@@ -13,6 +13,7 @@ export default defineConfig({
         chat: resolve(import.meta.dirname, "chat.html"),
         form: resolve(import.meta.dirname, "form.html"),
         landing: resolve(import.meta.dirname, "landing.html"),
+        charts: resolve(import.meta.dirname, "charts.html"),
       },
     },
   },

@@ -320,12 +320,100 @@ const off = hotkeys({ j: next, k: prev, "shift+n": newest, "mod+k": search });
 TypeScript types ship in `src/js/index.d.ts`, including the `sd:*` events on
 `document`.
 
+## Charts
+
+Time-series charts for bandwidth and latency, on Chart.js. Chart.js is an
+optional peer dependency: install it only if you use charts, and nothing in
+`signal-design/js` imports it.
+
+```bash
+npm install chart.js
+```
+
+```html
+<figure class="sd-chart" data-chart-theme="mono" style="--h: 480px">
+  <div class="sd-chart-bar">
+    <span class="sd-label">Core</span>
+    <div class="sd-seg" data-sd-chart-scale>
+      <button data-value="clamp">clamp</button><button data-value="p95">p95</button>
+      <button data-value="p90">p90</button><button data-value="linear">linear</button>
+      <button data-value="log">log</button>
+    </div>
+  </div>
+  <div class="sd-chart-plot"><canvas></canvas></div>
+</figure>
+```
+
+```js
+import { createChart } from "signal-design/charts";
+
+const core = createChart(canvas, {
+  preset: "core",                       // "bandwidth" | "latency" | "core"
+  bucketSeconds: 10,
+  live: 10,                             // seconds between updates
+  envelope: 120,                        // raw data: min/max ribbon + trend line
+  series: [
+    { label: "Core ↓", data: [{ x: ms, y: mbps }] },
+    { label: "Core ↑", data: [...] },
+    { label: "Core → MDF RTT", unit: " ms", data: [...], min: [...], max: [...] },
+  ],
+  thresholds: [{ value: 9000, level: "warning", label: "Warning 9 Gbps" }],
+  ranges: [{ from, to, kind: "maintenance", label: "Switch firmware" }],
+  events: [{ x, y, kind: "surge", unexpected: true }],
+});
+core.append({ "Core ↓": [{ x, y }] });
+```
+
+**Presets.** `bandwidth` is one Mbps panel. `latency` is one ms panel.
+`core` stacks both on one time axis (weights 74 and 26), with one tooltip and
+one crosshair across the two panels. Bandwidth values are Mbps and print on the
+Kbps → Mbps → Gbps → Tbps ladder; latency prints as ms.
+
+**Themes.** `data-chart-theme="mono"` (the default) is black and white: series
+differ by grey and dash, and color is kept for thresholds, line heat, bursts and
+alerts. `data-chart-theme="spectrum"` uses the full signal palette: green down,
+pink up, cyan RTT with a violet jitter band, amber warnings. Both follow the
+page theme (light gets deeper hues), and every color is a `--sd-chart-*` token
+you can override.
+
+**What a chart does.**
+
+| Feature | How |
+|---|---|
+| Scale modes | `clamp` (p99), `p95`, `p90` cut the axis so one spike can't flatten the rest; `linear` fits all; `log` is a symmetric log scale. Remembered across visits; `[data-sd-chart-scale]` buttons switch it. |
+| Off-scale peaks | A marker at the top of the panel with the real value when a clamped axis cuts a peak. |
+| Tooltip | Every series at the pointer's time, beside the cursor; bucket span in the title; deltas on 10s data; jitter as ±. |
+| Legend | Click a key to hide the series with its band and trend. |
+| Crosshair | Dashed, across every panel. |
+| Bands | `min`/`max` on a series draws a ribbon (jitter on RTT). `envelope` builds one from dense raw data. |
+| Gaps | `y: null` breaks the line; `ranges` of kind `missing` shade it. |
+| Thresholds, baselines | Dashed lines in warning, critical or baseline color. |
+| Ranges | `maintenance`, `missing`, `alert`, `dip`, `spike`, with labels. |
+| Events | `surge` and `drop` markers; unexpected ones ping. `peaks` marks daily peaks. |
+| Line heat | Lines warm toward warning, then critical, near the top of the axis. |
+| Forecast | `forecastFrom` shades the future and labels it. |
+| Rhythm | On 2+ day windows: working hours and day lines. |
+| Live | `append()` upserts at the tail, a ring pulses on the new point, value tags sit in the right gutter, and the window drifts with the clock. |
+| Selection | Drag to select (fires `sd:chart-select`); with `zoom: true` it zooms and double click resets. |
+| Effects | Square packets ride the bandwidth lines at a speed set by throughput, a heartbeat marks each live tip and turns amber, then grey, when the feed is late. |
+
+**Motion.** The effects layer is continuous motion, which Signal otherwise
+avoids, so it is guarded. It is off under `prefers-reduced-motion` and paused
+while the tab is hidden, the chart is off screen or under the pointer. A frame
+rate governor steps it down to half, a quarter, then off when the page runs
+slow. Set it per chart with `effects: "full" | "subtle" | "off"`, or for every
+chart with `setEffectsLevel()`.
+
+Server-rendered pages can skip the JS call: put the options as JSON in a
+`<script type="application/json">` inside `<figure data-sd-chart>` and call
+`initCharts()`.
+
 ## Page concepts
 
-The showcase has five pages built only from library parts: the components
+The showcase has six pages built only from library parts: the components
 reference (`index.html`), an app console (`shell.html`), a chat app
-(`chat.html`), a multi-step form (`form.html`) and a landing page
-(`landing.html`).
+(`chat.html`), a multi-step form (`form.html`), a landing page
+(`landing.html`) and live charts (`charts.html`).
 
 ## Develop
 

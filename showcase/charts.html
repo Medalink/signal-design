@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Signal Charts</title>
+  <script>
+    try { const t = localStorage.getItem("sd-theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
+  </script>
+  <link rel="stylesheet" href="./app.css">
+  <script type="module" src="./charts.js"></script>
+</head>
+<body>
+
+<header class="sd-topbar">
+  <a class="sd-wordmark" href="./index.html">ACME</a>
+  <nav class="sd-nav sd-desktop-only" aria-label="Examples">
+    <a href="./index.html">Components</a>
+    <a href="./shell.html">App shell</a>
+    <a href="./chat.html">Chat</a>
+    <a href="./form.html">Form</a>
+    <a href="./landing.html">Landing</a>
+    <a href="./charts.html" aria-current="page">Charts</a>
+  </nav>
+  <div class="sd-topbar-end">
+    <div class="sd-seg" data-sd-seg aria-label="Chart theme" id="chart-theme">
+      <button type="button" data-value="mono" aria-pressed="true">mono</button>
+      <button type="button" data-value="spectrum" aria-pressed="false">spectrum</button>
+    </div>
+    <button class="sd-btn sd-btn-sm" data-sd-theme-cycle>Theme</button>
+  </div>
+</header>
+
+<main class="sd-page sd-page-wide" style="max-width: 80rem">
+  <p class="sd-label">Charts</p>
+  <h1 class="sd-display mt-2">Bandwidth and latency. <em>Live.</em></h1>
+  <p class="sd-lead mt-4 max-w-[46rem]">Time-series charts on Chart.js, with two color themes: <b>mono</b>, black and white with color only for thresholds, heat and alerts, and <b>spectrum</b>, the full signal palette. Hover for the tooltip, drag to select, use the scale modes, click the legend.</p>
+
+  <!-- Core: bandwidth over latency, one chart -->
+  <figure class="sd-chart mt-12" data-chart-theme="mono" style="--h: 500px" id="core">
+    <div class="sd-chart-bar">
+      <div><span class="sd-label sd-label-strong">Core</span><span class="sd-status" data-tone="success" data-live>live · 2s</span></div>
+      <div class="flex flex-wrap items-center gap-2">
+        <div class="sd-seg" data-sd-chart-scale aria-label="Scale">
+          <button type="button" data-value="clamp">clamp</button>
+          <button type="button" data-value="p95">p95</button>
+          <button type="button" data-value="p90">p90</button>
+          <button type="button" data-value="linear">linear</button>
+          <button type="button" data-value="log">log</button>
+        </div>
+        <button class="sd-btn sd-btn-sm" data-pause aria-pressed="false">Pause feed</button>
+      </div>
+    </div>
+    <div class="sd-chart-plot"><canvas aria-label="Core bandwidth and round-trip time, last hour" role="img"></canvas></div>
+    <p class="sd-subtle text-sm">preset "core": bandwidth (Mbps) over path health (RTT ms with a jitter band). Raw 10s data with a min/max envelope and a trend line, maintenance and missing-data ranges, a warning threshold, surge and drop events, value tags, live edge, effects.</p>
+  </figure>
+
+  <div class="grid gap-10 mt-14 lg:grid-cols-2">
+    <figure class="sd-chart" data-chart-theme="mono" style="--h: 320px" id="bandwidth">
+      <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Internet uplink · 7 days</span></div></div>
+      <div class="sd-chart-plot"><canvas aria-label="Internet bandwidth, last 7 days" role="img"></canvas></div>
+      <p class="sd-subtle text-sm">preset "bandwidth": 5-minute rollup, smoothed (window 7, tension 0.35), daily peaks, a week-over-week ghost, working hours and day lines.</p>
+    </figure>
+    <figure class="sd-chart" data-chart-theme="mono" style="--h: 320px" id="latency">
+      <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Branch → core RTT</span></div></div>
+      <div class="sd-chart-plot"><canvas aria-label="Branch round-trip time, last 8 hours" role="img"></canvas></div>
+      <p class="sd-subtle text-sm">preset "latency": RTT with a jitter band, warning and critical thresholds, a forecast past now.</p>
+    </figure>
+  </div>
+
+  <section class="mt-14 grid gap-4 max-w-[52rem]">
+    <h2 class="sd-title">Formatting</h2>
+    <table>
+      <thead><tr><th>Call</th><th>Result</th></tr></thead>
+      <tbody id="formats"></tbody>
+    </table>
+  </section>
+</main>
+
+</body>
+</html>

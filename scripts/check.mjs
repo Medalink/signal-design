@@ -19,6 +19,7 @@ const pages = {
   chat: `${base}chat.html`,
   form: `${base}form.html`,
   landing: `${base}landing.html`,
+  charts: `${base}charts.html`,
   standalone: new URL("./standalone.html", import.meta.url).href,
 };
 if (!existsSync(new URL("../dist/signal.css", import.meta.url))) {
@@ -259,12 +260,100 @@ for (const [name, engine] of Object.entries(engines)) {
         await page.click('[data-sd-theme="light"]');
         if ((await page.evaluate(() => document.documentElement.dataset.theme)) !== "light") fail(where, "theme button failed");
       }
+      if (pageName === "charts" && width === 1280 && theme === "ink") {
+        const core = () => page.evaluate(() => {
+          const c = document.querySelector("#core canvas").sdChart.chart;
+          return {
+            newest: c.$sd.newestX,
+            yMax: c.scales.y.max,
+            hidden: c.data.datasets.filter((_, i) => !c.isDatasetVisible(i)).map((d) => d.label),
+            down: c.data.datasets.find((d) => d.label === "Core ↓")._color,
+          };
+        });
+        // Drawn: the canvas has plenty of non-empty pixels.
+        const inked = await page.evaluate(() => {
+          const cv = document.querySelector("#core canvas");
+          const d = cv.getContext("2d").getImageData(0, 0, cv.width, cv.height).data;
+          let n = 0;
+          for (let i = 3; i < d.length; i += 4) if (d[i] > 0) n++;
+          return n;
+        });
+        if (inked < 5000) fail(where, `core chart looks blank (${inked} pixels)`);
+        // Mono keeps series grey.
+        const mono = (await core()).down;
+        if (Math.max(mono.r, mono.g, mono.b) - Math.min(mono.r, mono.g, mono.b) > 12) fail(where, `mono series is colored ${JSON.stringify(mono)}`);
+        // Hover: the tooltip lists bandwidth and latency with units.
+        await page.locator("#core canvas:not(.sd-chart-fx)").scrollIntoViewIfNeeded();
+        const box = await page.locator("#core canvas:not(.sd-chart-fx)").boundingBox();
+        await page.mouse.move(box.x + box.width * 0.5, box.y + box.height * 0.5);
+        await page.waitForTimeout(150);
+        const tip = await page.evaluate(() => {
+          const t = document.querySelector("#core canvas").sdChart.chart.tooltip;
+          return t.opacity ? t.body.flatMap((b) => b.lines).join(" | ") : "";
+        });
+        if (!/bps/.test(tip) || !/ ms/.test(tip)) fail(where, `tooltip "${tip}"`);
+        await page.mouse.move(5, 5);
+        // Legend: clicking a key hides that series.
+        const hit = await page.evaluate(() => {
+          const c = document.querySelector("#core canvas").sdChart.chart;
+          const i = c.legend.legendItems.findIndex((l) => l.text === "Core ↑");
+          const h = c.legend.legendHitBoxes[i];
+          return h && { x: h.left + h.width / 2, y: h.top + h.height / 2 };
+        });
+        if (!hit) fail(where, "legend has no Core ↑ key");
+        else {
+          // Chart.js handles pointer events on the next animation frame.
+          await page.mouse.click(box.x + hit.x, box.y + hit.y);
+          await page.waitForTimeout(100);
+          if (!(await core()).hidden.includes("Core ↑")) fail(where, "legend click did not hide Core ↑");
+          await page.mouse.click(box.x + hit.x, box.y + hit.y);
+          await page.waitForTimeout(100);
+        }
+        // Scale modes change the axis and are remembered.
+        await page.click('#core [data-sd-chart-scale] [data-value="p90"]');
+        const p90Max = (await core()).yMax;
+        await page.click('#core [data-sd-chart-scale] [data-value="linear"]');
+        const linearMax = (await core()).yMax;
+        if (!(linearMax > p90Max)) fail(where, `linear max ${linearMax} not above p90 max ${p90Max}`);
+        await page.click('#core [data-sd-chart-scale] [data-value="log"]');
+        const logType = await page.evaluate(() => document.querySelector("#core canvas").sdChart.chart.scales.y.type);
+        if (logType !== "sdSymlog") fail(where, `log mode scale type ${logType}`);
+        await page.click('#core [data-sd-chart-scale] [data-value="clamp"]');
+        // Live: the feed appends a point every 2 seconds.
+        const before = (await core()).newest;
+        await page.waitForTimeout(2300);
+        if (!((await core()).newest > before)) fail(where, "live feed did not move the newest point");
+        // Theme: spectrum colors the series.
+        await page.click('#chart-theme [data-value="spectrum"]');
+        await page.waitForTimeout(200);
+        const spec = (await core()).down;
+        if (!(spec.g > spec.r + 60)) fail(where, `spectrum download is not green ${JSON.stringify(spec)}`);
+        await page.click('#chart-theme [data-value="mono"]');
+      }
       await page.close();
       console.log(`ok   ${where}`);
     }
   }
   }
   await browser.close();
+}
+
+// Chart formatting and scale maths, checked without a browser.
+{
+  const { formatValue } = await import("../src/js/charts/format.js");
+  const { scaleBounds, smooth } = await import("../src/js/charts/data.js");
+  const { symlogForward, symlogInverse } = await import("../src/js/charts/scales.js");
+  const expect = { "1500|Mbps": "1.5 Gbps", "250000|Mbps": "250 Gbps", "0.5|Mbps": "500 Kbps", "1200000|Mbps": "1.20 Tbps", "12.3| ms": "12.3 ms", "0|Mbps": "0 Mbps" };
+  for (const [k, want] of Object.entries(expect)) {
+    const [v, unit] = k.split("|");
+    const got = formatValue(Number(v), unit);
+    if (got !== want) fail("format", `formatValue(${v}, "${unit}") = "${got}", want "${want}"`);
+  }
+  const t = 50;
+  for (const v of [-900, 0, 3, 4999]) if (Math.abs(symlogInverse(symlogForward(v, t), t) - v) > 1e-6) fail("symlog", `round trip ${v}`);
+  const b = scaleBounds([...Array(99).fill(100), 10000], "clamp");
+  if (!(b.max < 10000 && b.ceiling === b.max)) fail("bounds", `clamp did not cut the spike: ${JSON.stringify(b)}`);
+  if (smooth([{ x: 0, y: 1 }, { x: 1, y: null }, { x: 2, y: 5 }])[1].y !== null) fail("smooth", "a gap was filled");
 }
 
 console.log(failures ? `\n${failures} failure(s)` : "\nall checks passed");

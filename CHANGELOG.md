@@ -26,8 +26,16 @@
 - TypeScript types (`src/js/index.d.ts`).
 - CI: the check suite in Chromium and WebKit on every push and pull request.
 - `data-sd-rain-skip` to keep rain off covering elements outside a shell.
+- Charts (`signal-design/charts`, Chart.js as an optional peer): bandwidth,
+  latency and the stacked core view; mono and spectrum themes; scale modes
+  with a symmetric log scale; bands, envelopes, thresholds, ranges, events,
+  heat, forecast, live updates, value tags, selection and a guarded effects
+  layer. `charts.html` shows all of it.
+- Redesigned landing page.
 
 ### Changed
+- Rain pauses while its canvas is off screen.
+- The hover shimmer keeps badge counts readable.
 - The status bar is optional; without one its row collapses.
 - The title bar and status bar use the rail background (`--sd-surface`).
 
