@@ -194,8 +194,8 @@ the rain skips them.
         <svg>…</svg><span class="sd-badge-count" data-tone="danger">2</span></button>
     </div>
   </header>
-  <div class="sd-shell-content" data-sd-corners data-sd-edges>…</div>
-  <div class="sd-shell-dock" data-sd-corners data-sd-edges>…composer…</div>
+  <div class="sd-shell-content" data-sd-ornaments data-sd-edges>…</div>
+  <div class="sd-shell-dock" data-sd-ornaments data-sd-edges>…composer…</div>
 </main>
 ```
 
@@ -260,22 +260,22 @@ Rain only draws where it shows. Inside a shell it skips the content, bars and
 dock. Elsewhere, list what covers it: `data-sd-rain-skip=".hero > *"`.
 `data-sd-rain-style="squares"` swaps glyphs for squares.
 
-## Corner ornaments
+## Ornaments
 
 ```html
-<div class="sd-shell-content" data-sd-corners>…</div>
+<div class="sd-shell-content" data-sd-ornaments>…</div>
 ```
 
 Dust in the bottom-right corner by default: small filled squares, outlines
 and dots, strongest at the corner and thinning as they spread. Ask for two
-corners (`data-sd-corners="tl br"`) and the first gets larger "blocks".
+corners (`data-sd-ornaments="tl br"`) and the first gets larger "blocks".
 Theme text color only, seeded so it never changes between loads, and painted
 as the element's background so it stays put while content scrolls.
 
 About one square in eight sparkles: it rests most of a slow 6 to 14 second
 cycle, then brightens briefly, each at its own offset, so the ornament glints
 without pulling the eye. It is an animated SVG, so it costs no script per
-frame. `prefers-reduced-motion` turns it off, and `data-sd-corners-still` keeps
+frame. `prefers-reduced-motion` turns it off, and `data-sd-ornaments-still` keeps
 one element still.
 
 ## Scrollbars

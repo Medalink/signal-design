@@ -36,8 +36,12 @@
 - Redesigned landing page.
 
 ### Changed
-- Corner and edge ornaments sparkle slowly (off for reduced motion;
-  `data-sd-corners-still` opts out).
+- Corner backgrounds are now called ornaments: `data-sd-ornaments`,
+  `data-sd-ornaments-size`, `data-sd-ornaments-still`, `paintOrnaments`,
+  `ornamentShapes`, `ORNAMENT_STYLES` (were `data-sd-corners`, `paintCorners`,
+  `cornerShapes`, `CORNER_STYLES`).
+- Ornaments sparkle slowly (off for reduced motion;
+  `data-sd-ornaments-still` opts out).
 - Graphite is now the lighter dark mode: `#0f0f0f` frame, `#151515` page,
   `#1a1a1a` panels, `#242424` raised, `#2e2e2e`/`#3d3d3d` lines, and ink's
   two-level text (`#f5f5f5`, `#a3a3a3`).

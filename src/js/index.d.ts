@@ -78,8 +78,8 @@ export const fps: {
 };
 
 /* Ornaments */
-export const CORNER_STYLES: Record<"blocks" | "dust", { cell: number; metric: string; falloff: number; merge: number; mix: number[] }>;
-export function cornerShapes(options?: {
+export const ORNAMENT_STYLES: Record<"blocks" | "dust", { cell: number; metric: string; falloff: number; merge: number; mix: number[] }>;
+export function ornamentShapes(options?: {
   size?: number;
   width?: number;
   edge?: boolean;
@@ -88,7 +88,7 @@ export function cornerShapes(options?: {
   strength?: number;
   style?: "blocks" | "dust";
 }): string;
-export function paintCorners(element: HTMLElement): void;
+export function paintOrnaments(element: HTMLElement): void;
 
 /* Scrollbars */
 export function setScrollbars(mode?: "auto" | "always"): void;
