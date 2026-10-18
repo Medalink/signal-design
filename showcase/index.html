@@ -708,9 +708,59 @@
         <div class="sd-stat"><span class="sd-stat-value">260<small>ms</small></span><span class="sd-stat-label">Checkout p95</span><span class="sd-stat-delta" data-tone="success">−150ms</span></div>
         <div class="sd-stat"><span class="sd-stat-value">6</span><span class="sd-stat-label">High risk</span><span class="sd-stat-delta" data-tone="danger">+2 today</span></div>
       </div>
+      <div class="grid gap-6 sm:grid-cols-4">
+        <div class="sd-stat-box" data-tone="success">
+          <span class="sd-stat-label">Running</span>
+          <span class="sd-stat-value">4<small>/ 9</small></span>
+          <span class="sd-stat-sub">containers with samples</span>
+        </div>
+        <div class="sd-stat-box" data-tone="accent">
+          <span class="sd-stat-label">Memory</span>
+          <span class="sd-stat-value">2.1<small>GiB</small></span>
+          <span class="sd-stat-sub">of 8.0 GiB granted</span>
+        </div>
+        <div class="sd-stat-box" data-tone="pending">
+          <span class="sd-stat-label">Orphaned</span>
+          <span class="sd-stat-value">1</span>
+          <span class="sd-stat-end"><button class="sd-btn sd-btn-sm">Reap</button></span>
+        </div>
+        <div class="sd-stat-box">
+          <span class="sd-stat-label">Windows</span>
+          <span class="sd-stat-value">31<small>%</small></span>
+          <span class="sd-stat-sub">CPU across 24 cores</span>
+        </div>
+      </div>
+      <div class="sd-card" data-tone="accent">
+        <div class="sd-card-head">Total CPU<span class="sd-subtle">5 min buckets</span></div>
+        <div class="sd-card-body">
+          <div class="sd-plot" data-tone="accent">
+            <svg viewBox="0 0 600 120" preserveAspectRatio="none" aria-hidden="true">
+              <path class="grid" d="M0 30H600M0 60H600M0 90H600" />
+              <polygon class="area" points="0,120 0,80 60,72 120,88 180,50 240,58 300,34 360,44 420,26 480,40 540,30 600,38 600,120" />
+              <polyline class="line" points="0,80 60,72 120,88 180,50 240,58 300,34 360,44 420,26 480,40 540,30 600,38" />
+            </svg>
+            <span class="sd-plot-readout">14:05<b>31%</b></span>
+          </div>
+        </div>
+      </div>
+      <div class="sd-cluster">
+        <span class="sd-plot sd-plot-inline" data-tone="accent">
+          <svg viewBox="0 0 100 24" preserveAspectRatio="none" aria-hidden="true">
+            <path class="grid" d="M0 6H100M0 12H100M0 18H100" />
+            <polygon class="area" points="0,24 0,16 25,12 50,18 75,8 100,12 100,24" />
+            <polyline class="line" points="0,16 25,12 50,18 75,8 100,12" />
+          </svg>
+        </span>
+        <span class="sd-plot sd-plot-inline" data-tone="extra">
+          <svg viewBox="0 0 100 24" preserveAspectRatio="none" aria-hidden="true">
+            <polygon class="area" points="0,24 0,10 25,14 50,6 75,12 100,4 100,24" />
+            <polyline class="line" points="0,10 25,14 50,6 75,12 100,4" />
+          </svg>
+        </span>
+      </div>
       <div class="sd-table-wrap">
         <table class="sd-table sd-table-hover">
-          <thead><tr><th>Team</th><th>Project</th><th class="sd-num">Items</th><th class="sd-num">Done</th><th>Status</th></tr></thead>
+          <thead><tr><th data-sort aria-sort="descending">Team</th><th data-sort>Project</th><th class="sd-num" data-sort>Items</th><th class="sd-num">Done</th><th>Status</th></tr></thead>
           <tbody>
             <tr><td>Platform</td><td>Website</td><td class="sd-num">12</td><td class="sd-num">9</td><td><span class="sd-status" data-tone="success">live</span></td></tr>
             <tr aria-selected="true"><td>Sales</td><td>Billing</td><td class="sd-num">4</td><td class="sd-num">1</td><td><span class="sd-badge" data-tone="danger">risk</span></td></tr>
@@ -730,7 +780,7 @@
 @import "signal-design";</code></pre>
         </div>
       </div>
-      <p class="demo-usage"><code>sd-stat</code> · <code>sd-table</code> + <code>-hover|-compact</code> · <code>sd-num</code> · <code>sd-kv</code> · <code>sd-code</code> + <code>data-sd-copy</code> · <code>sd-shot</code></p>
+      <p class="demo-usage"><code>sd-stat</code> · <code>sd-stat-box</code> + tone edge · <code>sd-stat-sub</code> · <code>sd-table</code> + <code>-hover|-compact</code> · <code>th[data-sort]</code> + <code>aria-sort</code> · <code>sd-plot</code> + <code>-inline</code> · <code>sd-num</code> · <code>sd-kv</code> · <code>sd-code</code> + <code>data-sd-copy</code> · <code>sd-shot</code></p>
     </div>
 
     <div class="demo-block">

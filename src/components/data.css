@@ -263,4 +263,167 @@
     text-transform: uppercase;
     color: var(--sd-fg-subtle);
   }
+
+  /*
+   * Boxed stat: an .sd-stat inside a hairline box with a tone edge, for
+   * dashboards. The edge means what data-tone says; no tone, no edge.
+   *   <div class="sd-stat-box" data-tone="success">
+   *     <span class="sd-stat-label">Running</span>
+   *     <span class="sd-stat-value">4<small>/ 9</small></span>
+   *     <span class="sd-stat-sub">of 9 containers</span>
+   *     <span class="sd-stat-end"><button class="sd-btn">…</button></span>
+   *   </div>
+   */
+  .sd-stat-box {
+    position: relative;
+    display: grid;
+    gap: 6px;
+    align-content: start;
+    min-width: 0;
+    padding: 14px 18px 16px;
+    border: 1px solid var(--sd-line);
+    border-inline-start: 2px solid var(--tone, var(--sd-line-strong));
+    background: var(--sd-canvas);
+  }
+  .sd-stat-box .sd-stat-value {
+    font-size: var(--text-2xl);
+    font-weight: 400;
+  }
+  .sd-stat-sub {
+    font-size: var(--text-2xs);
+    color: var(--sd-fg-subtle);
+    min-height: 1em;
+  }
+  .sd-stat-end {
+    position: absolute;
+    inset-inline-end: 14px;
+    inset-block-end: 12px;
+  }
+  .sd-stat-box-sm {
+    padding: 10px 16px 12px;
+    border-inline-start-width: 1px;
+  }
+  .sd-stat-box-sm .sd-stat-value {
+    font-size: var(--text-base);
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sd-stat-box-sm .sd-stat-sub {
+    min-height: 0;
+  }
+
+  /*
+   * Sortable table headers. The app sets aria-sort and data-sort on the th;
+   * the arrow is the only state the CSS draws.
+   *   <th data-sort="created" aria-sort="descending">Created</th>
+   */
+  .sd-table :where(th)[data-sort] {
+    text-align: inherit;
+    cursor: pointer;
+    user-select: none;
+    transition: color 120ms var(--ease-out);
+  }
+  .sd-table :where(th)[data-sort]:hover {
+    color: var(--sd-fg);
+  }
+  .sd-table :where(th)[aria-sort="ascending"]::after {
+    content: " \2191";
+    color: var(--sd-fg-subtle);
+  }
+  .sd-table :where(th)[aria-sort="descending"]::after {
+    content: " \2193";
+    color: var(--sd-fg-subtle);
+  }
+
+  /*
+   * Plot: a line chart the app draws itself as an SVG (scales and hover
+   * state belong to the app). The CSS owns the look: hairline grid, tone
+   * line, a soft area under it, dots, crosshair, readout and empty note.
+   *   <div class="sd-plot" data-tone="accent" id="cpu">
+   *     <svg viewBox="0 0 600 230" preserveAspectRatio="none">
+   *       <path class="grid" d="…" /><polygon class="area"/><polyline class="line"/>
+   *     </svg>
+   *     <span class="sd-plot-note">No samples yet</span>
+   *     <span class="sd-plot-readout">14:05<b>31%</b></span>
+   *   </div>
+   * .sd-plot-inline sizes it as a sparkline inside a row; the app decides
+   * how height changes when the row expands.
+   */
+  .sd-plot {
+    position: relative;
+    min-width: 0;
+    height: var(--h, 230px);
+    color: var(--tone, var(--sd-fg-subtle));
+  }
+  .sd-plot > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .sd-plot :where(.grid) {
+    fill: none;
+    stroke: var(--sd-line);
+    vector-effect: non-scaling-stroke;
+  }
+  .sd-plot :where(.base) {
+    fill: none;
+    stroke: var(--sd-line);
+    vector-effect: non-scaling-stroke;
+  }
+  .sd-plot :where(.area) {
+    fill: color-mix(in srgb, var(--tone, var(--sd-fg)) 10%, transparent);
+  }
+  .sd-plot :where(.line) {
+    fill: none;
+    stroke: var(--tone, var(--sd-fg-subtle));
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+  .sd-plot :where(.dot) {
+    fill: var(--tone, var(--sd-fg));
+    stroke: var(--tone, var(--sd-fg));
+  }
+  .sd-plot :where(.cross) {
+    fill: none;
+    stroke: var(--sd-fg-faint);
+    vector-effect: non-scaling-stroke;
+  }
+  .sd-plot text {
+    fill: var(--sd-fg-faint);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+  }
+  .sd-plot .sd-plot-note {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-sm);
+  }
+  .sd-plot .sd-plot-readout {
+    position: absolute;
+    top: 0;
+    padding: 4px 8px;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-canvas);
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-2xs);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .sd-plot .sd-plot-readout b {
+    margin-inline-start: 6px;
+    color: var(--sd-fg);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .sd-plot-inline {
+    --h: 30px;
+    flex: 1;
+  }
 }
