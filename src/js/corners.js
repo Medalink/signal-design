@@ -44,7 +44,12 @@ function seeded(seed) {
  * transform for other corners. edge: true spreads from the whole top edge
  * (full width) instead of from the corner point.
  */
-export function cornerShapes({ size = DEFAULT_SIZE, width = size, edge = false, color = "#fff", seed = 7, strength = 1, style = "blocks" } = {}) {
+/**
+ * sparkle: the share of squares that brighten now and then (0 = still).
+ * Each one rests most of a slow 6–14s cycle and lifts briefly, at its own
+ * offset, so the ornament glints without drawing the eye.
+ */
+export function cornerShapes({ size = DEFAULT_SIZE, width = size, edge = false, color = "#fff", seed = 7, strength = 1, style = "blocks", sparkle = 0 } = {}) {
   const preset = CORNER_STYLES[style] ?? CORNER_STYLES.blocks;
   const { cell, falloff, merge, mix } = preset;
   const metric = edge ? "edge" : preset.metric;
@@ -87,16 +92,28 @@ export function cornerShapes({ size = DEFAULT_SIZE, width = size, edge = false, 
 
       const w = span * cell - gap;
       const at = `x="${x + gap / 2}" y="${y + gap / 2}" width="${w}" height="${w}"`;
+      // A twinkle: rest at the base alpha, lift to a peak, settle back.
+      const glint = (attr) => {
+        if (!(sparkle > 0) || random() >= sparkle) return "";
+        const peak = Math.min(1, alpha * 2.6 + 0.12 * strength).toFixed(3);
+        const dur = (6 + random() * 8).toFixed(1);
+        const begin = (random() * 14).toFixed(1);
+        return `<animate attributeName="${attr}" values="${alpha};${alpha};${peak};${alpha}" keyTimes="0;0.72;0.84;1" dur="${dur}s" begin="${begin}s" repeatCount="indefinite"/>`;
+      };
+      const rect = (attrs, attr) => {
+        const g = glint(attr);
+        return g ? `<rect ${attrs}>${g}</rect>` : `<rect ${attrs}/>`;
+      };
       if (pick < filled) {
-        shapes.push(`<rect ${at} fill="${color}" fill-opacity="${alpha}"/>`);
+        shapes.push(rect(`${at} fill="${color}" fill-opacity="${alpha}"`, "fill-opacity"));
       } else if (pick < outline) {
-        shapes.push(`<rect ${at} fill="none" stroke="${color}" stroke-opacity="${alpha}"/>`);
+        shapes.push(rect(`${at} fill="none" stroke="${color}" stroke-opacity="${alpha}"`, "stroke-opacity"));
       } else if (pick < dotted) {
-        shapes.push(`<rect ${at} fill="none" stroke="${color}" stroke-opacity="${alpha}" stroke-dasharray="1 2"/>`);
+        shapes.push(rect(`${at} fill="none" stroke="${color}" stroke-opacity="${alpha}" stroke-dasharray="1 2"`, "stroke-opacity"));
       } else {
         const dot = Math.max(2, Math.round(cell / 4 + random() * 2));
         const o = (cell - dot) / 2;
-        shapes.push(`<rect x="${x + o}" y="${y + o}" width="${dot}" height="${dot}" fill="${color}" fill-opacity="${alpha}"/>`);
+        shapes.push(rect(`x="${x + o}" y="${y + o}" width="${dot}" height="${dot}" fill="${color}" fill-opacity="${alpha}"`, "fill-opacity"));
       }
     }
   }
@@ -170,6 +187,9 @@ export function paintCorners(el) {
   const color = style.getPropertyValue("--sd-fg").trim() || "#ffffff";
   // Light themes need a touch more ink to read on white.
   const strength = style.colorScheme === "light" ? 0.42 : 0.28;
+  // A slow sparkle on a few squares, unless the user asks for less motion or
+  // the element opts out with data-sd-corners-still.
+  const sparkle = matchMedia("(prefers-reduced-motion: reduce)").matches || "sdCornersStill" in el.dataset ? 0 : 0.12;
   // One corner gets "dust"; a second corner, when asked for, gets "blocks".
   const styles = corners.filter((c) => !EDGES.has(c)).length > 1 ? ["blocks", "dust"] : ["dust"];
   const images = [];
@@ -198,6 +218,7 @@ export function paintCorners(el) {
         // Blocks sit behind headings, so they stay quieter than the dust.
         strength: edge ? strength * 0.5 : styles[i % styles.length] === "blocks" ? strength * 0.5 : strength,
         seed: 11 + i * 97 + (edge ? width : 0),
+        sparkle,
         style: edge ? "dust" : styles[i % styles.length],
       }),
     );
@@ -236,4 +257,5 @@ export function initCorners(root = document) {
   const repaint = () => requestAnimationFrame(() => paintAll());
   document.addEventListener("sd:theme", repaint);
   matchMedia("(prefers-color-scheme: light)").addEventListener("change", repaint);
+  matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", repaint);
 }

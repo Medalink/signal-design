@@ -272,6 +272,12 @@ corners (`data-sd-corners="tl br"`) and the first gets larger "blocks".
 Theme text color only, seeded so it never changes between loads, and painted
 as the element's background so it stays put while content scrolls.
 
+About one square in eight sparkles: it rests most of a slow 6 to 14 second
+cycle, then brightens briefly, each at its own offset, so the ornament glints
+without pulling the eye. It is an animated SVG, so it costs no script per
+frame. `prefers-reduced-motion` turns it off, and `data-sd-corners-still` keeps
+one element still.
+
 ## Scrollbars
 
 `init()` hides scrollbars until something scrolls and hides them again 2s
