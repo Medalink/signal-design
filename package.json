@@ -19,13 +19,17 @@
   "style": "./dist/signal.css",
   "exports": {
     ".": {
+      "types": "./src/js/index.d.ts",
       "style": "./src/signal.css",
       "import": "./src/js/index.js",
       "default": "./src/js/index.js"
     },
     "./css": "./src/signal.css",
     "./dist/signal.css": "./dist/signal.css",
-    "./js": "./src/js/index.js",
+    "./js": {
+      "types": "./src/js/index.d.ts",
+      "default": "./src/js/index.js"
+    },
     "./js/*": "./src/js/*.js",
     "./fonts/*": "./src/fonts/*"
   },
@@ -61,5 +65,7 @@
     "playwright": "^1.64.1",
     "tailwindcss": "^4.3.3",
     "vite": "8.3.4"
-  }
+  },
+  "types": "./src/js/index.d.ts",
+  "packageManager": "pnpm@11.27.1"
 }

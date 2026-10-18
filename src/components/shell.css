@@ -369,8 +369,14 @@
     gap: 12px;
     min-width: 0;
   }
+  /* Bridges: a short ladder that ties a bar to the content box across the
+     gap, under the header (or header bar) and over the dock. */
   .sd-shell-header::before,
-  .sd-shell-header::after {
+  .sd-shell-header::after,
+  .sd-shell-main > .sd-shell-bar::before,
+  .sd-shell-main > .sd-shell-bar::after,
+  .sd-shell-main > .sd-shell-dock::before,
+  .sd-shell-main > .sd-shell-dock::after {
     content: "";
     position: absolute;
     top: 100%;
@@ -394,6 +400,22 @@
   }
   .sd-shell-header::after {
     right: 17.5px;
+  }
+  /* Header bar and dock: under the bar's first icon and last button. */
+  .sd-shell-main > .sd-shell-bar::before,
+  .sd-shell-main > .sd-shell-dock::before {
+    left: 19px;
+  }
+  .sd-shell-main > .sd-shell-bar::after,
+  .sd-shell-main > .sd-shell-dock::after {
+    right: 19px;
+  }
+  /* The dock's bridges go up to the content. Its border is painted on the
+     box, so they start 1px out. */
+  .sd-shell-main > .sd-shell-dock::before,
+  .sd-shell-main > .sd-shell-dock::after {
+    top: auto;
+    bottom: calc(100% + 1px);
   }
   .sd-shell-crumbs,
   .sd-shell-header-end {
@@ -453,6 +475,16 @@
     background: var(--sd-container);
   }
 
+  /* Dock: a box below the content, a gap apart, for a composer or a
+     footer toolbar. <div class="sd-shell-dock">…</div> */
+  .sd-shell-dock {
+    position: relative;
+    flex-shrink: 0;
+    padding: 12px;
+    border: 1px solid var(--sd-line);
+    background: var(--sd-container);
+  }
+
   /* Rain backdrop: covers only the page area (the rail, sidebar and panel
      are opaque), and the JS skips the boxes on top of it. */
   .sd-shell > .sd-rain {
@@ -504,6 +536,10 @@
 
   /* ---- Status bar, scrim, phone top bar ----------------------------- */
 
+  /* The status bar is optional; without one its row collapses. */
+  .sd-shell:not(:has(> .sd-shell-status)) {
+    --shell-status: 0px;
+  }
   .sd-shell-status {
     grid-area: status;
     z-index: 40;
@@ -657,7 +693,7 @@
     height: 2.25rem;
     padding-inline-start: 12px;
     border-block-end: 1px solid var(--sd-line);
-    background: var(--sd-canvas);
+    background: var(--sd-surface);
     user-select: none;
     -webkit-user-select: none;
   }
@@ -750,7 +786,7 @@
     padding-inline-end: 8px;
   }
 
-  /* ---- Header bar: a solid header attached to the content ------------ */
+  /* ---- Header bar: a solid header above the content, a gap apart ------ */
   /*
    * An alternative to the floating crumb and action bars.
    *   <header class="sd-shell-bar">
@@ -768,7 +804,6 @@
     min-height: 3.5rem;
     padding: 0 8px 0 16px;
     border: 1px solid var(--sd-line);
-    border-block-end: 0;
     background: var(--sd-container);
     container-type: inline-size;
   }
@@ -777,10 +812,6 @@
     .sd-shell-bar-center {
       display: none;
     }
-  }
-  /* The content box below joins it into one panel. */
-  .sd-shell-bar + .sd-shell-content {
-    margin-block-start: calc(-1 * var(--shell-gap));
   }
   .sd-shell-bar-title {
     display: flex;

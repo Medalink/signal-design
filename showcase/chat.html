@@ -108,11 +108,11 @@
 
   <!-- Main -->
   <main class="sd-shell-main" id="main">
-    <!-- Header bar: solid and attached to the content (the alternate to floating crumb bars) -->
-    <header class="sd-shell-bar">
+    <!-- Header bar: solid, a gap above the content (the alternate to floating crumb bars) -->
+    <header class="sd-shell-bar" data-sd-edges>
       <div class="sd-shell-bar-title">
         <button class="sd-icon-btn sd-shell-pin" data-sd-shell="sidebar" data-sd-key="[" aria-label="Pin sidebar open"><svg><use href="#i-collapse"/></svg></button>
-        <svg><use href="#i-hash"/></svg><b>general</b><span class="sd-desktop-only">Team chat for Design</span><span class="sd-badge sd-desktop-only">encrypted</span>
+        <svg><use href="#i-hash"/></svg><b>general</b><span class="sd-desktop-only">Team chat for Design</span>
       </div>
       <div class="sd-shell-bar-center sd-desktop-only"><span class="sd-status" data-tone="success">3 here</span></div>
       <div class="sd-shell-bar-end">
@@ -204,8 +204,11 @@
         </article>
       </div>
 
-      <div class="px-4 pb-4 grid gap-2">
-        <span class="sd-typing" aria-live="polite"><i><b></b></i> Alex is typing…</span>
+      <span class="sd-typing px-4 pb-3" aria-live="polite"><i><b></b></i> Alex is typing…</span>
+    </div>
+
+    <!-- Dock: the composer in its own box, a gap below the messages -->
+    <div class="sd-shell-dock grid gap-2" data-sd-corners data-sd-corners-size="120" data-sd-edges>
         <form class="sd-composer" data-composer>
           <div class="sd-composer-chips" data-chips></div>
           <div class="sd-composer-row">
@@ -224,7 +227,6 @@
           </div>
         </form>
         <p class="sd-composer-hint"><span><kbd>Enter</kbd> send</span><span><kbd>Shift</kbd>+<kbd>Enter</kbd> new line</span><span><kbd>@</kbd> mention</span></p>
-      </div>
     </div>
   </main>
 
@@ -262,13 +264,6 @@
     </div>
   </aside>
 
-  <footer class="sd-statusbar sd-shell-status">
-    <span><kbd>Ctrl</kbd><kbd>K</kbd> search</span>
-    <span><kbd>[</kbd> sidebar</span>
-    <span><kbd>]</kbd> members</span>
-    <span class="sd-status" data-tone="success">Connected</span>
-    <span class="sd-statusbar-end"><span class="sd-fps" data-sd-fps><b>--</b> fps</span> · v1.4</span>
-  </footer>
   <div class="sd-shell-scrim" data-sd-shell="close"></div>
 </div>
 

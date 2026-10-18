@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Signal Landing Example</title>
+  <script>
+    try { const t = localStorage.getItem("sd-theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
+  </script>
+  <link rel="stylesheet" href="./app.css">
+  <script type="module" src="./landing.js"></script>
+  <style>
+    /* Page-specific layout only; every piece below is a library component. */
+    .landing-hero { position: relative; min-height: min(78dvh, 46rem); display: grid; align-items: end; overflow: hidden; border-block-end: 1px solid var(--sd-line); }
+    .landing-hero > .sd-rain { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .landing-hero-inner { position: relative; padding-block: 120px 56px; }
+    .landing-section { padding-block: 72px; border-block-end: 1px solid var(--sd-line); }
+  </style>
+</head>
+<body>
+
+<header class="sd-topbar sticky top-0 z-30">
+  <a class="sd-wordmark" href="./landing.html">ACME</a>
+  <nav class="sd-nav" aria-label="Site">
+    <a href="#features">Features</a>
+    <a href="#numbers">Numbers</a>
+    <a href="#install">Install</a>
+    <a href="./index.html">Components</a>
+  </nav>
+  <div class="sd-topbar-end">
+    <a class="sd-btn sd-btn-sm sd-btn-ghost" href="./form.html">Sign in</a>
+    <a class="sd-btn sd-btn-sm sd-btn-primary" href="./form.html">Start free</a>
+  </div>
+</header>
+
+<main>
+  <section class="landing-hero">
+    <canvas class="sd-rain" data-sd-rain data-sd-rain-style="squares" data-sd-rain-skip=".landing-hero-inner > *" aria-hidden="true"></canvas>
+    <div class="sd-page sd-page-wide landing-hero-inner">
+      <span class="sd-badge" data-tone="success">New · v1.4</span>
+      <h1 class="sd-display sd-display-xl mt-6 max-w-[56rem]">Work that ships itself. <em>You sign off.</em></h1>
+      <p class="sd-lead mt-6 max-w-[40rem]">ACME collects finished work from your team and your tools, shows the proof, and asks for one decision. Approve, send back, or think about it.</p>
+      <div class="sd-actions mt-8">
+        <a class="sd-btn sd-btn-lg sd-btn-primary" href="./form.html">Start free</a>
+        <a class="sd-btn sd-btn-lg" href="./chat.html">See it running</a>
+        <span class="sd-subtle text-sm">No card needed · 14-day trial</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-section" id="features" aria-labelledby="features-h">
+    <div class="sd-page sd-page-wide" style="padding-block:0">
+      <p class="sd-label">Features</p>
+      <h2 id="features-h" class="sd-title mt-2">Everything in one column.</h2>
+      <div class="sd-grid mt-8" style="--min: 17rem">
+        <article class="sd-card"><header class="sd-card-head"><span class="sd-dot" data-tone="success"></span> Proof first</header><div class="sd-card-body sd-muted">Every item arrives with what was done and how it was checked, before anyone asks.</div></article>
+        <article class="sd-card"><header class="sd-card-head"><span class="sd-dot" data-tone="danger"></span> Risk stands out</header><div class="sd-card-body sd-muted">Irreversible work gets a red edge and needs a review. Routine work stays quiet.</div></article>
+        <article class="sd-card"><header class="sd-card-head"><span class="sd-dot" data-shape="hollow"></span> Keyboard all the way</header><div class="sd-card-body sd-muted"><kbd>j</kbd> <kbd>k</kbd> to move, <kbd>a</kbd> to approve, <kbd>Ctrl</kbd> <kbd>K</kbd> to find anything.</div></article>
+        <article class="sd-card"><header class="sd-card-head"><span class="sd-dot" data-tone="pending" data-shape="dashed"></span> Think about it</header><div class="sd-card-body sd-muted">Park anything for later today, tomorrow or Monday. It comes back on its own.</div></article>
+        <article class="sd-card"><header class="sd-card-head"><span class="sd-dot" data-shape="hollow"></span> Works offline</header><div class="sd-card-body sd-muted">A desktop app with the same screens, and nothing leaves your machine until you say so.</div></article>
+        <article class="sd-card"><header class="sd-card-head"><span class="sd-dot" data-shape="hollow"></span> Plays well</header><div class="sd-card-body sd-muted">Connect the tools your team already uses. Results show up as items, not noise.</div></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-section" id="numbers" aria-labelledby="numbers-h">
+    <div class="sd-page sd-page-wide" style="padding-block:0">
+      <p class="sd-label">Numbers</p>
+      <h2 id="numbers-h" class="sd-title mt-2">Less time deciding. <span class="sd-subtle">More time shipping.</span></h2>
+      <div class="grid gap-8 mt-8 sm:grid-cols-3">
+        <div class="sd-stat"><span class="sd-stat-value">4.2<small>s</small></span><span class="sd-stat-label">Median decision</span><span class="sd-spark" data-values="9 8 8 7 6 6 5 5 4.2"></span></div>
+        <div class="sd-stat"><span class="sd-stat-value">93<small>%</small></span><span class="sd-stat-label">Approved first time</span><span class="sd-spark" data-tone="success" data-values="70 74 78 80 84 86 90 91 93"></span></div>
+        <div class="sd-stat"><span class="sd-stat-value">0</span><span class="sd-stat-label">Surprise merges</span><span class="sd-spark" data-values="3 2 2 1 1 0 0 0 0"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-section" id="install" aria-labelledby="install-h">
+    <div class="sd-page" style="padding-block:0">
+      <p class="sd-label">Install</p>
+      <h2 id="install-h" class="sd-title mt-2">Running in a minute.</h2>
+      <div class="sd-tabs mt-6" role="tablist" aria-label="Platform">
+        <button role="tab" aria-selected="true" aria-controls="i-mac" id="t-mac">macOS</button>
+        <button role="tab" aria-controls="i-win" id="t-win">Windows</button>
+        <button role="tab" aria-controls="i-linux" id="t-linux">Linux</button>
+      </div>
+      <div class="sd-tabpanel" role="tabpanel" id="i-mac" aria-labelledby="t-mac"><div class="sd-code"><div class="sd-code-head">terminal <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#cmd-mac">Copy</button></div><pre id="cmd-mac"><code>brew install acme</code></pre></div></div>
+      <div class="sd-tabpanel" role="tabpanel" id="i-win" aria-labelledby="t-win" hidden><div class="sd-code"><div class="sd-code-head">powershell <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#cmd-win">Copy</button></div><pre id="cmd-win"><code>winget install acme</code></pre></div></div>
+      <div class="sd-tabpanel" role="tabpanel" id="i-linux" aria-labelledby="t-linux" hidden><div class="sd-code"><div class="sd-code-head">terminal <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#cmd-linux">Copy</button></div><pre id="cmd-linux"><code>curl -fsSL https://acme.example/install.sh | sh</code></pre></div></div>
+
+      <blockquote class="mt-12">
+        <p>We stopped reading status threads. The work shows up with its proof, and we decide.</p>
+        <footer>Head of engineering, a customer</footer>
+      </blockquote>
+    </div>
+  </section>
+
+  <section class="landing-section" aria-labelledby="cta-h">
+    <div class="sd-page" style="padding-block:0">
+      <div class="sd-panel" style="max-width:none" data-sd-corners data-sd-corners-size="220">
+        <h2 id="cta-h" class="sd-title">Try it with your team.</h2>
+        <p class="sd-panel-desc mt-2">Free for 14 days. Bring your own tools.</p>
+        <div class="sd-actions"><a class="sd-btn sd-btn-primary" href="./form.html">Start free</a><a class="sd-btn sd-btn-link" href="#features">Read the features</a></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="sd-page sd-page-wide">
+  <div class="sd-split">
+    <span class="sd-wordmark">ACME</span>
+    <nav class="sd-nav" aria-label="Footer"><a href="#features">Features</a><a href="#install">Install</a><a href="./index.html">Design system</a></nav>
+    <span class="sd-subtle text-sm">© 2026 ACME Inc.</span>
+  </div>
+</footer>
+
+</body>
+</html>

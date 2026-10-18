@@ -17,6 +17,8 @@ const pages = {
   components: base,
   shell: `${base}shell.html`,
   chat: `${base}chat.html`,
+  form: `${base}form.html`,
+  landing: `${base}landing.html`,
   standalone: new URL("./standalone.html", import.meta.url).href,
 };
 if (!existsSync(new URL("../dist/signal.css", import.meta.url))) {

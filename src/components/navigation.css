@@ -351,7 +351,7 @@
     min-height: 36px;
     padding: 0 16px;
     border-block-start: 1px solid var(--sd-line);
-    background: var(--sd-canvas);
+    background: var(--sd-surface);
     color: var(--sd-fg-subtle);
     font-size: var(--text-sm);
     white-space: nowrap;
