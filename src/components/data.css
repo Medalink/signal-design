@@ -350,13 +350,25 @@
    *   </div>
    * .sd-plot-inline sizes it as a sparkline inside a row; the app decides
    * how height changes when the row expands.
+   *
+   * Colors come from the chart tokens (charts.css), so a plot follows
+   * data-chart-theme like a full chart. data-series picks the series color
+   * (down, up, in, out, rtt, ghost, baseline); data-tone still wins.
    */
   .sd-plot {
+    --sd-plot-line: var(--sd-chart-fallback);
     position: relative;
     min-width: 0;
     height: var(--h, 230px);
-    color: var(--tone, var(--sd-fg-subtle));
+    color: var(--tone, var(--sd-plot-line));
   }
+  .sd-plot[data-series="down"] { --sd-plot-line: var(--sd-chart-down); }
+  .sd-plot[data-series="up"] { --sd-plot-line: var(--sd-chart-up); --sd-plot-dash: var(--sd-chart-up-dash); }
+  .sd-plot[data-series="in"] { --sd-plot-line: var(--sd-chart-in); --sd-plot-dash: var(--sd-chart-in-dash); }
+  .sd-plot[data-series="out"] { --sd-plot-line: var(--sd-chart-out); --sd-plot-dash: var(--sd-chart-out-dash); }
+  .sd-plot[data-series="rtt"] { --sd-plot-line: var(--sd-chart-rtt); }
+  .sd-plot[data-series="ghost"] { --sd-plot-line: var(--sd-chart-ghost); --sd-plot-dash: 4 4; }
+  .sd-plot[data-series="baseline"] { --sd-plot-line: var(--sd-chart-baseline); --sd-plot-dash: 3 4; }
   .sd-plot > svg {
     display: block;
     width: 100%;
@@ -365,35 +377,37 @@
   }
   .sd-plot :where(.grid) {
     fill: none;
-    stroke: var(--sd-line);
+    stroke: var(--sd-chart-grid);
     vector-effect: non-scaling-stroke;
   }
   .sd-plot :where(.base) {
     fill: none;
-    stroke: var(--sd-line);
+    stroke: var(--sd-chart-grid);
     vector-effect: non-scaling-stroke;
   }
   .sd-plot :where(.area) {
-    fill: color-mix(in srgb, var(--tone, var(--sd-fg)) 10%, transparent);
+    fill: color-mix(in srgb, var(--tone, var(--sd-plot-line)) 10%, transparent);
   }
   .sd-plot :where(.line) {
     fill: none;
-    stroke: var(--tone, var(--sd-fg-subtle));
+    stroke: var(--tone, var(--sd-plot-line));
+    stroke-dasharray: var(--sd-plot-dash, none);
     stroke-width: 1.5;
     stroke-linejoin: round;
     vector-effect: non-scaling-stroke;
   }
   .sd-plot :where(.dot) {
-    fill: var(--tone, var(--sd-fg));
-    stroke: var(--tone, var(--sd-fg));
+    fill: var(--tone, var(--sd-plot-line));
+    stroke: var(--tone, var(--sd-plot-line));
   }
   .sd-plot :where(.cross) {
     fill: none;
-    stroke: var(--sd-fg-faint);
+    stroke: var(--sd-chart-accent);
+    stroke-opacity: 0.4;
     vector-effect: non-scaling-stroke;
   }
   .sd-plot text {
-    fill: var(--sd-fg-faint);
+    fill: var(--sd-chart-tick);
     font-family: var(--font-mono);
     font-size: var(--text-2xs);
   }
@@ -409,16 +423,16 @@
     position: absolute;
     top: 0;
     padding: 4px 8px;
-    border: 1px solid var(--sd-line-strong);
-    background: var(--sd-canvas);
-    color: var(--sd-fg-subtle);
+    border: 1px solid var(--sd-chart-tooltip-line);
+    background: var(--sd-chart-tooltip-bg);
+    color: var(--sd-chart-tooltip-body);
     font-size: var(--text-2xs);
     white-space: nowrap;
     pointer-events: none;
   }
   .sd-plot .sd-plot-readout b {
     margin-inline-start: 6px;
-    color: var(--sd-fg);
+    color: var(--sd-chart-tooltip-title);
     font-weight: 600;
     font-variant-numeric: tabular-nums;
   }

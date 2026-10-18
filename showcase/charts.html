@@ -68,6 +68,37 @@
     </figure>
   </div>
 
+  <!-- The same tokens, without Chart.js -->
+  <section class="mt-16 grid gap-6" aria-labelledby="plots-h">
+    <div>
+      <h2 id="plots-h" class="sd-title">Small plots: <code>sd-plot</code></h2>
+      <p class="sd-muted mt-2 max-w-[46rem]">When your app already has the points and wants a small, static line, draw an SVG and let <code>sd-plot</code> style it. No Chart.js, no axes, no live engine. <code>data-series</code> picks the same color as the matching chart series, and the theme switch above applies to both.</p>
+    </div>
+    <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      <div class="sd-card">
+        <div class="sd-card-head"><span>Core ↓ · last 10 minutes</span><span class="sd-subtle">hover for the value</span></div>
+        <div class="sd-card-body">
+          <div class="sd-plot" data-series="down" style="--h: 140px" id="plot-down" data-unit="Mbps"></div>
+        </div>
+      </div>
+      <div class="sd-card">
+        <div class="sd-card-head"><span>Sparklines</span><span class="sd-subtle">sd-plot-inline</span></div>
+        <div class="sd-card-body grid gap-3" id="sparks">
+          <div class="flex items-center gap-4"><span class="w-24 sd-subtle text-sm">Core ↓</span><span class="sd-plot sd-plot-inline" data-series="down" data-from="down"></span><b class="w-24 text-right font-normal" data-last></b></div>
+          <div class="flex items-center gap-4"><span class="w-24 sd-subtle text-sm">Core ↑</span><span class="sd-plot sd-plot-inline" data-series="up" data-from="up"></span><b class="w-24 text-right font-normal" data-last></b></div>
+          <div class="flex items-center gap-4"><span class="w-24 sd-subtle text-sm">RTT</span><span class="sd-plot sd-plot-inline" data-series="rtt" data-from="rtt"></span><b class="w-24 text-right font-normal" data-last></b></div>
+        </div>
+      </div>
+    </div>
+    <table class="max-w-[52rem]">
+      <thead><tr><th>Use</th><th>When</th></tr></thead>
+      <tbody>
+        <tr><td><code>sd-plot</code></td><td>You have the points; you want a small static line or a sparkline. CSS only.</td></tr>
+        <tr><td><code>createChart</code></td><td>Time axes, units, several series, bands, tooltips, live data. Needs Chart.js.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
   <section class="mt-14 grid gap-4 max-w-[52rem]">
     <h2 class="sd-title">Formatting</h2>
     <table>

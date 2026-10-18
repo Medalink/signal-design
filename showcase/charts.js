@@ -143,6 +143,65 @@ createChart(document.querySelector("#latency canvas"), {
   forecastFrom: now,
 });
 
+/* ---- sd-plot: the app draws the SVG, the CSS styles it ----------------- */
+const SVG = "http://www.w3.org/2000/svg";
+function drawPlot(el, points, { grid = true } = {}) {
+  const w = 600;
+  const h = 100;
+  const ys = points.map((p) => p.y).filter(Number.isFinite);
+  const lo = Math.min(...ys);
+  const hi = Math.max(...ys);
+  const x0 = points[0].x;
+  const span = points.at(-1).x - x0 || 1;
+  const xy = (p) => [((p.x - x0) / span) * w, h - 4 - ((p.y - lo) / (hi - lo || 1)) * (h - 8)];
+  const line = points.filter((p) => p.y != null).map((p) => xy(p).map((n) => n.toFixed(1)).join(",")).join(" ");
+  el.querySelector("svg")?.remove();
+  const svg = document.createElementNS(SVG, "svg");
+  svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+  svg.setAttribute("preserveAspectRatio", "none");
+  svg.setAttribute("aria-hidden", "true");
+  svg.innerHTML = `${grid ? `<path class="grid" d="M0 25H${w}M0 50H${w}M0 75H${w}"/>` : ""}<polygon class="area" points="0,${h} ${line} ${w},${h}"/><polyline class="line" points="${line}"/>`;
+  el.prepend(svg);
+  return { xy, w, h };
+}
+
+const recent = (key) => c[key].slice(-60);
+const big = document.querySelector("#plot-down");
+const geom = drawPlot(big, recent("down"));
+const readout = document.createElement("span");
+readout.className = "sd-plot-readout";
+readout.hidden = true;
+big.append(readout);
+big.addEventListener("pointermove", (e) => {
+  const r = big.getBoundingClientRect();
+  const pts = recent("down").filter((p) => p.y != null);
+  const t = (e.clientX - r.left) / r.width;
+  const p = pts[Math.min(pts.length - 1, Math.max(0, Math.round(t * (pts.length - 1))))];
+  const [, y] = geom.xy(p);
+  let cross = big.querySelector(".cross");
+  if (!cross) {
+    cross = document.createElementNS(SVG, "path");
+    cross.setAttribute("class", "cross");
+    big.querySelector("svg").append(cross);
+  }
+  const x = geom.xy(p)[0];
+  cross.setAttribute("d", `M${x} 0V${geom.h}`);
+  readout.hidden = false;
+  readout.innerHTML = `${new Date(p.x).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}<b>${formatValue(p.y, "Mbps")}</b>`;
+  readout.style.left = `${Math.min(r.width - 150, Math.max(0, e.clientX - r.left + 12))}px`;
+  readout.style.top = `${Math.max(0, (y / geom.h) * r.height - 30)}px`;
+});
+big.addEventListener("pointerleave", () => {
+  readout.hidden = true;
+  big.querySelector(".cross")?.remove();
+});
+for (const row of document.querySelectorAll("#sparks > div")) {
+  const key = row.querySelector("[data-from]").dataset.from;
+  const pts = recent(key);
+  drawPlot(row.querySelector("[data-from]"), pts, { grid: false });
+  row.querySelector("[data-last]").textContent = formatValue(pts.at(-1).y, key === "rtt" ? " ms" : "Mbps");
+}
+
 /* ---- theme switch for every chart -------------------------------------- */
 const themeSeg = document.querySelector("#chart-theme");
 let chartTheme = "mono";
@@ -151,7 +210,7 @@ try {
 } catch {}
 function applyChartTheme(name) {
   chartTheme = name;
-  for (const fig of document.querySelectorAll(".sd-chart")) fig.dataset.chartTheme = name;
+  for (const fig of document.querySelectorAll(".sd-chart, .sd-plot")) fig.dataset.chartTheme = name;
   for (const b of themeSeg.querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.value === name));
   try {
     localStorage.setItem("sd-chart-theme", name);

@@ -31,6 +31,8 @@
   with a symmetric log scale; bands, envelopes, thresholds, ranges, events,
   heat, forecast, live updates, value tags, selection and a guarded effects
   layer. `charts.html` shows all of it.
+- `sd-plot` reads the chart tokens and follows `data-chart-theme`;
+  `data-series` picks a series color.
 - Redesigned landing page.
 
 ### Changed

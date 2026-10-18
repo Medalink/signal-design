@@ -322,6 +322,42 @@ TypeScript types ship in `src/js/index.d.ts`, including the `sd:*` events on
 
 ## Charts
 
+Two ways to chart, with one set of colors:
+
+| Use | When |
+|---|---|
+| `sd-plot` | Your app has the points and wants a small static line or a sparkline. CSS only, no JS. |
+| `createChart` | Time axes, units, several series, bands, tooltips, live data. Needs Chart.js. |
+
+Both read the `--sd-chart-*` tokens and follow `data-chart-theme` (`mono` or
+`spectrum`), set on the element or any element above it, so a sparkline in a
+table matches the full chart above it. See `showcase/charts.html`.
+
+### Small plots: `sd-plot`
+
+Draw an SVG; the CSS styles the parts by class. `data-series` picks the color
+of the matching chart series (`down`, `up`, `in`, `out`, `rtt`, `ghost`,
+`baseline`); `data-tone` overrides it.
+
+```html
+<div class="sd-plot" data-series="down" style="--h: 140px">
+  <svg viewBox="0 0 600 100" preserveAspectRatio="none">
+    <path class="grid" d="M0 25H600M0 50H600M0 75H600"/>
+    <polygon class="area" points="0,100 …points… 600,100"/>
+    <polyline class="line" points="…points…"/>
+  </svg>
+  <span class="sd-plot-readout">5:46 pm<b>4.8 Gbps</b></span>
+</div>
+<span class="sd-plot sd-plot-inline" data-series="rtt"><svg>…</svg></span>
+```
+
+Also: `.dot`, `.cross` (a hover line), `.base`, `text`, `.sd-plot-note` for an
+empty state. Scales and hover belong to your app. To format the readout the
+same way the charts do, without loading Chart.js:
+`import { formatValue } from "signal-design/js/charts/format"`.
+
+### Live charts: `createChart`
+
 Time-series charts for bandwidth and latency, on Chart.js. Chart.js is an
 optional peer dependency: install it only if you use charts, and nothing in
 `signal-design/js` imports it.

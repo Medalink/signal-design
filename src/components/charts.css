@@ -12,9 +12,11 @@
  * The canvas reads every color below at draw time and repaints on a theme
  * change. mono is black and white: series differ by grey and dash, and color
  * is kept for thresholds, heat and alerts. spectrum is the full signal palette.
+ * The same tokens color .sd-plot (data.css), so both kinds of chart match.
+ * Set data-chart-theme on the chart, the plot, or any element above them.
  */
 @layer components {
-  .sd-chart {
+  :is(.sd-chart, .sd-plot) {
     /* Frame */
     --sd-chart-grid: var(--sd-line);
     --sd-chart-tick: var(--sd-fg-faint);
@@ -59,7 +61,9 @@
     --sd-chart-forecast: var(--sd-pending);
     --sd-chart-stale: var(--sd-pending);
     --sd-chart-dead: var(--sd-fg-faint);
+  }
 
+  .sd-chart {
     display: grid;
     gap: 8px;
     min-width: 0;
@@ -67,7 +71,7 @@
   }
 
   /* The full signal palette. */
-  .sd-chart[data-chart-theme="spectrum"] {
+  :is(.sd-chart, .sd-plot):is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *) {
     --sd-chart-down: #22c55e;
     --sd-chart-up: #ff3366;
     --sd-chart-up-dash: none;
@@ -99,8 +103,7 @@
   }
 
   /* spectrum on light surfaces: the same hues, deep enough to read. */
-  [data-theme="light"] .sd-chart[data-chart-theme="spectrum"],
-  .sd-chart[data-chart-theme="spectrum"][data-theme="light"] {
+  :is(.sd-chart, .sd-plot):is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="light"], [data-theme="light"] *) {
     --sd-chart-down: #15803d;
     --sd-chart-up: #c8003a;
     --sd-chart-in: #8a5a32;
@@ -121,7 +124,7 @@
     --sd-chart-tag-text: #ffffff;
   }
   @media (prefers-color-scheme: light) {
-    [data-theme="auto"] .sd-chart[data-chart-theme="spectrum"] {
+    :is(.sd-chart, .sd-plot):is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="auto"], [data-theme="auto"] *) {
       --sd-chart-down: #15803d;
       --sd-chart-up: #c8003a;
       --sd-chart-in: #8a5a32;
