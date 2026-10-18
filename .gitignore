@@ -1,0 +1,8 @@
+*.log
+.DS_Store
+.claude/
+.showcase-dist/
+dist/
+examples/tauri/src-tauri/target/
+examples/tauri/web/
+node_modules/

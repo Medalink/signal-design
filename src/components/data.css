@@ -1,0 +1,266 @@
+@layer components {
+  /*
+   * Row: one item in a feed. A square marker, a one-line outcome and a
+   * status line under it. Detail lives in an .sd-expand after the row.
+   *   <article class="sd-row" data-tone="danger" aria-current="true">
+   *     <span class="sd-dot"></span>
+   *     <div class="sd-row-body">
+   *       <p class="sd-row-title">Stop double charges when a payment retries</p>
+   *       <p class="sd-meta"><span>Billing</span><span>07:56</span></p>
+   *     </div>
+   *     <div class="sd-row-end">...</div>
+   *   </article>
+   * States: aria-current = focused (1px fg edge), data-tone="danger" on a
+   * row = high risk (pink edge), data-done = handled (dimmed).
+   */
+  .sd-row {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-height: 68px;
+    padding: 18px 0 16px 0;
+    border-block-end: 1px solid var(--sd-line);
+    color: var(--sd-fg);
+    transition: opacity 160ms var(--ease-out), background-color 140ms var(--ease-out);
+  }
+  .sd-row > .sd-dot {
+    margin-top: 8px;
+  }
+  .sd-row-body {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .sd-row-title {
+    margin: 0;
+    overflow: hidden;
+    font-size: var(--text-lg);
+    line-height: 1.4;
+    letter-spacing: var(--tracking-tight);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sd-row-end {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .sd-row[aria-current]:not([aria-current="false"])::before,
+  .sd-row[data-edge]::before {
+    content: "";
+    position: absolute;
+    inset: 18px auto 16px -12px;
+    width: 1px;
+    background: var(--sd-fg);
+  }
+  .sd-row[data-edge]::before {
+    background: var(--tone, var(--sd-fg));
+  }
+  .sd-row[data-done] {
+    opacity: 0.42;
+  }
+  .sd-row[data-done] .sd-row-title {
+    color: var(--sd-fg-subtle);
+  }
+  a.sd-row,
+  button.sd-row,
+  .sd-row[tabindex] {
+    width: 100%;
+    background: none;
+    border-inline: 0;
+    border-block-start: 0;
+    font: inherit;
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .sd-row:focus-visible {
+    outline-offset: 4px;
+  }
+  @media (max-width: 40rem) {
+    .sd-row {
+      min-height: 60px;
+      padding: 14px 0 12px;
+    }
+    .sd-row-title {
+      font-size: var(--text-md);
+    }
+    .sd-row[aria-current]:not([aria-current="false"])::before,
+    .sd-row[data-edge]::before {
+      inset-inline-start: -8px;
+    }
+  }
+
+  /* Divider with labels: the "you are here" line between handled and new. */
+  .sd-marker {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 36px;
+    padding-inline-start: 18px;
+  }
+  .sd-marker::before {
+    content: "";
+    position: absolute;
+    inset: 50% 0 auto;
+    height: 1px;
+    background: var(--tone, var(--sd-line));
+  }
+  .sd-marker > * {
+    position: relative;
+    padding: 3px 10px;
+    border: 1px solid var(--sd-line);
+    background: var(--sd-canvas);
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+  .sd-marker > .sd-marker-plain {
+    border: 0;
+    letter-spacing: var(--tracking-wider);
+    text-transform: none;
+  }
+  .sd-marker > .sd-marker-end {
+    margin-inline-start: auto;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  @media (max-width: 40rem) {
+    .sd-marker {
+      padding-inline-start: 10px;
+      gap: 8px;
+    }
+    .sd-marker > .sd-marker-plain {
+      display: none;
+    }
+  }
+
+  /* Table extras on top of the base table. */
+  .sd-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+  }
+  .sd-table :where(td, th).sd-num,
+  .sd-table :where(td, th)[data-num] {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+  }
+  .sd-table-hover tbody tr {
+    transition: background-color 120ms var(--ease-out);
+  }
+  .sd-table-hover tbody tr:hover {
+    background: var(--sd-surface);
+  }
+  .sd-table-compact :where(td) {
+    padding-block: 6px;
+  }
+  .sd-table tbody tr[aria-selected="true"] {
+    background: var(--sd-raised);
+  }
+  .sd-table tbody tr[aria-selected="true"] > :first-child {
+    box-shadow: inset 1px 0 0 var(--sd-fg);
+    padding-inline-start: 12px;
+  }
+
+  /* Stat: one number and what it counts. */
+  .sd-stat {
+    display: grid;
+    gap: 4px;
+  }
+  .sd-stat-value {
+    font-size: var(--text-3xl);
+    line-height: 1;
+    letter-spacing: var(--tracking-display);
+    font-variant-numeric: tabular-nums;
+    color: var(--sd-fg);
+  }
+  .sd-stat-value small {
+    font-size: 0.5em;
+    letter-spacing: var(--tracking-tight);
+    color: var(--sd-fg-faint);
+  }
+  .sd-stat-label {
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--sd-fg-subtle);
+  }
+  .sd-stat-delta {
+    font-size: var(--text-sm);
+    color: var(--tone, var(--sd-fg-subtle));
+  }
+
+  /* Key-value grid. */
+  .sd-kv {
+    display: grid;
+    grid-template-columns: minmax(8rem, max-content) 1fr;
+    gap: 10px 24px;
+    margin: 0;
+  }
+  .sd-kv > dt {
+    padding-top: 2px;
+  }
+  .sd-kv > dd {
+    margin: 0;
+  }
+
+  /* Code block with a header. */
+  .sd-code {
+    min-width: 0; /* long lines scroll inside the block instead of widening a grid or flex parent */
+    border: 1px solid var(--sd-line);
+    background: var(--sd-surface);
+  }
+  .sd-code-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 34px;
+    padding: 0 6px 0 14px;
+    border-block-end: 1px solid var(--sd-line);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--sd-fg-subtle);
+  }
+  .sd-code-head > .sd-btn {
+    margin-inline-start: auto;
+  }
+  .sd-code > pre {
+    margin: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  /* Media frame: screenshot or video proof. */
+  .sd-shot {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border: 1px solid var(--sd-line);
+    background: var(--sd-surface);
+    aspect-ratio: var(--ratio, 16 / 9);
+  }
+  .sd-shot > :where(img, video, iframe, canvas) {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    object-fit: cover;
+    display: block;
+  }
+  .sd-shot-caption {
+    position: absolute;
+    inset: auto 0 0;
+    padding: 6px 10px;
+    border-block-start: 1px solid var(--sd-line);
+    background: var(--sd-canvas);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--sd-fg-subtle);
+  }
+}

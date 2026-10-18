@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Signal standalone check</title>
+  <!-- The prebuilt bundle, as an app without Tailwind (or a Tauri webview) would load it. -->
+  <link rel="stylesheet" href="../dist/signal.css">
+</head>
+<body>
+  <main class="sd-page">
+    <header class="sd-header">
+      <span class="sd-wordmark">Signal</span>
+      <h1 class="sd-display">32 open. <em>8 done.</em></h1>
+    </header>
+    <h2>Heading two</h2>
+    <p>Plain <a href="#">link</a>, <code>code</code>, <kbd>Shift</kbd>, <mark>mark</mark>.</p>
+    <ul><li>One</li><li>Two</li></ul>
+    <table><thead><tr><th>A</th><th>B</th></tr></thead><tbody><tr><td>1</td><td>2</td></tr></tbody></table>
+    <form class="sd-form">
+      <div class="sd-field"><label class="sd-field-label" for="n">Name</label><input id="n" placeholder="Name"></div>
+      <select><option>one</option></select>
+      <label class="sd-check"><input type="checkbox" checked> Checked</label>
+      <label class="sd-check"><input type="checkbox" role="switch" checked> Switch</label>
+      <input type="range">
+      <progress value="40" max="100"></progress>
+    </form>
+    <div class="sd-actions">
+      <button class="sd-btn sd-btn-primary">Approve <kbd>a</kbd></button>
+      <button class="sd-btn" data-tone="danger">Reject</button>
+      <span class="sd-badge" data-tone="danger">Risk</span>
+      <span class="sd-dot" data-tone="warning"></span>
+      <span class="sd-avatar" data-tone="extra">MK</span>
+    </div>
+    <article class="sd-row" aria-current="true"><span class="sd-dot" data-tone="warning"></span><div class="sd-row-body"><p class="sd-row-title">Row</p><p class="sd-meta"><span>bot</span><span>07:55</span></p></div></article>
+    <div class="sd-toast toast-probe" style="animation-name: sd-rise-in">Toast</div>
+    <div class="sd-cells"><i data-on></i><i></i></div>
+  </main>
+</body>
+</html>

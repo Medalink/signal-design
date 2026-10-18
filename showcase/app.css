@@ -1,0 +1,41 @@
+/* How an app consumes Signal with Tailwind v4. */
+@import "tailwindcss";
+@import "../src/signal.css";
+@source "./";
+
+/* Showcase-only chrome. */
+@layer components {
+  .demo-section {
+    scroll-margin-top: 72px;
+    padding-block: 56px;
+    border-block-start: 1px solid var(--sd-line);
+  }
+  .demo-block {
+    display: grid;
+    gap: 14px;
+    padding-block: 28px;
+    border-block-start: 1px solid var(--sd-line);
+  }
+  .demo-block > * {
+    min-width: 0;
+  }
+  .demo-block label.grid {
+    align-content: start;
+  }
+  .demo-block:first-of-type {
+    border-block-start: 0;
+  }
+  .demo-usage {
+    font-size: var(--text-sm);
+    color: var(--sd-fg-subtle);
+  }
+  .swatch {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+  }
+  .swatch-chip {
+    height: 56px;
+    border: 1px solid var(--sd-line);
+  }
+}

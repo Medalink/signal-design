@@ -1,0 +1,439 @@
+@layer components {
+  /*
+   * Item: one row with a leading visual, a title and subtitle, and an end slot.
+   * For members, conversations, channels, search results, pinned entries…
+   *   <a class="sd-item" href="…">
+   *     <span class="sd-avatar">AL</span>
+   *     <span class="sd-item-body"><span class="sd-item-title">Alex</span><span class="sd-item-sub">Reviewing #23</span></span>
+   *     <span class="sd-item-end">2m</span>
+   *   </a>
+   * States: aria-current (selected), data-unread (bold title + marker), data-muted (dimmed).
+   */
+  .sd-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    padding: 8px 10px;
+    border: 0;
+    border-inline-start: 2px solid transparent;
+    background: none;
+    color: var(--sd-fg-muted);
+    font: inherit;
+    font-size: var(--text-base);
+    text-align: start;
+    text-decoration: none;
+  }
+  :is(a, button, label).sd-item {
+    cursor: pointer;
+    transition: background-color 120ms var(--ease-out), color 120ms var(--ease-out);
+  }
+  :is(a, button, label).sd-item:hover {
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+  .sd-item[aria-current]:not([aria-current="false"]),
+  .sd-item[aria-selected="true"] {
+    border-inline-start-color: var(--sd-fg);
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+  .sd-item > svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    color: var(--sd-fg-subtle);
+  }
+  .sd-item-body {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+    gap: 1px;
+  }
+  .sd-item-title,
+  .sd-item-sub {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sd-item-title {
+    color: inherit;
+  }
+  .sd-item-sub {
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-sm);
+  }
+  .sd-item-end {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 8px;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-sm);
+  }
+  .sd-item[data-unread] .sd-item-title {
+    color: var(--sd-fg);
+    font-weight: 600;
+  }
+  .sd-item[data-unread]::before {
+    content: "";
+    position: absolute;
+    inset: 50% auto auto -6px;
+    width: 4px;
+    height: 4px;
+    margin-top: -2px;
+    background: var(--sd-fg);
+  }
+  .sd-item[data-muted] {
+    opacity: 0.5;
+  }
+  /* Nested rows, e.g. people inside a voice channel. */
+  .sd-item-nested {
+    padding-inline-start: 2.25rem;
+    font-size: var(--text-sm);
+  }
+  .sd-item-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 10px 6px;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+  .sd-item-group > :last-child:not(:first-child) {
+    margin-inline-start: auto;
+  }
+
+  /* Presence: a square on the avatar's corner.
+     <span class="sd-avatar" data-status="online">AL</span> */
+  .sd-avatar[data-status] {
+    position: relative;
+    overflow: visible;
+  }
+  .sd-avatar[data-status]::after {
+    content: "";
+    position: absolute;
+    right: -3px;
+    bottom: -3px;
+    width: 8px;
+    height: 8px;
+    border: 2px solid var(--sd-surface);
+    box-sizing: content-box;
+    background: var(--sd-fg-faint);
+  }
+  .sd-avatar[data-status="online"]::after { background: var(--sd-success); }
+  .sd-avatar[data-status="away"]::after { background: var(--sd-pending); }
+  .sd-avatar[data-status="busy"]::after { background: var(--sd-danger); }
+  .sd-avatar[data-status="offline"]::after {
+    background: var(--sd-surface);
+    outline: 1px solid var(--sd-fg-faint);
+    outline-offset: -3px;
+  }
+
+  /* Count: a small solid number, e.g. unread messages on an icon or avatar.
+     <span class="sd-badge-count">3</span>; data-tone="danger" for mentions. */
+  .sd-badge-count {
+    display: inline-grid;
+    place-items: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    background: var(--tone, var(--sd-fg));
+    color: var(--sd-canvas);
+    font-size: 11px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  /* Pinned to the corner of its parent (an avatar, an icon button, a rail item). */
+  .sd-badge-count[data-corner] {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    outline: 2px solid var(--sd-surface);
+  }
+
+  /* Rail items can carry an avatar or a group image instead of an icon. */
+  .sd-rail-item > .sd-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 13px;
+  }
+  .sd-rail-item[data-unread]::after {
+    content: "";
+    position: absolute;
+    inset: 50% auto auto -6px;
+    width: 3px;
+    height: 10px;
+    margin-top: -5px;
+    background: var(--sd-fg);
+  }
+  .sd-sidebar-link[data-unread] {
+    color: var(--sd-fg);
+    font-weight: 600;
+  }
+  .sd-sidebar-link[data-muted] {
+    opacity: 0.5;
+  }
+
+  /*
+   * Banner: a full-width strip at the top of a view for app-level news:
+   * an update, lost sync, a security warning.
+   *   <div class="sd-banner" data-tone="pending" role="status">Text <div class="sd-banner-actions">…</div></div>
+   */
+  .sd-banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+    min-height: 40px;
+    padding: 6px 12px 6px 14px;
+    border: 1px solid var(--sd-line);
+    border-inline-start: 2px solid var(--tone, var(--sd-fg-subtle));
+    background: var(--sd-surface);
+    color: var(--sd-fg-muted);
+    font-size: var(--text-sm);
+  }
+  .sd-banner > b {
+    color: var(--tone, var(--sd-fg));
+    font-weight: 600;
+  }
+  .sd-banner-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-inline-start: auto;
+  }
+
+  /* File card: an attachment with its type, name, size and an action. */
+  .sd-file {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 26rem;
+    padding: 10px 12px;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-surface);
+  }
+  .sd-file-type {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 36px;
+    height: 40px;
+    border: 1px solid var(--sd-line-strong);
+    color: var(--sd-fg-subtle);
+    font-size: 10px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+  .sd-file-body {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+    gap: 2px;
+  }
+  .sd-file-name {
+    overflow: hidden;
+    color: var(--sd-fg);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sd-file-meta {
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-sm);
+  }
+  .sd-file > .sd-progress {
+    flex-basis: 100%;
+  }
+
+  /* Link card: a preview of a URL. */
+  .sd-link-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 6px 14px;
+    max-width: 32rem;
+    padding: 12px 14px;
+    border: 1px solid var(--sd-line);
+    border-inline-start: 2px solid var(--sd-line-strong);
+    background: var(--sd-surface);
+    color: inherit;
+    text-decoration: none;
+  }
+  .sd-link-card-site {
+    grid-column: 1;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+  .sd-link-card-title {
+    grid-column: 1;
+    color: var(--sd-fg);
+  }
+  .sd-link-card-desc {
+    grid-column: 1;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-sm);
+  }
+  .sd-link-card-thumb {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    width: 88px;
+    height: 88px;
+    border: 1px solid var(--sd-line);
+    background: var(--sd-raised);
+    object-fit: cover;
+  }
+  a.sd-link-card:hover {
+    border-inline-start-color: var(--sd-fg);
+  }
+
+  /*
+   * Poll: a question with options. Each option is a button with a fill bar
+   * for its share. aria-pressed marks the viewer's choice.
+   *   <div class="sd-poll"><p class="sd-poll-q">…</p>
+   *     <button class="sd-poll-option" style="--share: 62" aria-pressed="true">Option <span>62%</span></button>…</div>
+   */
+  .sd-poll {
+    display: grid;
+    gap: 6px;
+    max-width: 28rem;
+    padding: 12px 14px;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-surface);
+  }
+  .sd-poll-q {
+    margin: 0 0 4px;
+    color: var(--sd-fg);
+  }
+  .sd-poll-option {
+    --share: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 34px;
+    padding: 0 10px;
+    border: 1px solid var(--sd-line-strong);
+    background: transparent;
+    color: var(--sd-fg-muted);
+    font: inherit;
+    font-size: var(--text-sm);
+    text-align: start;
+    cursor: pointer;
+    isolation: isolate;
+  }
+  .sd-poll-option::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    z-index: -1;
+    width: calc(var(--share) * 1%);
+    background: var(--sd-raised);
+    transition: width 200ms var(--ease-out);
+  }
+  .sd-poll-option > :last-child {
+    margin-inline-start: auto;
+    color: var(--sd-fg-subtle);
+    font-variant-numeric: tabular-nums;
+  }
+  .sd-poll-option:hover {
+    border-color: var(--sd-fg-faint);
+    color: var(--sd-fg);
+  }
+  .sd-poll-option[aria-pressed="true"] {
+    border-color: var(--sd-fg);
+    color: var(--sd-fg);
+  }
+  .sd-poll-meta {
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+
+  /*
+   * Tiles: a grid of people or media, e.g. a call. data-speaking lights the
+   * edge (green: someone is talking), data-muted shows a muted mark.
+   *   <div class="sd-tiles"><div class="sd-tile" data-speaking>…</div></div>
+   */
+  .sd-tiles {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(auto-fill, minmax(min(11rem, 100%), 1fr));
+  }
+  .sd-tile {
+    position: relative;
+    display: grid;
+    place-items: center;
+    gap: 10px;
+    aspect-ratio: 4 / 3;
+    padding: 12px;
+    border: 1px solid var(--sd-line);
+    background: var(--sd-surface);
+    color: var(--sd-fg-muted);
+    font-size: var(--text-sm);
+  }
+  .sd-tile > .sd-avatar {
+    width: 56px;
+    height: 56px;
+    font-size: 18px;
+  }
+  .sd-tile-name {
+    position: absolute;
+    inset: auto 0 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    color: var(--sd-fg);
+  }
+  .sd-tile[data-speaking] {
+    border-color: var(--sd-success);
+    box-shadow: inset 0 0 0 1px var(--sd-success);
+  }
+  .sd-tile[data-muted] .sd-tile-name::after {
+    content: "muted";
+    margin-inline-start: auto;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+  .sd-tile[data-hand] .sd-tile-name::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    background: var(--sd-pending);
+  }
+
+  /*
+   * Grid picker: a grid of choices (emoji, icons, colors) in a popover.
+   *   <div class="sd-grid-picker" role="listbox"><button role="option">…</button>…</div>
+   */
+  .sd-grid-picker {
+    display: grid;
+    gap: 2px;
+    grid-template-columns: repeat(var(--cols, 8), 36px);
+  }
+  .sd-grid-picker > :where(button, [role="option"]) {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid transparent;
+    background: none;
+    color: var(--sd-fg);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .sd-grid-picker > :where(button, [role="option"]):is(:hover, :focus-visible, [aria-selected="true"]) {
+    border-color: var(--sd-line-strong);
+    background: var(--sd-raised);
+  }
+}

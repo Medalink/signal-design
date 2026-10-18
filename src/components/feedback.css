@@ -1,0 +1,171 @@
+@layer components {
+  /* Note: one line that needs attention. Tone sets the color. */
+  .sd-note {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border: 1px solid color-mix(in srgb, var(--tone, var(--sd-fg-subtle)) 45%, transparent);
+    color: var(--tone, var(--sd-fg-muted));
+    font-size: var(--text-sm);
+    letter-spacing: var(--tracking-wide);
+  }
+  .sd-note > .sd-btn {
+    margin-inline-start: auto;
+  }
+
+  /* Callout: a titled block with a tone edge. */
+  .sd-callout {
+    display: grid;
+    gap: 4px;
+    padding: 14px 16px 14px 18px;
+    border: 1px solid var(--sd-line);
+    border-inline-start: 1px solid var(--tone, var(--sd-fg));
+    background: var(--sd-surface);
+    color: var(--sd-fg-muted);
+    font-size: var(--text-base);
+  }
+  .sd-callout-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--tone, var(--sd-fg));
+  }
+
+  /* Toasts. The JS toast() helper creates .sd-toaster on first use. */
+  .sd-toaster {
+    position: fixed;
+    inset: auto 24px 24px auto;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    max-width: calc(100vw - 32px);
+    pointer-events: none;
+  }
+  @media (max-width: 40rem) {
+    .sd-toaster {
+      inset: auto 16px 16px 16px;
+      align-items: stretch;
+    }
+  }
+  .sd-toast {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-overlay);
+    color: var(--sd-fg);
+    font-size: var(--text-base);
+    letter-spacing: 0.02em;
+    pointer-events: auto;
+    animation: sd-rise-in 160ms var(--ease-out);
+    transition: opacity 160ms var(--ease-out), transform 160ms var(--ease-out);
+  }
+  .sd-toast[data-tone]::before {
+    content: "";
+    flex-shrink: 0;
+    width: 6px;
+    height: 6px;
+    background: var(--tone);
+  }
+  .sd-toast[data-leaving] {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  .sd-toast .sd-btn {
+    margin-inline-start: 6px;
+  }
+
+  /* Progress cells: N of M as squares, e.g. "5 of 12 done". */
+  .sd-cells {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 3px;
+  }
+  .sd-cells > i {
+    width: 14px;
+    height: 6px;
+    background: var(--sd-line-strong);
+    transition: background-color 160ms var(--ease-out);
+  }
+  .sd-cells > i[data-on] {
+    background: var(--tone, var(--sd-success));
+  }
+
+  /* Progress bar as a div, for when <progress> can't be styled enough. */
+  .sd-progress {
+    --value: 0;
+    position: relative;
+    height: 4px;
+    background: var(--sd-line);
+    overflow: hidden;
+  }
+  .sd-progress::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: calc(var(--value) * 1%);
+    background: var(--tone, var(--sd-fg));
+    transition: width 200ms var(--ease-out);
+  }
+
+  /* Skeleton: static placeholder blocks. No shimmer, nothing loops. */
+  .sd-skeleton {
+    display: block;
+    height: 0.9em;
+    background: var(--sd-raised);
+  }
+  .sd-skeleton-text {
+    display: grid;
+    gap: 8px;
+  }
+  .sd-skeleton-text > .sd-skeleton:last-child {
+    width: 60%;
+  }
+
+  /* Empty state. */
+  .sd-empty {
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    padding: 48px 24px;
+    border: 1px dashed var(--sd-line);
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-sm);
+    text-align: center;
+  }
+  .sd-empty-title {
+    font-size: var(--text-lg);
+    letter-spacing: var(--tracking-tight);
+    color: var(--sd-fg);
+  }
+
+  /* Check results: ✓ ci green · ◷ watching 7d · ✕ lint */
+  .sd-checks {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-base);
+    line-height: 2;
+  }
+  .sd-checks > li {
+    display: flex;
+    gap: 10px;
+    color: var(--tone, var(--sd-fg-muted));
+  }
+  .sd-checks > li::before {
+    content: "\2022";
+    width: 1ch;
+    flex-shrink: 0;
+  }
+  .sd-checks > li[data-tone="success"]::before { content: "\2713"; }
+  .sd-checks > li[data-tone="pending"]::before { content: "\25F7"; }
+  .sd-checks > li[data-tone="danger"]::before { content: "\2715"; }
+}

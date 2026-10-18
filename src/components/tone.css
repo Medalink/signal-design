@@ -1,0 +1,20 @@
+/*
+ * Tones. One attribute colors any component by meaning:
+ *   data-tone="accent"   focus, current          (cyan)
+ *   data-tone="success"  approved, passing       (green)
+ *   data-tone="danger"   irreversible, high risk (pink)
+ *   data-tone="warning"  costly                  (orange)
+ *   data-tone="pending"  unproven, waiting       (amber)
+ *   data-tone="extra"    people, presence        (violet)
+ *   data-tone="neutral"  no meaning              (grey)
+ * Components read var(--tone).
+ */
+@layer components {
+  [data-tone="accent"] { --tone: var(--sd-accent); }
+  [data-tone="success"] { --tone: var(--sd-success); }
+  [data-tone="danger"] { --tone: var(--sd-danger); }
+  [data-tone="warning"] { --tone: var(--sd-warning); }
+  [data-tone="pending"] { --tone: var(--sd-pending); }
+  [data-tone="extra"] { --tone: var(--sd-extra); }
+  [data-tone="neutral"] { --tone: var(--sd-fg-subtle); }
+}

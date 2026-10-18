@@ -1,0 +1,346 @@
+/*
+ * Signal tokens.
+ *
+ * Two layers:
+ *   1. Raw palette and scales in @theme. These become Tailwind utilities
+ *      (bg-cyan, text-2xs, tracking-caps, ...) and :root variables.
+ *   2. Semantic roles (--sd-*) that switch per theme at runtime via
+ *      [data-theme]. @theme inline maps them to utilities (bg-canvas,
+ *      text-fg-muted, border-line, ...), so a utility follows the theme
+ *      without a rebuild.
+ *
+ * Hard rules this file enforces: square corners (every radius is 0),
+ * flat surfaces (no shadow scale), two weights (400, 600), one family.
+ */
+
+@font-face {
+  font-family: "Source Code Pro";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/source-code-pro-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Source Code Pro";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("./fonts/source-code-pro-600.woff2") format("woff2");
+}
+/* Real italics (Latin), so <em> and <i> aren't slanted by the browser. */
+@font-face {
+  font-family: "Source Code Pro";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/source-code-pro-400-italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Source Code Pro";
+  font-style: italic;
+  font-weight: 600;
+  font-display: swap;
+  src: url("./fonts/source-code-pro-600-italic.woff2") format("woff2");
+}
+
+/* static: emit every variable even when no utility uses it, so apps can
+   read var(--color-ink-850) from CSS or JS without it being tree-shaken. */
+@theme static {
+  /* Clear Tailwind's defaults so only on-system values produce utilities. */
+  --color-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
+  --inset-shadow-*: initial;
+  --drop-shadow-*: initial;
+  --text-shadow-*: initial;
+  --text-*: initial;
+  --font-weight-*: initial;
+  --tracking-*: initial;
+  --animate-*: initial;
+
+  /* Type: one family for everything. */
+  --font-sans: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-mono: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --font-weight-normal: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 600; /* only 400 and 600 ship; bold maps to 600, never a faux weight */
+
+  /* Size scale (rem, so the user's font-size preference still applies). */
+  --text-2xs: 0.875rem; /* 14px  labels, status lines (caps) */
+  --text-2xs--line-height: 1.4;
+  --text-xs: 0.90625rem; /* 14.5px  nav, wordmark, kbd */
+  --text-xs--line-height: 1.45;
+  --text-sm: 0.9375rem; /* 15px  meta, hints */
+  --text-sm--line-height: 1.5;
+  --text-base: 1rem; /* 16px  body */
+  --text-base--line-height: 1.5;
+  --text-md: 1.0625rem; /* 17px */
+  --text-md--line-height: 1.5;
+  --text-lg: 1.1875rem; /* 19px  row title, lead */
+  --text-lg--line-height: 1.4;
+  --text-xl: 1.4375rem; /* 23px  page title */
+  --text-xl--line-height: 1.3;
+  --text-2xl: 1.75rem; /* 28px  display on phones */
+  --text-2xl--line-height: 1.2;
+  --text-3xl: 2.375rem; /* 38px  display */
+  --text-3xl--line-height: 1.18;
+  --text-4xl: 3.125rem; /* 50px  landing */
+  --text-4xl--line-height: 1.1;
+  --text-5xl: 4.125rem; /* 66px  hero */
+  --text-5xl--line-height: 1.04;
+
+  --tracking-display: -0.03em;
+  --tracking-tight: -0.025em;
+  --tracking-snug: -0.01em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.04em;
+  --tracking-wider: 0.08em;
+  --tracking-caps: 0.14em; /* uppercase labels and status lines */
+  --tracking-widest: 0.16em;
+  --tracking-wordmark: 0.28em;
+
+  /* Square everywhere. Named so rounded-* utilities exist but stay 0. */
+  --radius-xs: 0;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+  --radius-2xl: 0;
+  --radius-3xl: 0;
+  --radius-4xl: 0;
+
+  /* Layout */
+  --container-column: 45rem; /* 720px: the Signal column */
+  --container-narrow: 35rem; /* 560px: settings panels, forms */
+  --container-wide: 64rem;
+
+  /* Motion: state changes only, 120-200ms, nothing loops. */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --default-transition-duration: 160ms;
+  --default-transition-timing-function: var(--ease-out);
+  --animate-slide-in: sd-slide-in 180ms var(--ease-out);
+  --animate-fade-in: sd-fade-in 160ms var(--ease-out);
+  --animate-rise-in: sd-rise-in 160ms var(--ease-out);
+
+  @keyframes sd-slide-in {
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: none; opacity: 1; }
+  }
+  @keyframes sd-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes sd-rise-in {
+    from { transform: translateY(8px); opacity: 0; }
+    to { transform: none; opacity: 1; }
+  }
+
+  /* Raw palette. Signals are the only saturated colors and each one means something. */
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  --color-cyan: #00d4ff; /* focus, current, selection */
+  --color-green: #00ff88; /* approved, passing, your position */
+  --color-pink: #ff3366; /* irreversible, high risk, reject */
+  --color-orange: #ff8800; /* costly */
+  --color-amber: #ffaa00; /* unproven, pending, low confidence */
+  --color-violet: #8855ff; /* reserved: people, presence */
+
+  /* Deep signals: the same hues dark enough to read on light surfaces. */
+  --color-cyan-deep: #00718f;
+  --color-green-deep: #00804a;
+  --color-pink-deep: #c8003a;
+  --color-orange-deep: #a84d00;
+  --color-amber-deep: #855800;
+  --color-violet-deep: #5b2fd1;
+
+  /* Ink: the shipped Signal greys (cool, near-black). */
+  --color-ink-1000: #050506;
+  --color-ink-950: #0a0a0b;
+  --color-ink-900: #111113;
+  --color-ink-850: #18181b;
+  --color-ink-800: #1f1f23;
+  --color-ink-700: #2a2a2f;
+  --color-ink-600: #3f3f46;
+  --color-ink-500: #6e6e78;
+  --color-ink-400: #9a9aa2;
+  --color-ink-300: #d4d4d8;
+  --color-ink-200: #e4e4e7;
+  --color-ink-100: #f4f4f6;
+  --color-ink-50: #fafafa;
+
+  /* Graphite: the original spec greys (neutral, a step lighter). */
+  --color-graphite-950: #0a0a0a;
+  --color-graphite-900: #0f0f0f;
+  --color-graphite-850: #151515;
+  --color-graphite-800: #1a1a1a;
+  --color-graphite-700: #2e2e2e;
+  --color-graphite-600: #3d3d3d;
+  --color-graphite-500: #6b6b6b;
+  --color-graphite-400: #8a8a8a;
+  --color-graphite-300: #a3a3a3;
+  --color-graphite-200: #e5e5e5;
+}
+
+/* Semantic roles as utilities. inline = the utility reads the live variable. */
+@theme inline {
+  --color-canvas: var(--sd-canvas); /* page background */
+  --color-surface: var(--sd-surface); /* wells, inputs, media frames */
+  --color-raised: var(--sd-raised); /* hover rows, selected segments */
+  --color-overlay: var(--sd-overlay); /* toasts, menus, dialogs */
+  --color-container: var(--sd-container); /* app content box */
+  --color-shell: var(--sd-shell-bg); /* behind the app content box */
+  --color-line: var(--sd-line); /* hairlines */
+  --color-line-strong: var(--sd-line-strong); /* control borders */
+  --color-fg: var(--sd-fg); /* primary text */
+  --color-fg-muted: var(--sd-fg-muted); /* secondary text */
+  --color-fg-subtle: var(--sd-fg-subtle); /* labels, meta; still AA for small text */
+  --color-fg-faint: var(--sd-fg-faint); /* decoration, disabled, large text only */
+  --color-primary: var(--sd-primary); /* the one solid button */
+  --color-on-primary: var(--sd-on-primary);
+  --color-accent: var(--sd-accent); /* focus and current */
+  --color-success: var(--sd-success);
+  --color-danger: var(--sd-danger);
+  --color-warning: var(--sd-warning);
+  --color-pending: var(--sd-pending);
+  --color-extra: var(--sd-extra);
+}
+
+/*
+ * Themes. Dark "ink" is the default. Set data-theme on <html> or on any
+ * element to theme a subtree: ink | graphite | light | auto.
+ */
+:root,
+[data-theme="ink"] {
+  color-scheme: dark;
+  /* Backgrounds and text follow T3 Code's dark palette: a black backdrop,
+     #0a0a0a panels, #191a1d hover, cool near-white text, neutral greys. */
+  --sd-canvas: #000000;
+  --sd-surface: #0a0a0a;
+  --sd-raised: #191a1d;
+  --sd-overlay: #191a1d;
+  --sd-line: rgb(255 255 255 / 0.08);
+  --sd-line-strong: rgb(255 255 255 / 0.16);
+  --sd-fg: #f1f3f7;
+  --sd-fg-muted: #d4d4d4;
+  --sd-fg-subtle: #a3a3a3;
+  --sd-fg-faint: #737373;
+  --sd-primary: #f1f3f7;
+  --sd-on-primary: var(--color-ink-1000);
+  --sd-accent: var(--color-cyan);
+  --sd-success: var(--color-green);
+  --sd-danger: var(--color-pink);
+  --sd-warning: var(--color-orange);
+  --sd-pending: var(--color-amber);
+  --sd-extra: var(--color-violet);
+  --sd-backdrop: rgb(0 0 0 / 0.64);
+  --sd-shell-bg: var(--sd-canvas); /* behind the app container, where the rain shows */
+  --sd-container: var(--sd-surface); /* the app's main content box: same as the rail */
+  --sd-flash: #ffffff; /* hover shimmer: the brightest ink */
+  --sd-icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%23050506' stroke-width='2' stroke-linecap='square'/%3E%3C/svg%3E");
+  --sd-icon-dash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='4' y='7' width='8' height='2' fill='%23050506'/%3E%3C/svg%3E");
+  --sd-icon-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%239A9AA2' stroke-width='1.5' stroke-linecap='square'/%3E%3C/svg%3E");
+  --sd-icon-thumb: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect width='12' height='12' fill='%239A9AA2'/%3E%3C/svg%3E");
+  --sd-icon-thumb-on: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect width='12' height='12' fill='%23050506'/%3E%3C/svg%3E");
+}
+
+[data-theme="graphite"] {
+  color-scheme: dark;
+  --sd-canvas: var(--color-graphite-900);
+  --sd-surface: var(--color-graphite-850); /* panels a step above the page */
+  --sd-raised: var(--color-graphite-800);
+  --sd-overlay: var(--color-graphite-800);
+  --sd-line: var(--color-graphite-700);
+  --sd-line-strong: var(--color-graphite-600);
+  --sd-fg: var(--color-graphite-200);
+  --sd-fg-muted: #c4c4c4;
+  --sd-fg-subtle: var(--color-graphite-300);
+  --sd-fg-faint: var(--color-graphite-500);
+  --sd-primary: var(--color-graphite-200);
+  --sd-on-primary: var(--color-graphite-900);
+  --sd-accent: var(--color-cyan);
+  --sd-success: var(--color-green);
+  --sd-danger: var(--color-pink);
+  --sd-warning: var(--color-orange);
+  --sd-pending: var(--color-amber);
+  --sd-extra: var(--color-violet);
+  --sd-backdrop: rgb(0 0 0 / 0.6);
+  --sd-shell-bg: var(--color-graphite-900);
+  --sd-container: var(--sd-surface);
+  --sd-flash: #ffffff;
+  --sd-icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%230F0F0F' stroke-width='2' stroke-linecap='square'/%3E%3C/svg%3E");
+  --sd-icon-dash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='4' y='7' width='8' height='2' fill='%230F0F0F'/%3E%3C/svg%3E");
+  --sd-icon-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%23A3A3A3' stroke-width='1.5' stroke-linecap='square'/%3E%3C/svg%3E");
+  --sd-icon-thumb: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect width='12' height='12' fill='%23A3A3A3'/%3E%3C/svg%3E");
+  --sd-icon-thumb-on: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect width='12' height='12' fill='%230F0F0F'/%3E%3C/svg%3E");
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --sd-canvas: #ffffff;
+  --sd-surface: #f6f6f7;
+  --sd-raised: #eeeef0;
+  --sd-overlay: #ffffff;
+  --sd-line: rgb(0 0 0 / 0.1);
+  --sd-line-strong: rgb(0 0 0 / 0.22);
+  --sd-fg: var(--color-ink-1000);
+  --sd-fg-muted: #2e2e33;
+  --sd-fg-subtle: #5c5c66;
+  --sd-fg-faint: #8e8e96;
+  --sd-primary: var(--color-ink-1000);
+  --sd-on-primary: #ffffff;
+  --sd-accent: var(--color-cyan-deep);
+  --sd-success: var(--color-green-deep);
+  --sd-danger: var(--color-pink-deep);
+  --sd-warning: var(--color-orange-deep);
+  --sd-pending: var(--color-amber-deep);
+  --sd-extra: var(--color-violet-deep);
+  --sd-backdrop: rgb(5 5 6 / 0.32);
+  --sd-shell-bg: #e9e9ec;
+  --sd-container: var(--sd-surface);
+  --sd-flash: #000000;
+  --sd-icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='square'/%3E%3C/svg%3E");
+  --sd-icon-dash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='4' y='7' width='8' height='2' fill='%23FFFFFF'/%3E%3C/svg%3E");
+  --sd-icon-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%235C5C66' stroke-width='1.5' stroke-linecap='square'/%3E%3C/svg%3E");
+  --sd-icon-thumb: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect width='12' height='12' fill='%235C5C66'/%3E%3C/svg%3E");
+  --sd-icon-thumb-on: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect width='12' height='12' fill='%23FFFFFF'/%3E%3C/svg%3E");
+}
+
+/* auto: ink by default, light when the OS asks for it. */
+@media (prefers-color-scheme: light) {
+  [data-theme="auto"] {
+    color-scheme: light;
+    --sd-canvas: #ffffff;
+    --sd-surface: #f6f6f7;
+    --sd-raised: #eeeef0;
+    --sd-overlay: #ffffff;
+    --sd-line: rgb(0 0 0 / 0.1);
+    --sd-line-strong: rgb(0 0 0 / 0.22);
+    --sd-fg: var(--color-ink-1000);
+    --sd-fg-muted: #2e2e33;
+    --sd-fg-subtle: #5c5c66;
+    --sd-fg-faint: #8e8e96;
+    --sd-primary: var(--color-ink-1000);
+    --sd-on-primary: #ffffff;
+    --sd-accent: var(--color-cyan-deep);
+    --sd-success: var(--color-green-deep);
+    --sd-danger: var(--color-pink-deep);
+    --sd-warning: var(--color-orange-deep);
+    --sd-pending: var(--color-amber-deep);
+    --sd-extra: var(--color-violet-deep);
+    --sd-backdrop: rgb(5 5 6 / 0.32);
+    --sd-shell-bg: #e9e9ec;
+    --sd-container: var(--sd-surface);
+    --sd-flash: #000000;
+    --sd-icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='square'/%3E%3C/svg%3E");
+    --sd-icon-dash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='4' y='7' width='8' height='2' fill='%23FFFFFF'/%3E%3C/svg%3E");
+    --sd-icon-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%235C5C66' stroke-width='1.5' stroke-linecap='square'/%3E%3C/svg%3E");
+    --sd-icon-thumb: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect width='12' height='12' fill='%235C5C66'/%3E%3C/svg%3E");
+    --sd-icon-thumb-on: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect width='12' height='12' fill='%23FFFFFF'/%3E%3C/svg%3E");
+  }
+}
+
+/* light: variant for the rare case a utility must differ by theme. */
+@custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));

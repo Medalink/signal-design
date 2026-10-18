@@ -1,0 +1,16 @@
+[package]
+name = "signal-tauri-check"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+# A minimal Tauri 2 app that loads the prebuilt Signal bundle, used to check
+# the library in a real Tauri webview (WebView2 on Windows).
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+
+[profile.dev]
+incremental = true

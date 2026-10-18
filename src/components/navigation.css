@@ -1,0 +1,375 @@
+@layer components {
+  /*
+   * Slim nav: uppercase words, the current one in fg.
+   * Current = aria-current="page" | aria-selected="true" | aria-pressed="true".
+   */
+  .sd-nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .sd-nav::-webkit-scrollbar {
+    display: none;
+  }
+  .sd-nav :where(a, button) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 0;
+    border: 0;
+    background: none;
+    color: var(--sd-fg-subtle);
+    font: inherit;
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color 120ms var(--ease-out);
+  }
+  .sd-nav :where(a, button):hover,
+  .sd-nav :where(a, button):is([aria-current]:not([aria-current="false"]), [aria-selected="true"], [aria-pressed="true"]) {
+    color: var(--sd-fg);
+  }
+
+  /* Tabs: a hairline under the list, a 1px fg line under the selected tab. */
+  .sd-tabs {
+    display: flex;
+    gap: 24px;
+    border-block-end: 1px solid var(--sd-line);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .sd-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .sd-tabs > :where(button, a) {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-block-end: -1px;
+    padding: 10px 0;
+    border: 0;
+    border-block-end: 1px solid transparent;
+    background: none;
+    color: var(--sd-fg-subtle);
+    font: inherit;
+    font-size: var(--text-sm);
+    letter-spacing: var(--tracking-wider);
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color 120ms var(--ease-out), border-color 120ms var(--ease-out);
+  }
+  .sd-tabs > :where(button, a):hover {
+    color: var(--sd-fg);
+  }
+  .sd-tabs > :where(button, a):is([aria-selected="true"], [aria-current]:not([aria-current="false"])) {
+    color: var(--sd-fg);
+    border-block-end-color: var(--sd-fg);
+  }
+  .sd-tabs > :where(button, a):focus-visible {
+    outline-offset: -1px;
+  }
+  .sd-tabpanel {
+    padding-block-start: 20px;
+  }
+  .sd-tabpanel[hidden] {
+    display: none;
+  }
+
+  /*
+   * Breadcrumb: padded crumbs split by chevrons; the current page is an
+   * accent chip. A crumb can lead with an icon; a first crumb can be home.
+   *   <ol class="sd-breadcrumb">
+   *     <li><a href="/" aria-label="Home"><svg>…</svg></a></li>
+   *     <li><span><svg>…</svg> Projects</span></li>
+   *     <li><span aria-current="page">All items</span></li>
+   *   </ol>
+   */
+  .sd-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-sm);
+    color: var(--sd-fg-subtle);
+    overflow-wrap: anywhere;
+  }
+  .sd-breadcrumb > li {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+  }
+  .sd-breadcrumb > li + li::before {
+    content: "";
+    flex-shrink: 0;
+    width: 6px;
+    height: 6px;
+    margin-inline: 4px 6px;
+    border-block-start: 1.5px solid var(--sd-fg-faint);
+    border-inline-end: 1.5px solid var(--sd-fg-faint);
+    transform: rotate(45deg);
+  }
+  .sd-breadcrumb > li > :where(a, span, button) {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    min-height: 2rem; /* every crumb the same height, icon-only or not */
+    padding: 0 10px;
+    border: 1px solid transparent;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-decoration: none;
+  }
+  .sd-breadcrumb > li > :where(a, button) {
+    cursor: pointer;
+    transition: color 120ms var(--ease-out), background-color 120ms var(--ease-out);
+  }
+  .sd-breadcrumb > li > :where(a, button):hover {
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+  .sd-breadcrumb [aria-current]:not([aria-current="false"]) {
+    border-color: var(--sd-line-strong);
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+  /* An icon-only crumb (home) is a square. */
+  .sd-breadcrumb > li > :where(a, span, button)[aria-label]:has(> svg:only-child) {
+    justify-content: center;
+    width: 2rem;
+    padding-inline: 0;
+  }
+  .sd-breadcrumb svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+  }
+
+  /* Pagination: square cells. */
+  .sd-pagination {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .sd-pagination :where(a, button, span) {
+    display: inline-grid;
+    place-items: center;
+    min-width: 30px;
+    height: 30px;
+    padding: 0 8px;
+    border: 1px solid var(--sd-line);
+    background: transparent;
+    color: var(--sd-fg-subtle);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .sd-pagination :where(a, button):hover {
+    border-color: var(--sd-line-strong);
+    color: var(--sd-fg);
+  }
+  .sd-pagination [aria-current] {
+    border-color: var(--sd-fg);
+    color: var(--sd-fg);
+  }
+  .sd-pagination span {
+    border-color: transparent;
+    cursor: default;
+  }
+
+  /*
+   * Menu: a list of actions with optional key hints. Lives inside a
+   * popover, a dialog or the page.
+   */
+  .sd-menu {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .sd-menu :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item) {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 8px 6px;
+    border: 0;
+    border-block-end: 1px solid var(--sd-line);
+    background: none;
+    color: var(--sd-fg);
+    font: inherit;
+    font-size: var(--text-base);
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+    outline: none;
+  }
+  .sd-menu > :last-child :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item),
+  .sd-menu > :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item):last-child {
+    border-block-end: 0;
+  }
+  .sd-menu :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item):is(:hover, :focus, [data-active]) {
+    background: var(--sd-raised);
+  }
+  .sd-menu :where([aria-checked="true"], [aria-selected="true"]) {
+    box-shadow: inset 1px 0 0 var(--sd-fg);
+  }
+  .sd-menu :where([aria-disabled="true"]) {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+  .sd-menu :where([data-tone]) {
+    color: var(--tone);
+  }
+  .sd-menu-hint {
+    margin-inline-start: auto;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-sm);
+  }
+  .sd-menu-label {
+    padding: 10px 6px 6px;
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--sd-fg-subtle);
+  }
+  .sd-menu :has(+ .sd-menu-sep) {
+    border-block-end: 0;
+  }
+  .sd-menu-sep {
+    height: 1px;
+    margin: 4px 0;
+    background: var(--sd-line-strong);
+    border: 0;
+  }
+
+  /* Side navigation for app shells. */
+  .sd-sidenav {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .sd-sidenav :where(a, button) {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 7px 12px;
+    border: 0;
+    border-inline-start: 1px solid transparent;
+    background: none;
+    color: var(--sd-fg-subtle);
+    font: inherit;
+    font-size: var(--text-base);
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .sd-sidenav :where(a, button):hover {
+    color: var(--sd-fg);
+    background: var(--sd-surface);
+  }
+  .sd-sidenav :where(a, button):is([aria-current]:not([aria-current="false"]), [aria-selected="true"]) {
+    border-inline-start-color: var(--sd-fg);
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+  .sd-sidenav .sd-count {
+    margin-inline-start: auto;
+  }
+  .sd-sidenav-group {
+    padding: 16px 12px 6px;
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--sd-fg-subtle);
+  }
+
+  /* Top bar: wordmark left, nav middle, actions right. */
+  .sd-topbar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    min-height: 56px;
+    padding: 0 24px;
+    border-block-end: 1px solid var(--sd-line);
+    background: var(--sd-canvas);
+  }
+  .sd-topbar > .sd-nav {
+    flex: 1;
+    min-width: 0;
+  }
+  .sd-topbar-end {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-inline-start: auto;
+  }
+  /* Phones: the nav drops to its own scrollable row under the brand. */
+  @media (max-width: 40rem) {
+    .sd-topbar {
+      flex-wrap: wrap;
+      gap: 4px 16px;
+      padding: 10px 16px 6px;
+    }
+    .sd-topbar > .sd-nav {
+      order: 3;
+      flex-basis: 100%;
+    }
+  }
+
+  /* Status bar: key hints along the bottom. */
+  .sd-statusbar {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    min-height: 36px;
+    padding: 0 16px;
+    border-block-start: 1px solid var(--sd-line);
+    background: var(--sd-canvas);
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-sm);
+    white-space: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .sd-statusbar > * {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .sd-statusbar-end {
+    margin-inline-start: auto;
+    color: var(--sd-fg-subtle);
+  }
+  .sd-statusbar-fixed {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 40;
+  }
+}

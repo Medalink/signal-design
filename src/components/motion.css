@@ -1,0 +1,87 @@
+@layer components {
+  /*
+   * Hover shimmer: the text dims, a bright band (white on dark themes, black
+   * on light) sweeps across it from left to right, and the text settles on
+   * its hover color behind the band. Once per hover. The band is clipped to the glyphs, so
+   * icons, borders and hover backgrounds stay as they are. Off with
+   * prefers-reduced-motion (base layer).
+   */
+  @keyframes sd-sweep {
+    from { background-position: 100% 0, 0 0; }
+    to { background-position: 0% 0, 0 0; }
+  }
+
+  :is(
+      .sd-nav :where(a, button),
+      .sd-tabs > :where(a, button),
+      .sd-breadcrumb > li > :where(a, button),
+      .sd-sidebar-link,
+      .sd-sidenav :where(a, button),
+      .sd-rail-item,
+      .sd-menu :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item),
+      .sd-pagination :where(a, button),
+      .sd-btn:not(.sd-btn-primary),
+      .sd-chip:is(button, a),
+      .sd-pill:is(button, a),
+      .sd-seg > :where(button, label),
+      .sd-sidebar-group > summary,
+      a:not([class])
+    ):hover {
+    /* Layer 1, clipped to the text: settled hover color behind the band,
+       the bright band, then the dimmer pre-hover grey ahead of it.
+       Layer 2 is empty; its border-box clip keeps the background color. */
+    background-image:
+      linear-gradient(90deg, currentColor 0 40%, var(--sd-flash) 50%, var(--sd-fg-subtle) 60% 100%),
+      linear-gradient(transparent, transparent);
+    background-size: 300% 100%, auto;
+    background-position: 0% 0, 0 0;
+    background-repeat: no-repeat;
+    -webkit-background-clip: text, border-box;
+    background-clip: text, border-box;
+    -webkit-text-fill-color: transparent;
+    animation: sd-sweep 700ms linear 1;
+  }
+
+  /* Pieces with their own colors keep them while their parent shimmers. */
+  :is(
+      .sd-nav :where(a, button),
+      .sd-tabs > :where(a, button),
+      .sd-breadcrumb > li > :where(a, button),
+      .sd-sidebar-link,
+      .sd-sidenav :where(a, button),
+      .sd-rail-item,
+      .sd-menu :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item),
+      .sd-pagination :where(a, button),
+      .sd-btn:not(.sd-btn-primary),
+      .sd-chip:is(button, a),
+      .sd-pill:is(button, a),
+      .sd-seg > :where(button, label),
+      .sd-sidebar-group > summary
+    ):hover :is(.sd-avatar, .sd-badge, .sd-dot, .sd-count[data-tone], kbd, .sd-kbd) {
+    -webkit-text-fill-color: currentColor;
+  }
+
+  /* Forced colors (Windows high contrast): no gradient text, real colors. */
+  @media (forced-colors: active) {
+    :is(
+        .sd-nav :where(a, button),
+        .sd-tabs > :where(a, button),
+        .sd-breadcrumb > li > :where(a, button),
+        .sd-sidebar-link,
+        .sd-sidenav :where(a, button),
+        .sd-rail-item,
+        .sd-menu :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item),
+        .sd-pagination :where(a, button),
+        .sd-btn:not(.sd-btn-primary),
+        .sd-chip:is(button, a),
+        .sd-pill:is(button, a),
+        .sd-seg > :where(button, label),
+        .sd-sidebar-group > summary,
+        a:not([class])
+      ):hover {
+      background-image: none;
+      -webkit-text-fill-color: currentColor;
+      animation: none;
+    }
+  }
+}

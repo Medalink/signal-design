@@ -1,0 +1,337 @@
+@layer components {
+  /*
+   * Message: one entry in a conversation, a comment thread or an activity log.
+   *   <article class="sd-message">
+   *     <span class="sd-avatar">AL</span>
+   *     <div class="sd-message-body">
+   *       <header class="sd-message-head"><b>Alex</b><time>09:42</time></header>
+   *       <div class="sd-message-text">…</div>
+   *     </div>
+   *     <div class="sd-message-actions">…buttons…</div>
+   *   </article>
+   * Variants: data-grouped (a follow-up from the same author: no avatar or
+   * head), data-mention (mentions the viewer), data-pending, data-failed,
+   * aria-current (selected or being replied to).
+   */
+  .sd-message {
+    position: relative;
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    column-gap: 12px;
+    padding: 8px 16px 8px 14px;
+    border-inline-start: 2px solid transparent;
+  }
+  .sd-message:hover,
+  .sd-message:focus-within {
+    background: var(--sd-raised);
+  }
+  .sd-message > .sd-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 13px;
+    margin-top: 2px;
+  }
+  .sd-message-body {
+    grid-column: 2;
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+  }
+  .sd-message-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-sm);
+  }
+  .sd-message-head > b {
+    color: var(--sd-fg);
+    font-size: var(--text-base);
+    font-weight: 600;
+  }
+  .sd-message-head time {
+    font-variant-numeric: tabular-nums;
+  }
+  .sd-message-text {
+    color: var(--sd-fg);
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+  .sd-message-text > :where(p, ul, ol, pre, blockquote):not(:last-child) {
+    margin-block-end: 0.5em;
+  }
+  /* An @mention inside text. */
+  .sd-mention {
+    padding: 0 3px;
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+    font-weight: 600;
+  }
+  .sd-message-edited {
+    color: var(--sd-fg-faint);
+    font-size: var(--text-sm);
+  }
+  .sd-message[data-grouped] {
+    padding-block-start: 2px;
+  }
+  .sd-message[data-grouped] > .sd-avatar,
+  .sd-message[data-grouped] .sd-message-head {
+    display: none;
+  }
+  /* Grouped rows show their time in the avatar column on hover. */
+  .sd-message[data-grouped] > time {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+    padding-top: 3px;
+    color: var(--sd-fg-faint);
+    font-size: 11px;
+    text-align: center;
+    opacity: 0;
+  }
+  .sd-message[data-grouped]:hover > time {
+    opacity: 1;
+  }
+  .sd-message[data-mention] {
+    border-inline-start-color: var(--sd-fg);
+    background: var(--sd-surface);
+  }
+  .sd-message[aria-current]:not([aria-current="false"]) {
+    border-inline-start-color: var(--sd-fg-subtle);
+    background: var(--sd-raised);
+  }
+  .sd-message[data-pending] .sd-message-text {
+    opacity: 0.55;
+  }
+  .sd-message[data-failed] {
+    border-inline-start-color: var(--sd-danger);
+  }
+  .sd-message-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-sm);
+  }
+  .sd-message[data-failed] .sd-message-status {
+    color: var(--sd-danger);
+  }
+
+  /* Hover toolbar: small square buttons in the top-right corner. */
+  .sd-message-actions {
+    position: absolute;
+    top: -14px;
+    right: 14px;
+    display: none;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-overlay);
+  }
+  .sd-message:hover > .sd-message-actions,
+  .sd-message:focus-within > .sd-message-actions {
+    display: flex;
+  }
+  .sd-message-actions > button {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 28px;
+    border: 0;
+    background: none;
+    color: var(--sd-fg-subtle);
+    cursor: pointer;
+  }
+  .sd-message-actions > button:hover {
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+  .sd-message-actions svg {
+    width: 15px;
+    height: 15px;
+    max-width: none; /* the base max-width: 100% collapses icons in grid-centered buttons */
+  }
+
+  /* Reply preview: a quoted line above a message or in the composer. */
+  .sd-reply {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    padding: 2px 0 2px 10px;
+    border-inline-start: 1px solid var(--sd-fg-faint);
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-sm);
+  }
+  .sd-reply > b {
+    flex-shrink: 0;
+    color: var(--sd-fg-muted);
+    font-weight: 600;
+  }
+  .sd-reply > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* System event: a quiet line between messages, e.g. "Alex joined". */
+  .sd-event {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 16px 6px 62px;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-sm);
+  }
+  .sd-event > b {
+    color: var(--sd-fg-muted);
+    font-weight: 600;
+  }
+  .sd-event > time {
+    margin-inline-start: auto;
+    color: var(--sd-fg-faint);
+  }
+
+  /*
+   * Reactions: toggles with a mark and a count. aria-pressed = the viewer
+   * reacted. The JS keeps the count in sync when toggled.
+   *   <div class="sd-reactions"><button aria-pressed="true" data-sd-reaction>👍 <b>3</b></button>…</div>
+   */
+  .sd-reactions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .sd-reactions > button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 26px;
+    padding: 0 8px;
+    border: 1px solid var(--sd-line-strong);
+    background: transparent;
+    color: var(--sd-fg-muted);
+    font: inherit;
+    font-size: var(--text-sm);
+    cursor: pointer;
+  }
+  .sd-reactions > button > b {
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+  }
+  .sd-reactions > button:hover {
+    border-color: var(--sd-fg-faint);
+    color: var(--sd-fg);
+  }
+  .sd-reactions > button[aria-pressed="true"] {
+    border-color: var(--sd-fg);
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+
+  /* Read receipts: tiny avatars at the end of a message. */
+  .sd-receipts {
+    display: flex;
+    justify-content: flex-end;
+    gap: 2px;
+  }
+  .sd-receipts > .sd-avatar {
+    width: 16px;
+    height: 16px;
+    font-size: 8px;
+  }
+
+  /* Typing indicator: who is typing, with three still squares (nothing loops). */
+  .sd-typing {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-sm);
+  }
+  .sd-typing > i {
+    display: inline-flex;
+    gap: 3px;
+  }
+  .sd-typing > i::before,
+  .sd-typing > i::after,
+  .sd-typing > i > b {
+    content: "";
+    width: 4px;
+    height: 4px;
+    background: var(--sd-fg-subtle);
+  }
+  .sd-typing > i > b {
+    display: block;
+  }
+  .sd-typing > i::before { background: var(--sd-fg); }
+
+  /*
+   * Composer: where people write. A growing textarea, a toolbar, and room
+   * for chips above it (a reply, attachments).
+   *   <form class="sd-composer">
+   *     <div class="sd-composer-chips">…</div>
+   *     <div class="sd-composer-row">
+   *       <button class="sd-btn sd-btn-icon sd-btn-ghost">+</button>
+   *       <textarea rows="1" data-sd-autogrow placeholder="Message #general"></textarea>
+   *       <button class="sd-btn sd-btn-primary">Send</button>
+   *     </div>
+   *   </form>
+   */
+  .sd-composer {
+    position: relative;
+    display: grid;
+    gap: 8px;
+    padding: 8px;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-surface);
+  }
+  .sd-composer:focus-within {
+    border-color: var(--sd-fg-subtle);
+  }
+  .sd-composer-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+  }
+  .sd-composer textarea {
+    flex: 1;
+    min-height: 34px;
+    max-height: 40vh;
+    padding: 7px 4px;
+    border: 0;
+    background: transparent;
+    resize: none;
+    line-height: 20px;
+  }
+  .sd-composer textarea:focus {
+    border: 0;
+    outline: none;
+  }
+  .sd-composer-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .sd-composer-chips:empty {
+    display: none;
+  }
+  .sd-composer-hint {
+    display: flex;
+    gap: 14px;
+    padding: 0 4px;
+    color: var(--sd-fg-faint);
+    font-size: var(--text-sm);
+  }
+  /* Suggestions (mentions, commands) float above the composer. */
+  .sd-suggest {
+    position: absolute;
+    inset: auto 0 calc(100% + 6px);
+    z-index: 30;
+    padding: 4px;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-overlay);
+  }
+  .sd-suggest[hidden] {
+    display: none;
+  }
+}

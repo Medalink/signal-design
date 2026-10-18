@@ -1,0 +1,95 @@
+@layer components {
+  /* SIGNAL: the product name, tracked wide. */
+  .sd-wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wordmark);
+    text-transform: uppercase;
+    color: var(--sd-fg);
+    text-decoration: none;
+  }
+
+  /* Two-tone display line: "32 open. <em>8 done.</em>" */
+  .sd-display {
+    font-size: var(--text-3xl);
+    font-weight: 400;
+    line-height: var(--text-3xl--line-height);
+    letter-spacing: var(--tracking-display);
+    color: var(--sd-fg);
+    text-wrap: balance;
+  }
+  .sd-display em,
+  .sd-display .sd-quiet {
+    font-style: normal;
+    color: var(--sd-fg-faint);
+  }
+  .sd-display-xl {
+    font-size: var(--text-5xl);
+    line-height: var(--text-5xl--line-height);
+  }
+  @media (max-width: 40rem) {
+    .sd-display {
+      font-size: var(--text-2xl);
+      letter-spacing: -0.02em;
+    }
+    .sd-display-xl {
+      font-size: var(--text-4xl);
+    }
+  }
+
+  .sd-title {
+    font-size: var(--text-xl);
+    font-weight: 400;
+    line-height: var(--text-xl--line-height);
+    letter-spacing: var(--tracking-tight);
+    color: var(--sd-fg);
+  }
+
+  .sd-lead {
+    font-size: var(--text-lg);
+    line-height: 1.55;
+    letter-spacing: var(--tracking-tight);
+    color: var(--sd-fg-muted);
+    text-wrap: pretty;
+  }
+
+  /* Uppercase label: section heads, field labels, captions. */
+  .sd-label {
+    display: block;
+    font-size: var(--text-2xs);
+    font-weight: 400;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--sd-fg-subtle);
+  }
+  .sd-label-strong {
+    color: var(--sd-fg);
+  }
+
+  /* Status line: OWNER · 07:55 · RISK. Children are separated by a dot. */
+  .sd-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 10px;
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--sd-fg-subtle);
+  }
+  .sd-meta > * + *::before {
+    content: "\00B7";
+    margin-inline-end: 10px;
+    color: var(--sd-fg-faint);
+  }
+  .sd-meta [data-tone] {
+    color: var(--tone);
+  }
+
+  .sd-muted { color: var(--sd-fg-muted); }
+  .sd-subtle { color: var(--sd-fg-subtle); }
+  .sd-num { font-variant-numeric: tabular-nums; }
+}

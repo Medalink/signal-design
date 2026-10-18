@@ -1,0 +1,631 @@
+@layer components {
+  /*
+   * Signal App Shell: rail, sidebar, main, optional aside, status bar.
+   * On phones a top bar replaces the rail and the rail + sidebar open
+   * together as a drawer.
+   *
+   *   <div class="sd-shell">
+   *     <header class="sd-shell-topbar">…</header>        phones only
+   *     <nav class="sd-rail">…</nav>
+   *     <aside class="sd-sidebar">…</aside>
+   *     <main class="sd-shell-main">
+   *       <div class="sd-shell-header">…</div>
+   *       <div class="sd-shell-content">…</div>
+   *     </main>
+   *     <aside class="sd-shell-aside">…</aside>          optional
+   *     <footer class="sd-statusbar sd-shell-status">…</footer>
+   *     <div class="sd-shell-scrim" data-sd-shell="close"></div>
+   *   </div>
+   *
+   * State lives in data attributes on .sd-shell, set by the JS:
+   *   data-sidebar="collapsed"   sidebar hidden (rail clicks then peek it)
+   *   data-peek                  sidebar shown over the page
+   *   data-aside="open"          right panel shown
+   *   data-drawer                phone drawer open
+   */
+  .sd-shell {
+    --shell-rail: 6rem;
+    --shell-sidebar: 18rem;
+    --shell-aside: 18rem;
+    --shell-head: 4rem;
+    --shell-status: 2.25rem;
+    --shell-gap: clamp(12px, 1.8vw, 28px);
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--shell-rail) var(--shell-sidebar) minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr) var(--shell-status);
+    grid-template-areas:
+      "top top top top"
+      "rail side main aside"
+      "status status status status";
+    height: 100dvh;
+    overflow: hidden;
+    background: var(--sd-shell-bg);
+  }
+  .sd-shell[data-sidebar="collapsed"] {
+    grid-template-columns: var(--shell-rail) 0 minmax(0, 1fr) auto;
+  }
+
+  /* ---- Rail ------------------------------------------------------- */
+
+  .sd-rail {
+    grid-area: rail;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    border-inline-end: 1px solid var(--sd-line-strong);
+    background: var(--sd-surface);
+  }
+  .sd-rail-home {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    height: var(--shell-head);
+    border-block-end: 1px solid var(--sd-line-strong);
+    color: var(--sd-fg);
+  }
+  .sd-rail-list {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 4px;
+    min-height: 0;
+    padding-block: 8px;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .sd-rail-list::-webkit-scrollbar {
+    display: none;
+  }
+  .sd-rail-sep {
+    flex-shrink: 0;
+    height: 1px;
+    margin: 0 12px;
+    background: var(--sd-line);
+  }
+  .sd-rail-tools {
+    display: flex;
+    flex-shrink: 0;
+    flex-direction: column;
+    gap: 4px;
+    padding-block: 8px;
+    border-block-start: 1px solid var(--sd-line-strong);
+  }
+
+  /* A section: icon over a short label. */
+  .sd-rail-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    margin-inline: 6px;
+    padding: 9px 2px 7px;
+    border: 0;
+    background: none;
+    color: var(--sd-fg-subtle);
+    font: inherit;
+    font-size: 15px;
+    line-height: 1;
+    letter-spacing: 0;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 120ms var(--ease-out), color 120ms var(--ease-out);
+  }
+  .sd-rail-item > svg {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+  }
+  .sd-rail-item > span {
+    max-width: 100%;
+    /* A full line box, so descenders (g, p, y) aren't cut by overflow: hidden. */
+    line-height: 1.35;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sd-rail-item:hover {
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+  .sd-rail-item:is([aria-current]:not([aria-current="false"]), [aria-pressed="true"], [aria-expanded="true"]) {
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+  .sd-rail-item[aria-current]:not([aria-current="false"])::before {
+    content: "";
+    position: absolute;
+    inset: 4px auto 4px -6px;
+    width: 2px;
+    background: var(--sd-fg);
+  }
+  .sd-rail-item > .sd-dot {
+    position: absolute;
+    top: 6px;
+    right: 10px;
+  }
+  .sd-rail-item kbd {
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    font-size: 13px;
+    line-height: 1;
+    color: var(--sd-fg-subtle);
+  }
+  .sd-rail-item:focus-visible {
+    outline-offset: -1px;
+  }
+
+  /* ---- Sidebar ---------------------------------------------------- */
+
+  .sd-sidebar {
+    grid-area: side;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    width: var(--shell-sidebar);
+    min-height: 0;
+    border-inline-end: 1px solid var(--sd-line-strong);
+    background: var(--sd-surface);
+  }
+  .sd-shell[data-sidebar="collapsed"] .sd-sidebar {
+    display: none;
+  }
+  /* Sidebar toggles point the way they will move: « collapse, » expand. */
+  [data-sd-shell="sidebar"] > svg {
+    transition: transform 160ms var(--ease-out);
+  }
+  .sd-shell[data-sidebar="collapsed"] [data-sd-shell="sidebar"] > svg {
+    transform: scaleX(-1);
+  }
+  /* Show something only in one sidebar state, e.g. a "Show sidebar" label. */
+  .sd-shell:not([data-sidebar="collapsed"]) .sd-when-collapsed,
+  .sd-shell[data-sidebar="collapsed"] .sd-when-pinned {
+    display: none;
+  }
+  /* Peek: a collapsed sidebar opens over the page from the rail. */
+  .sd-shell[data-sidebar="collapsed"][data-peek] .sd-sidebar {
+    position: absolute;
+    inset: 0 auto var(--shell-status) var(--shell-rail);
+    z-index: 50;
+    display: flex;
+    animation: sd-peek-in 160ms var(--ease-out);
+  }
+  @keyframes sd-peek-in {
+    from { transform: translateX(-12px); opacity: 0; }
+    to { transform: none; opacity: 1; }
+  }
+
+  .sd-sidebar-panel {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .sd-sidebar-panel[hidden] {
+    display: none;
+  }
+  .sd-sidebar-head {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 10px;
+    height: var(--shell-head);
+    padding: 0 8px 0 16px;
+    border-block-end: 1px solid var(--sd-line-strong);
+    color: var(--sd-fg);
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+  .sd-sidebar-head > svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--sd-fg-subtle);
+  }
+  .sd-sidebar-title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sd-sidebar-body {
+    flex: 1;
+    min-height: 0;
+    padding-block: 8px;
+    overflow-y: auto;
+  }
+  .sd-sidebar-foot {
+    flex-shrink: 0;
+    padding: 12px 16px;
+    border-block-start: 1px solid var(--sd-line-strong);
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-base);
+  }
+
+  /* Collapsible group: <details class="sd-sidebar-group" open><summary>…</summary><a>…</a></details> */
+  .sd-sidebar-group {
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
+  .sd-sidebar-group + .sd-sidebar-group {
+    margin-block-start: 12px;
+  }
+  .sd-sidebar-group[open] {
+    padding: 0;
+  }
+  .sd-sidebar-group > summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-sm);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+  .sd-sidebar-group > summary::before {
+    content: "";
+    width: 0;
+    height: 0;
+    border: 0;
+    border-block: 3.5px solid transparent;
+    border-inline-start: 5px solid currentColor;
+    transition: transform 120ms var(--ease-out);
+  }
+  .sd-sidebar-group[open] > summary::before {
+    content: "";
+    transform: rotate(90deg);
+  }
+  .sd-sidebar-group > summary:hover {
+    color: var(--sd-fg);
+  }
+  .sd-sidebar-group > summary .sd-count {
+    margin-inline-start: auto;
+    color: var(--sd-fg-subtle);
+  }
+
+  .sd-sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 12px 7px 1.625rem;
+    border: 0;
+    border-inline-start: 2px solid transparent;
+    background: none;
+    color: var(--sd-fg-muted);
+    font: inherit;
+    font-size: 1.125rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 120ms var(--ease-out), color 120ms var(--ease-out);
+  }
+  .sd-sidebar-link > svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--sd-fg-subtle);
+  }
+  .sd-sidebar .sd-count {
+    font-size: var(--text-md);
+  }
+  .sd-sidebar-link > .sd-count,
+  .sd-sidebar-link > .sd-badge {
+    margin-inline-start: auto;
+  }
+  .sd-sidebar-link:hover {
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+  .sd-sidebar-link[aria-current]:not([aria-current="false"]) {
+    border-inline-start-color: var(--sd-fg);
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+  .sd-sidebar-link[aria-current]:not([aria-current="false"]) > svg {
+    color: var(--sd-fg);
+  }
+  .sd-sidebar-link:focus-visible {
+    outline-offset: -1px;
+  }
+
+  /* ---- Main ------------------------------------------------------- */
+
+  /*
+   * The page sits inset in two lighter boxes, a header bar and the content,
+   * with a gap around them where the shell background (and the rain) shows.
+   */
+  .sd-shell-main {
+    grid-area: main;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: var(--shell-gap);
+    min-height: 0;
+    padding: var(--shell-gap);
+  }
+  /*
+   * Header: two bars above the content, the crumb bar fading out to the
+   * right and the action bar fading out to the left. A ladder bridge (two
+   * rails and a square node) drops from each bar's outer end to the content.
+   *   <div class="sd-shell-header">
+   *     <div class="sd-shell-crumbs">[» pin] <ol class="sd-breadcrumb">…</ol></div>
+   *     <div class="sd-shell-header-end">…actions…</div>
+   *   </div>
+   */
+  .sd-shell-header {
+    position: relative;
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+  }
+  .sd-shell-header::before,
+  .sd-shell-header::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    width: 11px;
+    height: var(--shell-gap);
+    background-color: var(--sd-fg-faint);
+    -webkit-mask:
+      url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='1'%20height='1'%3E%3Crect%20width='1'%20height='1'/%3E%3C/svg%3E") left top / 1px 100% no-repeat,
+      url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='1'%20height='1'%3E%3Crect%20width='1'%20height='1'/%3E%3C/svg%3E") right top / 1px 100% no-repeat,
+      url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='11'%20height='11'%3E%3Cpath%20d='M0%200h11v11H0z%20M1%201v9h9V1z'%20fill-rule='evenodd'/%3E%3Crect%20x='4'%20y='4'%20width='3'%20height='3'/%3E%3C/svg%3E") center / 11px 11px no-repeat;
+    mask:
+      url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='1'%20height='1'%3E%3Crect%20width='1'%20height='1'/%3E%3C/svg%3E") left top / 1px 100% no-repeat,
+      url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='1'%20height='1'%3E%3Crect%20width='1'%20height='1'/%3E%3C/svg%3E") right top / 1px 100% no-repeat,
+      url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='11'%20height='11'%3E%3Cpath%20d='M0%200h11v11H0z%20M1%201v9h9V1z'%20fill-rule='evenodd'/%3E%3Crect%20x='4'%20y='4'%20width='3'%20height='3'/%3E%3C/svg%3E") center / 11px 11px no-repeat;
+    pointer-events: none;
+  }
+  /* Each bridge sits under the outer item of its bar: border 1px + bar
+     padding 6px + half a 32px crumb, minus half the bridge's 11px. */
+  .sd-shell-header::before {
+    left: 17.5px;
+  }
+  .sd-shell-header::after {
+    right: 17.5px;
+  }
+  .sd-shell-crumbs,
+  .sd-shell-header-end {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 2.75rem;
+    border: 1px solid var(--sd-line);
+    background: var(--sd-container);
+  }
+  /* Crumb bar: as wide as its crumbs, fading out past the last one. */
+  .sd-shell-crumbs {
+    min-width: 0;
+    max-width: 100%;
+    padding: 4px 4rem 4px 6px;
+    overflow: hidden;
+    border-inline-end: 0;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 4rem), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 4rem), transparent);
+  }
+  /* Crumbs keep their size; when space runs out they run under the fade. */
+  .sd-shell-crumbs > .sd-breadcrumb {
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+  .sd-shell-crumbs > .sd-breadcrumb > li {
+    flex-shrink: 0;
+  }
+  /* The » pin button shows only while the sidebar is collapsed. */
+  .sd-shell-pin {
+    display: none;
+  }
+  .sd-shell[data-sidebar="collapsed"] .sd-shell-pin {
+    display: inline-flex;
+  }
+  /* Action bar: the mirror image, fading out to the left. */
+  .sd-shell-header-end {
+    flex-shrink: 0;
+    padding: 4px 6px 4px 4rem;
+    border-inline-start: 0;
+    -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 4rem), transparent);
+    mask-image: linear-gradient(to left, #000 calc(100% - 4rem), transparent);
+  }
+  .sd-shell-header-end > .sd-btn:not(:hover, .sd-btn-primary),
+  .sd-shell-crumbs > .sd-btn:not(:hover) {
+    --btn-bg: var(--sd-container);
+  }
+  .sd-shell-content {
+    flex: 1;
+    min-height: 0;
+    padding: 24px 24px 48px;
+    overflow-y: auto;
+    border: 1px solid var(--sd-line);
+    background: var(--sd-container);
+  }
+
+  /* Rain backdrop: covers only the page area (the rail, sidebar and panel
+     are opaque), and the JS skips the boxes on top of it. */
+  .sd-shell > .sd-rain {
+    grid-area: main;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  /* ---- Aside ------------------------------------------------------ */
+
+  .sd-shell-aside {
+    grid-area: aside;
+    z-index: 20;
+    display: none;
+    flex-direction: column;
+    width: var(--shell-aside);
+    min-height: 0;
+    border-inline-start: 1px solid var(--sd-line);
+    background: var(--sd-surface);
+    overflow-y: auto;
+  }
+  .sd-shell[data-aside="open"] .sd-shell-aside {
+    display: flex;
+    animation: sd-aside-in 180ms var(--ease-out);
+  }
+  @keyframes sd-aside-in {
+    from { transform: translateX(12px); opacity: 0; }
+    to { transform: none; opacity: 1; }
+  }
+  .sd-shell-aside-head {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 10px;
+    height: var(--shell-head);
+    padding: 0 8px 0 16px;
+    border-block-end: 1px solid var(--sd-line);
+    font-weight: 600;
+  }
+  .sd-shell-aside-section {
+    padding: 16px;
+    border-block-end: 1px solid var(--sd-line);
+  }
+
+  /* ---- Status bar, scrim, phone top bar ----------------------------- */
+
+  .sd-shell-status {
+    grid-area: status;
+    z-index: 40;
+    min-height: 0;
+  }
+  .sd-shell-status .sd-status {
+    font-size: inherit;
+  }
+
+  .sd-shell-scrim {
+    display: none;
+    position: absolute;
+    inset: 0;
+    z-index: 45;
+    background: var(--sd-backdrop);
+    animation: sd-fade-in 160ms var(--ease-out);
+  }
+  .sd-shell[data-peek] .sd-shell-scrim,
+  .sd-shell[data-drawer] .sd-shell-scrim {
+    display: block;
+  }
+  .sd-shell[data-peek] .sd-shell-scrim {
+    background: transparent;
+  }
+  /* While peeking, the rail stays clickable above the scrim. */
+  .sd-shell[data-peek] .sd-rail {
+    z-index: 50;
+  }
+
+  .sd-shell-topbar {
+    grid-area: top;
+    display: none;
+    align-items: center;
+    gap: 4px;
+    height: 3.5rem;
+    padding: 0 8px;
+    border-block-end: 1px solid var(--sd-line);
+    background: var(--sd-surface);
+  }
+  .sd-shell-topbar-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    padding-inline: 8px;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-sm);
+    text-align: end;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sd-shell-topbar .sd-btn-icon {
+    width: 44px;
+    min-height: 44px;
+  }
+
+  /* Phones and narrow windows: top bar, and rail + sidebar as a drawer. */
+  @media (max-width: 48rem) {
+    .sd-shell,
+    .sd-shell[data-sidebar="collapsed"] {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        "top"
+        "main"
+        "status";
+    }
+    .sd-shell-topbar {
+      display: flex;
+    }
+    .sd-rail,
+    .sd-shell .sd-sidebar,
+    .sd-shell-aside {
+      display: none;
+    }
+    .sd-shell[data-drawer] .sd-rail {
+      position: absolute;
+      inset: 0 auto 0 0;
+      z-index: 50;
+      display: flex;
+      width: var(--shell-rail);
+      animation: sd-drawer-in 200ms var(--ease-out);
+    }
+    .sd-shell[data-drawer] .sd-sidebar {
+      position: absolute;
+      inset: 0 auto 0 var(--shell-rail);
+      z-index: 50;
+      display: flex;
+      width: min(var(--shell-sidebar), calc(100vw - var(--shell-rail) - 40px));
+      animation: sd-drawer-in 200ms var(--ease-out);
+    }
+    .sd-shell[data-aside="open"] .sd-shell-aside {
+      position: absolute;
+      inset: 0 0 var(--shell-status) auto;
+      z-index: 50;
+      display: flex;
+      width: min(var(--shell-aside), 100vw);
+    }
+    .sd-shell {
+      --shell-gap: 8px;
+    }
+    .sd-shell-content {
+      padding: 24px 16px 40px;
+    }
+    /* Phones keep only the live status line. */
+    .sd-shell-status > :not(.sd-status) {
+      display: none;
+    }
+  }
+  @keyframes sd-drawer-in {
+    from { transform: translateX(-24px); opacity: 0; }
+    to { transform: none; opacity: 1; }
+  }
+
+  /* Hide-on-phone / phone-only helpers for shell chrome. */
+  @media (max-width: 48rem) {
+    .sd-desktop-only { display: none !important; }
+  }
+  @media (min-width: 48.0625rem) {
+    .sd-phone-only { display: none !important; }
+  }
+
+  /* A simple square mark for app chrome. */
+  .sd-mark {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+  }
+}

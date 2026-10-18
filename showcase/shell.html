@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Signal App Shell</title>
+  <script>
+    try { const t = localStorage.getItem("sd-theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
+  </script>
+  <link rel="stylesheet" href="./app.css">
+  <script type="module" src="./shell.js"></script>
+</head>
+<body>
+
+<!-- Icons: square strokes only, no circles. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-mark" viewBox="0 0 28 28"><rect x="1" y="1" width="26" height="26" fill="none" stroke="currentColor" stroke-opacity=".3"/><rect x="6" y="15" width="4" height="7" fill="currentColor" fill-opacity=".45"/><rect x="12" y="11" width="4" height="11" fill="currentColor" fill-opacity=".7"/><rect x="18" y="6" width="4" height="16" fill="var(--sd-accent)"/></symbol>
+    <symbol id="i-projects" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3.5" y="4.5" width="17" height="4"/><rect x="3.5" y="10" width="17" height="4"/><rect x="3.5" y="15.5" width="17" height="4"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 12H6l3-6 4 12 3-8 2 2h3.5"/></symbol>
+    <symbol id="i-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4.5" y="3.5" width="15" height="17"/><path d="M8 8h8M8 12h8M8 16h5"/></symbol>
+    <symbol id="i-teams" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="6.5" height="6.5"/><rect x="13.5" y="4" width="6.5" height="6.5"/><rect x="4" y="13.5" width="6.5" height="6.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><rect x="14" y="5" width="4" height="4"/><rect x="6" y="15" width="4" height="4"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="11" height="11"/><path d="M15 15l5.5 5.5"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 5h7v15H4zM13 5h7v15h-7z"/></symbol>
+    <symbol id="i-theme" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16"/><path d="M12 4v16" /><path d="M12 4h8v16h-8z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="i-rain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3v6M6 12v2M12 6v9M12 18v2M18 3v4M18 10v8"/></symbol>
+    <symbol id="i-play" viewBox="0 0 16 16" fill="currentColor"><path d="M4 3l9 5-9 5z"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-collapse" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 4L4 8l4 4M12 4L8 8l4 4"/></symbol>
+    <symbol id="i-panel" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="2.5" width="12" height="11"/><path d="M10 2.5v11"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="2.5" width="10" height="11"/><path d="M6 5.5h4"/></symbol>
+  </defs>
+</svg>
+
+<div class="sd-shell" id="shell">
+
+  <!-- Backdrop: shows in the gaps around the content. Still until work runs. -->
+  <canvas class="sd-rain" data-sd-rain data-sd-rain-style="squares" aria-hidden="true"></canvas>
+
+  <!-- Phones: top bar -->
+  <header class="sd-shell-topbar">
+    <button class="sd-btn sd-btn-ghost sd-btn-icon" data-sd-shell="drawer" aria-controls="shell-rail" aria-label="Open navigation"><svg><use href="#i-menu"/></svg></button>
+    <a href="./index.html" class="sd-wordmark" aria-label="ACME home"><svg class="sd-mark" style="width:22px;height:22px"><use href="#i-mark"/></svg> ACME</a>
+    <span class="sd-shell-topbar-label" data-page-label>Projects</span>
+    <button class="sd-btn sd-btn-ghost sd-btn-icon" data-sd-open="palette" aria-label="Search"><svg><use href="#i-search"/></svg></button>
+  </header>
+
+  <!-- Rail -->
+  <nav class="sd-rail" id="shell-rail" aria-label="Sections" data-sd-corners="bottom" data-sd-corners-size="200">
+    <a class="sd-rail-home" href="./index.html" aria-label="ACME home"><svg class="sd-mark"><use href="#i-mark"/></svg></a>
+    <button class="sd-rail-item" style="margin-top:8px" data-sd-open="palette" aria-label="Search (Ctrl K)">
+      <svg><use href="#i-search"/></svg><span><kbd>Ctrl K</kbd></span>
+    </button>
+    <div class="sd-rail-sep" style="margin-block:8px"></div>
+    <div class="sd-rail-list">
+      <a class="sd-rail-item" href="#" data-sd-section="projects" aria-current="true"><svg><use href="#i-projects"/></svg><span>Projects</span></a>
+      <a class="sd-rail-item" href="#" data-sd-section="monitors"><svg><use href="#i-monitor"/></svg><span>Monitors</span><span class="sd-dot" data-tone="pending" aria-label="2 monitors need attention"></span></a>
+      <a class="sd-rail-item" href="#" data-sd-section="history"><svg><use href="#i-history"/></svg><span>History</span></a>
+      <a class="sd-rail-item" href="#" data-sd-section="teams"><svg><use href="#i-teams"/></svg><span>Teams</span></a>
+      <a class="sd-rail-item" href="#" data-sd-section="settings"><svg><use href="#i-settings"/></svg><span>Settings</span></a>
+    </div>
+    <div class="sd-rail-tools">
+      <button class="sd-rail-item" data-sd-rain-toggle data-sd-tip="Digital rain" data-sd-tip-side="right" aria-label="Digital rain" aria-pressed="false"><svg><use href="#i-rain"/></svg></button>
+      <button class="sd-rail-item" data-sd-theme-cycle data-sd-tip="Next theme (Shift+T)" data-sd-tip-side="right" aria-label="Next theme"><svg><use href="#i-theme"/></svg></button>
+      <a class="sd-rail-item" href="./index.html" data-sd-tip="Components" data-sd-tip-side="right" aria-label="Components"><svg><use href="#i-help"/></svg></a>
+      <button class="sd-rail-item" popovertarget="account-menu" aria-haspopup="menu" aria-expanded="false" aria-label="Account"><span class="sd-avatar" data-tone="success">JD</span></button>
+    </div>
+  </nav>
+  <div popover id="account-menu" class="sd-popover" data-sd-side="right" data-sd-align="end">
+    <div class="sd-menu" role="menu" aria-label="Account">
+      <div class="sd-menu-label" role="presentation">jane@acme.example</div>
+      <button role="menuitem">Profile</button>
+      <button role="menuitem">Notifications <span class="sd-count" data-tone="danger">2</span></button>
+      <button role="menuitem">Keyboard shortcuts <span class="sd-menu-hint">?</span></button>
+      <hr class="sd-menu-sep">
+      <button role="menuitem">Log out</button>
+    </div>
+  </div>
+
+  <!-- Sidebar: one panel per rail section -->
+  <aside class="sd-sidebar" aria-label="Section pages">
+    <div class="sd-sidebar-panel" data-section="projects">
+      <div class="sd-sidebar-head"><svg><use href="#i-projects"/></svg><span class="sd-sidebar-title">Projects</span>
+        <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="sidebar" data-sd-key="[" aria-label="Collapse sidebar"><svg><use href="#i-collapse"/></svg></button></div>
+      <nav class="sd-sidebar-body" data-sd-corners="bottom" data-sd-corners-size="200" aria-label="Project pages">
+        <details class="sd-sidebar-group" open>
+          <summary>Views <span class="sd-count">4</span></summary>
+          <a class="sd-sidebar-link" href="#" aria-current="page">All items <span class="sd-count">108</span></a>
+          <a class="sd-sidebar-link" href="#">Needs review <span class="sd-count" data-tone="danger">6</span></a>
+          <a class="sd-sidebar-link" href="#">Saved <span class="sd-count">3</span></a>
+          <a class="sd-sidebar-link" href="#">Changes requested <span class="sd-count">2</span></a>
+        </details>
+        <details class="sd-sidebar-group" open>
+          <summary>Projects <span class="sd-count">4</span></summary>
+          <a class="sd-sidebar-link" href="#"><svg><use href="#i-folder"/></svg> Website <span class="sd-count">41</span></a>
+          <a class="sd-sidebar-link" href="#"><svg><use href="#i-folder"/></svg> Mobile app <span class="sd-count">37</span></a>
+          <a class="sd-sidebar-link" href="#"><svg><use href="#i-folder"/></svg> Billing <span class="sd-count">22</span></a>
+          <a class="sd-sidebar-link" href="#"><svg><use href="#i-folder"/></svg> Support <span class="sd-count">8</span></a>
+        </details>
+        <details class="sd-sidebar-group" open>
+          <summary>Online now <span class="sd-count">3</span></summary>
+          <a class="sd-sidebar-link" href="#"><span class="sd-avatar sd-avatar-sm" data-tone="success">JD</span> You <span class="sd-count">#21</span></a>
+          <a class="sd-sidebar-link" href="#"><span class="sd-avatar sd-avatar-sm" data-tone="extra">AL</span> Alex <span class="sd-count">#23</span></a>
+          <a class="sd-sidebar-link" href="#"><span class="sd-avatar sd-avatar-sm" data-tone="warning">SK</span> Sam <span class="sd-count" data-sam>#25</span></a>
+        </details>
+      </nav>
+      <div class="sd-sidebar-foot">acme.example · 4 projects</div>
+    </div>
+
+    <div class="sd-sidebar-panel" data-section="monitors" hidden>
+      <div class="sd-sidebar-head"><svg><use href="#i-monitor"/></svg><span class="sd-sidebar-title">Monitors</span>
+        <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="sidebar" data-sd-key="[" aria-label="Collapse sidebar"><svg><use href="#i-collapse"/></svg></button></div>
+      <nav class="sd-sidebar-body" data-sd-corners="bottom" data-sd-corners-size="200" aria-label="Monitor pages">
+        <details class="sd-sidebar-group" open>
+          <summary>Status <span class="sd-count">3</span></summary>
+          <a class="sd-sidebar-link" href="#" aria-current="page">Needs attention <span class="sd-count" data-tone="pending">2</span></a>
+          <a class="sd-sidebar-link" href="#">Healthy <span class="sd-count">11</span></a>
+          <a class="sd-sidebar-link" href="#">Down <span class="sd-count" data-tone="danger">1</span></a>
+        </details>
+      </nav>
+    </div>
+
+    <div class="sd-sidebar-panel" data-section="history" hidden>
+      <div class="sd-sidebar-head"><svg><use href="#i-history"/></svg><span class="sd-sidebar-title">History</span>
+        <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="sidebar" data-sd-key="[" aria-label="Collapse sidebar"><svg><use href="#i-collapse"/></svg></button></div>
+      <nav class="sd-sidebar-body" data-sd-corners="bottom" data-sd-corners-size="200" aria-label="History pages">
+        <details class="sd-sidebar-group" open>
+          <summary>Outcome <span class="sd-count">3</span></summary>
+          <a class="sd-sidebar-link" href="#" aria-current="page">Approved <span class="sd-count" data-tone="success">412</span></a>
+          <a class="sd-sidebar-link" href="#">Changes requested <span class="sd-count">38</span></a>
+          <a class="sd-sidebar-link" href="#">Declined <span class="sd-count">9</span></a>
+        </details>
+      </nav>
+    </div>
+
+    <div class="sd-sidebar-panel" data-section="teams" hidden>
+      <div class="sd-sidebar-head"><svg><use href="#i-teams"/></svg><span class="sd-sidebar-title">Teams</span>
+        <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="sidebar" data-sd-key="[" aria-label="Collapse sidebar"><svg><use href="#i-collapse"/></svg></button></div>
+      <nav class="sd-sidebar-body" data-sd-corners="bottom" data-sd-corners-size="200" aria-label="Teams">
+        <details class="sd-sidebar-group" open>
+          <summary>Teams <span class="sd-count">4</span></summary>
+          <a class="sd-sidebar-link" href="#" aria-current="page"><span class="sd-dot" data-tone="success"></span> Platform</a>
+          <a class="sd-sidebar-link" href="#"><span class="sd-dot" data-tone="success"></span> Design</a>
+          <a class="sd-sidebar-link" href="#"><span class="sd-dot" data-tone="success"></span> Data</a>
+          <a class="sd-sidebar-link" href="#"><span class="sd-dot" data-shape="hollow"></span> Sales <span class="sd-badge" data-tone="danger">risk</span></a>
+        </details>
+      </nav>
+    </div>
+
+    <div class="sd-sidebar-panel" data-section="settings" hidden>
+      <div class="sd-sidebar-head"><svg><use href="#i-settings"/></svg><span class="sd-sidebar-title">Settings</span>
+        <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="sidebar" data-sd-key="[" aria-label="Collapse sidebar"><svg><use href="#i-collapse"/></svg></button></div>
+      <nav class="sd-sidebar-body" data-sd-corners="bottom" data-sd-corners-size="200" aria-label="Settings pages">
+        <details class="sd-sidebar-group" open>
+          <summary>Workspace <span class="sd-count">4</span></summary>
+          <a class="sd-sidebar-link" href="#" aria-current="page">General</a>
+          <a class="sd-sidebar-link" href="#">Members</a>
+          <a class="sd-sidebar-link" href="#">Notifications</a>
+          <a class="sd-sidebar-link" href="#">API keys</a>
+        </details>
+      </nav>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="sd-shell-main" id="main">
+    <div class="sd-shell-header">
+      <div class="sd-shell-crumbs">
+        <button class="sd-btn sd-btn-icon sd-btn-sm sd-shell-pin" data-sd-shell="sidebar" data-sd-key="[" data-sd-tip="Show sidebar ([)" data-sd-tip-side="bottom" aria-label="Pin sidebar open"><svg><use href="#i-collapse"/></svg></button>
+        <ol class="sd-breadcrumb" aria-label="Breadcrumb">
+          <li><a href="./index.html" aria-label="Home"><svg><use href="#i-home"/></svg></a></li>
+          <li><span><svg><use href="#i-projects" data-crumb-icon/></svg><span data-crumb-section>Projects</span></span></li>
+          <li><span aria-current="page" data-crumb-page>All items</span></li>
+        </ol>
+      </div>
+      <div class="sd-shell-header-end">
+        <button class="sd-btn sd-btn-sm" data-run-batch data-sd-tip="Animates the rain while it runs" data-sd-tip-side="bottom"><svg><use href="#i-play"/></svg><span class="sd-desktop-only">Run checks</span></button>
+        <button class="sd-btn sd-btn-sm" data-sd-shell="aside" data-sd-key="]" aria-controls="detail-panel"><svg><use href="#i-panel"/></svg><span class="sd-desktop-only">Details</span> <kbd>]</kbd></button>
+      </div>
+    </div>
+
+    <div class="sd-shell-content" data-sd-corners data-sd-edges>
+      <div class="max-w-column">
+        <header class="sd-header">
+          <h1 class="sd-display"><span data-open>32</span> open. <em><span data-done>8</span> done.</em></h1>
+          <div class="sd-split">
+            <nav class="sd-nav" aria-label="Filters">
+              <a href="#" aria-current="page">All</a>
+              <a href="#">Needs review</a>
+              <a href="#">Changes requested</a>
+              <a href="#">History</a>
+            </nav>
+            <div class="sd-cells" data-cells aria-hidden="true"></div>
+          </div>
+        </header>
+
+        <div class="flex pb-2"><button class="sd-pill" type="button">↑ <b>21</b> new above <kbd>Shift+N</kbd></button></div>
+        <div data-feed></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Right panel -->
+  <aside class="sd-shell-aside" id="detail-panel" aria-label="Item details">
+    <div class="sd-shell-aside-head"><span class="flex-1">Item details</span><span class="sd-subtle text-sm font-normal" data-item>#21</span>
+      <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="aside" aria-label="Close details"><svg><use href="#i-close"/></svg></button></div>
+    <div class="sd-shell-aside-section text-sm sd-subtle">These settings apply to this item only. Workspace defaults cover everything else.</div>
+    <div class="sd-shell-aside-section sd-field">
+      <span class="sd-field-label">Priority <span class="sd-field-aside">changed</span></span>
+      <div class="sd-seg sd-seg-sm" data-sd-seg><button type="button" aria-pressed="false">low</button><button type="button" aria-pressed="true">normal</button><button type="button" aria-pressed="false">high</button></div>
+    </div>
+    <div class="sd-shell-aside-section sd-field">
+      <span class="sd-field-label">Due</span>
+      <div class="sd-seg sd-seg-sm" data-sd-seg><button type="button" aria-pressed="false">today</button><button type="button" aria-pressed="true">this week</button><button type="button" aria-pressed="false">later</button></div>
+    </div>
+    <div class="sd-shell-aside-section sd-field">
+      <span class="sd-field-label">Notify me</span>
+      <div class="sd-seg sd-seg-sm" data-sd-seg><button type="button" aria-pressed="true">important</button><button type="button" aria-pressed="false">all</button><button type="button" aria-pressed="false">off</button></div>
+    </div>
+    <div class="sd-shell-aside-section sd-field">
+      <label class="sd-field-label" for="change-note">Request changes</label>
+      <textarea id="change-note" placeholder="What should change?"></textarea>
+      <div class="sd-actions"><button class="sd-btn sd-btn-sm" data-tone="danger" data-request-changes>Request changes</button><button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-shell="aside">Cancel</button></div>
+    </div>
+    <div class="p-4 mt-auto"><button class="sd-btn sd-btn-link">Reset to workspace defaults</button></div>
+  </aside>
+
+  <!-- Status bar -->
+  <footer class="sd-statusbar sd-shell-status">
+    <span><kbd>N</kbd> next</span>
+    <span><kbd>j</kbd><kbd>k</kbd> move</span>
+    <span><kbd>a</kbd> approve</span>
+    <span><kbd>↵</kbd> details</span>
+    <span><kbd>[</kbd> sidebar</span>
+    <span><kbd>]</kbd> panel</span>
+    <span class="sd-status" data-tone="success" data-live>Sam viewing #25 · Alex reviewing #23</span>
+    <span class="sd-statusbar-end"><span class="sd-fps" data-sd-fps data-sd-tip="Browser frame rate" data-sd-tip-side="top"><b>--</b> fps</span> <span aria-hidden="true">·</span> v1.0 · 3 online</span>
+  </footer>
+
+  <div class="sd-shell-scrim" data-sd-shell="close"></div>
+</div>
+
+<!-- Command palette -->
+<dialog class="sd-command" id="palette" aria-label="Search" data-sd-palette>
+  <input type="search" placeholder="Search pages and items" aria-label="Search">
+  <div class="sd-menu" role="listbox" aria-label="Results"></div>
+  <p class="sd-command-foot">↑↓ to move · ↵ to open · Esc to close</p>
+</dialog>
+
+</body>
+</html>

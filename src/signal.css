@@ -1,0 +1,26 @@
+/*
+ * Signal design library, Tailwind v4 entry.
+ *
+ *   @import "tailwindcss";
+ *   @import "signal-design";
+ *
+ * Import after tailwindcss so the tokens override Tailwind's defaults.
+ * Apps without Tailwind link dist/signal.css instead.
+ */
+@import "./tokens.css";
+@import "./base.css";
+@import "./components/tone.css";
+@import "./components/typography.css";
+@import "./components/buttons.css";
+@import "./components/indicators.css";
+@import "./components/forms.css";
+@import "./components/navigation.css";
+@import "./components/feedback.css";
+@import "./components/data.css";
+@import "./components/overlays.css";
+@import "./components/layout.css";
+@import "./components/shell.css";
+@import "./components/blocks.css";
+@import "./components/conversation.css";
+@import "./components/inputs.css";
+@import "./components/motion.css";

@@ -1,0 +1,188 @@
+@layer components {
+  /*
+   * Buttons. The default is a 1px hairline. One solid button per view:
+   * sd-btn-primary (solid fg, e.g. Approve). Meaning comes from data-tone.
+   */
+  .sd-btn {
+    --btn-fg: var(--sd-fg);
+    --btn-bg: transparent;
+    --btn-border: var(--sd-line-strong);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 34px;
+    padding: 7px 16px;
+    border: 1px solid var(--btn-border);
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+    font: inherit;
+    font-size: var(--text-base);
+    line-height: 22px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color 120ms var(--ease-out),
+      border-color 120ms var(--ease-out),
+      color 120ms var(--ease-out),
+      opacity 120ms var(--ease-out);
+  }
+  .sd-btn:hover {
+    --btn-bg: var(--sd-raised);
+    --btn-border: var(--sd-fg-faint);
+  }
+  .sd-btn:active {
+    transform: translateY(1px);
+  }
+
+  .sd-btn-primary {
+    --btn-fg: var(--sd-on-primary);
+    --btn-bg: var(--sd-primary);
+    --btn-border: transparent;
+    font-weight: 600;
+  }
+  .sd-btn-primary:hover {
+    --btn-bg: var(--sd-primary);
+    --btn-border: transparent;
+    opacity: 0.88;
+  }
+
+  /* Toned hairline: danger = Reject, success = Approve in a green-first app. */
+  .sd-btn[data-tone] {
+    --btn-fg: var(--tone);
+    --btn-border: color-mix(in srgb, var(--tone) 40%, transparent);
+  }
+  .sd-btn[data-tone]:hover {
+    --btn-bg: color-mix(in srgb, var(--tone) 8%, transparent);
+    --btn-border: color-mix(in srgb, var(--tone) 70%, transparent);
+  }
+  .sd-btn-primary[data-tone] {
+    --btn-fg: var(--sd-canvas);
+    --btn-bg: var(--tone);
+    --btn-border: transparent;
+  }
+  .sd-btn-primary[data-tone]:hover {
+    --btn-bg: var(--tone);
+    --btn-border: transparent;
+  }
+
+  .sd-btn-ghost {
+    --btn-border: transparent;
+  }
+  .sd-btn-ghost:hover {
+    --btn-border: transparent;
+  }
+
+  /* Text-only action, e.g. "Reset to defaults". */
+  .sd-btn-link {
+    --btn-border: transparent;
+    min-height: 0;
+    padding: 0;
+    color: var(--sd-fg-subtle);
+    text-decoration: underline;
+    text-decoration-color: var(--sd-line-strong);
+    text-underline-offset: 3px;
+  }
+  .sd-btn-link:hover {
+    --btn-bg: transparent;
+    --btn-border: transparent;
+    color: var(--sd-fg);
+  }
+
+  .sd-btn-sm {
+    min-height: 26px;
+    padding: 3px 10px;
+    font-size: var(--text-sm);
+    gap: 7px;
+  }
+  .sd-btn-lg {
+    min-height: 44px;
+    padding: 11px 22px;
+    font-size: var(--text-md);
+  }
+  .sd-btn-block {
+    display: flex;
+    width: 100%;
+  }
+  .sd-btn-icon {
+    width: 34px;
+    padding: 0;
+  }
+  .sd-btn-icon.sd-btn-sm {
+    width: 26px;
+  }
+  .sd-btn-icon.sd-btn-lg {
+    width: 44px;
+  }
+  .sd-btn svg {
+    width: 16px;
+    height: 16px;
+    max-width: none;
+    flex-shrink: 0;
+  }
+
+  .sd-btn:disabled,
+  .sd-btn[aria-disabled="true"] {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+  /* Busy is a state, not an animation: dim it and say so. */
+  .sd-btn[aria-busy="true"] {
+    opacity: 0.7;
+    cursor: progress;
+  }
+  .sd-btn[aria-busy="true"]::after {
+    content: "\2026";
+  }
+
+  /* The kbd hint inside a button takes the button's color. */
+  .sd-btn .sd-kbd,
+  .sd-btn kbd {
+    border-color: color-mix(in srgb, currentColor 35%, transparent);
+    color: inherit;
+  }
+
+  /* Joined buttons. */
+  .sd-btn-group {
+    display: inline-flex;
+  }
+  .sd-btn-group > .sd-btn + .sd-btn {
+    margin-inline-start: -1px;
+  }
+  .sd-btn-group > .sd-btn:hover,
+  .sd-btn-group > .sd-btn:focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* A row of actions. */
+  .sd-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+  .sd-actions-end {
+    justify-content: flex-end;
+  }
+
+  /* Keyboard key: a hairline box. Also the default for bare <kbd>. */
+  .sd-kbd {
+    display: inline-block;
+    min-width: 20px;
+    padding: 1px 6px;
+    border: 1px solid var(--sd-line-strong);
+    background: transparent;
+    color: var(--sd-fg-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0;
+    text-align: center;
+    text-transform: none;
+  }
+}

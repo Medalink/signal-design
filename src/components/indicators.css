@@ -1,0 +1,204 @@
+@layer components {
+  /*
+   * Square marker. Solid = a fact (irreversible, costly), hollow = nothing
+   * to flag, dashed = unproven. <span class="sd-dot" data-tone="danger">
+   */
+  .sd-dot {
+    display: inline-block;
+    flex-shrink: 0;
+    width: 6px;
+    height: 6px;
+    background: var(--tone, var(--sd-fg-subtle));
+    vertical-align: 0.15em;
+  }
+  .sd-dot[data-shape="hollow"] {
+    background: transparent;
+    border: 1px solid var(--tone, var(--sd-line-strong));
+  }
+  .sd-dot[data-shape="dashed"] {
+    background: transparent;
+    border: 1px dashed var(--tone, var(--sd-fg-subtle));
+  }
+  .sd-dot-lg {
+    width: 8px;
+    height: 8px;
+  }
+
+  /* RISK, PENDING, v0.1 ... */
+  .sd-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 7px;
+    border: 1px solid color-mix(in srgb, var(--tone, var(--sd-fg-subtle)) 45%, transparent);
+    color: var(--tone, var(--sd-fg-subtle));
+    font-size: var(--text-2xs);
+    line-height: 18px;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    white-space: nowrap;
+    vertical-align: 0.1em;
+  }
+  .sd-badge-solid {
+    border-color: transparent;
+    background: var(--tone, var(--sd-fg-subtle));
+    color: var(--sd-canvas);
+    font-weight: 600;
+  }
+
+  /* A removable token or filter value. */
+  .sd-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 28px;
+    padding: 3px 10px;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-surface);
+    color: var(--sd-fg);
+    font-size: var(--text-sm);
+    white-space: nowrap;
+  }
+  .sd-chip b,
+  .sd-chip .sd-chip-key {
+    font-weight: 400;
+    color: var(--sd-fg-subtle);
+  }
+  .sd-chip > button {
+    display: inline-grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+    margin-inline-end: -4px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--sd-fg-subtle);
+    cursor: pointer;
+  }
+  .sd-chip > button:hover {
+    color: var(--sd-fg);
+  }
+  .sd-chip[aria-pressed="true"],
+  .sd-chip[aria-checked="true"] {
+    border-color: var(--sd-fg);
+  }
+  button.sd-chip {
+    cursor: pointer;
+  }
+
+  /* Counter pill: "↑ 21 NEW ABOVE  ⇧N" */
+  .sd-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 100%;
+    padding: 5px 12px;
+    border: 1px solid var(--sd-line);
+    background: var(--sd-canvas);
+    color: var(--sd-fg-muted);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .sd-pill b {
+    color: var(--sd-fg);
+    font-weight: 600;
+  }
+  button.sd-pill {
+    cursor: pointer;
+  }
+  button.sd-pill:hover {
+    border-color: var(--sd-line-strong);
+    color: var(--sd-fg);
+  }
+
+  /* Square avatar. Tone colors the fill. */
+  .sd-avatar {
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    overflow: hidden;
+    background: var(--tone, var(--sd-raised));
+    color: var(--sd-canvas);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    user-select: none;
+  }
+  .sd-avatar:not([data-tone]) {
+    color: var(--sd-fg-muted);
+    border: 1px solid var(--sd-line-strong);
+  }
+  .sd-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .sd-avatar-sm { width: 22px; height: 22px; font-size: 11px; }
+  .sd-avatar-lg { width: 34px; height: 34px; font-size: 15px; }
+  .sd-avatar-xl { width: 48px; height: 48px; font-size: var(--text-md); }
+
+  .sd-avatar-stack {
+    display: inline-flex;
+  }
+  .sd-avatar-stack > .sd-avatar {
+    outline: 2px solid var(--sd-canvas);
+  }
+  .sd-avatar-stack > .sd-avatar + .sd-avatar {
+    margin-inline-start: -2px;
+  }
+
+  /* Inline status: a dot and a word. */
+  .sd-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--text-sm);
+    color: var(--sd-fg-muted);
+  }
+  .sd-status::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: var(--tone, var(--sd-fg-subtle));
+  }
+
+  /* A count next to a nav item. */
+  .sd-count {
+    display: inline-block;
+    min-width: 18px;
+    padding: 0 4px;
+    color: var(--tone, var(--sd-fg-subtle));
+    font-size: var(--text-xs);
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+  }
+
+  /* Frame rate: <span class="sd-fps" data-sd-fps><b>--</b> fps</span> */
+  .sd-fps {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: default;
+    user-select: none;
+  }
+  .sd-fps > b {
+    min-width: 2ch;
+    color: var(--tone, var(--sd-fg-subtle));
+    font-size: var(--text-sm);
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+    text-align: end;
+  }
+}

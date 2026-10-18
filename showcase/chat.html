@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Signal Chat Example</title>
+  <script>
+    try { const t = localStorage.getItem("sd-theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
+  </script>
+  <link rel="stylesheet" href="./app.css">
+  <script type="module" src="./chat.js"></script>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-mark" viewBox="0 0 28 28"><rect x="1" y="1" width="26" height="26" fill="none" stroke="currentColor" stroke-opacity=".3"/><rect x="6" y="15" width="4" height="7" fill="currentColor" fill-opacity=".45"/><rect x="12" y="11" width="4" height="11" fill="currentColor" fill-opacity=".7"/><rect x="18" y="6" width="4" height="16" fill="currentColor"/></symbol>
+    <symbol id="i-dm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3.5" y="5.5" width="17" height="11"/><path d="M8 16.5v3l3-3"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-hash" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M6 2.5 5 13.5M11 2.5l-1 11M2.5 6h11M2 10h11"/></symbol>
+    <symbol id="i-voice" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="6" y="2" width="4" height="8"/><path d="M3.5 8v.5a4.5 4.5 0 0 0 9 0V8M8 13v1.5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="11" height="11"/><path d="M15 15l5.5 5.5"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M6 2.5h4l-.5 4 2.5 2v1.5H4V8.5l2.5-2zM8 10v4"/></symbol>
+    <symbol id="i-people" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2.5" y="3" width="5" height="5"/><rect x="9" y="5" width="4.5" height="4.5"/><path d="M1.5 13.5v-2h7v2M8.5 13.5v-1.5h6v1.5"/></symbol>
+    <symbol id="i-reply" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6.5 4 2.5 8l4 4M3 8h7a3.5 3.5 0 0 1 3.5 3.5V13"/></symbol>
+    <symbol id="i-smile" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2.5" y="2.5" width="11" height="11"/><path d="M5.5 9.5h5M6 6h.01M10 6h.01" stroke-linecap="square"/></symbol>
+    <symbol id="i-more" viewBox="0 0 16 16" fill="currentColor"><rect x="2.5" y="7" width="2" height="2"/><rect x="7" y="7" width="2" height="2"/><rect x="11.5" y="7" width="2" height="2"/></symbol>
+    <symbol id="i-attach" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-send" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2.5l12 5.5-12 5.5 2-5.5z"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-collapse" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 4L4 8l4 4M12 4L8 8l4 4"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+  </defs>
+</svg>
+
+<div class="sd-shell" id="shell" data-aside="open">
+  <canvas class="sd-rain" data-sd-rain data-sd-rain-style="squares" aria-hidden="true"></canvas>
+
+  <header class="sd-shell-topbar">
+    <button class="sd-btn sd-btn-ghost sd-btn-icon" data-sd-shell="drawer" aria-label="Open navigation"><svg><use href="#i-menu"/></svg></button>
+    <a href="./index.html" class="sd-wordmark"><svg class="sd-mark" style="width:22px;height:22px"><use href="#i-mark"/></svg> ACME</a>
+    <span class="sd-shell-topbar-label"># general</span>
+    <button class="sd-btn sd-btn-ghost sd-btn-icon" data-sd-shell="aside" aria-label="Members"><svg><use href="#i-people"/></svg></button>
+  </header>
+
+  <!-- Rail: workspaces as avatars, with unread marks and mention counts -->
+  <nav class="sd-rail" aria-label="Workspaces" data-sd-corners="bottom" data-sd-corners-size="200">
+    <a class="sd-rail-home" href="./index.html" aria-label="Home"><svg class="sd-mark"><use href="#i-mark"/></svg></a>
+    <div class="sd-rail-list" style="padding-top:12px">
+      <a class="sd-rail-item" href="#" aria-label="Direct messages" data-sd-tip="Direct messages" data-sd-tip-side="right"><svg><use href="#i-dm"/></svg><span>Direct</span><span class="sd-badge-count" data-corner data-tone="danger" style="right:14px;top:4px">2</span></a>
+      <div class="sd-rail-sep" style="margin-block:4px"></div>
+      <a class="sd-rail-item" href="#" aria-current="true" data-sd-tip="Design" data-sd-tip-side="right"><span class="sd-avatar" data-tone="extra">DE</span><span>Design</span></a>
+      <a class="sd-rail-item" href="#" data-unread data-sd-tip="Platform" data-sd-tip-side="right"><span class="sd-avatar" data-tone="accent">PL</span><span>Platform</span></a>
+      <a class="sd-rail-item" href="#" data-sd-tip="Support" data-sd-tip-side="right"><span class="sd-avatar" data-tone="warning">SU</span><span>Support</span><span class="sd-badge-count" data-corner style="right:14px;top:4px">7</span></a>
+      <a class="sd-rail-item" href="#" data-sd-tip="New workspace" data-sd-tip-side="right" aria-label="New workspace"><svg><use href="#i-plus"/></svg><span>New</span></a>
+    </div>
+    <div class="sd-rail-tools">
+      <button class="sd-rail-item" data-sd-theme-cycle data-sd-tip="Next theme" data-sd-tip-side="right" aria-label="Next theme"><span class="sd-avatar" data-tone="success" data-status="online">JD</span></button>
+    </div>
+  </nav>
+
+  <!-- Sidebar: channels, a voice channel with people in it, direct messages -->
+  <aside class="sd-sidebar" aria-label="Channels">
+    <div class="sd-sidebar-panel">
+      <div class="sd-sidebar-head"><span class="sd-sidebar-title">Design</span>
+        <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="sidebar" data-sd-key="[" aria-label="Collapse sidebar"><svg><use href="#i-collapse"/></svg></button></div>
+      <nav class="sd-sidebar-body" data-sd-corners="bottom" data-sd-corners-size="200">
+        <div class="sd-item-group">Channels <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="New channel" data-sd-tip="New channel"><svg><use href="#i-plus"/></svg></button></div>
+        <a class="sd-sidebar-link" href="#" aria-current="page"><svg><use href="#i-hash"/></svg> general</a>
+        <a class="sd-sidebar-link" href="#" data-unread><svg><use href="#i-hash"/></svg> releases <span class="sd-badge-count" data-tone="danger">1</span></a>
+        <a class="sd-sidebar-link" href="#" data-unread><svg><use href="#i-hash"/></svg> research</a>
+        <a class="sd-sidebar-link" href="#" data-muted><svg><use href="#i-hash"/></svg> random</a>
+        <a class="sd-sidebar-link" href="#"><svg><use href="#i-voice"/></svg> standup <span class="sd-count">3</span></a>
+        <a class="sd-item sd-item-nested" href="#"><span class="sd-avatar sd-avatar-sm" data-tone="extra">AL</span><span class="sd-item-body"><span class="sd-item-title">Alex</span></span><span class="sd-item-end"><span class="sd-dot" data-tone="success"></span></span></a>
+        <a class="sd-item sd-item-nested" href="#"><span class="sd-avatar sd-avatar-sm" data-tone="warning">SK</span><span class="sd-item-body"><span class="sd-item-title">Sam</span></span><span class="sd-item-end">muted</span></a>
+        <a class="sd-item sd-item-nested" href="#"><span class="sd-avatar sd-avatar-sm" data-tone="success">JD</span><span class="sd-item-body"><span class="sd-item-title">You</span></span></a>
+
+        <div class="sd-item-group">Direct messages</div>
+        <a class="sd-item" href="#" data-unread><span class="sd-avatar sd-avatar-sm" data-tone="extra" data-status="online">AL</span><span class="sd-item-body"><span class="sd-item-title">Alex</span></span><span class="sd-item-end"><span class="sd-badge-count" data-tone="danger">2</span></span></a>
+        <a class="sd-item" href="#"><span class="sd-avatar sd-avatar-sm" data-tone="warning" data-status="away">SK</span><span class="sd-item-body"><span class="sd-item-title">Sam</span></span></a>
+        <a class="sd-item" href="#"><span class="sd-avatar sd-avatar-sm" data-tone="accent" data-status="offline">TP</span><span class="sd-item-body"><span class="sd-item-title">Taylor</span></span></a>
+      </nav>
+      <div class="sd-sidebar-foot">acme.example · encrypted</div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="sd-shell-main" id="main">
+    <div class="sd-shell-header">
+      <div class="sd-shell-crumbs">
+        <button class="sd-btn sd-btn-icon sd-btn-sm sd-shell-pin" data-sd-shell="sidebar" data-sd-key="[" aria-label="Pin sidebar open"><svg><use href="#i-collapse"/></svg></button>
+        <ol class="sd-breadcrumb" aria-label="Breadcrumb">
+          <li><a href="./index.html" aria-label="Home"><svg><use href="#i-home"/></svg></a></li>
+          <li><span>Design</span></li>
+          <li><span aria-current="page"><svg><use href="#i-hash"/></svg> general</span></li>
+        </ol>
+      </div>
+      <div class="sd-shell-header-end">
+        <button class="sd-btn sd-btn-sm sd-btn-icon" data-sd-open="palette" data-sd-tip="Search (Ctrl K)" data-sd-tip-side="bottom" aria-label="Search"><svg><use href="#i-search"/></svg></button>
+        <button class="sd-btn sd-btn-sm sd-btn-icon" data-sd-tip="Pinned" data-sd-tip-side="bottom" aria-label="Pinned" data-show-tab="pinned"><svg><use href="#i-pin"/></svg></button>
+        <button class="sd-btn sd-btn-sm" data-sd-shell="aside" data-sd-key="]" aria-label="Members"><svg><use href="#i-people"/></svg><span class="sd-desktop-only">Members</span> <kbd>]</kbd></button>
+      </div>
+    </div>
+
+    <div class="sd-shell-content" data-sd-corners data-sd-edges style="padding:0;display:flex;flex-direction:column">
+      <div class="sd-banner" data-tone="pending" role="status" style="border-inline:0;border-top:0">
+        <b>Update ready</b> Version 1.4 is downloaded and will install on restart.
+        <div class="sd-banner-actions"><button class="sd-btn sd-btn-sm">Restart</button><button class="sd-btn sd-btn-sm sd-btn-ghost" data-dismiss aria-label="Dismiss">Later</button></div>
+      </div>
+
+      <div class="flex-1 overflow-y-auto py-4" data-feed aria-label="Messages" role="log">
+        <div class="sd-divider" style="margin:8px 16px">Yesterday</div>
+
+        <article class="sd-message" data-sd-contextmenu="msg-menu">
+          <span class="sd-avatar" data-tone="extra">AL</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>Alex</b><span class="sd-badge">Lead</span><time>16:02</time></header>
+            <div class="sd-message-text">Here is the spec for the new onboarding flow. The second screen still needs copy.</div>
+            <div class="sd-file"><span class="sd-file-type">pdf</span><span class="sd-file-body"><span class="sd-file-name">onboarding-flow-v3.pdf</span><span class="sd-file-meta">2.4 MB</span></span><button class="sd-btn sd-btn-sm">Open</button></div>
+            <div class="sd-reactions"><button data-sd-reaction aria-pressed="true">👍 <b>3</b></button><button data-sd-reaction aria-pressed="false">👀 <b>1</b></button><button class="sd-btn-ghost" aria-label="Add reaction" popovertarget="emoji" data-sd-side="top"><svg width="14" height="14"><use href="#i-smile"/></svg></button></div>
+          </div>
+          <div class="sd-message-actions" role="toolbar" aria-label="Message actions">
+            <button aria-label="React" popovertarget="emoji"><svg><use href="#i-smile"/></svg></button>
+            <button aria-label="Reply" data-reply><svg><use href="#i-reply"/></svg></button>
+            <button aria-label="More" popovertarget="msg-menu"><svg><use href="#i-more"/></svg></button>
+          </div>
+        </article>
+        <article class="sd-message" data-grouped data-sd-contextmenu="msg-menu">
+          <time>16:03</time>
+          <div class="sd-message-body"><div class="sd-message-text">Also, the reference board is pinned. <span class="sd-message-edited">(edited)</span></div></div>
+          <div class="sd-message-actions" role="toolbar" aria-label="Message actions"><button aria-label="React" popovertarget="emoji"><svg><use href="#i-smile"/></svg></button><button aria-label="Reply" data-reply><svg><use href="#i-reply"/></svg></button><button aria-label="More" popovertarget="msg-menu"><svg><use href="#i-more"/></svg></button></div>
+        </article>
+
+        <div class="sd-event"><span class="sd-dot" data-shape="hollow"></span><b>Taylor</b> joined the channel <time>16:20</time></div>
+
+        <div class="sd-divider" style="margin:8px 16px">Today</div>
+
+        <article class="sd-message" data-sd-contextmenu="msg-menu">
+          <span class="sd-avatar" data-tone="warning">SK</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>Sam</b><time>09:14</time></header>
+            <div class="sd-message-text">Found a good write-up on empty states:</div>
+            <a class="sd-link-card" href="#"><span class="sd-link-card-site">acme.example</span><span class="sd-link-card-title">Designing empty states that teach</span><span class="sd-link-card-desc">Show what goes here, why it matters, and the one action that fills it.</span><span class="sd-link-card-thumb"></span></a>
+          </div>
+          <div class="sd-message-actions" role="toolbar" aria-label="Message actions"><button aria-label="React" popovertarget="emoji"><svg><use href="#i-smile"/></svg></button><button aria-label="Reply" data-reply><svg><use href="#i-reply"/></svg></button><button aria-label="More" popovertarget="msg-menu"><svg><use href="#i-more"/></svg></button></div>
+        </article>
+
+        <article class="sd-message" data-sd-contextmenu="msg-menu">
+          <span class="sd-avatar" data-tone="extra">AL</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>Alex</b><time>09:30</time></header>
+            <div class="sd-poll" data-sd-poll>
+              <p class="sd-poll-q">Which layout do we ship for onboarding?</p>
+              <button class="sd-poll-option" style="--share:62" aria-pressed="true">Three short steps <span>62%</span></button>
+              <button class="sd-poll-option" style="--share:25" aria-pressed="false">One long page <span>25%</span></button>
+              <button class="sd-poll-option" style="--share:13" aria-pressed="false">Skip it <span>13%</span></button>
+              <span class="sd-poll-meta">8 votes · closes in 2 days</span>
+            </div>
+          </div>
+          <div class="sd-message-actions" role="toolbar" aria-label="Message actions"><button aria-label="React" popovertarget="emoji"><svg><use href="#i-smile"/></svg></button><button aria-label="Reply" data-reply><svg><use href="#i-reply"/></svg></button><button aria-label="More" popovertarget="msg-menu"><svg><use href="#i-more"/></svg></button></div>
+        </article>
+
+        <div class="sd-marker" data-tone="danger" style="--tone: var(--sd-danger); margin: 4px 16px"><span style="color: var(--sd-danger); border-color: color-mix(in srgb, var(--sd-danger) 45%, transparent)">New</span></div>
+
+        <article class="sd-message" data-mention data-sd-contextmenu="msg-menu">
+          <span class="sd-avatar" data-tone="accent">TP</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>Taylor</b><time>10:05</time></header>
+            <div class="sd-reply"><b>Alex</b><span>Here is the spec for the new onboarding flow. The second screen still needs copy.</span></div>
+            <div class="sd-message-text"><span class="sd-mention">@Jane</span> can you take the copy for screen two? I can review this afternoon.</div>
+          </div>
+          <div class="sd-message-actions" role="toolbar" aria-label="Message actions"><button aria-label="React" popovertarget="emoji"><svg><use href="#i-smile"/></svg></button><button aria-label="Reply" data-reply><svg><use href="#i-reply"/></svg></button><button aria-label="More" popovertarget="msg-menu"><svg><use href="#i-more"/></svg></button></div>
+        </article>
+
+        <article class="sd-message" data-failed data-sd-contextmenu="msg-menu">
+          <span class="sd-avatar" data-tone="success">JD</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>Jane</b><time>10:07</time></header>
+            <div class="sd-message-text">On it. Draft by 2pm.</div>
+            <div class="sd-message-status">Not sent · <button class="sd-btn sd-btn-link" data-retry>Retry</button></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="px-4 pb-4 grid gap-2">
+        <span class="sd-typing" aria-live="polite"><i><b></b></i> Alex is typing…</span>
+        <form class="sd-composer" data-composer>
+          <div class="sd-composer-chips" data-chips></div>
+          <div class="sd-composer-row">
+            <button type="button" class="sd-btn sd-btn-ghost sd-btn-icon" aria-label="Attach file" data-sd-tip="Attach"><svg><use href="#i-attach"/></svg></button>
+            <textarea rows="1" data-sd-autogrow data-sd-enter-submit data-sd-suggest="mentions" placeholder="Message #general" aria-label="Message"></textarea>
+            <button type="button" class="sd-btn sd-btn-ghost sd-btn-icon" aria-label="Emoji" popovertarget="emoji" data-sd-side="top" data-sd-align="end"><svg><use href="#i-smile"/></svg></button>
+            <button class="sd-btn sd-btn-primary sd-btn-icon" aria-label="Send"><svg><use href="#i-send"/></svg></button>
+          </div>
+          <div class="sd-suggest" id="mentions" hidden>
+            <div class="sd-menu" role="listbox" aria-label="Mention someone">
+              <button type="button" role="option" data-value="Alex"><span class="sd-avatar sd-avatar-sm" data-tone="extra">AL</span> Alex</button>
+              <button type="button" role="option" data-value="Sam"><span class="sd-avatar sd-avatar-sm" data-tone="warning">SK</span> Sam</button>
+              <button type="button" role="option" data-value="Taylor"><span class="sd-avatar sd-avatar-sm" data-tone="accent">TP</span> Taylor</button>
+              <button type="button" role="option" data-value="channel">@channel <span class="sd-menu-hint">everyone here</span></button>
+            </div>
+          </div>
+        </form>
+        <p class="sd-composer-hint"><span><kbd>Enter</kbd> send</span><span><kbd>Shift</kbd>+<kbd>Enter</kbd> new line</span><span><kbd>@</kbd> mention</span></p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Right panel: members, call, pinned -->
+  <aside class="sd-shell-aside" aria-label="Channel details">
+    <div class="sd-shell-aside-head"><span class="flex-1"># general</span>
+      <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="aside" aria-label="Close panel"><svg><use href="#i-close"/></svg></button></div>
+    <div class="px-4">
+      <div class="sd-tabs" role="tablist" aria-label="Panel">
+        <button role="tab" aria-selected="true" aria-controls="tab-members" id="t-members">Members</button>
+        <button role="tab" aria-controls="tab-call" id="t-call">Call</button>
+        <button role="tab" aria-controls="tab-pinned" id="t-pinned">Pinned</button>
+      </div>
+    </div>
+    <div class="sd-tabpanel px-2" role="tabpanel" id="tab-members" aria-labelledby="t-members" style="padding-top:8px">
+      <div class="sd-item-group">Online <span>3</span></div>
+      <a class="sd-item" href="#"><span class="sd-avatar" data-tone="extra" data-status="online">AL</span><span class="sd-item-body"><span class="sd-item-title">Alex</span><span class="sd-item-sub">Lead</span></span></a>
+      <a class="sd-item" href="#"><span class="sd-avatar" data-tone="success" data-status="online">JD</span><span class="sd-item-body"><span class="sd-item-title">Jane</span><span class="sd-item-sub">Writing copy</span></span></a>
+      <a class="sd-item" href="#"><span class="sd-avatar" data-tone="warning" data-status="away">SK</span><span class="sd-item-body"><span class="sd-item-title">Sam</span><span class="sd-item-sub">Away for 20 min</span></span></a>
+      <div class="sd-item-group">Offline <span>1</span></div>
+      <a class="sd-item" href="#" data-muted><span class="sd-avatar" data-tone="accent" data-status="offline">TP</span><span class="sd-item-body"><span class="sd-item-title">Taylor</span></span></a>
+    </div>
+    <div class="sd-tabpanel px-4" role="tabpanel" id="tab-call" aria-labelledby="t-call" hidden>
+      <p class="sd-label mb-3">standup · 3 in call</p>
+      <div class="sd-tiles" style="grid-template-columns:1fr 1fr">
+        <div class="sd-tile" data-speaking><span class="sd-avatar" data-tone="extra">AL</span><span class="sd-tile-name">Alex</span></div>
+        <div class="sd-tile" data-muted><span class="sd-avatar" data-tone="warning">SK</span><span class="sd-tile-name">Sam</span></div>
+        <div class="sd-tile" data-hand><span class="sd-avatar" data-tone="success">JD</span><span class="sd-tile-name">You</span></div>
+      </div>
+      <div class="sd-actions mt-4"><button class="sd-btn sd-btn-sm">Mute</button><button class="sd-btn sd-btn-sm" data-tone="danger">Leave</button></div>
+    </div>
+    <div class="sd-tabpanel px-2" role="tabpanel" id="tab-pinned" aria-labelledby="t-pinned" hidden>
+      <a class="sd-item" href="#"><svg><use href="#i-pin"/></svg><span class="sd-item-body"><span class="sd-item-title">Reference board</span><span class="sd-item-sub">Alex · yesterday</span></span></a>
+      <a class="sd-item" href="#"><svg><use href="#i-pin"/></svg><span class="sd-item-body"><span class="sd-item-title">onboarding-flow-v3.pdf</span><span class="sd-item-sub">Alex · yesterday</span></span></a>
+    </div>
+  </aside>
+
+  <footer class="sd-statusbar sd-shell-status">
+    <span><kbd>Ctrl</kbd><kbd>K</kbd> search</span>
+    <span><kbd>[</kbd> sidebar</span>
+    <span><kbd>]</kbd> members</span>
+    <span class="sd-status" data-tone="success">Connected</span>
+    <span class="sd-statusbar-end"><span class="sd-fps" data-sd-fps><b>--</b> fps</span> · v1.4</span>
+  </footer>
+  <div class="sd-shell-scrim" data-sd-shell="close"></div>
+</div>
+
+<!-- Emoji picker (a grid picker in a popover) -->
+<div popover id="emoji" class="sd-popover sd-popover-pad" data-sd-side="top">
+  <div class="sd-grid-picker" role="listbox" aria-label="Emoji" style="--cols:6" data-emoji>
+    <button role="option">👍</button><button role="option">👀</button><button role="option">🎉</button><button role="option">✅</button><button role="option">❤️</button><button role="option">🔥</button>
+    <button role="option">😂</button><button role="option">🙏</button><button role="option">🚀</button><button role="option">🤔</button><button role="option">👏</button><button role="option">💯</button>
+  </div>
+</div>
+
+<!-- Context menu for messages (right-click, or the ⋯ button) -->
+<div popover id="msg-menu" class="sd-popover">
+  <div class="sd-menu" role="menu" aria-label="Message">
+    <button role="menuitem" data-menu-reply>Reply <span class="sd-menu-hint">r</span></button>
+    <button role="menuitem">Copy text <span class="sd-menu-hint">c</span></button>
+    <button role="menuitem">Pin <span class="sd-menu-hint">p</span></button>
+    <hr class="sd-menu-sep">
+    <button role="menuitem" data-tone="danger">Delete</button>
+  </div>
+</div>
+
+<dialog class="sd-command" id="palette" aria-label="Search">
+  <input type="search" placeholder="Search messages and people" aria-label="Search">
+  <p class="sd-command-foot">Esc to close</p>
+</dialog>
+
+</body>
+</html>

@@ -1,0 +1,65 @@
+{
+  "name": "signal-design",
+  "version": "0.0.0",
+  "description": "Signal: a flat, square, mono design library for Tailwind CSS v4. Works in web apps, Tauri and anything that renders HTML.",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Medalink/signal-design.git"
+  },
+  "keywords": [
+    "design-system",
+    "tailwindcss",
+    "tailwind-v4",
+    "css",
+    "tauri",
+    "ui"
+  ],
+  "style": "./dist/signal.css",
+  "exports": {
+    ".": {
+      "style": "./src/signal.css",
+      "import": "./src/js/index.js",
+      "default": "./src/js/index.js"
+    },
+    "./css": "./src/signal.css",
+    "./dist/signal.css": "./dist/signal.css",
+    "./js": "./src/js/index.js",
+    "./js/*": "./src/js/*.js",
+    "./fonts/*": "./src/fonts/*"
+  },
+  "files": [
+    "src",
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "peerDependencies": {
+    "tailwindcss": "^4.3.0"
+  },
+  "peerDependenciesMeta": {
+    "tailwindcss": {
+      "optional": true
+    }
+  },
+  "scripts": {
+    "dev": "vite showcase",
+    "build:css": "tailwindcss -i src/standalone.css -o dist/signal.css --minify && node -e \"require('fs').cpSync('src/fonts','dist/fonts',{recursive:true})\"",
+    "build:showcase": "vite build showcase --outDir ../.showcase-dist --emptyOutDir",
+    "build": "pnpm build:css && pnpm build:showcase",
+    "prepack": "pnpm build:css",
+    "check": "node scripts/check.mjs"
+  },
+  "devDependencies": {
+    "@fontsource/source-code-pro": "5.3.1",
+    "@tailwindcss/cli": "4.3.3",
+    "@tailwindcss/vite": "4.3.3",
+    "playwright": "^1.64.1",
+    "tailwindcss": "^4.3.3",
+    "vite": "8.3.4"
+  }
+}

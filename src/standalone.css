@@ -1,0 +1,8 @@
+/*
+ * Prebuilt bundle for apps without Tailwind (plain HTML, Tauri, any
+ * framework). Built to dist/signal.css. Contains preflight, tokens, the
+ * element styles and every sd- component. No utilities: there is nothing
+ * to scan, so @source none keeps the file small.
+ */
+@import "tailwindcss" source(none);
+@import "./signal.css";

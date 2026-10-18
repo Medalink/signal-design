@@ -1,0 +1,149 @@
+@layer components {
+  /*
+   * Dialog: the native <dialog> is styled by the base layer. These classes
+   * add structure and sizes.
+   *   <dialog class="sd-dialog" id="confirm">
+   *     <header class="sd-dialog-head">Title <button data-sd-close>…</button></header>
+   *     <div class="sd-dialog-body">…</div>
+   *     <footer class="sd-dialog-foot">…</footer>
+   *   </dialog>
+   */
+  .sd-dialog {
+    width: 100%;
+    padding: 0;
+  }
+  .sd-dialog-sm { max-width: min(24rem, calc(100vw - 32px)); }
+  .sd-dialog-lg { max-width: min(48rem, calc(100vw - 32px)); }
+  .sd-dialog-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    border-block-end: 1px solid var(--sd-line);
+    font-size: var(--text-lg);
+    letter-spacing: var(--tracking-tight);
+  }
+  .sd-dialog-head > :last-child:not(:first-child) {
+    margin-inline-start: auto;
+  }
+  .sd-dialog-body {
+    padding: 20px;
+    color: var(--sd-fg-muted);
+  }
+  .sd-dialog-foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 14px 20px;
+    border-block-start: 1px solid var(--sd-line);
+  }
+
+  /* Sheet: a dialog pinned to the right edge (item settings, details). */
+  .sd-sheet {
+    width: min(22rem, 100vw);
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0 0 0 auto;
+    padding: 0;
+    border-block: 0;
+    border-inline-end: 0;
+    transform: none;
+  }
+  .sd-sheet:not([open]) {
+    transform: translateX(24px);
+  }
+  @starting-style {
+    .sd-sheet[open] {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+  }
+  .sd-sheet-left {
+    margin: 0 auto 0 0;
+    border-inline-start: 0;
+    border-inline-end: 1px solid var(--sd-line-strong);
+  }
+
+  /*
+   * Popover: a floating panel the JS positions next to its trigger.
+   *   <button popovertarget="m" data-sd-anchor>Open</button>
+   *   <div popover id="m" class="sd-popover">…</div>
+   */
+  .sd-popover {
+    position: fixed;
+    inset: auto;
+    margin: 0;
+    padding: 6px;
+    min-width: 180px;
+    max-width: min(360px, calc(100vw - 16px));
+    max-height: min(60dvh, 480px);
+    overflow: auto;
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 120ms var(--ease-out),
+      transform 120ms var(--ease-out),
+      overlay 120ms allow-discrete,
+      display 120ms allow-discrete;
+  }
+  .sd-popover:not(:popover-open) {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  @starting-style {
+    .sd-popover:popover-open {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+  }
+  .sd-popover-pad {
+    padding: 14px 16px;
+  }
+
+  /* Tooltip: plain text, positioned by the JS. */
+  .sd-tooltip {
+    position: fixed;
+    z-index: 70;
+    max-width: 240px;
+    padding: 4px 8px;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-overlay);
+    color: var(--sd-fg);
+    font-size: var(--text-sm);
+    line-height: 1.4;
+    pointer-events: none;
+    animation: sd-fade-in 120ms var(--ease-out);
+  }
+
+  /* Command panel: a centered dialog for search and quick choices. */
+  .sd-command {
+    position: fixed;
+    inset: 0;
+    width: min(520px, calc(100vw - 32px));
+    height: fit-content;
+    margin: auto;
+    padding: 16px;
+  }
+  .sd-command-head {
+    margin-block-end: 12px;
+    overflow: hidden;
+    font-size: var(--text-sm);
+    letter-spacing: var(--tracking-wider);
+    color: var(--sd-fg-subtle);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sd-command-head b {
+    font-weight: 400;
+    color: var(--sd-fg);
+  }
+  .sd-command-foot {
+    margin-block-start: 10px;
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--sd-fg-subtle);
+  }
+}

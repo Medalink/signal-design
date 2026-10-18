@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Signal Form Example</title>
+  <script>
+    try { const t = localStorage.getItem("sd-theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
+  </script>
+  <link rel="stylesheet" href="./app.css">
+  <script type="module" src="./form.js"></script>
+</head>
+<body>
+
+<header class="sd-topbar">
+  <a class="sd-wordmark" href="./index.html">ACME</a>
+  <nav class="sd-nav" aria-label="Examples">
+    <a href="./index.html">Components</a>
+    <a href="./shell.html">App shell</a>
+    <a href="./chat.html">Chat</a>
+    <a href="./form.html" aria-current="page">Form</a>
+    <a href="./landing.html">Landing</a>
+  </nav>
+  <div class="sd-topbar-end"><button class="sd-btn sd-btn-sm" data-sd-theme-cycle>Theme</button></div>
+</header>
+
+<main class="sd-page" style="max-width: var(--container-narrow)">
+  <header class="sd-header">
+    <span class="sd-wordmark">New workspace</span>
+    <h1 class="sd-display">Set up your team. <em>Three short steps.</em></h1>
+  </header>
+
+  <ol class="sd-steps" aria-label="Progress">
+    <li data-state="done">Account</li>
+    <li aria-current="step">Workspace</li>
+    <li>Invite</li>
+  </ol>
+
+  <form class="sd-form mt-10" data-form novalidate>
+    <div class="sd-note" data-tone="pending" hidden data-form-error role="alert">Check the highlighted fields.</div>
+
+    <div class="sd-form-row">
+      <div class="sd-field">
+        <label class="sd-field-label" for="ws-name">Workspace name</label>
+        <input id="ws-name" name="name" required minlength="3" placeholder="ACME Design">
+        <p class="sd-field-hint">Shown to everyone you invite.</p>
+        <p class="sd-field-error">Use at least 3 characters.</p>
+      </div>
+      <div class="sd-field">
+        <label class="sd-field-label" for="ws-url">Address</label>
+        <div class="sd-input-group">
+          <input id="ws-url" name="slug" required pattern="[a-z0-9-]+" placeholder="acme-design">
+          <span class="sd-addon">.acme.example</span>
+        </div>
+        <p class="sd-field-hint">Lowercase letters, numbers and dashes.</p>
+        <p class="sd-field-error">Only lowercase letters, numbers and dashes.</p>
+      </div>
+    </div>
+
+    <div class="sd-form-row">
+      <div class="sd-field">
+        <label class="sd-field-label" for="ws-tz">Time zone</label>
+        <div class="sd-combobox" data-sd-combobox>
+          <input id="ws-tz" role="combobox" aria-controls="tz-list" aria-expanded="false" aria-autocomplete="list" placeholder="Search time zones" autocomplete="off">
+          <input type="hidden" name="tz">
+          <div class="sd-menu sd-combobox-list" role="listbox" id="tz-list" hidden>
+            <div class="sd-menu-label" role="presentation">Americas</div>
+            <button type="button" role="option" data-value="America/Los_Angeles">Los Angeles · UTC−8</button>
+            <button type="button" role="option" data-value="America/Denver">Denver · UTC−7</button>
+            <button type="button" role="option" data-value="America/Chicago">Chicago · UTC−6</button>
+            <button type="button" role="option" data-value="America/New_York">New York · UTC−5</button>
+            <div class="sd-menu-label" role="presentation">Europe</div>
+            <button type="button" role="option" data-value="Europe/London">London · UTC+0</button>
+            <button type="button" role="option" data-value="Europe/Berlin">Berlin · UTC+1</button>
+            <div class="sd-menu-label" role="presentation">Asia Pacific</div>
+            <button type="button" role="option" data-value="Asia/Tokyo">Tokyo · UTC+9</button>
+            <button type="button" role="option" data-value="Australia/Sydney">Sydney · UTC+10</button>
+          </div>
+        </div>
+        <p class="sd-field-hint">Used for due dates and quiet hours.</p>
+      </div>
+      <div class="sd-field">
+        <label class="sd-field-label" for="ws-seats">Seats</label>
+        <div class="sd-number" data-sd-number>
+          <button type="button" data-step="-1" aria-label="Fewer seats">−</button>
+          <input id="ws-seats" name="seats" type="number" value="5" min="1" max="50">
+          <button type="button" data-step="1" aria-label="More seats">+</button>
+        </div>
+        <p class="sd-field-hint">$8 per seat per month. <span data-price>$40</span> total.</p>
+      </div>
+    </div>
+
+    <div class="sd-field">
+      <label class="sd-field-label" for="ws-labels">Default labels</label>
+      <div class="sd-tags" data-sd-tags data-name="labels">
+        <span class="sd-chip" data-value="design">design <button type="button" aria-label="Remove design">×</button><input type="hidden" name="labels" value="design"></span>
+        <span class="sd-chip" data-value="bug">bug <button type="button" aria-label="Remove bug">×</button><input type="hidden" name="labels" value="bug"></span>
+        <input id="ws-labels" placeholder="Add a label">
+      </div>
+      <p class="sd-field-hint">Enter or comma adds a label.</p>
+    </div>
+
+    <div class="sd-field">
+      <span class="sd-field-label">Plan</span>
+      <div class="sd-seg" role="radiogroup" aria-label="Plan">
+        <label><input type="radio" name="plan" value="starter"> Starter</label>
+        <label><input type="radio" name="plan" value="pro" checked> Pro</label>
+        <label><input type="radio" name="plan" value="enterprise"> Enterprise</label>
+      </div>
+    </div>
+
+    <fieldset class="sd-choices" style="border:0;padding:0">
+      <legend class="sd-field-label" style="margin-bottom:12px">Notifications</legend>
+      <label class="sd-check"><input type="checkbox" role="switch" name="digest" checked><span class="sd-check-text">Weekly digest<span class="sd-check-desc">A Monday summary of what changed.</span></span></label>
+      <label class="sd-check"><input type="checkbox" role="switch" name="mentions" checked><span class="sd-check-text">Mentions<span class="sd-check-desc">Notify me when someone @mentions me.</span></span></label>
+    </fieldset>
+
+    <div class="sd-field">
+      <span class="sd-field-label">Logo <span class="sd-field-aside">optional</span></span>
+      <label class="sd-dropzone"><input type="file" accept="image/*" name="logo"><span>Drop an image or <u>browse</u></span><span class="sd-subtle text-2xs uppercase tracking-caps" data-file-names>png · svg · up to 2 MB</span></label>
+    </div>
+
+    <label class="sd-check"><input type="checkbox" required name="terms"><span class="sd-check-text">I agree to the terms of service</span></label>
+
+    <div class="sd-divider"></div>
+    <div class="sd-split">
+      <button type="button" class="sd-btn sd-btn-ghost">Back</button>
+      <div class="sd-actions">
+        <button type="button" class="sd-btn">Save draft</button>
+        <button type="submit" class="sd-btn sd-btn-primary">Continue <kbd>↵</kbd></button>
+      </div>
+    </div>
+  </form>
+</main>
+
+</body>
+</html>
