@@ -859,9 +859,29 @@
         <p class="sd-panel-desc">You are billed at the start of each cycle.</p>
         <div class="sd-seg" data-sd-seg><button type="button" aria-pressed="false">monthly</button><button type="button" aria-pressed="true">yearly</button><button type="button" aria-pressed="false">custom</button></div>
       </section>
-      <div class="sd-divider">or</div>
-      <div class="sd-divider"></div>
-      <p class="demo-usage"><code>sd-page</code> (720px column) · <code>sd-header</code> · <code>sd-panel</code> · <code>sd-card</code> · <code>sd-divider</code> · <code>sd-stack</code> / <code>sd-cluster</code> / <code>sd-split</code> / <code>sd-grid</code> for apps without Tailwind</p>
+      <div class="grid gap-2">
+        <div class="sd-divider">or</div>
+        <p class="demo-usage"><code>sd-divider</code> with a word; empty, it is a plain rule.</p>
+      </div>
+      <div class="grid gap-6 md:grid-cols-2">
+        <div class="grid gap-2 content-start">
+          <p class="sd-label">sd-stack</p>
+          <div class="sd-stack" style="--gap: 8px; align-items: flex-start"><span class="sd-chip">first</span><span class="sd-chip">second</span><span class="sd-chip">third</span></div>
+        </div>
+        <div class="grid gap-2 content-start">
+          <p class="sd-label">sd-cluster</p>
+          <div class="sd-cluster" style="--gap: 8px"><span class="sd-chip">billing</span><span class="sd-chip">risk</span><span class="sd-chip">platform</span><span class="sd-chip">design</span><span class="sd-chip">support</span></div>
+        </div>
+        <div class="grid gap-2 md:col-span-2">
+          <p class="sd-label">sd-split</p>
+          <div class="sd-split border border-line p-3"><span>12 items selected</span><span class="sd-cluster" style="--gap: 8px"><button class="sd-btn sd-btn-sm sd-btn-ghost">Clear</button><button class="sd-btn sd-btn-sm sd-btn-primary">Approve all</button></span></div>
+        </div>
+        <div class="grid gap-2 md:col-span-2">
+          <p class="sd-label">sd-grid <span class="sd-faint">--min: 10rem</span></p>
+          <div class="sd-grid" style="--min: 10rem; --gap: 8px"><div class="border border-line p-3 sd-muted">one</div><div class="border border-line p-3 sd-muted">two</div><div class="border border-line p-3 sd-muted">three</div><div class="border border-line p-3 sd-muted">four</div><div class="border border-line p-3 sd-muted">five</div></div>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-page</code> (720px column) · <code>sd-header</code> · <code>sd-panel</code> · <code>sd-card</code> · <code>sd-divider</code> · <code>sd-stack</code> / <code>sd-cluster</code> / <code>sd-split</code> / <code>sd-grid</code> (with <code>--gap</code> and <code>--min</code>) for apps without Tailwind</p>
     </div>
   </section>
 

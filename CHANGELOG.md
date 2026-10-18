@@ -36,6 +36,10 @@
 - Redesigned landing page.
 
 ### Changed
+- Dropdown lists in Chromium use Signal's overlay and a white (or black)
+  selected row instead of the OS blue (`appearance: base-select`).
+- Empty states get a sparkling center ornament; `data-sd-ornaments="center"`.
+- File cards wrap their upload progress under the name.
 - Corner backgrounds are now called ornaments: `data-sd-ornaments`,
   `data-sd-ornaments-size`, `data-sd-ornaments-still`, `paintOrnaments`,
   `ornamentShapes`, `ORNAMENT_STYLES` (were `data-sd-corners`, `paintCorners`,

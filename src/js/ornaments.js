@@ -49,10 +49,10 @@ function seeded(seed) {
  * Each one rests most of a slow 6–14s cycle and lifts briefly, at its own
  * offset, so the ornament glints without drawing the eye.
  */
-export function ornamentShapes({ size = DEFAULT_SIZE, width = size, edge = false, color = "#fff", seed = 7, strength = 1, style = "blocks", sparkle = 0 } = {}) {
+export function ornamentShapes({ size = DEFAULT_SIZE, width = size, edge = false, center = false, color = "#fff", seed = 7, strength = 1, style = "blocks", sparkle = 0 } = {}) {
   const preset = ORNAMENT_STYLES[style] ?? ORNAMENT_STYLES.blocks;
   const { cell, falloff, merge, mix } = preset;
-  const metric = edge ? "edge" : preset.metric;
+  const metric = edge ? "edge" : center ? "center" : preset.metric;
   const random = seeded(seed);
   const cells = Math.floor(size / cell);
   const cols = Math.ceil(width / cell);
@@ -69,6 +69,7 @@ export function ornamentShapes({ size = DEFAULT_SIZE, width = size, edge = false
       // 0 at the corner (or edge), 1 at the reach.
       const d =
         metric === "edge" ? (row + 0.5) / cells
+        : metric === "center" ? Math.hypot(col + 0.5 - cells / 2, row + 0.5 - cells / 2) / (cells / 2)
         : metric === "diagonal" ? (col + row + 1) / cells
         : Math.hypot(col + 0.5, row + 0.5) / cells;
       if (d >= 1) continue;
@@ -120,17 +121,18 @@ export function ornamentShapes({ size = DEFAULT_SIZE, width = size, edge = false
   return shapes.join("");
 }
 
-const POSITION = { tl: "left top", tr: "right top", bl: "left bottom", br: "right bottom", top: "left top", bottom: "left bottom" };
+const POSITION = { tl: "left top", tr: "right top", bl: "left bottom", br: "right bottom", top: "left top", bottom: "left bottom", center: "center center" };
 const EDGES = new Set(["top", "bottom"]);
 
 function ornamentURL(corner, options) {
   const { size } = options;
   const edge = EDGES.has(corner);
+  const center = corner === "center";
   const width = edge ? options.width : size;
   const flipX = !edge && corner.endsWith("r");
   const flipY = corner.startsWith("b");
   const transform = flipX || flipY ? ` transform="translate(${flipX ? width : 0} ${flipY ? size : 0}) scale(${flipX ? -1 : 1} ${flipY ? -1 : 1})"` : "";
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${size}" viewBox="0 0 ${width} ${size}" shape-rendering="crispEdges"><g${transform}>${ornamentShapes({ ...options, width, edge })}</g></svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${size}" viewBox="0 0 ${width} ${size}" shape-rendering="crispEdges"><g${transform}>${ornamentShapes({ ...options, width, edge, center })}</g></svg>`;
   return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
 }
 
@@ -180,8 +182,13 @@ export function edgesSVG({ width, height, color = "#fff", dim = 0.12, center = 3
 
 /** Paint the ornaments on one element, in the current theme's text color. */
 export function paintOrnaments(el) {
-  const corners = "sdOrnaments" in el.dataset ? (el.dataset.sdOrnaments || "br").split(/\s+/).filter((c) => c in POSITION) : [];
+  // Empty states get a center ornament unless they ask for something else
+  // (data-sd-ornaments="none" turns it off).
+  const fallback = el.matches(".sd-empty") ? "center" : "br";
+  const corners = "sdOrnaments" in el.dataset || el.matches(".sd-empty") ? (el.dataset.sdOrnaments || fallback).split(/\s+/).filter((c) => c in POSITION) : [];
   const size = Number(el.dataset.sdOrnamentsSize) || DEFAULT_SIZE;
+  // A center ornament fits the box's height, so it sits behind the message.
+  const centerSize = Math.max(80, Math.min(size, Math.round(el.clientHeight) || size, 320));
   const width = Math.max(1, Math.round(el.clientWidth));
   const style = getComputedStyle(el);
   const color = style.getPropertyValue("--sd-fg").trim() || "#ffffff";
@@ -210,6 +217,12 @@ export function paintOrnaments(el) {
   // Edges always use a softer "dust"; corners alternate blocks, dust.
   corners.forEach((corner, i) => {
     const edge = EDGES.has(corner);
+    if (corner === "center") {
+      images.push(ornamentURL(corner, { size: centerSize, width: centerSize, color, strength: strength * 0.7, seed: 31 + centerSize, style: "dust", sparkle: sparkle ? sparkle * 1.5 : 0 }));
+      positions.push(POSITION.center);
+      sizes.push(`${centerSize}px ${centerSize}px`);
+      return;
+    }
     images.push(
       ornamentURL(corner, {
         size,
@@ -233,7 +246,7 @@ export function paintOrnaments(el) {
   el.style.backgroundOrigin = "border-box";
 }
 
-const SELECTOR = "[data-sd-ornaments], [data-sd-edges]";
+const SELECTOR = "[data-sd-ornaments], [data-sd-edges], .sd-empty";
 
 function paintAll(root = document) {
   for (const el of root.querySelectorAll(SELECTOR)) paintOrnaments(el);
@@ -244,7 +257,7 @@ let listening = false;
 // Edge ornaments span the element's width, so repaint when it changes.
 const resized = new ResizeObserver((entries) => {
   for (const { target } of entries) {
-    if ("sdEdges" in target.dataset || /(top|bottom)/.test(target.dataset.sdOrnaments || "")) paintOrnaments(target);
+    if (target.matches(".sd-empty") || "sdEdges" in target.dataset || /(top|bottom)/.test(target.dataset.sdOrnaments || "")) paintOrnaments(target);
   }
 });
 

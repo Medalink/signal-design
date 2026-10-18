@@ -278,6 +278,10 @@ without pulling the eye. It is an animated SVG, so it costs no script per
 frame. `prefers-reduced-motion` turns it off, and `data-sd-ornaments-still` keeps
 one element still.
 
+Empty states (`.sd-empty`) get a center ornament on their own: a small dust
+field behind the message, sparkling the same way. `data-sd-ornaments="none"`
+turns it off, and `data-sd-ornaments="center"` puts one on any box.
+
 ## Scrollbars
 
 `init()` hides scrollbars until something scrolls and hides them again 2s
