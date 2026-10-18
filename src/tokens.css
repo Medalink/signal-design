@@ -215,19 +215,20 @@
 :root,
 [data-theme="ink"] {
   color-scheme: dark;
-  /* Backgrounds and text follow T3 Code's dark palette: a black backdrop,
-     #0a0a0a panels, #191a1d hover, cool near-white text, neutral greys. */
+  /* A black backdrop, #0a0a0a panels and #191a1d hover. Text has two
+     clear levels: neutral white for content, #a3a3a3 for everything
+     secondary. Hairlines are solid #262626 so dividers read at a glance. */
   --sd-canvas: #000000;
   --sd-surface: #0a0a0a;
   --sd-raised: #191a1d;
   --sd-overlay: #191a1d;
-  --sd-line: rgb(255 255 255 / 0.08);
-  --sd-line-strong: rgb(255 255 255 / 0.16);
-  --sd-fg: #f1f3f7;
-  --sd-fg-muted: #d4d4d4;
-  --sd-fg-subtle: #a3a3a3;
+  --sd-line: #262626;
+  --sd-line-strong: #333333;
+  --sd-fg: #fafafa;
+  --sd-fg-muted: #a3a3a3;
+  --sd-fg-subtle: #8a8a8a;
   --sd-fg-faint: #737373;
-  --sd-primary: #f1f3f7;
+  --sd-primary: #fafafa;
   --sd-on-primary: var(--color-ink-1000);
   --sd-accent: var(--color-cyan);
   --sd-success: var(--color-green);

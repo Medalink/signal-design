@@ -36,6 +36,8 @@
 - Redesigned landing page.
 
 ### Changed
+- Ink: crisper two-level text contrast. Text `#fafafa`, secondary text
+  `#a3a3a3` (was `#d4d4d4`), subtle `#8a8a8a`, solid `#262626` lines.
 - Rain pauses while its canvas is off screen.
 - The hover shimmer keeps badge counts readable.
 - The status bar is optional; without one its row collapses.
