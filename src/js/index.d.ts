@@ -58,6 +58,7 @@ export interface RainMount {
   readonly playing: boolean;
   play(): void;
   pause(): void;
+  update(options: Record<string, unknown>): void;
   destroy(): void;
 }
 export function mountRain(canvas: HTMLCanvasElement, options?: { playing?: boolean; style?: "glyphs" | "squares" }): RainMount;
