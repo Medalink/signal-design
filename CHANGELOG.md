@@ -36,6 +36,9 @@
 - Redesigned landing page.
 
 ### Changed
+- Graphite is now the lighter dark mode: `#0f0f0f` frame, `#151515` page,
+  `#1a1a1a` panels, `#242424` raised, `#2e2e2e`/`#3d3d3d` lines, and ink's
+  two-level text (`#f5f5f5`, `#a3a3a3`).
 - Ink: crisper two-level text contrast. Text `#fafafa`, secondary text
   `#a3a3a3` (was `#d4d4d4`), subtle `#8a8a8a`, solid `#262626` lines.
 - Rain pauses while its canvas is off screen.

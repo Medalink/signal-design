@@ -55,7 +55,7 @@ Set `data-theme` on `<html>` or on any element to theme a subtree.
 | Theme | |
 |---|---|
 | `ink` (default, canonical) | Cool near-black greys, alpha hairlines |
-| `graphite` (optional) | Neutral greys from the original spec, solid hairlines |
+| `graphite` (optional) | The lighter dark mode: grey `#1a1a1a` panels on a `#0f0f0f` frame, same two-level text as ink |
 | `light` | White canvas, deepened signal colors for contrast |
 | `auto` | `ink`, or `light` when the OS asks for it |
 
