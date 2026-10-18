@@ -7,7 +7,8 @@
     "frontendDist": "../web"
   },
   "app": {
-    "windows": [{ "title": "Signal Check", "width": 1280, "height": 860 }],
+    "withGlobalTauri": true,
+    "windows": [{ "title": "Signal Check", "width": 1280, "height": 860, "decorations": false }],
     "security": { "csp": null }
   },
   "bundle": { "active": false, "icon": ["icons/icon.ico", "icons/icon.png"] }

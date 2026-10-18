@@ -30,12 +30,33 @@
     <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 6l12 12M18 6L6 18"/></symbol>
     <symbol id="i-collapse" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 4L4 8l4 4M12 4L8 8l4 4"/></symbol>
     <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 16V10a6 6 0 0 1 12 0v6l1.5 2h-15zM10 20.5h4"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="8" y="8" width="8" height="8"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.5 5.5l2 2M16.5 16.5l2 2M5.5 18.5l2-2M16.5 7.5l2-2"/></symbol>
+    <symbol id="i-win-min" viewBox="0 0 12 12" fill="none" stroke="currentColor"><path d="M1 6.5h10"/></symbol>
+    <symbol id="i-win-max" viewBox="0 0 12 12" fill="none" stroke="currentColor"><rect x="1.5" y="1.5" width="9" height="9"/></symbol>
+    <symbol id="i-win-restore" viewBox="0 0 12 12" fill="none" stroke="currentColor"><rect x="1.5" y="3.5" width="7" height="7"/><path d="M3.5 3.5v-2h7v7h-2"/></symbol>
+    <symbol id="i-win-close" viewBox="0 0 12 12" fill="none" stroke="currentColor"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9"/></symbol>
     <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
   </defs>
 </svg>
 
 <div class="sd-shell" id="shell" data-aside="open">
   <canvas class="sd-rain" data-sd-rain data-sd-rain-style="squares" aria-hidden="true"></canvas>
+
+  <!-- Window chrome for a frameless desktop app -->
+  <header class="sd-titlebar" data-tauri-drag-region>
+    <span class="sd-titlebar-brand"><b>ACME</b></span>
+    <div class="sd-titlebar-end">
+      <span class="sd-titlebar-metric sd-desktop-only">CPU <b>3%</b></span>
+      <span class="sd-titlebar-metric sd-desktop-only">MEM <b>182 MB</b></span>
+      <span class="sd-titlebar-metric sd-desktop-only">FPS <span class="sd-fps" data-sd-fps style="font-size:inherit;letter-spacing:0"><b>--</b></span></span>
+      <div class="sd-window-controls">
+        <button data-sd-window="minimize" aria-label="Minimize"><svg><use href="#i-win-min"/></svg></button>
+        <button data-sd-window="maximize" aria-label="Maximize"><svg class="sd-icon-maximize"><use href="#i-win-max"/></svg><svg class="sd-icon-restore"><use href="#i-win-restore"/></svg></button>
+        <button data-sd-window="close" aria-label="Close"><svg><use href="#i-win-close"/></svg></button>
+      </div>
+    </div>
+  </header>
 
   <header class="sd-shell-topbar">
     <button class="sd-btn sd-btn-ghost sd-btn-icon" data-sd-shell="drawer" aria-label="Open navigation"><svg><use href="#i-menu"/></svg></button>
@@ -87,21 +108,21 @@
 
   <!-- Main -->
   <main class="sd-shell-main" id="main">
-    <div class="sd-shell-header">
-      <div class="sd-shell-crumbs">
-        <button class="sd-btn sd-btn-icon sd-btn-sm sd-shell-pin" data-sd-shell="sidebar" data-sd-key="[" aria-label="Pin sidebar open"><svg><use href="#i-collapse"/></svg></button>
-        <ol class="sd-breadcrumb" aria-label="Breadcrumb">
-          <li><a href="./index.html" aria-label="Home"><svg><use href="#i-home"/></svg></a></li>
-          <li><span>Design</span></li>
-          <li><span aria-current="page"><svg><use href="#i-hash"/></svg> general</span></li>
-        </ol>
+    <!-- Header bar: solid and attached to the content (the alternate to floating crumb bars) -->
+    <header class="sd-shell-bar">
+      <div class="sd-shell-bar-title">
+        <button class="sd-icon-btn sd-shell-pin" data-sd-shell="sidebar" data-sd-key="[" aria-label="Pin sidebar open"><svg><use href="#i-collapse"/></svg></button>
+        <svg><use href="#i-hash"/></svg><b>general</b><span class="sd-desktop-only">Team chat for Design</span><span class="sd-badge sd-desktop-only">encrypted</span>
       </div>
-      <div class="sd-shell-header-end">
-        <button class="sd-btn sd-btn-sm sd-btn-icon" data-sd-open="palette" data-sd-tip="Search (Ctrl K)" data-sd-tip-side="bottom" aria-label="Search"><svg><use href="#i-search"/></svg></button>
-        <button class="sd-btn sd-btn-sm sd-btn-icon" data-sd-tip="Pinned" data-sd-tip-side="bottom" aria-label="Pinned" data-show-tab="pinned"><svg><use href="#i-pin"/></svg></button>
-        <button class="sd-btn sd-btn-sm" data-sd-shell="aside" data-sd-key="]" aria-label="Members"><svg><use href="#i-people"/></svg><span class="sd-desktop-only">Members</span> <kbd>]</kbd></button>
+      <div class="sd-shell-bar-center sd-desktop-only"><span class="sd-status" data-tone="success">3 here</span></div>
+      <div class="sd-shell-bar-end">
+        <button class="sd-icon-btn" popovertarget="attention" aria-label="Attention, 2 new" data-sd-tip="Attention" data-sd-tip-side="bottom"><svg><use href="#i-bell"/></svg><span class="sd-badge-count" data-tone="danger">2</span></button>
+        <button class="sd-icon-btn" popovertarget="pinned" aria-label="Pinned, 2" data-sd-tip="Pinned" data-sd-tip-side="bottom"><svg><use href="#i-pin"/></svg><span class="sd-badge-count">2</span></button>
+        <button class="sd-icon-btn" data-sd-open="palette" data-sd-key="mod+k" aria-label="Search" data-sd-tip="Search (Ctrl K)" data-sd-tip-side="bottom"><svg><use href="#i-search"/></svg></button>
+        <button class="sd-icon-btn" data-sd-shell="aside" data-sd-key="]" aria-label="Members" data-sd-tip="Members (])" data-sd-tip-side="bottom"><svg><use href="#i-people"/></svg></button>
+        <button class="sd-icon-btn" aria-label="Settings" data-sd-tip="Settings" data-sd-tip-side="bottom"><svg><use href="#i-gear"/></svg></button>
       </div>
-    </div>
+    </header>
 
     <div class="sd-shell-content" data-sd-corners data-sd-edges style="padding:0;display:flex;flex-direction:column">
       <div class="sd-banner" data-tone="pending" role="status" style="border-inline:0;border-top:0">
@@ -270,9 +291,35 @@
   </div>
 </div>
 
-<dialog class="sd-command" id="palette" aria-label="Search">
-  <input type="search" placeholder="Search messages and people" aria-label="Search">
-  <p class="sd-command-foot">Esc to close</p>
+<!-- Panel popovers from the header bar -->
+<div popover id="attention" class="sd-popover sd-popover-panel" data-sd-align="end">
+  <div class="sd-popover-head">Attention <button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" popovertarget="attention" popovertargetaction="hide" aria-label="Close">×</button></div>
+  <div class="sd-popover-body">
+    <a class="sd-item" href="#" data-unread><span class="sd-avatar" data-tone="accent">TP</span><span class="sd-item-body"><span class="sd-item-title">Taylor mentioned you</span><span class="sd-item-sub">can you take the copy for screen two?</span></span><span class="sd-item-end">10:05</span></a>
+    <a class="sd-item" href="#" data-unread><span class="sd-avatar" data-tone="extra">AL</span><span class="sd-item-body"><span class="sd-item-title">Alex replied to you</span><span class="sd-item-sub">Looks good, ship it.</span></span><span class="sd-item-end">09:58</span></a>
+  </div>
+</div>
+<div popover id="pinned" class="sd-popover sd-popover-panel" data-sd-align="end">
+  <div class="sd-popover-head">Pinned <button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" popovertarget="pinned" popovertargetaction="hide" aria-label="Close">×</button></div>
+  <div class="sd-popover-body">
+    <a class="sd-item" href="#"><svg><use href="#i-pin"/></svg><span class="sd-item-body"><span class="sd-item-title">Reference board</span><span class="sd-item-sub">Alex · yesterday</span></span></a>
+    <a class="sd-item" href="#"><svg><use href="#i-pin"/></svg><span class="sd-item-body"><span class="sd-item-title">onboarding-flow-v3.pdf</span><span class="sd-item-sub">Alex · yesterday</span></span></a>
+  </div>
+</div>
+
+<dialog class="sd-command" id="palette" aria-label="Search" data-sd-palette>
+  <input type="search" placeholder="Search channels and people" aria-label="Search">
+  <div class="sd-menu" role="listbox" aria-label="Results">
+    <div class="sd-menu-label" role="presentation">Channels</div>
+    <button type="button" role="option"># general</button>
+    <button type="button" role="option"># releases</button>
+    <button type="button" role="option"># research</button>
+    <div class="sd-menu-label" role="presentation">People</div>
+    <button type="button" role="option">Alex</button>
+    <button type="button" role="option">Sam</button>
+    <button type="button" role="option">Taylor</button>
+  </div>
+  <p class="sd-command-foot">↑↓ move · ↵ open · Esc close</p>
 </dialog>
 
 </body>

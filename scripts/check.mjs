@@ -222,6 +222,38 @@ for (const [name, engine] of Object.entries(engines)) {
         const seg = await page.evaluate(() => document.querySelector("#components [data-sd-seg] button:nth-child(2)").getAttribute("aria-pressed"));
         if (seg !== "true") fail(where, "segmented did not select");
 
+        // Combobox: filter, pick with the keyboard.
+        await page.locator("#demo-combo").click();
+        await page.keyboard.type("lis");
+        await page.keyboard.press("Enter");
+        if ((await page.locator("#demo-combo").inputValue()) !== "Lisbon") fail(where, `combobox picked ${await page.locator("#demo-combo").inputValue()}`);
+        // Tags: add with Enter, remove with Backspace.
+        await page.locator("#demo-tags").click();
+        await page.keyboard.type("ux");
+        await page.keyboard.press("Enter");
+        let tags = await page.evaluate(() => [...document.querySelectorAll("[data-sd-tags] .sd-chip")].map((c) => c.dataset.value).join(","));
+        if (!tags.endsWith("design,ux")) fail(where, `tags after add: ${tags}`);
+        await page.keyboard.press("Backspace");
+        tags = await page.evaluate(() => [...document.querySelectorAll("#inputs-more [data-sd-tags] .sd-chip")].map((c) => c.dataset.value).join(","));
+        if (tags !== "design") fail(where, `tags after backspace: ${tags}`);
+        // Number: stops at max.
+        for (let i = 0; i < 8; i++) await page.locator('#inputs-more [data-step="1"]').click({ force: true });
+        const n = await page.locator("#demo-number").inputValue();
+        const plusDisabled = await page.locator('#inputs-more [data-step="1"]').isDisabled();
+        if (n !== "9" || !plusDisabled) fail(where, `number ${n}, plus disabled ${plusDisabled}`);
+        // Palette: Ctrl K opens, typing filters, Escape closes.
+        await page.locator("body").click({ position: { x: 5, y: 5 } });
+        await page.keyboard.press("Control+k");
+        if (!(await page.evaluate(() => document.getElementById("demo-palette").open))) fail(where, "palette did not open");
+        await page.keyboard.type("form");
+        const shownOpts = await page.evaluate(() => [...document.querySelectorAll('#demo-palette [role="option"]:not([hidden])')].map((o) => o.textContent.trim()));
+        if (shownOpts.length !== 1 || !shownOpts[0].startsWith("Form")) fail(where, `palette filter showed ${shownOpts.join(" | ")}`);
+        await page.keyboard.press("Escape");
+        // Shortcuts sheet opens on "?".
+        await page.keyboard.press("Shift+Slash");
+        if (!(await page.evaluate(() => document.getElementById("demo-shortcuts").open))) fail(where, "? did not open shortcuts");
+        await page.keyboard.press("Escape");
+
         await page.click('[data-sd-theme="light"]');
         if ((await page.evaluate(() => document.documentElement.dataset.theme)) !== "light") fail(where, "theme button failed");
       }

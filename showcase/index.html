@@ -18,10 +18,13 @@
     <a href="#tokens">Tokens</a>
     <a href="#elements">Elements</a>
     <a href="#components">Components</a>
+    <a href="#conversation">Conversation</a>
+    <a href="#inputs-more">Inputs</a>
     <a href="#effects">Effects</a>
     <a href="#js">JS</a>
     <a href="./shell.html">App shell</a>
     <a href="./chat.html">Chat</a>
+    <a href="./form.html">Form</a>
   </nav>
   <div class="sd-topbar-end">
     <div class="sd-seg sd-seg-inline sd-seg-sm" aria-label="Theme">
@@ -811,8 +814,212 @@
   </section>
 
   <!-- ==================================================================== JS -->
-  <section class="demo-section" id="effects" aria-labelledby="effects-h">
+  <section class="demo-section" id="conversation" aria-labelledby="conversation-h">
     <p class="sd-label">04</p>
+    <h2 id="conversation-h" class="sd-title mt-2">Conversation</h2>
+    <p class="sd-muted mt-2 max-w-[42rem]">Generic pieces for anything with people and messages: chat, comments, activity, inboxes. The <a href="./chat.html">chat example</a> puts them together.</p>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Items, presence, counts</h3>
+      <div class="grid gap-6 sm:grid-cols-2 items-start">
+        <div class="border border-line py-2" style="background: var(--sd-surface)">
+          <div class="sd-item-group">Online <span>2</span></div>
+          <a class="sd-item" href="#conversation" aria-current="true"><span class="sd-avatar" data-tone="extra" data-status="online">AL</span><span class="sd-item-body"><span class="sd-item-title">Alex</span><span class="sd-item-sub">Reviewing the spec</span></span><span class="sd-item-end">2m</span></a>
+          <a class="sd-item" href="#conversation" data-unread><span class="sd-avatar" data-tone="warning" data-status="away">SK</span><span class="sd-item-body"><span class="sd-item-title">Sam</span><span class="sd-item-sub">Can you look at this?</span></span><span class="sd-item-end"><span class="sd-badge-count" data-tone="danger">2</span></span></a>
+          <div class="sd-item-group">Offline <span>1</span></div>
+          <a class="sd-item" href="#conversation" data-muted><span class="sd-avatar" data-tone="accent" data-status="offline">TP</span><span class="sd-item-body"><span class="sd-item-title">Taylor</span><span class="sd-item-sub">Muted</span></span></a>
+          <a class="sd-item sd-item-nested" href="#conversation"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M6 2.5 5 13.5M11 2.5l-1 11M2.5 6h11M2 10h11"/></svg><span class="sd-item-body"><span class="sd-item-title">nested row</span></span></a>
+        </div>
+        <div class="grid gap-4 content-start">
+          <div class="sd-cluster" style="--gap: 18px">
+            <span class="sd-avatar sd-avatar-lg" data-tone="extra" data-status="online">AL</span>
+            <span class="sd-avatar sd-avatar-lg" data-tone="warning" data-status="away">SK</span>
+            <span class="sd-avatar sd-avatar-lg" data-tone="accent" data-status="busy">TP</span>
+            <span class="sd-avatar sd-avatar-lg" data-tone="success" data-status="offline">JD</span>
+            <span class="relative inline-grid"><button class="sd-btn sd-btn-icon" aria-label="Inbox, 3 unread">✉</button><span class="sd-badge-count" data-corner>3</span></span>
+            <span class="sd-badge-count" data-tone="danger">12</span>
+          </div>
+          <p class="demo-usage"><code>sd-item</code> + <code>-body|-title|-sub|-end|-group|-nested</code> · <code>data-unread</code> · <code>data-muted</code> · <code>data-status="online|away|busy|offline"</code> · <code>sd-badge-count</code> + <code>data-corner</code></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Messages</h3>
+      <div class="border border-line py-3" style="background: var(--sd-surface)">
+        <article class="sd-message" data-sd-contextmenu="demo-msg-menu">
+          <span class="sd-avatar" data-tone="extra">AL</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>Alex</b><span class="sd-badge">Lead</span><time>09:42</time></header>
+            <div class="sd-message-text">A first message shows the avatar and the head. Right-click it for the menu.</div>
+            <div class="sd-reactions"><button data-sd-reaction aria-pressed="true">👍 <b>3</b></button><button data-sd-reaction aria-pressed="false">👀 <b>1</b></button></div>
+          </div>
+          <div class="sd-message-actions" role="toolbar" aria-label="Message actions"><button aria-label="Reply">↩</button><button aria-label="More" popovertarget="demo-msg-menu">⋯</button></div>
+        </article>
+        <article class="sd-message" data-grouped>
+          <time>09:43</time>
+          <div class="sd-message-body"><div class="sd-message-text">A follow-up is grouped: no avatar, the time shows on hover. <span class="sd-message-edited">(edited)</span></div></div>
+        </article>
+        <div class="sd-event"><span class="sd-dot" data-shape="hollow"></span><b>Taylor</b> joined <time>09:50</time></div>
+        <article class="sd-message" data-mention>
+          <span class="sd-avatar" data-tone="accent">TP</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>Taylor</b><time>10:05</time></header>
+            <div class="sd-reply"><b>Alex</b><span>A first message shows the avatar and the head.</span></div>
+            <div class="sd-message-text"><span class="sd-mention">@Jane</span> a mention of you gets an edge and a lifted background.</div>
+            <div class="sd-receipts" aria-label="Seen by 2"><span class="sd-avatar" data-tone="extra">AL</span><span class="sd-avatar" data-tone="warning">SK</span></div>
+          </div>
+        </article>
+        <article class="sd-message" data-pending>
+          <span class="sd-avatar" data-tone="success">JD</span>
+          <div class="sd-message-body"><header class="sd-message-head"><b>Jane</b><time>10:06</time></header><div class="sd-message-text">Pending: dimmed until it is confirmed.</div></div>
+        </article>
+        <article class="sd-message" data-failed data-grouped>
+          <time>10:07</time>
+          <div class="sd-message-body"><div class="sd-message-text">Failed: a red edge and a retry.</div><div class="sd-message-status">Not sent · <button class="sd-btn sd-btn-link">Retry</button></div></div>
+        </article>
+        <div class="px-4 pt-2"><span class="sd-typing"><i><b></b></i> Alex is typing…</span></div>
+      </div>
+      <div popover id="demo-msg-menu" class="sd-popover"><div class="sd-menu" role="menu" aria-label="Message"><button role="menuitem">Reply</button><button role="menuitem">Copy text</button><hr class="sd-menu-sep"><button role="menuitem" data-tone="danger">Delete</button></div></div>
+      <p class="demo-usage"><code>sd-message</code> + <code>-body|-head|-text|-actions|-status|-edited</code> · <code>data-grouped|mention|pending|failed</code> · <code>sd-reply</code> · <code>sd-mention</code> · <code>sd-event</code> · <code>sd-reactions</code> + <code>data-sd-reaction</code> · <code>sd-receipts</code> · <code>sd-typing</code> · <code>data-sd-contextmenu</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Composer</h3>
+      <form class="sd-composer max-w-column" onsubmit="event.preventDefault(); this.querySelector('textarea').value=''">
+        <div class="sd-composer-chips"><span class="sd-chip"><b>Replying to</b> Alex <button type="button" aria-label="Cancel reply">×</button></span></div>
+        <div class="sd-composer-row">
+          <button type="button" class="sd-btn sd-btn-ghost sd-btn-icon" aria-label="Attach">+</button>
+          <textarea rows="1" data-sd-autogrow data-sd-enter-submit data-sd-suggest="demo-mentions" placeholder="Type @ to mention someone" aria-label="Message"></textarea>
+          <button class="sd-btn sd-btn-primary">Send</button>
+        </div>
+        <div class="sd-suggest" id="demo-mentions" hidden>
+          <div class="sd-menu" role="listbox" aria-label="Mention">
+            <button type="button" role="option" data-value="Alex"><span class="sd-avatar sd-avatar-sm" data-tone="extra">AL</span> Alex</button>
+            <button type="button" role="option" data-value="Sam"><span class="sd-avatar sd-avatar-sm" data-tone="warning">SK</span> Sam</button>
+            <button type="button" role="option" data-value="Taylor"><span class="sd-avatar sd-avatar-sm" data-tone="accent">TP</span> Taylor</button>
+          </div>
+        </div>
+      </form>
+      <p class="demo-usage"><code>sd-composer</code> + <code>-row|-chips|-hint</code> · <code>data-sd-autogrow</code> · <code>data-sd-enter-submit</code> · <code>data-sd-suggest</code> + <code>data-sd-trigger</code> · <code>sd-suggest</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Blocks</h3>
+      <div class="sd-banner" data-tone="pending" role="status"><b>Update ready</b> Version 1.4 installs on restart. <div class="sd-banner-actions"><button class="sd-btn sd-btn-sm">Restart</button></div></div>
+      <div class="sd-banner" data-tone="danger" role="alert"><b>Connection lost</b> Messages will send when you're back online.</div>
+      <div class="grid gap-4 sm:grid-cols-2 items-start">
+        <div class="grid gap-4">
+          <div class="sd-file"><span class="sd-file-type">pdf</span><span class="sd-file-body"><span class="sd-file-name">onboarding-flow-v3.pdf</span><span class="sd-file-meta">2.4 MB</span></span><button class="sd-btn sd-btn-sm">Open</button></div>
+          <div class="sd-file"><span class="sd-file-type">zip</span><span class="sd-file-body"><span class="sd-file-name">assets.zip</span><span class="sd-file-meta">Uploading · 64%</span></span><div class="sd-progress" style="--value: 64"></div></div>
+          <a class="sd-link-card" href="#conversation"><span class="sd-link-card-site">acme.example</span><span class="sd-link-card-title">Designing empty states that teach</span><span class="sd-link-card-desc">Show what goes here and the one action that fills it.</span><span class="sd-link-card-thumb"></span></a>
+        </div>
+        <div class="sd-poll" data-sd-poll>
+          <p class="sd-poll-q">Which layout do we ship?</p>
+          <button class="sd-poll-option" style="--share:62" aria-pressed="true">Three short steps <span>62%</span></button>
+          <button class="sd-poll-option" style="--share:25" aria-pressed="false">One long page <span>25%</span></button>
+          <button class="sd-poll-option" style="--share:13" aria-pressed="false">Skip it <span>13%</span></button>
+          <span class="sd-poll-meta">8 votes · closes in 2 days</span>
+        </div>
+      </div>
+      <div class="sd-tiles">
+        <div class="sd-tile" data-speaking><span class="sd-avatar" data-tone="extra">AL</span><span class="sd-tile-name">Alex</span></div>
+        <div class="sd-tile" data-muted><span class="sd-avatar" data-tone="warning">SK</span><span class="sd-tile-name">Sam</span></div>
+        <div class="sd-tile" data-hand><span class="sd-avatar" data-tone="success">JD</span><span class="sd-tile-name">Jane</span></div>
+        <div class="sd-tile"><span class="sd-avatar" data-tone="accent">TP</span><span class="sd-tile-name">Taylor</span></div>
+      </div>
+      <div class="sd-actions"><button class="sd-btn" popovertarget="demo-emoji">Grid picker</button></div>
+      <div popover id="demo-emoji" class="sd-popover sd-popover-pad"><div class="sd-grid-picker" role="listbox" aria-label="Emoji" style="--cols:6"><button role="option">👍</button><button role="option">👀</button><button role="option">🎉</button><button role="option">✅</button><button role="option">❤️</button><button role="option">🔥</button><button role="option">😂</button><button role="option">🙏</button><button role="option">🚀</button><button role="option">🤔</button><button role="option">👏</button><button role="option">💯</button></div></div>
+      <p class="demo-usage"><code>sd-banner</code> · <code>sd-file</code> · <code>sd-link-card</code> · <code>sd-poll</code> + <code>data-sd-poll</code> · <code>sd-tiles</code> + <code>sd-tile[data-speaking|muted|hand]</code> · <code>sd-grid-picker</code></p>
+    </div>
+  </section>
+
+  <section class="demo-section" id="inputs-more" aria-labelledby="inputs-more-h">
+    <p class="sd-label">05</p>
+    <h2 id="inputs-more-h" class="sd-title mt-2">Inputs, search and data</h2>
+    <p class="sd-muted mt-2 max-w-[42rem]">The <a href="./form.html">form example</a> uses these together.</p>
+
+    <div class="demo-block">
+      <div class="grid gap-6 sm:grid-cols-2 items-start">
+        <div class="sd-field">
+          <label class="sd-field-label" for="demo-combo">Combobox</label>
+          <div class="sd-combobox" data-sd-combobox>
+            <input id="demo-combo" role="combobox" aria-controls="demo-combo-list" aria-expanded="false" placeholder="Search a city" autocomplete="off">
+            <input type="hidden" name="city">
+            <div class="sd-menu sd-combobox-list" role="listbox" id="demo-combo-list" hidden>
+              <button type="button" role="option">Berlin</button><button type="button" role="option">Lisbon</button><button type="button" role="option">London</button><button type="button" role="option">New York</button><button type="button" role="option">Tokyo</button>
+            </div>
+          </div>
+        </div>
+        <div class="sd-field">
+          <label class="sd-field-label" for="demo-tags">Tags</label>
+          <div class="sd-tags" data-sd-tags><span class="sd-chip" data-value="design">design <button type="button" aria-label="Remove design">×</button></span><input id="demo-tags" placeholder="Add a tag"></div>
+        </div>
+        <div class="sd-field">
+          <label class="sd-field-label" for="demo-number">Number</label>
+          <div class="sd-number" data-sd-number><button type="button" data-step="-1" aria-label="Less">−</button><input id="demo-number" type="number" value="3" min="1" max="9"><button type="button" data-step="1" aria-label="More">+</button></div>
+        </div>
+        <div class="sd-field">
+          <span class="sd-field-label">Steps</span>
+          <ol class="sd-steps"><li data-state="done">Account</li><li aria-current="step">Workspace</li><li>Invite</li></ol>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-combobox</code> + <code>data-sd-combobox</code> · <code>sd-tags</code> + <code>data-sd-tags</code> · <code>sd-number</code> + <code>data-sd-number</code> · <code>sd-steps</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Command palette and shortcuts</h3>
+      <div class="sd-actions">
+        <button class="sd-btn" data-sd-open="demo-palette" data-sd-key="mod+k">Open palette <kbd>Ctrl K</kbd></button>
+        <button class="sd-btn" data-sd-open="demo-shortcuts">Shortcuts <kbd>?</kbd></button>
+      </div>
+      <dialog class="sd-command" id="demo-palette" aria-label="Search" data-sd-palette>
+        <input type="search" placeholder="Search pages and actions" aria-label="Search">
+        <div class="sd-menu" role="listbox" aria-label="Results">
+          <div class="sd-menu-label" role="presentation">Pages</div>
+          <a role="option" href="./shell.html">App shell <span class="sd-menu-hint">page</span></a>
+          <a role="option" href="./chat.html">Chat <span class="sd-menu-hint">page</span></a>
+          <a role="option" href="./form.html">Form <span class="sd-menu-hint">page</span></a>
+          <div class="sd-menu-label" role="presentation">Actions</div>
+          <button type="button" role="option" data-sd-theme-cycle data-keywords="dark light">Next theme <span class="sd-menu-hint">Shift T</span></button>
+          <button type="button" role="option" data-sd-toast="Copied link">Copy link</button>
+        </div>
+        <p class="sd-command-foot">↑↓ move · ↵ open · Esc close</p>
+      </dialog>
+      <dialog class="sd-dialog" id="demo-shortcuts" data-sd-shortcuts aria-labelledby="demo-shortcuts-h">
+        <header class="sd-dialog-head"><span id="demo-shortcuts-h">Keyboard shortcuts</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">×</button></header>
+        <div class="sd-dialog-body">
+          <dl class="sd-shortcuts">
+            <div class="sd-shortcuts-group">Navigation</div>
+            <dt><kbd>Ctrl</kbd><kbd>K</kbd></dt><dd>Search</dd>
+            <dt><kbd>j</kbd> <kbd>k</kbd></dt><dd>Next, previous item</dd>
+            <dt><kbd>[</kbd></dt><dd>Toggle sidebar</dd>
+            <div class="sd-shortcuts-group">Actions</div>
+            <dt><kbd>a</kbd></dt><dd>Approve</dd>
+            <dt><kbd>?</kbd></dt><dd>This list</dd>
+          </dl>
+        </div>
+      </dialog>
+      <p class="demo-usage"><code>dialog.sd-command[data-sd-palette]</code> + <code>setOptions()</code> · <code>dialog[data-sd-shortcuts]</code> opens on <kbd>?</kbd> · <code>sd-shortcuts</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Charts and diffs</h3>
+      <div class="grid gap-6 sm:grid-cols-3 items-end">
+        <div class="sd-stat"><span class="sd-stat-value">260<small>ms</small></span><span class="sd-stat-label">Checkout p95</span><span class="sd-spark" data-values="410 380 395 340 320 300 290 270 260"></span></div>
+        <div class="sd-stat"><span class="sd-stat-value">1.2k</span><span class="sd-stat-label">Messages today</span><span class="sd-spark" data-tone="success" data-values="3 5 4 8 6 9 12 10 14"></span></div>
+        <div class="sd-bars" style="--h: 110px"><span style="--v:40" data-label="M"></span><span style="--v:65" data-label="T"></span><span style="--v:30" data-label="W"></span><span style="--v:80" data-label="T"></span><span style="--v:55" data-label="F" data-current></span></div>
+      </div>
+      <div class="sd-code">
+        <div class="sd-code-head">src/billing.js</div>
+        <pre class="sd-diff"><span data-line="@">@@ -12,6 +12,7 @@</span><span>function charge(customer) {</span><span data-line="-">  return pay(customer.card);</span><span data-line="+">  if (!customer.address) return missingAddress(customer);</span><span data-line="+">  return pay(customer.card);</span><span>}</span></pre>
+      </div>
+      <p class="demo-usage"><code>sd-spark</code> + <code>data-values</code> · <code>sd-bars</code> + <code>--v</code> · <code>sd-diff</code> + <code>data-line="+|-|@"</code></p>
+    </div>
+  </section>
+
+  <section class="demo-section" id="effects" aria-labelledby="effects-h">
+    <p class="sd-label">06</p>
     <h2 id="effects-h" class="sd-title mt-2">Effects</h2>
     <p class="sd-muted mt-2 max-w-[42rem]">Backdrops, ornaments and motion. All black, white and grey, all optional, all switched on with an attribute.</p>
 
@@ -875,6 +1082,40 @@
     </div>
 
     <div class="demo-block">
+      <h3 class="sd-label">Title bar and header bar</h3>
+      <p class="demo-usage">For frameless desktop apps: a draggable title bar with window buttons (Tauri's window API when present, an <code>sd:window</code> event otherwise; macOS keeps its native buttons). Below it, the solid header bar, the alternative to the floating crumb bars.</p>
+      <div class="border border-line">
+        <header class="sd-titlebar" data-tauri-drag-region style="position:relative">
+          <span class="sd-titlebar-brand"><b>ACME</b></span>
+          <div class="sd-titlebar-end">
+            <span class="sd-titlebar-metric">CPU <b>3%</b></span>
+            <span class="sd-titlebar-metric">MEM <b>182 MB</b></span>
+            <div class="sd-window-controls">
+              <button data-sd-window="minimize" aria-label="Minimize"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor"><path d="M1 6.5h10"/></svg></button>
+              <button data-sd-window="maximize" aria-label="Maximize"><svg class="sd-icon-maximize" viewBox="0 0 12 12" fill="none" stroke="currentColor"><rect x="1.5" y="1.5" width="9" height="9"/></svg><svg class="sd-icon-restore" viewBox="0 0 12 12" fill="none" stroke="currentColor"><rect x="1.5" y="3.5" width="7" height="7"/><path d="M3.5 3.5v-2h7v7h-2"/></svg></button>
+              <button data-sd-window="close" aria-label="Close"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9"/></svg></button>
+            </div>
+          </div>
+        </header>
+        <div class="p-4" style="background: var(--sd-shell-bg)">
+          <header class="sd-shell-bar">
+            <div class="sd-shell-bar-title"><b># general</b><span>Team chat for Design</span><span class="sd-badge">encrypted</span></div>
+            <div class="sd-shell-bar-center"><span class="sd-status" data-tone="success">3 here</span></div>
+            <div class="sd-shell-bar-end">
+              <button class="sd-icon-btn" popovertarget="demo-attention" aria-label="Attention, 2 new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 16V10a6 6 0 0 1 12 0v6l1.5 2h-15zM10 20.5h4"/></svg><span class="sd-badge-count" data-tone="danger">2</span></button>
+              <button class="sd-icon-btn" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="11" height="11"/><path d="M15 15l5.5 5.5"/></svg></button>
+            </div>
+          </header>
+        </div>
+      </div>
+      <div popover id="demo-attention" class="sd-popover sd-popover-panel" data-sd-align="end">
+        <div class="sd-popover-head">Attention <button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" popovertarget="demo-attention" popovertargetaction="hide" aria-label="Close">×</button></div>
+        <div class="sd-popover-body"><a class="sd-item" href="#effects" data-unread><span class="sd-avatar" data-tone="accent">TP</span><span class="sd-item-body"><span class="sd-item-title">Taylor mentioned you</span><span class="sd-item-sub">can you take the copy?</span></span><span class="sd-item-end">10:05</span></a></div>
+      </div>
+      <p class="demo-usage"><code>sd-titlebar</code> + <code>-brand|-end|-metric</code> · <code>sd-window-controls</code> + <code>data-sd-window="minimize|maximize|close"</code> · <code>sd-shell-bar</code> + <code>-title|-center|-end</code> · <code>sd-icon-btn</code> · <code>sd-popover-panel</code> + <code>sd-popover-head|-body</code></p>
+    </div>
+
+    <div class="demo-block">
       <h3 class="sd-label">The full shell</h3>
       <p class="demo-usage">Rail, sidebar, fading crumb and action bars with ladder bridges, the inset content box with corners and border glow, square rain, FPS counter.</p>
       <div><a class="sd-btn sd-btn-primary" href="./shell.html">Open the Signal App Shell</a></div>
@@ -882,7 +1123,7 @@
   </section>
 
   <section class="demo-section" id="js" aria-labelledby="js-h">
-    <p class="sd-label">05</p>
+    <p class="sd-label">07</p>
     <h2 id="js-h" class="sd-title mt-2">JS</h2>
     <p class="sd-muted mt-2 max-w-[42rem]">Optional, under 5 KB gzipped, no dependencies. Every listener is delegated, so markup added later just works. It only sets ARIA and <code>data-*</code> state; the CSS styles that state.</p>
     <div class="demo-block">

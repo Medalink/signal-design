@@ -12,4 +12,7 @@ cargo tauri dev
 ```
 
 `scripts/tauri-prep.mjs` copies `dist/signal.css`, the fonts, the JS and the
-shell example into `examples/tauri/web/` (generated, not committed).
+chat example into `examples/tauri/web/` (generated, not committed). The window
+is frameless (`decorations: false`), so the page's `sd-titlebar` provides the
+drag region and the minimize, maximize and close buttons, through Tauri's
+window API (`withGlobalTauri`).

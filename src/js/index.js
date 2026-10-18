@@ -19,6 +19,7 @@ import { onRainClick, initRain } from "./rain.js";
 import { initFps } from "./fps.js";
 import { initCorners } from "./corners.js";
 import { onScrollActivity, setScrollbars } from "./scrollbars.js";
+import { onWindowClick, onWindowDblClick, initWindow } from "./window.js";
 import { onListboxInput, onListboxKeydown, onListboxClick, initPalettes } from "./listbox.js";
 import { onInputsKeydown, onInputsClick, onInputsInput, onShortcutsKey, initInputs } from "./inputs.js";
 import { onConversationClick, onConversationInput, onConversationKeydown, onSuggestClick, onContextMenu, onContextMenuKey, initConversation } from "./conversation.js";
@@ -37,6 +38,7 @@ export { paintCorners, cornerShapes, CORNER_STYLES } from "./corners.js";
 export { setScrollbars } from "./scrollbars.js";
 export { setOptions, filterList } from "./listbox.js";
 export { drawSpark } from "./inputs.js";
+export { windowAction } from "./window.js";
 
 let started = false;
 
@@ -56,6 +58,7 @@ export function init({ theme = true, scrollbars = "auto" } = {}) {
   initConversation();
   initPalettes();
   initInputs();
+  initWindow();
   if (started) return;
   started = true;
 
@@ -70,6 +73,7 @@ export function init({ theme = true, scrollbars = "auto" } = {}) {
     onRainClick(event);
     onConversationClick(event);
     onListboxClick(event);
+    onWindowClick(event);
     onInputsClick(event);
     onSuggestClick(event);
   });
@@ -103,4 +107,5 @@ export function init({ theme = true, scrollbars = "auto" } = {}) {
     onInputsInput(event);
   });
   document.addEventListener("contextmenu", onContextMenu);
+  document.addEventListener("dblclick", onWindowDblClick);
 }

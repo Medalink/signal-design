@@ -43,6 +43,8 @@ export function onDialogKeydown(event) {
   if (dialog && !("sdStatic" in dialog.dataset)) {
     event.preventDefault();
     dialog.close("");
+    // Leave the closed dialog now; the close event hands focus back to the opener after.
+    if (dialog.contains(document.activeElement)) document.activeElement.blur();
   }
 }
 

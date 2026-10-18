@@ -20,7 +20,7 @@
 import { createRainRenderer } from "./rain/renderer.js";
 
 const KEY = "sd-rain"; // "on" | "off" | null (follow busy state)
-const SHELL_SKIP = ".sd-shell-content, .sd-shell-crumbs, .sd-shell-header-end";
+const SHELL_SKIP = ".sd-shell-content, .sd-shell-crumbs, .sd-shell-header-end, .sd-shell-bar";
 const FADE = 64; // the header bars fade over their last 4rem; rain shows through there
 
 /** Rectangles, relative to the canvas, that opaque elements cover. */

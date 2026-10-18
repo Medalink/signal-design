@@ -33,8 +33,9 @@
     position: relative;
     display: grid;
     grid-template-columns: var(--shell-rail) var(--shell-sidebar) minmax(0, 1fr) auto;
-    grid-template-rows: auto minmax(0, 1fr) var(--shell-status);
+    grid-template-rows: auto auto minmax(0, 1fr) var(--shell-status);
     grid-template-areas:
+      "title title title title"
       "top top top top"
       "rail side main aside"
       "status status status status";
@@ -424,6 +425,7 @@
     flex-shrink: 0;
   }
   /* The » pin button shows only while the sidebar is collapsed. */
+  .sd-shell:not([data-sidebar="collapsed"]) .sd-shell-pin,
   .sd-shell-pin {
     display: none;
   }
@@ -563,6 +565,7 @@
     .sd-shell[data-sidebar="collapsed"] {
       grid-template-columns: minmax(0, 1fr);
       grid-template-areas:
+        "title"
         "top"
         "main"
         "status";
@@ -627,5 +630,256 @@
     width: 28px;
     height: 28px;
     flex-shrink: 0;
+  }
+
+  /* ---- Title bar: window chrome for frameless apps ------------------- */
+  /*
+   *   <header class="sd-titlebar" data-tauri-drag-region>
+   *     <span class="sd-titlebar-brand">ACME</span>
+   *     <div class="sd-titlebar-end">
+   *       <span class="sd-titlebar-metric">CPU <b>4%</b></span>
+   *       <div class="sd-window-controls">
+   *         <button data-sd-window="minimize" aria-label="Minimize">…</button>
+   *         <button data-sd-window="maximize" aria-label="Maximize">…</button>
+   *         <button data-sd-window="close" aria-label="Close">…</button>
+   *       </div>
+   *     </div>
+   *   </header>
+   * The JS sets data-platform (mac | windows | linux) and data-maximized.
+   * On macOS the native traffic lights stay; the bar leaves room for them.
+   */
+  .sd-titlebar {
+    grid-area: title;
+    position: relative;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    height: 2.25rem;
+    padding-inline-start: 12px;
+    border-block-end: 1px solid var(--sd-line);
+    background: var(--sd-canvas);
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .sd-titlebar-brand {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-sm);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+  .sd-titlebar-brand b {
+    color: var(--sd-fg);
+    font-weight: 600;
+  }
+  .sd-titlebar-start,
+  .sd-titlebar-end {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+  }
+  .sd-titlebar-end {
+    margin-inline-start: auto;
+  }
+  .sd-titlebar-metric {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 0 8px;
+    color: var(--sd-fg-faint);
+    font-size: var(--text-sm);
+    letter-spacing: var(--tracking-wide);
+    white-space: nowrap;
+  }
+  .sd-titlebar-metric b {
+    color: var(--sd-fg-subtle);
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+  }
+  .sd-window-controls {
+    display: flex;
+    height: 100%;
+  }
+  .sd-window-controls > button {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 100%;
+    border: 0;
+    background: none;
+    color: var(--sd-fg-subtle);
+    cursor: default;
+    transition: background-color 100ms var(--ease-out), color 100ms var(--ease-out);
+  }
+  .sd-window-controls > button:hover {
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+  .sd-window-controls > button[data-sd-window="close"]:hover {
+    background: var(--sd-danger);
+    color: #ffffff;
+  }
+  .sd-window-controls svg {
+    width: 12px;
+    height: 12px;
+    max-width: none;
+  }
+  /* Maximize shows one square; restore shows two. */
+  .sd-window-controls .sd-icon-restore,
+  .sd-titlebar[data-maximized] .sd-icon-maximize {
+    display: none;
+  }
+  .sd-titlebar[data-maximized] .sd-icon-restore {
+    display: block;
+  }
+  /* macOS: native traffic lights on the left, no custom controls. */
+  .sd-titlebar[data-platform="mac"] {
+    padding-inline-start: 78px;
+  }
+  .sd-titlebar[data-platform="mac"] .sd-window-controls {
+    display: none;
+  }
+  .sd-titlebar[data-platform="mac"] .sd-titlebar-end {
+    padding-inline-end: 8px;
+  }
+
+  /* ---- Header bar: a solid header attached to the content ------------ */
+  /*
+   * An alternative to the floating crumb and action bars.
+   *   <header class="sd-shell-bar">
+   *     <div class="sd-shell-bar-title"><svg>…</svg><b>general</b><span>Team chat</span></div>
+   *     <div class="sd-shell-bar-center">…</div>
+   *     <div class="sd-shell-bar-end"><button class="sd-icon-btn">…</button></div>
+   *   </header>
+   */
+  .sd-shell-bar {
+    position: relative;
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 12px;
+    min-height: 3.5rem;
+    padding: 0 8px 0 16px;
+    border: 1px solid var(--sd-line);
+    border-block-end: 0;
+    background: var(--sd-container);
+    container-type: inline-size;
+  }
+  /* The center item only shows when the bar is wide enough to keep it clear. */
+  @container (max-width: 52rem) {
+    .sd-shell-bar-center {
+      display: none;
+    }
+  }
+  /* The content box below joins it into one panel. */
+  .sd-shell-bar + .sd-shell-content {
+    margin-block-start: calc(-1 * var(--shell-gap));
+  }
+  .sd-shell-bar-title {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+  .sd-shell-bar-title > svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    color: var(--sd-fg-subtle);
+  }
+  .sd-shell-bar-title > b {
+    overflow: hidden;
+    color: var(--sd-fg);
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sd-shell-bar-title > span {
+    overflow: hidden;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-sm);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sd-shell-bar-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .sd-shell-bar-end {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 2px;
+  }
+
+  /* Icon button: a quiet square button for toolbars, with an optional count. */
+  .sd-icon-btn {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    background: none;
+    color: var(--sd-fg-subtle);
+    cursor: pointer;
+    transition: background-color 120ms var(--ease-out), color 120ms var(--ease-out);
+  }
+  .sd-icon-btn:hover,
+  .sd-icon-btn[aria-expanded="true"],
+  .sd-icon-btn[aria-pressed="true"] {
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+  .sd-icon-btn > svg {
+    width: 20px;
+    height: 20px;
+    max-width: none;
+  }
+  .sd-icon-btn > .sd-badge-count {
+    position: absolute;
+    top: 2px;
+    right: 0;
+    min-width: 16px;
+    height: 16px;
+    font-size: 10px;
+    outline: 2px solid var(--sd-container);
+  }
+
+  /* Panel popover: a popover with a titled head, for lists like pinned items. */
+  .sd-popover-panel {
+    width: min(26rem, calc(100vw - 16px));
+    max-height: min(70dvh, 34rem);
+    padding: 0;
+  }
+  .sd-popover-head {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 8px 12px 16px;
+    border-block-end: 1px solid var(--sd-line);
+    background: var(--sd-overlay);
+    color: var(--sd-fg);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+  }
+  .sd-popover-head > :last-child:not(:first-child) {
+    margin-inline-start: auto;
+  }
+  .sd-popover-body {
+    padding: 8px;
   }
 }
