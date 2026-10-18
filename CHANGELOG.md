@@ -3,6 +3,13 @@
 ## Unreleased
 
 ### Added
+- `sd-plot`, a chart an app draws itself as SVG (`sd-plot-inline` for
+  sparklines), with tone-colored line, soft area, hairline grid, dots,
+  crosshair, readout and empty note.
+- `sd-stat-box`, a boxed stat with a tone edge for dashboards, plus
+  `sd-stat-sub` and a `sd-stat-end` action slot; `sd-stat-box-sm`.
+- Sortable table headers: `th[data-sort]` with `aria-sort` arrows.
+- A dashboard-style stat box, plot and sortable-header demo in the showcase.
 - App shell for frameless desktop windows: `sd-titlebar` with `sd-window-controls`
   (Tauri window API, or an `sd:window` event), macOS layout.
 - `sd-shell-bar`, a solid header bar, and `sd-shell-dock`, a box below the
