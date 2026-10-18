@@ -19,7 +19,7 @@
  */
 import {
   Chart, LineController, LineElement, PointElement, LinearScale, TimeScale, Filler, Tooltip, Legend,
-  Interaction, _adapters, Scale,
+  Interaction, _adapters, Scale, BarController, BarElement, CategoryScale, ScatterController,
 } from "chart.js";
 import { formatValue, formatDelta } from "./format.js";
 import { SCALE_MODES, scaleBounds, smooth, envelope, bursts, significance, flowRate, upsertTail } from "./data.js";
@@ -28,6 +28,7 @@ import { timeAdapter, formatTime } from "./time.js";
 import { FONT, readTheme, rgba, mix, kindOf } from "./theme.js";
 import * as plugins from "./plugins.js";
 import { createLayer, effectsLevel } from "./effects.js";
+import { createBasicChart } from "./basic.js";
 
 export { formatValue, formatBandwidth, formatMs, formatDelta } from "./format.js";
 export { SCALE_MODES, percentile, scaleBounds, smooth, envelope, bursts, significance, flowRate } from "./data.js";
@@ -38,7 +39,10 @@ let registered = false;
 function register() {
   if (registered) return;
   registered = true;
-  Chart.register(LineController, LineElement, PointElement, LinearScale, TimeScale, Filler, Tooltip, Legend, createSymlogScale(Scale));
+  Chart.register(
+    LineController, LineElement, PointElement, LinearScale, TimeScale, Filler, Tooltip, Legend,
+    BarController, BarElement, CategoryScale, ScatterController, createSymlogScale(Scale),
+  );
   _adapters._date.override(timeAdapter);
   Tooltip.positioners.sdCursor = plugins.cursorPositioner;
   Interaction.modes.sdTime = plugins.timeMode;
@@ -68,6 +72,9 @@ function storedScaleMode() {
  */
 export function createChart(canvas, options = {}) {
   register();
+  // Generic charts (line, area, bar, …) share the tokens but not the
+  // time-series engine.
+  if (options.type) return createBasicChart(canvas, options);
   const preset = PRESETS[options.preset] ? options.preset : "bandwidth";
   const frame = canvas.closest(".sd-chart") ?? canvas.parentElement;
   const plot = canvas.closest(".sd-chart-plot") ?? canvas.parentElement;

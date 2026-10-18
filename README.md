@@ -366,6 +366,43 @@ empty state. Scales and hover belong to your app. To format the readout the
 same way the charts do, without loading Chart.js:
 `import { formatValue } from "signal-design/js/charts/format"`.
 
+### Chart types
+
+`createChart(canvas, { type })` draws generic charts on the same tokens:
+
+| `type` | For |
+|---|---|
+| `line` | Trends; several series, `markers` for an SLO or target |
+| `area` | Volumes; `stacked: true` for parts of a total |
+| `step` | Counts that change in jumps (queue depth, replicas) |
+| `bar` | Comparisons; grouped by default, `stacked: true` for parts |
+| `hbar` | Rankings, with the value at each bar's end |
+| `histogram` | Distributions, with percentile `markers` |
+| `scatter` | Two measures per point, with quadrant `markers` |
+
+```js
+createChart(canvas, {
+  type: "line",
+  labels: ["00:00", "01:00", …],
+  unit: " ms",
+  series: [{ label: "p50", data: [82, 80, …] }, { label: "p95", data: […] }],
+  markers: [{ axis: "y", value: 300, label: "SLO 300 ms", tone: "warning" }],
+});
+```
+
+Series take colors 1 to 6 (`--sd-chart-1` … `--sd-chart-6`) in order, or a
+`tone` (`critical`, `warning`, …) for the one that matters. In mono, lines also
+take a dash each, so five greys stay apart.
+
+Four more charts are plain HTML and CSS, built from squares:
+
+| Class | Markup |
+|---|---|
+| `sd-heatmap` | `<i style="--v: .4">` per cell, `--cols` for the width; `sd-heatmap-key` for less → more |
+| `sd-waffle` | 100 `<i data-s="1–6">` cells, part of a whole; `sd-key` for the legend |
+| `sd-uptime` | `<i data-state="ok\|degraded\|down\|none">` per period |
+| `sd-meter` | `--value`, `--target`, `--warn`, `--crit` (0–100); `data-over` turns it critical |
+
 ### Live charts: `createChart`
 
 Time-series charts for bandwidth and latency, on Chart.js. Chart.js is an

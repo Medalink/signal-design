@@ -323,6 +323,25 @@ for (const [name, engine] of Object.entries(engines)) {
         const before = (await core()).newest;
         await page.waitForTimeout(2300);
         if (!((await core()).newest > before)) fail(where, "live feed did not move the newest point");
+        // Gallery: every generic chart draws, and the square charts render.
+        const blank = await page.evaluate(() =>
+          [...document.querySelectorAll('[id^="g-"] canvas:not(.sd-chart-fx)')]
+            .filter((cv) => {
+              const d = cv.getContext("2d").getImageData(0, 0, cv.width, cv.height).data;
+              let n = 0;
+              for (let i = 3; i < d.length; i += 4) if (d[i] > 0) n++;
+              return n < 2000;
+            })
+            .map((cv) => cv.closest("figure").id),
+        );
+        if (blank.length) fail(where, `blank gallery charts: ${blank.join(", ")}`);
+        const squares = await page.evaluate(() => ({
+          heat: document.querySelectorAll("[data-heat] > i").length,
+          waffle: document.querySelectorAll("[data-waffle] > i").length,
+          waffleW: document.querySelector("[data-waffle]").getBoundingClientRect().width,
+          uptime: document.querySelectorAll(".sd-uptime > i").length,
+        }));
+        if (squares.heat !== 168 || squares.waffle !== 100 || squares.waffleW < 150 || squares.uptime !== 360) fail(where, `square charts ${JSON.stringify(squares)}`);
         // Theme: spectrum colors the series.
         await page.click('#chart-theme [data-value="spectrum"]');
         await page.waitForTimeout(200);

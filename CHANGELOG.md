@@ -3,6 +3,9 @@
 ## Unreleased
 
 ### Added
+- Chart types on the same tokens: `line`, `area`, `step`, `bar` (grouped or
+  stacked), `hbar`, `histogram`, `scatter`, plus CSS-only `sd-heatmap`,
+  `sd-waffle`, `sd-uptime` and `sd-meter`; a gallery on `charts.html`.
 - `sd-plot`, a chart an app draws itself as SVG (`sd-plot-inline` for
   sparklines), with tone-colored line, soft area, hairline grid, dots,
   crosshair, readout and empty note.

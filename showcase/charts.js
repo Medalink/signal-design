@@ -202,6 +202,131 @@ for (const row of document.querySelectorAll("#sparks > div")) {
   row.querySelector("[data-last]").textContent = formatValue(pts.at(-1).y, key === "rtt" ? " ms" : "Mbps");
 }
 
+/* ---- gallery: generic types on the same tokens --------------------------- */
+const canvasOf = (id) => document.querySelector(`#${id} canvas`);
+const hours = Array.from({ length: 24 }, (_, h) => `${String(h).padStart(2, "0")}:00`);
+const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const wave = (h, peak = 14) => Math.max(0, Math.sin(((h - 6) / 24) * Math.PI * 2));
+
+createChart(canvasOf("g-percentiles"), {
+  type: "line",
+  labels: hours,
+  unit: " ms",
+  series: [
+    { label: "p50", data: hours.map((_, h) => Math.round(80 + wave(h) * 40 + noise(6))) },
+    { label: "p95", data: hours.map((_, h) => Math.round(180 + wave(h) * 110 + noise(14))) },
+    { label: "p99", data: hours.map((_, h) => Math.round(260 + wave(h) * 190 + (h === 15 ? 140 : 0) + noise(20))) },
+  ],
+  markers: [{ axis: "y", value: 300, label: "SLO 300 ms", tone: "warning" }],
+});
+
+createChart(canvasOf("g-region"), {
+  type: "area",
+  stacked: true,
+  labels: hours,
+  unit: "Mbps",
+  series: ["US East", "US West", "Europe", "Asia"].map((label, i) => ({
+    label,
+    data: hours.map((_, h) => Math.round((900 - i * 170) * (0.35 + wave((h + i * 5) % 24) * 0.9) + noise(40))),
+  })),
+});
+
+createChart(canvasOf("g-services"), {
+  type: "bar",
+  labels: days,
+  unit: "",
+  series: ["api", "web", "worker"].map((label, i) => ({
+    label,
+    data: days.map((_, d) => Math.round((5200 - i * 1400) * (d > 4 ? 0.45 : 1) + noise(500))),
+  })),
+});
+
+createChart(canvasOf("g-errors"), {
+  type: "bar",
+  stacked: true,
+  labels: hours.slice(8, 20),
+  series: [
+    { label: "4xx", data: hours.slice(8, 20).map(() => Math.round(40 + rand() * 30)) },
+    { label: "5xx", data: hours.slice(8, 20).map((_, i) => Math.round(4 + rand() * 6 + (i === 6 ? 38 : 0))), tone: "critical" },
+    { label: "timeout", data: hours.slice(8, 20).map(() => Math.round(rand() * 8)) },
+  ],
+});
+
+const endpoints = [["/api/search", 412], ["/api/export", 388], ["/api/reports", 261], ["/api/items", 174], ["/api/upload", 158], ["/api/users", 96], ["/api/auth", 71], ["/health", 12]];
+createChart(canvasOf("g-endpoints"), {
+  type: "hbar",
+  labels: endpoints.map((e) => e[0]),
+  unit: " ms",
+  series: [{ label: "p95", data: endpoints.map((e) => e[1]) }],
+});
+
+const buckets = Array.from({ length: 24 }, (_, i) => (i + 1) * 20);
+const hist = buckets.map((b) => Math.round(900 * Math.exp(-((b - 140) ** 2) / (2 * 60 ** 2)) + 40 * Math.exp(-((b - 420) ** 2) / 800) + rand() * 25));
+createChart(canvasOf("g-histogram"), {
+  type: "histogram",
+  labels: buckets.map((b) => `${b}`),
+  series: [{ label: "requests", data: hist }],
+  markers: [
+    { value: 6, label: "p50 140 ms" },
+    { value: 13, label: "p95 280 ms", tone: "warning" },
+    { value: 20, label: "p99 420 ms", tone: "critical" },
+  ],
+});
+
+const pts = Array.from({ length: 160 }, () => {
+  const kb = 2 ** (rand() * 10);
+  return { x: Math.round(kb), y: Math.max(12, Math.round(40 + kb * 0.35 + noise(60) + (rand() < 0.06 ? 400 : 0))) };
+});
+createChart(canvasOf("g-scatter"), {
+  type: "scatter",
+  unit: " ms",
+  xUnit: " KB",
+  series: [
+    { label: "ok", data: pts.filter((p) => p.y < 300) },
+    { label: "slow", data: pts.filter((p) => p.y >= 300), tone: "critical", size: 4 },
+  ],
+  markers: [{ axis: "y", value: 300, label: "300 ms", tone: "warning" }, { value: 512, label: "512 KB" }],
+});
+
+let depth = 20;
+createChart(canvasOf("g-queue"), {
+  type: "step",
+  labels: Array.from({ length: 48 }, (_, i) => `${String(Math.floor(i / 2)).padStart(2, "0")}:${i % 2 ? "30" : "00"}`),
+  series: [{ label: "jobs waiting", data: Array.from({ length: 48 }, (_, i) => (depth = Math.max(0, depth + Math.round(noise(9)) + (i === 30 ? 60 : 0) - (i > 31 && i < 36 ? 14 : 0)))) }],
+});
+
+// Heatmap: deploys by weekday and hour.
+document.querySelector("[data-heat-rows]").innerHTML = days.map((d) => `<span>${d}</span>`).join("");
+document.querySelector("[data-heat]").innerHTML = days
+  .flatMap((d, di) => hours.map((h, hi) => {
+    const work = di < 5 && hi >= 9 && hi <= 17;
+    const v = Math.min(1, (work ? 0.35 + rand() * 0.65 : rand() * 0.22) * (hi === 16 && di === 4 ? 0.1 : 1));
+    return `<i style="--v: ${v.toFixed(2)}" title="${d} ${h} · ${Math.round(v * 24)} deploys"></i>`;
+  }))
+  .join("");
+
+// Waffle: share of traffic in 100 squares.
+const share = [["API", 42], ["Web", 27], ["Mobile", 18], ["Partners", 9]];
+let cells = "";
+share.forEach(([, n], i) => (cells += `<i data-s="${i + 1}"></i>`.repeat(n)));
+cells += "<i></i>".repeat(100 - share.reduce((a, [, n]) => a + n, 0));
+document.querySelector("[data-waffle]").innerHTML = cells;
+document.querySelector("[data-waffle-key]").innerHTML =
+  share.map(([l, n], i) => `<li><i data-s="${i + 1}"></i>${l}<b>${n}%</b></li>`).join("") + `<li><i style="border:1px solid var(--sd-line)"></i>Other<b>4%</b></li>`;
+
+// Uptime: 90 days per service.
+const services = [["api", [61, 62]], ["web", []], ["worker", [12, 40, 41]], ["search", [77]]];
+document.querySelector("[data-uptime]").innerHTML = services
+  .map(([name, bad]) => {
+    const sq = Array.from({ length: 90 }, (_, d) => {
+      const state = d < 3 && name === "search" ? "none" : bad.includes(d) ? (d % 2 ? "down" : "degraded") : "ok";
+      return `<i data-state="${state}" title="${name} · day ${d + 1} · ${state}"></i>`;
+    }).join("");
+    const pct = (100 - bad.length * 0.21).toFixed(2);
+    return `<div class="grid gap-2"><div class="flex justify-between text-sm"><span>${name}</span><span class="sd-subtle">${pct}%</span></div><div class="sd-uptime">${sq}</div></div>`;
+  })
+  .join("");
+
 /* ---- theme switch for every chart -------------------------------------- */
 const themeSeg = document.querySelector("#chart-theme");
 let chartTheme = "mono";
@@ -210,7 +335,7 @@ try {
 } catch {}
 function applyChartTheme(name) {
   chartTheme = name;
-  for (const fig of document.querySelectorAll(".sd-chart, .sd-plot")) fig.dataset.chartTheme = name;
+  for (const fig of document.querySelectorAll(".sd-chart, .sd-plot, .sd-heatmap, .sd-waffle, .sd-uptime, .sd-meter")) fig.dataset.chartTheme = name;
   for (const b of themeSeg.querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.value === name));
   try {
     localStorage.setItem("sd-chart-theme", name);

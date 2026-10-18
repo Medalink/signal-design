@@ -95,6 +95,46 @@ export interface SignalChart {
   destroy(): void;
 }
 
+export interface BasicSeries {
+  label: string;
+  /** Numbers for category charts; { x, y } points for scatter or time. */
+  data: (number | null)[] | { x: number; y: number | null }[];
+  /** Any CSS color; otherwise series colors 1–6 in order. */
+  color?: string;
+  /** A theme role instead: "critical", "warning", "accent", … */
+  tone?: string;
+  dash?: number[];
+  borderWidth?: number;
+  /** Scatter point size. */
+  size?: number;
+}
+
+export interface BasicChartOptions {
+  type: "line" | "area" | "step" | "bar" | "hbar" | "histogram" | "scatter";
+  series: BasicSeries[];
+  labels?: string[];
+  unit?: string;
+  /** Scatter x unit. */
+  xUnit?: string;
+  stacked?: boolean;
+  /** Square points on lines. */
+  points?: boolean;
+  legend?: boolean;
+  /** Value labels at bar ends (hbar). Default true. */
+  valueLabels?: boolean;
+  beginAtZero?: boolean;
+  yMax?: number;
+  /** Dashed reference lines; x markers take a category index or x value. */
+  markers?: { value: number; axis?: "x" | "y"; label?: string; tone?: string }[];
+}
+
+export interface BasicChart {
+  readonly chart: Chart;
+  setData(data: { labels?: string[]; series?: BasicSeries[] }): void;
+  destroy(): void;
+}
+
+export function createChart(canvas: HTMLCanvasElement, options: BasicChartOptions): BasicChart;
 export function createChart(canvas: HTMLCanvasElement, options: ChartOptions): SignalChart;
 /** Build every [data-sd-chart] figure from its JSON payload. */
 export function initCharts(root?: ParentNode): SignalChart[];

@@ -7,6 +7,7 @@ export const TOKENS = [
   "down", "up", "in", "out", "rtt", "jitter", "ghost", "baseline", "fallback",
   "accent", "warning", "critical", "burst", "surge", "drop",
   "maintenance", "missing", "alert", "dip", "spike", "hours", "day", "forecast", "stale", "dead",
+  "1", "2", "3", "4", "5", "6", "heat",
 ];
 const DASHES = ["up", "in", "out"];
 
@@ -52,7 +53,9 @@ export function readTheme(el) {
     dashes[name] = !raw || raw === "none" ? [] : raw.split(/[\s,]+/).map(Number).filter(Number.isFinite);
   }
   const band = parseFloat(style.getPropertyValue("--sd-chart-band")) || 0.1;
-  return { colors, dashes, band };
+  const series = ["1", "2", "3", "4", "5", "6"].map((k) => colors[k]);
+  const mono = style.getPropertyValue("--sd-chart-dashes").trim() === "on";
+  return { colors, dashes, band, series, mono };
 }
 
 /** Which palette slot a series uses, from its label when not given. */
