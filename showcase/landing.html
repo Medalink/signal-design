@@ -59,13 +59,17 @@
     .l-cell { display: flex; flex-direction: column; gap: 14px; padding: 32px; }
     .l-cell-wide { grid-column: 1 / -1; }
     .l-step { font-size: var(--text-4xl); line-height: 1; letter-spacing: -0.04em; color: var(--sd-fg-faint); }
-    .l-cell-foot { margin-top: auto; padding-top: 12px; }
+    .l-cell-foot { margin-top: auto; }
 
     /* Split feature rows */
     .l-split { display: grid; gap: 48px; align-items: center; }
     @media (min-width: 60rem) { .l-split { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 80px; } .l-split-flip > :first-child { order: 2; } }
     .l-split + .l-split { margin-top: 112px; }
-    .l-frame { padding: 8px; border: 1px solid var(--sd-line); background: var(--sd-surface); }
+    /* A product panel: a head row, then hairline rows, on the page color. */
+    .l-frame { border: 1px solid var(--sd-line-strong); background: var(--sd-canvas); }
+    .l-frame-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 0 16px; border-block-end: 1px solid var(--sd-line); }
+    .l-frame > .sd-item { padding: 14px 16px; border-block-end: 1px solid var(--sd-line); }
+    .l-frame > .sd-item:last-child { border-block-end: 0; }
     .l-item-risk { box-shadow: inset 2px 0 0 var(--sd-danger); }
 
     /* Numbers */
@@ -258,6 +262,7 @@
           </ul>
         </div>
         <div class="l-frame" data-sd-corners data-sd-corners-size="140">
+          <div class="l-frame-head"><span class="sd-label">Inbox</span><span class="sd-status" data-tone="danger">1 needs review</span></div>
           <span class="sd-item l-item-risk"><span class="sd-avatar" data-tone="danger">DB</span><span class="sd-item-body"><span class="sd-item-title">Drop table sessions_old</span><span class="sd-item-sub">database · irreversible · needs 2</span></span><span class="sd-item-end"><span class="sd-badge" data-tone="danger">review</span></span></span>
           <span class="sd-item"><span class="sd-avatar">CI</span><span class="sd-item-body"><span class="sd-item-title">Bump lint rules</span><span class="sd-item-sub">routine · auto-approved</span></span><span class="sd-item-end">✓</span></span>
           <span class="sd-item"><span class="sd-avatar">CI</span><span class="sd-item-body"><span class="sd-item-title">Refresh lockfile</span><span class="sd-item-sub">routine · auto-approved</span></span><span class="sd-item-end">✓</span></span>
@@ -271,6 +276,7 @@
           <p class="sd-lead mt-6">Move with <kbd>j</kbd> and <kbd>k</kbd>, decide with one key, and find anything with <kbd>Ctrl</kbd> <kbd>K</kbd>. Press <kbd>?</kbd> anywhere for the list.</p>
         </div>
         <div class="l-frame" data-sd-corners data-sd-corners-size="140">
+          <div class="l-frame-head"><span class="sd-label">Keyboard</span><span class="sd-subtle text-sm">press <kbd>?</kbd> anywhere</span></div>
           <dl class="sd-shortcuts p-4">
             <div class="sd-shortcuts-group">Move</div>
             <dt><kbd>j</kbd> <kbd>k</kbd></dt><dd>Next, previous item</dd>

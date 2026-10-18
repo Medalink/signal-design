@@ -292,7 +292,7 @@
   --sd-fg: var(--color-ink-1000);
   --sd-fg-muted: #2e2e33;
   --sd-fg-subtle: #5c5c66;
-  --sd-fg-faint: #8e8e96;
+  --sd-fg-faint: #74747c; /* 4.5:1 on the light surface */
   --sd-primary: var(--color-ink-1000);
   --sd-on-primary: #ffffff;
   --sd-accent: var(--color-cyan-deep);
@@ -325,7 +325,7 @@
     --sd-fg: var(--color-ink-1000);
     --sd-fg-muted: #2e2e33;
     --sd-fg-subtle: #5c5c66;
-    --sd-fg-faint: #8e8e96;
+    --sd-fg-faint: #74747c; /* 4.5:1 on the light surface */
     --sd-primary: var(--color-ink-1000);
     --sd-on-primary: #ffffff;
     --sd-accent: var(--color-cyan-deep);

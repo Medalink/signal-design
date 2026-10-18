@@ -333,7 +333,7 @@ export function createChart(canvas, options = {}) {
       normalized: true,
       animation: false,
       interaction: { mode: "sdTime", intersect: false, axis: "x" },
-      layout: { padding: { top: opts.compact ? 2 : 4, right: state.valueTags ? 64 : 4, bottom: 0, left: 0 } },
+      layout: { padding: { top: opts.compact ? 2 : opts.legend === false && opts.labels?.primary ? 20 : 4, right: state.valueTags ? 64 : 4, bottom: 0, left: 0 } },
       scales: scales(built.xMin, built.xMax),
       plugins: {
         legend: legendOptions(),

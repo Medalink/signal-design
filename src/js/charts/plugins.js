@@ -72,15 +72,30 @@ export const panelLabels = {
   afterDatasetsDraw(chart) {
     const { labels, compact } = chart.$sd.options;
     if (compact || !labels) return;
-    const { ctx, chartArea: a } = chart;
+    const { ctx, chartArea: a, legend } = chart;
     ctx.save();
     ctx.font = font(11);
-    ctx.textBaseline = "top";
-    for (const [id, text, tone] of [["y", labels.primary, "tick"], ["y1", labels.secondary, "rtt"]]) {
-      const scale = chart.scales[id];
-      if (!scale || !text) continue;
-      ctx.fillStyle = color(chart, tone);
-      ctx.fillText(text, a.left + 4, scale.top + 2);
+    ctx.textBaseline = "middle";
+    // The main panel's title sits above the plot, on the legend row (the
+    // keys align right) or in the top padding, so it never covers data.
+    const primary = chart.scales.y && labels.primary;
+    if (primary) {
+      const shown = legend?.options?.display && legend.legendHitBoxes?.length;
+      const y = shown ? legend.legendHitBoxes[0].top + legend.legendHitBoxes[0].height / 2 : a.top - 9;
+      const room = shown ? legend.legendHitBoxes[0].left - a.left - 16 : Infinity;
+      if (ctx.measureText(primary).width <= room) {
+        ctx.fillStyle = color(chart, "tick");
+        ctx.fillText(primary, a.left, y);
+      }
+    }
+    // A stacked panel's title sits inside it, on a backing so lines pass under.
+    const y1 = chart.scales.y1;
+    if (y1 && labels.secondary) {
+      const w = ctx.measureText(labels.secondary).width + 8;
+      ctx.fillStyle = color(chart, "cap-bg", 0.85);
+      ctx.fillRect(a.left + 1, y1.top + 1, w, 15);
+      ctx.fillStyle = color(chart, "rtt");
+      ctx.fillText(labels.secondary, a.left + 5, y1.top + 9);
     }
     ctx.restore();
   },

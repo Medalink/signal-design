@@ -59,11 +59,13 @@
   .sd-row[data-edge]::before {
     background: var(--tone, var(--sd-fg));
   }
-  .sd-row[data-done] {
-    opacity: 0.42;
-  }
+  /* Done rows step back by color, not opacity, so they stay readable on
+     light surfaces: the title drops to subtle, the rest keeps its grey. */
   .sd-row[data-done] .sd-row-title {
     color: var(--sd-fg-subtle);
+  }
+  .sd-row[data-done] :is(.sd-marker, .sd-row-marker) {
+    opacity: 0.6;
   }
   a.sd-row,
   button.sd-row,
