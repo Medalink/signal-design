@@ -12,33 +12,105 @@
 </head>
 <body>
 
-<header class="sd-topbar sticky top-0 z-30">
-  <a class="sd-wordmark" href="#top">Signal</a>
-  <nav class="sd-nav" aria-label="Sections">
-    <a href="#tokens">Tokens</a>
-    <a href="#elements">Elements</a>
-    <a href="#components">Components</a>
-    <a href="#conversation">Conversation</a>
-    <a href="#inputs-more">Inputs</a>
-    <a href="#effects">Effects</a>
-    <a href="#js">JS</a>
-    <a href="./shell.html">App shell</a>
-    <a href="./chat.html">Chat</a>
-    <a href="./form.html">Form</a>
-    <a href="./landing.html">Landing</a>
-    <a href="./charts.html">Charts</a>
-  </nav>
-  <div class="sd-topbar-end">
-    <div class="sd-seg sd-seg-inline sd-seg-sm" aria-label="Theme">
-      <button type="button" data-sd-theme="ink">ink</button>
-      <button type="button" data-sd-theme="graphite">graphite</button>
-      <button type="button" data-sd-theme="light">light</button>
-      <button type="button" data-sd-theme="auto">auto</button>
-    </div>
-  </div>
-</header>
+<!-- Icons: square strokes only. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-mark" viewBox="0 0 28 28"><rect x="1" y="1" width="26" height="26" fill="none" stroke="currentColor" stroke-opacity=".3"/><rect x="6" y="15" width="4" height="7" fill="currentColor" fill-opacity=".45"/><rect x="12" y="11" width="4" height="11" fill="currentColor" fill-opacity=".7"/><rect x="18" y="6" width="4" height="16" fill="var(--sd-accent)"/></symbol>
+    <symbol id="i-foundations" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><path d="M13 16.5h7M16.5 13v7"/></symbol>
+    <symbol id="i-components" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3.5" y="4.5" width="17" height="4"/><rect x="3.5" y="10" width="11" height="4"/><rect x="3.5" y="15.5" width="14" height="4"/></symbol>
+    <symbol id="i-charts" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 20h16"/><rect x="5.5" y="12" width="3" height="6"/><rect x="10.5" y="7" width="3" height="11"/><rect x="15.5" y="10" width="3" height="8"/></symbol>
+    <symbol id="i-effects" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3v6M6 12v2M12 6v9M12 18v2M18 3v4M18 10v8"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 5l-3 14"/></symbol>
+    <symbol id="i-pages" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4.5" y="3.5" width="12" height="15"/><path d="M8 21.5h11.5V7"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="11" height="11"/><path d="M15 15l5.5 5.5"/></symbol>
+    <symbol id="i-theme" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16"/><path d="M12 4h8v16h-8z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-rain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3v6M6 12v2M12 6v9M12 18v2M18 3v4M18 10v8"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><rect x="14" y="5" width="4" height="4"/><rect x="6" y="15" width="4" height="4"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-collapse" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 4L4 8l4 4M12 4L8 8l4 4"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></symbol>
+    <symbol id="i-panel" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="2.5" width="12" height="11"/><path d="M10 2.5v11"/></symbol>
+  </defs>
+</svg>
 
-<main class="sd-page sd-page-wide" id="top">
+<!-- The components page is itself an app in the Signal App Shell. -->
+<div class="sd-shell" id="shell">
+  <canvas class="sd-rain" data-sd-rain data-sd-rain-style="squares" aria-hidden="true"></canvas>
+
+  <header class="sd-shell-topbar">
+    <button class="sd-btn sd-btn-ghost sd-btn-icon" data-sd-shell="drawer" aria-controls="shell-rail" aria-label="Open navigation"><svg><use href="#i-menu"/></svg></button>
+    <a href="#top" class="sd-wordmark" aria-label="Signal home"><svg class="sd-mark" style="width:22px;height:22px"><use href="#i-mark"/></svg> Signal</a>
+    <span class="sd-shell-topbar-label" data-page-label>Basics</span>
+    <button class="sd-btn sd-btn-ghost sd-btn-icon" data-sd-open="demo-palette" aria-label="Search"><svg><use href="#i-search"/></svg></button>
+  </header>
+
+  <nav class="sd-rail" id="shell-rail" aria-label="Library" data-sd-ornaments="bottom" data-sd-ornaments-size="200">
+    <a class="sd-rail-home" href="#top" aria-label="Signal home"><svg class="sd-mark"><use href="#i-mark"/></svg></a>
+    <button class="sd-rail-item" style="margin-top:8px" data-sd-open="demo-palette" aria-label="Search (Ctrl K)"><svg><use href="#i-search"/></svg><span><kbd>Ctrl K</kbd></span></button>
+    <div class="sd-rail-sep" style="margin-block:8px"></div>
+    <div class="sd-rail-list">
+      <a class="sd-rail-item" href="#tokens" data-sd-section="foundations" aria-current="true"><svg><use href="#i-foundations"/></svg><span>Basics</span></a>
+      <a class="sd-rail-item" href="#components" data-sd-section="components"><svg><use href="#i-components"/></svg><span>Parts</span></a>
+      <a class="sd-rail-item" href="#charts" data-sd-section="charts"><svg><use href="#i-charts"/></svg><span>Charts</span></a>
+      <a class="sd-rail-item" href="#effects" data-sd-section="effects"><svg><use href="#i-effects"/></svg><span>Effects</span></a>
+      <a class="sd-rail-item" href="#js" data-sd-section="code"><svg><use href="#i-code"/></svg><span>JS</span></a>
+      <a class="sd-rail-item" href="#top" data-sd-section="pages"><svg><use href="#i-pages"/></svg><span>Pages</span></a>
+    </div>
+    <div class="sd-rail-tools">
+      <button class="sd-rail-item" data-sd-rain-toggle data-sd-tip="Digital rain" data-sd-tip-side="right" aria-label="Digital rain" aria-pressed="false"><svg><use href="#i-rain"/></svg></button>
+      <button class="sd-rail-item" data-sd-theme-cycle data-sd-tip="Next theme (Shift+T)" data-sd-tip-side="right" aria-label="Next theme"><svg><use href="#i-theme"/></svg></button>
+      <button class="sd-rail-item" data-sd-shell="aside" data-sd-tip="Display settings (])" data-sd-tip-side="right" aria-label="Display settings"><svg><use href="#i-settings"/></svg></button>
+    </div>
+  </nav>
+
+  <!-- One sidebar panel per rail section; main.js lists each block in it. -->
+  <aside class="sd-sidebar" aria-label="Library pages">
+    <div class="sd-sidebar-panel" data-section="foundations" data-sections="tokens elements" data-title="Basics"></div>
+    <div class="sd-sidebar-panel" data-section="components" data-sections="components conversation inputs-more" data-title="Parts" hidden></div>
+    <div class="sd-sidebar-panel" data-section="charts" data-sections="charts" data-title="Charts" hidden></div>
+    <div class="sd-sidebar-panel" data-section="effects" data-sections="effects" data-title="Effects" hidden></div>
+    <div class="sd-sidebar-panel" data-section="code" data-sections="js" data-title="JS" hidden></div>
+    <div class="sd-sidebar-panel" data-section="pages" data-title="Pages" hidden>
+      <div class="sd-sidebar-head"><svg><use href="#i-pages"/></svg><span class="sd-sidebar-title">Pages</span>
+        <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="sidebar" aria-label="Collapse sidebar"><svg><use href="#i-collapse"/></svg></button></div>
+      <nav class="sd-sidebar-body" data-sd-ornaments="bottom" data-sd-ornaments-size="200" aria-label="Example pages">
+        <details class="sd-sidebar-group" open>
+          <summary>Examples <span class="sd-count">5</span></summary>
+          <a class="sd-sidebar-link" href="./shell.html">App shell</a>
+          <a class="sd-sidebar-link" href="./chat.html">Chat</a>
+          <a class="sd-sidebar-link" href="./form.html">Form</a>
+          <a class="sd-sidebar-link" href="./landing.html">Landing</a>
+          <a class="sd-sidebar-link" href="./charts.html">Charts</a>
+        </details>
+      </nav>
+      <div class="sd-sidebar-foot">signal-design · 5 example pages</div>
+    </div>
+  </aside>
+
+  <main class="sd-shell-main" id="main">
+    <div class="sd-shell-header">
+      <div class="sd-shell-crumbs">
+        <button class="sd-btn sd-btn-icon sd-btn-sm sd-shell-pin" data-sd-shell="sidebar" data-sd-key="[" data-sd-tip="Show sidebar ([)" data-sd-tip-side="bottom" aria-label="Pin sidebar open"><svg><use href="#i-collapse"/></svg></button>
+        <ol class="sd-breadcrumb" aria-label="Breadcrumb">
+          <li><a href="#top" aria-label="Home"><svg><use href="#i-home"/></svg></a></li>
+          <li><span data-crumb-section>Basics</span></li>
+          <li><span aria-current="page" data-crumb-page>Signal</span></li>
+        </ol>
+      </div>
+      <div class="sd-shell-header-end">
+        <div class="sd-seg sd-seg-inline sd-seg-sm sd-desktop-only" aria-label="Theme">
+          <button type="button" data-sd-theme="ink">ink</button>
+          <button type="button" data-sd-theme="graphite">graphite</button>
+          <button type="button" data-sd-theme="light">light</button>
+          <button type="button" data-sd-theme="auto">auto</button>
+        </div>
+        <button class="sd-btn sd-btn-sm" data-sd-shell="aside" data-sd-key="]" aria-controls="settings-panel"><svg><use href="#i-panel"/></svg><span class="sd-desktop-only">Display</span> <kbd>]</kbd></button>
+      </div>
+    </div>
+
+    <div class="sd-shell-content" data-sd-ornaments data-sd-edges id="top">
+    <div class="demo-wrap">
 
   <header class="sd-header">
     <span class="sd-wordmark">Signal design</span>
@@ -359,6 +431,29 @@
     <p class="sd-muted mt-2 max-w-[42rem]">Classes start with <code>sd-</code>. Color comes from <code>data-tone</code>: accent, success, danger, warning, pending, extra, neutral. State comes from ARIA and <code>data-*</code>, so the JS never needs your Tailwind build to contain a class.</p>
 
     <div class="demo-block">
+      <h3 class="sd-label">Text styles</h3>
+      <div class="grid gap-5">
+        <p class="sd-display sd-display-xl">32 open. <em>8 done.</em></p>
+        <p class="sd-display">Display line <span class="sd-quiet">with a quiet half.</span></p>
+        <p class="sd-title">Title: a section or panel heading</p>
+        <p class="sd-lead max-w-[42rem]">Lead: the paragraph under a page title, a step softer than body text.</p>
+        <div class="sd-cluster" style="--gap: 20px"><span class="sd-label">Label</span><span class="sd-label sd-label-strong">Strong label</span><span class="sd-muted">muted</span><span class="sd-subtle">subtle</span><span class="sd-faint">faint</span></div>
+        <p class="sd-meta"><span>Owner Jane</span><span>07:55</span><span data-tone="danger">risk</span></p>
+      </div>
+      <p class="demo-usage"><code>sd-display</code> + <code>-xl</code> (<code>em</code> or <code>sd-quiet</code> for the quiet half) · <code>sd-title</code> · <code>sd-lead</code> · <code>sd-label</code> + <code>-strong</code> · <code>sd-muted|subtle|faint</code> · <code>sd-meta</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Visibility helpers</h3>
+      <div class="sd-cluster">
+        <span class="sd-badge sd-desktop-only">shown above 48rem</span>
+        <span class="sd-badge sd-phone-only">shown on phones</span>
+        <button class="sd-btn sd-btn-icon" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="11" height="11"/><path d="M15 15l5.5 5.5"/></svg><span class="sd-sr-only">Search the library</span></button>
+      </div>
+      <p class="demo-usage"><code>sd-desktop-only</code> · <code>sd-phone-only</code> · <code>sd-sr-only</code> (read by screen readers, not shown). Resize the window to see the first two swap.</p>
+    </div>
+
+    <div class="demo-block">
       <h3 class="sd-label">Buttons</h3>
       <div class="sd-actions">
         <button class="sd-btn sd-btn-primary">Approve <kbd>a</kbd></button>
@@ -387,7 +482,11 @@
           <button class="sd-btn sd-btn-sm">Day</button><button class="sd-btn sd-btn-sm">Week</button><button class="sd-btn sd-btn-sm">Month</button>
         </div>
       </div>
-      <p class="demo-usage"><code>sd-btn</code> · <code>sd-btn-primary</code> · <code>sd-btn-ghost</code> · <code>sd-btn-link</code> · <code>sd-btn-sm|lg|icon|block</code> · <code>data-tone</code> · <code>aria-busy</code></p>
+      <div class="grid gap-3 max-w-[22rem]">
+        <button class="sd-btn sd-btn-primary sd-btn-block">Continue</button>
+        <p class="text-sm sd-subtle">Press <span class="sd-kbd">Ctrl</span> <span class="sd-kbd">Enter</span> to send · <span class="sd-chip"><span class="sd-chip-key">a</span> approve</span></p>
+      </div>
+      <p class="demo-usage"><code>sd-btn</code> · <code>sd-btn-primary</code> · <code>sd-btn-ghost</code> · <code>sd-btn-link</code> · <code>sd-btn-sm|lg|icon|block</code> · <code>data-tone</code> · <code>aria-busy</code> · <code>sd-kbd</code> (a <code>kbd</code> look for any element) · <code>sd-chip-key</code></p>
     </div>
 
     <div class="demo-block">
@@ -576,7 +675,9 @@
         <button class="sd-btn" popovertarget="snooze-menu" aria-haspopup="menu" aria-expanded="false">Save for later <kbd>t</kbd></button>
         <button class="sd-btn sd-btn-icon" popovertarget="row-menu" aria-haspopup="menu" aria-label="More" aria-expanded="false">⋯</button>
         <button class="sd-btn" popovertarget="info-pop" aria-expanded="false">Popover panel</button>
+        <button class="sd-btn" popovertarget="above-pop" aria-expanded="false">Opens above</button>
       </div>
+      <div popover id="above-pop" class="sd-popover sd-popover-pad" data-sd-side="top"><p class="sd-muted"><code>data-sd-side="top"</code> places it above; it still flips at the edge.</p></div>
       <div popover id="snooze-menu" class="sd-popover">
         <div class="sd-menu" role="menu" aria-label="Remind me">
           <div class="sd-menu-label" role="presentation">Remind me</div>
@@ -595,6 +696,7 @@
           <hr class="sd-menu-sep">
           <button role="menuitem" data-tone="danger">Delete <span class="sd-menu-hint">x</span></button>
           <button role="menuitem" aria-disabled="true">Restore (not deleted)</button>
+          <a class="sd-menu-item" href="#components">A link styled as an item</a>
         </div>
       </div>
       <div popover id="info-pop" class="sd-popover sd-popover-pad">
@@ -731,6 +833,12 @@
           <span class="sd-stat-sub">CPU across 24 cores</span>
         </div>
       </div>
+      <div class="grid gap-3 sm:grid-cols-4">
+        <div class="sd-stat-box sd-stat-box-sm"><span class="sd-stat-label">Region</span><span class="sd-stat-value">us-east-1</span></div>
+        <div class="sd-stat-box sd-stat-box-sm"><span class="sd-stat-label">Uptime</span><span class="sd-stat-value">41 days</span></div>
+        <div class="sd-stat-box sd-stat-box-sm" data-tone="pending"><span class="sd-stat-label">Queue</span><span class="sd-stat-value">72 jobs</span></div>
+        <div class="sd-stat-box sd-stat-box-sm"><span class="sd-stat-label">Version</span><span class="sd-stat-value">1.4.2</span></div>
+      </div>
       <div class="sd-card" data-tone="accent">
         <div class="sd-card-head">Total CPU<span class="sd-subtle">5 min buckets</span></div>
         <div class="sd-card-body">
@@ -781,7 +889,7 @@
 @import "signal-design";</code></pre>
         </div>
       </div>
-      <p class="demo-usage"><code>sd-stat</code> · <code>sd-stat-box</code> + tone edge · <code>sd-stat-sub</code> · <code>sd-table</code> + <code>-hover|-compact</code> · <code>th[data-sort]</code> + <code>aria-sort</code> · <code>sd-plot</code> + <code>-inline</code> · <code>sd-num</code> · <code>sd-kv</code> · <code>sd-code</code> + <code>data-sd-copy</code> · <code>sd-shot</code></p>
+      <p class="demo-usage"><code>sd-stat</code> · <code>sd-stat-box</code> + tone edge + <code>-sm</code> · <code>sd-stat-sub</code> · <code>sd-table</code> + <code>-hover|-compact</code> · <code>th[data-sort]</code> + <code>aria-sort</code> · <code>sd-plot</code> + <code>-inline</code> · <code>sd-num</code> · <code>sd-kv</code> · <code>sd-code</code> + <code>data-sd-copy</code> · <code>sd-shot</code></p>
     </div>
 
     <div class="demo-block">
@@ -790,6 +898,9 @@
         <button class="sd-btn" data-sd-open="demo-dialog">Dialog</button>
         <button class="sd-btn" data-sd-open="demo-sheet">Sheet <kbd>]</kbd></button>
         <button class="sd-btn" data-sd-open="demo-command">Command panel</button>
+        <button class="sd-btn" data-sd-open="demo-dialog-sm">Small dialog</button>
+        <button class="sd-btn" data-sd-open="demo-dialog-lg">Large dialog</button>
+        <button class="sd-btn" data-sd-open="demo-sheet-left">Sheet from the left</button>
         <button class="sd-btn" data-sd-tip="Tooltips show on hover and focus">Hover for tooltip</button>
         <button class="sd-btn" data-sd-tip="Below" data-sd-tip-side="bottom">Tooltip below</button>
       </div>
@@ -820,6 +931,20 @@
         </div>
       </dialog>
 
+      <dialog class="sd-dialog sd-dialog-sm" id="demo-dialog-sm" aria-labelledby="demo-dialog-sm-h">
+        <header class="sd-dialog-head"><span id="demo-dialog-sm-h">Discard draft?</span></header>
+        <div class="sd-dialog-body sd-muted">Your note will be lost.</div>
+        <footer class="sd-dialog-foot"><button class="sd-btn sd-btn-ghost" data-sd-close>Keep</button><button class="sd-btn" data-tone="danger" data-sd-close>Discard</button></footer>
+      </dialog>
+      <dialog class="sd-dialog sd-dialog-lg" id="demo-dialog-lg" aria-labelledby="demo-dialog-lg-h">
+        <header class="sd-dialog-head"><span id="demo-dialog-lg-h">Compare versions</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">×</button></header>
+        <div class="sd-dialog-body"><pre class="sd-diff"><span data-line="@">@@ -1,3 +1,3 @@</span><span data-line="-">price: 12</span><span data-line="+">price: 14</span><span>currency: USD</span></pre></div>
+      </dialog>
+      <dialog class="sd-dialog sd-sheet sd-sheet-left" id="demo-sheet-left" aria-labelledby="demo-sheet-left-h">
+        <header class="sd-dialog-head"><span id="demo-sheet-left-h">Filters</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">«</button></header>
+        <div class="sd-dialog-body sd-muted">A sheet can come from either side.</div>
+      </dialog>
+
       <dialog class="sd-command" id="demo-command" aria-label="Remind me">
         <p class="sd-command-head">Remind me about <b>Fix the crash when a customer has no address</b></p>
         <div class="sd-menu" role="menu">
@@ -830,7 +955,7 @@
         </div>
         <p class="sd-command-foot">Esc to cancel</p>
       </dialog>
-      <p class="demo-usage"><code>sd-dialog</code> + <code>-head|-body|-foot</code> · <code>sd-sheet</code> · <code>sd-command</code> · <code>data-sd-open</code> / <code>data-sd-close</code> · <code>data-sd-tip</code></p>
+      <p class="demo-usage"><code>sd-dialog</code> + <code>-head|-body|-foot</code> · <code>sd-dialog-sm|lg</code> · <code>sd-sheet</code> + <code>-left</code> · <code>sd-command</code> · <code>data-sd-open</code> / <code>data-sd-close</code> · <code>data-sd-tip</code></p>
     </div>
 
     <div class="demo-block">
@@ -859,6 +984,10 @@
         <p class="sd-panel-desc">You are billed at the start of each cycle.</p>
         <div class="sd-seg" data-sd-seg><button type="button" aria-pressed="false">monthly</button><button type="button" aria-pressed="true">yearly</button><button type="button" aria-pressed="false">custom</button></div>
       </section>
+      <div class="grid gap-2">
+        <div class="border border-dashed border-line"><div class="sd-page border-x border-line" style="padding-block: 14px"><span class="sd-subtle text-sm">sd-page: the 720px reading column, centered</span></div></div>
+        <div class="border border-dashed border-line"><div class="sd-page sd-page-wide border-x border-line" style="padding-block: 14px"><span class="sd-subtle text-sm">sd-page sd-page-wide: 1024px for dashboards</span></div></div>
+      </div>
       <div class="grid gap-2">
         <div class="sd-divider">or</div>
         <p class="demo-usage"><code>sd-divider</code> with a word; empty, it is a plain rule.</p>
@@ -973,6 +1102,7 @@
           </div>
         </div>
       </form>
+      <p class="sd-composer-hint"><span><kbd>Enter</kbd> send</span><span><kbd>Shift</kbd>+<kbd>Enter</kbd> new line</span><span><kbd>@</kbd> mention</span></p>
       <p class="demo-usage"><code>sd-composer</code> + <code>-row|-chips|-hint</code> · <code>data-sd-autogrow</code> · <code>data-sd-enter-submit</code> · <code>data-sd-suggest</code> + <code>data-sd-trigger</code> · <code>sd-suggest</code></p>
     </div>
 
@@ -1012,6 +1142,7 @@
     <p class="sd-muted mt-2 max-w-[42rem]">The <a href="./form.html">form example</a> uses these together.</p>
 
     <div class="demo-block">
+      <h3 class="sd-label">Combobox, tags, number and steps</h3>
       <div class="grid gap-6 sm:grid-cols-2 items-start">
         <div class="sd-field">
           <label class="sd-field-label" for="demo-combo">Combobox</label>
@@ -1090,8 +1221,103 @@
     </div>
   </section>
 
-  <section class="demo-section" id="effects" aria-labelledby="effects-h">
+  <section class="demo-section" id="charts" aria-labelledby="charts-h">
     <p class="sd-label">06</p>
+    <h2 id="charts-h" class="sd-title mt-2">Charts</h2>
+    <p class="sd-muted mt-2 max-w-[42rem]">Time series, generic chart types and square charts, all on the <code>--sd-chart-*</code> tokens. Switch <b>mono</b> and <b>spectrum</b> in the display panel (<kbd>]</kbd>). Live charts need Chart.js; square charts and <code>sd-plot</code> are CSS only.</p>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Live time series</h3>
+      <figure class="sd-chart" style="--h: 340px" id="demo-core">
+        <div class="sd-chart-bar">
+          <div><span class="sd-label sd-label-strong">Core</span><span class="sd-status" data-tone="success">live</span></div>
+          <div class="sd-seg sd-seg-sm sd-seg-inline" data-sd-chart-scale aria-label="Scale">
+            <button type="button" data-value="clamp">clamp</button><button type="button" data-value="p95">p95</button><button type="button" data-value="p90">p90</button><button type="button" data-value="linear">linear</button><button type="button" data-value="log">log</button>
+          </div>
+        </div>
+        <div class="sd-chart-plot"><canvas role="img" aria-label="Core bandwidth and round-trip time"></canvas></div>
+      </figure>
+      <script type="text/plain" data-demo-js>import { createChart } from "signal-design/charts";
+
+const core = createChart(document.querySelector("#demo-core canvas"), {
+  preset: "core",                      // bandwidth over latency, one time axis
+  bucketSeconds: 10, live: 2, envelope: 60,
+  series: [
+    { label: "Core ↓", data: down },   // [{ x: ms, y: Mbps }]
+    { label: "Core ↑", data: up },
+    { label: "Core → MDF RTT", unit: " ms", data: rtt, min: jitterLow, max: jitterHigh },
+  ],
+});
+core.append({ "Core ↓": [{ x: Date.now(), y: 4200 }] });</script>
+      <p class="demo-usage"><code>sd-chart</code> + <code>-bar|-plot</code> · <code>data-sd-chart-scale</code> · <code>createChart({ preset })</code> · <code>data-chart-theme="mono|spectrum"</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Chart types</h3>
+      <div class="grid gap-8 lg:grid-cols-2">
+        <figure class="sd-chart" style="--h: 220px" id="demo-line"><div class="sd-chart-bar"><span class="sd-label">type "line"</span></div><div class="sd-chart-plot"><canvas role="img" aria-label="Line chart"></canvas></div></figure>
+        <figure class="sd-chart" style="--h: 220px" id="demo-bar"><div class="sd-chart-bar"><span class="sd-label">type "bar" · stacked</span></div><div class="sd-chart-plot"><canvas role="img" aria-label="Stacked bar chart"></canvas></div></figure>
+        <figure class="sd-chart" style="--h: 220px" id="demo-hbar"><div class="sd-chart-bar"><span class="sd-label">type "hbar"</span></div><div class="sd-chart-plot"><canvas role="img" aria-label="Ranking"></canvas></div></figure>
+        <figure class="sd-chart" style="--h: 220px" id="demo-hist"><div class="sd-chart-bar"><span class="sd-label">type "histogram"</span></div><div class="sd-chart-plot"><canvas role="img" aria-label="Histogram"></canvas></div></figure>
+      </div>
+      <script type="text/plain" data-demo-js>import { createChart } from "signal-design/charts";
+
+createChart(canvas, {
+  type: "line",            // line | area | step | bar | hbar | histogram | scatter
+  labels: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+  unit: " ms",
+  series: [{ label: "p50", data: [82, 80, 91, 88, 79] }, { label: "p95", data: [190, 210, 260, 230, 200] }],
+  markers: [{ axis: "y", value: 250, label: "SLO", tone: "warning" }],
+});</script>
+      <p class="demo-usage"><code>createChart(canvas, { type })</code> · <code>stacked</code> · <code>markers</code> · series colors <code>--sd-chart-1…6</code> or a <code>tone</code>. More in <a href="./charts.html">the chart gallery</a>.</p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Square charts</h3>
+      <div class="grid gap-8 lg:grid-cols-2">
+        <div class="grid gap-3">
+          <p class="sd-label">sd-heatmap</p>
+          <div class="sd-heatmap" style="--cols: 24" id="demo-heat"></div>
+          <div class="sd-heatmap-key">less <i style="--v: 0"></i><i style="--v: .25"></i><i style="--v: .5"></i><i style="--v: .75"></i><i style="--v: 1"></i> more</div>
+        </div>
+        <div class="flex flex-wrap items-center gap-6">
+          <div class="sd-waffle" style="--w: 150px" id="demo-waffle"></div>
+          <ul class="sd-key flex-1 min-w-[10rem]"><li><i data-s="1"></i>API<b>42%</b></li><li><i data-s="2"></i>Web<b>31%</b></li><li><i data-s="3"></i>Mobile<b>19%</b></li></ul>
+        </div>
+        <div class="grid gap-2">
+          <div class="flex justify-between text-sm"><span>api</span><span class="sd-subtle">99.58%</span></div>
+          <div class="sd-uptime" id="demo-uptime"></div>
+        </div>
+        <div class="grid gap-2">
+          <div class="flex justify-between text-sm"><span>Memory</span><span class="sd-subtle">84% · target 75%</span></div>
+          <div class="sd-meter" style="--value: 84; --target: 75; --warn: 80; --crit: 95"><i data-at="warn"></i><i data-at="crit"></i></div>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-heatmap</code> + <code>--v</code> · <code>sd-waffle</code> + <code>data-s</code> · <code>sd-key</code> · <code>sd-uptime</code> + <code>data-state</code> · <code>sd-meter</code> + <code>--value|--target|--warn|--crit</code>. CSS only.</p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Small plots</h3>
+      <div class="grid gap-6 lg:grid-cols-2">
+        <div class="sd-plot" data-series="down" style="--h: 120px">
+          <svg viewBox="0 0 600 100" preserveAspectRatio="none" aria-hidden="true">
+            <path class="grid" d="M0 25H600M0 50H600M0 75H600" />
+            <polygon class="area" points="0,100 0,70 60,64 120,72 180,40 240,48 300,26 360,36 420,20 480,30 540,24 600,32 600,100" />
+            <polyline class="line" points="0,70 60,64 120,72 180,40 240,48 300,26 360,36 420,20 480,30 540,24 600,32" />
+          </svg>
+          <span class="sd-plot-readout" style="left: 52%">5:46 pm<b>4.8 Gbps</b></span>
+        </div>
+        <div class="sd-plot" style="--h: 120px">
+          <svg viewBox="0 0 600 100" preserveAspectRatio="none" aria-hidden="true"><path class="grid" d="M0 25H600M0 50H600M0 75H600" /></svg>
+          <span class="sd-plot-note">No samples yet</span>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-plot</code> + <code>data-series</code> · <code>.grid|.area|.line|.dot|.cross</code> · <code>sd-plot-readout</code> · <code>sd-plot-note</code> · <code>sd-plot-inline</code></p>
+    </div>
+  </section>
+
+  <section class="demo-section" id="effects" aria-labelledby="effects-h">
+    <p class="sd-label">07</p>
     <h2 id="effects-h" class="sd-title mt-2">Effects</h2>
     <p class="sd-muted mt-2 max-w-[42rem]">Backdrops, ornaments and motion. All black, white and grey, all optional, all switched on with an attribute.</p>
 
@@ -1104,7 +1330,8 @@
           <figcaption class="absolute left-3 bottom-3 m-0 sd-badge" style="background: var(--sd-canvas)">glyphs</figcaption>
         </figure>
         <figure class="relative h-56 border border-line overflow-hidden">
-          <canvas class="sd-rain absolute inset-0 w-full h-full" data-sd-rain data-sd-rain-style="squares" aria-hidden="true"></canvas>
+          <canvas class="sd-rain absolute inset-0 w-full h-full" data-sd-rain data-sd-rain-style="squares" data-sd-rain-skip=".rain-skip-demo" aria-hidden="true"></canvas>
+          <div class="rain-skip-demo absolute inset-x-8 top-8 p-3 border border-line text-sm sd-muted" style="background: var(--sd-canvas)">The rain skips this box: <code>data-sd-rain-skip</code></div>
           <figcaption class="absolute left-3 bottom-3 m-0 sd-badge" style="background: var(--sd-canvas)">squares</figcaption>
         </figure>
       </div>
@@ -1112,7 +1339,7 @@
         <button class="sd-btn" data-sd-rain-toggle>Animate rain</button>
         <button class="sd-btn" data-demo-busy>Run a 6s job</button>
       </div>
-      <p class="demo-usage"><code>&lt;canvas class="sd-rain" data-sd-rain data-sd-rain-style="squares"&gt;</code> · <code>data-sd-rain-toggle</code> · <code>rain.busy()</code></p>
+      <p class="demo-usage"><code>&lt;canvas class="sd-rain" data-sd-rain data-sd-rain-style="squares"&gt;</code> · <code>data-sd-rain-skip=".selector"</code> · <code>data-sd-rain-toggle</code> · <code>rain.busy()</code></p>
     </div>
 
     <div class="demo-block">
@@ -1158,6 +1385,7 @@
       <p class="demo-usage">For frameless desktop apps: a draggable title bar with window buttons (Tauri's window API when present, an <code>sd:window</code> event otherwise; macOS keeps its native buttons). Below it, the solid header bar, the alternative to the floating crumb bars.</p>
       <div class="border border-line">
         <header class="sd-titlebar" data-tauri-drag-region style="position:relative">
+          <div class="sd-titlebar-start"><span class="sd-subtle text-sm">File</span><span class="sd-subtle text-sm">View</span></div>
           <span class="sd-titlebar-brand"><b>ACME</b></span>
           <div class="sd-titlebar-end">
             <span class="sd-titlebar-metric">CPU <b>3%</b></span>
@@ -1178,27 +1406,31 @@
               <button class="sd-icon-btn" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="11" height="11"/><path d="M15 15l5.5 5.5"/></svg></button>
             </div>
           </header>
+          <div class="sd-shell-dock mt-3" data-sd-edges>
+            <div class="sd-composer"><div class="sd-composer-row"><textarea rows="1" data-sd-autogrow placeholder="Message #general" aria-label="Message"></textarea><button class="sd-btn sd-btn-primary sd-btn-icon" aria-label="Send">➤</button></div></div>
+          </div>
         </div>
       </div>
       <div popover id="demo-attention" class="sd-popover sd-popover-panel" data-sd-align="end">
         <div class="sd-popover-head">Attention <button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" popovertarget="demo-attention" popovertargetaction="hide" aria-label="Close">×</button></div>
         <div class="sd-popover-body"><a class="sd-item" href="#effects" data-unread><span class="sd-avatar" data-tone="accent">TP</span><span class="sd-item-body"><span class="sd-item-title">Taylor mentioned you</span><span class="sd-item-sub">can you take the copy?</span></span><span class="sd-item-end">10:05</span></a></div>
       </div>
-      <p class="demo-usage"><code>sd-titlebar</code> + <code>-brand|-end|-metric</code> · <code>sd-window-controls</code> + <code>data-sd-window="minimize|maximize|close"</code> · <code>sd-shell-bar</code> + <code>-title|-center|-end</code> · <code>sd-icon-btn</code> · <code>sd-popover-panel</code> + <code>sd-popover-head|-body</code></p>
+      <p class="demo-usage"><code>sd-titlebar</code> + <code>-start|-brand|-end|-metric</code> · <code>sd-window-controls</code> + <code>data-sd-window="minimize|maximize|close"</code> · <code>sd-shell-bar</code> + <code>-title|-center|-end</code> · <code>sd-shell-dock</code> (a box under the content, e.g. a composer) · <code>sd-icon-btn</code> · <code>sd-popover-panel</code> + <code>sd-popover-head|-body</code></p>
     </div>
 
     <div class="demo-block">
       <h3 class="sd-label">The full shell</h3>
-      <p class="demo-usage">Rail, sidebar, fading crumb and action bars with ladder bridges, the inset content box with corners and border glow, square rain, FPS counter.</p>
+      <p class="demo-usage">You are in it: this page runs in the Signal App Shell (rail, sidebar panels, fading crumb and action bars with ladder bridges, the inset content box with ornaments and border glow, square rain, display panel, status bar with FPS). <code>shell.html</code> shows it as a work queue.</p>
       <div><a class="sd-btn sd-btn-primary" href="./shell.html">Open the Signal App Shell</a></div>
     </div>
   </section>
 
   <section class="demo-section" id="js" aria-labelledby="js-h">
-    <p class="sd-label">07</p>
+    <p class="sd-label">08</p>
     <h2 id="js-h" class="sd-title mt-2">JS</h2>
     <p class="sd-muted mt-2 max-w-[42rem]">Optional, under 5 KB gzipped, no dependencies. Every listener is delegated, so markup added later just works. It only sets ARIA and <code>data-*</code> state; the CSS styles that state.</p>
     <div class="demo-block">
+      <h3 class="sd-label">Setup and attributes</h3>
       <div class="sd-code">
         <div class="sd-code-head">main.js <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#snippet-js">Copy</button></div>
         <pre id="snippet-js"><code>import { init, toast, hotkeys, setTheme } from "signal-design/js";
@@ -1232,7 +1464,43 @@ setTheme("light");                        // ink | graphite | light | auto</code
       </div>
     </div>
   </section>
-</main>
+    </div>
+    </div>
+  </main>
+
+  <!-- Display settings -->
+  <aside class="sd-shell-aside" id="settings-panel" aria-label="Display settings">
+    <div class="sd-shell-aside-head"><span class="flex-1">Display</span>
+      <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="aside" aria-label="Close settings"><svg><use href="#i-close"/></svg></button></div>
+    <div class="sd-shell-aside-section text-sm sd-subtle">These apply to this page and are remembered in this browser.</div>
+    <div class="sd-shell-aside-section sd-field">
+      <span class="sd-field-label">Chart colors</span>
+      <div class="sd-seg sd-seg-sm" id="chart-theme"><button type="button" data-value="mono" aria-pressed="true">mono</button><button type="button" data-value="spectrum" aria-pressed="false">spectrum</button></div>
+    </div>
+    <div class="sd-shell-aside-section sd-field">
+      <span class="sd-field-label">Scrollbars</span>
+      <div class="sd-seg sd-seg-sm" id="scrollbar-mode"><button type="button" data-value="auto" aria-pressed="true">hide when idle</button><button type="button" data-value="always" aria-pressed="false">always</button></div>
+    </div>
+    <div class="sd-shell-aside-section sd-field">
+      <span class="sd-field-label">Code views</span>
+      <div class="sd-actions"><button class="sd-btn sd-btn-sm" data-code-all="code">Show all code</button><button class="sd-btn sd-btn-sm sd-btn-ghost" data-code-all="preview">Show all previews</button></div>
+    </div>
+    <div class="sd-shell-aside-section sd-field">
+      <span class="sd-field-label">Backdrop</span>
+      <button class="sd-btn sd-btn-sm" data-sd-rain-toggle aria-pressed="false">Digital rain</button>
+    </div>
+  </aside>
+
+  <footer class="sd-statusbar sd-shell-status">
+    <span><kbd>Ctrl</kbd><kbd>K</kbd> search</span>
+    <span><kbd>[</kbd> sidebar</span>
+    <span><kbd>]</kbd> display</span>
+    <span><kbd>Shift</kbd><kbd>T</kbd> theme</span>
+    <span class="sd-status" data-tone="success">signal-design · all components</span>
+    <span class="sd-statusbar-end"><span class="sd-fps" data-sd-fps><b>--</b> fps</span> · v0.0</span>
+  </footer>
+  <div class="sd-shell-scrim" data-sd-shell="close"></div>
+</div>
 
 </body>
 </html>

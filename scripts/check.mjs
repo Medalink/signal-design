@@ -190,6 +190,21 @@ for (const [name, engine] of Object.entries(engines)) {
       }
 
       if (pageName === "components" && width === 1280 && theme === "ink") {
+        // Every block flips between preview and code in place.
+        const flips = await page.evaluate(() => {
+          const blocks = [...document.querySelectorAll(".demo-block")];
+          return { blocks: blocks.length, toggles: blocks.filter((b) => b.querySelector(":scope > .demo-head [data-view='code']")).length };
+        });
+        if (!flips.blocks || flips.toggles !== flips.blocks) fail(where, `code toggles ${flips.toggles} of ${flips.blocks} blocks`);
+        const buttons = page.locator("#components-buttons");
+        await buttons.locator(".demo-head [data-view='code']").click();
+        const view = await buttons.evaluate((b) => ({
+          code: b.querySelector(".demo-code pre")?.textContent ?? "",
+          preview: getComputedStyle(b.querySelector(".sd-actions")).display,
+        }));
+        if (!view.code.startsWith('<div class="sd-actions">') || view.preview !== "none") fail(where, `code view ${JSON.stringify({ start: view.code.slice(0, 30), preview: view.preview })}`);
+        await buttons.locator(".demo-head [data-view='preview']").click();
+
         // Behaviors
         await page.click('[data-sd-open="demo-dialog"]');
         if (!(await page.evaluate(() => document.getElementById("demo-dialog").open))) fail(where, "dialog did not open");

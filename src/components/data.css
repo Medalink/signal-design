@@ -64,7 +64,7 @@
   .sd-row[data-done] .sd-row-title {
     color: var(--sd-fg-subtle);
   }
-  .sd-row[data-done] :is(.sd-marker, .sd-row-marker) {
+  .sd-row[data-done] .sd-marker {
     opacity: 0.6;
   }
   a.sd-row,

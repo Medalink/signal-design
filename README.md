@@ -494,7 +494,9 @@ Server-rendered pages can skip the JS call: put the options as JSON in a
 ## Page concepts
 
 The showcase has six pages built only from library parts: the components
-reference (`index.html`), an app console (`shell.html`), a chat app
+reference (`index.html`, itself an app in the Signal App Shell, with every
+component from the other pages and a Preview / Code flip on each block that
+shows copyable HTML, the JS it needs, and a JS snippet where one applies), an app console (`shell.html`), a chat app
 (`chat.html`), a multi-step form (`form.html`), a landing page
 (`landing.html`) and live charts (`charts.html`).
 

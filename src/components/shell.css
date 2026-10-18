@@ -40,7 +40,9 @@
       "rail side main aside"
       "status status status status";
     height: 100dvh;
-    overflow: hidden;
+    /* clip, not hidden: a hidden box can still be scrolled by an anchor jump
+       or scrollIntoView, which would slide the whole frame up. */
+    overflow: clip;
     background: var(--sd-shell-bg);
   }
   .sd-shell[data-sidebar="collapsed"] {

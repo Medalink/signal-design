@@ -39,6 +39,13 @@
 - Redesigned landing page.
 
 ### Changed
+- The components page runs in the Signal App Shell: rail sections, a
+  sidebar listing every block, crumbs that follow the scroll, a display
+  panel (chart colors, scrollbars, code views, rain) and a status bar.
+  Every block flips between Preview and Code in place, with copyable HTML
+  and a note of the JS it needs. It now shows every component used on the
+  example pages, plus a Charts section.
+- `.sd-shell` uses `overflow: clip`, so anchor jumps can't slide the frame.
 - Dropdown lists in Chromium use Signal's overlay and a white (or black)
   selected row instead of the OS blue (`appearance: base-select`).
 - Empty states get a sparkling center ornament; `data-sd-ornaments="center"`.
