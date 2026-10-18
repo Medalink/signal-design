@@ -56,8 +56,9 @@
       .sd-chip:is(button, a),
       .sd-pill:is(button, a),
       .sd-seg > :where(button, label),
-      .sd-sidebar-group > summary
-    ):hover :is(.sd-avatar, .sd-badge, .sd-dot, .sd-count[data-tone], kbd, .sd-kbd) {
+      .sd-sidebar-group > summary,
+      a:not([class])
+    ):hover :is(.sd-avatar, .sd-badge, .sd-badge-count, .sd-dot, .sd-count, [data-tone], kbd, .sd-kbd) {
     -webkit-text-fill-color: currentColor;
   }
 
