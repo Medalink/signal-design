@@ -3,6 +3,10 @@
 ## Unreleased
 
 ### Added
+- `dist/signal.js`, a prebuilt single-file ESM bundle of `signal-design/js`
+  (`pnpm build:js`), stamped with the package version — vendoring apps can
+  ship it next to `dist/signal.css` with no bundler of their own. Exported
+  as `signal-design/dist/signal.js`. The charts entry stays unbundled.
 - Release workflow: pushing a `v*` tag builds dist and attaches a
   `signal-design-dist.zip` (signal.css, fonts, and dist/signal.js when
   present) to the GitHub Release.
@@ -11,6 +15,7 @@
   `sd-waffle`, `sd-uptime` and `sd-meter`; a gallery on `charts.html`.
 - The built `dist/signal.css` carries a `/*! signal-design <version> */`
   banner from `package.json`, so vendored copies can be identified.
+>>>>>>> origin/main
 - `sd-plot`, a chart an app draws itself as SVG (`sd-plot-inline` for
   sparklines), with tone-colored line, soft area, hairline grid, dots,
   crosshair, readout and empty note.

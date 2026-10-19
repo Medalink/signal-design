@@ -45,6 +45,30 @@ Link the prebuilt bundle. It has the reset, tokens, element styles and every
 </script>
 ```
 
+No build step on the JS side either? Ship the prebuilt bundle instead of
+importing from `src/`. It exports the same API as `signal-design/js`:
+
+```html
+<link rel="stylesheet" href="node_modules/signal-design/dist/signal.css">
+<script type="module">
+  import { init } from "./node_modules/signal-design/dist/signal.js";
+  init();
+</script>
+```
+
+Without a bundler of your own, point the import at the prebuilt bundle
+instead — same exports, one file:
+
+```html
+<script type="module">
+  import { init } from "./node_modules/signal-design/dist/signal.js";
+  init();
+</script>
+```
+
+`pnpm build:js` regenerates `dist/signal.js` (the charts entry is not
+bundled; its Chart.js peer stays external).
+
 The CSS and JS avoid Chromium-only features, so they behave the same in
 WebView2 (Windows), WKWebView (macOS) and WebKitGTK (Linux).
 
