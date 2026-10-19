@@ -134,6 +134,9 @@
   now defaults to `fill: none; stroke: currentColor` (stroke-width 1.5), so the
   documented minimal markup — bare `<path>`/`<rect>` with no attributes — is
   visible on a dark title bar.
+- An `.sd-shell` with no `.sd-sidebar` child no longer reserves the 18rem
+  sidebar column: the content now fills the space beside the rail and scales
+  with the window, same as a collapsed sidebar.
 - Shell region components (`sd-rail`, `sd-sidebar`, `sd-shell-main`,
   `sd-shell-aside`, `sd-shell-status`, `sd-shell-topbar`, `sd-titlebar`) now
   claim their named grid area only as direct children of `.sd-shell`. Used
