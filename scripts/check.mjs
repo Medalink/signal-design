@@ -160,6 +160,17 @@ for (const [name, engine] of Object.entries(engines)) {
         }
       }
 
+      // Shift+T steps the theme on every page.
+      if (width === 1280 && theme === "ink" && pageName !== "standalone") {
+        await page.locator("body").press("Shift+T");
+        const now = await page.evaluate(() => document.documentElement.dataset.theme);
+        if (now !== "graphite") fail(where, `Shift+T gave theme ${now}`);
+        await page.locator("body").press("Shift+T");
+        await page.locator("body").press("Shift+T");
+        await page.locator("body").press("Shift+T");
+        if ((await page.evaluate(() => document.documentElement.dataset.theme)) !== "ink") fail(where, "Shift+T did not come back to ink");
+      }
+
       if (pageName === "chat" && width === 1280 && theme === "ink") {
         const box = page.locator("[data-composer] textarea");
         await box.click();
@@ -190,6 +201,21 @@ for (const [name, engine] of Object.entries(engines)) {
       }
 
       if (pageName === "components" && width === 1280 && theme === "ink") {
+        // Every block flips between preview and code in place.
+        const flips = await page.evaluate(() => {
+          const blocks = [...document.querySelectorAll(".demo-block")];
+          return { blocks: blocks.length, toggles: blocks.filter((b) => b.querySelector(":scope > .demo-head [data-view='code']")).length };
+        });
+        if (!flips.blocks || flips.toggles !== flips.blocks) fail(where, `code toggles ${flips.toggles} of ${flips.blocks} blocks`);
+        const buttons = page.locator("#components-buttons");
+        await buttons.locator(".demo-head [data-view='code']").click();
+        const view = await buttons.evaluate((b) => ({
+          code: b.querySelector(".demo-code pre")?.textContent ?? "",
+          preview: getComputedStyle(b.querySelector(".sd-actions")).display,
+        }));
+        if (!view.code.startsWith('<div class="sd-actions">') || view.preview !== "none") fail(where, `code view ${JSON.stringify({ start: view.code.slice(0, 30), preview: view.preview })}`);
+        await buttons.locator(".demo-head [data-view='preview']").click();
+
         // Behaviors
         await page.click('[data-sd-open="demo-dialog"]');
         if (!(await page.evaluate(() => document.getElementById("demo-dialog").open))) fail(where, "dialog did not open");
@@ -323,6 +349,31 @@ for (const [name, engine] of Object.entries(engines)) {
         const before = (await core()).newest;
         await page.waitForTimeout(2300);
         if (!((await core()).newest > before)) fail(where, "live feed did not move the newest point");
+        // Gallery: every generic chart draws, and the square charts render.
+        // Charts build as they come near the screen, so visit each one.
+        for (const fig of await page.locator('[id^="g-"] canvas:not(.sd-chart-fx)').all()) {
+          await fig.scrollIntoViewIfNeeded();
+          await page.waitForTimeout(60);
+        }
+        await page.waitForTimeout(200);
+        const blank = await page.evaluate(() =>
+          [...document.querySelectorAll('[id^="g-"] canvas:not(.sd-chart-fx)')]
+            .filter((cv) => {
+              const d = cv.getContext("2d").getImageData(0, 0, cv.width, cv.height).data;
+              let n = 0;
+              for (let i = 3; i < d.length; i += 4) if (d[i] > 0) n++;
+              return n < 2000;
+            })
+            .map((cv) => cv.closest("figure").id),
+        );
+        if (blank.length) fail(where, `blank gallery charts: ${blank.join(", ")}`);
+        const squares = await page.evaluate(() => ({
+          heat: document.querySelectorAll("[data-heat] > i").length,
+          waffle: document.querySelectorAll("[data-waffle] > i").length,
+          waffleW: document.querySelector("[data-waffle]").getBoundingClientRect().width,
+          uptime: document.querySelectorAll(".sd-uptime > i").length,
+        }));
+        if (squares.heat !== 168 || squares.waffle !== 100 || squares.waffleW < 150 || squares.uptime !== 360) fail(where, `square charts ${JSON.stringify(squares)}`);
         // Theme: spectrum colors the series.
         await page.click('#chart-theme [data-value="spectrum"]');
         await page.waitForTimeout(200);

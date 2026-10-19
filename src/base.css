@@ -94,16 +94,17 @@
   }
 
   /* Auto-hiding scrollbars: the JS marks a scroller with data-sd-scrolling
-     while it moves and for 2s after. Only the thumb color changes. */
-  :root[data-sd-scrollbars="auto"] {
+     while it moves and for 2s after. Only the thumb color changes.
+     Every element sets its own transparent color (no inheritance from the
+     scroller), so marking a scroller restyles that one element, not the
+     whole subtree it scrolls. */
+  :root[data-sd-scrollbars="auto"],
+  :root[data-sd-scrollbars="auto"] * {
     scrollbar-color: transparent transparent;
   }
   :root[data-sd-scrollbars="auto"][data-sd-scrolling],
   :root[data-sd-scrollbars="auto"] [data-sd-scrolling] {
     scrollbar-color: var(--sd-line-strong) transparent;
-  }
-  :root[data-sd-scrollbars="auto"] [data-sd-scrolling] :not([data-sd-scrolling]) {
-    scrollbar-color: transparent transparent;
   }
   :root[data-sd-scrollbars="auto"] ::-webkit-scrollbar-thumb {
     background: transparent;
@@ -505,6 +506,49 @@
     font-style: normal;
     font-weight: 400;
     color: var(--sd-fg-subtle);
+  }
+
+  /* Dropdown lists. Chromium (Chrome, Edge, WebView2) lets a select style its
+     own picker, so the open list uses Signal's overlay and a white (or black)
+     selected row instead of the OS blue. Other engines keep the native list. */
+  @supports (appearance: base-select) {
+    :is(select:not([multiple], [size]:not([size="1"]))) {
+      appearance: base-select;
+    }
+    :is(select)::picker-icon {
+      display: none;
+    }
+    :is(select)::picker(select) {
+      appearance: base-select;
+      margin-block: 4px;
+      padding: 4px;
+      border: 1px solid var(--sd-line-strong);
+      border-radius: 0;
+      background: var(--sd-overlay);
+      color: var(--sd-fg);
+      box-shadow: none;
+    }
+    :is(select) :is(option) {
+      font-weight: 400;
+      min-height: 30px;
+      padding: 5px 10px;
+      border-radius: 0;
+      background: transparent;
+      outline: none;
+    }
+    :is(select) :is(option)::checkmark {
+      display: none;
+    }
+    :is(select) :is(option):is(:hover, :focus-visible) {
+      background: var(--sd-raised);
+    }
+    :is(select) :is(option):is(:checked) {
+      background: var(--sd-primary);
+      color: var(--sd-on-primary);
+    }
+    :is(select) :is(option):is(:disabled) {
+      color: var(--sd-fg-faint);
+    }
   }
 
   ::-webkit-calendar-picker-indicator {

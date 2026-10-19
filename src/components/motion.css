@@ -85,4 +85,57 @@
       animation: none;
     }
   }
+
+  /* Ornament sparkle: squares that brighten briefly, animated on the
+     compositor (opacity only). paintOrnaments() lays them out. */
+  .sd-glints {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .sd-glints[data-sticky] {
+    position: sticky;
+    display: block;
+    inset: auto;
+    height: 0;
+    overflow: visible;
+  }
+  .sd-glints-box {
+    position: absolute;
+    overflow: hidden;
+  }
+  :is(.sd-glints, .sd-glints-box) > i {
+    position: absolute;
+    box-sizing: border-box;
+    opacity: 0;
+    animation: sd-glint 9s linear infinite;
+    will-change: opacity;
+  }
+  :is(.sd-glints, .sd-glints-box) > i {
+    background-repeat: no-repeat;
+  }
+  /* Hold the sparkle still while the page scrolls: scroll frames are busy
+     enough, and nobody watches the corners mid-scroll. */
+  :root[data-sd-scrolling-page] :is(.sd-glints, .sd-glints-box) > i {
+    animation-play-state: paused;
+  }
+  @keyframes sd-glint {
+    0%,
+    72% {
+      opacity: 0;
+    }
+    84% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sd-glints {
+      display: none;
+    }
+  }
 }

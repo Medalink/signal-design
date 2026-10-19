@@ -5,8 +5,20 @@
 
 /* Showcase-only chrome. */
 @layer components {
+  /* Inside the shell the content box scrolls; keep a readable width. */
+  .demo-wrap {
+    max-width: 64rem;
+  }
+  .demo-wrap > .sd-header {
+    padding-block: 8px 40px;
+  }
   .demo-section {
-    scroll-margin-top: 72px;
+    /* Off-screen sections skip style, layout and paint until they come near:
+       the components page is long, and theme switches and scrolling pay for
+       what is on screen only. */
+    content-visibility: auto;
+    contain-intrinsic-size: auto 1800px;
+    scroll-margin-top: 16px;
     padding-block: 56px;
     border-block-start: 1px solid var(--sd-line);
   }
@@ -28,6 +40,32 @@
   .demo-usage {
     font-size: var(--text-sm);
     color: var(--sd-fg-subtle);
+  }
+  .demo-block {
+    scroll-margin-top: 16px;
+  }
+  /* Preview / code flip, in place. */
+  .demo-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 28px;
+  }
+  .demo-block[data-view="code"] > :not(.demo-head, .demo-code, script) {
+    display: none !important;
+  }
+  .demo-block:not([data-view="code"]) > .demo-code {
+    display: none;
+  }
+  .demo-code {
+    display: grid;
+    gap: 12px;
+    min-width: 0;
+  }
+  .demo-code pre {
+    max-height: 32rem;
+    overflow: auto;
   }
   .swatch {
     display: grid;

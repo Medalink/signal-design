@@ -61,12 +61,13 @@
   },
   "scripts": {
     "dev": "vite showcase",
-    "build:css": "tailwindcss -i src/standalone.css -o dist/signal.css --minify && node -e \"require('fs').cpSync('src/fonts','dist/fonts',{recursive:true})\"",
+    "build:css": "node scripts/build-css.mjs",
     "build:js": "node scripts/build-js.mjs",
     "build:showcase": "vite build showcase --outDir ../.showcase-dist --emptyOutDir",
     "build": "pnpm build:css && pnpm build:showcase",
     "prepack": "pnpm build:css",
-    "check": "node scripts/check.mjs"
+    "check": "node scripts/check.mjs",
+    "perf": "node scripts/perf.mjs"
   },
   "devDependencies": {
     "@fontsource/source-code-pro": "5.3.1",

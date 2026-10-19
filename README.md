@@ -79,7 +79,7 @@ Set `data-theme` on `<html>` or on any element to theme a subtree.
 | Theme | |
 |---|---|
 | `ink` (default, canonical) | Cool near-black greys, alpha hairlines |
-| `graphite` (optional) | Neutral greys from the original spec, solid hairlines |
+| `graphite` (optional) | The lighter dark mode: grey `#1a1a1a` panels on a `#0f0f0f` frame, same two-level text as ink |
 | `light` | White canvas, deepened signal colors for contrast |
 | `auto` | `ink`, or `light` when the OS asks for it |
 
@@ -218,8 +218,8 @@ the rain skips them.
         <svg>…</svg><span class="sd-badge-count" data-tone="danger">2</span></button>
     </div>
   </header>
-  <div class="sd-shell-content" data-sd-corners data-sd-edges>…</div>
-  <div class="sd-shell-dock" data-sd-corners data-sd-edges>…composer…</div>
+  <div class="sd-shell-content" data-sd-ornaments data-sd-edges>…</div>
+  <div class="sd-shell-dock" data-sd-ornaments data-sd-edges>…composer…</div>
 </main>
 ```
 
@@ -284,17 +284,27 @@ Rain only draws where it shows. Inside a shell it skips the content, bars and
 dock. Elsewhere, list what covers it: `data-sd-rain-skip=".hero > *"`.
 `data-sd-rain-style="squares"` swaps glyphs for squares.
 
-## Corner ornaments
+## Ornaments
 
 ```html
-<div class="sd-shell-content" data-sd-corners>…</div>
+<div class="sd-shell-content" data-sd-ornaments>…</div>
 ```
 
 Dust in the bottom-right corner by default: small filled squares, outlines
 and dots, strongest at the corner and thinning as they spread. Ask for two
-corners (`data-sd-corners="tl br"`) and the first gets larger "blocks".
+corners (`data-sd-ornaments="tl br"`) and the first gets larger "blocks".
 Theme text color only, seeded so it never changes between loads, and painted
 as the element's background so it stays put while content scrolls.
+
+About one square in eight sparkles: it rests most of a slow 6 to 14 second
+cycle, then brightens briefly, each at its own offset, so the ornament glints
+without pulling the eye. It is an animated SVG, so it costs no script per
+frame. `prefers-reduced-motion` turns it off, and `data-sd-ornaments-still` keeps
+one element still.
+
+Empty states (`.sd-empty`) get a center ornament on their own: a small dust
+field behind the message, sparkling the same way. `data-sd-ornaments="none"`
+turns it off, and `data-sd-ornaments="center"` puts one on any box.
 
 ## Scrollbars
 
@@ -339,10 +349,35 @@ const off = hotkeys({ j: next, k: prev, "shift+n": newest, "mod+k": search });
 | `data-sd-copy="#id"` | Copy text and confirm with a toast. |
 | `data-sd-toast="text"` | Show a toast on click. |
 | `data-sd-theme="name"` | Switch theme and remember it. |
+| <kbd>Shift</kbd>+<kbd>T</kbd> | Steps the theme on every page (`init({ themeKey })` changes or turns it off; `cycleTheme()` does it from code). |
 | `data-sd-window="minimize\|maximize\|close"` | Window buttons (Tauri or `sd:window`). |
 
 TypeScript types ship in `src/js/index.d.ts`, including the `sd:*` events on
 `document`.
+
+### State contract
+
+The JS only writes attributes and `data-*`; the CSS only keys on those (never
+a JS-added class). So the same state can be driven from code without the JS —
+tests, app bindings, a verification harness — and anything that reads state
+gets the same answer:
+
+| State | Where it applies |
+|---|---|
+| `data-tone="success\|pending\|danger\|accent\|warning\|extra\|neutral"` | Tones a subtree: cards, chips, items, stat boxes, checks, progress. Resolves to `--tone`. |
+| `aria-selected="true"` | Selection in `sd-tabs`, `sd-item`, `sd-table` rows, `sd-seg`, `sd-grid-picker`, `sd-menu`. |
+| `aria-pressed="true"` | Toggle state in `sd-chip`, `sd-seg`, `sd-poll-option`, `sd-reactions`, `sd-icon-btn`. |
+| `aria-expanded="true"` | `sd-icon-btn` (popover/menu triggers), `sd-rail-item`; `aria-controls` points at the panel. |
+| `aria-current` (any value but `"false"`) | Current location in `sd-nav`, `sd-sidenav`, `sd-sidebar-link`, `sd-breadcrumb`, `sd-pagination`, `sd-rail-item`, `sd-message`; `sd-steps` uses `aria-current="step"`. |
+| `aria-sort="ascending\|descending"` | Sort direction of a `th[data-sort]` in `sd-table`. |
+| `data-sidebar`, `data-aside`, `data-drawer`, `data-peek` | `sd-shell` layout state; toggled by `setSidebar`/`setAside`/`setDrawer` and read back from `dataset`. `.sd-expand` panels open/close via `data-open` (kept in sync with `aria-expanded`). |
+| `--value` on `.sd-progress` | Progress, unitless `0`–`100`. |
+| `data-theme` (element or `<html>`) | Themes a subtree; `setTheme` also remembers it in `localStorage`. |
+| `data-sd-scrolling` on `<html>` | Present while the page is scrolling; drives the auto-hiding scrollbars. |
+
+Events bubble on `document`: `sd:tab`, `sd:theme`, `sd:shell`, `sd:window`,
+`sd:contextmenu`, `sd:reaction` — with `detail` payloads typed in
+`src/js/index.d.ts`.
 
 ## Charts
 
@@ -379,6 +414,43 @@ Also: `.dot`, `.cross` (a hover line), `.base`, `text`, `.sd-plot-note` for an
 empty state. Scales and hover belong to your app. To format the readout the
 same way the charts do, without loading Chart.js:
 `import { formatValue } from "signal-design/js/charts/format"`.
+
+### Chart types
+
+`createChart(canvas, { type })` draws generic charts on the same tokens:
+
+| `type` | For |
+|---|---|
+| `line` | Trends; several series, `markers` for an SLO or target |
+| `area` | Volumes; `stacked: true` for parts of a total |
+| `step` | Counts that change in jumps (queue depth, replicas) |
+| `bar` | Comparisons; grouped by default, `stacked: true` for parts |
+| `hbar` | Rankings, with the value at each bar's end |
+| `histogram` | Distributions, with percentile `markers` |
+| `scatter` | Two measures per point, with quadrant `markers` |
+
+```js
+createChart(canvas, {
+  type: "line",
+  labels: ["00:00", "01:00", …],
+  unit: " ms",
+  series: [{ label: "p50", data: [82, 80, …] }, { label: "p95", data: […] }],
+  markers: [{ axis: "y", value: 300, label: "SLO 300 ms", tone: "warning" }],
+});
+```
+
+Series take colors 1 to 6 (`--sd-chart-1` … `--sd-chart-6`) in order, or a
+`tone` (`critical`, `warning`, …) for the one that matters. In mono, lines also
+take a dash each, so five greys stay apart.
+
+Four more charts are plain HTML and CSS, built from squares:
+
+| Class | Markup |
+|---|---|
+| `sd-heatmap` | `<i style="--v: .4">` per cell, `--cols` for the width; `sd-heatmap-key` for less → more |
+| `sd-waffle` | 100 `<i data-s="1–6">` cells, part of a whole; `sd-key` for the legend |
+| `sd-uptime` | `<i data-state="ok\|degraded\|down\|none">` per period |
+| `sd-meter` | `--value`, `--target`, `--warn`, `--crit` (0–100); `data-over` turns it critical |
 
 ### Live charts: `createChart`
 
@@ -453,7 +525,7 @@ you can override.
 | Line heat | Lines warm toward warning, then critical, near the top of the axis. |
 | Forecast | `forecastFrom` shades the future and labels it. |
 | Rhythm | On 2+ day windows: working hours and day lines. |
-| Live | `append()` upserts at the tail, a ring pulses on the new point, value tags sit in the right gutter, and the window drifts with the clock. |
+| Live | `append()` upserts at the tail, the effects layer rings the new point, value tags sit in the right gutter, and the window drifts with the clock. |
 | Selection | Drag to select (fires `sd:chart-select`); with `zoom: true` it zooms and double click resets. |
 | Effects | Square packets ride the bandwidth lines at a speed set by throughput, a heartbeat marks each live tip and turns amber, then grey, when the feed is late. |
 
@@ -471,7 +543,9 @@ Server-rendered pages can skip the JS call: put the options as JSON in a
 ## Page concepts
 
 The showcase has six pages built only from library parts: the components
-reference (`index.html`), an app console (`shell.html`), a chat app
+reference (`index.html`, itself an app in the Signal App Shell, with every
+component from the other pages and a Preview / Code flip on each block that
+shows copyable HTML, the JS it needs, and a JS snippet where one applies), an app console (`shell.html`), a chat app
 (`chat.html`), a multi-step form (`form.html`), a landing page
 (`landing.html`) and live charts (`charts.html`).
 
@@ -482,6 +556,7 @@ pnpm install
 pnpm dev          # showcase at http://localhost:5178
 pnpm build:css    # dist/signal.css + dist/fonts
 node scripts/check.mjs http://localhost:5178/
+pnpm perf          # load, idle, scroll and theme cost per page, CPU slowed 4x
 ```
 
 `scripts/check.mjs` loads the showcase in Chromium and WebKit, in every theme, at
