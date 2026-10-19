@@ -1440,11 +1440,45 @@ createChart(canvas, {
         <pre id="copy-command" tabindex="0"><code>npm test</code></pre>
       </div>
     </div>
+    <div class="demo-block" id="js-countdown">
+      <h3 class="sd-label">Pauseable countdown</h3>
+      <p class="demo-usage">Call <code>mountCountdown(root)</code>, then <code>set({ remainingMs, running })</code> with authoritative time. <code>init()</code> does not mount it. Progress uses the largest remaining time since mount or the last completion. Remount for a different task; call <code>dispose()</code> on teardown. <code>sd:countdown</code> reports state changes, not every tick. The application owns eligibility and actions.</p>
+      <div class="sd-stack" id="demo-countdown" data-sd-countdown data-state="paused">
+        <p class="sd-note" data-tone="pending">Next step in <span data-sd-countdown-value>5</span>s.</p>
+        <div class="sd-progress" role="progressbar" aria-label="Elapsed countdown time" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="--value: 0"></div>
+        <p class="sd-meta" id="countdown-state" role="status">paused</p>
+      </div>
+      <div class="sd-actions"><button class="sd-btn sd-btn-sm" id="countdown-resume">Resume</button><button class="sd-btn sd-btn-sm" id="countdown-pause">Pause</button><button class="sd-btn sd-btn-sm" id="countdown-resync">Resync to 5s</button></div>
+      <script type="text/plain" data-demo-js>
+import { mountCountdown } from "signal-design/js";
+const root = document.getElementById("demo-countdown");
+const countdown = mountCountdown(root);
+let remainingMs = 5000;
+let startedAt = null;
+root.addEventListener("sd:countdown", ({ detail }) => {
+  document.getElementById("countdown-state").textContent = detail.state;
+  if (detail.state === "complete") { remainingMs = 0; startedAt = null; }
+});
+function set(running) {
+  if (startedAt !== null) remainingMs = Math.max(0, remainingMs - (performance.now() - startedAt));
+  startedAt = running ? performance.now() : null;
+  countdown.set({ remainingMs, running });
+}
+set(false);
+document.getElementById("countdown-resume").onclick = () => set(true);
+document.getElementById("countdown-pause").onclick = () => set(false);
+document.getElementById("countdown-resync").onclick = () => {
+  remainingMs = 5000;
+  startedAt = null;
+  set(false);
+};
+      </script>
+    </div>
     <div class="demo-block">
       <h3 class="sd-label">Setup and attributes</h3>
       <div class="sd-code">
         <div class="sd-code-head">main.js <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#snippet-js">Copy</button></div>
-        <pre id="snippet-js"><code>import { init, toast, hotkeys, setTheme } from "signal-design/js";
+        <pre id="snippet-js" tabindex="0"><code>import { init, toast, hotkeys, setTheme } from "signal-design/js";
 
 init();                                   // dialogs, popovers, menus, tabs, tooltips, toggles
 toast("Saved", { tone: "success" });

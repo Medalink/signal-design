@@ -417,6 +417,22 @@ const off = hotkeys({ j: next, k: prev, "shift+n": newest, "mod+k": search });
 TypeScript types ship in `src/js/index.d.ts`, including the `sd:*` events on
 `document`.
 
+### Countdowns
+
+Call `mountCountdown(root)` explicitly, then supply
+`set({ remainingMs, running })` whenever your authoritative time changes.
+The root contains `[data-sd-countdown-value]` for whole seconds and an optional
+`.sd-progress[role="progressbar"]` for elapsed percent. Give the progress bar
+an accessible label. `init()` does not mount countdowns.
+
+The controller uses a deadline while running and retains the supplied value
+while paused. It sets `data-state="running|paused|complete"`, numeric ARIA,
+and `--value`; `sd:countdown` reports state transitions with `remainingMs`
+and `running`. Zero completes the display. Progress uses the largest remaining
+time supplied since mount or the last completion. Dispose before mounting a different task.
+`dispose()` stops timers and later updates. Eligibility and actions stay with
+your application; the displayed countdown does not authorize anything.
+
 ### State contract
 
 The JS only writes attributes and `data-*`; the CSS only keys on those (never

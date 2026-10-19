@@ -10,10 +10,12 @@
  * phone width, and broken JS behaviors.
  */
 import { existsSync, readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { chromium, webkit } from "playwright";
 import { sweep as rulesSweep } from "../bin/rules.mjs";
 
 const base = (process.argv[2] || "http://localhost:5178/").replace(/\/?$/, "/");
+const apiUrl = `${base}@fs/${fileURLToPath(new URL("../src/js/index.js", import.meta.url)).replace(/\\/g, "/")}`;
 const pages = {
   components: base,
   shell: `${base}shell.html`,
@@ -81,6 +83,84 @@ async function checkCopy(page, name) {
   });
   for (const error of result.errors) fail(`${name} copy`, error);
   if (!result.errors.length) console.log(`ok   ${name} copy ${result.assertions} behavioral assertions`);
+}
+
+async function checkCountdown(page, name) {
+  await page.clock.install({ time: new Date("2026-01-01T00:00:00Z") });
+  await page.goto(base);
+  await page.clock.pauseAt(new Date("2026-01-01T00:01:00Z"));
+  let assertions = 0;
+  let failed = false;
+  const assert = (ok, message) => { assertions++; if (!ok) { failed = true; fail(`${name} countdown`, message); } };
+  await page.evaluate(async (apiUrl) => {
+    const { mountCountdown } = await import(apiUrl);
+    const root = document.createElement("div");
+    root.dataset.sdCountdown = "";
+    root.innerHTML = '<span data-sd-countdown-value></span><div class="sd-progress" role="progressbar" aria-label="Elapsed time"></div>';
+    document.body.append(root);
+    const events = [];
+    root.addEventListener("sd:countdown", ({ detail }) => events.push(detail));
+    window.countdownProbe = { root, events, timer: mountCountdown(root) };
+  }, apiUrl);
+  const set = (remainingMs, running) => page.evaluate((value) => window.countdownProbe.timer.set(value), { remainingMs, running });
+  const read = () => page.evaluate(() => {
+    const { root, events } = window.countdownProbe;
+    const bar = root.querySelector('[role="progressbar"]');
+    return { state: root.dataset.state, value: root.querySelector("[data-sd-countdown-value]").textContent,
+      min: bar.getAttribute("aria-valuemin"), max: bar.getAttribute("aria-valuemax"), now: bar.getAttribute("aria-valuenow"),
+      text: bar.getAttribute("aria-valuetext"), fill: bar.style.getPropertyValue("--value"), events: events.map((event) => event.state) };
+  });
+  await set(3000, false);
+  let state = await read();
+  assert(state.state === "paused" && state.value === "3", "initial paused seconds");
+  assert(state.min === "0" && state.max === "100" && state.now === "0" && state.fill === "0", "initial numeric progress");
+  await page.clock.runFor(1000);
+  assert(JSON.stringify(await read()) === JSON.stringify(state), "paused timer changed");
+  await set(1500, true);
+  await page.evaluate(() => {
+    const probe = window.countdownProbe;
+    probe.attributes = [];
+    probe.observer = new MutationObserver((records) => probe.attributes.push(...records.map((record) => record.attributeName)));
+    probe.observer.observe(probe.root, { subtree: true, attributes: true,
+      attributeFilter: ["data-state", "aria-valuemin", "aria-valuemax", "aria-valuetext"] });
+  });
+  await page.clock.runFor(600);
+  state = await read();
+  assert(state.state === "running" && state.value === "1" && state.now === "70" && state.fill === "70", "running deadline/progress");
+  assert(state.text === "1 second remaining, running", "accessible remaining time");
+  assert(state.events.join(",") === "paused,running", "ticks emitted state changes");
+  const attributes = await page.evaluate(() => {
+    window.countdownProbe.observer.disconnect();
+    return window.countdownProbe.attributes;
+  });
+  assert(attributes.join(",") === "aria-valuetext", "unchanged state or ARIA produced duplicate mutations");
+  await set(900, false);
+  state = await read();
+  await page.clock.runFor(2000);
+  assert(JSON.stringify(await read()) === JSON.stringify(state), "pause lost supplied remaining time");
+  await set(900, true);
+  await page.clock.runFor(500);
+  assert((await read()).now === "87", "resume did not retain elapsed progress");
+  await set(4000, true);
+  state = await read();
+  assert(state.now === "0" && state.value === "4", "authoritative extension did not resync");
+  await page.clock.runFor(1000);
+  assert((await read()).now === "25" && (await read()).value === "3", "resynced deadline did not run");
+  await page.clock.fastForward(5000);
+  state = await read();
+  assert(state.state === "complete" && state.value === "0" && state.now === "100" && state.fill === "100", "delayed tick did not complete at deadline");
+  assert(state.events.filter((event) => event === "complete").length === 1, "completion emitted more than once");
+  await set(-100, true);
+  assert((await read()).state === "complete" && (await read()).value === "0", "negative time was not clamped");
+  await set(2000, true);
+  assert((await read()).now === "0" && (await read()).state === "running", "new countdown after completion did not reset duration");
+  await page.evaluate(() => window.countdownProbe.timer.dispose());
+  state = await read();
+  await page.clock.runFor(5000);
+  await set(1000, true);
+  assert(JSON.stringify(await read()) === JSON.stringify(state), "dispose left updates or events active");
+  await page.evaluate(() => { window.countdownProbe.root.remove(); delete window.countdownProbe; });
+  if (!failed) console.log(`ok   ${name} countdown ${assertions} behavioral assertions`);
 }
 
 for (const [name, engine] of Object.entries(engines)) {
@@ -435,6 +515,8 @@ for (const [name, engine] of Object.entries(engines)) {
   }
   const behaviorPage = await browser.newPage();
   await checkCopy(behaviorPage, name);
+
+  await checkCountdown(behaviorPage, name);
   await behaviorPage.close();
   await browser.close();
 }
