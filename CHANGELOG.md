@@ -3,6 +3,8 @@
 ## Unreleased
 
 ### Added
+- The built `dist/signal.css` carries a `/*! signal-design <version> */`
+  banner from `package.json`, so vendored copies can be identified.
 - `sd-plot`, a chart an app draws itself as SVG (`sd-plot-inline` for
   sparklines), with tone-colored line, soft area, hairline grid, dots,
   crosshair, readout and empty note.
