@@ -42,7 +42,7 @@
     --btn-fg: var(--sd-on-primary);
     --btn-bg: var(--sd-primary);
     --btn-border: transparent;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
   .sd-btn-primary:hover {
     --btn-bg: var(--sd-primary);

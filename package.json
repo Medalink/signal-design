@@ -36,11 +36,22 @@
     "./charts": {
       "types": "./src/js/charts/index.d.ts",
       "default": "./src/js/charts/index.js"
-    }
+    },
+    "./ai/*": "./ai/*",
+    "./vscode/*": "./vscode/*",
+    "./package.json": "./package.json"
   },
   "files": [
     "src",
     "dist",
+    "bin",
+    "ai",
+    "vscode",
+    "skills",
+    ".claude-plugin",
+    "AGENTS.md",
+    "llms.txt",
+    "llms-full.txt",
     "LICENSE",
     "README.md"
   ],
@@ -68,7 +79,9 @@
     "prepack": "pnpm build:css",
     "check": "node scripts/check.mjs",
     "perf": "node scripts/perf.mjs",
-    "a11y": "node scripts/a11y.mjs"
+    "a11y": "node scripts/a11y.mjs",
+    "build:ai": "node scripts/build-ai.mjs",
+    "prepare": "node scripts/build-css.mjs && node scripts/build-js.mjs"
   },
   "devDependencies": {
     "@fontsource/source-code-pro": "5.3.1",
@@ -82,5 +95,8 @@
     "vite": "8.3.4"
   },
   "types": "./src/js/index.d.ts",
-  "packageManager": "pnpm@11.27.1"
+  "packageManager": "pnpm@11.27.1",
+  "bin": {
+    "signal-design": "./bin/signal-design.mjs"
+  }
 }

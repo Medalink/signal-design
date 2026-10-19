@@ -1,8 +1,18 @@
 /**
- * Showcase helper: a width toggle on every page. Pick a width and the same
- * page opens in a frame at that size, so layouts can be checked at phone,
- * tablet and laptop widths without resizing the window. Esc or Full closes.
+ * Showcase helper: a slim bar at the top of every page with links to the
+ * showcase pages and a width switch. Pick a width and the same page opens in
+ * a frame at that size, so layouts can be checked at phone, tablet and laptop
+ * widths without resizing the window. Esc or Full closes. The bar sits in the
+ * page flow (nothing is covered) and is hidden on phones and inside the frame.
  */
+const PAGES = [
+  ["index.html", "Components"],
+  ["shell.html", "App shell"],
+  ["chat.html", "Chat"],
+  ["form.html", "Form"],
+  ["landing.html", "Landing"],
+  ["charts.html", "Charts"],
+];
 const SIZES = [
   { label: "Full", w: 0 },
   { label: "1440", w: 1440, h: 900, name: "Desktop 1440 × 900" },
@@ -21,15 +31,20 @@ function frameUrl() {
 }
 
 function mount() {
-  // One small button; the widths are a menu, so it never covers the page.
-  const bar = document.createElement("div");
-  bar.className = "vp-toggle";
+  const here = location.pathname.split("/").pop() || "index.html";
+  const bar = document.createElement("nav");
+  bar.className = "vp-bar";
+  bar.setAttribute("aria-label", "Showcase");
   bar.innerHTML =
-    `<button type="button" class="sd-btn sd-btn-sm" popovertarget="vp-menu" aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><rect x="1.5" y="3" width="13" height="10"/><path d="M5 8H1.5M11 8h3.5M3.5 6.5L2 8l1.5 1.5M12.5 6.5L14 8l-1.5 1.5"/></svg>Width</button>` +
-    `<div popover id="vp-menu" class="sd-popover" data-sd-side="top" data-sd-align="start"><div class="sd-menu" role="menu" aria-label="Show this page at a width">${SIZES.map(
-      (s) => `<button role="menuitemradio" data-vp="${s.w}" aria-checked="${s.w === 0}">${s.name ?? "Full window"}</button>`,
-    ).join("")}</div></div>`;
-  document.body.append(bar);
+    `<span class="vp-brand">Signal showcase</span>` +
+    `<span class="vp-pages">${PAGES.map(([href, label]) => `<a href="./${href}"${href === here ? ' aria-current="page"' : ""}>${label}</a>`).join("")}</span>` +
+    `<span class="vp-widths"><span id="vp-label">Width</span><span class="sd-seg sd-seg-sm sd-seg-inline" role="group" aria-labelledby="vp-label">${SIZES.map(
+      (s) => `<button type="button" data-vp="${s.w}" aria-pressed="${s.w === 0}" ${s.name ? `aria-label="${s.name}"` : ""}>${s.label}</button>`,
+    ).join("")}</span></span>`;
+  // After the skip link, so that stays the first thing Tab reaches.
+  const skip = document.querySelector("body > .sd-skip");
+  (skip ? skip.after(bar) : document.body.prepend(bar));
+  document.documentElement.classList.add("has-vp-bar");
 
   const dialog = document.createElement("dialog");
   dialog.className = "vp-dialog";
@@ -54,8 +69,7 @@ function mount() {
   let current = SIZES[0];
   function show(w) {
     current = SIZES.find((s) => s.w === w) ?? SIZES[0];
-    for (const b of document.querySelectorAll("[data-vp]")) b.setAttribute(b.getAttribute("role") === "menuitemradio" ? "aria-checked" : "aria-pressed", String(Number(b.dataset.vp) === current.w));
-    document.getElementById("vp-menu")?.hidePopover?.();
+    for (const b of document.querySelectorAll("[data-vp]")) b.setAttribute("aria-pressed", String(Number(b.dataset.vp) === current.w));
     if (!current.w) {
       if (dialog.open) dialog.close();
       return;
@@ -73,7 +87,7 @@ function mount() {
     else if (e.target === dialog || e.target === stage) show(0);
   });
   dialog.addEventListener("close", () => {
-    for (const b of document.querySelectorAll("[data-vp]")) b.setAttribute(b.getAttribute("role") === "menuitemradio" ? "aria-checked" : "aria-pressed", String(Number(b.dataset.vp) === 0));
+    for (const b of document.querySelectorAll("[data-vp]")) b.setAttribute("aria-pressed", String(Number(b.dataset.vp) === 0));
     frame.removeAttribute("src");
   });
   addEventListener("resize", () => dialog.open && fit(current));

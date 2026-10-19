@@ -235,7 +235,7 @@
     border-block-end: 1px solid var(--sd-line-strong);
     color: var(--sd-fg);
     font-size: 1.125rem;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
   .sd-sidebar-head > svg {
     width: 20px;
@@ -545,7 +545,7 @@
     height: var(--shell-head);
     padding: 0 8px 0 16px;
     border-block-end: 1px solid var(--sd-line);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
   .sd-shell-aside-section {
     padding: 16px;
@@ -756,7 +756,7 @@
   }
   .sd-titlebar-brand b {
     color: var(--sd-fg);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
   .sd-titlebar-start,
   .sd-titlebar-end {
@@ -881,7 +881,7 @@
   .sd-shell-bar-title > b {
     overflow: hidden;
     color: var(--sd-fg);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     text-overflow: ellipsis;
     white-space: nowrap;
   }

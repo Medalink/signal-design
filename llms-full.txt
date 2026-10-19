@@ -1,0 +1,1799 @@
+# Signal design library: guide for AI agents
+
+Read this before writing UI with Signal (`signal-design`). It is the contract:
+what to install, the rules the design holds to, the parts to build from, and
+how to check your work. The full component reference, with copyable HTML for
+every part, is in `llms-full.txt` and `ai/components.json`.
+
+## What it is
+
+A flat, square, monochrome design library: CSS components (`sd-` classes) on
+Tailwind CSS v4 or as one prebuilt stylesheet, plus a small dependency-free JS
+module that wires behavior through attributes. Optional charts on Chart.js.
+It runs in browsers and in Tauri (WebView2, WKWebView, WebKitGTK).
+
+## Install (from GitHub, not npm)
+
+```bash
+pnpm add github:Medalink/signal-design        # or: npm install github:Medalink/signal-design
+pnpm add github:Medalink/signal-design#v0.1.0 # pin a tag or commit for reproducible builds
+```
+
+**With Tailwind v4** (no build step needed for Signal itself):
+
+```css
+/* app.css */
+@import "tailwindcss";
+@import "signal-design";
+```
+
+**Without Tailwind**: link `dist/signal.css` and keep `dist/fonts/` next to it.
+`dist/` is built by the package's `prepare` script on a git install. If
+`node_modules/signal-design/dist/` is missing, allow the script and reinstall
+(npm: `npm approve-scripts signal-design`; pnpm: add `signal-design` to
+`onlyBuiltDependencies`). Each GitHub Release
+also has `signal-design-dist.zip` with `signal.css`, `signal.js` and the fonts.
+
+**JS** (optional, but anything with a `data-sd-*` attribute needs it):
+
+```js
+import { init } from "signal-design/js";
+init(); // once, after the DOM exists; every listener is delegated, so later markup works too
+```
+
+**Charts** (optional): `pnpm add chart.js@^4.5`, then `import { createChart } from "signal-design/charts"`.
+
+## Hard rules (do not break these)
+
+1. **Square corners.** No `rounded-*`, no `border-radius`. Avatars and checkboxes too.
+2. **Flat.** No blurred `box-shadow`, no glow, no glass, no CSS gradients. Hairlines only.
+3. **Color means something.** Only status and focus are colored, via the roles
+   `accent`, `success`, `danger`, `warning`, `pending`, `extra` (`data-tone="danger"`,
+   `text-danger`). Everything else, navigation included, is black, white and grey.
+   Never use hues directly (`text-pink`, `#ff3366`).
+4. **Tokens, not values.** Colors come from `--sd-*` variables or the Tailwind
+   utilities built on them (`bg-canvas`, `bg-surface`, `text-fg-muted`, `border-line`).
+   Never hard-code a hex value; themes would break.
+5. **Two faces.** SF Pro (the system UI font; Segoe UI on Windows) in regular and medium for text,
+   Source Code Pro (bundled) for code. No other families or weights.
+6. **Motion on state change only.** 120–200ms transitions. Nothing loops for decoration.
+7. **Style state, not classes.** The JS writes ARIA and `data-*` (`aria-pressed`,
+   `aria-expanded`, `aria-current`, `aria-selected`, `data-open`, `data-tone`);
+   the CSS keys on those. Set the same attributes from your own code to drive state.
+
+## Themes
+
+`<html data-theme="ink">` (default, near-black) · `graphite` (lighter dark) ·
+`paper` (white; `light` is an older alias) · `auto` (ink, or paper when the OS
+asks for light). `setTheme("paper")` switches and remembers; Shift+T cycles.
+Any element can carry `data-theme` to theme a subtree. Charts add
+`data-chart-theme="mono"` (default, greys) or `"spectrum"` (full palette).
+
+## Building pages
+
+Start from the closest pattern; copy its HTML from `ai/components.json` (search
+by `title` or `classes`) rather than inventing markup.
+
+| Need | Use |
+|---|---|
+| Reading page | `<main class="sd-page">` (720px column) or `sd-page sd-page-wide` |
+| App with navigation | Signal App Shell: `sd-shell` > `sd-rail`, `sd-sidebar`, `sd-shell-main` (`sd-shell-header` or `sd-shell-bar`, `sd-shell-content`, optional `sd-shell-dock`), `sd-shell-aside`, `sd-statusbar sd-shell-status` |
+| Desktop window chrome | `sd-titlebar` with `sd-window-controls` (`data-sd-window`) |
+| Buttons | `sd-btn` + `sd-btn-primary` (one per view) / `sd-btn-ghost` / `sd-btn-link`, sizes `-sm` `-lg` `-icon` `-block` |
+| Forms | `sd-field` > `sd-field-label` + control + `sd-field-hint`; inputs are styled unclassed |
+| Choices | `sd-seg` (segmented), `role="switch"` checkbox, `sd-combobox`, `sd-tags`, `sd-number` |
+| Overlays | `<dialog class="sd-dialog">` + `data-sd-open`; `popover` + `.sd-popover`; `data-sd-tip`; `toast()` |
+| Lists and rows | `sd-item`, `sd-row`, `sd-table`, `sd-kv` |
+| Status | `sd-badge`, `sd-status`, `sd-dot`, `sd-count`, `sd-progress`, `sd-checks` |
+| Chat and feeds | `sd-message`, `sd-composer`, `sd-reactions`, `sd-banner`, `sd-file` |
+| Data | `sd-stat`, `sd-stat-box`, `createChart(canvas, { type })`, `sd-plot`, `sd-heatmap`, `sd-uptime`, `sd-meter` |
+| Empty | `sd-empty` (gets a center ornament automatically) |
+
+Tone anything with `data-tone`. Mark the current location with `aria-current`.
+Use `sd-desktop-only` / `sd-phone-only` (split at 768px) for chrome that changes on phones.
+
+## Accessibility (your part)
+
+The library meets WCAG 2.2 AA contrast and wires keyboard behavior. You still must:
+- give every icon-only control an `aria-label`;
+- have one `<h1>` per page (use `class="sd-sr-only"` if it should not show);
+- start the page with `<a class="sd-skip" href="#main">Skip to content</a>` and give
+  the target `id="main" tabindex="-1"`;
+- label a desktop title bar: `role="region" aria-label="Window"`;
+- keep focus visible (do not remove outlines);
+- respect `prefers-reduced-motion` in any motion you add.
+
+## Check your work
+
+```bash
+npx signal-design check http://localhost:5173/          # your running app
+npx signal-design check http://localhost:5173/ --a11y   # plus an axe WCAG 2.2 AA audit
+```
+
+It loads each URL in Chromium (Playwright) and fails on: rounded corners,
+blurred shadows, CSS gradients, horizontal overflow at 1280/768/375px, fonts
+that did not load, console errors, and (with `--a11y`) accessibility
+violations. Needs `playwright` (and `axe-core` for `--a11y`) installed, and
+`npx playwright install chromium` once.
+
+## Files for tools
+
+| File | What |
+|---|---|
+| `ai/components.json` | Every block: id, section, title, classes, `data-sd-*` attributes, copyable HTML, required JS, a JS snippet where one applies |
+| `ai/tokens.json` | Every token resolved per theme (W3C design-token form), with contrast ratios |
+| `llms-full.txt` | This guide plus every component's HTML, as one text file |
+| `vscode/html-data.json`, `vscode/css-data.json` | Editor completions for `data-sd-*` and `--sd-*` |
+| `src/js/index.d.ts`, `src/js/charts/index.d.ts` | Types for the JS API |
+| `README.md` | Human documentation |
+
+## Common mistakes
+
+- Adding `rounded`, `shadow-lg` or `bg-gradient-*` from Tailwind habit. Remove them.
+- Coloring navigation, headings or icons. Keep them grey; color is for status.
+- Writing `color: #...` or `bg-[#...]`. Use a role token.
+- Forgetting `init()`, so `data-sd-*` attributes do nothing.
+- Building a custom dropdown, tooltip, modal or tabs. Use the native element plus Signal.
+- Wrapping the app in your own sidebar layout instead of `sd-shell`.
+
+---
+
+# Component reference (generated)
+
+Every block from the components page, with its copyable HTML. `JS:` says what `init()` must wire.
+
+## Tokens / Hard rules
+
+
+
+Classes: none
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<ol class="grid gap-y-2 gap-x-16 sm:grid-cols-2 text-fg-muted" style="list-style: decimal-leading-zero; padding-inline-start: 2.2em">
+  <li>Square corners everywhere, avatars and checkboxes included.</li>
+  <li>Flat surfaces. No glass, grain, glow or shadow. Fades are for borders and edges only.</li>
+  <li>Color is for important things: risk, status, success, focus. Everything else is black, white and grey, navigation included.</li>
+  <li>Motion on state change only: 120–200ms transitions and a one-pass hover shimmer. The rain moves only while work runs.</li>
+  <li>Minimal by default, detail on expand.</li>
+  <li>SF Pro for text in regular and medium; Source Code Pro for code.</li>
+</ol>
+```
+
+## Tokens / Semantic roles
+
+
+
+Classes: none
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4" data-swatches="roles"></div>
+```
+
+## Tokens / Signals
+
+The only saturated colors. Each one has a job. Use the role (text-danger), not the hue (text-pink), so paper (the light theme) can deepen it.
+
+Classes: none
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4" data-swatches="signals"></div>
+```
+
+## Tokens / Greys
+
+Ink is the shipped Signal ramp: cool and near-black. Graphite is the original ramp from the spec table. The ink theme uses the first, the graphite theme the second.
+
+Classes: none
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="grid grid-cols-[repeat(13,minmax(0,1fr))] gap-1" data-swatches="ink"></div>
+
+<div class="grid grid-cols-[repeat(13,minmax(0,1fr))] gap-1" data-swatches="graphite"></div>
+```
+
+## Tokens / Spec vs shipped
+
+The original spec table and the shipped stylesheet disagree. Ink, the shipped ramp, is the canonical default. Graphite keeps the spec values as an optional theme.
+
+Classes: sd-table, sd-table-wrap
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="sd-table-wrap">
+  <table class="sd-table">
+    <thead><tr><th>Role</th><th>Ink (default)</th><th>Graphite (spec)</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Canvas</th><td><span class="inline-block size-3 align-middle mr-2 border border-line" style="background:#000000"></span>#000000</td><td><span class="inline-block size-3 align-middle mr-2 border border-line" style="background:#0F0F0F"></span>#0F0F0F</td></tr>
+      <tr><th scope="row">Surface / raised</th><td>#0A0A0A / #191A1D</td><td>#0A0A0A / #151515</td></tr>
+      <tr><th scope="row">Text</th><td>#F1F3F7 · #D4D4D4 · #A3A3A3 · #737373</td><td>#E5E5E5 · #A3A3A3 · #6B6B6B</td></tr>
+      <tr><th scope="row">Lines</th><td>white 8% / 16% (alpha)</td><td>#2E2E2E / #3D3D3D (solid)</td></tr>
+    </tbody>
+  </table>
+</div>
+```
+
+## Tokens / Contrast on canvas
+
+WCAG ratio of each text role against the current canvas. Body text needs 4.5. fg-faint is for decoration, disabled states and large display text only.
+
+Classes: sd-table, sd-table-compact, sd-table-wrap
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="sd-table-wrap"><table class="sd-table sd-table-compact" data-contrast=""></table></div>
+```
+
+## Tokens / Type scale
+
+
+
+Classes: sd-table, sd-table-wrap
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="sd-table-wrap"><table class="sd-table" data-type-scale=""></table></div>
+```
+
+## Tokens / Tracking and weight
+
+
+
+Classes: none
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="grid gap-3">
+  <p class="text-3xl tracking-display">display −0.03em</p>
+  <p class="text-lg tracking-tight">tight −0.025em for row titles</p>
+  <p class="text-2xs uppercase tracking-caps text-fg-subtle">caps 0.14em · status line</p>
+  <p class="text-2xs uppercase tracking-widest text-fg-subtle">widest 0.16em · labels</p>
+  <p class="text-xs uppercase tracking-wordmark font-semibold">wordmark 0.28em</p>
+  <p class="text-lg"><span class="font-normal">400 regular</span> · <span class="font-semibold">500 medium</span></p>
+</div>
+```
+
+## Tokens / Spacing, layout, motion
+
+
+
+Classes: sd-btn, sd-dot, sd-kv, sd-row, sd-row-body, sd-row-title
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="grid gap-6 sm:grid-cols-3">
+  <dl class="sd-kv">
+    <dt>Base unit</dt><dd>4px (Tailwind <code>--spacing</code>)</dd>
+    <dt>Column</dt><dd>720px <code>max-w-column</code></dd>
+    <dt>Narrow</dt><dd>560px <code>max-w-narrow</code></dd>
+    <dt>Wide</dt><dd>1024px <code>max-w-wide</code></dd>
+  </dl>
+  <dl class="sd-kv">
+    <dt>Fast</dt><dd>120ms hover, color</dd>
+    <dt>Base</dt><dd>160ms collapse, toast</dd>
+    <dt>Slow</dt><dd>200ms expand, scroll</dd>
+    <dt>Ease</dt><dd><code>ease-out</code></dd>
+  </dl>
+  <div class="grid gap-3 content-start">
+    <button type="button" class="sd-btn" data-demo="motion">Replay slide-in</button>
+    <div class="sd-row" data-demo-row="" style="min-height: 0; padding-block: 10px">
+      <span class="sd-dot" data-tone="success"></span>
+      <div class="sd-row-body"><p class="sd-row-title text-md">New item arrives in 180ms</p></div>
+    </div>
+  </div>
+</div>
+```
+
+## Elements / Headings
+
+
+
+Classes: none
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div>
+  <h1>32 open. <em>8 done.</em></h1>
+  <h2>Heading two</h2>
+  <h3>Heading three</h3>
+  <h4>Heading four</h4>
+  <h5>Heading five</h5>
+  <h6>Heading six</h6>
+</div>
+```
+
+## Elements / Text
+
+
+
+Classes: none
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="max-w-[42rem]">
+  <p>Paragraph text sits at 16px on a 1.5 line height. It holds a <a href="#elements">link</a>, <strong>strong</strong>, <em>emphasis</em>, <i>idiomatic</i>, <b>bold</b>, <small>small print</small>, <mark>marked</mark>, <del>deleted</del>, <ins>inserted</ins>, <s>struck</s>, <u>underlined</u>, H<sub>2</sub>O, x<sup>2</sup>, <abbr title="Continuous integration">CI</abbr>, <cite>a cited title</cite>, <q>an inline quote</q>, <dfn>a definition</dfn>, <time datetime="2026-10-18T07:55">07:55</time>, <var>count</var>, <samp>exit 0</samp>, <code>code()</code> and <kbd><kbd>Shift</kbd>+<kbd>N</kbd></kbd>.</p>
+  <p>A second paragraph follows with flow spacing. Margins only appear between siblings, never after the last one.</p>
+  <address>ACME Inc. · 100 Main Street · Springfield</address>
+</div>
+```
+
+## Elements / Lists
+
+
+
+Classes: none
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="grid gap-8 sm:grid-cols-3">
+  <ul>
+    <li>Square markers</li>
+    <li>Faint marker color
+      <ul><li>Nested item</li><li>Another</li></ul>
+    </li>
+    <li>Third item</li>
+  </ul>
+  <ol>
+    <li>Leading zeros</li>
+    <li>Tabular numbers</li>
+    <li>Third step</li>
+  </ol>
+  <dl>
+    <dt>Plan</dt><dd>Pro</dd>
+    <dt>Billing cycle</dt><dd>Monthly</dd>
+  </dl>
+</div>
+```
+
+## Elements / Quote, code, rule
+
+
+
+Classes: none
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<blockquote>
+  <p>Color only where it means something.</p>
+  <footer>Signal hard rule 3</footer>
+</blockquote>
+
+<pre><code>@import "tailwindcss";
+@import "signal-design";</code></pre>
+
+<hr>
+```
+
+## Elements / Table
+
+
+
+Classes: sd-table-wrap
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="sd-table-wrap">
+  <table>
+    <caption>Recent items</caption>
+    <thead><tr><th scope="col">#</th><th scope="col">Team</th><th scope="col">Item</th><th scope="col">Time</th></tr></thead>
+    <tbody>
+      <tr><td>21</td><td>Platform</td><td>Fix the crash when a customer has no address</td><td>07:55</td></tr>
+      <tr><td>22</td><td>Billing</td><td>Stop double charges when a payment retries</td><td>07:56</td></tr>
+      <tr><td>23</td><td>Support</td><td>Triage 9 new tickets, close 2 duplicates</td><td>07:57</td></tr>
+    </tbody>
+    <tfoot><tr><td colspan="3">3 items</td><td>2 min</td></tr></tfoot>
+  </table>
+</div>
+```
+
+## Elements / Form controls
+
+
+
+Classes: none
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<form class="grid gap-6" onsubmit="return false">
+  <fieldset>
+    <legend>Text inputs</legend>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <label class="grid gap-1.5">text <input type="text" placeholder="Placeholder"></label>
+      <label class="grid gap-1.5">email (required) <input type="email" required="" placeholder="you@example.com"></label>
+      <label class="grid gap-1.5">password <input type="password" value="hunter22"></label>
+      <label class="grid gap-1.5">search <input type="search" placeholder="Search"></label>
+      <label class="grid gap-1.5">number <input type="number" value="42"></label>
+      <label class="grid gap-1.5">tel <input type="tel" placeholder="+1 555 0100"></label>
+      <label class="grid gap-1.5">url <input type="url" placeholder="https://"></label>
+      <label class="grid gap-1.5">date <input type="date"></label>
+      <label class="grid gap-1.5">time <input type="time"></label>
+      <label class="grid gap-1.5">datetime-local <input type="datetime-local"></label>
+      <label class="grid gap-1.5">month <input type="month"></label>
+      <label class="grid gap-1.5">week <input type="week"></label>
+      <label class="grid gap-1.5">readonly <input type="text" readonly="" value="read only"></label>
+      <label class="grid gap-1.5">disabled <input type="text" disabled="" value="disabled"></label>
+      <label class="grid gap-1.5">datalist <input list="teams" placeholder="Team"></label>
+    </div>
+    <datalist id="teams"><option value="Platform"></option><option value="Design"></option><option value="Billing"></option></datalist>
+  </fieldset>
+
+  <fieldset>
+    <legend>Choice and range</legend>
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="grid gap-3">
+        <label class="flex gap-2.5 items-center"><input type="checkbox" checked=""> checked</label>
+        <label class="flex gap-2.5 items-center"><input type="checkbox"> unchecked</label>
+        <label class="flex gap-2.5 items-center"><input type="checkbox" data-indeterminate=""> indeterminate</label>
+        <label class="flex gap-2.5 items-center"><input type="checkbox" disabled=""> disabled</label>
+      </div>
+      <div class="grid gap-3">
+        <label class="flex gap-2.5 items-center"><input type="radio" name="r" checked=""> monthly</label>
+        <label class="flex gap-2.5 items-center"><input type="radio" name="r"> yearly</label>
+        <label class="flex gap-2.5 items-center"><input type="radio" name="r"> custom</label>
+        <label class="flex gap-2.5 items-center"><input type="checkbox" role="switch" checked=""> switch on</label>
+        <label class="flex gap-2.5 items-center"><input type="checkbox" role="switch"> switch off</label>
+      </div>
+      <div class="grid gap-4">
+        <label class="grid gap-2">range <input type="range" value="60"></label>
+        <label class="flex gap-3 items-center">color <input type="color" value="#00d4ff"></label>
+        <label class="grid gap-2">file <input type="file"></label>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Select and textarea</legend>
+    <div class="grid gap-4 sm:grid-cols-3">
+      <label class="grid gap-1.5">select
+        <select>
+          <optgroup label="Plans"><option>Starter</option><option selected="">Pro</option><option>Enterprise</option></optgroup>
+        </select>
+      </label>
+      <label class="grid gap-1.5">multiple
+        <select multiple="" size="4"><option selected="">Website</option><option>Mobile app</option><option selected="">Billing</option><option>Support</option></select>
+      </label>
+      <label class="grid gap-1.5">textarea <textarea placeholder="Leave a note"></textarea></label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Output, progress, meter</legend>
+    <div class="grid gap-4 sm:grid-cols-2">
+      <label class="grid gap-2">progress 64% <progress value="64" max="100"></progress></label>
+      <label class="grid gap-2">progress indeterminate <progress></progress></label>
+      <label class="grid gap-2">meter optimum <meter value="0.9" low="0.3" high="0.7" optimum="1"></meter></label>
+      <label class="grid gap-2">meter suboptimum <meter value="0.5" low="0.3" high="0.7" optimum="1"></meter></label>
+      <label class="grid gap-2">meter poor <meter value="0.1" low="0.3" high="0.7" optimum="1"></meter></label>
+      <p>output: <output>214</output> tests</p>
+    </div>
+  </fieldset>
+
+  <div class="flex flex-wrap gap-2.5">
+    <input type="submit" value="Submit">
+    <button>Button</button>
+    <input type="reset" value="Reset">
+    <button disabled="">Disabled</button>
+  </div>
+</form>
+```
+
+## Elements / Details, dialog, popover
+
+
+
+Classes: none
+
+JS: init() from signal-design/js wires data-sd-open · data-sd-close · popovertarget (placement, menu keys).
+
+```html
+<div>
+  <details open="">
+    <summary>What happens when I approve?</summary>
+    <p>The item moves to Done and the owner is notified.</p>
+  </details>
+  <details>
+    <summary>What does Request changes do?</summary>
+    <p>It asks for a note and sends it to the owner.</p>
+  </details>
+</div>
+
+<div class="flex flex-wrap gap-2.5">
+  <button data-sd-open="plain-dialog">Open a plain &lt;dialog&gt;</button>
+  <button popovertarget="plain-popover">Toggle a plain [popover]</button>
+</div>
+
+<dialog id="plain-dialog">
+  <h4>Plain dialog</h4>
+  <p>Unclassed, styled by the base layer. Click the backdrop or the button to close.</p>
+  <button data-sd-close="">Close</button>
+</dialog>
+
+<div popover="" id="plain-popover"><p>Plain popover, centered by the browser.</p></div>
+```
+
+## Elements / Media
+
+
+
+Classes: none
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="grid gap-6 sm:grid-cols-2">
+  <figure>
+    <img alt="Abstract square grid" width="640" height="360" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 360'%3E%3Crect width='640' height='360' fill='%230A0A0B'/%3E%3Crect x='0' y='0' width='128' height='360' fill='%23111113'/%3E%3Crect x='168' y='44' width='200' height='10' fill='%232A2A2F'/%3E%3Crect x='168' y='96' width='420' height='120' fill='none' stroke='%232A2A2F'/%3E%3Crect x='188' y='120' width='160' height='40' fill='%2300D4FF' fill-opacity='.35'/%3E%3Crect x='168' y='290' width='300' height='8' fill='%231F1F23'/%3E%3C/svg%3E">
+    <figcaption>Figure caption</figcaption>
+  </figure>
+  <div class="grid gap-4 content-start">
+    <audio controls=""></audio>
+    <iframe title="Inline frame" srcdoc="&lt;body style='margin:0;font:12px monospace;color:#9A9AA2;background:#0A0A0B;display:grid;place-items:center;height:100vh'&gt;iframe&lt;/body&gt;" height="120" class="w-full"></iframe>
+  </div>
+</div>
+```
+
+## Components / Text styles
+
+sd-display + -xl (em or sd-quiet for the quiet half) · sd-title · sd-lead · sd-label + -strong · sd-muted|subtle|faint · sd-meta
+
+Classes: sd-cluster, sd-display, sd-display-xl, sd-faint, sd-label, sd-label-strong, sd-lead, sd-meta, sd-muted, sd-quiet, sd-subtle, sd-title
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="grid gap-5">
+  <p class="sd-display sd-display-xl">32 open. <em>8 done.</em></p>
+  <p class="sd-display">Display line <span class="sd-quiet">with a quiet half.</span></p>
+  <p class="sd-title">Title: a section or panel heading</p>
+  <p class="sd-lead max-w-[42rem]">Lead: the paragraph under a page title, a step softer than body text.</p>
+  <div class="sd-cluster" style="--gap: 20px"><span class="sd-label">Label</span><span class="sd-label sd-label-strong">Strong label</span><span class="sd-muted">muted</span><span class="sd-subtle">subtle</span><span class="sd-faint">faint</span></div>
+  <p class="sd-meta"><span>Owner Jane</span><span>07:55</span><span data-tone="danger">risk</span></p>
+</div>
+```
+
+## Components / Visibility helpers
+
+sd-desktop-only · sd-phone-only · sd-sr-only (read by screen readers, not shown). Resize the window to see the first two swap.
+
+Classes: sd-badge, sd-btn, sd-btn-icon, sd-cluster, sd-desktop-only, sd-phone-only, sd-sr-only
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="sd-cluster">
+  <span class="sd-badge sd-desktop-only">shown above 48rem</span>
+  <span class="sd-badge sd-phone-only">shown on phones</span>
+  <button class="sd-btn sd-btn-icon" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="11" height="11"></rect><path d="M15 15l5.5 5.5"></path></svg><span class="sd-sr-only">Search the library</span></button>
+</div>
+```
+
+## Components / Buttons
+
+sd-btn · sd-btn-primary · sd-btn-ghost · sd-btn-link · sd-btn-sm|lg|icon|block · data-tone · aria-busy · sd-kbd (a kbd look for any element) · sd-chip-key
+
+Classes: sd-actions, sd-btn, sd-btn-block, sd-btn-ghost, sd-btn-group, sd-btn-icon, sd-btn-lg, sd-btn-link, sd-btn-primary, sd-btn-sm, sd-chip, sd-chip-key, sd-kbd, sd-subtle
+
+JS: init() from signal-design/js wires data-sd-tip.
+
+```html
+<div class="sd-actions">
+  <button class="sd-btn sd-btn-primary">Approve <kbd>a</kbd></button>
+  <button class="sd-btn">Save for later <kbd>t</kbd></button>
+  <button class="sd-btn">Request changes <kbd>s</kbd></button>
+  <button class="sd-btn" data-tone="danger">Reject <kbd>x</kbd></button>
+  <button class="sd-btn sd-btn-ghost">Cancel</button>
+  <button class="sd-btn sd-btn-link">Reset to defaults</button>
+</div>
+
+<div class="sd-actions">
+  <button class="sd-btn" data-tone="success">Approve</button>
+  <button class="sd-btn" data-tone="accent">Focus</button>
+  <button class="sd-btn" data-tone="warning">Costly</button>
+  <button class="sd-btn" data-tone="pending">Pending</button>
+  <button class="sd-btn sd-btn-primary" data-tone="success">Solid success</button>
+  <button class="sd-btn sd-btn-primary" data-tone="danger">Solid danger</button>
+</div>
+
+<div class="sd-actions">
+  <button class="sd-btn sd-btn-sm">Small</button>
+  <button class="sd-btn">Default</button>
+  <button class="sd-btn sd-btn-lg">Large</button>
+  <button class="sd-btn sd-btn-icon" aria-label="Settings" data-sd-tip="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16"></rect><path d="M4 9h16M9 4v16"></path></svg></button>
+  <button class="sd-btn" disabled="">Disabled</button>
+  <button class="sd-btn" aria-busy="true">Merging</button>
+  <div class="sd-btn-group" role="group" aria-label="View">
+    <button class="sd-btn sd-btn-sm">Day</button><button class="sd-btn sd-btn-sm">Week</button><button class="sd-btn sd-btn-sm">Month</button>
+  </div>
+</div>
+
+<div class="grid gap-3 max-w-[22rem]">
+  <button class="sd-btn sd-btn-primary sd-btn-block">Continue</button>
+  <p class="text-sm sd-subtle">Press <span class="sd-kbd">Ctrl</span> <span class="sd-kbd">Enter</span> to send · <span class="sd-chip"><span class="sd-chip-key">a</span> approve</span></p>
+</div>
+```
+
+## Components / Markers, badges, chips, pill
+
+sd-dot + data-shape="hollow|dashed" · sd-badge · sd-badge-solid · sd-chip · sd-pill
+
+Classes: sd-badge, sd-badge-solid, sd-chip, sd-cluster, sd-dot, sd-dot-lg, sd-pill
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="sd-cluster" style="--gap: 18px">
+  <span class="sd-cluster" style="--gap: 6px"><span class="sd-dot" data-tone="danger"></span> irreversible</span>
+  <span class="sd-cluster" style="--gap: 6px"><span class="sd-dot" data-tone="warning"></span> costly</span>
+  <span class="sd-cluster" style="--gap: 6px"><span class="sd-dot" data-tone="pending" data-shape="dashed"></span> unproven</span>
+  <span class="sd-cluster" style="--gap: 6px"><span class="sd-dot" data-shape="hollow"></span> routine</span>
+  <span class="sd-cluster" style="--gap: 6px"><span class="sd-dot" data-tone="accent" data-shape="hollow"></span> saved</span>
+  <span class="sd-cluster" style="--gap: 6px"><span class="sd-dot sd-dot-lg" data-tone="success"></span> large</span>
+</div>
+
+<div class="sd-cluster">
+  <span class="sd-badge" data-tone="danger">Risk</span>
+  <span class="sd-badge" data-tone="warning">Costly</span>
+  <span class="sd-badge" data-tone="pending">Unproven</span>
+  <span class="sd-badge" data-tone="success">Passing</span>
+  <span class="sd-badge" data-tone="accent">Current</span>
+  <span class="sd-badge">v1.0</span>
+  <span class="sd-badge sd-badge-solid" data-tone="danger">Risk</span>
+  <span class="sd-badge sd-badge-solid" data-tone="success">Done</span>
+</div>
+
+<div class="sd-cluster">
+  <span class="sd-chip"><b>project</b> Website <button type="button" aria-label="Remove">×</button></span>
+  <span class="sd-chip"><b>due</b> this week</span>
+  <button class="sd-chip" aria-pressed="true">high risk</button>
+  <button class="sd-chip" aria-pressed="false">changes requested</button>
+  <button class="sd-pill">↑ <b>21</b> new above <kbd>Shift+N</kbd></button>
+</div>
+```
+
+## Components / Avatars, status, counts
+
+sd-avatar + -sm|lg|xl · sd-avatar-stack · sd-status · sd-count · sd-fps + data-sd-fps
+
+Classes: sd-avatar, sd-avatar-lg, sd-avatar-sm, sd-avatar-stack, sd-avatar-xl, sd-cluster, sd-count, sd-fps, sd-status
+
+JS: init() from signal-design/js wires data-sd-fps.
+
+```html
+<div class="sd-cluster" style="--gap: 16px">
+  <span class="sd-avatar sd-avatar-sm" data-tone="success">JD</span>
+  <span class="sd-avatar" data-tone="extra">AL</span>
+  <span class="sd-avatar sd-avatar-lg" data-tone="warning">SK</span>
+  <span class="sd-avatar sd-avatar-xl" data-tone="accent">TP</span>
+  <span class="sd-avatar">??</span>
+  <span class="sd-avatar-stack">
+    <span class="sd-avatar" data-tone="success">JD</span><span class="sd-avatar" data-tone="extra">AL</span><span class="sd-avatar" data-tone="warning">SK</span><span class="sd-avatar" data-tone="accent">TP</span>
+  </span>
+  <span class="sd-status" data-tone="success">live</span>
+  <span class="sd-status" data-tone="pending">monitoring</span>
+  <span class="sd-status">offline</span>
+  <span>Saved <span class="sd-count">3</span></span>
+  <span>High risk <span class="sd-count" data-tone="danger">6</span></span>
+  <span class="sd-fps" data-sd-fps=""><b>--</b> fps</span>
+</div>
+```
+
+## Components / Fields
+
+
+
+Classes: sd-actions, sd-actions-end, sd-addon, sd-btn, sd-btn-ghost, sd-btn-primary, sd-check, sd-check-desc, sd-check-text, sd-choices, sd-control-lg, sd-control-sm, sd-dropzone, sd-field, sd-field-aside, sd-field-error, sd-field-hint, sd-field-label, sd-form, sd-form-row, sd-input-group, sd-seg, sd-subtle
+
+JS: init() from signal-design/js wires data-sd-seg.
+
+```html
+<form class="sd-form max-w-narrow" onsubmit="return false" novalidate="">
+  <div class="sd-form-row">
+    <div class="sd-field">
+      <label class="sd-field-label" for="f-name">Name</label>
+      <input id="f-name" required="" placeholder="Jane Doe">
+      <p class="sd-field-hint">Shown on your profile.</p>
+      <p class="sd-field-error">Name is required.</p>
+    </div>
+    <div class="sd-field" data-invalid="">
+      <label class="sd-field-label" for="f-mail">Email <span class="sd-field-aside">optional</span></label>
+      <input id="f-mail" type="email" value="jane@acme" aria-invalid="true">
+      <p class="sd-field-error">Enter an address like jane@acme.example.</p>
+    </div>
+  </div>
+  <div class="sd-field">
+    <label class="sd-field-label" for="f-url">Website</label>
+    <div class="sd-input-group">
+      <span class="sd-addon">https://</span>
+      <input id="f-url" placeholder="acme.example">
+      <button class="sd-btn" type="button">Test</button>
+    </div>
+  </div>
+  <div class="sd-field">
+    <span class="sd-field-label">Billing cycle</span>
+    <div class="sd-seg" role="radiogroup" aria-label="Billing cycle">
+      <label><input type="radio" name="cycle" value="monthly"> monthly</label>
+      <label><input type="radio" name="cycle" value="yearly" checked=""> yearly</label>
+      <label><input type="radio" name="cycle" value="custom"> custom</label>
+    </div>
+    <p class="sd-field-hint">Radios inside labels: no JS.</p>
+  </div>
+  <div class="sd-field">
+    <span class="sd-field-label">Notify me</span>
+    <div class="sd-seg" data-sd-seg="" aria-label="Notify me">
+      <button type="button" aria-pressed="true">important</button>
+      <button type="button" aria-pressed="false">all</button>
+      <button type="button" aria-pressed="false">off</button>
+    </div>
+    <p class="sd-field-hint">Buttons with <code>data-sd-seg</code>: fires <code>change</code>.</p>
+  </div>
+  <div class="sd-choices">
+    <label class="sd-check"><input type="checkbox" checked=""><span class="sd-check-text">Email me a weekly summary<span class="sd-check-desc">Sent every Monday morning.</span></span></label>
+    <label class="sd-check"><input type="checkbox" role="switch"><span class="sd-check-text">Push notifications<span class="sd-check-desc">Only for items marked high risk.</span></span></label>
+    <label class="sd-check"><input type="checkbox" disabled=""><span class="sd-check-text">Auto-approve routine items<span class="sd-check-desc">Not available on your plan.</span></span></label>
+  </div>
+  <div class="sd-field">
+    <span class="sd-field-label">Attachments</span>
+    <label class="sd-dropzone"><input type="file" multiple=""><span>Drop files here or <u>browse</u></span><span class="sd-subtle text-2xs uppercase tracking-caps" data-file-names="">png · mp4 · up to 20 MB</span></label>
+  </div>
+  <div class="sd-form-row">
+    <input class="sd-control-sm" placeholder="sd-control-sm">
+    <input class="sd-control-lg" placeholder="sd-control-lg">
+  </div>
+  <div class="sd-actions sd-actions-end">
+    <button class="sd-btn sd-btn-ghost" type="reset">Cancel</button>
+    <button class="sd-btn sd-btn-primary" type="submit">Save</button>
+  </div>
+</form>
+```
+
+## Components / Navigation
+
+sd-nav · sd-tabs + sd-tabpanel · sd-breadcrumb · sd-pagination · sd-sidenav · sd-topbar · sd-statusbar
+
+Classes: sd-avatar, sd-avatar-sm, sd-breadcrumb, sd-btn, sd-btn-sm, sd-checks, sd-count, sd-muted, sd-nav, sd-pagination, sd-sidenav, sd-sidenav-group, sd-statusbar, sd-statusbar-end, sd-tabpanel, sd-tabs, sd-topbar, sd-topbar-end, sd-wordmark
+
+JS: init() from signal-design/js wires role="tab".
+
+```html
+<nav class="sd-nav" aria-label="Filters">
+  <a href="#components" aria-current="page">All</a>
+  <a href="#components">High risk</a>
+  <a href="#components">Changes requested</a>
+  <a href="#components">History</a>
+  <a href="#components">Saved <span class="sd-count">3</span></a>
+  <a href="#components">Settings</a>
+</nav>
+
+<div>
+  <div class="sd-tabs" role="tablist" aria-label="Item detail">
+    <button role="tab" aria-selected="true" aria-controls="tab-proof" id="t-proof">Overview</button>
+    <button role="tab" aria-controls="tab-checks" id="t-checks">Checks <span class="sd-count" data-tone="success">4</span></button>
+    <button role="tab" aria-controls="tab-diff" id="t-diff">Activity</button>
+  </div>
+  <div class="sd-tabpanel" role="tabpanel" id="tab-proof" aria-labelledby="t-proof"><p class="sd-muted">Summary, owner and due date go here. Arrow keys move between tabs.</p></div>
+  <div class="sd-tabpanel" role="tabpanel" id="tab-checks" aria-labelledby="t-checks" hidden="">
+    <ul class="sd-checks"><li data-tone="success">checks passed · 214 tests</li><li data-tone="success">reviewed by Alex</li><li data-tone="pending">monitoring for 7 days</li><li data-tone="danger">lint · 2 warnings</li></ul>
+  </div>
+  <div class="sd-tabpanel" role="tabpanel" id="tab-diff" aria-labelledby="t-diff" hidden=""><p class="sd-muted">ACME-421 · updated 2 min ago</p></div>
+</div>
+
+<div class="grid gap-6 sm:grid-cols-2 items-start">
+  <ol class="sd-breadcrumb">
+    <li><a href="#components">Projects</a></li>
+    <li><a href="#components">Website</a></li>
+    <li><span aria-current="page">#21</span></li>
+  </ol>
+  <ul class="sd-pagination" aria-label="Pages">
+    <li><a href="#components" aria-label="Previous">‹</a></li>
+    <li><a href="#components">1</a></li>
+    <li><a href="#components" aria-current="page">2</a></li>
+    <li><a href="#components">3</a></li>
+    <li><span>…</span></li>
+    <li><a href="#components">12</a></li>
+    <li><a href="#components" aria-label="Next">›</a></li>
+  </ul>
+</div>
+
+<div class="grid gap-6 sm:grid-cols-[15rem_1fr] items-start">
+  <nav aria-label="App" class="border border-line py-2">
+    <div class="sd-sidenav-group">Projects</div>
+    <ul class="sd-sidenav">
+      <li><a href="#components" aria-current="page">All items <span class="sd-count">108</span></a></li>
+      <li><a href="#components">High risk <span class="sd-count" data-tone="danger">6</span></a></li>
+      <li><a href="#components">Saved <span class="sd-count">3</span></a></li>
+    </ul>
+    <div class="sd-sidenav-group">Online now</div>
+    <ul class="sd-sidenav">
+      <li><a href="#components"><span class="sd-avatar sd-avatar-sm" data-tone="success">JD</span> You <span class="sd-count">#21</span></a></li>
+      <li><a href="#components"><span class="sd-avatar sd-avatar-sm" data-tone="extra">AL</span> Alex <span class="sd-count">#23</span></a></li>
+    </ul>
+  </nav>
+  <div class="grid gap-4">
+    <div class="sd-topbar border border-line">
+      <span class="sd-wordmark">ACME</span>
+      <nav class="sd-nav" aria-label="Demo top"><a href="#components" aria-current="page">Projects</a><a href="#components">History</a></nav>
+      <div class="sd-topbar-end"><button class="sd-btn sd-btn-sm">Search <kbd>Ctrl K</kbd></button><span class="sd-avatar" data-tone="success">JD</span></div>
+    </div>
+    <div class="sd-statusbar border border-line">
+      <span><kbd>N</kbd> next</span><span><kbd>j</kbd><kbd>k</kbd> move</span><span><kbd>a</kbd> approve</span><span><kbd>↵</kbd> details</span>
+      <span class="sd-statusbar-end">v1.0 · 3 online</span>
+    </div>
+  </div>
+</div>
+```
+
+## Components / Menu and popover
+
+Native popover + popovertarget, positioned by the JS. In a role="menu": arrows, Home/End, type to jump, Esc closes.
+
+Classes: sd-actions, sd-btn, sd-btn-icon, sd-label, sd-menu, sd-menu-hint, sd-menu-item, sd-menu-label, sd-menu-sep, sd-muted, sd-popover, sd-popover-pad
+
+JS: init() from signal-design/js wires popovertarget (placement, menu keys).
+
+```html
+<div class="sd-actions">
+  <button class="sd-btn" popovertarget="snooze-menu" aria-haspopup="menu" aria-expanded="false">Save for later <kbd>t</kbd></button>
+  <button class="sd-btn sd-btn-icon" popovertarget="row-menu" aria-haspopup="menu" aria-label="More" aria-expanded="false">⋯</button>
+  <button class="sd-btn" popovertarget="info-pop" aria-expanded="false">Popover panel</button>
+  <button class="sd-btn" popovertarget="above-pop" aria-expanded="false">Opens above</button>
+</div>
+
+<div popover="" id="above-pop" class="sd-popover sd-popover-pad" data-sd-side="top"><p class="sd-muted"><code>data-sd-side="top"</code> places it above; it still flips at the edge.</p></div>
+
+<div popover="" id="snooze-menu" class="sd-popover">
+  <div class="sd-menu" role="menu" aria-label="Remind me">
+    <div class="sd-menu-label" role="presentation">Remind me</div>
+    <button role="menuitem" data-demo-toast="Reminder set for later today"><kbd>1</kbd> later today</button>
+    <button role="menuitem" data-demo-toast="Reminder set for tomorrow 09:00"><kbd>2</kbd> tomorrow 09:00</button>
+    <button role="menuitem" data-demo-toast="Reminder set for Monday"><kbd>3</kbd> Monday</button>
+    <button role="menuitem"><kbd>4</kbd> custom…</button>
+  </div>
+</div>
+
+<div popover="" id="row-menu" class="sd-popover" data-sd-align="end">
+  <div class="sd-menu" role="menu" aria-label="Item actions">
+    <button role="menuitem">Open <span class="sd-menu-hint">o</span></button>
+    <button role="menuitem">Copy link <span class="sd-menu-hint">c</span></button>
+    <button role="menuitemradio" aria-checked="true">Due this week</button>
+    <button role="menuitemradio" aria-checked="false">Due next week</button>
+    <hr class="sd-menu-sep">
+    <button role="menuitem" data-tone="danger">Delete <span class="sd-menu-hint">x</span></button>
+    <button role="menuitem" aria-disabled="true">Restore (not deleted)</button>
+    <a class="sd-menu-item" href="#components">A link styled as an item</a>
+  </div>
+</div>
+
+<div popover="" id="info-pop" class="sd-popover sd-popover-pad">
+  <p class="sd-label">Why this is flagged</p>
+  <p class="mt-2 sd-muted">It sends money to a customer, which can't be undone.</p>
+</div>
+```
+
+## Components / Feedback
+
+sd-note · sd-callout · toast() · sd-cells · sd-progress · sd-skeleton · sd-checks · sd-empty
+
+Classes: sd-actions, sd-btn, sd-btn-sm, sd-callout, sd-callout-title, sd-cells, sd-checks, sd-dot, sd-empty, sd-empty-title, sd-label, sd-note, sd-progress, sd-skeleton, sd-skeleton-text
+
+JS: init() from signal-design/js wires data-sd-toast.
+
+```html
+<div class="grid gap-3">
+  <div class="sd-note" data-tone="pending">◷ This item changed after you opened it. <button class="sd-btn sd-btn-sm" data-tone="pending">Reload</button></div>
+  <div class="sd-note" data-tone="danger">Irreversible: sends a $4,200 quote to a customer.</div>
+  <div class="sd-note">New items use your workspace defaults.</div>
+</div>
+
+<div class="grid gap-3 sm:grid-cols-2">
+  <div class="sd-callout" data-tone="danger"><p class="sd-callout-title"><span class="sd-dot"></span>High risk</p><p>Expires in 45 min. Review before approving.</p></div>
+  <div class="sd-callout" data-tone="success"><p class="sd-callout-title">All checks passed</p><p>214 tests ran in 41 seconds.</p></div>
+  <div class="sd-callout"><p class="sd-callout-title">Note</p><p>A neutral callout uses an fg edge.</p></div>
+  <div class="sd-callout" data-tone="accent"><p class="sd-callout-title">Tip</p><p>Press <kbd>N</kbd> to jump to the next item.</p></div>
+</div>
+
+<div class="sd-actions">
+  <button class="sd-btn" data-demo-toast="Approved ACME-421" data-demo-tone="success">Toast: success</button>
+  <button class="sd-btn" data-demo-toast="Changes requested from Platform" data-demo-undo="">Toast with undo</button>
+  <button class="sd-btn" data-sd-toast="Saved">Declarative toast</button>
+</div>
+
+<div class="grid gap-6 sm:grid-cols-2 items-center">
+  <div class="grid gap-2">
+    <span class="sd-label">5 of 12 done</span>
+    <div class="sd-cells" data-cells="12" data-on="5"></div>
+  </div>
+  <div class="grid gap-2">
+    <span class="sd-label">Progress 64%</span>
+    <div class="sd-progress" style="--value: 64" role="progressbar" aria-label="Upload progress" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100"></div>
+  </div>
+  <div class="sd-skeleton-text" aria-hidden="true"><span class="sd-skeleton"></span><span class="sd-skeleton"></span><span class="sd-skeleton"></span></div>
+  <ul class="sd-checks"><li data-tone="success">checks passed · 214 tests</li><li data-tone="pending">monitoring for 7 days</li><li data-tone="danger">budget over by 31%</li><li>no reviewer yet</li></ul>
+</div>
+
+<div class="sd-empty">
+  <span class="sd-dot" data-shape="hollow"></span>
+  <p class="sd-empty-title">Nothing here yet.</p>
+  <p>Items your team creates will show up here.</p>
+  <button class="sd-btn sd-btn-sm">Create an item</button>
+</div>
+```
+
+## Components / Rows, marker, expand
+
+sd-row + aria-current (focus edge) · data-edge + tone (risk edge) · data-done · sd-marker · sd-expand + data-sd-toggle
+
+Classes: sd-actions, sd-btn, sd-btn-primary, sd-btn-sm, sd-checks, sd-dot, sd-expand, sd-label, sd-marker, sd-marker-end, sd-marker-plain, sd-meta, sd-pill, sd-row, sd-row-body, sd-row-end, sd-row-title, sd-shot, sd-shot-caption
+
+JS: init() from signal-design/js wires data-sd-toggle.
+
+```html
+<div class="max-w-column">
+  <div class="flex justify-center pb-2"><button class="sd-pill">↑ <b>21</b> new above <kbd>Shift+N</kbd></button></div>
+  <article class="sd-row">
+    <span class="sd-dot" data-shape="hollow"></span>
+    <div class="sd-row-body"><p class="sd-row-title">Triage 9 new tickets, close 2 duplicates</p><p class="sd-meta"><span>Support</span><span>07:57</span></p></div>
+  </article>
+  <article class="sd-row" data-tone="danger" data-edge="">
+    <span class="sd-dot"></span>
+    <div class="sd-row-body"><p class="sd-row-title">Stop double charges when a payment retries</p><p class="sd-meta"><span>Billing</span><span>07:56</span><span data-tone="danger">risk</span></p></div>
+    <div class="sd-row-end"><button class="sd-btn sd-btn-sm" data-tone="danger">Review</button></div>
+  </article>
+  <article class="sd-row" aria-current="true">
+    <span class="sd-dot" data-tone="warning"></span>
+    <div class="sd-row-body">
+      <p class="sd-row-title">Fix the crash when a customer has no address</p>
+      <p class="sd-meta"><span>Platform</span><span>07:55</span></p>
+    </div>
+    <div class="sd-row-end"><button class="sd-btn sd-btn-sm" data-sd-toggle="detail-21" aria-expanded="false" aria-controls="detail-21">Details <kbd>↵</kbd></button></div>
+  </article>
+  <div class="sd-expand" id="detail-21">
+    <div>
+      <div class="grid gap-5 py-4 pl-[18px] sm:grid-cols-[1fr_1fr]">
+        <div class="grid gap-2">
+          <span class="sd-label">Preview</span>
+          <div class="sd-shot"><span class="sd-shot-caption">0:07 / 0:12</span></div>
+        </div>
+        <div class="grid gap-2 content-start">
+          <span class="sd-label">Checks</span>
+          <ul class="sd-checks"><li data-tone="success">checks passed · 214 tests</li><li data-tone="success">reviewed by Alex</li><li data-tone="pending">monitoring for 7 days</li></ul>
+          <p class="sd-meta"><span>ACME-421</span><span>3 files changed</span></p>
+        </div>
+      </div>
+      <div class="sd-actions pl-[18px] pb-5">
+        <button class="sd-btn sd-btn-primary">Approve <kbd>a</kbd></button>
+        <button class="sd-btn">Request changes <kbd>s</kbd></button>
+        <button class="sd-btn" data-tone="danger">Decline <kbd>x</kbd></button>
+      </div>
+    </div>
+  </div>
+  <div class="sd-marker">
+    <span>You are here</span>
+    <span class="sd-marker-plain">reviewed through #20</span>
+    <span class="sd-marker-end"><kbd>N</kbd> next is #21</span>
+  </div>
+  <article class="sd-row" data-done="">
+    <span class="sd-dot" data-tone="warning"></span>
+    <div class="sd-row-body"><p class="sd-row-title">Upgrade the web framework to 11.31.4</p><p class="sd-meta"><span>Platform</span><span>07:50</span></p></div>
+  </article>
+  <article class="sd-row" data-done="">
+    <span class="sd-dot" data-shape="hollow"></span>
+    <div class="sd-row-body"><p class="sd-row-title">Fix 6 broken links in the help center</p><p class="sd-meta"><span>Design</span><span>07:40</span></p></div>
+  </article>
+</div>
+```
+
+## Components / Data
+
+sd-stat · sd-stat-box + tone edge + -sm · sd-stat-sub · sd-table + -hover|-compact · th[data-sort] + aria-sort · sd-plot + -inline · sd-num · sd-kv · sd-code + data-sd-copy · sd-shot
+
+Classes: sd-badge, sd-btn, sd-btn-ghost, sd-btn-sm, sd-card, sd-card-body, sd-card-head, sd-cluster, sd-code, sd-code-head, sd-kv, sd-num, sd-plot, sd-plot-inline, sd-plot-readout, sd-stat, sd-stat-box, sd-stat-box-sm, sd-stat-delta, sd-stat-end, sd-stat-label, sd-stat-sub, sd-stat-value, sd-status, sd-subtle, sd-table, sd-table-hover, sd-table-wrap
+
+JS: init() from signal-design/js wires data-sd-copy.
+
+```html
+<div class="grid gap-6 sm:grid-cols-4">
+  <div class="sd-stat"><span class="sd-stat-value">32</span><span class="sd-stat-label">Open</span></div>
+  <div class="sd-stat"><span class="sd-stat-value">8<small>/32</small></span><span class="sd-stat-label">Done</span></div>
+  <div class="sd-stat"><span class="sd-stat-value">260<small>ms</small></span><span class="sd-stat-label">Checkout p95</span><span class="sd-stat-delta" data-tone="success">−150ms</span></div>
+  <div class="sd-stat"><span class="sd-stat-value">6</span><span class="sd-stat-label">High risk</span><span class="sd-stat-delta" data-tone="danger">+2 today</span></div>
+</div>
+
+<div class="grid gap-6 sm:grid-cols-4">
+  <div class="sd-stat-box" data-tone="success">
+    <span class="sd-stat-label">Running</span>
+    <span class="sd-stat-value">4<small>/ 9</small></span>
+    <span class="sd-stat-sub">containers with samples</span>
+  </div>
+  <div class="sd-stat-box" data-tone="accent">
+    <span class="sd-stat-label">Memory</span>
+    <span class="sd-stat-value">2.1<small>GiB</small></span>
+    <span class="sd-stat-sub">of 8.0 GiB granted</span>
+  </div>
+  <div class="sd-stat-box" data-tone="pending">
+    <span class="sd-stat-label">Orphaned</span>
+    <span class="sd-stat-value">1</span>
+    <span class="sd-stat-end"><button class="sd-btn sd-btn-sm">Reap</button></span>
+  </div>
+  <div class="sd-stat-box">
+    <span class="sd-stat-label">Windows</span>
+    <span class="sd-stat-value">31<small>%</small></span>
+    <span class="sd-stat-sub">CPU across 24 cores</span>
+  </div>
+</div>
+
+<div class="grid gap-3 sm:grid-cols-4">
+  <div class="sd-stat-box sd-stat-box-sm"><span class="sd-stat-label">Region</span><span class="sd-stat-value">us-east-1</span></div>
+  <div class="sd-stat-box sd-stat-box-sm"><span class="sd-stat-label">Uptime</span><span class="sd-stat-value">41 days</span></div>
+  <div class="sd-stat-box sd-stat-box-sm" data-tone="pending"><span class="sd-stat-label">Queue</span><span class="sd-stat-value">72 jobs</span></div>
+  <div class="sd-stat-box sd-stat-box-sm"><span class="sd-stat-label">Version</span><span class="sd-stat-value">1.4.2</span></div>
+</div>
+
+<div class="sd-card" data-tone="accent">
+  <div class="sd-card-head">Total CPU<span class="sd-subtle">5 min buckets</span></div>
+  <div class="sd-card-body">
+    <div class="sd-plot" data-tone="accent">
+      <svg viewBox="0 0 600 120" preserveAspectRatio="none" aria-hidden="true">
+        <path class="grid" d="M0 30H600M0 60H600M0 90H600"></path>
+        <polygon class="area" points="0,120 0,80 60,72 120,88 180,50 240,58 300,34 360,44 420,26 480,40 540,30 600,38 600,120"></polygon>
+        <polyline class="line" points="0,80 60,72 120,88 180,50 240,58 300,34 360,44 420,26 480,40 540,30 600,38"></polyline>
+      </svg>
+      <span class="sd-plot-readout">14:05<b>31%</b></span>
+    </div>
+  </div>
+</div>
+
+<div class="sd-cluster">
+  <span class="sd-plot sd-plot-inline" data-tone="accent">
+    <svg viewBox="0 0 100 24" preserveAspectRatio="none" aria-hidden="true">
+      <path class="grid" d="M0 6H100M0 12H100M0 18H100"></path>
+      <polygon class="area" points="0,24 0,16 25,12 50,18 75,8 100,12 100,24"></polygon>
+      <polyline class="line" points="0,16 25,12 50,18 75,8 100,12"></polyline>
+    </svg>
+  </span>
+  <span class="sd-plot sd-plot-inline" data-tone="extra">
+    <svg viewBox="0 0 100 24" preserveAspectRatio="none" aria-hidden="true">
+      <polygon class="area" points="0,24 0,10 25,14 50,6 75,12 100,4 100,24"></polygon>
+      <polyline class="line" points="0,10 25,14 50,6 75,12 100,4"></polyline>
+    </svg>
+  </span>
+</div>
+
+<div class="sd-table-wrap">
+  <table class="sd-table sd-table-hover">
+    <thead><tr><th data-sort="" aria-sort="descending">Team</th><th data-sort="">Project</th><th class="sd-num" data-sort="">Items</th><th class="sd-num">Done</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Platform</td><td>Website</td><td class="sd-num">12</td><td class="sd-num">9</td><td><span class="sd-status" data-tone="success">live</span></td></tr>
+      <tr aria-selected="true"><td>Sales</td><td>Billing</td><td class="sd-num">4</td><td class="sd-num">1</td><td><span class="sd-badge" data-tone="danger">risk</span></td></tr>
+      <tr><td>Design</td><td>Mobile app</td><td class="sd-num">31</td><td class="sd-num">31</td><td><span class="sd-status">idle</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="grid gap-6 sm:grid-cols-2 items-start">
+        <dl class="sd-kv">
+          <dt>Plan</dt><dd>Pro <span class="sd-badge" data-tone="accent">trial</span></dd>
+          <dt>Seats</dt><dd>12 of 20</dd>
+          <dt>Notify</dt><dd>important only</dd>
+        </dl>
+        <div class="sd-code">
+          <div class="sd-code-head">app.css <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#snippet-css">Copy</button></div>
+          <pre id="snippet-css"><code>@import "tailwindcss";
+@import "signal-design";</code></pre>
+        </div>
+      </div>
+```
+
+## Components / Overlays
+
+sd-dialog + -head|-body|-foot · sd-dialog-sm|lg · sd-sheet + -left · sd-command · data-sd-open / data-sd-close · data-sd-tip
+
+Classes: sd-actions, sd-btn, sd-btn-ghost, sd-btn-icon, sd-btn-link, sd-btn-sm, sd-command, sd-command-foot, sd-command-head, sd-dialog, sd-dialog-body, sd-dialog-foot, sd-dialog-head, sd-dialog-lg, sd-dialog-sm, sd-diff, sd-field, sd-field-aside, sd-field-label, sd-menu, sd-muted, sd-seg, sd-seg-sm, sd-sheet, sd-sheet-left, sd-subtle
+
+JS: init() from signal-design/js wires data-sd-open · data-sd-tip · data-sd-close · data-sd-seg.
+
+```html
+<div class="sd-actions">
+  <button class="sd-btn" data-sd-open="demo-dialog">Dialog</button>
+  <button class="sd-btn" data-sd-open="demo-sheet">Sheet <kbd>]</kbd></button>
+  <button class="sd-btn" data-sd-open="demo-command">Command panel</button>
+  <button class="sd-btn" data-sd-open="demo-dialog-sm">Small dialog</button>
+  <button class="sd-btn" data-sd-open="demo-dialog-lg">Large dialog</button>
+  <button class="sd-btn" data-sd-open="demo-sheet-left">Sheet from the left</button>
+  <button class="sd-btn" data-sd-tip="Tooltips show on hover and focus">Hover for tooltip</button>
+  <button class="sd-btn" data-sd-tip="Below" data-sd-tip-side="bottom">Tooltip below</button>
+</div>
+
+<dialog class="sd-dialog" id="demo-dialog" aria-labelledby="demo-dialog-h">
+  <header class="sd-dialog-head"><span id="demo-dialog-h">Request changes on ACME-421?</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close="" aria-label="Close">×</button></header>
+  <div class="sd-dialog-body">
+    <div class="sd-field">
+      <label class="sd-field-label" for="sb-note">Note for Platform</label>
+      <textarea id="sb-note">Also handle an expired card; the empty state should say "Update card".</textarea>
+    </div>
+  </div>
+  <footer class="sd-dialog-foot">
+    <button class="sd-btn sd-btn-ghost" data-sd-close="">Cancel</button>
+    <button class="sd-btn" data-tone="danger" data-sd-close="send">Request changes</button>
+  </footer>
+</dialog>
+
+<dialog class="sd-dialog sd-sheet" id="demo-sheet" aria-labelledby="demo-sheet-h">
+  <header class="sd-dialog-head"><span id="demo-sheet-h">Item details</span><span class="sd-subtle text-sm">ACME-421</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close="" aria-label="Close">»</button></header>
+  <div class="sd-dialog-body grid gap-5">
+    <p class="text-sm">These settings apply to this item only. Workspace defaults cover everything else.</p>
+    <div class="sd-field"><span class="sd-field-label">Priority <span class="sd-field-aside">changed</span></span>
+      <div class="sd-seg sd-seg-sm" data-sd-seg=""><button type="button" aria-pressed="false">low</button><button type="button" aria-pressed="true">normal</button><button type="button" aria-pressed="false">high</button></div></div>
+    <div class="sd-field"><span class="sd-field-label">Due</span>
+      <div class="sd-seg sd-seg-sm" data-sd-seg=""><button type="button" aria-pressed="false">3d</button><button type="button" aria-pressed="true">7d</button><button type="button" aria-pressed="false">14d</button></div></div>
+    <button class="sd-btn sd-btn-link justify-self-start">Reset to workspace defaults</button>
+  </div>
+</dialog>
+
+<dialog class="sd-dialog sd-dialog-sm" id="demo-dialog-sm" aria-labelledby="demo-dialog-sm-h">
+  <header class="sd-dialog-head"><span id="demo-dialog-sm-h">Discard draft?</span></header>
+  <div class="sd-dialog-body sd-muted">Your note will be lost.</div>
+  <footer class="sd-dialog-foot"><button class="sd-btn sd-btn-ghost" data-sd-close="">Keep</button><button class="sd-btn" data-tone="danger" data-sd-close="">Discard</button></footer>
+</dialog>
+
+<dialog class="sd-dialog sd-dialog-lg" id="demo-dialog-lg" aria-labelledby="demo-dialog-lg-h">
+  <header class="sd-dialog-head"><span id="demo-dialog-lg-h">Compare versions</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close="" aria-label="Close">×</button></header>
+  <div class="sd-dialog-body"><pre class="sd-diff"><span data-line="@">@@ -1,3 +1,3 @@</span><span data-line="-">price: 12</span><span data-line="+">price: 14</span><span>currency: USD</span></pre></div>
+</dialog>
+
+<dialog class="sd-dialog sd-sheet sd-sheet-left" id="demo-sheet-left" aria-labelledby="demo-sheet-left-h">
+  <header class="sd-dialog-head"><span id="demo-sheet-left-h">Filters</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close="" aria-label="Close">«</button></header>
+  <div class="sd-dialog-body sd-muted">A sheet can come from either side.</div>
+</dialog>
+
+<dialog class="sd-command" id="demo-command" aria-label="Remind me">
+  <p class="sd-command-head">Remind me about <b>Fix the crash when a customer has no address</b></p>
+  <div class="sd-menu" role="menu">
+    <button role="menuitem" data-sd-close=""><kbd>1</kbd> later today</button>
+    <button role="menuitem" data-sd-close=""><kbd>2</kbd> tomorrow 09:00</button>
+    <button role="menuitem" data-sd-close=""><kbd>3</kbd> Monday</button>
+    <button role="menuitem" data-sd-close=""><kbd>4</kbd> custom…</button>
+  </div>
+  <p class="sd-command-foot">Esc to cancel</p>
+</dialog>
+```
+
+## Components / Layout
+
+sd-page (720px column) · sd-header · sd-panel · sd-card · sd-divider · sd-stack / sd-cluster / sd-split / sd-grid (with --gap and --min) for apps without Tailwind
+
+Classes: sd-badge, sd-btn, sd-btn-ghost, sd-btn-primary, sd-btn-sm, sd-card, sd-card-body, sd-card-foot, sd-card-head, sd-chip, sd-cluster, sd-divider, sd-faint, sd-grid, sd-label, sd-muted, sd-page, sd-page-wide, sd-panel, sd-panel-desc, sd-panel-title, sd-seg, sd-split, sd-stack, sd-subtle
+
+JS: init() from signal-design/js wires data-sd-ornaments · data-sd-seg.
+
+```html
+<div class="grid gap-4 sm:grid-cols-3">
+  <article class="sd-card">
+    <header class="sd-card-head">Card <span class="sd-badge">3</span></header>
+    <div class="sd-card-body sd-muted">Header, body and footer split by hairlines.</div>
+    <footer class="sd-card-foot"><button class="sd-btn sd-btn-sm">Open</button></footer>
+  </article>
+  <article class="sd-card" data-tone="danger">
+    <header class="sd-card-head">Toned card</header>
+    <div class="sd-card-body sd-muted"><code>data-tone</code> colors the top edge.</div>
+  </article>
+  <a class="sd-card" href="#components">
+    <div class="sd-card-body"><p class="sd-label">Link card</p><p class="mt-2">The whole card is a link.</p></div>
+  </a>
+</div>
+
+<div class="sd-card" data-sd-ornaments="" data-sd-ornaments-size="220" style="background-color: var(--sd-container)">
+  <div class="sd-card-body grid place-items-center text-center" style="min-height: 260px">
+    <div><p class="sd-label">Ornaments</p><p class="mt-2 sd-muted max-w-[28rem]">Dust in the bottom-right corner: filled squares, outlines and dots, fading as they spread. <code>data-sd-ornaments</code></p></div>
+  </div>
+</div>
+
+<section class="sd-panel">
+  <h3 class="sd-panel-title">Billing cycle</h3>
+  <p class="sd-panel-desc">You are billed at the start of each cycle.</p>
+  <div class="sd-seg" data-sd-seg=""><button type="button" aria-pressed="false">monthly</button><button type="button" aria-pressed="true">yearly</button><button type="button" aria-pressed="false">custom</button></div>
+</section>
+
+<div class="grid gap-2">
+  <div class="border border-dashed border-line"><div class="sd-page border-x border-line" style="padding-block: 14px"><span class="sd-subtle text-sm">sd-page: the 720px reading column, centered</span></div></div>
+  <div class="border border-dashed border-line"><div class="sd-page sd-page-wide border-x border-line" style="padding-block: 14px"><span class="sd-subtle text-sm">sd-page sd-page-wide: 1024px for dashboards</span></div></div>
+</div>
+
+<div class="grid gap-2">
+  <div class="sd-divider">or</div>
+  <p class="demo-usage"><code>sd-divider</code> with a word; empty, it is a plain rule.</p>
+</div>
+
+<div class="grid gap-6 md:grid-cols-2">
+  <div class="grid gap-2 content-start">
+    <p class="sd-label">sd-stack</p>
+    <div class="sd-stack" style="--gap: 8px; align-items: flex-start"><span class="sd-chip">first</span><span class="sd-chip">second</span><span class="sd-chip">third</span></div>
+  </div>
+  <div class="grid gap-2 content-start">
+    <p class="sd-label">sd-cluster</p>
+    <div class="sd-cluster" style="--gap: 8px"><span class="sd-chip">billing</span><span class="sd-chip">risk</span><span class="sd-chip">platform</span><span class="sd-chip">design</span><span class="sd-chip">support</span></div>
+  </div>
+  <div class="grid gap-2 md:col-span-2">
+    <p class="sd-label">sd-split</p>
+    <div class="sd-split border border-line p-3"><span>12 items selected</span><span class="sd-cluster" style="--gap: 8px"><button class="sd-btn sd-btn-sm sd-btn-ghost">Clear</button><button class="sd-btn sd-btn-sm sd-btn-primary">Approve all</button></span></div>
+  </div>
+  <div class="grid gap-2 md:col-span-2">
+    <p class="sd-label">sd-grid <span class="sd-faint">--min: 10rem</span></p>
+    <div class="sd-grid" style="--min: 10rem; --gap: 8px"><div class="border border-line p-3 sd-muted">one</div><div class="border border-line p-3 sd-muted">two</div><div class="border border-line p-3 sd-muted">three</div><div class="border border-line p-3 sd-muted">four</div><div class="border border-line p-3 sd-muted">five</div></div>
+  </div>
+</div>
+```
+
+## Conversation / Items, presence, counts
+
+
+
+Classes: sd-avatar, sd-avatar-lg, sd-badge-count, sd-btn, sd-btn-icon, sd-cluster, sd-item, sd-item-body, sd-item-end, sd-item-group, sd-item-nested, sd-item-sub, sd-item-title
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="grid gap-6 sm:grid-cols-2 items-start">
+  <div class="border border-line py-2" style="background: var(--sd-surface)">
+    <div class="sd-item-group">Online <span>2</span></div>
+    <a class="sd-item" href="#conversation" aria-current="true"><span class="sd-avatar" data-tone="extra" data-status="online">AL</span><span class="sd-item-body"><span class="sd-item-title">Alex</span><span class="sd-item-sub">Reviewing the spec</span></span><span class="sd-item-end">2m</span></a>
+    <a class="sd-item" href="#conversation" data-unread=""><span class="sd-avatar" data-tone="warning" data-status="away">SK</span><span class="sd-item-body"><span class="sd-item-title">Sam</span><span class="sd-item-sub">Can you look at this?</span></span><span class="sd-item-end"><span class="sd-badge-count" data-tone="danger">2</span></span></a>
+    <div class="sd-item-group">Offline <span>1</span></div>
+    <a class="sd-item" href="#conversation" data-muted=""><span class="sd-avatar" data-tone="accent" data-status="offline">TP</span><span class="sd-item-body"><span class="sd-item-title">Taylor</span><span class="sd-item-sub">Muted</span></span></a>
+    <a class="sd-item sd-item-nested" href="#conversation"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M6 2.5 5 13.5M11 2.5l-1 11M2.5 6h11M2 10h11"></path></svg><span class="sd-item-body"><span class="sd-item-title">nested row</span></span></a>
+  </div>
+  <div class="grid gap-4 content-start">
+    <div class="sd-cluster" style="--gap: 18px">
+      <span class="sd-avatar sd-avatar-lg" data-tone="extra" data-status="online">AL</span>
+      <span class="sd-avatar sd-avatar-lg" data-tone="warning" data-status="away">SK</span>
+      <span class="sd-avatar sd-avatar-lg" data-tone="accent" data-status="busy">TP</span>
+      <span class="sd-avatar sd-avatar-lg" data-tone="success" data-status="offline">JD</span>
+      <span class="relative inline-grid"><button class="sd-btn sd-btn-icon" aria-label="Inbox, 3 unread">✉</button><span class="sd-badge-count" data-corner="">3</span></span>
+      <span class="sd-badge-count" data-tone="danger">12</span>
+    </div>
+    <p class="demo-usage"><code>sd-item</code> + <code>-body|-title|-sub|-end|-group|-nested</code> · <code>data-unread</code> · <code>data-muted</code> · <code>data-status="online|away|busy|offline"</code> · <code>sd-badge-count</code> + <code>data-corner</code></p>
+  </div>
+</div>
+```
+
+## Conversation / Messages
+
+sd-message + -body|-head|-text|-actions|-status|-edited · data-grouped|mention|pending|failed · sd-reply · sd-mention · sd-event · sd-reactions + data-sd-reaction · sd-receipts · sd-typing · data-sd-contextmenu
+
+Classes: sd-avatar, sd-badge, sd-btn, sd-btn-link, sd-dot, sd-event, sd-mention, sd-menu, sd-menu-sep, sd-message, sd-message-actions, sd-message-body, sd-message-edited, sd-message-head, sd-message-status, sd-message-text, sd-popover, sd-reactions, sd-receipts, sd-reply, sd-typing
+
+JS: init() from signal-design/js wires data-sd-contextmenu · data-sd-reaction · popovertarget (placement, menu keys).
+
+```html
+<div class="border border-line py-3" style="background: var(--sd-surface)">
+  <article class="sd-message" data-sd-contextmenu="demo-msg-menu">
+    <span class="sd-avatar" data-tone="extra">AL</span>
+    <div class="sd-message-body">
+      <header class="sd-message-head"><b>Alex</b><span class="sd-badge">Lead</span><time>09:42</time></header>
+      <div class="sd-message-text">A first message shows the avatar and the head. Right-click it for the menu.</div>
+      <div class="sd-reactions"><button data-sd-reaction="" aria-pressed="true">👍 <b>3</b></button><button data-sd-reaction="" aria-pressed="false">👀 <b>1</b></button></div>
+    </div>
+    <div class="sd-message-actions" role="toolbar" aria-label="Message actions"><button aria-label="Reply">↩</button><button aria-label="More" popovertarget="demo-msg-menu">⋯</button></div>
+  </article>
+  <article class="sd-message" data-grouped="">
+    <time>09:43</time>
+    <div class="sd-message-body"><div class="sd-message-text">A follow-up is grouped: no avatar, the time shows on hover. <span class="sd-message-edited">(edited)</span></div></div>
+  </article>
+  <div class="sd-event"><span class="sd-dot" data-shape="hollow"></span><b>Taylor</b> joined <time>09:50</time></div>
+  <article class="sd-message" data-mention="">
+    <span class="sd-avatar" data-tone="accent">TP</span>
+    <div class="sd-message-body">
+      <header class="sd-message-head"><b>Taylor</b><time>10:05</time></header>
+      <div class="sd-reply"><b>Alex</b><span>A first message shows the avatar and the head.</span></div>
+      <div class="sd-message-text"><span class="sd-mention">@Jane</span> a mention of you gets an edge and a lifted background.</div>
+      <div class="sd-receipts" aria-label="Seen by 2"><span class="sd-avatar" data-tone="extra">AL</span><span class="sd-avatar" data-tone="warning">SK</span></div>
+    </div>
+  </article>
+  <article class="sd-message" data-pending="">
+    <span class="sd-avatar" data-tone="success">JD</span>
+    <div class="sd-message-body"><header class="sd-message-head"><b>Jane</b><time>10:06</time></header><div class="sd-message-text">Pending: dimmed until it is confirmed.</div></div>
+  </article>
+  <article class="sd-message" data-failed="" data-grouped="">
+    <time>10:07</time>
+    <div class="sd-message-body"><div class="sd-message-text">Failed: a red edge and a retry.</div><div class="sd-message-status">Not sent · <button class="sd-btn sd-btn-link">Retry</button></div></div>
+  </article>
+  <div class="px-4 pt-2"><span class="sd-typing"><i><b></b></i> Alex is typing…</span></div>
+</div>
+
+<div popover="" id="demo-msg-menu" class="sd-popover"><div class="sd-menu" role="menu" aria-label="Message"><button role="menuitem">Reply</button><button role="menuitem">Copy text</button><hr class="sd-menu-sep"><button role="menuitem" data-tone="danger">Delete</button></div></div>
+```
+
+## Conversation / Composer
+
+sd-composer + -row|-chips|-hint · data-sd-autogrow · data-sd-enter-submit · data-sd-suggest + data-sd-trigger · sd-suggest
+
+Classes: sd-avatar, sd-avatar-sm, sd-btn, sd-btn-ghost, sd-btn-icon, sd-btn-primary, sd-chip, sd-composer, sd-composer-chips, sd-composer-hint, sd-composer-row, sd-menu, sd-suggest
+
+JS: init() from signal-design/js wires data-sd-autogrow · data-sd-enter-submit · data-sd-suggest.
+
+```html
+<form class="sd-composer max-w-column" onsubmit="event.preventDefault(); this.querySelector('textarea').value=''">
+  <div class="sd-composer-chips"><span class="sd-chip"><b>Replying to</b> Alex <button type="button" aria-label="Cancel reply">×</button></span></div>
+  <div class="sd-composer-row">
+    <button type="button" class="sd-btn sd-btn-ghost sd-btn-icon" aria-label="Attach">+</button>
+    <textarea rows="1" data-sd-autogrow="" data-sd-enter-submit="" data-sd-suggest="demo-mentions" placeholder="Type @ to mention someone" aria-label="Message"></textarea>
+    <button class="sd-btn sd-btn-primary">Send</button>
+  </div>
+  <div class="sd-suggest" id="demo-mentions" hidden="">
+    <div class="sd-menu" role="listbox" aria-label="Mention">
+      <button type="button" role="option" data-value="Alex"><span class="sd-avatar sd-avatar-sm" data-tone="extra">AL</span> Alex</button>
+      <button type="button" role="option" data-value="Sam"><span class="sd-avatar sd-avatar-sm" data-tone="warning">SK</span> Sam</button>
+      <button type="button" role="option" data-value="Taylor"><span class="sd-avatar sd-avatar-sm" data-tone="accent">TP</span> Taylor</button>
+    </div>
+  </div>
+</form>
+
+<p class="sd-composer-hint"><span><kbd>Enter</kbd> send</span><span><kbd>Shift</kbd>+<kbd>Enter</kbd> new line</span><span><kbd>@</kbd> mention</span></p>
+```
+
+## Conversation / Blocks
+
+sd-banner · sd-file · sd-link-card · sd-poll + data-sd-poll · sd-tiles + sd-tile[data-speaking|muted|hand] · sd-grid-picker
+
+Classes: sd-actions, sd-avatar, sd-banner, sd-banner-actions, sd-btn, sd-btn-sm, sd-file, sd-file-body, sd-file-meta, sd-file-name, sd-file-type, sd-grid-picker, sd-link-card, sd-link-card-desc, sd-link-card-site, sd-link-card-thumb, sd-link-card-title, sd-poll, sd-poll-meta, sd-poll-option, sd-poll-q, sd-popover, sd-popover-pad, sd-progress, sd-tile, sd-tile-name, sd-tiles
+
+JS: init() from signal-design/js wires data-sd-poll · popovertarget (placement, menu keys).
+
+```html
+<div class="sd-banner" data-tone="pending" role="status"><b>Update ready</b> Version 1.4 installs on restart. <div class="sd-banner-actions"><button class="sd-btn sd-btn-sm">Restart</button></div></div>
+
+<div class="sd-banner" data-tone="danger" role="alert"><b>Connection lost</b> Messages will send when you're back online.</div>
+
+<div class="grid gap-4 sm:grid-cols-2 items-start">
+  <div class="grid gap-4">
+    <div class="sd-file"><span class="sd-file-type">pdf</span><span class="sd-file-body"><span class="sd-file-name">onboarding-flow-v3.pdf</span><span class="sd-file-meta">2.4 MB</span></span><button class="sd-btn sd-btn-sm">Open</button></div>
+    <div class="sd-file"><span class="sd-file-type">zip</span><span class="sd-file-body"><span class="sd-file-name">assets.zip</span><span class="sd-file-meta">Uploading · 64%</span></span><div class="sd-progress" style="--value: 64"></div></div>
+    <a class="sd-link-card" href="#conversation"><span class="sd-link-card-site">acme.example</span><span class="sd-link-card-title">Designing empty states that teach</span><span class="sd-link-card-desc">Show what goes here and the one action that fills it.</span><span class="sd-link-card-thumb"></span></a>
+  </div>
+  <div class="sd-poll" data-sd-poll="">
+    <p class="sd-poll-q">Which layout do we ship?</p>
+    <button class="sd-poll-option" style="--share:62" aria-pressed="true">Three short steps <span>62%</span></button>
+    <button class="sd-poll-option" style="--share:25" aria-pressed="false">One long page <span>25%</span></button>
+    <button class="sd-poll-option" style="--share:13" aria-pressed="false">Skip it <span>13%</span></button>
+    <span class="sd-poll-meta">8 votes · closes in 2 days</span>
+  </div>
+</div>
+
+<div class="sd-tiles">
+  <div class="sd-tile" data-speaking=""><span class="sd-avatar" data-tone="extra">AL</span><span class="sd-tile-name">Alex</span></div>
+  <div class="sd-tile" data-muted=""><span class="sd-avatar" data-tone="warning">SK</span><span class="sd-tile-name">Sam</span></div>
+  <div class="sd-tile" data-hand=""><span class="sd-avatar" data-tone="success">JD</span><span class="sd-tile-name">Jane</span></div>
+  <div class="sd-tile"><span class="sd-avatar" data-tone="accent">TP</span><span class="sd-tile-name">Taylor</span></div>
+</div>
+
+<div class="sd-actions"><button class="sd-btn" popovertarget="demo-emoji">Grid picker</button></div>
+
+<div popover="" id="demo-emoji" class="sd-popover sd-popover-pad"><div class="sd-grid-picker" role="listbox" aria-label="Emoji" style="--cols:6"><button role="option">👍</button><button role="option">👀</button><button role="option">🎉</button><button role="option">✅</button><button role="option">❤️</button><button role="option">🔥</button><button role="option">😂</button><button role="option">🙏</button><button role="option">🚀</button><button role="option">🤔</button><button role="option">👏</button><button role="option">💯</button></div></div>
+```
+
+## Inputs, search and data / Combobox, tags, number and steps
+
+sd-combobox + data-sd-combobox · sd-tags + data-sd-tags · sd-number + data-sd-number · sd-steps
+
+Classes: sd-chip, sd-combobox, sd-combobox-list, sd-field, sd-field-label, sd-menu, sd-number, sd-steps, sd-tags
+
+JS: init() from signal-design/js wires data-sd-combobox · data-sd-tags · data-sd-number.
+
+```html
+<div class="grid gap-6 sm:grid-cols-2 items-start">
+  <div class="sd-field">
+    <label class="sd-field-label" for="demo-combo">Combobox</label>
+    <div class="sd-combobox" data-sd-combobox="">
+      <input id="demo-combo" role="combobox" aria-controls="demo-combo-list" aria-expanded="false" placeholder="Search a city" autocomplete="off">
+      <input type="hidden" name="city">
+      <div class="sd-menu sd-combobox-list" role="listbox" id="demo-combo-list" hidden="">
+        <button type="button" role="option">Berlin</button><button type="button" role="option">Lisbon</button><button type="button" role="option">London</button><button type="button" role="option">New York</button><button type="button" role="option">Tokyo</button>
+      </div>
+    </div>
+  </div>
+  <div class="sd-field">
+    <label class="sd-field-label" for="demo-tags">Tags</label>
+    <div class="sd-tags" data-sd-tags=""><span class="sd-chip" data-value="design">design <button type="button" aria-label="Remove design">×</button></span><input id="demo-tags" placeholder="Add a tag"></div>
+  </div>
+  <div class="sd-field">
+    <label class="sd-field-label" for="demo-number">Number</label>
+    <div class="sd-number" data-sd-number=""><button type="button" data-step="-1" aria-label="Less">−</button><input id="demo-number" type="number" value="3" min="1" max="9"><button type="button" data-step="1" aria-label="More">+</button></div>
+  </div>
+  <div class="sd-field">
+    <span class="sd-field-label">Steps</span>
+    <ol class="sd-steps"><li data-state="done">Account</li><li aria-current="step">Workspace</li><li>Invite</li></ol>
+  </div>
+</div>
+```
+
+## Inputs, search and data / Command palette and shortcuts
+
+dialog.sd-command[data-sd-palette] + setOptions() · dialog[data-sd-shortcuts] opens on ? · sd-shortcuts
+
+Classes: sd-actions, sd-btn, sd-btn-ghost, sd-btn-icon, sd-btn-sm, sd-command, sd-command-foot, sd-dialog, sd-dialog-body, sd-dialog-head, sd-menu, sd-menu-hint, sd-menu-label, sd-shortcuts, sd-shortcuts-group
+
+JS: init() from signal-design/js wires data-sd-open · data-sd-key · data-sd-palette · data-sd-theme-cycle · data-sd-toast · data-sd-shortcuts · data-sd-close.
+
+```html
+<div class="sd-actions">
+  <button class="sd-btn" data-sd-open="demo-palette" data-sd-key="mod+k">Open palette <kbd>Ctrl K</kbd></button>
+  <button class="sd-btn" data-sd-open="demo-shortcuts">Shortcuts <kbd>?</kbd></button>
+</div>
+
+<dialog class="sd-command" id="demo-palette" aria-label="Search" data-sd-palette="">
+  <input type="search" placeholder="Search pages and actions" aria-label="Search">
+  <div class="sd-menu" role="listbox" aria-label="Results">
+    <div class="sd-menu-label" role="presentation">Pages</div>
+    <a role="option" href="./shell.html">App shell <span class="sd-menu-hint">page</span></a>
+    <a role="option" href="./chat.html">Chat <span class="sd-menu-hint">page</span></a>
+    <a role="option" href="./form.html">Form <span class="sd-menu-hint">page</span></a>
+    <div class="sd-menu-label" role="presentation">Actions</div>
+    <button type="button" role="option" data-sd-theme-cycle="" data-keywords="dark light paper">Next theme <span class="sd-menu-hint">Shift T</span></button>
+    <button type="button" role="option" data-sd-toast="Copied link">Copy link</button>
+  </div>
+  <p class="sd-command-foot">↑↓ move · ↵ open · Esc close</p>
+</dialog>
+
+<dialog class="sd-dialog" id="demo-shortcuts" data-sd-shortcuts="" aria-labelledby="demo-shortcuts-h">
+  <header class="sd-dialog-head"><span id="demo-shortcuts-h">Keyboard shortcuts</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close="" aria-label="Close">×</button></header>
+  <div class="sd-dialog-body">
+    <p class="sd-shortcuts-group">Navigation</p>
+    <dl class="sd-shortcuts">
+      <dt><kbd>Ctrl</kbd><kbd>K</kbd></dt><dd>Search</dd>
+      <dt><kbd>j</kbd> <kbd>k</kbd></dt><dd>Next, previous item</dd>
+      <dt><kbd>[</kbd></dt><dd>Toggle sidebar</dd>
+    </dl>
+    <p class="sd-shortcuts-group">Actions</p>
+    <dl class="sd-shortcuts">
+      <dt><kbd>a</kbd></dt><dd>Approve</dd>
+      <dt><kbd>?</kbd></dt><dd>This list</dd>
+    </dl>
+  </div>
+</dialog>
+```
+
+## Inputs, search and data / Charts and diffs
+
+sd-spark + data-values · sd-bars + --v · sd-diff + data-line="+|-|@"
+
+Classes: sd-bars, sd-code, sd-code-head, sd-diff, sd-spark, sd-stat, sd-stat-label, sd-stat-value
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="grid gap-6 sm:grid-cols-3 items-end">
+  <div class="sd-stat"><span class="sd-stat-value">260<small>ms</small></span><span class="sd-stat-label">Checkout p95</span><span class="sd-spark" data-values="410 380 395 340 320 300 290 270 260"></span></div>
+  <div class="sd-stat"><span class="sd-stat-value">1.2k</span><span class="sd-stat-label">Messages today</span><span class="sd-spark" data-tone="success" data-values="3 5 4 8 6 9 12 10 14"></span></div>
+  <div class="sd-bars" style="--h: 110px"><span style="--v:40" data-label="M"></span><span style="--v:65" data-label="T"></span><span style="--v:30" data-label="W"></span><span style="--v:80" data-label="T"></span><span style="--v:55" data-label="F" data-current=""></span></div>
+</div>
+
+<div class="sd-code">
+  <div class="sd-code-head">src/billing.js</div>
+  <pre class="sd-diff"><span data-line="@">@@ -12,6 +12,7 @@</span><span>function charge(customer) {</span><span data-line="-">  return pay(customer.card);</span><span data-line="+">  if (!customer.address) return missingAddress(customer);</span><span data-line="+">  return pay(customer.card);</span><span>}</span></pre>
+</div>
+```
+
+## Charts / Live time series
+
+sd-chart + -bar|-plot · data-sd-chart-scale · createChart({ preset }) · data-chart-theme="mono|spectrum"
+
+Classes: sd-chart, sd-chart-bar, sd-chart-plot, sd-label, sd-label-strong, sd-seg, sd-seg-inline, sd-seg-sm, sd-status
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<figure class="sd-chart" style="--h: 340px" id="demo-core">
+  <div class="sd-chart-bar">
+    <div><span class="sd-label sd-label-strong">Core</span><span class="sd-status" data-tone="success">live</span></div>
+    <div class="sd-seg sd-seg-sm sd-seg-inline" data-sd-chart-scale="" aria-label="Scale">
+      <button type="button" data-value="clamp">clamp</button><button type="button" data-value="p95">p95</button><button type="button" data-value="p90">p90</button><button type="button" data-value="linear">linear</button><button type="button" data-value="log">log</button>
+    </div>
+  </div>
+  <div class="sd-chart-plot"><canvas role="img" aria-label="Core bandwidth and round-trip time"></canvas></div>
+</figure>
+```
+
+```js
+import { createChart } from "signal-design/charts";
+
+const core = createChart(document.querySelector("#demo-core canvas"), {
+  preset: "core",                      // bandwidth over latency, one time axis
+  bucketSeconds: 10, live: 2, envelope: 60,
+  series: [
+    { label: "Core ↓", data: down },   // [{ x: ms, y: Mbps }]
+    { label: "Core ↑", data: up },
+    { label: "Core → MDF RTT", unit: " ms", data: rtt, min: jitterLow, max: jitterHigh },
+  ],
+});
+core.append({ "Core ↓": [{ x: Date.now(), y: 4200 }] });
+```
+
+## Charts / Chart types
+
+createChart(canvas, { type }) · stacked · markers · series colors --sd-chart-1…6 or a tone. More in the chart gallery.
+
+Classes: sd-chart, sd-chart-bar, sd-chart-plot, sd-label
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="grid gap-8 lg:grid-cols-2">
+  <figure class="sd-chart" style="--h: 220px" id="demo-line"><div class="sd-chart-bar"><span class="sd-label">type "line"</span></div><div class="sd-chart-plot"><canvas role="img" aria-label="Line chart"></canvas></div></figure>
+  <figure class="sd-chart" style="--h: 220px" id="demo-bar"><div class="sd-chart-bar"><span class="sd-label">type "bar" · stacked</span></div><div class="sd-chart-plot"><canvas role="img" aria-label="Stacked bar chart"></canvas></div></figure>
+  <figure class="sd-chart" style="--h: 220px" id="demo-hbar"><div class="sd-chart-bar"><span class="sd-label">type "hbar"</span></div><div class="sd-chart-plot"><canvas role="img" aria-label="Ranking"></canvas></div></figure>
+  <figure class="sd-chart" style="--h: 220px" id="demo-hist"><div class="sd-chart-bar"><span class="sd-label">type "histogram"</span></div><div class="sd-chart-plot"><canvas role="img" aria-label="Histogram"></canvas></div></figure>
+</div>
+```
+
+```js
+import { createChart } from "signal-design/charts";
+
+createChart(canvas, {
+  type: "line",            // line | area | step | bar | hbar | histogram | scatter
+  labels: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+  unit: " ms",
+  series: [{ label: "p50", data: [82, 80, 91, 88, 79] }, { label: "p95", data: [190, 210, 260, 230, 200] }],
+  markers: [{ axis: "y", value: 250, label: "SLO", tone: "warning" }],
+});
+```
+
+## Charts / Square charts
+
+sd-heatmap + --v · sd-waffle + data-s · sd-key · sd-uptime + data-state · sd-meter + --value|--target|--warn|--crit. CSS only.
+
+Classes: sd-heatmap, sd-heatmap-key, sd-key, sd-label, sd-meter, sd-subtle, sd-uptime, sd-waffle
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="grid gap-8 lg:grid-cols-2">
+  <div class="grid gap-3">
+    <p class="sd-label">sd-heatmap</p>
+    <div class="sd-heatmap" style="--cols: 24" id="demo-heat"></div>
+    <div class="sd-heatmap-key">less <i style="--v: 0"></i><i style="--v: .25"></i><i style="--v: .5"></i><i style="--v: .75"></i><i style="--v: 1"></i> more</div>
+  </div>
+  <div class="flex flex-wrap items-center gap-6">
+    <div class="sd-waffle" style="--w: 150px" id="demo-waffle"></div>
+    <ul class="sd-key flex-1 min-w-[10rem]"><li><i data-s="1"></i>API<b>42%</b></li><li><i data-s="2"></i>Web<b>31%</b></li><li><i data-s="3"></i>Mobile<b>19%</b></li></ul>
+  </div>
+  <div class="grid gap-2">
+    <div class="flex justify-between text-sm"><span>api</span><span class="sd-subtle">99.58%</span></div>
+    <div class="sd-uptime" id="demo-uptime"></div>
+  </div>
+  <div class="grid gap-2">
+    <div class="flex justify-between text-sm"><span>Memory</span><span class="sd-subtle">84% · target 75%</span></div>
+    <div class="sd-meter" style="--value: 84; --target: 75; --warn: 80; --crit: 95"><i data-at="warn"></i><i data-at="crit"></i></div>
+  </div>
+</div>
+```
+
+## Charts / Small plots
+
+sd-plot + data-series · .grid|.area|.line|.dot|.cross · sd-plot-readout · sd-plot-note · sd-plot-inline
+
+Classes: sd-plot, sd-plot-note, sd-plot-readout
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="grid gap-6 lg:grid-cols-2">
+  <div class="sd-plot" data-series="down" style="--h: 120px">
+    <svg viewBox="0 0 600 100" preserveAspectRatio="none" aria-hidden="true">
+      <path class="grid" d="M0 25H600M0 50H600M0 75H600"></path>
+      <polygon class="area" points="0,100 0,70 60,64 120,72 180,40 240,48 300,26 360,36 420,20 480,30 540,24 600,32 600,100"></polygon>
+      <polyline class="line" points="0,70 60,64 120,72 180,40 240,48 300,26 360,36 420,20 480,30 540,24 600,32"></polyline>
+    </svg>
+    <span class="sd-plot-readout" style="left: 52%">5:46 pm<b>4.8 Gbps</b></span>
+  </div>
+  <div class="sd-plot" style="--h: 120px">
+    <svg viewBox="0 0 600 100" preserveAspectRatio="none" aria-hidden="true"><path class="grid" d="M0 25H600M0 50H600M0 75H600"></path></svg>
+    <span class="sd-plot-note">No samples yet</span>
+  </div>
+</div>
+```
+
+## Effects / Digital rain
+
+A still frame by default; it moves while work runs (rain.busy(true)) or when the user turns it on. Glyphs or squares, theme text color only. <canvas class="sd-rain" data-sd-rain data-sd-rain-style="squares"> · data-sd-rain-skip=".selector" · data-sd-rain-toggle · rain.busy()
+
+Classes: sd-actions, sd-badge, sd-btn, sd-muted, sd-rain
+
+JS: init() from signal-design/js wires data-sd-rain · data-sd-rain-toggle.
+
+```html
+<div class="grid gap-4 sm:grid-cols-2">
+  <figure class="relative h-56 border border-line overflow-hidden">
+    <canvas class="sd-rain absolute inset-0 w-full h-full" data-sd-rain="" aria-hidden="true"></canvas>
+    <figcaption class="absolute left-3 bottom-3 m-0 sd-badge" style="background: var(--sd-canvas)">glyphs</figcaption>
+  </figure>
+  <figure class="relative h-56 border border-line overflow-hidden">
+    <canvas class="sd-rain absolute inset-0 w-full h-full" data-sd-rain="" data-sd-rain-style="squares" data-sd-rain-skip=".rain-skip-demo" aria-hidden="true"></canvas>
+    <div class="rain-skip-demo absolute inset-x-8 top-8 p-3 border border-line text-sm sd-muted" style="background: var(--sd-canvas)">The rain skips this box: <code>data-sd-rain-skip</code></div>
+    <figcaption class="absolute left-3 bottom-3 m-0 sd-badge" style="background: var(--sd-canvas)">squares</figcaption>
+  </figure>
+</div>
+
+<div class="sd-actions">
+  <button class="sd-btn" data-sd-rain-toggle="">Animate rain</button>
+  <button class="sd-btn" data-demo-busy="">Run a 6s job</button>
+</div>
+```
+
+## Effects / Ornaments and border glow
+
+Dust in the bottom-right corner, strongest at the corner and thinning as it spreads. The border glows at the corners, fades to a hairline, and only the top edge has a bright center segment.
+
+Classes: sd-muted
+
+JS: init() from signal-design/js wires data-sd-ornaments · data-sd-edges.
+
+```html
+<div class="h-72 grid place-items-center text-center bg-surface" data-sd-ornaments="" data-sd-edges="" data-sd-ornaments-size="260" style="border: 1px solid var(--sd-line)">
+  <p class="sd-muted"><code>data-sd-ornaments</code> + <code>data-sd-edges</code></p>
+</div>
+```
+
+## Effects / Edge dust
+
+The same dust rising from a whole edge, softer, with a clear column at each side so dividers stay crisp. The shell uses it under the rail and the sidebar's page list.
+
+Classes: none
+
+JS: init() from signal-design/js wires data-sd-ornaments.
+
+```html
+<div class="grid gap-4 sm:grid-cols-[6rem_18rem_1fr]">
+  <div class="h-64 bg-surface border border-line-strong" data-sd-ornaments="bottom" data-sd-ornaments-size="200"></div>
+  <div class="h-64 bg-surface border border-line-strong" data-sd-ornaments="bottom" data-sd-ornaments-size="200"></div>
+  <p class="demo-usage self-end"><code>data-sd-ornaments="bottom"</code> or <code>"top"</code></p>
+</div>
+```
+
+## Effects / Hover shimmer
+
+A bright band sweeps across interactive text from left to right (white on dark, black on light), once per hover. Icons, borders and backgrounds stay put. Off with reduced motion.
+
+Classes: sd-btn, sd-cluster, sd-nav
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="sd-cluster" style="--gap: 20px">
+  <nav class="sd-nav" aria-label="Hover demo"><a href="#effects">Overview</a><a href="#effects">Activity</a><a href="#effects">Settings</a></nav>
+  <button class="sd-btn">Hover me</button>
+  <a href="#effects">A plain link</a>
+</div>
+```
+
+## Effects / Scrollbars
+
+Hidden until something scrolls, hidden again 2s after it stops. Only the thumb color changes, so nothing shifts. init({ scrollbars: "always" }) keeps them.
+
+Classes: none
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="h-40 overflow-y-auto border border-line p-4 max-w-narrow" tabindex="0" aria-label="Scrollable demo">
+  <ol class="grid gap-2" style="list-style: decimal-leading-zero; padding-inline-start: 2.2em">
+    <li>Scroll this box.</li><li>The thumb appears.</li><li>Stop for 2 seconds.</li><li>It hides again.</li><li>Nothing moves.</li><li>Row six.</li><li>Row seven.</li><li>Row eight.</li><li>Row nine.</li><li>Row ten.</li><li>Row eleven.</li><li>Row twelve.</li>
+  </ol>
+</div>
+```
+
+## Effects / Title bar and header bar
+
+For frameless desktop apps: a draggable title bar with window buttons (Tauri's window API when present, an sd:window event otherwise; macOS keeps its native buttons). Below it, the solid header bar, the alternative to the floating crumb bars. sd-titlebar + -start|-brand|-end|-metric · sd-window-controls + data-sd-window="minimize|maximize|close" · sd-shell-bar + -title|-center|-end · sd-shell-dock (a box under the content, e.g. a composer) · sd-icon-btn · sd-popover-panel + sd-popover-head|-body
+
+Classes: sd-avatar, sd-badge-count, sd-btn, sd-btn-ghost, sd-btn-icon, sd-btn-primary, sd-btn-sm, sd-composer, sd-composer-row, sd-icon-btn, sd-icon-maximize, sd-icon-restore, sd-item, sd-item-body, sd-item-end, sd-item-sub, sd-item-title, sd-popover, sd-popover-body, sd-popover-head, sd-popover-panel, sd-shell-bar, sd-shell-bar-center, sd-shell-bar-end, sd-shell-bar-title, sd-shell-dock, sd-status, sd-subtle, sd-titlebar, sd-titlebar-brand, sd-titlebar-end, sd-titlebar-metric, sd-titlebar-start, sd-window-controls
+
+JS: init() from signal-design/js wires data-sd-window · data-sd-edges · data-sd-autogrow · popovertarget (placement, menu keys).
+
+```html
+<div class="border border-line">
+  <div class="sd-titlebar" data-tauri-drag-region="" style="position:relative" role="region" aria-label="Window">
+    <div class="sd-titlebar-start"><span class="sd-subtle text-sm">File</span><span class="sd-subtle text-sm">View</span></div>
+    <span class="sd-titlebar-brand"><b>ACME</b></span>
+    <div class="sd-titlebar-end">
+      <span class="sd-titlebar-metric">CPU <b>3%</b></span>
+      <span class="sd-titlebar-metric">MEM <b>182 MB</b></span>
+      <div class="sd-window-controls">
+        <button data-sd-window="minimize" aria-label="Minimize"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor"><path d="M1 6.5h10"></path></svg></button>
+        <button data-sd-window="maximize" aria-label="Maximize"><svg class="sd-icon-maximize" viewBox="0 0 12 12" fill="none" stroke="currentColor"><rect x="1.5" y="1.5" width="9" height="9"></rect></svg><svg class="sd-icon-restore" viewBox="0 0 12 12" fill="none" stroke="currentColor"><rect x="1.5" y="3.5" width="7" height="7"></rect><path d="M3.5 3.5v-2h7v7h-2"></path></svg></button>
+        <button data-sd-window="close" aria-label="Close"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9"></path></svg></button>
+      </div>
+    </div>
+  </div>
+  <div class="p-4" style="background: var(--sd-shell-bg)">
+    <header class="sd-shell-bar" data-sd-edges="">
+      <div class="sd-shell-bar-title"><b># general</b><span>Team chat for Design</span></div>
+      <div class="sd-shell-bar-center"><span class="sd-status" data-tone="success">3 here</span></div>
+      <div class="sd-shell-bar-end">
+        <button class="sd-icon-btn" popovertarget="demo-attention" aria-label="Attention, 2 new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 16V10a6 6 0 0 1 12 0v6l1.5 2h-15zM10 20.5h4"></path></svg><span class="sd-badge-count" data-tone="danger">2</span></button>
+        <button class="sd-icon-btn" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="11" height="11"></rect><path d="M15 15l5.5 5.5"></path></svg></button>
+      </div>
+    </header>
+    <div class="sd-shell-dock mt-3" data-sd-edges="">
+      <div class="sd-composer"><div class="sd-composer-row"><textarea rows="1" data-sd-autogrow="" placeholder="Message #general" aria-label="Message"></textarea><button class="sd-btn sd-btn-primary sd-btn-icon" aria-label="Send">➤</button></div></div>
+    </div>
+  </div>
+</div>
+
+<div popover="" id="demo-attention" class="sd-popover sd-popover-panel" data-sd-align="end">
+  <div class="sd-popover-head">Attention <button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" popovertarget="demo-attention" popovertargetaction="hide" aria-label="Close">×</button></div>
+  <div class="sd-popover-body"><a class="sd-item" href="#effects" data-unread=""><span class="sd-avatar" data-tone="accent">TP</span><span class="sd-item-body"><span class="sd-item-title">Taylor mentioned you</span><span class="sd-item-sub">can you take the copy?</span></span><span class="sd-item-end">10:05</span></a></div>
+</div>
+```
+
+## Effects / The full shell
+
+You are in it: this page runs in the Signal App Shell (rail, sidebar panels, fading crumb and action bars with ladder bridges, the inset content box with ornaments and border glow, square rain, display panel, status bar with FPS). shell.html shows it as a work queue.
+
+Classes: sd-btn, sd-btn-primary
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div><a class="sd-btn sd-btn-primary" href="./shell.html">Open the Signal App Shell</a></div>
+```
+
+## JS / Setup and attributes
+
+
+
+Classes: sd-actions, sd-btn, sd-btn-ghost, sd-btn-sm, sd-code, sd-code-head, sd-subtle, sd-table, sd-table-wrap
+
+JS: init() from signal-design/js wires data-sd-copy · data-sd-open · data-sd-close · data-sd-toggle · data-sd-seg · data-sd-key · data-sd-tip · data-sd-toast · data-sd-theme · data-sd-theme-cycle · popovertarget (placement, menu keys) · role="tab".
+
+```html
+<div class="sd-code">
+        <div class="sd-code-head">main.js <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#snippet-js">Copy</button></div>
+        <pre id="snippet-js"><code>import { init, toast, hotkeys, setTheme } from "signal-design/js";
+
+init();                                   // dialogs, popovers, menus, tabs, tooltips, toggles
+toast("Saved", { tone: "success" });
+const off = hotkeys({ j: next, k: prev, "shift+n": newest, "mod+k": search });
+setTheme("paper");                        // ink | graphite | paper | auto</code></pre>
+      </div>
+
+<div class="sd-table-wrap">
+  <table class="sd-table">
+    <thead><tr><th>Attribute</th><th>Does</th></tr></thead>
+    <tbody>
+      <tr><td><code>data-sd-open="id"</code> · <code>data-sd-close</code></td><td>Opens a dialog as modal; closes the nearest dialog. Backdrop click closes unless <code>data-sd-static</code>.</td></tr>
+      <tr><td><code>popovertarget</code> + <code>.sd-popover</code></td><td>Places the popover next to its trigger, flips at edges, keyboard for menus.</td></tr>
+      <tr><td><code>role="tab"</code></td><td>Selects tabs and panels, arrow keys, roving focus.</td></tr>
+      <tr><td><code>data-sd-toggle="id"</code></td><td>Opens and closes an <code>.sd-expand</code>, keeps <code>aria-expanded</code> in sync.</td></tr>
+      <tr><td><code>data-sd-seg</code></td><td>Single-select button group; fires <code>change</code>.</td></tr>
+      <tr><td><code>data-sd-key="a"</code></td><td>Clicks the element when the key is pressed (ignored while typing).</td></tr>
+      <tr><td><code>data-sd-tip="text"</code></td><td>Tooltip on hover and focus.</td></tr>
+      <tr><td><code>data-sd-copy="#id"</code></td><td>Copies text and confirms with a toast.</td></tr>
+      <tr><td><code>data-sd-toast="text"</code></td><td>Shows a toast on click.</td></tr>
+      <tr><td><code>data-sd-theme="paper"</code></td><td>Switches theme and remembers it.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="sd-actions">
+  <span class="sd-subtle text-sm">Try:</span>
+  <button class="sd-btn sd-btn-sm" data-sd-key="]" data-sd-open="demo-sheet">Sheet <kbd>]</kbd></button>
+  <button class="sd-btn sd-btn-sm" data-sd-key="shift+t" data-sd-theme-cycle="">Next theme <kbd>Shift+T</kbd></button>
+</div>
+```

@@ -43,7 +43,7 @@
     border-color: transparent;
     background: var(--tone, var(--sd-fg-subtle));
     color: var(--sd-canvas);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
 
   /* A removable token or filter value. */
@@ -104,7 +104,7 @@
   }
   .sd-pill b {
     color: var(--sd-fg);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
   button.sd-pill {
     cursor: pointer;
@@ -126,7 +126,7 @@
     /* Dark ink on the bright dark-theme tones, white on the deep light ones. */
     color: var(--sd-on-tone, #050505);
     font-size: 12px;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     letter-spacing: 0;
     text-transform: uppercase;
     user-select: none;

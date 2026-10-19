@@ -11,6 +11,7 @@
  */
 import { existsSync, readFileSync } from "node:fs";
 import { chromium, webkit } from "playwright";
+import { sweep as rulesSweep } from "../bin/rules.mjs";
 
 const base = (process.argv[2] || "http://localhost:5178/").replace(/\/?$/, "/");
 const pages = {
@@ -38,31 +39,8 @@ function fail(where, msg) {
   console.log(`FAIL ${where}: ${msg}`);
 }
 
-const sweep = () => {
-  const bad = [];
-  const describe = (el) => el.tagName.toLowerCase() + (el.id ? `#${el.id}` : "") + (el.className && typeof el.className === "string" ? `.${el.className.trim().split(/\s+/).join(".")}` : "");
-  for (const el of document.querySelectorAll("body *")) {
-    for (const pseudo of [null, "::before", "::after"]) {
-      const s = getComputedStyle(el, pseudo);
-      if (pseudo && (s.content === "none" || s.content === "normal")) continue;
-      const where = describe(el) + (pseudo || "");
-      for (const corner of ["borderTopLeftRadius", "borderTopRightRadius", "borderBottomLeftRadius", "borderBottomRightRadius"]) {
-        if (s[corner] !== "0px") bad.push(`${where} radius ${s[corner]}`);
-      }
-      if (s.boxShadow !== "none") {
-        // Allowed: hairlines drawn as inset or spread-only shadows with zero blur.
-        for (const part of s.boxShadow.split(/,(?![^(]*\))/)) {
-          const nums = part.replace(/rgba?\([^)]*\)|#[0-9a-f]+/gi, "").match(/-?[\d.]+px/g) || [];
-          const [, , blur = "0px"] = nums;
-          if (parseFloat(blur) > 0) bad.push(`${where} shadow blur ${part.trim()}`);
-        }
-      }
-      // CSS gradients only: an SVG image may mention gradients inside its url().
-      if (/(^|[\s,])(repeating-)?(linear|radial|conic)-gradient\(/.test(s.backgroundImage.replace(/url\([^)]*\)/g, ""))) bad.push(`${where} gradient`);
-    }
-  }
-  return bad;
-};
+// The hard-rule sweep is shared with the `signal-design check` CLI.
+const sweep = rulesSweep;
 
 for (const [name, engine] of Object.entries(engines)) {
   const browser = await engine.launch();

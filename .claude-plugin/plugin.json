@@ -1,0 +1,9 @@
+{
+  "name": "signal-design",
+  "description": "Build UI with the Signal design library: the rules, real component markup, tokens and a checker, as a Claude Code skill.",
+  "author": { "name": "Medalink" },
+  "homepage": "https://github.com/Medalink/signal-design",
+  "repository": "https://github.com/Medalink/signal-design",
+  "license": "MIT",
+  "keywords": ["design-system", "css", "tailwind", "ui", "signal"]
+}

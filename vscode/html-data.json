@@ -1,0 +1,185 @@
+{
+ "version": 1.1,
+ "globalAttributes": [
+  {
+   "name": "data-sd-open",
+   "description": "Opens the <dialog> with this id as a modal."
+  },
+  {
+   "name": "data-sd-close",
+   "description": "Closes the nearest dialog; a value becomes its returnValue."
+  },
+  {
+   "name": "data-sd-static",
+   "description": "On a dialog: a backdrop click does not close it."
+  },
+  {
+   "name": "data-sd-toggle",
+   "description": "Opens and closes the .sd-expand with this id; keeps aria-expanded in sync."
+  },
+  {
+   "name": "data-sd-seg",
+   "description": "Single-select button group (aria-pressed); fires change."
+  },
+  {
+   "name": "data-sd-key",
+   "description": "Clicks the element when this key combo is pressed (not while typing), e.g. \"a\", \"shift+n\", \"mod+k\"."
+  },
+  {
+   "name": "data-sd-tip",
+   "description": "Tooltip text shown on hover and focus."
+  },
+  {
+   "name": "data-sd-tip-side",
+   "description": "Tooltip side: top, bottom, left or right."
+  },
+  {
+   "name": "data-sd-side",
+   "description": "Popover side: top, bottom, left or right."
+  },
+  {
+   "name": "data-sd-align",
+   "description": "Popover alignment: start, center or end."
+  },
+  {
+   "name": "data-sd-anchor",
+   "description": "Positions a popover against this selector instead of its trigger."
+  },
+  {
+   "name": "data-sd-copy",
+   "description": "Copies the text of the element matched by this selector and confirms with a toast."
+  },
+  {
+   "name": "data-sd-toast",
+   "description": "Shows this text as a toast on click (data-tone colors it)."
+  },
+  {
+   "name": "data-sd-theme",
+   "description": "Switches the theme (ink, graphite, paper, auto) and remembers it."
+  },
+  {
+   "name": "data-sd-theme-cycle",
+   "description": "Steps to the next theme on click."
+  },
+  {
+   "name": "data-sd-shell",
+   "description": "App shell control: sidebar (pin/collapse), aside (right panel), drawer (phones) or close."
+  },
+  {
+   "name": "data-sd-section",
+   "description": "On a rail item: shows the sidebar panel with the same data-section."
+  },
+  {
+   "name": "data-sd-window",
+   "description": "Title bar window button: minimize, maximize or close (Tauri window API, else an sd:window event)."
+  },
+  {
+   "name": "data-sd-ornaments",
+   "description": "Square-dust ornaments painted as the background: br (default), tl, tr, bl, top, bottom, center or none; space-separated."
+  },
+  {
+   "name": "data-sd-ornaments-size",
+   "description": "Ornament size in px (default 340)."
+  },
+  {
+   "name": "data-sd-ornaments-still",
+   "description": "Turns off the ornament sparkle on this element."
+  },
+  {
+   "name": "data-sd-edges",
+   "description": "Replaces the border with the glowing edge (bright corners, faint sides)."
+  },
+  {
+   "name": "data-sd-rain",
+   "description": "Turns a <canvas class=\"sd-rain\"> into the digital rain backdrop."
+  },
+  {
+   "name": "data-sd-rain-style",
+   "description": "Rain style: glyphs (default) or squares."
+  },
+  {
+   "name": "data-sd-rain-skip",
+   "description": "Selector for elements that cover the rain, so it skips drawing under them."
+  },
+  {
+   "name": "data-sd-rain-toggle",
+   "description": "Button that turns the rain on or off (remembered)."
+  },
+  {
+   "name": "data-sd-fps",
+   "description": "Frame-rate counter; the number goes in a child <b>."
+  },
+  {
+   "name": "data-sd-combobox",
+   "description": "Text input with a filtered listbox (role=combobox, aria-controls)."
+  },
+  {
+   "name": "data-sd-tags",
+   "description": "Tag entry: Enter or comma adds, Backspace removes; hidden inputs carry the values."
+  },
+  {
+   "name": "data-sd-number",
+   "description": "Number stepper: − and + buttons with data-step."
+  },
+  {
+   "name": "data-sd-palette",
+   "description": "On a <dialog class=\"sd-command\">: a command palette with filtering and arrow keys."
+  },
+  {
+   "name": "data-sd-shortcuts",
+   "description": "On a <dialog>: the keyboard shortcut sheet; ? opens it."
+  },
+  {
+   "name": "data-sd-autogrow",
+   "description": "Textarea grows with its content."
+  },
+  {
+   "name": "data-sd-enter-submit",
+   "description": "Enter submits the form; Shift+Enter adds a line."
+  },
+  {
+   "name": "data-sd-suggest",
+   "description": "Id of an .sd-suggest list opened by the trigger character (mentions)."
+  },
+  {
+   "name": "data-sd-trigger",
+   "description": "Character that opens the suggestion list (default @)."
+  },
+  {
+   "name": "data-sd-contextmenu",
+   "description": "Id of a menu opened at the pointer on right click, Shift+F10 or the menu key."
+  },
+  {
+   "name": "data-sd-reaction",
+   "description": "Reaction toggle with a count; fires sd:reaction."
+  },
+  {
+   "name": "data-sd-poll",
+   "description": "Poll: choosing an option marks it and reveals the shares."
+  },
+  {
+   "name": "data-sd-chart",
+   "description": "On a <figure>: init a chart from its JSON <script> (initCharts from signal-design/charts)."
+  },
+  {
+   "name": "data-sd-chart-scale",
+   "description": "Container of buttons (data-value clamp|p95|p90|linear|log) that switch a chart's scale mode."
+  },
+  {
+   "name": "data-sd-scroll-tab",
+   "description": "Give this scroll box a tab stop while it scrolls (tables and code get one automatically)."
+  },
+  {
+   "name": "data-sd-scrollbars",
+   "description": "Set by init() on <html>: auto hides scrollbars when idle, always keeps them."
+  },
+  {
+   "name": "data-sd-scrolling",
+   "description": "Set by the JS on a scroller while it moves (scrollbar shows)."
+  },
+  {
+   "name": "data-sd-scrolling-page",
+   "description": "Set by the JS on <html> while anything scrolls (idle motion pauses)."
+  }
+ ]
+}

@@ -2,13 +2,17 @@
 
 ## Unreleased
 
-### Fixed
-- Window-control icons no longer render as black squares: `.sd-window-controls svg`
-  now defaults to `fill: none; stroke: currentColor` (stroke-width 1.5), so the
-  documented minimal markup — bare `<path>`/`<rect>` with no attributes — is
-  visible on a dark title bar.
-
 ### Added
+- AI integration: `AGENTS.md` (the contract for agents), `llms.txt` and
+  `llms-full.txt`, generated `ai/components.json` (every block's classes,
+  attributes, HTML and required JS) and `ai/tokens.json` (every token per
+  theme, W3C form, with contrast ratios), VS Code completion data in
+  `vscode/`, a Cursor rule in `ai/rules/`, and a Claude Code plugin and
+  marketplace with a `signal-design` skill. `pnpm build:ai` regenerates the
+  files; CI fails when they are stale.
+- `signal-design check <url> [--a11y]`: the hard-rule sweep and an axe audit
+  for any project's pages (`bin/`, rules shared with `scripts/check.mjs`).
+- Git installs build `dist/` through a `prepare` script.
 - `dist/signal.js`, a prebuilt single-file ESM bundle of `signal-design/js`
   (`pnpm build:js`), stamped with the package version — vendoring apps can
   ship it next to `dist/signal.css` with no bundler of their own. Exported
@@ -54,6 +58,14 @@
 - Redesigned landing page.
 
 ### Changed
+- Text is set in SF Pro (the system UI font; Segoe UI on Windows) in regular
+  and medium (500) in every theme. Source Code Pro stays bundled for code,
+  charts and the rain. Bold rules now use `--font-weight-semibold` instead of
+  a literal 600.
+- Breadcrumbs on phones shrink each crumb to its first letter (Home > P > B);
+  icon-only crumbs stay, full names stay readable to screen readers.
+- Showcase: a slim top bar with the page links and the width switch replaces
+  the floating Width button.
 - The light theme is called paper: `data-theme="paper"`, `setTheme("paper")`,
   the `paper:` Tailwind variant. `light` still works everywhere as an alias
   (attribute, `setTheme`, `data-sd-theme`, a saved preference, `light:`).
@@ -118,6 +130,10 @@
 - The title bar and status bar use the rail background (`--sd-surface`).
 
 ### Fixed
+- Window-control icons no longer render as black squares: `.sd-window-controls svg`
+  now defaults to `fill: none; stroke: currentColor` (stroke-width 1.5), so the
+  documented minimal markup — bare `<path>`/`<rect>` with no attributes — is
+  visible on a dark title bar.
 - Shell region components (`sd-rail`, `sd-sidebar`, `sd-shell-main`,
   `sd-shell-aside`, `sd-shell-status`, `sd-shell-topbar`, `sd-titlebar`) now
   claim their named grid area only as direct children of `.sd-shell`. Used

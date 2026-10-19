@@ -1,0 +1,12 @@
+{
+  "name": "signal-design",
+  "description": "The Signal design library's Claude Code plugin.",
+  "owner": { "name": "Medalink" },
+  "plugins": [
+    {
+      "name": "signal-design",
+      "source": "./",
+      "description": "Build UI with the Signal design library: the rules, real component markup, tokens and a checker, as a Claude Code skill."
+    }
+  ]
+}

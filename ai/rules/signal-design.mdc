@@ -1,0 +1,28 @@
+---
+description: Signal design library rules for UI work (sd- classes, data-sd- attributes, signal-design imports)
+globs: ["**/*.html", "**/*.css", "**/*.jsx", "**/*.tsx", "**/*.vue", "**/*.svelte", "**/*.astro"]
+alwaysApply: false
+---
+
+This project uses the Signal design library (`signal-design`). Before writing UI,
+read `node_modules/signal-design/AGENTS.md`, and copy component markup from
+`node_modules/signal-design/ai/components.json` (or `llms-full.txt`) rather than
+inventing it.
+
+Hard rules:
+- Square corners: never `rounded-*` or `border-radius`.
+- Flat: no blurred shadows, glow, glass or CSS gradients.
+- Color only for status and focus, through roles (`data-tone="danger"`, `text-danger`);
+  navigation, headings and icons stay black, white and grey.
+- Tokens only (`var(--sd-*)`, `bg-surface`, `text-fg-muted`); never hex values.
+- Source Code Pro 400/600 only.
+- Motion only on state change, 120–200ms.
+- Drive state with ARIA and `data-*` attributes; call `init()` from `signal-design/js`
+  when markup uses `data-sd-*`.
+
+Use the native element plus Signal for dialogs, popovers, tooltips, tabs and selects,
+and `sd-shell` for app layout. Icon-only buttons need `aria-label`; each page needs one
+`<h1>` and an `<a class="sd-skip" href="#main">` skip link.
+
+Before finishing, run `npx signal-design check <url> --a11y` on the running page and
+fix what it reports.

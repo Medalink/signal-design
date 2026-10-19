@@ -1,0 +1,93 @@
+{
+ "version": 1.1,
+ "properties": [
+  {
+   "name": "--sd-canvas",
+   "description": "Page background. ink #000000 · graphite #151515 · paper #ffffff"
+  },
+  {
+   "name": "--sd-surface",
+   "description": "Panels a step above the page: rail, sidebar, cards, the shell's content box. ink #0a0a0a · graphite #1a1a1a · paper #f6f6f7"
+  },
+  {
+   "name": "--sd-raised",
+   "description": "Hover rows and raised controls. ink #191a1d · graphite #242424 · paper #eeeef0"
+  },
+  {
+   "name": "--sd-overlay",
+   "description": "Popovers, menus, dialogs, tooltips. ink #191a1d · graphite #242424 · paper #ffffff"
+  },
+  {
+   "name": "--sd-line",
+   "description": "Hairlines and default borders. ink #262626 · graphite #2e2e2e · paper #0000001a"
+  },
+  {
+   "name": "--sd-line-strong",
+   "description": "Control borders and dividers that must read. ink #333333 · graphite #3d3d3d · paper #00000038"
+  },
+  {
+   "name": "--sd-fg",
+   "description": "Main text. ink #fafafa · graphite #f5f5f5 · paper #050506"
+  },
+  {
+   "name": "--sd-fg-muted",
+   "description": "Secondary text: descriptions, leads, subtitles. ink #a3a3a3 · graphite #adadad · paper #2e2e33"
+  },
+  {
+   "name": "--sd-fg-subtle",
+   "description": "Labels and meta. ink #949494 · graphite #999999 · paper #5c5c66"
+  },
+  {
+   "name": "--sd-fg-faint",
+   "description": "The quietest readable text (still 4.5:1): hints, timestamps. ink #828282 · graphite #8b8b8b · paper #6a6a72"
+  },
+  {
+   "name": "--sd-primary",
+   "description": "Primary button background. ink #fafafa · graphite #f5f5f5 · paper #050506"
+  },
+  {
+   "name": "--sd-on-primary",
+   "description": "Text on primary. ink #050506 · graphite #0f0f0f · paper #ffffff"
+  },
+  {
+   "name": "--sd-accent",
+   "description": "Signal: focus, current, selection. ink #00d4ff · graphite #00d4ff · paper #00718f"
+  },
+  {
+   "name": "--sd-success",
+   "description": "Signal: approved, passing, online. ink #00ff88 · graphite #00ff88 · paper #00804a"
+  },
+  {
+   "name": "--sd-danger",
+   "description": "Signal: irreversible, risk, reject, errors. ink #ff3366 · graphite #ff4775 · paper #c8003a"
+  },
+  {
+   "name": "--sd-warning",
+   "description": "Signal: costly. ink #ff8800 · graphite #ff8800 · paper #a84d00"
+  },
+  {
+   "name": "--sd-pending",
+   "description": "Signal: unproven, waiting, low confidence. ink #ffaa00 · graphite #ffaa00 · paper #855800"
+  },
+  {
+   "name": "--sd-extra",
+   "description": "Signal: people and presence. ink #8855ff · graphite #8855ff · paper #5b2fd1"
+  },
+  {
+   "name": "--sd-backdrop",
+   "description": "Behind modal dialogs and drawers. ink #000000a3 · graphite #00000099 · paper #05050652"
+  },
+  {
+   "name": "--sd-shell-bg",
+   "description": "Behind the app shell's content box, where the rain shows. ink #000000 · graphite #0f0f0f · paper #e9e9ec"
+  },
+  {
+   "name": "--sd-container",
+   "description": "The app shell's main content box. ink #0a0a0a · graphite #1a1a1a · paper #f6f6f7"
+  },
+  {
+   "name": "--sd-flash",
+   "description": "Brightest ink: the hover shimmer's highlight. ink #ffffff · graphite #ffffff · paper #000000"
+  }
+ ]
+}
