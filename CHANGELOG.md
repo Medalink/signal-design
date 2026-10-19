@@ -3,6 +3,16 @@
 ## Unreleased
 
 ### Added
+- AI integration: `AGENTS.md` (the contract for agents), `llms.txt` and
+  `llms-full.txt`, generated `ai/components.json` (every block's classes,
+  attributes, HTML and required JS) and `ai/tokens.json` (every token per
+  theme, W3C form, with contrast ratios), VS Code completion data in
+  `vscode/`, a Cursor rule in `ai/rules/`, and a Claude Code plugin and
+  marketplace with a `signal-design` skill. `pnpm build:ai` regenerates the
+  files; CI fails when they are stale.
+- `signal-design check <url> [--a11y]`: the hard-rule sweep and an axe audit
+  for any project's pages (`bin/`, rules shared with `scripts/check.mjs`).
+- Git installs build `dist/` through a `prepare` script.
 - `dist/signal.js`, a prebuilt single-file ESM bundle of `signal-design/js`
   (`pnpm build:js`), stamped with the package version — vendoring apps can
   ship it next to `dist/signal.css` with no bundler of their own. Exported

@@ -9,6 +9,67 @@ Tauri apps and plain HTML.
 - **Color is for important things:** risk, status, success and focus. Everything else, navigation included, is black, white and grey.
 - **Motion on state change only:** 120–200ms transitions and a one-pass hover shimmer. The rain backdrop moves only while work runs. `prefers-reduced-motion` turns motion off.
 
+## Install
+
+From GitHub (this package is not on npm). Pin a tag or commit for
+reproducible builds:
+
+```bash
+pnpm add github:Medalink/signal-design            # or npm install github:Medalink/signal-design
+pnpm add github:Medalink/signal-design#v0.1.0
+```
+
+Tailwind projects import the source and need no build. `dist/` (plain CSS and
+the JS bundle) is built by the package's `prepare` script on a git install;
+npm runs it, and pnpm runs it once the package is allowed to build
+(`onlyBuiltDependencies`). Each GitHub Release also carries
+`signal-design-dist.zip`.
+
+## Use it with AI tools
+
+The package carries what an AI agent needs to use it well:
+
+| File | For |
+|---|---|
+| `AGENTS.md` | The contract: install, the hard rules, which part for which need, accessibility duties, checking. Point your project's own `AGENTS.md` at `node_modules/signal-design/AGENTS.md`. |
+| `llms.txt`, `llms-full.txt` | The index, and the guide plus every component's HTML in one file. |
+| `ai/components.json` | Every block from the components page: classes, `data-sd-*` attributes, copyable HTML, the JS it needs. |
+| `ai/tokens.json` | Every token resolved per theme (W3C design-token form) with contrast ratios. |
+| `ai/rules/signal-design.mdc` | A Cursor rule; copy it to `.cursor/rules/`. |
+| `vscode/*.json` | Editor completions for `data-sd-*` and `--sd-*` (see below). |
+
+**Claude Code plugin.** The repo is a plugin marketplace with a
+`signal-design` skill that loads the contract, copies real markup and runs the
+checker:
+
+```
+/plugin marketplace add Medalink/signal-design
+/plugin install signal-design@signal-design
+```
+
+**Checker.** Any project can test its pages against Signal's rules:
+
+```bash
+pnpm add -D playwright axe-core && npx playwright install chromium
+npx signal-design check http://localhost:5173/ --a11y
+```
+
+It fails on rounded corners, blurred shadows, CSS gradients, horizontal
+overflow at 1280/768/375px, fonts that did not load, console errors and (with
+`--a11y`) WCAG 2.2 AA violations. `--widths` and `--theme` adjust the run.
+
+**Editor completions (VS Code).** Add to `.vscode/settings.json`:
+
+```json
+{
+  "html.customData": ["./node_modules/signal-design/vscode/html-data.json"],
+  "css.customData": ["./node_modules/signal-design/vscode/css-data.json"]
+}
+```
+
+`pnpm build:ai` regenerates the `ai/`, `vscode/` and `llms-full.txt` files from
+the components page; CI fails when they are out of date.
+
 ## Use it with Tailwind v4
 
 ```css
@@ -99,8 +160,8 @@ Set `data-theme` on `<html>` or on any element to theme a subtree.
 Components take a `data-tone` attribute with one of these names (or `neutral`).
 Use the role, not the hue: `text-danger`, not `text-pink`.
 
-`fg-faint` is below 4.5:1 on the canvas. Use it for decoration, disabled states
-and large display text, not body copy.
+Every text color, `fg-faint` included, meets 4.5:1 on every surface of its
+theme, so any of them can carry body copy.
 
 ## What is styled
 
