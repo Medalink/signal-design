@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.0.0 (2026-10-19)
 
 ### Added
 - AI integration: `AGENTS.md` (the contract for agents), `llms.txt` and
