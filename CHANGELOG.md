@@ -44,6 +44,19 @@
 - Redesigned landing page.
 
 ### Changed
+- Performance pass (Chrome, CPU slowed 4x, `pnpm perf`). Idle main-thread
+  work per 3 s: components 915 → ~400–700 ms, shell 446 → 131, chat 442 →
+  157, charts 1180 → 121–212.
+  - Ornament sparkle runs as CSS opacity animations (three grouped layers per
+    ornament) instead of SVG animation, and pauses while anything scrolls
+    (`data-sd-scrolling-page` on `<html>`).
+  - Ornaments for elements the browser isn't rendering (content-visibility,
+    display: none) paint when they come into view.
+  - The FPS counter samples 1 s out of every 4 s.
+  - Chart effects draw at 30 fps on timer-scheduled frames, color strings
+    are cached, and packets ride bandwidth lines only.
+  - Showcase: off-screen sections use `content-visibility: auto`; charts
+    below the fold build when they come near.
 - Scrolling is much cheaper. The shell's content and sidebar scrollers get
   their own GPU layer (`will-change: scroll-position`); auto-hiding
   scrollbars restyle only the scroller, not its subtree, and touch the DOM

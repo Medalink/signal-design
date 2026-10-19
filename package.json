@@ -64,7 +64,8 @@
     "build:showcase": "vite build showcase --outDir ../.showcase-dist --emptyOutDir",
     "build": "pnpm build:css && pnpm build:showcase",
     "prepack": "pnpm build:css",
-    "check": "node scripts/check.mjs"
+    "check": "node scripts/check.mjs",
+    "perf": "node scripts/perf.mjs"
   },
   "devDependencies": {
     "@fontsource/source-code-pro": "5.3.1",

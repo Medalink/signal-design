@@ -1,5 +1,5 @@
 import { init, toast, getTheme, rain, selectSection, setScrollbars } from "../src/js/index.js";
-import { createChart } from "../src/js/charts/index.js";
+import { lazyChart } from "./lazy.js";
 
 /* ---- Preview / code: snapshot every block before any script touches it -- */
 
@@ -355,7 +355,8 @@ for (let x = now - 30 * 60_000; x <= now; x += 10_000) {
   jLo.push({ x, y: +(r - j).toFixed(2) });
   jHi.push({ x, y: +(r + j).toFixed(2) });
 }
-const core = createChart(document.querySelector("#demo-core canvas"), {
+let core = null;
+lazyChart(document.querySelector("#demo-core canvas"), {
   preset: "core",
   bucketSeconds: 10,
   live: 2,
@@ -366,7 +367,7 @@ const core = createChart(document.querySelector("#demo-core canvas"), {
     { label: "Core ↑", data: up },
     { label: "Core → MDF RTT", unit: " ms", data: rtt, min: jLo, max: jHi },
   ],
-});
+}, (c) => (core = c));
 let tick = now;
 setInterval(() => {
   if (document.hidden) return;
@@ -374,7 +375,7 @@ setInterval(() => {
   d = Math.max(0, d + noise(300) + (4400 - d) * 0.08);
   u = Math.max(0, u + noise(150) + (1700 - u) * 0.08);
   const r = 4.2 + noise(0.6);
-  core.append({
+  core?.append({
     "Core ↓": [{ x: tick, y: d }],
     "Core ↑": [{ x: tick, y: u }],
     "Core → MDF RTT": [{ x: tick, y: +r.toFixed(2), min: +(r - 0.8).toFixed(2), max: +(r + 0.8).toFixed(2) }],
@@ -382,7 +383,7 @@ setInterval(() => {
 }, 2000);
 
 const week = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-createChart(document.querySelector("#demo-line canvas"), {
+lazyChart(document.querySelector("#demo-line canvas"), {
   type: "line",
   labels: week,
   unit: " ms",
@@ -393,7 +394,7 @@ createChart(document.querySelector("#demo-line canvas"), {
   ],
   markers: [{ axis: "y", value: 300, label: "SLO", tone: "warning" }],
 });
-createChart(document.querySelector("#demo-bar canvas"), {
+lazyChart(document.querySelector("#demo-bar canvas"), {
   type: "bar",
   stacked: true,
   labels: week,
@@ -403,14 +404,14 @@ createChart(document.querySelector("#demo-bar canvas"), {
     { label: "timeout", data: [3, 6, 2, 8, 4, 1, 0] },
   ],
 });
-createChart(document.querySelector("#demo-hbar canvas"), {
+lazyChart(document.querySelector("#demo-hbar canvas"), {
   type: "hbar",
   labels: ["/api/search", "/api/export", "/api/reports", "/api/items", "/health"],
   unit: " ms",
   series: [{ label: "p95", data: [412, 388, 261, 174, 12] }],
 });
 const buckets = Array.from({ length: 18 }, (_, i) => (i + 1) * 25);
-createChart(document.querySelector("#demo-hist canvas"), {
+lazyChart(document.querySelector("#demo-hist canvas"), {
   type: "histogram",
   labels: buckets.map(String),
   series: [{ label: "requests", data: buckets.map((b) => Math.round(700 * Math.exp(-((b - 150) ** 2) / 5000) + rand() * 30)) }],

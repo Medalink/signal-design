@@ -350,6 +350,12 @@ for (const [name, engine] of Object.entries(engines)) {
         await page.waitForTimeout(2300);
         if (!((await core()).newest > before)) fail(where, "live feed did not move the newest point");
         // Gallery: every generic chart draws, and the square charts render.
+        // Charts build as they come near the screen, so visit each one.
+        for (const fig of await page.locator('[id^="g-"] canvas:not(.sd-chart-fx)').all()) {
+          await fig.scrollIntoViewIfNeeded();
+          await page.waitForTimeout(60);
+        }
+        await page.waitForTimeout(200);
         const blank = await page.evaluate(() =>
           [...document.querySelectorAll('[id^="g-"] canvas:not(.sd-chart-fx)')]
             .filter((cv) => {

@@ -13,6 +13,11 @@
     padding-block: 8px 40px;
   }
   .demo-section {
+    /* Off-screen sections skip style, layout and paint until they come near:
+       the components page is long, and theme switches and scrolling pay for
+       what is on screen only. */
+    content-visibility: auto;
+    contain-intrinsic-size: auto 1800px;
     scroll-margin-top: 16px;
     padding-block: 56px;
     border-block-start: 1px solid var(--sd-line);

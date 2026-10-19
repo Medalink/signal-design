@@ -1,5 +1,6 @@
 import { init } from "../src/js/index.js";
 import { createChart, formatValue } from "../src/js/charts/index.js";
+import { lazyChart } from "./lazy.js";
 
 init();
 
@@ -107,7 +108,7 @@ for (let day = 0; day < 7; day++) {
   const top = slice.reduce((a, b) => (b.y > a.y ? b : a), slice[0]);
   if (top) peaks.push(top);
 }
-createChart(document.querySelector("#bandwidth canvas"), {
+lazyChart(document.querySelector("#bandwidth canvas"), {
   preset: "bandwidth",
   bucketSeconds: 300,
   tension: 0.35,
@@ -132,7 +133,7 @@ for (let x = now - 8 * HOUR; x <= now + HOUR; x += 60_000) {
   lMin.push({ x, y: +(v - j).toFixed(2) });
   lMax.push({ x, y: +(v + j).toFixed(2) });
 }
-createChart(document.querySelector("#latency canvas"), {
+lazyChart(document.querySelector("#latency canvas"), {
   preset: "latency",
   bucketSeconds: 60,
   series: [{ label: "Branch → core RTT", unit: " ms", data: lat, min: lMin, max: lMax }],
@@ -208,7 +209,7 @@ const hours = Array.from({ length: 24 }, (_, h) => `${String(h).padStart(2, "0")
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const wave = (h, peak = 14) => Math.max(0, Math.sin(((h - 6) / 24) * Math.PI * 2));
 
-createChart(canvasOf("g-percentiles"), {
+lazyChart(canvasOf("g-percentiles"), {
   type: "line",
   labels: hours,
   unit: " ms",
@@ -220,7 +221,7 @@ createChart(canvasOf("g-percentiles"), {
   markers: [{ axis: "y", value: 300, label: "SLO 300 ms", tone: "warning" }],
 });
 
-createChart(canvasOf("g-region"), {
+lazyChart(canvasOf("g-region"), {
   type: "area",
   stacked: true,
   labels: hours,
@@ -231,7 +232,7 @@ createChart(canvasOf("g-region"), {
   })),
 });
 
-createChart(canvasOf("g-services"), {
+lazyChart(canvasOf("g-services"), {
   type: "bar",
   labels: days,
   unit: "",
@@ -241,7 +242,7 @@ createChart(canvasOf("g-services"), {
   })),
 });
 
-createChart(canvasOf("g-errors"), {
+lazyChart(canvasOf("g-errors"), {
   type: "bar",
   stacked: true,
   labels: hours.slice(8, 20),
@@ -253,7 +254,7 @@ createChart(canvasOf("g-errors"), {
 });
 
 const endpoints = [["/api/search", 412], ["/api/export", 388], ["/api/reports", 261], ["/api/items", 174], ["/api/upload", 158], ["/api/users", 96], ["/api/auth", 71], ["/health", 12]];
-createChart(canvasOf("g-endpoints"), {
+lazyChart(canvasOf("g-endpoints"), {
   type: "hbar",
   labels: endpoints.map((e) => e[0]),
   unit: " ms",
@@ -262,7 +263,7 @@ createChart(canvasOf("g-endpoints"), {
 
 const buckets = Array.from({ length: 24 }, (_, i) => (i + 1) * 20);
 const hist = buckets.map((b) => Math.round(900 * Math.exp(-((b - 140) ** 2) / (2 * 60 ** 2)) + 40 * Math.exp(-((b - 420) ** 2) / 800) + rand() * 25));
-createChart(canvasOf("g-histogram"), {
+lazyChart(canvasOf("g-histogram"), {
   type: "histogram",
   labels: buckets.map((b) => `${b}`),
   series: [{ label: "requests", data: hist }],
@@ -277,7 +278,7 @@ const pts = Array.from({ length: 160 }, () => {
   const kb = 2 ** (rand() * 10);
   return { x: Math.round(kb), y: Math.max(12, Math.round(40 + kb * 0.35 + noise(60) + (rand() < 0.06 ? 400 : 0))) };
 });
-createChart(canvasOf("g-scatter"), {
+lazyChart(canvasOf("g-scatter"), {
   type: "scatter",
   unit: " ms",
   xUnit: " KB",
@@ -289,7 +290,7 @@ createChart(canvasOf("g-scatter"), {
 });
 
 let depth = 20;
-createChart(canvasOf("g-queue"), {
+lazyChart(canvasOf("g-queue"), {
   type: "step",
   labels: Array.from({ length: 48 }, (_, i) => `${String(Math.floor(i / 2)).padStart(2, "0")}:${i % 2 ? "30" : "00"}`),
   series: [{ label: "jobs waiting", data: Array.from({ length: 48 }, (_, i) => (depth = Math.max(0, depth + Math.round(noise(9)) + (i === 30 ? 60 : 0) - (i > 31 && i < 36 ? 14 : 0)))) }],

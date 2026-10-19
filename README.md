@@ -532,6 +532,7 @@ pnpm install
 pnpm dev          # showcase at http://localhost:5178
 pnpm build:css    # dist/signal.css + dist/fonts
 node scripts/check.mjs http://localhost:5178/
+pnpm perf          # load, idle, scroll and theme cost per page, CPU slowed 4x
 ```
 
 `scripts/check.mjs` loads the showcase in Chromium and WebKit, in every theme, at
