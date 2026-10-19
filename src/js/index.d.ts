@@ -36,6 +36,8 @@ export function hotkeys(
     target?: EventTarget;
     /** Milliseconds between sequence keys, such as "g t". Default 900. */
     sequenceTimeout?: number;
+    /** Allow repeated single-key bindings. Default true. Sequences never repeat. */
+    repeat?: boolean;
     enabled?: boolean | ((event: KeyboardEvent) => boolean);
   },
 ): () => void;

@@ -40,7 +40,7 @@ function modalOf(target) {
   return target.closest?.("dialog:modal") || doc.querySelector("dialog:modal");
 }
 
-export function hotkeys(map, { target = document, sequenceTimeout = 900, enabled = true } = {}) {
+export function hotkeys(map, { target = document, sequenceTimeout = 900, enabled = true, repeat = true } = {}) {
   const table = new Map(Object.entries(map).map(([combo, fn]) => [combo.trim().split(/\s+/).map(normalize).join(" "), fn]));
   let pending = "";
   let timer;
@@ -48,7 +48,7 @@ export function hotkeys(map, { target = document, sequenceTimeout = 900, enabled
   const reset = () => { pending = ""; clearTimeout(timer); };
   const handler = (event) => {
     const modal = modalOf(event.target);
-    if (event.defaultPrevented || event.repeat || event.isComposing || !(typeof enabled === "function" ? enabled(event) : enabled) ||
+    if (event.defaultPrevented || event.isComposing || !(typeof enabled === "function" ? enabled(event) : enabled) ||
       (modal && !(target instanceof Node && modal.contains(target)))) {
       reset();
       return;
@@ -56,6 +56,7 @@ export function hotkeys(map, { target = document, sequenceTimeout = 900, enabled
     if (context !== modal) reset();
     context = modal;
     const combo = keyOf(event);
+    if (event.repeat && (!repeat || pending || !table.has(combo))) { reset(); return; }
     if (typing(event.target) && !combo.startsWith("mod+") && combo !== "escape") { reset(); return; }
     // Enter and Space belong to whatever control has focus.
     if ((combo === "enter" || combo === "space") && event.target.closest?.(CONTROL)) { reset(); return; }

@@ -449,11 +449,12 @@ returns a row ID or marker element for idle return after `idleMs` (default
 `suspend(true)` cancels return and motion; `suspend(false)` allows future
 scrolls to arm return. `dispose()` removes listeners and timers.
 
-`hotkeys(map, { target, enabled, sequenceTimeout })` scopes bindings to an
+`hotkeys(map, { target, enabled, sequenceTimeout, repeat })` scopes bindings to an
 event target. `enabled` accepts a boolean or event predicate. Sequences such
 as `"g t"` expire after `sequenceTimeout` milliseconds (default 900). A single
-key binding takes precedence if it is also a sequence prefix. Handled events,
-repeats, composition, native Enter/Space, and typing are ignored, except the
+key binding takes precedence if it is also a sequence prefix. Single-key bindings repeat by default for held navigation keys. Use
+`repeat: false` for action bindings. Sequences never repeat. Handled events,
+composition, native Enter/Space, and typing are ignored, except the
 existing Mod and Escape bindings while typing. Bind modal shortcuts to that
 dialog; document bindings pause while a modal is open. Call the returned
 function to remove bindings and pending sequences.

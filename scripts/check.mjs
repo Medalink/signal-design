@@ -163,6 +163,40 @@ async function checkCountdown(page, name) {
   if (!failed) console.log(`ok   ${name} countdown ${assertions} behavioral assertions`);
 }
 
+async function checkLegacyRepeat(page, name) {
+  await page.goto(pages.shell);
+  await page.keyboard.down("j");
+  await page.keyboard.down("j");
+  await page.keyboard.down("j");
+  await page.keyboard.up("j");
+  const afterNext = await page.locator('[data-feed] [aria-current="true"]').getAttribute("data-n");
+  if (afterNext !== "18") fail(name, `holding j should reach row 18, got ${afterNext}`);
+  await page.keyboard.down("k");
+  await page.keyboard.down("k");
+  await page.keyboard.down("k");
+  await page.keyboard.up("k");
+  const afterPrevious = await page.locator('[data-feed] [aria-current="true"]').getAttribute("data-n");
+  if (afterPrevious !== "21") fail(name, `holding k should return to row 21, got ${afterPrevious}`);
+  await page.goto(base);
+  await page.evaluate(async (apiUrl) => {
+    const { hotkeys } = await import(apiUrl);
+    window.repeatProbe = { calls: 0 };
+    window.repeatProbe.off = hotkeys({ x: () => window.repeatProbe.calls++ }, { repeat: false });
+  }, apiUrl);
+  await page.keyboard.down("x");
+  await page.keyboard.down("x");
+  await page.keyboard.up("x");
+  const calls = await page.evaluate(() => {
+    const { calls, off } = window.repeatProbe;
+    off();
+    delete window.repeatProbe;
+    return calls;
+  });
+  if (calls !== 1) fail(name, `repeat-disabled action should run once, got ${calls}`);
+  console.log(`ok   ${name} legacy repeat 3 behavioral assertions`);
+}
+
+
 async function checkFeedAndHotkeys(page, name) {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto(base);
@@ -732,6 +766,7 @@ for (const [name, engine] of Object.entries(engines)) {
   const behaviorPage = await browser.newPage();
   await checkCopy(behaviorPage, name);
 
+  await checkLegacyRepeat(behaviorPage, name);
   await checkFeedAndHotkeys(behaviorPage, name);
   await checkCountdown(behaviorPage, name);
   await behaviorPage.close();
