@@ -21,8 +21,9 @@ pnpm add github:Medalink/signal-design#v0.1.0
 
 Tailwind projects import the source and need no build. `dist/` (plain CSS and
 the JS bundle) is built by the package's `prepare` script on a git install;
-npm runs it, and pnpm runs it once the package is allowed to build
-(`onlyBuiltDependencies`). Each GitHub Release also carries
+if `node_modules/signal-design/dist/` is missing, allow the script and
+reinstall (npm: `npm approve-scripts signal-design`; pnpm: add `signal-design`
+to `onlyBuiltDependencies`). Each GitHub Release also carries
 `signal-design-dist.zip`.
 
 ## Use it with AI tools

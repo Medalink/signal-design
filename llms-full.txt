@@ -28,9 +28,10 @@ pnpm add github:Medalink/signal-design#v0.1.0 # pin a tag or commit for reproduc
 ```
 
 **Without Tailwind**: link `dist/signal.css` and keep `dist/fonts/` next to it.
-`dist/` is built by the package's `prepare` script on a git install (npm does
-this; with pnpm, allow it: `pnpm config set --location project onlyBuiltDependencies[] signal-design`,
-or run `pnpm --dir node_modules/signal-design build:css`). Each GitHub Release
+`dist/` is built by the package's `prepare` script on a git install. If
+`node_modules/signal-design/dist/` is missing, allow the script and reinstall
+(npm: `npm approve-scripts signal-design`; pnpm: add `signal-design` to
+`onlyBuiltDependencies`). Each GitHub Release
 also has `signal-design-dist.zip` with `signal.css`, `signal.js` and the fonts.
 
 **JS** (optional, but anything with a `data-sd-*` attribute needs it):
