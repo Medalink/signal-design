@@ -148,6 +148,8 @@
   .sd-message-actions svg {
     width: 15px;
     height: 15px;
+    width: 1.5cap;
+    height: 1.5cap;
     max-width: none; /* the base max-width: 100% collapses icons in grid-centered buttons */
   }
 

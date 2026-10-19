@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- Icons are sized to the text's cap height (`1.5cap`, with an `em` fallback)
+  in buttons, rows, navigation, messages and the shell, so they follow the
+  font instead of fixed px.
+
+### Added
+- `sd-icon-text` and `sd-icon`: an icon and a word on one baseline, sized to
+  the cap height. In Tailwind, `size-[1.5cap]` with `items-baseline` does the
+  same.
+
 ## 1.1.1 (2026-10-19)
 
 ### Added

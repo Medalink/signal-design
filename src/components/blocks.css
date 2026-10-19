@@ -42,6 +42,8 @@
   .sd-item > svg {
     width: 18px;
     height: 18px;
+    width: 1.5cap;
+    height: 1.5cap;
     flex-shrink: 0;
     color: var(--sd-fg-subtle);
   }
