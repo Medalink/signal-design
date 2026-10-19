@@ -197,6 +197,40 @@ async function checkLegacyRepeat(page, name) {
 }
 
 
+async function checkModifiedSequence(page, name) {
+  await page.goto(base);
+  await page.evaluate(async (apiUrl) => {
+    const { hotkeys } = await import(apiUrl);
+    const root = document.createElement("div");
+    root.tabIndex = 0;
+    document.body.append(root);
+    const calls = [];
+    const off = hotkeys({
+      "g shift+n": () => calls.push("shift"),
+      "g mod+n": () => calls.push("mod"),
+      "g alt+n": () => calls.push("alt"),
+      "g mod+shift+n": () => calls.push("mod-shift"),
+    }, { target: root, sequenceTimeout: 10000 });
+    window.modifiedProbe = { root, off, calls };
+    root.focus();
+  }, apiUrl);
+  const mod = await page.evaluate(() => /Mac|iPhone|iPad/.test(navigator.platform) ? "Meta" : "Control");
+  for (const [keys, expected] of [["Shift+n", "shift"], [mod + "+n", "mod"], ["Alt+n", "alt"], [mod + "+Shift+n", "mod-shift"]]) {
+    await page.keyboard.press("g");
+    await page.keyboard.press(keys);
+    const calls = await page.evaluate(() => window.modifiedProbe.calls.splice(0));
+    if (calls.length !== 1 || calls[0] !== expected) fail(name, `sequence g ${keys} should run ${expected}, got ${JSON.stringify(calls)}`);
+  }
+  await page.evaluate(() => {
+    const { root, off } = window.modifiedProbe;
+    off();
+    root.remove();
+    delete window.modifiedProbe;
+  });
+  console.log(`ok   ${name} modified sequences 4 behavioral assertions`);
+}
+
+
 async function checkFeedAndHotkeys(page, name) {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto(base);
@@ -767,6 +801,7 @@ for (const [name, engine] of Object.entries(engines)) {
   await checkCopy(behaviorPage, name);
 
   await checkLegacyRepeat(behaviorPage, name);
+  await checkModifiedSequence(behaviorPage, name);
   await checkFeedAndHotkeys(behaviorPage, name);
   await checkCountdown(behaviorPage, name);
   await behaviorPage.close();

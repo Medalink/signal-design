@@ -55,6 +55,7 @@ export function hotkeys(map, { target = document, sequenceTimeout = 900, enabled
     }
     if (context !== modal) reset();
     context = modal;
+    if (["Shift", "Control", "Alt", "Meta", "AltGraph"].includes(event.key)) return;
     const combo = keyOf(event);
     if (event.repeat && (!repeat || pending || !table.has(combo))) { reset(); return; }
     if (typing(event.target) && !combo.startsWith("mod+") && combo !== "escape") { reset(); return; }
