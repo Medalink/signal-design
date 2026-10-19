@@ -17,7 +17,7 @@ const base = (args.find((a) => a.startsWith("http")) || "http://localhost:5178/"
 const i = args.indexOf("--pages");
 const PAGES = { index: "index.html", shell: "shell.html", chat: "chat.html", form: "form.html", landing: "landing.html", charts: "charts.html" };
 const only = (i >= 0 ? args[i + 1] : Object.keys(PAGES).join(",")).split(",");
-const themes = ["ink", "graphite", "light"];
+const themes = ["ink", "graphite", "paper"];
 const widths = [1280, 390];
 
 const browser = await chromium.launch();

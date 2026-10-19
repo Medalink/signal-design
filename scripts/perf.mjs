@@ -88,8 +88,8 @@ for (const key of only) {
   });
   const theme = await page.evaluate(async () => {
     const t0 = performance.now();
-    document.documentElement.dataset.theme = "light";
-    document.dispatchEvent(new CustomEvent("sd:theme", { detail: { theme: "light" } }));
+    document.documentElement.dataset.theme = "paper";
+    document.dispatchEvent(new CustomEvent("sd:theme", { detail: { theme: "paper" } }));
     await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
     const ms = performance.now() - t0;
     document.documentElement.dataset.theme = "ink";

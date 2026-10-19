@@ -210,7 +210,8 @@
 
 /*
  * Themes. Dark "ink" is the default. Set data-theme on <html> or on any
- * element to theme a subtree: ink | graphite | light | auto.
+ * element to theme a subtree: ink | graphite | paper | auto ("light" is an
+ * older name for paper and still works).
  */
 :root,
 [data-theme="ink"] {
@@ -281,6 +282,7 @@
   --sd-icon-thumb-on: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect width='12' height='12' fill='%230F0F0F'/%3E%3C/svg%3E");
 }
 
+[data-theme="paper"],
 [data-theme="light"] {
   color-scheme: light;
   --sd-on-tone: #ffffff;
@@ -313,7 +315,7 @@
   --sd-icon-thumb-on: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect width='12' height='12' fill='%23FFFFFF'/%3E%3C/svg%3E");
 }
 
-/* auto: ink by default, light when the OS asks for it. */
+/* auto: ink by default, paper when the OS asks for light. */
 @media (prefers-color-scheme: light) {
   [data-theme="auto"] {
     color-scheme: light;
@@ -348,5 +350,7 @@
   }
 }
 
-/* light: variant for the rare case a utility must differ by theme. */
-@custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
+/* paper: variant for the rare case a utility must differ by theme.
+   `light:` is the older name for the same variant. */
+@custom-variant paper (&:where([data-theme="paper"], [data-theme="paper"] *, [data-theme="light"], [data-theme="light"] *));
+@custom-variant light (&:where([data-theme="paper"], [data-theme="paper"] *, [data-theme="light"], [data-theme="light"] *));

@@ -80,10 +80,10 @@ Set `data-theme` on `<html>` or on any element to theme a subtree.
 |---|---|
 | `ink` (default, canonical) | Cool near-black greys, alpha hairlines |
 | `graphite` (optional) | The lighter dark mode: grey `#1a1a1a` panels on a `#0f0f0f` frame, same two-level text as ink |
-| `light` | White canvas, deepened signal colors for contrast |
-| `auto` | `ink`, or `light` when the OS asks for it |
+| `paper` | White canvas, deepened signal colors for contrast (`light` is the older name and still works) |
+| `auto` | `ink`, or `paper` when the OS asks for light |
 
-`setTheme("light")` switches and remembers it; `<button data-sd-theme="light">` does the same declaratively.
+`setTheme("paper")` switches and remembers it; `<button data-sd-theme="paper">` does the same declaratively. `"light"` still works and means paper.
 
 ## Color roles
 
@@ -505,7 +505,7 @@ Kbps → Mbps → Gbps → Tbps ladder; latency prints as ms.
 differ by grey and dash, and color is kept for thresholds, line heat, bursts and
 alerts. `data-chart-theme="spectrum"` uses the full signal palette: green down,
 pink up, cyan RTT with a violet jitter band, amber warnings. Both follow the
-page theme (light gets deeper hues), and every color is a `--sd-chart-*` token
+page theme (paper gets deeper hues), and every color is a `--sd-chart-*` token
 you can override.
 
 **What a chart does.**
@@ -552,7 +552,7 @@ shows copyable HTML, the JS it needs, and a JS snippet where one applies), an ap
 ## Accessibility
 
 Every showcase page passes axe-core's WCAG 2.2 A/AA and best-practice rules in
-ink, graphite and light, at desktop and phone width (`pnpm a11y`, also in CI).
+ink, graphite and paper, at desktop and phone width (`pnpm a11y`, also in CI).
 What the library does for you:
 
 - Text colors meet 4.5:1 on every surface of each theme, hover rows included;

@@ -103,7 +103,7 @@
         <div class="sd-seg sd-seg-inline sd-seg-sm hdr-theme" aria-label="Theme">
           <button type="button" data-sd-theme="ink">ink</button>
           <button type="button" data-sd-theme="graphite">graphite</button>
-          <button type="button" data-sd-theme="light">light</button>
+          <button type="button" data-sd-theme="paper">paper</button>
           <button type="button" data-sd-theme="auto">auto</button>
         </div>
         <button class="sd-btn sd-btn-sm" data-sd-shell="aside" data-sd-key="]" aria-controls="settings-panel"><svg><use href="#i-panel"/></svg><span class="sd-desktop-only">Display</span> <kbd>]</kbd></button>
@@ -149,7 +149,7 @@
 
     <div class="demo-block">
       <h3 class="sd-label">Signals</h3>
-      <p class="demo-usage">The only saturated colors. Each one has a job. Use the role (<code>text-danger</code>), not the hue (<code>text-pink</code>), so light mode can deepen it.</p>
+      <p class="demo-usage">The only saturated colors. Each one has a job. Use the role (<code>text-danger</code>), not the hue (<code>text-pink</code>), so paper (the light theme) can deepen it.</p>
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4" data-swatches="signals"></div>
     </div>
 
@@ -1185,7 +1185,7 @@
           <a role="option" href="./chat.html">Chat <span class="sd-menu-hint">page</span></a>
           <a role="option" href="./form.html">Form <span class="sd-menu-hint">page</span></a>
           <div class="sd-menu-label" role="presentation">Actions</div>
-          <button type="button" role="option" data-sd-theme-cycle data-keywords="dark light">Next theme <span class="sd-menu-hint">Shift T</span></button>
+          <button type="button" role="option" data-sd-theme-cycle data-keywords="dark light paper">Next theme <span class="sd-menu-hint">Shift T</span></button>
           <button type="button" role="option" data-sd-toast="Copied link">Copy link</button>
         </div>
         <p class="sd-command-foot">↑↓ move · ↵ open · Esc close</p>
@@ -1441,7 +1441,7 @@ createChart(canvas, {
 init();                                   // dialogs, popovers, menus, tabs, tooltips, toggles
 toast("Saved", { tone: "success" });
 const off = hotkeys({ j: next, k: prev, "shift+n": newest, "mod+k": search });
-setTheme("light");                        // ink | graphite | light | auto</code></pre>
+setTheme("paper");                        // ink | graphite | paper | auto</code></pre>
       </div>
       <div class="sd-table-wrap">
         <table class="sd-table">
@@ -1456,7 +1456,7 @@ setTheme("light");                        // ink | graphite | light | auto</code
             <tr><td><code>data-sd-tip="text"</code></td><td>Tooltip on hover and focus.</td></tr>
             <tr><td><code>data-sd-copy="#id"</code></td><td>Copies text and confirms with a toast.</td></tr>
             <tr><td><code>data-sd-toast="text"</code></td><td>Shows a toast on click.</td></tr>
-            <tr><td><code>data-sd-theme="light"</code></td><td>Switches theme and remembers it.</td></tr>
+            <tr><td><code>data-sd-theme="paper"</code></td><td>Switches theme and remembers it.</td></tr>
           </tbody>
         </table>
       </div>

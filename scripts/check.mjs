@@ -28,7 +28,7 @@ if (!existsSync(new URL("../dist/signal.css", import.meta.url))) {
 }
 const shots = process.argv[3];
 const engines = { chromium, webkit };
-const themes = ["ink", "graphite", "light"];
+const themes = ["ink", "graphite", "paper"];
 // Desktop, small laptop, tablet, phone. The in-between widths run in ink only.
 const widths = [1280, 1024, 768, 375];
 let failures = 0;
@@ -300,8 +300,19 @@ for (const [name, engine] of Object.entries(engines)) {
         if (!(await page.evaluate(() => document.getElementById("demo-shortcuts").open))) fail(where, "? did not open shortcuts");
         await page.keyboard.press("Escape");
 
-        await page.click('[data-sd-theme="light"]');
-        if ((await page.evaluate(() => document.documentElement.dataset.theme)) !== "light") fail(where, "theme button failed");
+        await page.click('[data-sd-theme="paper"]');
+        if ((await page.evaluate(() => document.documentElement.dataset.theme)) !== "paper") fail(where, "theme button failed");
+        // "light" is the older name for paper: a light button still sets paper.
+        await page.evaluate(() => {
+          const b = document.createElement("button");
+          b.dataset.sdTheme = "light";
+          b.id = "alias-check";
+          document.body.append(b);
+          b.click();
+          b.remove();
+        });
+        const aliased = await page.evaluate(() => [document.documentElement.dataset.theme, localStorage.getItem("sd-theme")].join(","));
+        if (aliased !== "paper,paper") fail(where, `data-sd-theme="light" gave ${aliased}`);
       }
       if (pageName === "charts" && width === 1280 && theme === "ink") {
         const core = () => page.evaluate(() => {

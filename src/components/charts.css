@@ -123,8 +123,8 @@
     --sd-chart-tag-text: #0d1117;
   }
 
-  /* spectrum on light surfaces: the same hues, deep enough to read. */
-  :is(.sd-chart, .sd-plot, .sd-heatmap, .sd-waffle, .sd-uptime, .sd-meter):is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="light"], [data-theme="light"] *) {
+  /* spectrum on paper (light surfaces): the same hues, deep enough to read. */
+  :is(.sd-chart, .sd-plot, .sd-heatmap, .sd-waffle, .sd-uptime, .sd-meter):is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="paper"], [data-theme="paper"] *, [data-theme="light"], [data-theme="light"] *) {
     --sd-chart-down: #15803d;
     --sd-chart-up: #c8003a;
     --sd-chart-in: #8a5a32;

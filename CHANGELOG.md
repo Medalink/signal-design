@@ -49,6 +49,9 @@
 - Redesigned landing page.
 
 ### Changed
+- The light theme is called paper: `data-theme="paper"`, `setTheme("paper")`,
+  the `paper:` Tailwind variant. `light` still works everywhere as an alias
+  (attribute, `setTheme`, `data-sd-theme`, a saved preference, `light:`).
 - Accessibility: every showcase page passes axe-core WCAG 2.2 AA in all
   themes at desktop and phone width (`pnpm a11y`, in CI). Faint text is now
   4.5:1 on every surface (ink `#828282`, graphite `#8b8b8b`, light `#6a6a72`;
