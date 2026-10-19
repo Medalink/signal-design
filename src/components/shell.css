@@ -49,16 +49,31 @@
     grid-template-columns: var(--shell-rail) 0 minmax(0, 1fr) auto;
   }
 
+  /* Named grid areas only apply to direct children of the shell grid.
+     The same components used standalone in an app's own layout must not
+     create implicit tracks there. */
+  .sd-shell > .sd-sidebar { grid-area: side; }
+  .sd-shell > .sd-shell-main { grid-area: main; }
+  .sd-shell > .sd-shell-aside { grid-area: aside; }
+  .sd-shell > .sd-shell-status { grid-area: status; }
+  .sd-shell > .sd-shell-topbar { grid-area: top; }
+  .sd-shell > .sd-titlebar { grid-area: title; }
+
   /* ---- Rail ------------------------------------------------------- */
 
   .sd-rail {
-    grid-area: rail;
     z-index: 30;
     display: flex;
     flex-direction: column;
     min-height: 0;
     border-inline-end: 1px solid var(--sd-line-strong);
     background: var(--sd-surface);
+  }
+  /* The named grid areas only apply inside the shell grid; used standalone
+     (a rail or titlebar in an app's own layout) they must not create
+     implicit tracks in the host grid. */
+  .sd-shell > .sd-rail {
+    grid-area: rail;
   }
   .sd-rail-home {
     display: grid;
@@ -165,7 +180,6 @@
   /* ---- Sidebar ---------------------------------------------------- */
 
   .sd-sidebar {
-    grid-area: side;
     z-index: 20;
     display: flex;
     flex-direction: column;
@@ -345,7 +359,6 @@
    * with a gap around them where the shell background (and the rain) shows.
    */
   .sd-shell-main {
-    grid-area: main;
     z-index: 1;
     display: flex;
     flex-direction: column;
@@ -507,7 +520,6 @@
   /* ---- Aside ------------------------------------------------------ */
 
   .sd-shell-aside {
-    grid-area: aside;
     z-index: 20;
     display: none;
     flex-direction: column;
@@ -547,7 +559,6 @@
     --shell-status: 0px;
   }
   .sd-shell-status {
-    grid-area: status;
     z-index: 40;
     min-height: 0;
   }
@@ -576,7 +587,6 @@
   }
 
   .sd-shell-topbar {
-    grid-area: top;
     display: none;
     align-items: center;
     gap: 4px;
@@ -691,7 +701,6 @@
    * On macOS the native traffic lights stay; the bar leaves room for them.
    */
   .sd-titlebar {
-    grid-area: title;
     position: relative;
     z-index: 60;
     display: flex;

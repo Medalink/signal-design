@@ -73,6 +73,13 @@
 - The status bar is optional; without one its row collapses.
 - The title bar and status bar use the rail background (`--sd-surface`).
 
+### Fixed
+- Shell region components (`sd-rail`, `sd-sidebar`, `sd-shell-main`,
+  `sd-shell-aside`, `sd-shell-status`, `sd-shell-topbar`, `sd-titlebar`) now
+  claim their named grid area only as direct children of `.sd-shell`. Used
+  standalone in an app's own layout, they no longer create implicit tracks in
+  the host grid.
+
 ## 0.0.0
 
 - Baseline: tokens, themes (ink, graphite, light, auto), every HTML element,
