@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Changed
+- Text is set in SF Pro (the system UI font; Segoe UI on Windows) in regular
+  and medium (500) in every theme. Source Code Pro stays bundled for code,
+  charts and the rain. Bold rules now use `--font-weight-semibold` instead of
+  a literal 600.
+
 ### Added
 - AI integration: `AGENTS.md` (the contract for agents), `llms.txt` and
   `llms-full.txt`, generated `ai/components.json` (every block's classes,

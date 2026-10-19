@@ -54,7 +54,8 @@ init(); // once, after the DOM exists; every listener is delegated, so later mar
 4. **Tokens, not values.** Colors come from `--sd-*` variables or the Tailwind
    utilities built on them (`bg-canvas`, `bg-surface`, `text-fg-muted`, `border-line`).
    Never hard-code a hex value; themes would break.
-5. **One font.** Source Code Pro 400 and 600 only (bundled). No other families or weights.
+5. **Two faces.** SF Pro (the system UI font; Segoe UI on Windows) in regular and medium for text,
+   Source Code Pro (bundled) for code. No other families or weights.
 6. **Motion on state change only.** 120–200ms transitions. Nothing loops for decoration.
 7. **Style state, not classes.** The JS writes ARIA and `data-*` (`aria-pressed`,
    `aria-expanded`, `aria-current`, `aria-selected`, `data-open`, `data-tone`);

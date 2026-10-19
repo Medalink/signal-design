@@ -10,7 +10,7 @@
  *      without a rebuild.
  *
  * Hard rules this file enforces: square corners (every radius is 0),
- * flat surfaces (no shadow scale), two weights (400, 600), one family.
+ * flat surfaces (no shadow scale), SF Pro text in 400 and 500, Source Code Pro for code.
  */
 
 @font-face {
@@ -58,13 +58,13 @@
   --tracking-*: initial;
   --animate-*: initial;
 
-  /* Type: one family for everything. */
-  --font-sans: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* Type: SF Pro (the system UI face) for text, Source Code Pro for code. */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", system-ui, sans-serif;
   --font-mono: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   --font-weight-normal: 400;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 600; /* only 400 and 600 ship; bold maps to 600, never a faux weight */
+  --font-weight-semibold: 500;
+  --font-weight-bold: 500; /* regular and medium only */
 
   /* Size scale (rem, so the user's font-size preference still applies). */
   --text-2xs: 0.875rem; /* 14px  labels, status lines (caps) */
@@ -249,9 +249,9 @@
 }
 
 [data-theme="graphite"] {
-  /* The lighter dark mode: IRIS's greys one step up from ink. The frame
-     behind the app is #0f0f0f, content sits on #1a1a1a cards, controls
-     and borders use #2e2e2e and #3d3d3d. Text keeps ink's two levels. */
+  /* The lighter dark mode: greys one step up from ink. The frame behind the
+     app is #0f0f0f, content sits on #1a1a1a cards, controls and borders use
+     #2e2e2e and #3d3d3d. */
   color-scheme: dark;
   --sd-canvas: #151515;
   --sd-surface: #1a1a1a;

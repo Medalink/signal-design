@@ -307,7 +307,7 @@
   }
   .sd-stat-box-sm .sd-stat-value {
     font-size: var(--text-base);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -435,7 +435,7 @@
   .sd-plot .sd-plot-readout b {
     margin-inline-start: 6px;
     color: var(--sd-chart-tooltip-title);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     font-variant-numeric: tabular-nums;
   }
   .sd-plot-inline {

@@ -203,7 +203,7 @@ try {
       return {
         themes: out,
         typography: {
-          family: { $type: "fontFamily", $value: getComputedStyle(document.body).fontFamily, $description: "Source Code Pro for all text, weights 400 and 600." },
+          family: { $type: "fontFamily", $value: getComputedStyle(document.body).fontFamily, $description: "SF Pro (system UI font) for text, regular 400 and medium 500; Source Code Pro for code." },
           size: sizes,
           tracking,
         },

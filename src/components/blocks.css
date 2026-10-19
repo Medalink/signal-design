@@ -74,7 +74,7 @@
   }
   .sd-item[data-unread] .sd-item-title {
     color: var(--sd-fg);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
   .sd-item[data-unread]::before {
     content: "";
@@ -151,7 +151,7 @@
     background: var(--tone, var(--sd-fg));
     color: var(--sd-canvas);
     font-size: 11px;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     font-variant-numeric: tabular-nums;
     line-height: 1;
   }
@@ -180,7 +180,7 @@
   }
   .sd-sidebar-link[data-unread] {
     color: var(--sd-fg);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
   .sd-sidebar-link[data-muted] {
     opacity: 0.5;
@@ -206,7 +206,7 @@
   }
   .sd-banner > b {
     color: var(--tone, var(--sd-fg));
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
   .sd-banner-actions {
     display: flex;

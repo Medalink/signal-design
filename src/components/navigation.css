@@ -410,7 +410,7 @@
     padding: 8px 14px;
     background: var(--sd-primary);
     color: var(--sd-on-primary);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     text-decoration: none;
     transform: translateY(calc(-100% - 16px));
   }

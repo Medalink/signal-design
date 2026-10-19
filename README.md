@@ -3,7 +3,7 @@
 A flat, square, mono design library for Tailwind CSS v4. It works in web apps,
 Tauri apps and plain HTML.
 
-- **One family, two weights.** Source Code Pro 400 and 600 for all text (bundled, OFL).
+- **Two faces, two weights.** SF Pro (system UI font, Segoe UI on Windows) in regular and medium for text; Source Code Pro (bundled, OFL) for code, charts and numbers.
 - **Square corners everywhere**, avatars and checkboxes included.
 - **Flat surfaces.** No glass, glow, shadow or gradient.
 - **Color is for important things:** risk, status, success and focus. Everything else, navigation included, is black, white and grey.

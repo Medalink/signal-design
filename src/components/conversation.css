@@ -48,7 +48,7 @@
   .sd-message-head > b {
     color: var(--sd-fg);
     font-size: var(--text-base);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
   .sd-message-head time {
     font-variant-numeric: tabular-nums;
@@ -66,7 +66,7 @@
     padding: 0 3px;
     background: var(--sd-raised);
     color: var(--sd-fg);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
   .sd-message-edited {
     color: var(--sd-fg-faint);
@@ -165,7 +165,7 @@
   .sd-reply > b {
     flex-shrink: 0;
     color: var(--sd-fg-muted);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
   .sd-reply > span {
     overflow: hidden;
@@ -184,7 +184,7 @@
   }
   .sd-event > b {
     color: var(--sd-fg-muted);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
   .sd-event > time {
     margin-inline-start: auto;

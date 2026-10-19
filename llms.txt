@@ -1,6 +1,6 @@
 # Signal design library (signal-design)
 
-> A flat, square, monochrome design library for Tailwind CSS v4 or plain CSS, with a small attribute-driven JS module and optional Chart.js charts. Install from GitHub: `pnpm add github:Medalink/signal-design`. Square corners, no shadows or gradients, color only for status, tokens only, Source Code Pro.
+> A flat, square, monochrome design library for Tailwind CSS v4 or plain CSS, with a small attribute-driven JS module and optional Chart.js charts. Install from GitHub: `pnpm add github:Medalink/signal-design`. Square corners, no shadows or gradients, color only for status, tokens only, SF Pro text with Source Code Pro for code.
 
 Start with AGENTS.md: it is the contract (install, hard rules, which parts to use, accessibility duties, how to check your work). Then copy real markup from ai/components.json instead of inventing it.
 

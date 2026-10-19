@@ -12,7 +12,7 @@
    "attributes": [],
    "usage": "",
    "js": "No JS needed: the HTML works with the CSS alone.",
-   "html": "<ol class=\"grid gap-y-2 gap-x-16 sm:grid-cols-2 text-fg-muted\" style=\"list-style: decimal-leading-zero; padding-inline-start: 2.2em\">\n  <li>Square corners everywhere, avatars and checkboxes included.</li>\n  <li>Flat surfaces. No glass, grain, glow or shadow. Fades are for borders and edges only.</li>\n  <li>Color is for important things: risk, status, success, focus. Everything else is black, white and grey, navigation included.</li>\n  <li>Motion on state change only: 120–200ms transitions and a one-pass hover shimmer. The rain moves only while work runs.</li>\n  <li>Minimal by default, detail on expand.</li>\n  <li>Source Code Pro for all text, weights 400 and 600.</li>\n</ol>"
+   "html": "<ol class=\"grid gap-y-2 gap-x-16 sm:grid-cols-2 text-fg-muted\" style=\"list-style: decimal-leading-zero; padding-inline-start: 2.2em\">\n  <li>Square corners everywhere, avatars and checkboxes included.</li>\n  <li>Flat surfaces. No glass, grain, glow or shadow. Fades are for borders and edges only.</li>\n  <li>Color is for important things: risk, status, success, focus. Everything else is black, white and grey, navigation included.</li>\n  <li>Motion on state change only: 120–200ms transitions and a one-pass hover shimmer. The rain moves only while work runs.</li>\n  <li>Minimal by default, detail on expand.</li>\n  <li>SF Pro for text in regular and medium; Source Code Pro for code.</li>\n</ol>"
   },
   {
    "id": "tokens-semantic-roles",
@@ -92,7 +92,7 @@
    "attributes": [],
    "usage": "",
    "js": "No JS needed: the HTML works with the CSS alone.",
-   "html": "<div class=\"grid gap-3\">\n  <p class=\"text-3xl tracking-display\">display −0.03em</p>\n  <p class=\"text-lg tracking-tight\">tight −0.025em for row titles</p>\n  <p class=\"text-2xs uppercase tracking-caps text-fg-subtle\">caps 0.14em · status line</p>\n  <p class=\"text-2xs uppercase tracking-widest text-fg-subtle\">widest 0.16em · labels</p>\n  <p class=\"text-xs uppercase tracking-wordmark font-semibold\">wordmark 0.28em</p>\n  <p class=\"text-lg\"><span class=\"font-normal\">400 regular</span> · <span class=\"font-semibold\">600 semibold</span></p>\n</div>"
+   "html": "<div class=\"grid gap-3\">\n  <p class=\"text-3xl tracking-display\">display −0.03em</p>\n  <p class=\"text-lg tracking-tight\">tight −0.025em for row titles</p>\n  <p class=\"text-2xs uppercase tracking-caps text-fg-subtle\">caps 0.14em · status line</p>\n  <p class=\"text-2xs uppercase tracking-widest text-fg-subtle\">widest 0.16em · labels</p>\n  <p class=\"text-xs uppercase tracking-wordmark font-semibold\">wordmark 0.28em</p>\n  <p class=\"text-lg\"><span class=\"font-normal\">400 regular</span> · <span class=\"font-semibold\">500 medium</span></p>\n</div>"
   },
   {
    "id": "tokens-spacing-layout-motion",

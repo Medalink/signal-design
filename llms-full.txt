@@ -54,7 +54,8 @@ init(); // once, after the DOM exists; every listener is delegated, so later mar
 4. **Tokens, not values.** Colors come from `--sd-*` variables or the Tailwind
    utilities built on them (`bg-canvas`, `bg-surface`, `text-fg-muted`, `border-line`).
    Never hard-code a hex value; themes would break.
-5. **One font.** Source Code Pro 400 and 600 only (bundled). No other families or weights.
+5. **Two faces.** SF Pro (the system UI font; Segoe UI on Windows) in regular and medium for text,
+   Source Code Pro (bundled) for code. No other families or weights.
 6. **Motion on state change only.** 120–200ms transitions. Nothing loops for decoration.
 7. **Style state, not classes.** The JS writes ARIA and `data-*` (`aria-pressed`,
    `aria-expanded`, `aria-current`, `aria-selected`, `data-open`, `data-tone`);
@@ -156,7 +157,7 @@ No JS needed: the HTML works with the CSS alone.
   <li>Color is for important things: risk, status, success, focus. Everything else is black, white and grey, navigation included.</li>
   <li>Motion on state change only: 120–200ms transitions and a one-pass hover shimmer. The rain moves only while work runs.</li>
   <li>Minimal by default, detail on expand.</li>
-  <li>Source Code Pro for all text, weights 400 and 600.</li>
+  <li>SF Pro for text in regular and medium; Source Code Pro for code.</li>
 </ol>
 ```
 
@@ -259,7 +260,7 @@ No JS needed: the HTML works with the CSS alone.
   <p class="text-2xs uppercase tracking-caps text-fg-subtle">caps 0.14em · status line</p>
   <p class="text-2xs uppercase tracking-widest text-fg-subtle">widest 0.16em · labels</p>
   <p class="text-xs uppercase tracking-wordmark font-semibold">wordmark 0.28em</p>
-  <p class="text-lg"><span class="font-normal">400 regular</span> · <span class="font-semibold">600 semibold</span></p>
+  <p class="text-lg"><span class="font-normal">400 regular</span> · <span class="font-semibold">500 medium</span></p>
 </div>
 ```
 

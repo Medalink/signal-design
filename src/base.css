@@ -152,11 +152,11 @@
     font-size: var(--text-lg);
     line-height: var(--text-lg--line-height);
     letter-spacing: var(--tracking-tight);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
   :is(h5) {
     font-size: var(--text-base);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
   :is(h6) {
     font-size: var(--text-2xs);
@@ -189,7 +189,7 @@
   }
 
   :is(strong, b) {
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
   :is(em, i, cite, dfn) {
     font-style: italic;
@@ -198,7 +198,7 @@
     color: var(--sd-fg-muted);
   }
   :is(dfn) {
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
   :is(small) {
     font-size: var(--text-sm);
@@ -736,7 +736,7 @@
     border-color: transparent;
     background: var(--sd-primary);
     color: var(--sd-on-primary);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
   :is(input[type="submit"]):is(:not([class])):is(:hover:not(:disabled)) {
     background: var(--sd-primary);
