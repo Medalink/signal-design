@@ -26,6 +26,7 @@
     },
     "./css": "./src/signal.css",
     "./dist/signal.css": "./dist/signal.css",
+    "./dist/signal.js": "./dist/signal.js",
     "./js": {
       "types": "./src/js/index.d.ts",
       "default": "./src/js/index.js"
@@ -47,8 +48,8 @@
     "*.css"
   ],
   "peerDependencies": {
-    "tailwindcss": "^4.3.0",
-    "chart.js": "^4.5.1"
+    "chart.js": "^4.5.1",
+    "tailwindcss": "^4.3.0"
   },
   "peerDependenciesMeta": {
     "tailwindcss": {
@@ -61,6 +62,7 @@
   "scripts": {
     "dev": "vite showcase",
     "build:css": "tailwindcss -i src/standalone.css -o dist/signal.css --minify && node -e \"require('fs').cpSync('src/fonts','dist/fonts',{recursive:true})\"",
+    "build:js": "node scripts/build-js.mjs",
     "build:showcase": "vite build showcase --outDir ../.showcase-dist --emptyOutDir",
     "build": "pnpm build:css && pnpm build:showcase",
     "prepack": "pnpm build:css",
@@ -71,6 +73,7 @@
     "@tailwindcss/cli": "4.3.3",
     "@tailwindcss/vite": "4.3.3",
     "chart.js": "4.5.1",
+    "esbuild": "^0.28.2",
     "playwright": "^1.64.1",
     "tailwindcss": "^4.3.3",
     "vite": "8.3.4"

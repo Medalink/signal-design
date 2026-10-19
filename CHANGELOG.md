@@ -3,6 +3,10 @@
 ## Unreleased
 
 ### Added
+- `dist/signal.js`, a prebuilt single-file ESM bundle of `signal-design/js`
+  (`pnpm build:js`), stamped with the package version — vendoring apps can
+  ship it next to `dist/signal.css` with no bundler of their own. Exported
+  as `signal-design/dist/signal.js`. The charts entry stays unbundled.
 - `sd-plot`, a chart an app draws itself as SVG (`sd-plot-inline` for
   sparklines), with tone-colored line, soft area, hairline grid, dots,
   crosshair, readout and empty note.
