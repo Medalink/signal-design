@@ -3,6 +3,9 @@
 ## Unreleased
 
 ### Added
+- Release workflow: pushing a `v*` tag builds dist and attaches a
+  `signal-design-dist.zip` (signal.css, fonts, and dist/signal.js when
+  present) to the GitHub Release.
 - `sd-plot`, a chart an app draws itself as SVG (`sd-plot-inline` for
   sparklines), with tone-colored line, soft area, hairline grid, dots,
   crosshair, readout and empty note.
