@@ -98,6 +98,23 @@ export function mountFeed(root: HTMLElement, options?: {
   align?: number;
 }): FeedMount;
 
+/* Living tables */
+export interface LivingTableState {
+  width: number;
+  collapsed: string[];
+}
+export interface LivingTableMount {
+  toggle(id: string, open?: boolean): void;
+  /** Width in CSS pixels. null restores fluid parent width. */
+  resize(value: { width: number | null }): void;
+  /** Reconcile rows, groups, and parent width after moving containers. Remount after changing the column schema. */
+  refresh(): void;
+  /** Restore authored markup. Later calls have no effect. */
+  dispose(): void;
+}
+/** Explicit mount, independent of init(). Duplicate live mounts throw. */
+export function mountLivingTable(root: HTMLElement): LivingTableMount;
+
 /* Theme */
 export const THEMES: readonly Theme[];
 export function setTheme(name: ThemeName, options?: { persist?: boolean }): void;
@@ -179,10 +196,12 @@ export function drawSpark(element: HTMLElement): void;
 /* Events the library dispatches */
 declare global {
   interface HTMLElementEventMap {
+    "sd:living-table": CustomEvent<LivingTableState>;
     "sd:countdown": CustomEvent<CountdownState>;
     "sd:feed": CustomEvent<FeedState>;
   }
   interface DocumentEventMap {
+    "sd:living-table": CustomEvent<LivingTableState>;
     "sd:countdown": CustomEvent<CountdownState>;
 
     "sd:feed": CustomEvent<FeedState>;

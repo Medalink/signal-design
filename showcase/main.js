@@ -2,6 +2,7 @@ import "./viewport.js";
 import { init, toast, getTheme, rain, selectSection, setScrollbars } from "../src/js/index.js";
 import { lazyChart } from "./lazy.js";
 import { mountCountdownDemo } from "./countdown.js";
+import { mountLivingTableDemo } from "./living-table.js";
 
 import { mountFeedDemo } from "./feed.js";
 
@@ -26,6 +27,7 @@ function dedent(html) {
 
 /** What init() wires in this block, so a copied snippet works. */
 function jsNote(html) {
+  if (/data-sd-living-table/.test(html)) return 'JS: Call <code>mountLivingTable(root)</code> from <code>signal-design/js</code>; <code>init()</code> does not mount it. Call <code>dispose()</code> on teardown.';
   if (/data-sd-countdown/.test(html)) return 'JS: Call <code>mountCountdown(root)</code> from <code>signal-design/js</code>, then <code>set({ remainingMs, running })</code>; <code>init()</code> does not mount it.';
 
   if (/data-sd-feed/.test(html)) return 'JS: Call <code>mountFeed(root, options)</code> and <code>hotkeys(map, options)</code> from <code>signal-design/js</code>; <code>init()</code> wires detail toggles.';
@@ -99,6 +101,7 @@ for (const panel of document.querySelectorAll(".sd-sidebar-panel[data-sections]"
 
 init();
 mountCountdownDemo();
+mountLivingTableDemo();
 
 mountFeedDemo();
 

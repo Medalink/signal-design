@@ -2,6 +2,14 @@
  "version": 1.1,
  "globalAttributes": [
   {
+   "name": "data-sd-living-table",
+   "description": "Grouped native table mounted explicitly with mountLivingTable(root), independent of init(). Metadata folds at container widths of 48rem and 32rem."
+  },
+  {
+   "name": "data-sd-living-resize",
+   "description": "Hidden until mountLivingTable runs. Width separator supports pointer capture, arrow keys, Shift arrows, Home, End, and Escape to cancel a drag."
+  },
+  {
    "name": "data-sd-countdown",
    "description": "Countdown root mounted explicitly with mountCountdown(root), then set({ remainingMs, running }). Not mounted by init()."
   },

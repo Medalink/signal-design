@@ -24,6 +24,8 @@ const pkg = JSON.parse(readFileSync(resolve(root, "package.json"), "utf8"));
 
 /** What each data-sd-* attribute does; the generator fails on an unknown one. */
 const ATTRIBUTES = {
+  "data-sd-living-table": "Grouped native table mounted explicitly with mountLivingTable(root), independent of init(). Metadata folds at container widths of 48rem and 32rem.",
+  "data-sd-living-resize": "Hidden until mountLivingTable runs. Width separator supports pointer capture, arrow keys, Shift arrows, Home, End, and Escape to cancel a drag.",
   "data-sd-countdown": "Countdown root mounted explicitly with mountCountdown(root), then set({ remainingMs, running }). Not mounted by init().",
   "data-sd-countdown-value": "Whole seconds remaining, written by mountCountdown. Progress uses an optional labeled role=progressbar child.",
 
