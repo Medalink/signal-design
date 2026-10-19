@@ -140,6 +140,8 @@
   .sd-rail-item > svg {
     width: 26px;
     height: 26px;
+    width: 2.5cap;
+    height: 2.5cap;
     flex-shrink: 0;
   }
   .sd-rail-item > span {
@@ -245,6 +247,8 @@
   .sd-sidebar-head > svg {
     width: 20px;
     height: 20px;
+    width: 1.5cap;
+    height: 1.5cap;
     flex-shrink: 0;
     color: var(--sd-fg-subtle);
   }
@@ -331,6 +335,8 @@
   .sd-sidebar-link > svg {
     width: 20px;
     height: 20px;
+    width: 1.5cap;
+    height: 1.5cap;
     flex-shrink: 0;
     color: var(--sd-fg-subtle);
   }
@@ -880,6 +886,8 @@
   .sd-shell-bar-title > svg {
     width: 18px;
     height: 18px;
+    width: 1.5cap;
+    height: 1.5cap;
     flex-shrink: 0;
     color: var(--sd-fg-subtle);
   }

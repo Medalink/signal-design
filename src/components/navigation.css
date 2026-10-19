@@ -157,6 +157,8 @@
   .sd-breadcrumb svg {
     width: 15px;
     height: 15px;
+    width: 1.5cap;
+    height: 1.5cap;
     flex-shrink: 0;
   }
 

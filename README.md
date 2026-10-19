@@ -179,6 +179,26 @@ theme, so any of them can carry body copy.
 
 Open the showcase to see each one with its class names.
 
+## Icons
+
+Icons are bare inline SVG, sized to the text. Signal draws them on a 24 grid
+with 4 units of inset, so the box is `1.5cap`: the drawn shape spans the cap
+height of the text beside it, and it follows the font at any size instead of
+being pinned to px. Buttons, rows, navigation, messages and the shell use the
+same rule.
+
+```html
+<span class="sd-icon-text">
+  <svg class="sd-icon" viewBox="0 0 24 24" aria-hidden="true">…</svg>
+  Save
+</span>
+```
+
+`cap` is in every current engine (Safari 17.2 was the last to add it); the CSS
+keeps an `em` fallback. Tailwind has no `cap` utility, but arbitrary values
+take any CSS unit: `size-[1.5cap]` on the icon and `items-baseline` on the
+label do the same. Icon-only controls still need an `aria-label`.
+
 ## Signal App Shell
 
 A full app frame: an optional title bar, a 96px icon rail, a 288px sidebar

@@ -120,6 +120,8 @@
   .sd-btn svg {
     width: 16px;
     height: 16px;
+    width: 1.5cap;
+    height: 1.5cap;
     max-width: none;
     flex-shrink: 0;
   }

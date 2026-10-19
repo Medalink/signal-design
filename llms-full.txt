@@ -80,6 +80,7 @@ by `title` or `classes`) rather than inventing markup.
 | App with navigation | Signal App Shell: `sd-shell` > `sd-rail`, `sd-sidebar`, `sd-shell-main` (`sd-shell-header` or `sd-shell-bar`, `sd-shell-content`, optional `sd-shell-dock`), `sd-shell-aside`, `sd-statusbar sd-shell-status` |
 | Desktop window chrome | `sd-titlebar` with `sd-window-controls` (`data-sd-window`) |
 | Buttons | `sd-btn` + `sd-btn-primary` (one per view) / `sd-btn-ghost` / `sd-btn-link`, sizes `-sm` `-lg` `-icon` `-block` |
+| Icons | `sd-icon-text` > `sd-icon` + text; icons are sized to the text's cap height (`1.5cap`) and scale with it |
 | Forms | `sd-field` > `sd-field-label` + control + `sd-field-hint`; inputs are styled unclassed |
 | Choices | `sd-seg` (segmented), `role="switch"` checkbox, `sd-combobox`, `sd-tags`, `sd-number` |
 | Overlays | `<dialog class="sd-dialog">` + `data-sd-open`; `popover` + `.sd-popover`; `data-sd-tip`; `toast()` |
@@ -627,6 +628,29 @@ JS: init() from signal-design/js wires data-sd-tip.
 <div class="grid gap-3 max-w-[22rem]">
   <button class="sd-btn sd-btn-primary sd-btn-block">Continue</button>
   <p class="text-sm sd-subtle">Press <span class="sd-kbd">Ctrl</span> <span class="sd-kbd">Enter</span> to send · <span class="sd-chip"><span class="sd-chip-key">a</span> approve</span></p>
+</div>
+```
+
+## Components / Icons
+
+sd-icon-text + sd-icon · icons size to 1.5cap (the 24 grid's 4-unit inset makes the drawn shape span the caps), so they follow the text at any size. Buttons, rows, navigation and the shell use the same rule. In Tailwind: size-[1.5cap] with items-baseline.
+
+Classes: sd-actions, sd-btn, sd-btn-lg, sd-btn-sm, sd-icon, sd-icon-text
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="grid gap-3">
+  <span class="sd-icon-text" style="font-size: var(--text-2xs)"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="4" width="11" height="11"></rect><path d="M15 15l5.5 5.5"></path></svg>Search at the 14px label size</span>
+  <span class="sd-icon-text"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="4" width="11" height="11"></rect><path d="M15 15l5.5 5.5"></path></svg>Search at the 16px body size</span>
+  <span class="sd-icon-text" style="font-size: var(--text-lg)"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="4" width="11" height="11"></rect><path d="M15 15l5.5 5.5"></path></svg>Search at the 19px row-title size</span>
+  <span class="sd-icon-text" style="font-size: var(--text-3xl)"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="4" width="11" height="11"></rect><path d="M15 15l5.5 5.5"></path></svg>Search at the 38px display size</span>
+</div>
+
+<div class="sd-actions">
+  <button class="sd-btn sd-btn-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="4" width="11" height="11"></rect><path d="M15 15l5.5 5.5"></path></svg>Small</button>
+  <button class="sd-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="4" width="11" height="11"></rect><path d="M15 15l5.5 5.5"></path></svg>Default</button>
+  <button class="sd-btn sd-btn-lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="4" width="11" height="11"></rect><path d="M15 15l5.5 5.5"></path></svg>Large</button>
 </div>
 ```
 

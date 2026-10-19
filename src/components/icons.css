@@ -1,0 +1,40 @@
+@layer components {
+  /*
+   * Icons. Signal draws its icon set on a 24 grid with 4 units of inset,
+   * so the drawn shape fills two thirds of the box. Sizing the box at
+   * 1.5cap makes the shape span the cap height of the text beside it, and
+   * the icon follows the font at any size instead of being pinned to px.
+   *
+   *   <span class="sd-icon-text">
+   *     <svg class="sd-icon" viewBox="0 0 24 24" aria-hidden="true">.</svg>
+   *     Save
+   *   </span>
+   *
+   * Tailwind has no cap utility, but arbitrary values take any CSS unit:
+   * class="inline-flex items-baseline gap-[0.5em]" on the label and
+   * class="size-[1.5cap]" on the icon.
+   *
+   * Browsers without cap (WebKit before 17.2) keep the em fallback, which
+   * is the same optical size at the default text scale.
+   */
+  .sd-icon {
+    display: inline-block;
+    inline-size: 1.05em;
+    block-size: 1.05em;
+    inline-size: 1.5cap;
+    block-size: 1.5cap;
+    max-inline-size: none;
+    flex: none;
+  }
+
+  /* An icon and a word on one baseline. The 4-unit bottom inset is taken
+     out of the baseline, so the drawn shape spans the caps, not the box. */
+  .sd-icon-text {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5em;
+  }
+  .sd-icon-text > .sd-icon {
+    translate: 0 0.25cap;
+  }
+}
