@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Fixed
+- Window-control icons no longer render as black squares: `.sd-window-controls svg`
+  now defaults to `fill: none; stroke: currentColor` (stroke-width 1.5), so the
+  documented minimal markup — bare `<path>`/`<rect>` with no attributes — is
+  visible on a dark title bar.
+
 ### Added
 - `dist/signal.js`, a prebuilt single-file ESM bundle of `signal-design/js`
   (`pnpm build:js`), stamped with the package version — vendoring apps can
