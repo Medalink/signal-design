@@ -36,6 +36,22 @@ export function hotkeys(
 ): () => void;
 export function keyOf(event: KeyboardEvent): string;
 
+/* Countdowns */
+export interface CountdownState {
+  state: "running" | "paused" | "complete";
+  remainingMs: number;
+  running: boolean;
+}
+export interface CountdownMount {
+  /** Supply authoritative time. Zero or negative time completes the display. */
+  set(value: { remainingMs: number; running: boolean }): void;
+  /** Stop future updates. Later set() calls have no effect. */
+  dispose(): void;
+}
+/** Explicit mount, independent of init(). Progress uses the largest remaining
+ * time since mount or the last completion as its duration. Remount for a new task. */
+export function mountCountdown(root: HTMLElement): CountdownMount;
+
 /* Theme */
 export const THEMES: readonly Theme[];
 export function setTheme(name: ThemeName, options?: { persist?: boolean }): void;
@@ -116,7 +132,11 @@ export function drawSpark(element: HTMLElement): void;
 
 /* Events the library dispatches */
 declare global {
+  interface HTMLElementEventMap {
+    "sd:countdown": CustomEvent<CountdownState>;
+  }
   interface DocumentEventMap {
+    "sd:countdown": CustomEvent<CountdownState>;
     "sd:theme": CustomEvent<{ theme: Theme }>;
     "sd:shell": CustomEvent<{ sidebar: "pinned" | "collapsed"; aside: "open" | "closed"; drawer: boolean; section?: string }>;
     "sd:window": CustomEvent<{ action: "minimize" | "maximize" | "close" }>;

@@ -7,6 +7,11 @@
   rejects a write: "Copy unavailable. Select the line instead." Successful
   copies still show "Copied". No insecure clipboard workaround is used.
 
+### Added
+- `mountCountdown(root)` presents authoritative remaining time, supports pause,
+  resume and resync, and reports running, paused and complete state changes.
+  It updates the existing progress component and accessible numeric values.
+
 ## 1.0.0 (2026-10-19)
 
 ### Added

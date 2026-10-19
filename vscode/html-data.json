@@ -2,6 +2,14 @@
  "version": 1.1,
  "globalAttributes": [
   {
+   "name": "data-sd-countdown",
+   "description": "Countdown root mounted explicitly with mountCountdown(root), then set({ remainingMs, running }). Not mounted by init()."
+  },
+  {
+   "name": "data-sd-countdown-value",
+   "description": "Whole seconds remaining, written by mountCountdown. Progress uses an optional labeled role=progressbar child."
+  },
+  {
    "name": "data-sd-open",
    "description": "Opens the <dialog> with this id as a modal."
   },

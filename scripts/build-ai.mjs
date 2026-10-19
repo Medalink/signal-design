@@ -24,6 +24,8 @@ const pkg = JSON.parse(readFileSync(resolve(root, "package.json"), "utf8"));
 
 /** What each data-sd-* attribute does; the generator fails on an unknown one. */
 const ATTRIBUTES = {
+  "data-sd-countdown": "Countdown root mounted explicitly with mountCountdown(root), then set({ remainingMs, running }). Not mounted by init().",
+  "data-sd-countdown-value": "Whole seconds remaining, written by mountCountdown. Progress uses an optional labeled role=progressbar child.",
   "data-sd-open": "Opens the <dialog> with this id as a modal.",
   "data-sd-close": "Closes the nearest dialog; a value becomes its returnValue.",
   "data-sd-static": "On a dialog: a backdrop click does not close it.",
