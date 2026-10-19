@@ -128,7 +128,6 @@ hotkeys({
   a: () => approve(focus),
   enter: () => toggleDetail(focus),
   s: () => shell.querySelector('[data-sd-shell="aside"]').click(),
-  "shift+t": () => document.querySelector("[data-sd-theme-cycle]").click(),
   "mod+k": () => openDialog("palette"),
 });
 

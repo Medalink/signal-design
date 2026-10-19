@@ -6,6 +6,9 @@
 - Release workflow: pushing a `v*` tag builds dist and attaches a
   `signal-design-dist.zip` (signal.css, fonts, and dist/signal.js when
   present) to the GitHub Release.
+- Chart types on the same tokens: `line`, `area`, `step`, `bar` (grouped or
+  stacked), `hbar`, `histogram`, `scatter`, plus CSS-only `sd-heatmap`,
+  `sd-waffle`, `sd-uptime` and `sd-meter`; a gallery on `charts.html`.
 - `sd-plot`, a chart an app draws itself as SVG (`sd-plot-inline` for
   sparklines), with tone-colored line, soft area, hairline grid, dots,
   crosshair, readout and empty note.
@@ -39,12 +42,46 @@
 - Redesigned landing page.
 
 ### Changed
+- Scrolling is much cheaper. The shell's content and sidebar scrollers get
+  their own GPU layer (`will-change: scroll-position`); auto-hiding
+  scrollbars restyle only the scroller, not its subtree, and touch the DOM
+  only when the state changes; charts no longer redraw every frame after a
+  live update (the effects layer rings the new point). The components page
+  updates its crumbs and sidebar once scrolling settles.
+- Shift+T steps the theme on every page (`init({ themeKey })`, `cycleTheme()`).
+- The components page runs in the Signal App Shell: rail sections, a
+  sidebar listing every block, crumbs that follow the scroll, a display
+  panel (chart colors, scrollbars, code views, rain) and a status bar.
+  Every block flips between Preview and Code in place, with copyable HTML
+  and a note of the JS it needs. It now shows every component used on the
+  example pages, plus a Charts section.
+- `.sd-shell` uses `overflow: clip`, so anchor jumps can't slide the frame.
+- Dropdown lists in Chromium use Signal's overlay and a white (or black)
+  selected row instead of the OS blue (`appearance: base-select`).
+- Empty states get a sparkling center ornament; `data-sd-ornaments="center"`.
+- File cards wrap their upload progress under the name.
+- Corner backgrounds are now called ornaments: `data-sd-ornaments`,
+  `data-sd-ornaments-size`, `data-sd-ornaments-still`, `paintOrnaments`,
+  `ornamentShapes`, `ORNAMENT_STYLES` (were `data-sd-corners`, `paintCorners`,
+  `cornerShapes`, `CORNER_STYLES`).
+- Ornaments sparkle slowly (off for reduced motion;
+  `data-sd-ornaments-still` opts out).
+- Graphite is now the lighter dark mode: `#0f0f0f` frame, `#151515` page,
+  `#1a1a1a` panels, `#242424` raised, `#2e2e2e`/`#3d3d3d` lines, and ink's
+  two-level text (`#f5f5f5`, `#a3a3a3`).
 - Ink: crisper two-level text contrast. Text `#fafafa`, secondary text
   `#a3a3a3` (was `#d4d4d4`), subtle `#8a8a8a`, solid `#262626` lines.
 - Rain pauses while its canvas is off screen.
 - The hover shimmer keeps badge counts readable.
 - The status bar is optional; without one its row collapses.
 - The title bar and status bar use the rail background (`--sd-surface`).
+
+### Fixed
+- Shell region components (`sd-rail`, `sd-sidebar`, `sd-shell-main`,
+  `sd-shell-aside`, `sd-shell-status`, `sd-shell-topbar`, `sd-titlebar`) now
+  claim their named grid area only as direct children of `.sd-shell`. Used
+  standalone in an app's own layout, they no longer create implicit tracks in
+  the host grid.
 
 ## 0.0.0
 
