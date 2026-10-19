@@ -331,6 +331,30 @@ const off = hotkeys({ j: next, k: prev, "shift+n": newest, "mod+k": search });
 TypeScript types ship in `src/js/index.d.ts`, including the `sd:*` events on
 `document`.
 
+### State contract
+
+The JS only writes attributes and `data-*`; the CSS only keys on those (never
+a JS-added class). So the same state can be driven from code without the JS —
+tests, app bindings, a verification harness — and anything that reads state
+gets the same answer:
+
+| State | Where it applies |
+|---|---|
+| `data-tone="success\|pending\|danger\|accent\|warning\|extra\|neutral"` | Tones a subtree: cards, chips, items, stat boxes, checks, progress. Resolves to `--tone`. |
+| `aria-selected="true"` | Selection in `sd-tabs`, `sd-item`, `sd-table` rows, `sd-seg`, `sd-grid-picker`, `sd-menu`. |
+| `aria-pressed="true"` | Toggle state in `sd-chip`, `sd-seg`, `sd-poll-option`, `sd-reactions`, `sd-icon-btn`. |
+| `aria-expanded="true"` | `sd-icon-btn` (popover/menu triggers), `sd-rail-item`; `aria-controls` points at the panel. |
+| `aria-current` (any value but `"false"`) | Current location in `sd-nav`, `sd-sidenav`, `sd-sidebar-link`, `sd-breadcrumb`, `sd-pagination`, `sd-rail-item`, `sd-message`; `sd-steps` uses `aria-current="step"`. |
+| `aria-sort="ascending\|descending"` | Sort direction of a `th[data-sort]` in `sd-table`. |
+| `data-open`, `data-peek`, `data-sidebar`, `data-aside`, `data-drawer` | `sd-shell` layout state; toggled by `setSidebar`/`setAside`/`setDrawer` and read back from `dataset`. |
+| `--value` on `.sd-progress` | Progress, unitless `0`–`100`. |
+| `data-theme` (element or `<html>`) | Themes a subtree; `setTheme` also remembers it in `localStorage`. |
+| `data-sd-scrolling` on `<html>` | Present while the page is scrolling; drives the auto-hiding scrollbars. |
+
+Events bubble on `document`: `sd:tab`, `sd:theme`, `sd:shell`, `sd:window`,
+`sd:contextmenu`, `sd:reaction` — with `detail` payloads typed in
+`src/js/index.d.ts`.
+
 ## Charts
 
 Two ways to chart, with one set of colors:
