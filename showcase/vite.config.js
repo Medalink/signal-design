@@ -2,7 +2,11 @@ import { resolve } from "node:path";
 import { defineConfig } from "vite";
 import tailwindcss from "@tailwindcss/vite";
 
+// SHOWCASE_BASE rewrites asset URLs for hosting under a subpath, e.g.
+// SHOWCASE_BASE=/signal-design/ for the GitHub Pages deploy. Local builds
+// default to "/".
 export default defineConfig({
+  base: process.env.SHOWCASE_BASE || "/",
   plugins: [tailwindcss()],
   server: { port: 5178, strictPort: true },
   build: {
