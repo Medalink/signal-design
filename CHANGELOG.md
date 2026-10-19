@@ -3,6 +3,9 @@
 ## Unreleased
 
 ### Added
+- Release workflow: pushing a `v*` tag builds dist and attaches a
+  `signal-design-dist.zip` (signal.css, fonts, and dist/signal.js when
+  present) to the GitHub Release.
 - Chart types on the same tokens: `line`, `area`, `step`, `bar` (grouped or
   stacked), `hbar`, `histogram`, `scatter`, plus CSS-only `sd-heatmap`,
   `sd-waffle`, `sd-uptime` and `sd-meter`; a gallery on `charts.html`.

@@ -1,0 +1,34 @@
+name: release
+
+# Builds dist/ and attaches it to a GitHub Release when a version tag is
+# pushed. The zip mirrors dist/ (signal.css, signal.js when present,
+# fonts/), so vendoring is a matter of unzipping into the app.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build:css
+      - run: pnpm run build:js --if-present
+      - name: Zip dist
+        run: cd dist && zip -r ../signal-design-dist.zip . && cd ..
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: signal-design-dist.zip
+          fail_on_unmatched_files: true
