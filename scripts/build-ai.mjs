@@ -8,7 +8,7 @@
  *   vscode/css-data.json    --sd-* custom property completions with values
  *
  *   node scripts/build-ai.mjs           write the files
- *   node scripts/build-ai.mjs --check   fail if they are out of date (CI)
+ *   node scripts/build-ai.mjs --check   fail if they are out of date
  *
  * Starts its own Vite server for the showcase, so it needs no dev server.
  */

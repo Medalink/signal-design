@@ -23,8 +23,8 @@ Tailwind projects import the source and need no build. `dist/` (plain CSS and
 the JS bundle) is built by the package's `prepare` script on a git install;
 if `node_modules/signal-design/dist/` is missing, allow the script and
 reinstall (npm: `npm approve-scripts signal-design`; pnpm: add `signal-design`
-to `onlyBuiltDependencies`). Each GitHub Release also carries
-`signal-design-dist.zip`.
+to `onlyBuiltDependencies`). Releases up to v1.1.0 also carry
+`signal-design-dist.zip`; later releases are tags only.
 
 ## Use it with AI tools
 
@@ -69,7 +69,8 @@ overflow at 1280/768/375px, fonts that did not load, console errors and (with
 ```
 
 `pnpm build:ai` regenerates the `ai/`, `vscode/` and `llms-full.txt` files from
-the components page; CI fails when they are out of date.
+the components page; `node scripts/build-ai.mjs --check` fails when they are
+out of date. Run it before you push.
 
 ## Use it with Tailwind v4
 
@@ -656,7 +657,7 @@ shows copyable HTML, the JS it needs, and a JS snippet where one applies), an ap
 ## Accessibility
 
 Every showcase page passes axe-core's WCAG 2.2 A/AA and best-practice rules in
-ink, graphite and paper, at desktop and phone width (`pnpm a11y`, also in CI).
+ink, graphite and paper, at desktop and phone width (`pnpm a11y`; run it before you push).
 What the library does for you:
 
 - Text colors meet 4.5:1 on every surface of each theme, hover rows included;
