@@ -211,6 +211,7 @@
   /* File card: an attachment with its type, name, size and an action. */
   .sd-file {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 12px;
     max-width: 26rem;
@@ -246,6 +247,7 @@
     color: var(--sd-fg-subtle);
     font-size: var(--text-sm);
   }
+  /* An upload's progress runs full width under the name. */
   .sd-file > .sd-progress {
     flex-basis: 100%;
   }

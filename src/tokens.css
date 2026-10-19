@@ -248,19 +248,22 @@
 }
 
 [data-theme="graphite"] {
+  /* The lighter dark mode: IRIS's greys one step up from ink. The frame
+     behind the app is #0f0f0f, content sits on #1a1a1a cards, controls
+     and borders use #2e2e2e and #3d3d3d. Text keeps ink's two levels. */
   color-scheme: dark;
-  --sd-canvas: var(--color-graphite-900);
-  --sd-surface: var(--color-graphite-850); /* panels a step above the page */
-  --sd-raised: var(--color-graphite-800);
-  --sd-overlay: var(--color-graphite-800);
-  --sd-line: var(--color-graphite-700);
-  --sd-line-strong: var(--color-graphite-600);
-  --sd-fg: var(--color-graphite-200);
-  --sd-fg-muted: #c4c4c4;
-  --sd-fg-subtle: var(--color-graphite-300);
-  --sd-fg-faint: var(--color-graphite-500);
-  --sd-primary: var(--color-graphite-200);
-  --sd-on-primary: var(--color-graphite-900);
+  --sd-canvas: #151515;
+  --sd-surface: #1a1a1a;
+  --sd-raised: #242424;
+  --sd-overlay: #242424;
+  --sd-line: #2e2e2e;
+  --sd-line-strong: #3d3d3d;
+  --sd-fg: #f5f5f5;
+  --sd-fg-muted: #a3a3a3;
+  --sd-fg-subtle: #8a8a8a;
+  --sd-fg-faint: #787878;
+  --sd-primary: #f5f5f5;
+  --sd-on-primary: #0f0f0f;
   --sd-accent: var(--color-cyan);
   --sd-success: var(--color-green);
   --sd-danger: var(--color-pink);
@@ -268,7 +271,7 @@
   --sd-pending: var(--color-amber);
   --sd-extra: var(--color-violet);
   --sd-backdrop: rgb(0 0 0 / 0.6);
-  --sd-shell-bg: var(--color-graphite-900);
+  --sd-shell-bg: #0f0f0f;
   --sd-container: var(--sd-surface);
   --sd-flash: #ffffff;
   --sd-icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%230F0F0F' stroke-width='2' stroke-linecap='square'/%3E%3C/svg%3E");
@@ -289,7 +292,7 @@
   --sd-fg: var(--color-ink-1000);
   --sd-fg-muted: #2e2e33;
   --sd-fg-subtle: #5c5c66;
-  --sd-fg-faint: #8e8e96;
+  --sd-fg-faint: #74747c; /* 4.5:1 on the light surface */
   --sd-primary: var(--color-ink-1000);
   --sd-on-primary: #ffffff;
   --sd-accent: var(--color-cyan-deep);
@@ -322,7 +325,7 @@
     --sd-fg: var(--color-ink-1000);
     --sd-fg-muted: #2e2e33;
     --sd-fg-subtle: #5c5c66;
-    --sd-fg-faint: #8e8e96;
+    --sd-fg-faint: #74747c; /* 4.5:1 on the light surface */
     --sd-primary: var(--color-ink-1000);
     --sd-on-primary: #ffffff;
     --sd-accent: var(--color-cyan-deep);
