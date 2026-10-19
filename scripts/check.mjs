@@ -42,6 +42,47 @@ function fail(where, msg) {
 // The hard-rule sweep is shared with the `signal-design check` CLI.
 const sweep = rulesSweep;
 
+async function checkCopy(page, name) {
+  await page.goto(base);
+  const result = await page.evaluate(async () => {
+    const errors = [];
+    let assertions = 0;
+    const assert = (ok, message) => { assertions++; if (!ok) errors.push(message); };
+    const original = Object.getOwnPropertyDescriptor(navigator, "clipboard");
+    const root = document.createElement("div");
+    root.innerHTML = '<pre id="copy-behavior-line" tabindex="0"><code>npm test</code></pre><button data-sd-copy="#copy-behavior-line">Copy</button>';
+    document.body.append(root);
+    const written = [];
+    const profiles = [
+      { name: "absent", clipboard: undefined, message: "Copy unavailable. Select the line instead.", tone: "danger" },
+      { name: "rejected", clipboard: { writeText: () => Promise.reject(new DOMException("Denied", "NotAllowedError")) }, message: "Copy unavailable. Select the line instead.", tone: "danger" },
+      { name: "success", clipboard: { writeText: async (text) => { written.push(text); } }, message: "Copied", tone: "success" },
+    ];
+    try {
+      for (const profile of profiles) {
+        document.querySelector(".sd-toaster")?.replaceChildren();
+        Object.defineProperty(navigator, "clipboard", { configurable: true, value: profile.clipboard });
+        root.querySelector("button").click();
+        await Promise.resolve();
+        await Promise.resolve();
+        const toasts = [...document.querySelectorAll(".sd-toaster .sd-toast")];
+        assert(toasts.length === 1, `${profile.name}: expected one copy toast, got ${toasts.length}`);
+        assert(toasts[0]?.textContent === profile.message, `${profile.name}: copy feedback text ${toasts[0]?.textContent}`);
+        assert(toasts[0]?.dataset.tone === profile.tone, `${profile.name}: copy feedback tone ${toasts[0]?.dataset.tone}`);
+      }
+      assert(written.join("|") === "npm test", `success: clipboard payload ${written.join("|")}`);
+    } finally {
+      if (original) Object.defineProperty(navigator, "clipboard", original);
+      else delete navigator.clipboard;
+      root.remove();
+      document.querySelector(".sd-toaster")?.replaceChildren();
+    }
+    return { errors, assertions };
+  });
+  for (const error of result.errors) fail(`${name} copy`, error);
+  if (!result.errors.length) console.log(`ok   ${name} copy ${result.assertions} behavioral assertions`);
+}
+
 for (const [name, engine] of Object.entries(engines)) {
   const browser = await engine.launch();
   for (const [pageName, url] of Object.entries(pages)) {
@@ -392,6 +433,9 @@ for (const [name, engine] of Object.entries(engines)) {
     }
   }
   }
+  const behaviorPage = await browser.newPage();
+  await checkCopy(behaviorPage, name);
+  await behaviorPage.close();
   await browser.close();
 }
 
