@@ -611,8 +611,24 @@
     min-height: 44px;
   }
 
+  /* Below 75rem the right panel floats over the content instead of taking a
+     column, so the page keeps its width; a click outside or Esc closes it. */
+  @media (min-width: 48rem) and (max-width: 74.99rem) {
+    .sd-shell[data-aside="open"] .sd-shell-aside {
+      position: absolute;
+      grid-area: 3 / 1 / 4 / -1;
+      inset: 0 0 0 auto;
+      z-index: 50;
+      width: min(var(--shell-aside), calc(100% - var(--shell-rail) - 40px));
+      animation: sd-aside-in 200ms var(--ease-out);
+    }
+    .sd-shell[data-aside="open"] .sd-shell-scrim {
+      display: block;
+    }
+  }
+
   /* Phones and narrow windows: top bar, and rail + sidebar as a drawer. */
-  @media (max-width: 48rem) {
+  @media (max-width: 47.99rem) {
     .sd-shell,
     .sd-shell[data-sidebar="collapsed"] {
       grid-template-columns: minmax(0, 1fr);
@@ -629,6 +645,14 @@
     .sd-shell .sd-sidebar,
     .sd-shell-aside {
       display: none;
+    }
+    /* Overlays sit in the rows under the title bar (grid rows 2 and 3), so a
+       desktop window bar stays visible above them. */
+    .sd-shell[data-drawer] .sd-rail,
+    .sd-shell[data-drawer] .sd-sidebar,
+    .sd-shell[data-aside="open"] .sd-shell-aside,
+    .sd-shell-scrim {
+      grid-area: 2 / 1 / 4 / -1;
     }
     .sd-shell[data-drawer] .sd-rail {
       position: absolute;
@@ -648,10 +672,14 @@
     }
     .sd-shell[data-aside="open"] .sd-shell-aside {
       position: absolute;
-      inset: 0 0 var(--shell-status) auto;
+      inset: 0 0 0 auto;
       z-index: 50;
       display: flex;
-      width: min(var(--shell-aside), 100vw);
+      width: min(var(--shell-aside), calc(100vw - 40px));
+      animation: sd-aside-in 200ms var(--ease-out);
+    }
+    .sd-shell[data-aside="open"] .sd-shell-scrim {
+      display: block;
     }
     .sd-shell {
       --shell-gap: 8px;
@@ -664,16 +692,19 @@
       display: none;
     }
   }
+  @keyframes sd-aside-in {
+    from { transform: translateX(24px); opacity: 0; }
+  }
   @keyframes sd-drawer-in {
     from { transform: translateX(-24px); opacity: 0; }
     to { transform: none; opacity: 1; }
   }
 
   /* Hide-on-phone / phone-only helpers for shell chrome. */
-  @media (max-width: 48rem) {
+  @media (max-width: 47.99rem) {
     .sd-desktop-only { display: none !important; }
   }
-  @media (min-width: 48.0625rem) {
+  @media (min-width: 48rem) {
     .sd-phone-only { display: none !important; }
   }
 
@@ -758,7 +789,7 @@
     display: flex;
     height: 100%;
   }
-  .sd-window-controls > button {
+  .sd-window-controls > :is(button, span) {
     display: grid;
     place-items: center;
     width: 46px;

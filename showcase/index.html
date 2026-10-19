@@ -11,6 +11,7 @@
   <script type="module" src="./main.js"></script>
 </head>
 <body>
+<a class="sd-skip" href="#top">Skip to content</a>
 
 <!-- Icons: square strokes only. -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -99,7 +100,7 @@
         </ol>
       </div>
       <div class="sd-shell-header-end">
-        <div class="sd-seg sd-seg-inline sd-seg-sm sd-desktop-only" aria-label="Theme">
+        <div class="sd-seg sd-seg-inline sd-seg-sm hdr-theme" aria-label="Theme">
           <button type="button" data-sd-theme="ink">ink</button>
           <button type="button" data-sd-theme="graphite">graphite</button>
           <button type="button" data-sd-theme="light">light</button>
@@ -109,7 +110,7 @@
       </div>
     </div>
 
-    <div class="sd-shell-content" data-sd-ornaments data-sd-edges id="top">
+    <div class="sd-shell-content" data-sd-ornaments data-sd-edges id="top" tabindex="-1">
     <div class="demo-wrap">
 
   <header class="sd-header">
@@ -731,7 +732,7 @@
         </div>
         <div class="grid gap-2">
           <span class="sd-label">Progress 64%</span>
-          <div class="sd-progress" style="--value: 64" role="progressbar" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100"></div>
+          <div class="sd-progress" style="--value: 64" role="progressbar" aria-label="Upload progress" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
         <div class="sd-skeleton-text" aria-hidden="true"><span class="sd-skeleton"></span><span class="sd-skeleton"></span><span class="sd-skeleton"></span></div>
         <ul class="sd-checks"><li data-tone="success">checks passed · 214 tests</li><li data-tone="pending">monitoring for 7 days</li><li data-tone="danger">budget over by 31%</li><li>no reviewer yet</li></ul>
@@ -1192,12 +1193,14 @@
       <dialog class="sd-dialog" id="demo-shortcuts" data-sd-shortcuts aria-labelledby="demo-shortcuts-h">
         <header class="sd-dialog-head"><span id="demo-shortcuts-h">Keyboard shortcuts</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">×</button></header>
         <div class="sd-dialog-body">
+          <p class="sd-shortcuts-group">Navigation</p>
           <dl class="sd-shortcuts">
-            <div class="sd-shortcuts-group">Navigation</div>
             <dt><kbd>Ctrl</kbd><kbd>K</kbd></dt><dd>Search</dd>
             <dt><kbd>j</kbd> <kbd>k</kbd></dt><dd>Next, previous item</dd>
             <dt><kbd>[</kbd></dt><dd>Toggle sidebar</dd>
-            <div class="sd-shortcuts-group">Actions</div>
+          </dl>
+          <p class="sd-shortcuts-group">Actions</p>
+          <dl class="sd-shortcuts">
             <dt><kbd>a</kbd></dt><dd>Approve</dd>
             <dt><kbd>?</kbd></dt><dd>This list</dd>
           </dl>
@@ -1384,7 +1387,7 @@ createChart(canvas, {
       <h3 class="sd-label">Title bar and header bar</h3>
       <p class="demo-usage">For frameless desktop apps: a draggable title bar with window buttons (Tauri's window API when present, an <code>sd:window</code> event otherwise; macOS keeps its native buttons). Below it, the solid header bar, the alternative to the floating crumb bars.</p>
       <div class="border border-line">
-        <header class="sd-titlebar" data-tauri-drag-region style="position:relative">
+        <div class="sd-titlebar" data-tauri-drag-region style="position:relative" role="region" aria-label="Window">
           <div class="sd-titlebar-start"><span class="sd-subtle text-sm">File</span><span class="sd-subtle text-sm">View</span></div>
           <span class="sd-titlebar-brand"><b>ACME</b></span>
           <div class="sd-titlebar-end">
@@ -1396,7 +1399,7 @@ createChart(canvas, {
               <button data-sd-window="close" aria-label="Close"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9"/></svg></button>
             </div>
           </div>
-        </header>
+        </div>
         <div class="p-4" style="background: var(--sd-shell-bg)">
           <header class="sd-shell-bar" data-sd-edges>
             <div class="sd-shell-bar-title"><b># general</b><span>Team chat for Design</span></div>

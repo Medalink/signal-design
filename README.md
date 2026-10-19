@@ -549,6 +549,42 @@ shows copyable HTML, the JS it needs, and a JS snippet where one applies), an ap
 (`chat.html`), a multi-step form (`form.html`), a landing page
 (`landing.html`) and live charts (`charts.html`).
 
+## Accessibility
+
+Every showcase page passes axe-core's WCAG 2.2 A/AA and best-practice rules in
+ink, graphite and light, at desktop and phone width (`pnpm a11y`, also in CI).
+What the library does for you:
+
+- Text colors meet 4.5:1 on every surface of each theme, hover rows included;
+  muted rows and done rows step back by color, never by opacity.
+- Avatars pick dark or white ink for their tone.
+- `init()` gives scroll boxes with no focusable content (wide tables, code,
+  diffs, the phone status bar) a tab stop while they scroll.
+- `.sd-skip` is a skip link that shows when focused:
+  `<a class="sd-skip" href="#main">Skip to content</a>` as the first element.
+- Motion (rain, sparkle, chart effects) stops under `prefers-reduced-motion`.
+
+What stays yours: names for icon-only buttons (`aria-label`), one `<h1>` per
+page, and a `role="region"` with a label on a desktop title bar.
+
+## Responsive
+
+The shell has four sizes:
+
+| Width | Layout |
+|---|---|
+| under 768px | Top bar; rail and sidebar open as a drawer; the right panel is an overlay. |
+| 768–1023px | Rail and content; the sidebar slides in over the page when a section is picked. |
+| 1024–1199px | Rail, sidebar and content; the right panel floats over the content. |
+| 1200px and up | Everything side by side. |
+
+Overlays sit under a desktop title bar, close on a click outside or Esc, and
+the right panel starts closed wherever it would cover the page.
+`sd-desktop-only` and `sd-phone-only` split at 768px. Every showcase page has a
+**Width** button (bottom left) that opens the same page at 1440, 1024, 768, 390
+or 360px, and `scripts/check.mjs` checks for horizontal overflow at 1280, 1024,
+768 and 375px.
+
 ## Develop
 
 ```bash
@@ -557,6 +593,7 @@ pnpm dev          # showcase at http://localhost:5178
 pnpm build:css    # dist/signal.css + dist/fonts
 node scripts/check.mjs http://localhost:5178/
 pnpm perf          # load, idle, scroll and theme cost per page, CPU slowed 4x
+pnpm a11y          # axe-core audit of every page, theme and width
 ```
 
 `scripts/check.mjs` loads the showcase in Chromium and WebKit, in every theme, at

@@ -24,5 +24,6 @@ jobs:
           pnpm dev --port 5178 --strictPort > vite.log 2>&1 &
           npx -y wait-on@8.0.3 -t 60000 http-get://localhost:5178/
       - run: node scripts/check.mjs http://localhost:5178/
+      - run: node scripts/a11y.mjs http://localhost:5178/
       - if: failure()
         run: cat vite.log

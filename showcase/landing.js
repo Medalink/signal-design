@@ -1,3 +1,4 @@
+import "./viewport.js";
 import { init, rain } from "../src/js/index.js";
 
 init();

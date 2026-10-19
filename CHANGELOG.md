@@ -49,6 +49,19 @@
 - Redesigned landing page.
 
 ### Changed
+- Accessibility: every showcase page passes axe-core WCAG 2.2 AA in all
+  themes at desktop and phone width (`pnpm a11y`, in CI). Faint text is now
+  4.5:1 on every surface (ink `#828282`, graphite `#8b8b8b`, light `#6a6a72`;
+  subtle greys step up with it); graphite's danger is `#ff4775`; muted rows
+  use color, not opacity; avatars pick dark or white ink (`--sd-on-tone`);
+  shortcut groups are headings above separate lists (`p.sd-shortcuts-group`).
+  New: `.sd-skip` skip link, and `init()` gives scrolling boxes a tab stop.
+- Responsive shell: tablets (768–1023px) keep the rail and peek the sidebar;
+  below 1200px the right panel floats over the content and starts closed;
+  phone overlays sit under the title bar and close on Esc or a click outside.
+  Phones are now under 768px. The composer hint hides on phones.
+- Showcase: a Width button on every page previews it at 1440, 1024, 768, 390
+  and 360px; checks cover 1024 and 768px too.
 - Performance pass (Chrome, CPU slowed 4x, `pnpm perf`). Idle main-thread
   work per 3 s: components 915 → ~400–700 ms, shell 446 → 131, chat 442 →
   157, charts 1180 → 121–212.

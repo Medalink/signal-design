@@ -322,6 +322,12 @@
     color: var(--sd-fg-faint);
     font-size: var(--text-sm);
   }
+  /* Phones have no Shift+Enter to explain; the hint only crowds the composer. */
+  @media (max-width: 40rem) {
+    .sd-composer-hint {
+      display: none;
+    }
+  }
   /* Suggestions (mentions, commands) float above the composer. */
   .sd-suggest {
     position: absolute;

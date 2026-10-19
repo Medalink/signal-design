@@ -11,6 +11,7 @@
   <script type="module" src="./shell.js"></script>
 </head>
 <body>
+<a class="sd-skip" href="#main">Skip to content</a>
 
 <!-- Icons: square strokes only, no circles. -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -166,7 +167,7 @@
   </aside>
 
   <!-- Main -->
-  <main class="sd-shell-main" id="main">
+  <main class="sd-shell-main" id="main" tabindex="-1">
     <div class="sd-shell-header">
       <div class="sd-shell-crumbs">
         <button class="sd-btn sd-btn-icon sd-btn-sm sd-shell-pin" data-sd-shell="sidebar" data-sd-key="[" data-sd-tip="Show sidebar ([)" data-sd-tip-side="bottom" aria-label="Pin sidebar open"><svg><use href="#i-collapse"/></svg></button>
@@ -177,7 +178,7 @@
         </ol>
       </div>
       <div class="sd-shell-header-end">
-        <button class="sd-btn sd-btn-sm" data-run-batch data-sd-tip="Animates the rain while it runs" data-sd-tip-side="bottom"><svg><use href="#i-play"/></svg><span class="sd-desktop-only">Run checks</span></button>
+        <button class="sd-btn sd-btn-sm" data-run-batch aria-label="Run checks" data-sd-tip="Animates the rain while it runs" data-sd-tip-side="bottom"><svg><use href="#i-play"/></svg><span class="sd-desktop-only">Run checks</span></button>
         <button class="sd-btn sd-btn-sm" data-sd-shell="aside" data-sd-key="]" aria-controls="detail-panel"><svg><use href="#i-panel"/></svg><span class="sd-desktop-only">Details</span> <kbd>]</kbd></button>
       </div>
     </div>

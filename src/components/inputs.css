@@ -161,13 +161,17 @@
   /*
    * Shortcuts: a two-column list of keys and what they do, usually in a
    * dialog opened with "?".
+   *   <p class="sd-shortcuts-group">Move</p>
    *   <dl class="sd-shortcuts"><dt><kbd>j</kbd></dt><dd>Next item</dd>…</dl>
    */
   .sd-shortcuts {
     display: grid;
-    grid-template-columns: max-content 1fr;
+    grid-template-columns: minmax(5.5rem, max-content) 1fr;
     gap: 10px 20px;
     margin: 0;
+  }
+  .sd-shortcuts + .sd-shortcuts-group {
+    margin-block-start: 18px;
   }
   .sd-shortcuts > dt {
     display: flex;
@@ -182,9 +186,9 @@
     margin: 0;
     color: var(--sd-fg-muted);
   }
-  .sd-shortcuts > .sd-shortcuts-group {
-    grid-column: 1 / -1;
-    margin-block-start: 8px;
+  /* Group heading above a list: <p class="sd-shortcuts-group">Move</p><dl class="sd-shortcuts">…</dl> */
+  .sd-shortcuts-group {
+    margin: 0 0 10px;
     color: var(--sd-fg-subtle);
     font-size: var(--text-2xs);
     letter-spacing: var(--tracking-caps);

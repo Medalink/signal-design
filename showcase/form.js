@@ -1,3 +1,4 @@
+import "./viewport.js";
 import { init, toast } from "../src/js/index.js";
 
 init();

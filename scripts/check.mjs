@@ -29,7 +29,8 @@ if (!existsSync(new URL("../dist/signal.css", import.meta.url))) {
 const shots = process.argv[3];
 const engines = { chromium, webkit };
 const themes = ["ink", "graphite", "light"];
-const widths = [1280, 375];
+// Desktop, small laptop, tablet, phone. The in-between widths run in ink only.
+const widths = [1280, 1024, 768, 375];
 let failures = 0;
 
 function fail(where, msg) {
@@ -68,6 +69,7 @@ for (const [name, engine] of Object.entries(engines)) {
   for (const [pageName, url] of Object.entries(pages)) {
   for (const width of widths) {
     for (const theme of themes) {
+      if ((width === 1024 || width === 768) && theme !== "ink") continue;
       const where = `${name} ${pageName} ${width}px ${theme}`;
       const page = await browser.newPage({ viewport: { width, height: 900 } });
       const errors = [];
@@ -158,6 +160,21 @@ for (const [name, engine] of Object.entries(engines)) {
           await page.click(".sd-shell-scrim", { position: { x: 360, y: 400 } });
           if ("drawer" in (await state())) fail(where, "scrim click did not close the drawer");
         }
+      }
+
+      // A skip link comes first in tab order and shows when focused.
+      if (width === 1280 && theme === "ink" && pageName !== "standalone") {
+        const skip = await page.evaluate(() => {
+          const focusable = [...document.querySelectorAll('a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])')].filter((el) => !el.disabled && el.tabIndex >= 0);
+          const link = document.querySelector(".sd-skip");
+          if (!link) return "missing";
+          if (focusable[0] !== link) return `first focusable is ${focusable[0]?.className || focusable[0]?.tagName}`;
+          link.focus();
+          const shown = link.getBoundingClientRect().top >= 0;
+          link.blur();
+          return shown ? "" : "not visible when focused";
+        });
+        if (skip) fail(where, `skip link: ${skip}`);
       }
 
       // Shift+T steps the theme on every page.

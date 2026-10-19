@@ -11,6 +11,7 @@
   <script type="module" src="./chat.js"></script>
 </head>
 <body>
+<a class="sd-skip" href="#main">Skip to content</a>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
@@ -44,7 +45,7 @@
   <canvas class="sd-rain" data-sd-rain data-sd-rain-style="squares" aria-hidden="true"></canvas>
 
   <!-- Window chrome for a frameless desktop app -->
-  <header class="sd-titlebar" data-tauri-drag-region>
+  <div class="sd-titlebar" data-tauri-drag-region role="region" aria-label="Window">
     <span class="sd-titlebar-brand"><b>ACME</b></span>
     <div class="sd-titlebar-end">
       <span class="sd-titlebar-metric sd-desktop-only">CPU <b>3%</b></span>
@@ -56,7 +57,7 @@
         <button data-sd-window="close" aria-label="Close"><svg><use href="#i-win-close"/></svg></button>
       </div>
     </div>
-  </header>
+  </div>
 
   <header class="sd-shell-topbar">
     <button class="sd-btn sd-btn-ghost sd-btn-icon" data-sd-shell="drawer" aria-label="Open navigation"><svg><use href="#i-menu"/></svg></button>
@@ -107,7 +108,8 @@
   </aside>
 
   <!-- Main -->
-  <main class="sd-shell-main" id="main">
+  <main class="sd-shell-main" id="main" tabindex="-1">
+    <h1 class="sd-sr-only">ACME chat: #general</h1>
     <!-- Header bar: solid, a gap above the content (the alternate to floating crumb bars) -->
     <header class="sd-shell-bar" data-sd-edges>
       <div class="sd-shell-bar-title">

@@ -372,4 +372,24 @@
     inset: auto 0 0;
     z-index: 40;
   }
+
+  /* Skip link: the first thing a keyboard user tabs to, hidden until then.
+     <a class="sd-skip" href="#main">Skip to content</a> */
+  .sd-skip {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    z-index: 100;
+    padding: 8px 14px;
+    background: var(--sd-primary);
+    color: var(--sd-on-primary);
+    font-weight: 600;
+    text-decoration: none;
+    transform: translateY(calc(-100% - 16px));
+  }
+  .sd-skip:focus {
+    transform: none;
+    outline: 2px solid var(--sd-fg);
+    outline-offset: 2px;
+  }
 }

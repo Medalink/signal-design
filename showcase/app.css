@@ -76,4 +76,77 @@
     height: 56px;
     border: 1px solid var(--sd-line);
   }
+
+  /* The header's theme switch needs room; below 80rem the rail button and
+     Shift+T switch themes instead. */
+  .hdr-theme {
+    display: none;
+  }
+  @media (min-width: 80rem) {
+    .hdr-theme {
+      display: inline-flex;
+    }
+  }
+
+  /* Width toggle (showcase/viewport.js). */
+  .vp-toggle {
+    position: fixed;
+    left: 12px;
+    bottom: 48px;
+    z-index: 80;
+  }
+  .vp-toggle > .sd-btn {
+    background: var(--sd-overlay);
+  }
+  .vp-toggle > .sd-btn > svg {
+    width: 14px;
+    height: 14px;
+  }
+  @media (max-width: 47.99rem) {
+    .vp-toggle {
+      display: none;
+    }
+  }
+  .vp-dialog {
+    width: 100vw;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--sd-shell-bg);
+    color: var(--sd-fg);
+  }
+  .vp-dialog::backdrop {
+    background: var(--sd-backdrop);
+  }
+  .vp-dialog[open] {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .vp-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 16px;
+    border-block-end: 1px solid var(--sd-line);
+  }
+  .vp-name {
+    color: var(--sd-fg-muted);
+    font-size: var(--text-sm);
+  }
+  .vp-stage {
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    padding: 16px;
+  }
+  .vp-stage > iframe {
+    flex-shrink: 0;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-canvas);
+    transform-origin: center;
+  }
 }

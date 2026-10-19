@@ -1,3 +1,4 @@
+import "./viewport.js";
 import { init, toast, getTheme, rain, selectSection, setScrollbars } from "../src/js/index.js";
 import { lazyChart } from "./lazy.js";
 

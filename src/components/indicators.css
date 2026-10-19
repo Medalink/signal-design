@@ -123,7 +123,8 @@
     height: 24px;
     overflow: hidden;
     background: var(--tone, var(--sd-raised));
-    color: var(--sd-canvas);
+    /* Dark ink on the bright dark-theme tones, white on the deep light ones. */
+    color: var(--sd-on-tone, #050505);
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0;

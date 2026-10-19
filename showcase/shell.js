@@ -1,3 +1,4 @@
+import "./viewport.js";
 import { init, hotkeys, toast, setExpanded, rain, setOptions, openDialog } from "../src/js/index.js";
 
 init();

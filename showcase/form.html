@@ -11,10 +11,11 @@
   <script type="module" src="./form.js"></script>
 </head>
 <body>
+<a class="sd-skip" href="#main">Skip to content</a>
 
 <header class="sd-topbar">
   <a class="sd-wordmark" href="./index.html">ACME</a>
-  <nav class="sd-nav" aria-label="Examples">
+  <nav class="sd-nav sd-desktop-only" aria-label="Examples">
     <a href="./index.html">Components</a>
     <a href="./shell.html">App shell</a>
     <a href="./chat.html">Chat</a>
@@ -24,7 +25,7 @@
   <div class="sd-topbar-end"><button class="sd-btn sd-btn-sm" data-sd-theme-cycle>Theme</button></div>
 </header>
 
-<main class="sd-page" style="max-width: var(--container-narrow)">
+<main class="sd-page" id="main" tabindex="-1" style="max-width: var(--container-narrow)">
   <header class="sd-header">
     <span class="sd-wordmark">New workspace</span>
     <h1 class="sd-display">Set up your team. <em>Three short steps.</em></h1>

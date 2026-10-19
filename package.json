@@ -67,12 +67,14 @@
     "build": "pnpm build:css && pnpm build:showcase",
     "prepack": "pnpm build:css",
     "check": "node scripts/check.mjs",
-    "perf": "node scripts/perf.mjs"
+    "perf": "node scripts/perf.mjs",
+    "a11y": "node scripts/a11y.mjs"
   },
   "devDependencies": {
     "@fontsource/source-code-pro": "5.3.1",
     "@tailwindcss/cli": "4.3.3",
     "@tailwindcss/vite": "4.3.3",
+    "axe-core": "4.10.3",
     "chart.js": "4.5.1",
     "esbuild": "^0.28.2",
     "playwright": "^1.64.1",

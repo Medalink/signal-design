@@ -85,8 +85,15 @@
     margin-top: -2px;
     background: var(--sd-fg);
   }
-  .sd-item[data-muted] {
-    opacity: 0.5;
+  /* Muted steps back by color, not opacity, so its text stays readable. */
+  .sd-item[data-muted] :is(.sd-item-title, .sd-item-end) {
+    color: var(--sd-fg-subtle);
+  }
+  .sd-item[data-muted] .sd-item-sub {
+    color: var(--sd-fg-faint);
+  }
+  .sd-item[data-muted] .sd-avatar {
+    filter: saturate(0);
   }
   /* Nested rows, e.g. people inside a voice channel. */
   .sd-item-nested {
