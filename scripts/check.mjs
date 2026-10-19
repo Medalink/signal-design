@@ -16,6 +16,7 @@ import ts from "typescript";
 import { fileURLToPath } from "node:url";
 import { chromium, webkit } from "playwright";
 import { sweep as rulesSweep } from "../bin/rules.mjs";
+import { checkLivingTable, checkLivingTableTypes } from "./check-living-table.mjs";
 
 const base = (process.argv[2] || "http://localhost:5178/").replace(/\/?$/, "/");
 const apiUrl = `${base}@fs/${fileURLToPath(new URL("../src/js/index.js", import.meta.url)).replace(/\\/g, "/")}`;
@@ -46,6 +47,11 @@ function fail(where, msg) {
 
 // The hard-rule sweep is shared with the `signal-design check` CLI.
 const sweep = rulesSweep;
+
+try {
+  checkLivingTableTypes();
+  console.log("ok   living table types 1 strict consumer compilation");
+} catch (error) { fail("living table types", error.message); }
 
 async function checkCopy(page, name) {
   await page.goto(base);
@@ -855,6 +861,11 @@ for (const [name, engine] of Object.entries(engines)) {
   await checkFeedAndHotkeys(behaviorPage, name);
   await checkCountdown(behaviorPage, name);
   await behaviorPage.close();
+  const livingPage = await browser.newPage();
+  const living = await checkLivingTable(livingPage, base, name);
+  for (const error of living.errors) fail("living tables", error);
+  console.log(`ok   ${name} living tables ${living.passed} behavior checks`);
+  await livingPage.close();
   await browser.close();
 }
 

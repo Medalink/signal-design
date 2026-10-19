@@ -32,6 +32,7 @@ export { hotkeys, keyOf } from "./hotkeys.js";
 export { mountCountdown } from "./countdown.js";
 
 export { mountFeed } from "./feed.js";
+export { mountLivingTable } from "./living-table.js";
 export { setExpanded } from "./controls.js";
 export { setTheme, getTheme, restoreTheme, cycleTheme, THEMES } from "./theme.js";
 export { place } from "./position.js";

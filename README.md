@@ -459,6 +459,65 @@ existing Mod and Escape bindings while typing. Bind modal shortcuts to that
 dialog; document bindings pause while a modal is open. Call the returned
 function to remove bindings and pending sequences.
 
+### Living tables
+
+Living tables keep one native table and its cells while metadata folds beneath
+the row title. Ordinary `sd-table` markup keeps its existing behavior.
+Use `.sd-living-table[data-sd-living-table]` around `.sd-table-wrap > table.sd-table`.
+Give the wrapper an id, and add a hidden `[data-sd-living-resize]` sibling with
+an accessible label. The showcase and `ai/components.json` contain a complete
+copyable example with its mounting code.
+
+Use one `thead` row of `th[scope="col"]` cells. The first column is the row title.
+Set `data-fold="1"` on headers that fold at 48rem, and `data-fold="2"` on those
+that fold at 32rem. Each `tbody[data-id]` has a stable, unique group id. Start it
+with `tr.sd-living-table-group > th[scope="rowgroup"][colspan]`, spanning all
+columns, and a disabled button with `aria-expanded="true"`. Optional
+`.sd-living-table-count` text inside the button receives the row count.
+Item rows start with `th[scope="row"]` and have one cell per column.
+Unmounted content stays a static table with disabled disclosures and a hidden grip.
+
+```js
+import { mountLivingTable } from "signal-design/js";
+const table = mountLivingTable(document.getElementById("work-table"));
+table.toggle("review", false);
+table.resize({ width: 480 });
+table.resize({ width: null });
+table.refresh();
+table.dispose();
+```
+
+Mount explicitly after the DOM exists. `init()` does not mount living tables.
+Duplicate live mounts throw. `toggle(id, open?)` uses the group id and toggles
+when `open` is omitted. `resize({ width })` accepts finite CSS pixels or `null`.
+The effective minimum is 320px or the available parent width, whichever is smaller.
+The maximum is the parent content width. Parent shrinkage clamps the rendered
+width while retaining the requested width for regrowth. The grip reports the
+rendered width through `aria-valuenow`.
+
+Drag the trailing grip with a mouse, pen, or touch. Arrow keys resize by 16px,
+Shift arrows by 64px, Home selects the minimum, and End selects the maximum.
+Horizontal controls respect RTL. Escape, pointer cancellation, or lost capture
+cancels a drag. No height resize or persistence is included.
+
+`refresh()` reconciles added or removed rows and groups, their roles, counts,
+and visual metadata labels. Call it after moving a mounted table to another
+container to update width bounds and observe the current parent.
+Generated labels follow header text changes.
+Authored `data-label` values take precedence. Change the column schema only
+after disposal, then remount.
+Replacing header nodes with the same column count and fold settings is supported.
+`dispose()` restores owned attributes, inline styles and priorities, count text,
+and each group's original disclosure and row visibility. It removes listeners
+and observers. Later calls do nothing.
+
+`sd:living-table` bubbles on committed changes with `{ width, collapsed }`.
+`width` is the rendered CSS width; `collapsed` contains stable group ids.
+Mounting, unchanged calls, and intermediate drag positions emit no event.
+CSS container queries and subgrid handle layout, requiring Chromium 117+ or
+Safari 16+. Folded column headers retain their table associations. Visual field
+labels use CSS generated content with empty alternative text.
+
 ### State contract
 
 The JS only writes attributes and `data-*`; the CSS only keys on those (never
