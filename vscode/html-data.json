@@ -47,7 +47,7 @@
   },
   {
    "name": "data-sd-copy",
-   "description": "Copies the text of the element matched by this selector and confirms with a toast."
+   "description": "Copies the text of the element matched by this selector and confirms with a toast. If copying is unavailable or denied, shows a danger toast asking the user to select the line instead."
   },
   {
    "name": "data-sd-toast",

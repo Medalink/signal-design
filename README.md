@@ -408,7 +408,7 @@ const off = hotkeys({ j: next, k: prev, "shift+n": newest, "mod+k": search });
 | `data-sd-seg` | Single-select button group; fires `change`. |
 | `data-sd-key="a"` | Click the element when the key is pressed (not while typing). |
 | `data-sd-tip="text"` | Tooltip on hover and focus. |
-| `data-sd-copy="#id"` | Copy text and confirm with a toast. |
+| `data-sd-copy="#id"` | Copy text and confirm with a toast; if the browser cannot copy, explain that the text can be selected instead. |
 | `data-sd-toast="text"` | Show a toast on click. |
 | `data-sd-theme="name"` | Switch theme and remember it. |
 | <kbd>Shift</kbd>+<kbd>T</kbd> | Steps the theme on every page (`init({ themeKey })` changes or turns it off; `cycleTheme()` does it from code). |

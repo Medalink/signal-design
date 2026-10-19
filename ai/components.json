@@ -994,6 +994,24 @@
    "html": "<div><a class=\"sd-btn sd-btn-primary\" href=\"./shell.html\">Open the Signal App Shell</a></div>"
   },
   {
+   "id": "js-copy-feedback",
+   "section": "JS",
+   "title": "Copy feedback",
+   "classes": [
+    "sd-btn",
+    "sd-btn-ghost",
+    "sd-btn-sm",
+    "sd-code",
+    "sd-code-head"
+   ],
+   "attributes": [
+    "data-sd-copy"
+   ],
+   "usage": "Copy needs browser clipboard access. On an insecure LAN connection, or when permission is denied, the danger toast says \"Copy unavailable. Select the line instead.\" The command stays selectable. Successful copies still say \"Copied\". No insecure clipboard bypass is used.",
+   "js": "JS: init() from signal-design/js wires data-sd-copy.",
+   "html": "<div class=\"sd-code\">\n  <div class=\"sd-code-head\">Command <button class=\"sd-btn sd-btn-sm sd-btn-ghost\" data-sd-copy=\"#copy-command\">Copy</button></div>\n  <pre id=\"copy-command\" tabindex=\"0\"><code>npm test</code></pre>\n</div>"
+  },
+  {
    "id": "js-setup-and-attributes",
    "section": "JS",
    "title": "Setup and attributes",
@@ -1023,7 +1041,7 @@
    ],
    "usage": "",
    "js": "JS: init() from signal-design/js wires data-sd-copy · data-sd-open · data-sd-close · data-sd-toggle · data-sd-seg · data-sd-key · data-sd-tip · data-sd-toast · data-sd-theme · data-sd-theme-cycle · popovertarget (placement, menu keys) · role=\"tab\".",
-   "html": "<div class=\"sd-code\">\n        <div class=\"sd-code-head\">main.js <button class=\"sd-btn sd-btn-sm sd-btn-ghost\" data-sd-copy=\"#snippet-js\">Copy</button></div>\n        <pre id=\"snippet-js\"><code>import { init, toast, hotkeys, setTheme } from \"signal-design/js\";\n\ninit();                                   // dialogs, popovers, menus, tabs, tooltips, toggles\ntoast(\"Saved\", { tone: \"success\" });\nconst off = hotkeys({ j: next, k: prev, \"shift+n\": newest, \"mod+k\": search });\nsetTheme(\"paper\");                        // ink | graphite | paper | auto</code></pre>\n      </div>\n\n<div class=\"sd-table-wrap\">\n  <table class=\"sd-table\">\n    <thead><tr><th>Attribute</th><th>Does</th></tr></thead>\n    <tbody>\n      <tr><td><code>data-sd-open=\"id\"</code> · <code>data-sd-close</code></td><td>Opens a dialog as modal; closes the nearest dialog. Backdrop click closes unless <code>data-sd-static</code>.</td></tr>\n      <tr><td><code>popovertarget</code> + <code>.sd-popover</code></td><td>Places the popover next to its trigger, flips at edges, keyboard for menus.</td></tr>\n      <tr><td><code>role=\"tab\"</code></td><td>Selects tabs and panels, arrow keys, roving focus.</td></tr>\n      <tr><td><code>data-sd-toggle=\"id\"</code></td><td>Opens and closes an <code>.sd-expand</code>, keeps <code>aria-expanded</code> in sync.</td></tr>\n      <tr><td><code>data-sd-seg</code></td><td>Single-select button group; fires <code>change</code>.</td></tr>\n      <tr><td><code>data-sd-key=\"a\"</code></td><td>Clicks the element when the key is pressed (ignored while typing).</td></tr>\n      <tr><td><code>data-sd-tip=\"text\"</code></td><td>Tooltip on hover and focus.</td></tr>\n      <tr><td><code>data-sd-copy=\"#id\"</code></td><td>Copies text and confirms with a toast.</td></tr>\n      <tr><td><code>data-sd-toast=\"text\"</code></td><td>Shows a toast on click.</td></tr>\n      <tr><td><code>data-sd-theme=\"paper\"</code></td><td>Switches theme and remembers it.</td></tr>\n    </tbody>\n  </table>\n</div>\n\n<div class=\"sd-actions\">\n  <span class=\"sd-subtle text-sm\">Try:</span>\n  <button class=\"sd-btn sd-btn-sm\" data-sd-key=\"]\" data-sd-open=\"demo-sheet\">Sheet <kbd>]</kbd></button>\n  <button class=\"sd-btn sd-btn-sm\" data-sd-key=\"shift+t\" data-sd-theme-cycle=\"\">Next theme <kbd>Shift+T</kbd></button>\n</div>"
+   "html": "<div class=\"sd-code\">\n        <div class=\"sd-code-head\">main.js <button class=\"sd-btn sd-btn-sm sd-btn-ghost\" data-sd-copy=\"#snippet-js\">Copy</button></div>\n        <pre id=\"snippet-js\"><code>import { init, toast, hotkeys, setTheme } from \"signal-design/js\";\n\ninit();                                   // dialogs, popovers, menus, tabs, tooltips, toggles\ntoast(\"Saved\", { tone: \"success\" });\nconst off = hotkeys({ j: next, k: prev, \"shift+n\": newest, \"mod+k\": search });\nsetTheme(\"paper\");                        // ink | graphite | paper | auto</code></pre>\n      </div>\n\n<div class=\"sd-table-wrap\">\n  <table class=\"sd-table\">\n    <thead><tr><th>Attribute</th><th>Does</th></tr></thead>\n    <tbody>\n      <tr><td><code>data-sd-open=\"id\"</code> · <code>data-sd-close</code></td><td>Opens a dialog as modal; closes the nearest dialog. Backdrop click closes unless <code>data-sd-static</code>.</td></tr>\n      <tr><td><code>popovertarget</code> + <code>.sd-popover</code></td><td>Places the popover next to its trigger, flips at edges, keyboard for menus.</td></tr>\n      <tr><td><code>role=\"tab\"</code></td><td>Selects tabs and panels, arrow keys, roving focus.</td></tr>\n      <tr><td><code>data-sd-toggle=\"id\"</code></td><td>Opens and closes an <code>.sd-expand</code>, keeps <code>aria-expanded</code> in sync.</td></tr>\n      <tr><td><code>data-sd-seg</code></td><td>Single-select button group; fires <code>change</code>.</td></tr>\n      <tr><td><code>data-sd-key=\"a\"</code></td><td>Clicks the element when the key is pressed (ignored while typing).</td></tr>\n      <tr><td><code>data-sd-tip=\"text\"</code></td><td>Tooltip on hover and focus.</td></tr>\n      <tr><td><code>data-sd-copy=\"#id\"</code></td><td>Copies text, or explains that copying is unavailable.</td></tr>\n      <tr><td><code>data-sd-toast=\"text\"</code></td><td>Shows a toast on click.</td></tr>\n      <tr><td><code>data-sd-theme=\"paper\"</code></td><td>Switches theme and remembers it.</td></tr>\n    </tbody>\n  </table>\n</div>\n\n<div class=\"sd-actions\">\n  <span class=\"sd-subtle text-sm\">Try:</span>\n  <button class=\"sd-btn sd-btn-sm\" data-sd-key=\"]\" data-sd-open=\"demo-sheet\">Sheet <kbd>]</kbd></button>\n  <button class=\"sd-btn sd-btn-sm\" data-sd-key=\"shift+t\" data-sd-theme-cycle=\"\">Next theme <kbd>Shift+T</kbd></button>\n</div>"
   }
  ]
 }

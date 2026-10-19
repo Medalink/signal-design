@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Copy controls show a danger toast when the Clipboard API is unavailable or
+  rejects a write: "Copy unavailable. Select the line instead." Successful
+  copies still show "Copied". No insecure clipboard workaround is used.
+
 ## 1.0.0 (2026-10-19)
 
 ### Added

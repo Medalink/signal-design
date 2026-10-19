@@ -35,7 +35,7 @@ const ATTRIBUTES = {
   "data-sd-side": "Popover side: top, bottom, left or right.",
   "data-sd-align": "Popover alignment: start, center or end.",
   "data-sd-anchor": "Positions a popover against this selector instead of its trigger.",
-  "data-sd-copy": "Copies the text of the element matched by this selector and confirms with a toast.",
+  "data-sd-copy": "Copies the text of the element matched by this selector and confirms with a toast. If copying is unavailable or denied, shows a danger toast asking the user to select the line instead.",
   "data-sd-toast": "Shows this text as a toast on click (data-tone colors it).",
   "data-sd-theme": "Switches the theme (ink, graphite, paper, auto) and remembers it.",
   "data-sd-theme-cycle": "Steps to the next theme on click.",
