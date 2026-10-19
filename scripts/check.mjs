@@ -202,6 +202,7 @@ mountFeed(root);
 
 
 async function checkLegacyRepeat(page, name) {
+  const before = failures;
   await page.goto(pages.shell);
   await page.keyboard.down("j");
   await page.keyboard.down("j");
@@ -209,29 +210,38 @@ async function checkLegacyRepeat(page, name) {
   await page.keyboard.up("j");
   const afterNext = await page.locator('[data-feed] [aria-current="true"]').getAttribute("data-n");
   if (afterNext !== "18") fail(name, `holding j should reach row 18, got ${afterNext}`);
-  await page.keyboard.down("k");
-  await page.keyboard.down("k");
-  await page.keyboard.down("k");
+  await page.locator('[data-feed] [data-n="18"]').click({ position: { x: 10, y: 10 } });
+  const startPrevious = await page.locator('[data-feed] [aria-current="true"]').getAttribute("data-n");
+  if (startPrevious !== "18") fail(name, `holding k should start from row 18, got ${startPrevious}`);
+  for (const expected of ["19", "20", "21"]) {
+    await page.keyboard.down("k");
+    const afterPrevious = await page.locator('[data-feed] [aria-current="true"]').getAttribute("data-n");
+    if (afterPrevious !== expected) fail(name, `holding k should reach row ${expected}, got ${afterPrevious}`);
+  }
   await page.keyboard.up("k");
-  const afterPrevious = await page.locator('[data-feed] [aria-current="true"]').getAttribute("data-n");
-  if (afterPrevious !== "21") fail(name, `holding k should return to row 21, got ${afterPrevious}`);
   await page.goto(base);
   await page.evaluate(async (apiUrl) => {
     const { hotkeys } = await import(apiUrl);
-    window.repeatProbe = { calls: 0 };
+    window.repeatProbe = { calls: 0, repeatedCalls: 0 };
     window.repeatProbe.off = hotkeys({ x: () => window.repeatProbe.calls++ }, { repeat: false });
+    window.repeatProbe.offRepeated = hotkeys({ y: () => window.repeatProbe.repeatedCalls++ });
   }, apiUrl);
   await page.keyboard.down("x");
   await page.keyboard.down("x");
   await page.keyboard.up("x");
-  const calls = await page.evaluate(() => {
-    const { calls, off } = window.repeatProbe;
+  await page.keyboard.down("y");
+  await page.keyboard.down("y");
+  await page.keyboard.up("y");
+  const { calls, repeatedCalls } = await page.evaluate(() => {
+    const { calls, repeatedCalls, off, offRepeated } = window.repeatProbe;
     off();
+    offRepeated();
     delete window.repeatProbe;
-    return calls;
+    return { calls, repeatedCalls };
   });
   if (calls !== 1) fail(name, `repeat-disabled action should run once, got ${calls}`);
-  console.log(`ok   ${name} legacy repeat 3 behavioral assertions`);
+  if (repeatedCalls !== 2) fail(name, `default-repeat action should run twice, got ${repeatedCalls}`);
+  if (failures === before) console.log(`ok   ${name} legacy repeat 7 behavioral assertions`);
 }
 
 
