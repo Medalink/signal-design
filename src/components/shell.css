@@ -48,6 +48,11 @@
   .sd-shell[data-sidebar="collapsed"] {
     grid-template-columns: var(--shell-rail) 0 minmax(0, 1fr) auto;
   }
+  /* An app with no sidebar at all gets the collapsed track too: the reserved
+     18rem column would otherwise sit beside the rail as an empty hole. */
+  .sd-shell:not(:has(> .sd-sidebar)) {
+    grid-template-columns: var(--shell-rail) 0 minmax(0, 1fr) auto;
+  }
 
   /* Named grid areas only apply to direct children of the shell grid.
      The same components used standalone in an app's own layout must not
