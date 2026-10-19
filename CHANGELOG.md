@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.0 (2026-10-19)
 
 ### Fixed
 - Copy controls show a danger toast when the Clipboard API is unavailable or
@@ -11,7 +11,6 @@
 - `mountCountdown(root)` presents authoritative remaining time, supports pause,
   resume and resync, and reports running, paused and complete state changes.
   It updates the existing progress component and accessible numeric values.
-
 - `mountFeed(root, options)` preserves stable row anchors across DOM updates,
   navigates rows, reports the above count, and supports suspendable idle return.
 - `hotkeys()` accepts sequences such as `g t`, `sequenceTimeout`, and `enabled`.
