@@ -231,7 +231,8 @@ try {
     })),
   };
 
-  const agents = readFileSync(resolve(root, "AGENTS.md"), "utf8");
+  // Same output on every OS: a Windows checkout may have CRLF line endings.
+  const agents = readFileSync(resolve(root, "AGENTS.md"), "utf8").replace(/\r\n/g, "\n");
   const full =
     agents.trimEnd() +
     "\n\n---\n\n# Component reference (generated)\n\nEvery block from the components page, with its copyable HTML. " +
