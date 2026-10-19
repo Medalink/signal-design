@@ -183,8 +183,27 @@ export async function checkLivingTable(page, base, engine) {
         range.selectNodeContents(cell);
         const box = cell.getBoundingClientRect();
         const rects = [...range.getClientRects()];
+        const style = getComputedStyle(cell);
+        const contentWidth = box.width - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+        // Widest word at its unbroken width, via canvas metrics with the cell's
+        // own font, so a wrap is judged against the font actually rendering:
+        // a header may span lines only when its longest word cannot fit.
+        const canvas = document.createElement("canvas").getContext("2d");
+        const spacing = style.letterSpacing === "normal" ? 0 : parseFloat(style.letterSpacing);
+        let widest = 0;
+        for (const node of cell.childNodes) {
+          if (node.nodeType !== Node.TEXT_NODE) continue;
+          for (const match of node.textContent.matchAll(/\S+/g)) {
+            let word = match[0];
+            if (style.textTransform === "uppercase") word = word.toUpperCase();
+            else if (style.textTransform === "capitalize") word = word[0].toUpperCase() + word.slice(1);
+            canvas.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+            widest = Math.max(widest, canvas.measureText(word).width + spacing * word.length);
+          }
+        }
         return {
           lines: new Set(rects.map((rect) => rect.top)).size,
+          forced: widest > contentWidth + 1,
           inside: rects.every((rect) => rect.left >= box.left && rect.right <= box.right),
           outsideGrip: box.right <= grip.left + 1,
         };
@@ -192,7 +211,7 @@ export async function checkLivingTable(page, base, engine) {
       return { headers, overflow: root.scrollWidth > root.clientWidth };
     };
     const normal = await evaluate(inspect);
-    assert.equal(normal.headers.every((header) => header.lines === 1 && header.inside && header.outsideGrip) && !normal.overflow, true, JSON.stringify(normal));
+    assert.equal(normal.headers.every((header) => (header.lines === 1 || header.forced) && header.inside && header.outsideGrip) && !normal.overflow, true, JSON.stringify(normal));
     const original = await evaluate(() => {
       const header = livingCheck.root.querySelectorAll("thead th")[2];
       const text = header.textContent;
