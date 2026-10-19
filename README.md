@@ -346,7 +346,7 @@ gets the same answer:
 | `aria-expanded="true"` | `sd-icon-btn` (popover/menu triggers), `sd-rail-item`; `aria-controls` points at the panel. |
 | `aria-current` (any value but `"false"`) | Current location in `sd-nav`, `sd-sidenav`, `sd-sidebar-link`, `sd-breadcrumb`, `sd-pagination`, `sd-rail-item`, `sd-message`; `sd-steps` uses `aria-current="step"`. |
 | `aria-sort="ascending\|descending"` | Sort direction of a `th[data-sort]` in `sd-table`. |
-| `data-open`, `data-peek`, `data-sidebar`, `data-aside`, `data-drawer` | `sd-shell` layout state; toggled by `setSidebar`/`setAside`/`setDrawer` and read back from `dataset`. |
+| `data-sidebar`, `data-aside`, `data-drawer`, `data-peek` | `sd-shell` layout state; toggled by `setSidebar`/`setAside`/`setDrawer` and read back from `dataset`. `.sd-expand` panels open/close via `data-open` (kept in sync with `aria-expanded`). |
 | `--value` on `.sd-progress` | Progress, unitless `0`–`100`. |
 | `data-theme` (element or `<html>`) | Themes a subtree; `setTheme` also remembers it in `localStorage`. |
 | `data-sd-scrolling` on `<html>` | Present while the page is scrolling; drives the auto-hiding scrollbars. |
