@@ -39,6 +39,13 @@
 - Redesigned landing page.
 
 ### Changed
+- Scrolling is much cheaper. The shell's content and sidebar scrollers get
+  their own GPU layer (`will-change: scroll-position`); auto-hiding
+  scrollbars restyle only the scroller, not its subtree, and touch the DOM
+  only when the state changes; charts no longer redraw every frame after a
+  live update (the effects layer rings the new point). The components page
+  updates its crumbs and sidebar once scrolling settles.
+- Shift+T steps the theme on every page (`init({ themeKey })`, `cycleTheme()`).
 - The components page runs in the Signal App Shell: rail sections, a
   sidebar listing every block, crumbs that follow the scroll, a display
   panel (chart colors, scrollbars, code views, rain) and a status bar.

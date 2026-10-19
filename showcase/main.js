@@ -101,32 +101,47 @@ for (const panel of document.querySelectorAll(".sd-sidebar-panel[data-sections]"
   for (const id of panel.dataset.sections.split(" ")) sectionOf.set(id, panel);
 }
 let current = null;
+let lastLink = null;
 const seen = new Map();
+
+// Updating crumbs, the sidebar and the rail restyles and re-lays out parts of
+// the frame, so do it once the scroll settles, never on every frame of it.
+function showWhereYouAre() {
+  const top = [...seen].filter(([, y]) => y !== null).sort((a, b) => a[1] - b[1])[0]?.[0];
+  if (!top || top === current) return;
+  current = top;
+  const panel = sectionOf.get(top.closest(".demo-section")?.id);
+  const page = document.querySelector("[data-crumb-page]");
+  const title = top.querySelector("h3")?.textContent ?? "";
+  if (page.textContent !== title) page.textContent = title;
+  if (panel) {
+    const crumb = document.querySelector("[data-crumb-section]");
+    if (crumb.textContent !== panel.dataset.title) crumb.textContent = panel.dataset.title;
+    document.querySelector("[data-page-label]").textContent = panel.dataset.title;
+    if (panel.hidden) {
+      // Follow along in the sidebar only while it is pinned; never pop a peek.
+      if (shell.dataset.sidebar !== "collapsed" && !("drawer" in shell.dataset)) selectSection(shell, panel.dataset.section);
+      else for (const r of shell.querySelectorAll(".sd-rail-item[data-sd-section]")) r.toggleAttribute("aria-current", r.dataset.sdSection === panel.dataset.section);
+    }
+  }
+  lastLink?.removeAttribute("aria-current");
+  lastLink = document.querySelector(`.sd-sidebar-link[data-block="${top.id}"]`);
+  lastLink?.setAttribute("aria-current", "page");
+}
+let settle = 0;
+const later = () => {
+  clearTimeout(settle);
+  settle = setTimeout(showWhereYouAre, 140);
+};
 const spy = new IntersectionObserver(
   (entries) => {
     for (const e of entries) seen.set(e.target, e.isIntersecting ? e.boundingClientRect.top : null);
-    const top = [...seen].filter(([, y]) => y !== null).sort((a, b) => a[1] - b[1])[0]?.[0];
-    if (!top || top === current) return;
-    current = top;
-    const panel = sectionOf.get(top.closest(".demo-section")?.id);
-    document.querySelector("[data-crumb-page]").textContent = top.querySelector("h3")?.textContent ?? "";
-    if (panel) {
-      document.querySelector("[data-crumb-section]").textContent = panel.dataset.title;
-      document.querySelector("[data-page-label]").textContent = panel.dataset.title;
-      if (panel.hidden) {
-        // Follow along in the sidebar only while it is pinned; never pop a peek.
-        if (shell.dataset.sidebar !== "collapsed" && !("drawer" in shell.dataset)) selectSection(shell, panel.dataset.section);
-        else for (const r of shell.querySelectorAll(".sd-rail-item[data-sd-section]")) r.toggleAttribute("aria-current", r.dataset.sdSection === panel.dataset.section);
-      }
-    }
-    for (const a of document.querySelectorAll(".sd-sidebar-link[data-block]")) {
-      if (a.dataset.block === top.id) a.setAttribute("aria-current", "page");
-      else a.removeAttribute("aria-current");
-    }
+    later();
   },
   { root: content, rootMargin: "0px 0px -60% 0px" },
 );
 for (const block of blocks) spy.observe(block);
+content.addEventListener("scroll", () => settle && later(), { passive: true });
 
 /* ---- Display settings ----------------------------------------------------- */
 

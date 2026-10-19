@@ -160,6 +160,17 @@ for (const [name, engine] of Object.entries(engines)) {
         }
       }
 
+      // Shift+T steps the theme on every page.
+      if (width === 1280 && theme === "ink" && pageName !== "standalone") {
+        await page.locator("body").press("Shift+T");
+        const now = await page.evaluate(() => document.documentElement.dataset.theme);
+        if (now !== "graphite") fail(where, `Shift+T gave theme ${now}`);
+        await page.locator("body").press("Shift+T");
+        await page.locator("body").press("Shift+T");
+        await page.locator("body").press("Shift+T");
+        if ((await page.evaluate(() => document.documentElement.dataset.theme)) !== "ink") fail(where, "Shift+T did not come back to ink");
+      }
+
       if (pageName === "chat" && width === 1280 && theme === "ink") {
         const box = page.locator("[data-composer] textarea");
         await box.click();

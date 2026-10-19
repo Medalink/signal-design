@@ -112,7 +112,6 @@ export function createChart(canvas, options = {}) {
     hoverX: null,
     selection: null,
     ceiling: null,
-    pulseAt: 0,
     bucketMs,
     newestX: 0,
     valueTags: !opts.compact && opts.live > 0,
@@ -661,10 +660,8 @@ export function createChart(canvas, options = {}) {
       state.newestX = newest;
       lastScroll = performance.now();
       refresh();
-      if (!reduced.matches) {
-        state.pulseAt = performance.now();
-        chart.draw();
-      }
+      // The effects layer rings the newest points; the chart itself is not
+      // redrawn per frame for it.
       layer?.ingest(magnitude);
     },
     /** "clamp" | "p95" | "p90" | "linear" | "log"; remembered. */

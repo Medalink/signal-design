@@ -325,6 +325,7 @@ const off = hotkeys({ j: next, k: prev, "shift+n": newest, "mod+k": search });
 | `data-sd-copy="#id"` | Copy text and confirm with a toast. |
 | `data-sd-toast="text"` | Show a toast on click. |
 | `data-sd-theme="name"` | Switch theme and remember it. |
+| <kbd>Shift</kbd>+<kbd>T</kbd> | Steps the theme on every page (`init({ themeKey })` changes or turns it off; `cycleTheme()` does it from code). |
 | `data-sd-window="minimize\|maximize\|close"` | Window buttons (Tauri or `sd:window`). |
 
 TypeScript types ship in `src/js/index.d.ts`, including the `sd:*` events on
@@ -476,7 +477,7 @@ you can override.
 | Line heat | Lines warm toward warning, then critical, near the top of the axis. |
 | Forecast | `forecastFrom` shades the future and labels it. |
 | Rhythm | On 2+ day windows: working hours and day lines. |
-| Live | `append()` upserts at the tail, a ring pulses on the new point, value tags sit in the right gutter, and the window drifts with the clock. |
+| Live | `append()` upserts at the tail, the effects layer rings the new point, value tags sit in the right gutter, and the window drifts with the clock. |
 | Selection | Drag to select (fires `sd:chart-select`); with `zoom: true` it zooms and double click resets. |
 | Effects | Square packets ride the bandwidth lines at a speed set by throughput, a heartbeat marks each live tip and turns amber, then grey, when the feed is late. |
 

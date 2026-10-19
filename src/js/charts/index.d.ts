@@ -79,7 +79,6 @@ export interface ChartOptions {
   /** Weight of the latency panel in the core preset (bandwidth gets the rest of 100). Default 26. */
   secondaryWeight?: number;
   effects?: EffectsLevel;
-  pulseMs?: number;
 }
 
 export interface SignalChart {

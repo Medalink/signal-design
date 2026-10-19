@@ -1,6 +1,6 @@
 /**
  * Canvas plugins for signal charts. Each reads chart.$sd, the state the
- * chart factory keeps: { theme, options, hoverX, selection, ceiling, pulse }.
+ * chart factory keeps: { theme, options, hoverX, selection, ceiling }.
  * Everything is square: no arcs, no blur, no gradients.
  */
 import { FONT, rgba } from "./theme.js";
@@ -342,45 +342,6 @@ export const offScaleCaps = {
   },
 };
 
-/** After new data arrives: a square ring grows from the newest point. */
-export const ingestPulse = {
-  id: "sdIngestPulse",
-  afterDatasetsDraw(chart) {
-    const start = chart.$sd.pulseAt;
-    if (!start || reduced()) return;
-    const duration = chart.$sd.options.pulseMs ?? 1200;
-    const t = (performance.now() - start) / duration;
-    if (t >= 1) {
-      chart.$sd.pulseAt = 0;
-      return;
-    }
-    const { ctx } = chart;
-    ctx.save();
-    for (const i of lineIndexes(chart, { visual: true })) {
-      const ds = chart.data.datasets[i];
-      const p = newestPoint(chart, i);
-      if (!p) continue;
-      const r = 5 + t * 13;
-      ctx.strokeStyle = rgba(ds._color, (1 - t) * 0.52);
-      ctx.lineWidth = 2;
-      ctx.strokeRect(p.x - r, p.y - r, r * 2, r * 2);
-      // Light the newest segment.
-      const meta = chart.getDatasetMeta(i).data;
-      const prev = meta.at(-2);
-      if (prev && Number.isFinite(prev.y)) {
-        ctx.strokeStyle = rgba(ds._color, Math.max(0.1, (1 - t) * 0.8));
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(prev.x, prev.y);
-        ctx.lineTo(p.x, p.y);
-        ctx.stroke();
-      }
-    }
-    ctx.restore();
-    requestAnimationFrame(() => chart.$sd && chart.draw());
-  },
-};
-
 /** Tooltip beside the cursor; flips left past the middle. */
 export function cursorPositioner(items, position) {
   if (!items.length || !position) return false;
@@ -428,4 +389,4 @@ export function tooltipTitle(chart, items) {
   return formatTime(x, "MMM d, h:mm a");
 }
 
-export const ALL = [pointer, rhythm, forecast, ranges, selection, crosshair, panelLabels, liveEdge, valueTags, offScaleCaps, ingestPulse];
+export const ALL = [pointer, rhythm, forecast, ranges, selection, crosshair, panelLabels, liveEdge, valueTags, offScaleCaps];

@@ -241,6 +241,7 @@
     min-height: 0;
     padding-block: 8px;
     overflow-y: auto;
+    will-change: scroll-position;
   }
   .sd-sidebar-foot {
     flex-shrink: 0;
@@ -473,6 +474,9 @@
     min-height: 0;
     padding: 24px 24px 48px;
     overflow-y: auto;
+    /* Its own GPU scrolling layer. Without it Chrome keeps LCD text on this
+       box and repaints the whole main area on every scroll frame. */
+    will-change: scroll-position;
     border: 1px solid var(--sd-line);
     background: var(--sd-container);
   }
