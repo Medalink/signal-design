@@ -433,6 +433,31 @@ time supplied since mount or the last completion. Dispose before mounting a diff
 `dispose()` stops timers and later updates. Eligibility and actions stay with
 your application; the displayed countdown does not authorize anything.
 
+### Live feeds and scoped shortcuts
+
+`mountFeed(root, options)` controls a scroll box of `.sd-row[data-id][data-order]`
+rows. IDs stay stable across updates. Numeric order controls `oldest()` and
+`newest()`; `move(delta)` follows DOM order. `select(id)` accepts application
+targets. Selection writes `aria-current`; `sd:feed` reports `activeId`, the
+count of rows entirely above the viewport, and `returnPending`.
+
+Call `beforeUpdate()`, change the DOM synchronously, then call `afterUpdate()`
+to retain the visible anchor, including while reading expanded details.
+`refresh()` reconciles selection without anchoring. Optional `returnTarget`
+returns a row ID or marker element for idle return after `idleMs` (default
+2400). `canReturn` defaults to false while a descendant is expanded.
+`suspend(true)` cancels return and motion; `suspend(false)` allows future
+scrolls to arm return. `dispose()` removes listeners and timers.
+
+`hotkeys(map, { target, enabled, sequenceTimeout })` scopes bindings to an
+event target. `enabled` accepts a boolean or event predicate. Sequences such
+as `"g t"` expire after `sequenceTimeout` milliseconds (default 900). A single
+key binding takes precedence if it is also a sequence prefix. Handled events,
+repeats, composition, native Enter/Space, and typing are ignored, except the
+existing Mod and Escape bindings while typing. Bind modal shortcuts to that
+dialog; document bindings pause while a modal is open. Call the returned
+function to remove bindings and pending sequences.
+
 ### State contract
 
 The JS only writes attributes and `data-*`; the CSS only keys on those (never

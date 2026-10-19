@@ -10,6 +10,10 @@
    "description": "Whole seconds remaining, written by mountCountdown. Progress uses an optional labeled role=progressbar child."
   },
   {
+   "name": "data-sd-feed",
+   "description": "Scrollable stable-ID rows controlled by an explicit mountFeed(root, options) call, not init()."
+  },
+  {
    "name": "data-sd-open",
    "description": "Opens the <dialog> with this id as a modal."
   },

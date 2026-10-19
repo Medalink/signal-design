@@ -12,6 +12,11 @@
   resume and resync, and reports running, paused and complete state changes.
   It updates the existing progress component and accessible numeric values.
 
+- `mountFeed(root, options)` preserves stable row anchors across DOM updates,
+  navigates rows, reports the above count, and supports suspendable idle return.
+- `hotkeys()` accepts sequences such as `g t`, `sequenceTimeout`, and `enabled`.
+  Scoped bindings respect modal contexts, native controls, and handled events.
+
 ## 1.0.0 (2026-10-19)
 
 ### Added
