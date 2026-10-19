@@ -180,6 +180,7 @@ export function drawSpark(element: HTMLElement): void;
 declare global {
   interface HTMLElementEventMap {
     "sd:countdown": CustomEvent<CountdownState>;
+    "sd:feed": CustomEvent<FeedState>;
   }
   interface DocumentEventMap {
     "sd:countdown": CustomEvent<CountdownState>;

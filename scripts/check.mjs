@@ -9,7 +9,10 @@
  * corner, any blurred shadow (glow), any gradient, horizontal scroll at
  * phone width, and broken JS behaviors.
  */
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import ts from "typescript";
 import { fileURLToPath } from "node:url";
 import { chromium, webkit } from "playwright";
 import { sweep as rulesSweep } from "../bin/rules.mjs";
@@ -162,6 +165,41 @@ async function checkCountdown(page, name) {
   await page.evaluate(() => { window.countdownProbe.root.remove(); delete window.countdownProbe; });
   if (!failed) console.log(`ok   ${name} countdown ${assertions} behavioral assertions`);
 }
+function checkFeedTypes() {
+  const dir = mkdtempSync(join(tmpdir(), "signal-feed-types-"));
+  const fixture = join(dir, "feed.mts");
+  const module = fileURLToPath(new URL("../src/js/index.js", import.meta.url)).replace(/\\/g, "/");
+  writeFileSync(fixture, `import { mountFeed, type FeedState } from ${JSON.stringify(module)};
+const root = document.createElement("div");
+root.addEventListener("sd:feed", (event) => {
+  const state: FeedState = event.detail;
+  console.log(state.activeId, state.aboveCount);
+  // @ts-expect-error FeedState does not include arbitrary properties.
+  console.log(event.detail.missing);
+});
+document.addEventListener("sd:feed", (event) => {
+  const state: FeedState = event.detail;
+  console.log(state.activeId);
+});
+mountFeed(root);
+`);
+  try {
+    const program = ts.createProgram([fixture], {
+      strict: true, noEmit: true, target: ts.ScriptTarget.ES2022,
+      module: ts.ModuleKind.NodeNext, moduleResolution: ts.ModuleResolutionKind.NodeNext,
+      lib: ["lib.es2022.d.ts", "lib.dom.d.ts"],
+    });
+    const diagnostics = ts.getPreEmitDiagnostics(program);
+    if (diagnostics.length) fail("feed types", ts.formatDiagnostics(diagnostics, {
+      getCanonicalFileName: (file) => file, getCurrentDirectory: () => dir, getNewLine: () => "\n",
+    }));
+    else console.log("ok   feed types 1 strict consumer compilation");
+    return diagnostics.length === 0;
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
 
 async function checkLegacyRepeat(page, name) {
   await page.goto(pages.shell);
@@ -446,6 +484,8 @@ async function checkFeedAndHotkeys(page, name) {
   for (const [key, passed] of Object.entries(motion)) if (!passed) fail(`${name} feed motion`, key);
   if (Object.values(motion).every(Boolean)) console.log(`ok   ${name} feed motion 3 behavioral assertions`);
 }
+
+if (!checkFeedTypes()) process.exit(1);
 
 for (const [name, engine] of Object.entries(engines)) {
   const browser = await engine.launch();
