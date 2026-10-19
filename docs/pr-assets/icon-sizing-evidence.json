@@ -1,0 +1,299 @@
+{
+  "schemaVersion": 1,
+  "assembledAtUtc": "2026-10-19T18:40:50.214Z",
+  "baseCommit": "bbe539130b5ddb540766c5452e75aca3a50703de",
+  "branchCommit": "847a1d4d955e397756a7e97ca88135811d2304cb",
+  "page": "showcase/shell.html",
+  "pageMarkupIdentical": true,
+  "viewport": {
+    "width": 1280,
+    "height": 900,
+    "devicePixelRatio": 2
+  },
+  "engine": "T3 collaborative Chromium",
+  "theme": "ink",
+  "captureRunWallSeconds": 1.087,
+  "captures": [
+    {
+      "variant": "base",
+      "rootFontPx": 16,
+      "rootPx": "16px",
+      "viewport": {
+        "width": 1280,
+        "height": 900,
+        "dpr": 2
+      },
+      "theme": "ink",
+      "head": {
+        "text": "Projects",
+        "fontPx": "18px",
+        "iconWidthPx": "20px",
+        "rect": {
+          "x": 96,
+          "y": 36,
+          "width": 287,
+          "height": 64,
+          "top": 36,
+          "right": 383,
+          "bottom": 100,
+          "left": 96
+        }
+      },
+      "row": {
+        "text": "Website 41",
+        "fontPx": "18px",
+        "iconWidthPx": "20px",
+        "rect": {
+          "x": 96,
+          "y": 363,
+          "width": 287,
+          "height": 41,
+          "top": 363,
+          "right": 383,
+          "bottom": 404,
+          "left": 96
+        }
+      },
+      "rail": {
+        "text": "Projects",
+        "fontPx": "15px",
+        "iconWidthPx": "26px",
+        "rect": {
+          "x": 6,
+          "y": 202.25,
+          "width": 83,
+          "height": 69.25,
+          "top": 202.25,
+          "right": 89,
+          "bottom": 271.5,
+          "left": 6
+        }
+      },
+      "fontFamily": "-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"SF Pro Display\", \"Segoe UI\", system-ui, sans-serif"
+    },
+    {
+      "variant": "base",
+      "rootFontPx": 32,
+      "rootPx": "32px",
+      "viewport": {
+        "width": 1280,
+        "height": 900,
+        "dpr": 2
+      },
+      "theme": "ink",
+      "head": {
+        "text": "Projects",
+        "fontPx": "36px",
+        "iconWidthPx": "20px",
+        "rect": {
+          "x": 192,
+          "y": 36,
+          "width": 575,
+          "height": 128,
+          "top": 36,
+          "right": 767,
+          "bottom": 164,
+          "left": 192
+        }
+      },
+      "row": {
+        "text": "Website 41",
+        "fontPx": "36px",
+        "iconWidthPx": "20px",
+        "rect": {
+          "x": 192,
+          "y": 586,
+          "width": 575,
+          "height": 68,
+          "top": 586,
+          "right": 767,
+          "bottom": 654,
+          "left": 192
+        }
+      },
+      "rail": {
+        "text": "Projects",
+        "fontPx": "15px",
+        "iconWidthPx": "26px",
+        "rect": {
+          "x": 6,
+          "y": 266.25,
+          "width": 179,
+          "height": 69.25,
+          "top": 266.25,
+          "right": 185,
+          "bottom": 335.5,
+          "left": 6
+        }
+      },
+      "fontFamily": "-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"SF Pro Display\", \"Segoe UI\", system-ui, sans-serif"
+    },
+    {
+      "variant": "branch",
+      "rootFontPx": 16,
+      "rootPx": "16px",
+      "viewport": {
+        "width": 1280,
+        "height": 900,
+        "dpr": 2
+      },
+      "theme": "ink",
+      "head": {
+        "text": "Projects",
+        "fontPx": "18px",
+        "iconWidthPx": "18.8984px",
+        "rect": {
+          "x": 96,
+          "y": 36,
+          "width": 287,
+          "height": 64,
+          "top": 36,
+          "right": 383,
+          "bottom": 100,
+          "left": 96
+        }
+      },
+      "row": {
+        "text": "Website 41",
+        "fontPx": "18px",
+        "iconWidthPx": "18.8984px",
+        "rect": {
+          "x": 96,
+          "y": 363,
+          "width": 287,
+          "height": 41,
+          "top": 363,
+          "right": 383,
+          "bottom": 404,
+          "left": 96
+        }
+      },
+      "rail": {
+        "text": "Projects",
+        "fontPx": "15px",
+        "iconWidthPx": "26.25px",
+        "rect": {
+          "x": 6,
+          "y": 202.5,
+          "width": 83,
+          "height": 69.5,
+          "top": 202.5,
+          "right": 89,
+          "bottom": 272,
+          "left": 6
+        }
+      },
+      "fontFamily": "-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"SF Pro Display\", \"Segoe UI\", system-ui, sans-serif"
+    },
+    {
+      "variant": "branch",
+      "rootFontPx": 32,
+      "rootPx": "32px",
+      "viewport": {
+        "width": 1280,
+        "height": 900,
+        "dpr": 2
+      },
+      "theme": "ink",
+      "head": {
+        "text": "Projects",
+        "fontPx": "36px",
+        "iconWidthPx": "37.8047px",
+        "rect": {
+          "x": 192,
+          "y": 36,
+          "width": 575,
+          "height": 128,
+          "top": 36,
+          "right": 767,
+          "bottom": 164,
+          "left": 192
+        }
+      },
+      "row": {
+        "text": "Website 41",
+        "fontPx": "36px",
+        "iconWidthPx": "37.8047px",
+        "rect": {
+          "x": 192,
+          "y": 586,
+          "width": 575,
+          "height": 68,
+          "top": 586,
+          "right": 767,
+          "bottom": 654,
+          "left": 192
+        }
+      },
+      "rail": {
+        "text": "Projects",
+        "fontPx": "15px",
+        "iconWidthPx": "26.25px",
+        "rect": {
+          "x": 6,
+          "y": 266.5,
+          "width": 179,
+          "height": 69.5,
+          "top": 266.5,
+          "right": 185,
+          "bottom": 336,
+          "left": 6
+        }
+      },
+      "fontFamily": "-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"SF Pro Display\", \"Segoe UI\", system-ui, sans-serif"
+    }
+  ],
+  "cropWidthCssPx": 280,
+  "comparison": "icon-sizing-comparison.png",
+  "captureProcedure": [
+    "Serve the exact base and branch checkouts with the same installed Vite and Tailwind dependencies on ports 5189 and 5178.",
+    "Use preview_resize with width 1280 and height 900.",
+    "Navigate to /shell.html, set the ink theme and html.style.fontSize to 16px or 32px, and await document.fonts.ready.",
+    "Read the actual Projects sidebar heading, Website row, and rail text and SVG dimensions with getComputedStyle and getBoundingClientRect.",
+    "Save all four page screenshots with preview_snapshot save:true. Do not override SVG sizing or replace page markup.",
+    "Compose 280 CSS-pixel-wide crops from the recorded heading and row rectangles. Render the labelled comparison at 624 by 734 CSS pixels."
+  ],
+  "measurementChecks": {
+    "matchingViewports": true,
+    "matchingInkTheme": true,
+    "sidebarTextDoubles": true,
+    "baseSidebarIconsStay20px": true,
+    "branchSidebarIconsDouble": true,
+    "railStaysFixed": true
+  },
+  "verification": {
+    "generatedAi": {
+      "command": "node scripts/build-ai.mjs --check",
+      "exitCode": 0,
+      "wallSeconds": 1.367,
+      "components": 54,
+      "attributes": 50,
+      "roles": 22,
+      "themes": 3
+    },
+    "whitespace": {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    "sourceScope": {
+      "command": "git diff --exit-code 847a1d4 -- . ':(exclude)docs/pr-assets'",
+      "exitCode": 0
+    },
+    "ci": {
+      "branchRun": "https://github.com/Medalink/signal-design/actions/runs/39301023059",
+      "baseRun": "https://github.com/Medalink/signal-design/actions/runs/39298583108",
+      "failures": 2,
+      "engines": [
+        "chromium",
+        "webkit"
+      ],
+      "diagnostic": "800px headers fit beside the grip and long headings wrap",
+      "baseAlsoFails": true
+    },
+    "notRunThisUpdate": [
+      "Full local browser matrix",
+      "New axe audit",
+      "Manual WebView2 or WKWebView"
+    ]
+  }
+}
