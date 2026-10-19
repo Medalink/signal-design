@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.1 (2026-10-19)
+
+### Added
+
+- Living Tables support collapsible groups, responsive metadata, and pointer
+  or keyboard width resizing through `mountLivingTable(root)`.
+- The showcase includes copyable HTML and JavaScript. `refresh()` reconciles
+  rows, groups, and parent bounds after a container move.
+
 ## 1.1.0 (2026-10-19)
 
 ### Fixed
