@@ -1754,6 +1754,21 @@ No JS needed: the HTML works with the CSS alone.
 <div><a class="sd-btn sd-btn-primary" href="./shell.html">Open the Signal App Shell</a></div>
 ```
 
+## JS / Copy feedback
+
+Copy needs browser clipboard access. On an insecure LAN connection, or when permission is denied, the danger toast says "Copy unavailable. Select the line instead." The command stays selectable. Successful copies still say "Copied". No insecure clipboard bypass is used.
+
+Classes: sd-btn, sd-btn-ghost, sd-btn-sm, sd-code, sd-code-head
+
+JS: init() from signal-design/js wires data-sd-copy.
+
+```html
+<div class="sd-code">
+  <div class="sd-code-head">Command <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#copy-command">Copy</button></div>
+  <pre id="copy-command" tabindex="0"><code>npm test</code></pre>
+</div>
+```
+
 ## JS / Setup and attributes
 
 
@@ -1784,7 +1799,7 @@ setTheme("paper");                        // ink | graphite | paper | auto</code
       <tr><td><code>data-sd-seg</code></td><td>Single-select button group; fires <code>change</code>.</td></tr>
       <tr><td><code>data-sd-key="a"</code></td><td>Clicks the element when the key is pressed (ignored while typing).</td></tr>
       <tr><td><code>data-sd-tip="text"</code></td><td>Tooltip on hover and focus.</td></tr>
-      <tr><td><code>data-sd-copy="#id"</code></td><td>Copies text and confirms with a toast.</td></tr>
+      <tr><td><code>data-sd-copy="#id"</code></td><td>Copies text, or explains that copying is unavailable.</td></tr>
       <tr><td><code>data-sd-toast="text"</code></td><td>Shows a toast on click.</td></tr>
       <tr><td><code>data-sd-theme="paper"</code></td><td>Switches theme and remembers it.</td></tr>
     </tbody>
