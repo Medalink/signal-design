@@ -812,6 +812,12 @@
     width: 12px;
     height: 12px;
     max-width: none;
+    /* Window-control icons arrive as bare strokes and rects from the app
+       (the documented markup leaves the icon to the app). An SVG path or
+       rect defaults to fill: black, which vanishes into a dark title bar. */
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
   }
   /* Maximize shows one square; restore shows two. */
   .sd-window-controls .sd-icon-restore,

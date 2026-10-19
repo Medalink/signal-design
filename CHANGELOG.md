@@ -2,12 +2,6 @@
 
 ## Unreleased
 
-### Changed
-- Text is set in SF Pro (the system UI font; Segoe UI on Windows) in regular
-  and medium (500) in every theme. Source Code Pro stays bundled for code,
-  charts and the rain. Bold rules now use `--font-weight-semibold` instead of
-  a literal 600.
-
 ### Added
 - AI integration: `AGENTS.md` (the contract for agents), `llms.txt` and
   `llms-full.txt`, generated `ai/components.json` (every block's classes,
@@ -64,6 +58,10 @@
 - Redesigned landing page.
 
 ### Changed
+- Text is set in SF Pro (the system UI font; Segoe UI on Windows) in regular
+  and medium (500) in every theme. Source Code Pro stays bundled for code,
+  charts and the rain. Bold rules now use `--font-weight-semibold` instead of
+  a literal 600.
 - Breadcrumbs on phones shrink each crumb to its first letter (Home > P > B);
   icon-only crumbs stay, full names stay readable to screen readers.
 - Showcase: a slim top bar with the page links and the width switch replaces
@@ -132,6 +130,10 @@
 - The title bar and status bar use the rail background (`--sd-surface`).
 
 ### Fixed
+- Window-control icons no longer render as black squares: `.sd-window-controls svg`
+  now defaults to `fill: none; stroke: currentColor` (stroke-width 1.5), so the
+  documented minimal markup — bare `<path>`/`<rect>` with no attributes — is
+  visible on a dark title bar.
 - Shell region components (`sd-rail`, `sd-sidebar`, `sd-shell-main`,
   `sd-shell-aside`, `sd-shell-status`, `sd-shell-topbar`, `sd-titlebar`) now
   claim their named grid area only as direct children of `.sd-shell`. Used
