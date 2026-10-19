@@ -89,22 +89,59 @@
   }
 
   /* Width toggle (showcase/viewport.js). */
-  .vp-toggle {
-    position: fixed;
-    left: 12px;
-    bottom: 48px;
-    z-index: 80;
+  /* Showcase bar (showcase/viewport.js): page links and a width switch. */
+  .vp-bar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    height: 36px;
+    padding: 0 12px;
+    border-block-end: 1px solid var(--sd-line);
+    background: var(--sd-surface);
+    font-size: var(--text-xs);
   }
-  .vp-toggle > .sd-btn {
-    background: var(--sd-overlay);
+  .vp-brand {
+    color: var(--sd-fg-faint);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    font-size: var(--text-2xs);
   }
-  .vp-toggle > .sd-btn > svg {
-    width: 14px;
-    height: 14px;
+  .vp-pages {
+    display: flex;
+    gap: 16px;
+  }
+  .vp-pages > a {
+    color: var(--sd-fg-subtle);
+    text-decoration: none;
+  }
+  .vp-pages > a:hover,
+  .vp-pages > a[aria-current] {
+    color: var(--sd-fg);
+  }
+  .vp-widths {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-inline-start: auto;
+    color: var(--sd-fg-faint);
+  }
+  /* Tablets: just the width switch. */
+  @media (max-width: 63.99rem) {
+    .vp-brand,
+    .vp-pages {
+      display: none;
+    }
+  }
+  /* The app-shell pages fill the window; make room for the bar. */
+  .has-vp-bar .sd-shell {
+    height: calc(100dvh - 36px);
   }
   @media (max-width: 47.99rem) {
-    .vp-toggle {
+    .vp-bar {
       display: none;
+    }
+    .has-vp-bar .sd-shell {
+      height: 100dvh;
     }
   }
   .vp-dialog {

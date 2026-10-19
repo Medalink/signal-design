@@ -58,6 +58,10 @@
 - Redesigned landing page.
 
 ### Changed
+- Breadcrumbs on phones shrink each crumb to its first letter (Home > P > B);
+  icon-only crumbs stay, full names stay readable to screen readers.
+- Showcase: a slim top bar with the page links and the width switch replaces
+  the floating Width button.
 - The light theme is called paper: `data-theme="paper"`, `setTheme("paper")`,
   the `paper:` Tailwind variant. `light` still works everywhere as an alias
   (attribute, `setTheme`, `data-sd-theme`, a saved preference, `light:`).

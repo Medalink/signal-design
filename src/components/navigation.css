@@ -160,6 +160,33 @@
     flex-shrink: 0;
   }
 
+  /* Phones: every crumb but an icon-only one shrinks to its first letter
+     (Home > P > B). The crumb's text is sized to 0 and only ::first-letter
+     gets the real size, so exactly one character shows; the full name stays
+     in the page for screen readers. */
+  @media (max-width: 47.99rem) {
+    .sd-breadcrumb {
+      flex-wrap: nowrap;
+    }
+    .sd-breadcrumb > li > :where(a, span, button):not([aria-label]:has(> svg:only-child)) {
+      display: inline-block;
+      width: 2rem;
+      padding: 0;
+      font-size: 0;
+      line-height: calc(2rem - 2px);
+      text-align: center;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .sd-breadcrumb > li > :where(a, span, button):not([aria-label]:has(> svg:only-child))::first-letter {
+      font-size: var(--text-sm);
+    }
+    .sd-breadcrumb > li > :where(a, span, button):not([aria-label]:has(> svg:only-child)) svg {
+      display: none;
+    }
+  }
+
   /* Pagination: square cells. */
   .sd-pagination {
     display: flex;
