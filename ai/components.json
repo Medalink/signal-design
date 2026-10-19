@@ -1034,6 +1034,32 @@
    "script": "import { mountCountdown } from \"signal-design/js\";\nconst root = document.getElementById(\"demo-countdown\");\nconst countdown = mountCountdown(root);\nlet remainingMs = 5000;\nlet startedAt = null;\nroot.addEventListener(\"sd:countdown\", ({ detail }) => {\n  document.getElementById(\"countdown-state\").textContent = detail.state;\n  if (detail.state === \"complete\") { remainingMs = 0; startedAt = null; }\n});\nfunction set(running) {\n  if (startedAt !== null) remainingMs = Math.max(0, remainingMs - (performance.now() - startedAt));\n  startedAt = running ? performance.now() : null;\n  countdown.set({ remainingMs, running });\n}\nset(false);\ndocument.getElementById(\"countdown-resume\").onclick = () => set(true);\ndocument.getElementById(\"countdown-pause\").onclick = () => set(false);\ndocument.getElementById(\"countdown-resync\").onclick = () => {\n  remainingMs = 5000;\n  startedAt = null;\n  set(false);\n};"
   },
   {
+   "id": "js-live-feed",
+   "section": "JS",
+   "title": "Live feed navigation",
+   "classes": [
+    "sd-actions",
+    "sd-btn",
+    "sd-btn-sm",
+    "sd-expand",
+    "sd-note",
+    "sd-pill",
+    "sd-row",
+    "sd-row-body",
+    "sd-row-title",
+    "sd-stack"
+   ],
+   "attributes": [
+    "data-sd-feed",
+    "data-sd-scroll-tab",
+    "data-sd-toggle"
+   ],
+   "usage": "Focus the feed for j/k, g then t for newest, and n for oldest. Insert a row while reading to keep your place. Rows need stable data-id and numeric data-order. Call beforeUpdate() before replacing rows and afterUpdate() afterward. select(id) handles application targets. refresh() reconciles selection; suspend(true) cancels idle return and motion; dispose() removes listeners and timers. DOM order controls next/previous, numeric order controls oldest/newest.",
+   "js": "JS: Call mountFeed(root, options) and hotkeys(map, options) from signal-design/js; init() wires detail toggles.",
+   "html": "<div class=\"sd-stack\">\n  <div class=\"sd-actions\"><button class=\"sd-btn sd-btn-sm\" id=\"feed-insert\">Insert row</button><button class=\"sd-btn sd-btn-sm\" id=\"feed-oldest\">Oldest</button><button class=\"sd-btn sd-btn-sm\" id=\"feed-newest\">Newest</button><span class=\"sd-pill\" id=\"feed-above\" role=\"status\">0 above</span></div>\n  <div class=\"sd-stack\" id=\"demo-feed\" data-sd-feed=\"\" data-sd-scroll-tab=\"\" tabindex=\"0\" role=\"region\" aria-label=\"Activity feed\" style=\"max-height: 14rem; overflow-y: auto\">\n    <article class=\"sd-row\" data-id=\"activity-3\" data-order=\"3\"><div class=\"sd-row-body\"><p class=\"sd-row-title\">Build completed</p></div></article>\n    <article class=\"sd-row\" data-id=\"activity-2\" data-order=\"2\" aria-current=\"true\"><div class=\"sd-row-body\"><p class=\"sd-row-title\">Export finished</p></div><button class=\"sd-btn sd-btn-sm\" data-sd-toggle=\"feed-detail\" aria-controls=\"feed-detail\" aria-expanded=\"false\">Details</button></article>\n    <div class=\"sd-expand\" id=\"feed-detail\"><div><p class=\"sd-note\">The export is ready to download.</p></div></div>\n    <article class=\"sd-row\" data-id=\"activity-1\" data-order=\"1\"><div class=\"sd-row-body\"><p class=\"sd-row-title\">Sync started</p></div></article>\n  </div>\n</div>",
+   "script": "import { mountFeed, hotkeys } from \"signal-design/js\";\nconst root = document.getElementById(\"demo-feed\");\nroot.addEventListener(\"sd:feed\", ({ detail }) => {\n  document.getElementById(\"feed-above\").textContent = `${detail.aboveCount} above`;\n});\nconst feed = mountFeed(root);\nconst off = hotkeys({ j: () => feed.move(1), k: () => feed.move(-1),\n  \"g t\": () => feed.newest(), n: () => feed.oldest() },\n  { target: root, sequenceTimeout: 900, enabled: () => !root.hidden });\ndocument.getElementById(\"feed-oldest\").onclick = () => feed.oldest();\ndocument.getElementById(\"feed-newest\").onclick = () => feed.newest();\nlet order = 3;\ndocument.getElementById(\"feed-insert\").onclick = () => {\n  feed.beforeUpdate();\n  const row = document.createElement(\"article\");\n  row.className = \"sd-row\";\n  row.dataset.id = `activity-${++order}`;\n  row.dataset.order = String(order);\n  row.textContent = `Activity ${order} received`;\n  root.prepend(row);\n  feed.afterUpdate();\n};"
+  },
+  {
    "id": "js-setup-and-attributes",
    "section": "JS",
    "title": "Setup and attributes",

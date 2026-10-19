@@ -3,6 +3,8 @@ import { init, toast, getTheme, rain, selectSection, setScrollbars } from "../sr
 import { lazyChart } from "./lazy.js";
 import { mountCountdownDemo } from "./countdown.js";
 
+import { mountFeedDemo } from "./feed.js";
+
 /* ---- Preview / code: snapshot every block before any script touches it -- */
 
 const blocks = [...document.querySelectorAll(".demo-block")];
@@ -25,6 +27,8 @@ function dedent(html) {
 /** What init() wires in this block, so a copied snippet works. */
 function jsNote(html) {
   if (/data-sd-countdown/.test(html)) return 'JS: Call <code>mountCountdown(root)</code> from <code>signal-design/js</code>, then <code>set({ remainingMs, running })</code>; <code>init()</code> does not mount it.';
+
+  if (/data-sd-feed/.test(html)) return 'JS: Call <code>mountFeed(root, options)</code> and <code>hotkeys(map, options)</code> from <code>signal-design/js</code>; <code>init()</code> wires detail toggles.';
   const passive = /^data-sd-(ornaments-size|ornaments-still|rain-style|rain-skip|tip-side|align|side|static|chart-scale)$/;
   const attrs = [...new Set(html.match(/data-sd-[a-z-]+/g) || [])].filter((a) => !passive.test(a));
   const extras = [];
@@ -95,6 +99,8 @@ for (const panel of document.querySelectorAll(".sd-sidebar-panel[data-sections]"
 
 init();
 mountCountdownDemo();
+
+mountFeedDemo();
 
 /* ---- Where you are: crumbs, sidebar and rail follow the scroll ---------- */
 
