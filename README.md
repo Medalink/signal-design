@@ -308,6 +308,23 @@ the rain skips them.
 `sd-popover-panel` with `sd-popover-head` and `sd-popover-body` makes a larger
 popover for an inbox or a pinned list.
 
+## Progress
+
+`sd-progress` fills to `--value` (unitless `0`–`100`). When the amount is not
+known yet, set `data-state="indeterminate"`: the bar becomes a static dashed
+line in the pending tone (`data-tone` overrides it). It does not sweep or
+pulse, because Signal moves only when state changes. Say what it waits for in
+an `sd-progress-label` above it, and leave out `aria-valuenow`.
+
+```html
+<p class="sd-progress-label"><span>Checking for updates</span><span>waiting</span></p>
+<div class="sd-progress" data-state="indeterminate" role="progressbar" aria-label="Checking for updates"></div>
+```
+
+Once the amount is known, drop `data-state` and set `--value` and
+`aria-valuenow`; the bar shrinks to the value in 200ms. A native `<progress>`
+without a `value` stays an empty track.
+
 ## Conversation and lists
 
 Generic pieces for chat, comments, feeds and inboxes. See `showcase/chat.html`.
@@ -555,6 +572,7 @@ gets the same answer:
 | `aria-sort="ascending\|descending"` | Sort direction of a `th[data-sort]` in `sd-table`. |
 | `data-sidebar`, `data-aside`, `data-drawer`, `data-peek` | `sd-shell` layout state; toggled by `setSidebar`/`setAside`/`setDrawer` and read back from `dataset`. `.sd-expand` panels open/close via `data-open` (kept in sync with `aria-expanded`). |
 | `--value` on `.sd-progress` | Progress, unitless `0`–`100`. |
+| `data-state="indeterminate"` on `.sd-progress` | Unknown amount: a static dashed bar in the pending tone. |
 | `data-theme` (element or `<html>`) | Themes a subtree; `setTheme` also remembers it in `localStorage`. |
 | `data-sd-scrolling` on `<html>` | Present while the page is scrolling; drives the auto-hiding scrollbars. |
 

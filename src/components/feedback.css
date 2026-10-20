@@ -114,6 +114,26 @@
     background: var(--tone, var(--sd-fg));
     transition: width 200ms var(--ease-out);
   }
+  /* Unknown amount: a static dashed bar in the pending tone. Nothing moves
+     while it waits; set --value and drop data-state once the amount is known. */
+  .sd-progress[data-state="indeterminate"]::before {
+    width: 100%;
+    border-block-start: 4px dashed var(--tone, var(--sd-pending));
+    background: none;
+  }
+  /* What the bar measures, with its value or state on the right. */
+  .sd-progress-label {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-block-end: 8px;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
+  }
+  .sd-progress-label > :first-child {
+    color: var(--sd-fg);
+  }
 
   /* Skeleton: static placeholder blocks. No shimmer, nothing loops. */
   .sd-skeleton {
