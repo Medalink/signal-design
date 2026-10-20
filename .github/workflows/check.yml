@@ -5,28 +5,52 @@ on:
     branches: [main]
   pull_request:
 
+# A new push to a pull request supersedes the run in progress.
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   check:
+    name: check (${{ matrix.suite }})
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [chromium, webkit, a11y]
+    env:
+      BROWSER: ${{ matrix.suite == 'webkit' && 'webkit' || 'chromium' }}
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: ${{ matrix.suite == 'chromium' && github.event_name == 'pull_request' && '0' || '1' }}
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Playwright version
+        id: pw
+        run: echo "version=$(node -p 'require("playwright/package.json").version')" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        id: browsers
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ steps.pw.outputs.version }}-${{ env.BROWSER }}
+      - if: steps.browsers.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install --with-deps ${{ env.BROWSER }}
+      - if: steps.browsers.outputs.cache-hit == 'true'
+        run: pnpm exec playwright install-deps ${{ env.BROWSER }}
       - run: pnpm build:css
-      - run: pnpm exec playwright install --with-deps chromium webkit
       - name: Start the showcase
         run: |
           pnpm dev --port 5178 --strictPort > vite.log 2>&1 &
           npx -y wait-on@8.0.3 -t 60000 http-get://localhost:5178/
+
       - name: Pull request leaves generated and shared files alone
-        if: github.event_name == 'pull_request' && !startsWith(github.head_ref, 'release/')
+        if: matrix.suite == 'chromium' && github.event_name == 'pull_request' && !startsWith(github.head_ref, 'release/')
         run: |
           touched=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD" -- CHANGELOG.md ai/components.json ai/tokens.json llms-full.txt vscode/html-data.json vscode/css-data.json)
           if [ -n "$touched" ]; then
@@ -36,10 +60,15 @@ jobs:
             exit 1
           fi
       - name: Changelog fragments are well formed
+        if: matrix.suite == 'chromium'
         run: node scripts/changelog.mjs --check
       - name: AI files build
+        if: matrix.suite == 'chromium'
         run: node scripts/build-ai.mjs
-      - run: node scripts/check.mjs http://localhost:5178/
-      - run: node scripts/a11y.mjs http://localhost:5178/
+
+      - if: matrix.suite != 'a11y'
+        run: node scripts/check.mjs http://localhost:5178/ --engine ${{ matrix.suite }}
+      - if: matrix.suite == 'a11y'
+        run: node scripts/a11y.mjs http://localhost:5178/
       - if: failure()
         run: cat vite.log

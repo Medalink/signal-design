@@ -49,6 +49,20 @@ exempt so it can fold the fragments into `CHANGELOG.md`.
 - `git config rerere.enabled true` makes git reuse a conflict resolution it
   has already seen.
 
+## Writing checks that do not flake
+
+CI runners are slower and busier than a laptop, and WebKit more so. A check
+that sleeps a fixed time and then asserts passes locally and fails there.
+
+- Wait for the condition you are about to assert, with a generous timeout,
+  then assert it: `page.waitForFunction(() => cond, null, { timeout: 2000 })`,
+  or a polling loop inside `page.evaluate`. Never `waitForTimeout` before a
+  positive assertion.
+- A fixed wait is fine only for a negative assertion ("nothing moved after
+  dispose"), where a slow runner can make it pass but never fail.
+- For transitions, wait for `element.getAnimations({ subtree: true })` to
+  finish rather than for their duration.
+
 ## Develop
 
 ```bash
@@ -56,6 +70,7 @@ pnpm install
 pnpm dev                                        # showcase at http://localhost:5178
 pnpm build:css
 node scripts/check.mjs http://localhost:5178/   # hard rules and behavior, Chromium and WebKit
+node scripts/check.mjs http://localhost:5178/ --engine webkit   # one engine, as each CI job runs it
 pnpm a11y                                       # axe-core audit
 node scripts/changelog.mjs --check              # changelog fragments
 ```
