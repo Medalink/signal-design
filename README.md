@@ -326,6 +326,18 @@ Generic pieces for chat, comments, feeds and inboxes. See `showcase/chat.html`.
 | `sd-file`, `sd-link-card`, `sd-poll` | Attachment, link preview, poll (`--share` per option). |
 | `sd-tiles`, `sd-tile` | Call grid; `data-speaking`, `data-muted`, `data-hand`. |
 | `sd-grid-picker` | An emoji or icon grid (`--cols`). |
+| `sd-level` | A live level meter, such as a microphone input: 2 to 8 `<i>` bars that light up to `--level` (`0`–`1`). |
+
+`sd-level` moves only when your level changes. Write `--level` and
+`aria-valuenow` from the same value, for example each audio analyser frame; a
+bar fades in 120ms when the value crosses it, and nothing loops while the level
+holds. Bars rise in height from left to right, `--h` sets the tallest (default
+`1.5cap`), and `data-tone` colors the lit bars.
+
+```html
+<span class="sd-level" data-tone="success" role="meter" aria-label="Microphone level"
+  aria-valuemin="0" aria-valuemax="1" aria-valuenow="0.6" style="--level: 0.6"><i></i><i></i><i></i></span>
+```
 
 `data-sd-contextmenu="menu-id"` opens a menu at the pointer on right click,
 Shift+F10 or the menu key, and fires `sd:contextmenu` with the target.
@@ -555,6 +567,7 @@ gets the same answer:
 | `aria-sort="ascending\|descending"` | Sort direction of a `th[data-sort]` in `sd-table`. |
 | `data-sidebar`, `data-aside`, `data-drawer`, `data-peek` | `sd-shell` layout state; toggled by `setSidebar`/`setAside`/`setDrawer` and read back from `dataset`. `.sd-expand` panels open/close via `data-open` (kept in sync with `aria-expanded`). |
 | `--value` on `.sd-progress` | Progress, unitless `0`–`100`. |
+| `--level` on `.sd-level` | Live level, unitless `0`–`1`; pair it with `aria-valuenow`. |
 | `data-theme` (element or `<html>`) | Themes a subtree; `setTheme` also remembers it in `localStorage`. |
 | `data-sd-scrolling` on `<html>` | Present while the page is scrolling; drives the auto-hiding scrollbars. |
 

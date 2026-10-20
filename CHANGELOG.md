@@ -11,6 +11,9 @@
 - `sd-icon-text` and `sd-icon`: an icon and a word on one baseline, sized to
   the cap height. In Tailwind, `size-[1.5cap]` with `items-baseline` does the
   same.
+- `sd-level`: a live level meter (2 to 8 bars) driven by `--level` from 0 to
+  1, with `role="meter"`. Bars change only when the value crosses them; it
+  never loops.
 
 ## 1.1.1 (2026-10-19)
 
