@@ -89,7 +89,7 @@ by `title` or `classes`) rather than inventing markup.
 | Lists and rows | `sd-item`, `sd-row`, `sd-table`, `sd-kv` |
 | Status | `sd-badge`, `sd-status`, `sd-dot`, `sd-count`, `sd-progress` (`data-state="indeterminate"` when the amount is unknown; never a looping bar), `sd-checks`, `sd-level` (live level from `--level`, 0–1) |
 | People | `sd-avatar` (`-sm` `-md` `-lg` `-xl`, or `--sd-avatar-size`) with `data-status`; on your own panel set `--sd-ring` to its background so the presence ring matches |
-| Chat and feeds | `sd-message`, `sd-composer`, `sd-reactions`, `sd-banner`, `sd-file`, `sd-link-card` (`-hero`, `-compact`, `-type`, `data-blocked`, `aria-busy`) |
+| Chat and feeds | `sd-message` (`--edge` role color, `data-own`, `data-selected`), `sd-composer`, `sd-reactions`, `sd-banner`, `sd-file`, `sd-link-card` (`-hero`, `-compact`, `-type`, `data-blocked`, `aria-busy`) |
 | Data | `sd-stat`, `sd-stat-box`, `createChart(canvas, { type })`, `sd-plot`, `sd-heatmap`, `sd-uptime`, `sd-meter` |
 | Empty | `sd-empty` (gets a center ornament automatically) |
 

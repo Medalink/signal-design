@@ -1219,6 +1219,53 @@ for (const button of preview.querySelectorAll("[data-living-width]")) {
     </div>
 
     <div class="demo-block">
+      <h3 class="sd-label">Message edges and selection</h3>
+      <div class="border border-line py-3" style="background: var(--sd-surface)">
+        <article class="sd-message" style="--edge: var(--sd-extra)">
+          <span class="sd-avatar" data-tone="extra">AL</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>Alex</b><span class="sd-badge">Moderator</span><time>11:02</time></header>
+            <div class="sd-message-text">An author or role color sits on the start edge through <code>--edge</code>.</div>
+          </div>
+        </article>
+        <article class="sd-message" data-grouped style="--edge: var(--sd-extra)">
+          <time>11:03</time>
+          <div class="sd-message-body"><div class="sd-message-text">Grouped follow-ups keep it.</div></div>
+        </article>
+        <article class="sd-message" data-own>
+          <span class="sd-avatar" data-tone="success">JD</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>Jane</b><span class="sd-message-edited">you</span><time>11:04</time></header>
+            <div class="sd-message-text">Your own messages get a light tint with <code>data-own</code>.</div>
+          </div>
+        </article>
+        <article class="sd-message" data-selected style="--edge: var(--sd-extra)">
+          <span class="sd-avatar" data-tone="extra">AL</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><input type="checkbox" checked aria-label="Select message from Alex at 11:05"><b>Alex</b><time>11:05</time></header>
+            <div class="sd-message-text">Selected for a bulk action: the accent edge replaces the role color.</div>
+          </div>
+        </article>
+        <article class="sd-message" data-mention style="--edge: var(--sd-warning)">
+          <span class="sd-avatar" data-tone="warning">SK</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>Sam</b><time>11:06</time></header>
+            <div class="sd-message-text"><span class="sd-mention">@Jane</span> a mention edge wins over the role color too.</div>
+          </div>
+        </article>
+        <article class="sd-message" data-own data-failed aria-current="true">
+          <span class="sd-avatar" data-tone="success">JD</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>Jane</b><time>11:07</time></header>
+            <div class="sd-message-text">Failed wins over every other edge, even while you reply to it.</div>
+            <div class="sd-message-status">Not sent · <button class="sd-btn sd-btn-link">Retry</button></div>
+          </div>
+        </article>
+      </div>
+      <p class="demo-usage"><code>--edge</code> (author or role color, user data) · <code>data-own</code> · <code>data-selected</code> + a real checkbox · edge order: <code>data-failed</code> &gt; <code>aria-current</code> &gt; <code>data-selected</code> &gt; <code>data-mention</code> &gt; <code>--edge</code></p>
+    </div>
+
+    <div class="demo-block">
       <h3 class="sd-label">Composer</h3>
       <form class="sd-composer max-w-column" onsubmit="event.preventDefault(); this.querySelector('textarea').value=''">
         <div class="sd-composer-chips"><span class="sd-chip"><b>Replying to</b> Alex <button type="button" aria-label="Cancel reply">×</button></span></div>

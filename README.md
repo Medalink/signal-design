@@ -407,7 +407,7 @@ Generic pieces for chat, comments, feeds and inboxes. See `showcase/chat.html`.
 | `sd-avatar` (+ `-sm`, `-md`, `-lg`, `-xl`) | 22, 28, 34 and 48px squares (24px without a size class). `--sd-avatar-size` sets any other size, such as a profile preview; the initials and the presence square grow with it. |
 | `sd-avatar[data-status]` | `online`, `away` (or `afk`), `busy`, `offline` square on the corner. |
 | `sd-badge-count` | A count on an icon, rail item, rail tile or avatar. |
-| `sd-message` | Avatar plus body; `data-grouped`, `data-mention`, `data-pending`, `data-failed`. `sd-message-actions` is the hover toolbar. |
+| `sd-message` | Avatar plus body; `data-grouped`, `data-mention`, `data-pending`, `data-failed`, `data-own`, `data-selected`, and `--edge` for an author or role color. `sd-message-actions` is the hover toolbar. |
 | `sd-reply`, `sd-mention`, `sd-event` | Quoted reply, inline mention, system line. |
 | `sd-reactions` | Toggle buttons with counts; fires `sd:reaction`. |
 | `sd-receipts`, `sd-typing` | Read receipts and the typing line. |
@@ -466,6 +466,16 @@ Link cards come in a few shapes for one URL preview:
   <span class="sd-link-card-desc"></span><span class="sd-link-card-thumb"></span>
 </div>
 ```
+
+A message's start edge carries one color at a time. `--edge` sets an author
+or role color; it is user data, so pass it as a custom property
+(`style="--edge: var(--role-color)"`) rather than a tone, and note that it
+inherits, so a wrapper can set it for a run of messages. State edges win over
+it in a fixed order: `data-failed` > `aria-current` > `data-selected` >
+`data-mention` > `--edge`. `data-own` tints the viewer's own messages with half
+of `--sd-raised`; `data-selected` (an accent edge on `--sd-raised`) marks
+messages picked for a bulk action. `data-selected` is only the look: expose the
+choice with a real control, such as a labelled checkbox in the message.
 
 `data-sd-contextmenu="menu-id"` opens a menu at the pointer on right click,
 Shift+F10 or the menu key, and fires `sd:contextmenu` with the target.
@@ -715,6 +725,7 @@ gets the same answer:
 | `aria-selected="true"` | Selection in `sd-tabs`, `sd-item`, `sd-table` rows, `sd-seg`, `sd-grid-picker`, `sd-menu`. |
 | `aria-pressed="true"` | Toggle state in `sd-chip`, `sd-seg`, `sd-option`, `sd-poll-option`, `sd-reactions`, `sd-icon-btn`. |
 | `aria-expanded="true"` | `sd-icon-btn` (popover/menu triggers), `sd-rail-item`; `aria-controls` points at the panel. |
+| `data-own`, `data-selected`, `--edge` on `.sd-message` | Own-message tint, bulk selection, author or role edge color. |
 | `aria-current` (any value but `"false"`) | Current location in `sd-nav`, `sd-sidenav`, `sd-sidebar-link`, `sd-breadcrumb`, `sd-pagination`, `sd-rail-item`, `sd-rail-tile`, `sd-message`; `sd-steps` uses `aria-current="step"`. |
 | `aria-sort="ascending\|descending"` | Sort direction of a `th[data-sort]` in `sd-table`. |
 | `--shell-sidebar` on `.sd-shell`, `aria-valuenow` on `.sd-sidebar-resize`, `data-resizing` | Sidebar width in px, its separator's value, and a drag in progress; written by `data-sd-shell="resize"` and `setSidebarWidth`. |
