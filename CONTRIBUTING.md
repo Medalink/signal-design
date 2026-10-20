@@ -79,6 +79,7 @@ pnpm build:css
 node scripts/check.mjs http://localhost:5178/   # hard rules and behavior, Chromium and WebKit
 node scripts/check.mjs http://localhost:5178/ --engine webkit --only chat,behaviors   # one engine, some pages
 pnpm a11y                                       # axe-core audit
+node scripts/check-showcase-build.mjs           # production build under /signal-design/, every page
 node scripts/changelog.mjs --check              # changelog fragments
 ```
 

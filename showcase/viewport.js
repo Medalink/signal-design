@@ -110,7 +110,7 @@ function scrollbars(mode, { persist = true } = {}) {
   if (persist) store.set("sd-scrollbars", mode);
 }
 
-function mount() {
+function buildBar() {
   const where = here();
   const bar = document.createElement("nav");
   bar.className = "vp-bar";
@@ -207,18 +207,26 @@ function mount() {
   pick("vp-scrollbars", store.get("sd-scrollbars") || "auto");
 }
 
-if (!inFrame) mount();
-else {
-  // The framed page takes theme changes from the page that framed it.
-  addEventListener("message", (e) => {
-    if (e.origin === location.origin && THEMES.includes(e.data?.sdTheme)) setTheme(e.data.sdTheme, { persist: false });
+/**
+ * Mount the bar (not in a frame) and restore the saved chart colors and
+ * scrollbars. Each page entry calls it before init(): the package marks only
+ * CSS as side-effect free, so a bare `import "./viewport.js"` is tree-shaken
+ * out of the production build.
+ */
+export function mountBar() {
+  if (!inFrame) buildBar();
+  else {
+    // The framed page takes theme changes from the page that framed it.
+    addEventListener("message", (e) => {
+      if (e.origin === location.origin && THEMES.includes(e.data?.sdTheme)) setTheme(e.data.sdTheme, { persist: false });
+    });
+  }
+
+  // Run after init() (which resets scrollbars to "auto"), whether or not the bar mounted.
+  document.addEventListener("DOMContentLoaded", () => {
+    const colors = store.get("sd-chart-theme");
+    if (colors && colors !== "mono") chartColors(colors, { persist: false });
+    const bars = store.get("sd-scrollbars");
+    if (bars && bars !== "auto") scrollbars(bars, { persist: false });
   });
 }
-
-// Run after init() (which resets scrollbars to "auto"), whether or not the bar mounted.
-document.addEventListener("DOMContentLoaded", () => {
-  const colors = store.get("sd-chart-theme");
-  if (colors && colors !== "mono") chartColors(colors, { persist: false });
-  const bars = store.get("sd-scrollbars");
-  if (bars && bars !== "auto") scrollbars(bars, { persist: false });
-});

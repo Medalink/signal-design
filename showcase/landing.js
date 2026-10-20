@@ -1,6 +1,7 @@
-import "./viewport.js";
+import { mountBar } from "./viewport.js";
 import { init, rain } from "../src/js/index.js";
 
+mountBar();
 init();
 
 // The hero rain moves for a few seconds on arrival (a state change: the page

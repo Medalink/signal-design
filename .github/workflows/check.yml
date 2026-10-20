@@ -79,6 +79,9 @@ jobs:
       - name: AI files build
         if: matrix.suite == 'chromium'
         run: node scripts/build-ai.mjs
+      - name: Production showcase build keeps the bar
+        if: matrix.suite == 'chromium'
+        run: node scripts/check-showcase-build.mjs
 
       - if: matrix.suite != 'a11y'
         run: node scripts/check.mjs http://localhost:5178/ ${{ matrix.args }}

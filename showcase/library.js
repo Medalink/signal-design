@@ -5,7 +5,7 @@
  * module calls mountLibrary() first, before any demo code, so the snapshots
  * below capture each block's markup as authored.
  */
-import "./viewport.js";
+import { mountBar } from "./viewport.js";
 import { init } from "../src/js/index.js";
 
 const slug = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -142,6 +142,7 @@ function followScroll(blocks) {
 
 /** Wire the page shell. Call first: it snapshots the blocks, then runs init(). */
 export function mountLibrary() {
+  mountBar();
   const blocks = [...document.querySelectorAll(".demo-block")];
   decorateBlocks(blocks);
   buildSidebar();

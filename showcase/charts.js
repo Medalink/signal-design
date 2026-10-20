@@ -1,8 +1,9 @@
-import "./viewport.js";
+import { mountBar } from "./viewport.js";
 import { init } from "../src/js/index.js";
 import { createChart, formatValue } from "../src/js/charts/index.js";
 import { lazyChart } from "./lazy.js";
 
+mountBar();
 init();
 
 // Seeded noise so every load (and every test run) draws the same chart.

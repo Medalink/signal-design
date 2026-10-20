@@ -1,6 +1,7 @@
-import "./viewport.js";
+import { mountBar } from "./viewport.js";
 import { init, hotkeys, toast, setExpanded, rain, setOptions, openDialog } from "../src/js/index.js";
 
+mountBar();
 init();
 
 const shell = document.getElementById("shell");

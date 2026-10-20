@@ -1,6 +1,7 @@
-import "./viewport.js";
+import { mountBar } from "./viewport.js";
 import { init, toast } from "../src/js/index.js";
 
+mountBar();
 init();
 
 const form = document.querySelector("[data-form]");
