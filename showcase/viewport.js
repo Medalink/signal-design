@@ -256,8 +256,13 @@ export function mountBar() {
   else if (window.parent !== window) {
     peer = () => window.parent;
     // The frame holds the focus, so Esc never reaches the dialog that holds it.
+    // Judged on the way down: a Signal tooltip removes itself on this same Esc before the bubble phase.
+    let closes = false;
     addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && !e.defaultPrevented && !document.querySelector(":popover-open, dialog[open]")) window.parent.postMessage({ sdClose: true }, location.origin);
+      closes = e.key === "Escape" && !e.isComposing && !document.querySelector('[role="tooltip"], :popover-open, dialog[open]');
+    }, true);
+    addEventListener("keydown", (e) => {
+      if (closes && !e.defaultPrevented) window.parent.postMessage({ sdClose: true }, location.origin);
     });
   }
 

@@ -166,6 +166,20 @@ export async function checkShowcaseBar(browser, base, name) {
     expect(settled.themes.every((t) => t === last) && settled.events.every((n) => n <= 4), `two theme changes queued from the ${from} settle on ${last} without echoing ${JSON.stringify(settled)}`);
   }
 
+  // Esc that dismisses a tooltip, or ends an IME composition, is not a request to close the frame.
+  await page.frameLocator(".vp-dialog iframe").locator("#main").focus();
+  await page.frameLocator(".vp-dialog iframe").locator("[data-sd-tip]").first().hover();
+  await frame.waitForSelector('[role="tooltip"]', { timeout: 2000 });
+  await page.keyboard.press("Escape");
+  await frame.waitForFunction(() => !document.querySelector('[role="tooltip"]'), null, { timeout: 2000 });
+  await page.waitForTimeout(300);
+  expect(await page.evaluate(() => document.querySelector(".vp-dialog").open), "Esc that hides a tooltip in the frame leaves the frame open");
+  // A pointer left over the trigger shows the tooltip again whenever the layout under it changes.
+  await page.mouse.move(5, 5);
+  await frame.evaluate(() => document.activeElement.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", isComposing: true, bubbles: true })));
+  await page.waitForTimeout(300);
+  expect(await page.evaluate(() => document.querySelector(".vp-dialog").open), "Esc during an IME composition in the frame leaves the frame open");
+
   // Esc inside the frame closes the dialog, unless a palette in the frame takes it first.
   await page.frameLocator(".vp-dialog iframe").locator("#main").focus();
   await page.keyboard.press("Control+k");
