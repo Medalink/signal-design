@@ -139,6 +139,34 @@ export async function checkSidebarResize(page, base, apiUrl) {
     key: localStorage.getItem("sd-shell-sidebar-width:demo-resize-sidebar"),
   }));
   expect(result.demo === 360 && result.page === pageShell && result.key === "360", `the demo sidebar resizes alone under its own key, got ${JSON.stringify(result)}`);
+
+  // An authored inline width (the demo's 15rem) survives a cancelled drag and null.
+  const demoWidth = () => page.evaluate(() => ({
+    width: Math.round(document.getElementById("demo-resize-sidebar").getBoundingClientRect().width),
+    now: document.querySelector("#demo-resize-sidebar > .sd-sidebar-resize").getAttribute("aria-valuenow"),
+    inline: document.getElementById("demo-resize-sidebar").style.getPropertyValue("--shell-sidebar"),
+    key: localStorage.getItem("sd-shell-sidebar-width:demo-resize-sidebar"),
+  }));
+  await page.evaluate(async (url) => (await import(url)).setSidebarWidth(document.getElementById("demo-resize-sidebar"), null), apiUrl);
+  let d = await demoWidth();
+  expect(d.width === 240 && d.now === "240" && d.inline === "15rem" && d.key === null, `setSidebarWidth(sidebar, null) returns to the authored 15rem and forgets, got ${JSON.stringify(d)}`);
+  const demoBox = await page.locator(demo).boundingBox();
+  await page.mouse.move(demoBox.x + demoBox.width / 2, demoBox.y + 60);
+  await page.mouse.down();
+  await page.mouse.move(demoBox.x + 60, demoBox.y + 60, { steps: 4 });
+  await page.keyboard.press("Escape");
+  await page.mouse.up();
+  d = await demoWidth();
+  expect(d.width === 240 && d.inline === "15rem" && d.key === null, `Escape mid-drag returns the demo to its authored 15rem, got ${JSON.stringify(d)}`);
+
+  // The page shell's collapse and peek state do not reach a sidebar nested in its content.
+  await page.evaluate(async (url) => (await import(url)).setSidebar(document.querySelector(".sd-shell"), "collapsed"), apiUrl);
+  d = await page.evaluate(() => {
+    const el = document.getElementById("demo-resize-sidebar");
+    return { shown: el.getClientRects().length > 0, position: getComputedStyle(el).position };
+  });
+  expect(d.shown && d.position === "relative", `a nested demo sidebar ignores the page shell's collapsed state, got ${JSON.stringify(d)}`);
+  await page.evaluate(async (url) => (await import(url)).setSidebar(document.querySelector(".sd-shell"), "pinned"), apiUrl);
   await page.evaluate(() => localStorage.clear());
 
   return { errors, passed };

@@ -274,8 +274,10 @@ With `data-sd-shell="resize"`, `init()` sets `--shell-sidebar` on the
 current, sets `data-resizing` on it while a drag runs, stores the width in
 `localStorage` under `sd-shell-sidebar-width:<sidebar id>`, and restores it on
 load. `setSidebarWidth(shell, px)` does the same from code; `null` returns to
-the stylesheet's width and forgets it. `sd:shell` reports the committed
-`width`; drags in progress do not fire it.
+the width the page was authored with (an inline `--shell-sidebar`, else the
+stylesheet's) and forgets the stored one. On a shell, `sd:shell` reports the
+committed `width`; drags in progress do not fire it, and a standalone sidebar
+fires nothing.
 
 When a framework owns the width, leave out `data-sd-shell="resize"` and keep
 the class, the role and the ARIA. Render `--shell-sidebar` on `.sd-shell` and

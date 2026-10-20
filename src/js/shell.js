@@ -116,17 +116,29 @@ function renderedWidth(target) {
   const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
   return Math.round(value.endsWith("rem") ? parseFloat(value) * rem : parseFloat(value) || 288);
 }
-function applyWidth(target, width) {
-  if (width === null) target.style.removeProperty("--shell-sidebar");
-  else target.style.setProperty("--shell-sidebar", `${width}px`);
-  const now = width ?? renderedWidth(target);
+// The inline --shell-sidebar each target had before the JS first wrote one, so
+// null and a cancelled drag return to the author's value, not to the stylesheet.
+const authored = new WeakMap();
+
+/** Write --shell-sidebar as a CSS string ("" removes it) and update aria-valuenow. */
+function writeWidth(target, value) {
+  if (!authored.has(target)) authored.set(target, target.style.getPropertyValue("--shell-sidebar"));
+  if (value) target.style.setProperty("--shell-sidebar", value);
+  else target.style.removeProperty("--shell-sidebar");
+  const now = renderedWidth(target);
   for (const h of handlesOf(target)) h.setAttribute("aria-valuenow", String(now));
+}
+/** A width in px, or null for the width the page was authored with. */
+function applyWidth(target, width) {
+  const original = authored.has(target) ? authored.get(target) : target.style.getPropertyValue("--shell-sidebar");
+  writeWidth(target, width === null ? original : `${width}px`);
 }
 
 /**
  * Set the sidebar to `width` CSS px (clamped to the handle's aria-valuemin and
- * aria-valuemax) and remember it, or pass null to return to the stylesheet's
- * width and forget it. `target` is the .sd-shell, or a .sd-sidebar used on its own.
+ * aria-valuemax) and remember it, or pass null to return to the width the page
+ * was authored with and forget it. `target` is the .sd-shell, or a .sd-sidebar
+ * used on its own; only a shell fires sd:shell.
  */
 export function setSidebarWidth(target, width) {
   const handle = handlesOf(target)[0];
@@ -142,7 +154,7 @@ export function setSidebarWidth(target, width) {
   } catch {
     /* storage blocked */
   }
-  emit(target);
+  if (target.matches(".sd-shell")) emit(target);
 }
 
 const DRAG_EVENTS = ["pointermove", "pointerup", "pointercancel", "lostpointercapture"];
@@ -155,7 +167,7 @@ function endDrag(commit) {
   for (const type of DRAG_EVENTS) handle.removeEventListener(type, onResizePointer);
   if (handle.hasPointerCapture(pointerId)) handle.releasePointerCapture(pointerId);
   if (commit) setSidebarWidth(target, renderedWidth(target));
-  else applyWidth(target, from);
+  else writeWidth(target, from);
 }
 
 function onResizePointer(event) {
@@ -174,14 +186,13 @@ export function onShellPointerdown(event) {
   if (!target) return;
   event.preventDefault();
   handle.focus({ preventScroll: true });
-  const inline = target.style.getPropertyValue("--shell-sidebar");
   drag = {
     handle,
     target,
     pointerId: event.pointerId,
     x: event.clientX,
     width: renderedWidth(target),
-    from: inline ? parseFloat(inline) : null,
+    from: target.style.getPropertyValue("--shell-sidebar"),
     direction: getComputedStyle(handle).direction === "rtl" ? -1 : 1,
   };
   target.dataset.resizing = "";

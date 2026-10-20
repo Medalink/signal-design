@@ -196,7 +196,7 @@
     border-inline-end: 1px solid var(--sd-line-strong);
     background: var(--sd-surface);
   }
-  .sd-shell[data-sidebar="collapsed"] .sd-sidebar {
+  .sd-shell[data-sidebar="collapsed"] > .sd-sidebar {
     display: none;
   }
   /* Sidebar toggles point the way they will move: « collapse, » expand. */
@@ -212,7 +212,7 @@
     display: none;
   }
   /* Peek: a collapsed sidebar opens over the page from the rail. */
-  .sd-shell[data-sidebar="collapsed"][data-peek] .sd-sidebar {
+  .sd-shell[data-sidebar="collapsed"][data-peek] > .sd-sidebar {
     position: absolute;
     inset: 0 auto var(--shell-status) var(--shell-rail);
     z-index: 50;
@@ -312,7 +312,7 @@
     user-select: none;
   }
   /* A sidebar over the page (peek, tablets) or in the phone drawer keeps its width. */
-  .sd-shell:is([data-peek], [data-drawer]) .sd-sidebar-resize {
+  .sd-shell:is([data-peek], [data-drawer]) > .sd-sidebar > .sd-sidebar-resize {
     display: none;
   }
   @media (max-width: 47.99rem) {

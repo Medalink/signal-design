@@ -132,7 +132,7 @@ export function place(
 
 /* App shell */
 export function setSidebar(shell: HTMLElement, state: "pinned" | "collapsed"): void;
-/** Set the sidebar width in CSS px, clamped to the resize handle's aria-valuemin and aria-valuemax, and remember it; null returns to the stylesheet's width. `target` is the .sd-shell, or a .sd-sidebar used on its own. */
+/** Set the sidebar width in CSS px, clamped to the resize handle's aria-valuemin and aria-valuemax, and remember it; null returns to the width the page was authored with. `target` is the .sd-shell, or a .sd-sidebar used on its own; only a shell fires sd:shell. */
 export function setSidebarWidth(target: HTMLElement, width: number | null): void;
 export function setAside(shell: HTMLElement, open: boolean): void;
 export function setDrawer(shell: HTMLElement, open: boolean): void;
