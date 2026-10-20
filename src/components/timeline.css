@@ -133,14 +133,14 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 6px;
+    gap: 4px;
     overflow: hidden;
-    padding-inline: 4px;
+    padding-inline: 2px;
     border: 1px solid var(--tone, var(--sd-line-strong));
     background: var(--sd-canvas);
     color: var(--sd-fg-faint);
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 9px;
     line-height: 1;
     white-space: nowrap;
     translate: 0 -50%;
