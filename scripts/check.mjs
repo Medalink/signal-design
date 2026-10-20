@@ -1,7 +1,7 @@
 /**
  * Hard-rule sweep of the showcase pages in Chromium and WebKit.
  *
- *   node scripts/check.mjs [baseUrl] [screenshotDir] [--engine chromium|webkit] [--only|--except lib-components,charts,behaviors,...]
+ *   node scripts/check.mjs [baseUrl] [screenshotDir] [--engine chromium|webkit] [--only|--except lib-components,charts,behaviors,webkit-1,...]
  *
  * Pages: every page in showcase/pages.js (the overview, the library pages and
  * the example apps; a page's name here is its file without .html), and the
@@ -21,7 +21,7 @@ import { checkLivingTable, checkLivingTableTypes } from "./check-living-table.mj
 import { checkSidebarResize } from "./check-sidebar-resize.mjs";
 import { checkHashRedirects, checkShowcasePages } from "./check-showcase-pages.mjs";
 import { checkShowcaseBar } from "./check-showcase-bar.mjs";
-import { ALL, LIBRARY, byId, keyOf } from "../showcase/pages.js";
+import { ALL, HOME, LIBRARY, byId, keyOf } from "../showcase/pages.js";
 
 // One file per component in scripts/checks/, each exporting
 // `default async (page, where, fail)` and `page`, the id of the library page
@@ -45,9 +45,18 @@ function listFlag(flag) {
   const at = args.indexOf(flag);
   return at < 0 ? null : (args.splice(at, 2)[1] ?? "").split(",").filter(Boolean);
 }
+// A group names several parts at once, so a CI job lists neither pages nor
+// edits itself when a page is added. webkit-1 is the first WebKit job: the
+// overview and every library page from the registry, plus the example pages
+// and the standalone page that fill it out. The second WebKit job takes
+// `--except webkit-1`, which leaves every other page and the behavior groups.
+const groups = {
+  "webkit-1": [keyOf(HOME), ...LIBRARY.map(keyOf), "charts", "form", "landing", "standalone"],
+};
+const expand = (names) => names?.flatMap((name) => groups[name] ?? [name]);
 const onlyEngines = listFlag("--engine");
-const onlyParts = listFlag("--only");
-const exceptParts = listFlag("--except");
+const onlyParts = expand(listFlag("--only"));
+const exceptParts = expand(listFlag("--except"));
 const base = (args[0] || "http://localhost:5178/").replace(/\/?$/, "/");
 const apiUrl = `${base}@fs/${fileURLToPath(new URL("../src/js/index.js", import.meta.url)).replace(/\\/g, "/")}`;
 const pageUrl = (page) => `${base}${page.file}`;
@@ -66,7 +75,7 @@ const parts = [...Object.keys(pages), "behaviors"];
 for (const [flag, given, allowed] of [["--engine", onlyEngines, ["chromium", "webkit"]], ["--only", onlyParts, parts], ["--except", exceptParts, parts]]) {
   const unknown = given?.filter((name) => !allowed.includes(name)) ?? [];
   if (given?.length === 0 || unknown.length) {
-    console.log(`FAIL unknown ${flag} ${unknown.join(", ")}: use ${allowed.join(", ")}`);
+    console.log(`FAIL unknown ${flag} ${unknown.join(", ")}: use ${[...allowed, ...(flag === "--engine" ? [] : Object.keys(groups))].join(", ")}`);
     process.exit(1);
   }
 }

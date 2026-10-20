@@ -19,18 +19,19 @@ jobs:
       fail-fast: false
       matrix:
         # WebKit is the slowest engine, so its pages split across two jobs of
-        # about equal length. The second takes everything the first does not,
-        # so a new page is checked without editing this list.
+        # about equal length. webkit-1 is a group in scripts/check.mjs, built
+        # from showcase/pages.js; the second job takes everything the first does
+        # not, so a new page is checked without editing this list.
         include:
           - suite: chromium
             browser: chromium
             args: --engine chromium
           - suite: webkit 1/2
             browser: webkit
-            args: --engine webkit --only index,lib-tokens,lib-elements,lib-components,lib-conversation,lib-inputs-more,lib-charts,lib-effects,lib-js,charts,form,standalone,landing
+            args: --engine webkit --only webkit-1
           - suite: webkit 2/2
             browser: webkit
-            args: --engine webkit --except index,lib-tokens,lib-elements,lib-components,lib-conversation,lib-inputs-more,lib-charts,lib-effects,lib-js,charts,form,standalone,landing
+            args: --engine webkit --except webkit-1
           - suite: a11y
             browser: chromium
     env:
