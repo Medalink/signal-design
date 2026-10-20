@@ -105,17 +105,22 @@
   .sd-message[data-grouped]:hover > time {
     opacity: 1;
   }
+  /* Mention and current have their own fills (--sd-mention-fill, --sd-current-fill),
+     lighter than --sd-raised and visible on a surface pane. Faint text is lifted
+     to subtle on them so it keeps 4.5:1. */
   .sd-message[data-mention] {
+    --sd-fg-faint: var(--sd-fg-subtle);
     border-inline-start-color: var(--sd-fg);
-    background: var(--sd-surface);
+    background: var(--sd-mention-fill);
   }
   .sd-message[data-selected] {
     border-inline-start-color: var(--sd-accent);
     background: var(--sd-raised);
   }
   .sd-message[aria-current]:not([aria-current="false"]) {
+    --sd-fg-faint: var(--sd-fg-subtle);
     border-inline-start-color: var(--sd-fg-subtle);
-    background: var(--sd-raised);
+    background: var(--sd-current-fill);
   }
   .sd-message[data-pending] .sd-message-text {
     opacity: 0.55;

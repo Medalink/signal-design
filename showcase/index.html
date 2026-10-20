@@ -1314,6 +1314,13 @@ for (const button of preview.querySelectorAll("[data-living-width]")) {
             <div class="sd-message-text"><span class="sd-mention">@Jane</span> a mention edge wins over the role color too.</div>
           </div>
         </article>
+        <article class="sd-message" aria-current="true" style="--edge: var(--sd-extra)">
+          <span class="sd-avatar" data-tone="extra">AL</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>Alex</b><time>11:06</time></header>
+            <div class="sd-message-text">The message you are replying to or jumped to: <code>aria-current</code> has its own fill, stronger than hover.</div>
+          </div>
+        </article>
         <article class="sd-message" data-own data-failed aria-current="true">
           <span class="sd-avatar" data-tone="success">JD</span>
           <div class="sd-message-body">
@@ -1323,7 +1330,7 @@ for (const button of preview.querySelectorAll("[data-living-width]")) {
           </div>
         </article>
       </div>
-      <p class="demo-usage"><code>--edge</code> (author or role color, user data) · <code>data-own</code> · <code>data-selected</code> + a real checkbox · edge order: <code>data-failed</code> &gt; <code>aria-current</code> &gt; <code>data-selected</code> &gt; <code>data-mention</code> &gt; <code>--edge</code></p>
+      <p class="demo-usage"><code>--edge</code> (author or role color, user data) · <code>data-own</code> · <code>data-selected</code> + a real checkbox · fills <code>--sd-mention-fill</code> and <code>--sd-current-fill</code> · edge order: <code>data-failed</code> &gt; <code>aria-current</code> &gt; <code>data-selected</code> &gt; <code>data-mention</code> &gt; <code>--edge</code></p>
     </div>
 
     <div class="demo-block">

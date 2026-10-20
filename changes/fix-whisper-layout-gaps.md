@@ -5,6 +5,14 @@
   ellipsis (at most 60% and 40% of the row) instead of overflowing; the reply
   name was `flex-shrink: 0`.
 
+### Changed
+- `sd-message[data-mention]` and `[aria-current]` no longer share a fill with the
+  pane or with each other: they use new tokens `--sd-mention-fill` (7% of the
+  text color) and `--sd-current-fill` (10%), defined in every theme and
+  readable on both `--sd-canvas` and `--sd-surface`. Secondary text on those
+  rows is lifted from `--sd-fg-faint` to `--sd-fg-subtle` to keep 4.5:1.
+  `data-own` and `data-selected` are unchanged.
+
 ### Added
 - `sd-panel-wide` (capped at 1024px) and `sd-panel-fluid` (no cap) for
   settings-style pages; `sd-panel` stays at 560px.
