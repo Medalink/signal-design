@@ -61,6 +61,12 @@ export async function checkHashRedirects(page, base) {
     if (got === want && inView) passed++;
     else errors.push(`${hash} went to ${got}, want ${want}; target in view: ${inView}`);
   }
+  // An old link followed on an overview that is already open changes only the hash.
+  await page.goto(`${base}${ALL[0].file}`, { waitUntil: "networkidle" });
+  await page.evaluate(() => (location.hash = "#components-buttons"));
+  const open = pageOfHash("#components-buttons").file;
+  if (await page.waitForURL((url) => url.pathname.endsWith(open), { timeout: 3000 }).then(() => true, () => false)) passed++;
+  else errors.push(`#components-buttons set on the open overview stayed on ${new URL(page.url()).pathname}, want ${open}`);
   await page.goto(`${base}${ALL[0].file}#top`);
   await page.waitForLoadState("networkidle");
   if (new URL(page.url()).pathname.endsWith(ALL[0].file)) passed++;
