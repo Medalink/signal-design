@@ -1,3 +1,4 @@
+export const page = "effects";
 /** sd-sidebar-head-sm: a smaller title step, so "Direct Messages" and an action fit a 240px sidebar head. */
 export default async function checkSidebarHeadSm(page, where, fail) {
   const got = await page.evaluate(() => {

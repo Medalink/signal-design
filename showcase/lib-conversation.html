@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+  <section class="demo-section" id="conversation" aria-labelledby="conversation-h">
+    <header class="demo-intro">
+      <h1 class="sd-display">Conversation. <em>Parts for people and messages.</em></h1>
+      <p class="sd-lead max-w-[42rem]">Messages, composer, reactions, banners, files and link cards. Nothing in them assumes chat, so the same parts build a comment thread, an activity feed or an inbox.</p>
+      <div class="demo-intro-cols">
+        <div>
+          <p class="sd-label">Principles</p>
+          <ul>
+            <li><b class="text-fg font-semibold">Color identifies, never decorates.</b> A message edge takes an author or role color through <code>--edge</code>. Pending, failed and selected messages change the edge or the fill in a fixed order.</li>
+            <li><b class="text-fg font-semibold">Presence is a square.</b> <code>data-status</code> puts online, away, busy or offline on the avatar corner. Set <code>--sd-ring</code> to the panel color so the ring matches.</li>
+            <li><b class="text-fg font-semibold">State sits in attributes.</b> <code>data-own</code>, <code>data-selected</code>, <code>data-pending</code>, <code>data-failed</code>, <code>data-grouped</code> and <code>data-mention</code> restyle a message. Your code sets them.</li>
+            <li><b class="text-fg font-semibold">Live values hold still between changes.</b> The level meter lights bars up to <code>--level</code>, fades for 120ms when the value moves, and rests otherwise.</li>
+            <li><b class="text-fg font-semibold">Unknown stays visible.</b> A link card has <code>data-blocked</code> and <code>aria-busy="true"</code> states, so a blocked or loading link says so.</li>
+          </ul>
+        </div>
+        <div class="grid content-start gap-8">
+          <div>
+            <p class="sd-label">Use it for</p>
+            <ul>
+              <li>Chat, comment threads, activity feeds and inboxes.</li>
+              <li>Call grids with <code>sd-tiles</code>, which show speaking, muted and raised-hand states.</li>
+              <li>Composers that grow with the text and send on Enter.</li>
+            </ul>
+          </div>
+          <div>
+            <p class="sd-label">Leave it out when</p>
+            <ul>
+              <li>Sending, receiving or storing messages. These parts style state. Transport and data are yours.</li>
+              <li>Author colors that do not name an author or a role. Color is for meaning.</li>
+              <li>Hand-rolled reaction or poll toggles. Use <code>sd-reactions</code> and <code>sd-poll</code>.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
+    <p class="sd-label">04</p>
+    <h2 id="conversation-h" class="sd-title mt-2">Conversation</h2>
+    <p class="sd-muted mt-2 max-w-[42rem]">Generic pieces for anything with people and messages: chat, comments, activity, inboxes. The <a href="./chat.html">chat example</a> puts them together.</p>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Items, presence, counts</h3>
+      <div class="grid gap-6 sm:grid-cols-2 items-start">
+        <div class="border border-line py-2" style="background: var(--sd-surface)">
+          <div class="sd-item-group">Online <span>2</span></div>
+          <a class="sd-item" href="#conversation" aria-current="true"><span class="sd-avatar" data-tone="extra" data-status="online">AL</span><span class="sd-item-body"><span class="sd-item-title">Alex</span><span class="sd-item-sub">Reviewing the spec</span></span><span class="sd-item-end">2m</span></a>
+          <a class="sd-item" href="#conversation" data-unread><span class="sd-avatar" data-tone="warning" data-status="away">SK</span><span class="sd-item-body"><span class="sd-item-title">Sam</span><span class="sd-item-sub">Can you look at this?</span></span><span class="sd-item-end"><span class="sd-badge-count" data-tone="danger">2</span></span></a>
+          <div class="sd-item-group">Offline <span>1</span></div>
+          <a class="sd-item" href="#conversation" data-muted><span class="sd-avatar" data-tone="accent" data-status="offline">TP</span><span class="sd-item-body"><span class="sd-item-title">Taylor</span><span class="sd-item-sub">Muted</span></span></a>
+          <a class="sd-item sd-item-nested" href="#conversation"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M6 2.5 5 13.5M11 2.5l-1 11M2.5 6h11M2 10h11"/></svg><span class="sd-item-body"><span class="sd-item-title">nested row</span></span></a>
+        </div>
+        <div class="grid gap-4 content-start">
+          <div class="sd-cluster" style="--gap: 18px">
+            <span class="sd-avatar sd-avatar-lg" data-tone="extra" data-status="online">AL</span>
+            <span class="sd-avatar sd-avatar-lg" data-tone="warning" data-status="away">SK</span>
+            <span class="sd-avatar sd-avatar-lg" data-tone="accent" data-status="busy">TP</span>
+            <span class="sd-avatar sd-avatar-lg" data-tone="success" data-status="offline">JD</span>
+            <span class="relative inline-grid"><button class="sd-btn sd-btn-icon" aria-label="Inbox, 3 unread">✉</button><span class="sd-badge-count" data-corner>3</span></span>
+            <span class="sd-badge-count" data-tone="danger">12</span>
+          </div>
+          <p class="demo-usage"><code>sd-item</code> + <code>-body|-title|-sub|-end|-group|-nested</code> · <code>data-unread</code> · <code>data-muted</code> · <code>data-status="online|away|busy|offline"</code> · <code>sd-badge-count</code> + <code>data-corner</code></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Messages</h3>
+      <div class="border border-line py-3" style="background: var(--sd-surface)">
+        <article class="sd-message" data-sd-contextmenu="demo-msg-menu">
+          <span class="sd-avatar" data-tone="extra">AL</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>Alex</b><span class="sd-badge">Lead</span><time>09:42</time></header>
+            <div class="sd-message-text">A first message shows the avatar and the head. Right-click it for the menu.</div>
+            <div class="sd-reactions"><button data-sd-reaction aria-pressed="true">👍 <b>3</b></button><button data-sd-reaction aria-pressed="false">👀 <b>1</b></button></div>
+          </div>
+          <div class="sd-message-actions" role="toolbar" aria-label="Message actions"><button aria-label="Reply">↩</button><button aria-label="More" popovertarget="demo-msg-menu">⋯</button></div>
+        </article>
+        <article class="sd-message" data-grouped>
+          <time>09:43</time>
+          <div class="sd-message-body"><div class="sd-message-text">A follow-up is grouped: no avatar, the time shows on hover. <span class="sd-message-edited">(edited)</span></div></div>
+        </article>
+        <div class="sd-event"><span class="sd-dot" data-shape="hollow"></span><b>Taylor</b> joined <time>09:50</time></div>
+        <article class="sd-message" data-mention>
+          <span class="sd-avatar" data-tone="accent">TP</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>Taylor</b><time>10:05</time></header>
+            <div class="sd-reply"><b>Alex</b><span>A first message shows the avatar and the head.</span></div>
+            <div class="sd-message-text"><span class="sd-mention">@Jane</span> a mention of you gets an edge and a lifted background.</div>
+            <div class="sd-receipts" aria-label="Seen by 2"><span class="sd-avatar" data-tone="extra">AL</span><span class="sd-avatar" data-tone="warning">SK</span></div>
+          </div>
+        </article>
+        <article class="sd-message" data-pending>
+          <span class="sd-avatar" data-tone="success">JD</span>
+          <div class="sd-message-body"><header class="sd-message-head"><b>Jane</b><time>10:06</time></header><div class="sd-message-text">Pending: dimmed until it is confirmed.</div></div>
+        </article>
+        <article class="sd-message" data-failed data-grouped>
+          <time>10:07</time>
+          <div class="sd-message-body"><div class="sd-message-text">Failed: a red edge and a retry.</div><div class="sd-message-status">Not sent · <button class="sd-btn sd-btn-link">Retry</button></div></div>
+        </article>
+        <div class="px-4 pt-2"><span class="sd-typing"><i><b></b></i> Alex is typing…</span></div>
+      </div>
+      <div popover id="demo-msg-menu" class="sd-popover"><div class="sd-menu" role="menu" aria-label="Message"><button role="menuitem">Reply</button><button role="menuitem">Copy text</button><hr class="sd-menu-sep"><button role="menuitem" data-tone="danger">Delete</button></div></div>
+      <p class="demo-usage"><code>sd-message</code> + <code>-body|-head|-text|-actions|-status|-edited</code> · <code>data-grouped|mention|pending|failed</code> · <code>sd-reply</code> · <code>sd-mention</code> · <code>sd-event</code> · <code>sd-reactions</code> + <code>data-sd-reaction</code> · <code>sd-receipts</code> · <code>sd-typing</code> · <code>data-sd-contextmenu</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Message edges and selection</h3>
+      <div class="border border-line py-3" style="background: var(--sd-surface)">
+        <article class="sd-message" style="--edge: var(--sd-extra)">
+          <span class="sd-avatar" data-tone="extra">AL</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>Alex</b><span class="sd-badge">Moderator</span><time>11:02</time></header>
+            <div class="sd-message-text">An author or role color sits on the start edge through <code>--edge</code>.</div>
+          </div>
+        </article>
+        <article class="sd-message" data-grouped style="--edge: var(--sd-extra)">
+          <time>11:03</time>
+          <div class="sd-message-body"><div class="sd-message-text">Grouped follow-ups keep it.</div></div>
+        </article>
+        <article class="sd-message" data-own>
+          <span class="sd-avatar" data-tone="success">JD</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>Jane</b><span class="sd-message-edited">you</span><time>11:04</time></header>
+            <div class="sd-message-text">Your own messages get a light tint with <code>data-own</code>.</div>
+          </div>
+        </article>
+        <article class="sd-message" data-selected style="--edge: var(--sd-extra)">
+          <span class="sd-avatar" data-tone="extra">AL</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><input type="checkbox" checked aria-label="Select message from Alex at 11:05"><b>Alex</b><time>11:05</time></header>
+            <div class="sd-message-text">Selected for a bulk action: the accent edge replaces the role color.</div>
+          </div>
+        </article>
+        <article class="sd-message" data-mention style="--edge: var(--sd-warning)">
+          <span class="sd-avatar" data-tone="warning">SK</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>Sam</b><time>11:06</time></header>
+            <div class="sd-message-text"><span class="sd-mention">@Jane</span> a mention edge wins over the role color too.</div>
+          </div>
+        </article>
+        <article class="sd-message" aria-current="true" style="--edge: var(--sd-extra)">
+          <span class="sd-avatar" data-tone="extra">AL</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>Alex</b><time>11:06</time></header>
+            <div class="sd-message-text">The message you are replying to or jumped to: <code>aria-current</code> has its own fill, stronger than hover.</div>
+          </div>
+        </article>
+        <article class="sd-message" data-own data-failed aria-current="true">
+          <span class="sd-avatar" data-tone="success">JD</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>Jane</b><time>11:07</time></header>
+            <div class="sd-message-text">Failed wins over every other edge, even while you reply to it.</div>
+            <div class="sd-message-status">Not sent · <button class="sd-btn sd-btn-link">Retry</button></div>
+          </div>
+        </article>
+      </div>
+      <p class="demo-usage"><code>--edge</code> (author or role color, user data) · <code>data-own</code> · <code>data-selected</code> + a real checkbox · fills <code>--sd-mention-fill</code> and <code>--sd-current-fill</code> · edge order: <code>data-failed</code> &gt; <code>aria-current</code> &gt; <code>data-selected</code> &gt; <code>data-mention</code> &gt; <code>--edge</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Message in a narrow column</h3>
+      <div class="border border-line py-3" style="width: 20rem; max-width: 100%; background: var(--sd-surface)">
+        <article class="sd-message">
+          <span class="sd-avatar" data-tone="extra">LN</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>anunbrokenauthornamewithnospacestowrapatall</b><span class="sd-badge">Lead</span><time>12:30</time></header>
+            <div class="sd-reply"><b>anotherunbrokenauthornamewithnospacesatall</b><span>The quoted text keeps the rest of the line.</span></div>
+            <div class="sd-message-text">The body column is <code>minmax(0, 1fr)</code>, so a long name cannot widen the row past its container. Names in the head and in a reply cut off with an ellipsis.</div>
+          </div>
+        </article>
+      </div>
+      <div class="border border-line py-3" id="demo-narrow-button-author" style="width: 20rem; max-width: 100%; background: var(--sd-surface)">
+        <article class="sd-message">
+          <span class="sd-avatar" data-tone="extra">LN</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b><button type="button">anunbrokenauthornamewithnospacestowrapatall</button></b><span class="sd-badge">Lead</span><time>12:30</time></header>
+            <div class="sd-reply"><b><a href="#conversation">anotherunbrokenauthornamewithnospacesatall</a></b><span>A clickable author is cut off the same way.</span></div>
+            <div class="sd-message-text">The author is a button in the head and a link in the reply.</div>
+          </div>
+        </article>
+      </div>
+      <p class="demo-usage"><code>sd-message-body</code> shrinks with the message, whatever the head holds · <code>sd-message-head &gt; b</code> and <code>sd-reply &gt; b</code> truncate with an ellipsis (60% and 40% of the row at most), also when the author is a <code>button</code> or <code>a</code> inside the <code>b</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Composer</h3>
+      <form class="sd-composer max-w-column" onsubmit="event.preventDefault(); this.querySelector('textarea').value=''">
+        <div class="sd-composer-chips"><span class="sd-chip"><b>Replying to</b> Alex <button type="button" aria-label="Cancel reply">×</button></span></div>
+        <div class="sd-composer-row">
+          <button type="button" class="sd-btn sd-btn-ghost sd-btn-icon" aria-label="Attach">+</button>
+          <textarea rows="1" data-sd-autogrow data-sd-enter-submit data-sd-suggest="demo-mentions" placeholder="Type @ to mention someone" aria-label="Message"></textarea>
+          <button class="sd-btn sd-btn-primary">Send</button>
+        </div>
+        <div class="sd-suggest" id="demo-mentions" hidden>
+          <div class="sd-menu" role="listbox" aria-label="Mention">
+            <button type="button" role="option" data-value="Alex"><span class="sd-avatar sd-avatar-sm" data-tone="extra">AL</span> Alex</button>
+            <button type="button" role="option" data-value="Sam"><span class="sd-avatar sd-avatar-sm" data-tone="warning">SK</span> Sam</button>
+            <button type="button" role="option" data-value="Taylor"><span class="sd-avatar sd-avatar-sm" data-tone="accent">TP</span> Taylor</button>
+          </div>
+        </div>
+      </form>
+      <p class="sd-composer-hint"><span><kbd>Enter</kbd> send</span><span><kbd>Shift</kbd>+<kbd>Enter</kbd> new line</span><span><kbd>@</kbd> mention</span></p>
+      <p class="demo-usage"><code>sd-composer</code> + <code>-row|-chips|-hint</code> · <code>data-sd-autogrow</code> · <code>data-sd-enter-submit</code> · <code>data-sd-suggest</code> + <code>data-sd-trigger</code> · <code>sd-suggest</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Blocks</h3>
+      <div class="sd-banner" data-tone="pending" role="status"><b>Update ready</b> Version 1.4 installs on restart. <div class="sd-banner-actions"><button class="sd-btn sd-btn-sm">Restart</button></div></div>
+      <div class="sd-banner" data-tone="danger" role="alert"><b>Connection lost</b> Messages will send when you're back online.</div>
+      <div class="grid gap-4 sm:grid-cols-2 items-start">
+        <div class="grid gap-4">
+          <div class="sd-file"><span class="sd-file-type">pdf</span><span class="sd-file-body"><span class="sd-file-name">onboarding-flow-v3.pdf</span><span class="sd-file-meta">2.4 MB</span></span><button class="sd-btn sd-btn-sm">Open</button></div>
+          <div class="sd-file"><span class="sd-file-type">zip</span><span class="sd-file-body"><span class="sd-file-name">assets.zip</span><span class="sd-file-meta">Uploading · 64%</span></span><div class="sd-progress" style="--value: 64"></div></div>
+          <a class="sd-link-card" href="#conversation"><span class="sd-link-card-site">acme.example</span><span class="sd-link-card-title">Designing empty states that teach</span><span class="sd-link-card-desc">Show what goes here and the one action that fills it.</span><span class="sd-link-card-thumb"></span></a>
+        </div>
+        <div class="sd-poll" data-sd-poll>
+          <p class="sd-poll-q">Which layout do we ship?</p>
+          <button class="sd-poll-option" style="--share:62" aria-pressed="true">Three short steps <span>62%</span></button>
+          <button class="sd-poll-option" style="--share:25" aria-pressed="false">One long page <span>25%</span></button>
+          <button class="sd-poll-option" style="--share:13" aria-pressed="false">Skip it <span>13%</span></button>
+          <span class="sd-poll-meta">8 votes · closes in 2 days</span>
+        </div>
+      </div>
+      <div class="sd-tiles">
+        <div class="sd-tile" data-speaking><span class="sd-avatar" data-tone="extra">AL</span><span class="sd-tile-name">Alex</span></div>
+        <div class="sd-tile" data-muted><span class="sd-avatar" data-tone="warning">SK</span><span class="sd-tile-name">Sam</span></div>
+        <div class="sd-tile" data-hand><span class="sd-avatar" data-tone="success">JD</span><span class="sd-tile-name">Jane</span></div>
+        <div class="sd-tile"><span class="sd-avatar" data-tone="accent">TP</span><span class="sd-tile-name">Taylor</span></div>
+      </div>
+      <div class="sd-actions"><button class="sd-btn" popovertarget="demo-emoji">Grid picker</button></div>
+      <div popover id="demo-emoji" class="sd-popover sd-popover-pad"><div class="sd-grid-picker" role="listbox" aria-label="Emoji" style="--cols:6"><button role="option">👍</button><button role="option">👀</button><button role="option">🎉</button><button role="option">✅</button><button role="option">❤️</button><button role="option">🔥</button><button role="option">😂</button><button role="option">🙏</button><button role="option">🚀</button><button role="option">🤔</button><button role="option">👏</button><button role="option">💯</button></div></div>
+      <p class="demo-usage"><code>sd-banner</code> · <code>sd-file</code> · <code>sd-link-card</code> · <code>sd-poll</code> + <code>data-sd-poll</code> · <code>sd-tiles</code> + <code>sd-tile[data-speaking|muted|hand]</code> · <code>sd-grid-picker</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Level meter</h3>
+      <div class="flex flex-wrap items-center gap-x-8 gap-y-4">
+        <span class="inline-flex items-center gap-2"><span class="sd-level" role="meter" aria-label="Silent" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" style="--level: 0"><i></i><i></i><i></i></span> silent</span>
+        <span class="inline-flex items-center gap-2"><span class="sd-level" role="meter" aria-label="Quiet" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0.3" style="--level: 0.3"><i></i><i></i><i></i></span> quiet</span>
+        <span class="inline-flex items-center gap-2"><span class="sd-level" data-tone="success" role="meter" aria-label="Speaking" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0.8" style="--level: 0.8"><i></i><i></i><i></i></span> speaking</span>
+        <span class="inline-flex items-center gap-2"><span class="sd-level" data-tone="warning" role="meter" aria-label="Clipping" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" style="--level: 1"><i></i><i></i><i></i><i></i><i></i></span> clipping</span>
+      </div>
+      <div class="sd-field max-w-narrow">
+        <label class="sd-field-label" for="demo-level-input">Input level</label>
+        <div class="flex items-center gap-4">
+          <input id="demo-level-input" type="range" min="0" max="1" step="0.05" value="0.6">
+          <span class="sd-level" id="demo-level" role="meter" aria-label="Microphone level" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0.6" style="--level: 0.6; --h: 20px"><i></i><i></i><i></i><i></i><i></i></span>
+        </div>
+        <p class="sd-field-hint">Drag to set the level. A bar fades in 120ms when the value crosses it and holds still otherwise.</p>
+      </div>
+      <p class="demo-usage"><code>sd-level</code> + 2 to 8 <code>&lt;i&gt;</code> bars · <code>--level</code> (0 to 1) · <code>--h</code> · <code>data-tone</code> · <code>role="meter"</code> + <code>aria-valuenow</code></p>
+      <script type="text/plain" data-demo-js>
+// Feed it your own level, for example the RMS of an AnalyserNode frame.
+const meter = document.getElementById("demo-level");
+function setLevel(level) {
+  meter.style.setProperty("--level", level);
+  meter.setAttribute("aria-valuenow", level.toFixed(2));
+}
+document.getElementById("demo-level-input").addEventListener("input", (e) => setLevel(Number(e.target.value)));
+      </script>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Link cards</h3>
+      <div class="grid gap-4 sm:grid-cols-2 items-start">
+        <a class="sd-link-card sd-link-card-hero" href="#conversation"><img class="sd-link-card-thumb" alt="" width="640" height="336" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 336'%3E%3Crect width='640' height='336' fill='%230A0A0B'/%3E%3Crect x='0' y='0' width='128' height='336' fill='%23111113'/%3E%3Crect x='168' y='44' width='200' height='10' fill='%232A2A2F'/%3E%3Crect x='168' y='96' width='420' height='120' fill='none' stroke='%232A2A2F'/%3E%3Crect x='188' y='120' width='160' height='40' fill='%2300D4FF' fill-opacity='.35'/%3E%3Crect x='168' y='270' width='300' height='8' fill='%231F1F23'/%3E%3C/svg%3E"><span class="sd-link-card-site">acme.example</span><span class="sd-link-card-title">A dashboard for the whole team</span><span class="sd-link-card-desc">One place for status, owners and what changed since you last looked.</span></a>
+        <div class="grid gap-4">
+          <a class="sd-link-card sd-link-card-compact" href="#conversation"><span class="sd-link-card-site">docs.acme.example</span><span class="sd-link-card-title">Getting started with workspaces and roles</span><span class="sd-link-card-thumb"></span></a>
+          <a class="sd-link-card" href="#conversation"><span class="sd-link-card-site">acme.example</span><span class="sd-link-card-title">quarterly-report-q3.pdf</span><span class="sd-link-card-desc">12 pages · 2.4 MB</span><span class="sd-link-card-type">pdf</span></a>
+          <div class="sd-link-card" data-blocked><span class="sd-link-card-site">free-prizes.example</span><span class="sd-link-card-title">free-prizes.example/claim?id=4417</span><span class="sd-link-card-note">Preview blocked: this site is on the unsafe list.</span></div>
+          <div class="sd-link-card" aria-busy="true" role="status"><span class="sd-sr-only">Loading link preview</span><span class="sd-link-card-site"></span><span class="sd-link-card-title"></span><span class="sd-link-card-desc"></span><span class="sd-link-card-thumb"></span></div>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-link-card</code> + <code>sd-link-card-hero</code> (thumb on top: an image, GIF or <code>&lt;video&gt;</code>) · <code>sd-link-card-compact</code> · <code>sd-link-card-type</code> (documents) · <code>data-blocked</code> + <code>sd-link-card-note</code> (render a <code>&lt;div&gt;</code>, not a link) · <code>aria-busy="true"</code> (loading) · <code>data-tone</code></p>
+    </div>
+  </section>
+</body>
+</html>

@@ -1,8 +1,10 @@
 /**
  * Behavior checks for the sidebar resize handle (data-sd-shell="resize") on
- * showcase/shell.html and the standalone demo on the components page.
+ * showcase/shell.html and the standalone demo on the effects page.
  * Called from scripts/check.mjs once per engine.
  */
+import { byId } from "../showcase/pages.js";
+
 const KEY = "sd-shell-sidebar-width:section-sidebar";
 const HANDLE = '#section-sidebar > [data-sd-shell="resize"]';
 
@@ -127,7 +129,7 @@ export async function checkSidebarResize(page, base, apiUrl) {
   await page.setViewportSize({ width: 1280, height: 900 });
 
   // The standalone demo resizes its own sidebar and leaves the page shell alone.
-  await page.goto(base);
+  await page.goto(new URL(byId("effects").file, base).href);
   const demo = '#demo-resize-sidebar > [data-sd-shell="resize"]';
   await page.locator(demo).scrollIntoViewIfNeeded();
   const pageShell = await page.evaluate(() => document.getElementById("library-sidebar").getBoundingClientRect().width);

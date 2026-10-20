@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 import ts from "typescript";
 import { chromium, webkit } from "playwright";
+import { byId } from "../showcase/pages.js";
 
 const rootPath = fileURLToPath(new URL("../", import.meta.url));
 const served = (base, path) => `${base.replace(/\/?$/, "/")}@fs/${fileURLToPath(new URL(path, import.meta.url)).replace(/\\/g, "/")}`;
@@ -62,7 +63,7 @@ export async function checkLivingTable(page, base, engine) {
     catch (error) { errors.push(`${engine} ${name}: ${error.message}`); }
   };
   await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto(base);
+  await page.goto(new URL(byId("components").file, base).href);
   await page.waitForSelector("#living-table-demo[data-mounted]");
   await page.evaluate(() => {
     window.livingWindowErrors = [];

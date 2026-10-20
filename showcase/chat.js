@@ -1,7 +1,8 @@
-import "./viewport.js";
+import { mountBar, savedScrollbars } from "./viewport.js";
 import { init, toast } from "../src/js/index.js";
 
-init();
+mountBar();
+init({ scrollbars: savedScrollbars() });
 
 const feed = document.querySelector("[data-feed]");
 const form = document.querySelector("[data-composer]");

@@ -19,18 +19,19 @@ jobs:
       fail-fast: false
       matrix:
         # WebKit is the slowest engine, so its pages split across two jobs of
-        # about equal length. The second takes everything the first does not,
-        # so a new page is checked without editing this list.
+        # about equal length. webkit-1 is a group in scripts/check.mjs, built
+        # from showcase/pages.js; the second job takes everything the first does
+        # not, so a new page is checked without editing this list.
         include:
           - suite: chromium
             browser: chromium
             args: --engine chromium
           - suite: webkit 1/2
             browser: webkit
-            args: --engine webkit --only components,charts,form,standalone,landing
+            args: --engine webkit --only webkit-1
           - suite: webkit 2/2
             browser: webkit
-            args: --engine webkit --except components,charts,form,standalone,landing
+            args: --engine webkit --except webkit-1
           - suite: a11y
             browser: chromium
     env:
@@ -79,6 +80,9 @@ jobs:
       - name: AI files build
         if: matrix.suite == 'chromium'
         run: node scripts/build-ai.mjs
+      - name: Production showcase build keeps the bar
+        if: matrix.suite == 'chromium'
+        run: node scripts/check-showcase-build.mjs
 
       - if: matrix.suite != 'a11y'
         run: node scripts/check.mjs http://localhost:5178/ ${{ matrix.args }}

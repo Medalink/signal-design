@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+  <section class="demo-section" id="components" aria-labelledby="components-h">
+    <header class="demo-intro">
+      <h1 class="sd-display">Components. <em>State lives in attributes.</em></h1>
+      <p class="sd-lead max-w-[42rem]">Parts for what plain elements cannot do: buttons, fields, rows, navigation, feedback and overlays. Tone and state come from attributes, so your CSS, your code and a screen reader agree on what is true.</p>
+      <div class="demo-intro-cols">
+        <div>
+          <p class="sd-label">Principles</p>
+          <ul>
+            <li><b class="text-fg font-semibold">Tone is data.</b> <code>data-tone</code> takes accent, success, danger, warning, pending, extra or neutral. A part never takes a color class.</li>
+            <li><b class="text-fg font-semibold">State is ARIA.</b> <code>aria-pressed</code>, <code>aria-expanded</code>, <code>aria-current</code> and <code>aria-selected</code> drive the styling. Set them from your own code and the part follows.</li>
+            <li><b class="text-fg font-semibold">One writer per state.</b> Where React, Vue or Svelte renders a piece's state, leave out its <code>data-sd-*</code> behavior attribute and render the attributes yourself. The JS page has an example.</li>
+            <li><b class="text-fg font-semibold">Minimal by default.</b> A row shows its outcome and expands for detail. A view has one primary button.</li>
+            <li><b class="text-fg font-semibold">Square, flat, grey.</b> Parts use hairline borders and no shadows. Navigation stays grey, and color marks status.</li>
+          </ul>
+        </div>
+        <div class="grid content-start gap-8">
+          <div>
+            <p class="sd-label">Use it for</p>
+            <ul>
+              <li>Status with <code>sd-badge</code>, <code>sd-status</code>, <code>sd-dot</code> and <code>sd-count</code>, each of which takes a tone.</li>
+              <li>Lists of work: rows, tables, key-value lists and living tables.</li>
+              <li>Overlays: dialogs, sheets, popovers, menus and tooltips, wired by <code>init()</code>.</li>
+            </ul>
+          </div>
+          <div>
+            <p class="sd-label">Leave it out when</p>
+            <ul>
+              <li>Coloring navigation, headings or icons. Color is for status.</li>
+              <li>A looping progress bar. When the amount is unknown, set <code>data-state="indeterminate"</code> on <code>sd-progress</code>. It stays still.</li>
+              <li>Your own sidebar layout around an app. Use the App Shell, <code>sd-shell</code>.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
+    <p class="sd-label">03</p>
+    <h2 id="components-h" class="sd-title mt-2">Components</h2>
+    <p class="sd-muted mt-2 max-w-[42rem]">Classes start with <code>sd-</code>. Color comes from <code>data-tone</code>: accent, success, danger, warning, pending, extra, neutral. State comes from ARIA and <code>data-*</code>, so the JS never needs your Tailwind build to contain a class.</p>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Text styles</h3>
+      <div class="grid gap-5">
+        <p class="sd-display sd-display-xl">32 open. <em>8 done.</em></p>
+        <p class="sd-display">Display line <span class="sd-quiet">with a quiet half.</span></p>
+        <p class="sd-title">Title: a section or panel heading</p>
+        <p class="sd-lead max-w-[42rem]">Lead: the paragraph under a page title, a step softer than body text.</p>
+        <div class="sd-cluster" style="--gap: 20px"><span class="sd-label">Label</span><span class="sd-label sd-label-strong">Strong label</span><span class="sd-muted">muted</span><span class="sd-subtle">subtle</span><span class="sd-faint">faint</span></div>
+        <p class="sd-meta"><span>Owner Jane</span><span>07:55</span><span data-tone="danger">risk</span></p>
+      </div>
+      <p class="demo-usage"><code>sd-display</code> + <code>-xl</code> (<code>em</code> or <code>sd-quiet</code> for the quiet half) · <code>sd-title</code> · <code>sd-lead</code> · <code>sd-label</code> + <code>-strong</code> · <code>sd-muted|subtle|faint</code> · <code>sd-meta</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Visibility helpers</h3>
+      <div class="sd-cluster">
+        <span class="sd-badge sd-desktop-only">shown above 48rem</span>
+        <span class="sd-badge sd-phone-only">shown on phones</span>
+        <button class="sd-btn sd-btn-icon" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="11" height="11"/><path d="M15 15l5.5 5.5"/></svg><span class="sd-sr-only">Search the library</span></button>
+      </div>
+      <p class="demo-usage"><code>sd-desktop-only</code> · <code>sd-phone-only</code> · <code>sd-sr-only</code> (read by screen readers, not shown). Resize the window to see the first two swap.</p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Buttons</h3>
+      <div class="sd-actions">
+        <button class="sd-btn sd-btn-primary">Approve <kbd>a</kbd></button>
+        <button class="sd-btn">Save for later <kbd>t</kbd></button>
+        <button class="sd-btn">Request changes <kbd>s</kbd></button>
+        <button class="sd-btn" data-tone="danger">Reject <kbd>x</kbd></button>
+        <button class="sd-btn sd-btn-ghost">Cancel</button>
+        <button class="sd-btn sd-btn-link">Reset to defaults</button>
+      </div>
+      <div class="sd-actions">
+        <button class="sd-btn" data-tone="success">Approve</button>
+        <button class="sd-btn" data-tone="accent">Focus</button>
+        <button class="sd-btn" data-tone="warning">Costly</button>
+        <button class="sd-btn" data-tone="pending">Pending</button>
+        <button class="sd-btn sd-btn-primary" data-tone="success">Solid success</button>
+        <button class="sd-btn sd-btn-primary" data-tone="danger">Solid danger</button>
+      </div>
+      <div class="sd-actions">
+        <button class="sd-btn sd-btn-sm">Small</button>
+        <button class="sd-btn">Default</button>
+        <button class="sd-btn sd-btn-lg">Large</button>
+        <button class="sd-btn sd-btn-icon" aria-label="Settings" data-sd-tip="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg></button>
+        <button class="sd-btn" disabled>Disabled</button>
+        <button class="sd-btn" aria-busy="true">Merging</button>
+        <div class="sd-btn-group" role="group" aria-label="View">
+          <button class="sd-btn sd-btn-sm">Day</button><button class="sd-btn sd-btn-sm">Week</button><button class="sd-btn sd-btn-sm">Month</button>
+        </div>
+      </div>
+      <div class="grid gap-3 max-w-[22rem]">
+        <button class="sd-btn sd-btn-primary sd-btn-block">Continue</button>
+        <p class="text-sm sd-subtle">Press <span class="sd-kbd">Ctrl</span> <span class="sd-kbd">Enter</span> to send · <span class="sd-chip"><span class="sd-chip-key">a</span> approve</span></p>
+      </div>
+      <p class="demo-usage"><code>sd-btn</code> · <code>sd-btn-primary</code> · <code>sd-btn-ghost</code> · <code>sd-btn-link</code> · <code>sd-btn-sm|lg|icon|block</code> · <code>data-tone</code> · <code>aria-busy</code> · <code>sd-kbd</code> (a <code>kbd</code> look for any element) · <code>sd-chip-key</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Icons</h3>
+      <div class="grid gap-3">
+        <span class="sd-icon-text" style="font-size: var(--text-2xs)"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="4" width="11" height="11"/><path d="M15 15l5.5 5.5"/></svg>Search at the 14px label size</span>
+        <span class="sd-icon-text"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="4" width="11" height="11"/><path d="M15 15l5.5 5.5"/></svg>Search at the 16px body size</span>
+        <span class="sd-icon-text" style="font-size: var(--text-lg)"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="4" width="11" height="11"/><path d="M15 15l5.5 5.5"/></svg>Search at the 19px row-title size</span>
+        <span class="sd-icon-text" style="font-size: var(--text-3xl)"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="4" width="11" height="11"/><path d="M15 15l5.5 5.5"/></svg>Search at the 38px display size</span>
+      </div>
+      <div class="sd-actions">
+        <button class="sd-btn sd-btn-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="4" width="11" height="11"/><path d="M15 15l5.5 5.5"/></svg>Small</button>
+        <button class="sd-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="4" width="11" height="11"/><path d="M15 15l5.5 5.5"/></svg>Default</button>
+        <button class="sd-btn sd-btn-lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="4" width="11" height="11"/><path d="M15 15l5.5 5.5"/></svg>Large</button>
+      </div>
+      <p class="demo-usage"><code>sd-icon-text</code> + <code>sd-icon</code> · icons size to <code>1.5cap</code> (the 24 grid's 4-unit inset makes the drawn shape span the caps), so they follow the text at any size. Buttons, rows, navigation and the shell use the same rule. In Tailwind: <code>size-[1.5cap]</code> with <code>items-baseline</code>.</p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Markers, badges, chips, pill</h3>
+      <div class="sd-cluster" style="--gap: 18px">
+        <span class="sd-cluster" style="--gap: 6px"><span class="sd-dot" data-tone="danger"></span> irreversible</span>
+        <span class="sd-cluster" style="--gap: 6px"><span class="sd-dot" data-tone="warning"></span> costly</span>
+        <span class="sd-cluster" style="--gap: 6px"><span class="sd-dot" data-tone="pending" data-shape="dashed"></span> unproven</span>
+        <span class="sd-cluster" style="--gap: 6px"><span class="sd-dot" data-shape="hollow"></span> routine</span>
+        <span class="sd-cluster" style="--gap: 6px"><span class="sd-dot" data-tone="accent" data-shape="hollow"></span> saved</span>
+        <span class="sd-cluster" style="--gap: 6px"><span class="sd-dot sd-dot-lg" data-tone="success"></span> large</span>
+      </div>
+      <div class="sd-cluster">
+        <span class="sd-badge" data-tone="danger">Risk</span>
+        <span class="sd-badge" data-tone="warning">Costly</span>
+        <span class="sd-badge" data-tone="pending">Unproven</span>
+        <span class="sd-badge" data-tone="success">Passing</span>
+        <span class="sd-badge" data-tone="accent">Current</span>
+        <span class="sd-badge">v1.0</span>
+        <span class="sd-badge sd-badge-solid" data-tone="danger">Risk</span>
+        <span class="sd-badge sd-badge-solid" data-tone="success">Done</span>
+      </div>
+      <div class="sd-cluster">
+        <span class="sd-chip"><b>project</b> Website <button type="button" aria-label="Remove">×</button></span>
+        <span class="sd-chip"><b>due</b> this week</span>
+        <button class="sd-chip" aria-pressed="true">high risk</button>
+        <button class="sd-chip" aria-pressed="false">changes requested</button>
+        <button class="sd-pill">↑ <b>21</b> new above <kbd>Shift+N</kbd></button>
+      </div>
+      <p class="demo-usage"><code>sd-dot</code> + <code>data-shape="hollow|dashed"</code> · <code>sd-badge</code> · <code>sd-badge-solid</code> · <code>sd-chip</code> · <code>sd-pill</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Avatars, status, counts</h3>
+      <div class="sd-cluster" style="--gap: 16px">
+        <span class="sd-avatar sd-avatar-sm" data-tone="success">JD</span>
+        <span class="sd-avatar" data-tone="extra">AL</span>
+        <span class="sd-avatar sd-avatar-lg" data-tone="warning">SK</span>
+        <span class="sd-avatar sd-avatar-xl" data-tone="accent">TP</span>
+        <span class="sd-avatar">??</span>
+        <span class="sd-avatar-stack">
+          <span class="sd-avatar" data-tone="success">JD</span><span class="sd-avatar" data-tone="extra">AL</span><span class="sd-avatar" data-tone="warning">SK</span><span class="sd-avatar" data-tone="accent">TP</span>
+        </span>
+        <span class="sd-status" data-tone="success">live</span>
+        <span class="sd-status" data-tone="pending">monitoring</span>
+        <span class="sd-status">offline</span>
+        <span>Saved <span class="sd-count">3</span></span>
+        <span>High risk <span class="sd-count" data-tone="danger">6</span></span>
+        <span class="sd-fps" data-sd-fps><b>--</b> fps</span>
+      </div>
+      <p class="demo-usage"><code>sd-avatar</code> + <code>-sm|md|lg|xl</code> · <code>sd-avatar-stack</code> · <code>sd-status</code> · <code>sd-count</code> · <code>sd-fps</code> + <code>data-sd-fps</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Avatar sizes and presence</h3>
+      <p class="demo-usage">Steps at 22, 24, 28, 34 and 48px, or any size with <code>--sd-avatar-size</code>; the initials and the presence square grow with it. The square's ring, a corner count's ring and a stack's gaps take the color of what they sit on: every Signal surface sets <code>--sd-ring</code>, and outside them it is the page canvas. On a panel of your own, set <code>--sd-ring</code> to its background.</p>
+      <div class="sd-cluster" style="--gap: 24px; align-items: end">
+        <span class="grid justify-items-center gap-2"><span class="sd-avatar sd-avatar-sm" data-tone="success" data-status="online">JD</span><span class="sd-meta">sm 22</span></span>
+        <span class="grid justify-items-center gap-2"><span class="sd-avatar" data-tone="extra" data-status="online">AL</span><span class="sd-meta">24</span></span>
+        <span class="grid justify-items-center gap-2"><span class="sd-avatar sd-avatar-md" data-tone="warning" data-status="afk">SK</span><span class="sd-meta">md 28</span></span>
+        <span class="grid justify-items-center gap-2"><span class="sd-avatar sd-avatar-lg" data-tone="accent" data-status="busy">TP</span><span class="sd-meta">lg 34</span></span>
+        <span class="grid justify-items-center gap-2"><span class="sd-avatar sd-avatar-xl" data-tone="success" data-status="offline">JD</span><span class="sd-meta">xl 48</span></span>
+        <span class="grid justify-items-center gap-2"><span class="sd-avatar" data-tone="extra" data-status="online" style="--sd-avatar-size: 7rem">AL</span><span class="sd-meta">--sd-avatar-size: 7rem</span></span>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-3 items-start">
+        <div class="sd-card p-4 grid gap-3"><span class="sd-meta">On canvas (sd-card)</span><div class="sd-cluster" style="--gap: 16px"><span class="sd-avatar sd-avatar-md" data-tone="extra" data-status="online">AL</span><span class="sd-avatar sd-avatar-md" data-tone="success" data-status="offline">JD</span><span class="relative inline-grid"><button class="sd-btn sd-btn-icon" aria-label="Inbox, 3 unread">✉</button><span class="sd-badge-count" data-corner>3</span></span><span class="sd-avatar-stack"><span class="sd-avatar" data-tone="success">JD</span><span class="sd-avatar" data-tone="extra">AL</span><span class="sd-avatar" data-tone="warning">SK</span></span></div></div>
+        <div class="p-4 grid gap-3 border border-line"><span class="sd-meta">On the content surface</span><div class="sd-cluster" style="--gap: 16px"><span class="sd-avatar sd-avatar-md" data-tone="extra" data-status="online">AL</span><span class="sd-avatar sd-avatar-md" data-tone="success" data-status="offline">JD</span><span class="relative inline-grid"><button class="sd-btn sd-btn-icon" aria-label="Inbox, 3 unread">✉</button><span class="sd-badge-count" data-corner>3</span></span><span class="sd-avatar-stack"><span class="sd-avatar" data-tone="success">JD</span><span class="sd-avatar" data-tone="extra">AL</span><span class="sd-avatar" data-tone="warning">SK</span></span></div></div>
+        <div class="grid gap-3"><span class="sd-meta">On a current row (raised)</span><a class="sd-item" href="#components" aria-current="true"><span class="sd-avatar sd-avatar-md" data-tone="warning" data-status="away">SK</span><span class="sd-item-body"><span class="sd-item-title">Sam</span><span class="sd-item-sub">Away</span></span></a></div>
+      </div>
+      <p class="demo-usage"><code>--sd-avatar-size</code> · <code>sd-avatar-md</code> · <code>data-status="online|away|afk|busy|offline"</code> · <code>--sd-ring</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Fields</h3>
+      <form class="sd-form max-w-narrow" onsubmit="return false" novalidate>
+        <div class="sd-form-row">
+          <div class="sd-field">
+            <label class="sd-field-label" for="f-name">Name</label>
+            <input id="f-name" required placeholder="Jane Doe">
+            <p class="sd-field-hint">Shown on your profile.</p>
+            <p class="sd-field-error">Name is required.</p>
+          </div>
+          <div class="sd-field" data-invalid>
+            <label class="sd-field-label" for="f-mail">Email <span class="sd-field-aside">optional</span></label>
+            <input id="f-mail" type="email" value="jane@acme" aria-invalid="true">
+            <p class="sd-field-error">Enter an address like jane@acme.example.</p>
+          </div>
+        </div>
+        <div class="sd-field">
+          <label class="sd-field-label" for="f-url">Website</label>
+          <div class="sd-input-group">
+            <span class="sd-addon">https://</span>
+            <input id="f-url" placeholder="acme.example">
+            <button class="sd-btn" type="button">Test</button>
+          </div>
+        </div>
+        <div class="sd-field">
+          <span class="sd-field-label">Billing cycle</span>
+          <div class="sd-seg" role="radiogroup" aria-label="Billing cycle">
+            <label><input type="radio" name="cycle" value="monthly"> monthly</label>
+            <label><input type="radio" name="cycle" value="yearly" checked> yearly</label>
+            <label><input type="radio" name="cycle" value="custom"> custom</label>
+          </div>
+          <p class="sd-field-hint">Radios inside labels: no JS.</p>
+        </div>
+        <div class="sd-field">
+          <span class="sd-field-label">Notify me</span>
+          <div class="sd-seg" data-sd-seg aria-label="Notify me">
+            <button type="button" aria-pressed="true">important</button>
+            <button type="button" aria-pressed="false">all</button>
+            <button type="button" aria-pressed="false">off</button>
+          </div>
+          <p class="sd-field-hint">Buttons with <code>data-sd-seg</code>: fires <code>change</code>.</p>
+        </div>
+        <div class="sd-choices">
+          <label class="sd-check"><input type="checkbox" checked><span class="sd-check-text">Email me a weekly summary<span class="sd-check-desc">Sent every Monday morning.</span></span></label>
+          <label class="sd-check"><input type="checkbox" role="switch"><span class="sd-check-text">Push notifications<span class="sd-check-desc">Only for items marked high risk.</span></span></label>
+          <label class="sd-check"><input type="checkbox" disabled><span class="sd-check-text">Auto-approve routine items<span class="sd-check-desc">Not available on your plan.</span></span></label>
+        </div>
+        <div class="sd-field">
+          <span class="sd-field-label">Attachments</span>
+          <label class="sd-dropzone"><input type="file" multiple><span>Drop files here or <u>browse</u></span><span class="sd-subtle text-2xs uppercase tracking-caps" data-file-names>png · mp4 · up to 20 MB</span></label>
+        </div>
+        <div class="sd-form-row">
+          <input class="sd-control-sm" placeholder="sd-control-sm">
+          <input class="sd-control-lg" placeholder="sd-control-lg">
+        </div>
+        <div class="sd-actions sd-actions-end">
+          <button class="sd-btn sd-btn-ghost" type="reset">Cancel</button>
+          <button class="sd-btn sd-btn-primary" type="submit">Save</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Option cards</h3>
+      <div class="sd-field">
+        <span class="sd-field-label" id="demo-option-theme-label">Theme</span>
+        <div class="sd-options" role="radiogroup" aria-labelledby="demo-option-theme-label">
+          <label class="sd-option">
+            <input type="radio" name="demo-option-theme" value="ink" checked>
+            <span class="sd-option-preview grid content-start gap-2 p-3" data-theme="ink" aria-hidden="true" style="background: var(--sd-canvas)"><span class="sd-skeleton w-3/4"></span><span class="sd-skeleton w-1/2"></span><span class="sd-skeleton w-1/4" style="background: var(--sd-fg)"></span></span>
+            <span class="sd-option-title">Ink</span>
+            <span class="sd-option-desc">Near-black. The default.</span>
+          </label>
+          <label class="sd-option">
+            <input type="radio" name="demo-option-theme" value="graphite">
+            <span class="sd-option-preview grid content-start gap-2 p-3" data-theme="graphite" aria-hidden="true" style="background: var(--sd-canvas)"><span class="sd-skeleton w-3/4"></span><span class="sd-skeleton w-1/2"></span><span class="sd-skeleton w-1/4" style="background: var(--sd-fg)"></span></span>
+            <span class="sd-option-title">Graphite</span>
+            <span class="sd-option-desc">A lighter dark grey.</span>
+          </label>
+          <label class="sd-option">
+            <input type="radio" name="demo-option-theme" value="paper">
+            <span class="sd-option-preview grid content-start gap-2 p-3" data-theme="paper" aria-hidden="true" style="background: var(--sd-canvas)"><span class="sd-skeleton w-3/4"></span><span class="sd-skeleton w-1/2"></span><span class="sd-skeleton w-1/4" style="background: var(--sd-fg)"></span></span>
+            <span class="sd-option-title">Paper</span>
+            <span class="sd-option-desc">White, for bright rooms.</span>
+          </label>
+        </div>
+        <p class="sd-field-hint">Radios inside labels: arrow keys move the choice, no JS.</p>
+      </div>
+      <div class="sd-field">
+        <span class="sd-field-label" id="demo-option-noise-label">Noise suppression</span>
+        <div class="sd-options" style="--min: 10rem" data-sd-seg role="group" aria-labelledby="demo-option-noise-label">
+          <button type="button" class="sd-option" aria-pressed="false"><span class="sd-option-title">Off</span><span class="sd-option-desc">Send the microphone as it is.</span></button>
+          <button type="button" class="sd-option" aria-pressed="true"><span class="sd-option-title">Standard</span><span class="sd-option-desc">Removes fans and keyboards.</span></button>
+          <button type="button" class="sd-option" aria-pressed="false"><span class="sd-option-title">Strong</span><span class="sd-option-desc">Also removes voices nearby.</span></button>
+          <button type="button" class="sd-option" aria-pressed="false" disabled><span class="sd-option-title">Studio</span><span class="sd-option-desc">Needs a newer device.</span></button>
+        </div>
+        <p class="sd-field-hint">Buttons with <code>aria-pressed</code>; <code>data-sd-seg</code> keeps one pressed and fires <code>change</code>.</p>
+      </div>
+      <p class="demo-usage"><code>sd-options</code> + <code>--min</code> · <code>sd-option</code> + <code>-preview|-title|-desc</code> · selected by <code>:checked</code>, <code>aria-pressed</code> or <code>aria-checked</code> · disabled by <code>:disabled</code> or <code>aria-disabled</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Segmented control in a narrow container</h3>
+      <div class="grid gap-6 sm:grid-cols-2 items-start">
+        <div class="grid gap-2">
+          <p class="sd-field-hint">One row, as wide as the container allows.</p>
+          <div class="sd-seg sd-seg-wrap" data-sd-seg aria-label="Range">
+            <button type="button" aria-pressed="false">hour</button><button type="button" aria-pressed="true">day</button><button type="button" aria-pressed="false">week</button>
+          </div>
+        </div>
+        <div class="grid gap-2" style="width: 13rem; max-width: 100%">
+          <p class="sd-field-hint">Wraps in a 13rem container.</p>
+          <div class="sd-seg sd-seg-wrap" data-sd-seg aria-label="Range, narrow">
+            <button type="button" aria-pressed="false">last hour</button><button type="button" aria-pressed="true">last day</button><button type="button" aria-pressed="false">last week</button><button type="button" aria-pressed="false">last month</button><button type="button" aria-pressed="false">custom</button>
+          </div>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-seg</code> + <code>sd-seg-wrap</code> · without it, items stay on one line and a narrow container overflows</p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Navigation</h3>
+      <nav class="sd-nav" aria-label="Filters">
+        <a href="#components" aria-current="page">All</a>
+        <a href="#components">High risk</a>
+        <a href="#components">Changes requested</a>
+        <a href="#components">History</a>
+        <a href="#components">Saved <span class="sd-count">3</span></a>
+        <a href="#components">Settings</a>
+      </nav>
+      <div>
+        <div class="sd-tabs" role="tablist" aria-label="Item detail">
+          <button role="tab" aria-selected="true" aria-controls="tab-proof" id="t-proof">Overview</button>
+          <button role="tab" aria-controls="tab-checks" id="t-checks">Checks <span class="sd-count" data-tone="success">4</span></button>
+          <button role="tab" aria-controls="tab-diff" id="t-diff">Activity</button>
+        </div>
+        <div class="sd-tabpanel" role="tabpanel" id="tab-proof" aria-labelledby="t-proof"><p class="sd-muted">Summary, owner and due date go here. Arrow keys move between tabs.</p></div>
+        <div class="sd-tabpanel" role="tabpanel" id="tab-checks" aria-labelledby="t-checks" hidden>
+          <ul class="sd-checks"><li data-tone="success">checks passed · 214 tests</li><li data-tone="success">reviewed by Alex</li><li data-tone="pending">monitoring for 7 days</li><li data-tone="danger">lint · 2 warnings</li></ul>
+        </div>
+        <div class="sd-tabpanel" role="tabpanel" id="tab-diff" aria-labelledby="t-diff" hidden><p class="sd-muted">ACME-421 · updated 2 min ago</p></div>
+      </div>
+      <div class="grid gap-6 sm:grid-cols-2 items-start">
+        <ol class="sd-breadcrumb">
+          <li><a href="#components">Projects</a></li>
+          <li><a href="#components">Website</a></li>
+          <li><span aria-current="page">#21</span></li>
+        </ol>
+        <ul class="sd-pagination" aria-label="Pages">
+          <li><a href="#components" aria-label="Previous">‹</a></li>
+          <li><a href="#components">1</a></li>
+          <li><a href="#components" aria-current="page">2</a></li>
+          <li><a href="#components">3</a></li>
+          <li><span>…</span></li>
+          <li><a href="#components">12</a></li>
+          <li><a href="#components" aria-label="Next">›</a></li>
+        </ul>
+      </div>
+      <div class="grid gap-6 sm:grid-cols-[15rem_1fr] items-start">
+        <nav aria-label="App" class="border border-line py-2">
+          <div class="sd-sidenav-group">Projects</div>
+          <ul class="sd-sidenav">
+            <li><a href="#components" aria-current="page">All items <span class="sd-count">108</span></a></li>
+            <li><a href="#components">High risk <span class="sd-count" data-tone="danger">6</span></a></li>
+            <li><a href="#components">Saved <span class="sd-count">3</span></a></li>
+          </ul>
+          <div class="sd-sidenav-group">Online now</div>
+          <ul class="sd-sidenav">
+            <li><a href="#components"><span class="sd-avatar sd-avatar-sm" data-tone="success">JD</span> You <span class="sd-count">#21</span></a></li>
+            <li><a href="#components"><span class="sd-avatar sd-avatar-sm" data-tone="extra">AL</span> Alex <span class="sd-count">#23</span></a></li>
+          </ul>
+        </nav>
+        <div class="grid gap-4">
+          <div class="sd-topbar border border-line">
+            <span class="sd-wordmark">ACME</span>
+            <nav class="sd-nav" aria-label="Demo top"><a href="#components" aria-current="page">Projects</a><a href="#components">History</a></nav>
+            <div class="sd-topbar-end"><button class="sd-btn sd-btn-sm">Search <kbd>Ctrl K</kbd></button><span class="sd-avatar" data-tone="success">JD</span></div>
+          </div>
+          <div class="sd-statusbar border border-line">
+            <span><kbd>N</kbd> next</span><span><kbd>j</kbd><kbd>k</kbd> move</span><span><kbd>a</kbd> approve</span><span><kbd>↵</kbd> details</span>
+            <span class="sd-statusbar-end">v1.0 · 3 online</span>
+          </div>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-nav</code> · <code>sd-tabs</code> + <code>sd-tabpanel</code> · <code>sd-breadcrumb</code> · <code>sd-pagination</code> · <code>sd-sidenav</code> · <code>sd-topbar</code> · <code>sd-statusbar</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Menu and popover</h3>
+      <div class="sd-actions">
+        <button class="sd-btn" popovertarget="snooze-menu" aria-haspopup="menu" aria-expanded="false">Save for later <kbd>t</kbd></button>
+        <button class="sd-btn sd-btn-icon" popovertarget="row-menu" aria-haspopup="menu" aria-label="More" aria-expanded="false">⋯</button>
+        <button class="sd-btn" popovertarget="info-pop" aria-expanded="false">Popover panel</button>
+        <button class="sd-btn" popovertarget="above-pop" aria-expanded="false">Opens above</button>
+      </div>
+      <div popover id="above-pop" class="sd-popover sd-popover-pad" data-sd-side="top"><p class="sd-muted"><code>data-sd-side="top"</code> places it above; it still flips at the edge.</p></div>
+      <div popover id="snooze-menu" class="sd-popover">
+        <div class="sd-menu" role="menu" aria-label="Remind me">
+          <div class="sd-menu-label" role="presentation">Remind me</div>
+          <button role="menuitem" data-demo-toast="Reminder set for later today"><kbd>1</kbd> later today</button>
+          <button role="menuitem" data-demo-toast="Reminder set for tomorrow 09:00"><kbd>2</kbd> tomorrow 09:00</button>
+          <button role="menuitem" data-demo-toast="Reminder set for Monday"><kbd>3</kbd> Monday</button>
+          <button role="menuitem"><kbd>4</kbd> custom…</button>
+        </div>
+      </div>
+      <div popover id="row-menu" class="sd-popover" data-sd-align="end">
+        <div class="sd-menu" role="menu" aria-label="Item actions">
+          <button role="menuitem">Open <span class="sd-menu-hint">o</span></button>
+          <button role="menuitem">Copy link <span class="sd-menu-hint">c</span></button>
+          <button role="menuitemradio" aria-checked="true">Due this week</button>
+          <button role="menuitemradio" aria-checked="false">Due next week</button>
+          <hr class="sd-menu-sep">
+          <button role="menuitem" data-tone="danger">Delete <span class="sd-menu-hint">x</span></button>
+          <button role="menuitem" aria-disabled="true">Restore (not deleted)</button>
+          <a class="sd-menu-item" href="#components">A link styled as an item</a>
+        </div>
+      </div>
+      <div popover id="info-pop" class="sd-popover sd-popover-pad">
+        <p class="sd-label">Why this is flagged</p>
+        <p class="mt-2 sd-muted">It sends money to a customer, which can't be undone.</p>
+      </div>
+      <p class="demo-usage">Native <code>popover</code> + <code>popovertarget</code>, positioned by the JS. In a <code>role="menu"</code>: arrows, Home/End, type to jump, Esc closes.</p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Feedback</h3>
+      <div class="grid gap-3">
+        <div class="sd-note" data-tone="pending">◷ This item changed after you opened it. <button class="sd-btn sd-btn-sm" data-tone="pending">Reload</button></div>
+        <div class="sd-note" data-tone="danger">Irreversible: sends a $4,200 quote to a customer.</div>
+        <div class="sd-note">New items use your workspace defaults.</div>
+      </div>
+      <div class="grid gap-3 sm:grid-cols-2">
+        <div class="sd-callout" data-tone="danger"><p class="sd-callout-title"><span class="sd-dot"></span>High risk</p><p>Expires in 45 min. Review before approving.</p></div>
+        <div class="sd-callout" data-tone="success"><p class="sd-callout-title">All checks passed</p><p>214 tests ran in 41 seconds.</p></div>
+        <div class="sd-callout"><p class="sd-callout-title">Note</p><p>A neutral callout uses an fg edge.</p></div>
+        <div class="sd-callout" data-tone="accent"><p class="sd-callout-title">Tip</p><p>Press <kbd>N</kbd> to jump to the next item.</p></div>
+      </div>
+      <div class="sd-actions">
+        <button class="sd-btn" data-demo-toast="Approved ACME-421" data-demo-tone="success">Toast: success</button>
+        <button class="sd-btn" data-demo-toast="Changes requested from Platform" data-demo-undo>Toast with undo</button>
+        <button class="sd-btn" data-sd-toast="Saved">Declarative toast</button>
+      </div>
+      <div class="grid gap-6 sm:grid-cols-2 items-center">
+        <div class="grid gap-2">
+          <span class="sd-label">5 of 12 done</span>
+          <div class="sd-cells" data-cells="12" data-on="5"></div>
+        </div>
+        <div class="grid gap-5">
+          <div>
+            <p class="sd-progress-label"><span>Uploading</span><span>64%</span></p>
+            <div class="sd-progress" style="--value: 64" role="progressbar" aria-label="Upload progress" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <div>
+            <p class="sd-progress-label"><span>Checking for updates</span><span>waiting</span></p>
+            <div class="sd-progress" data-state="indeterminate" role="progressbar" aria-label="Checking for updates"></div>
+          </div>
+        </div>
+        <div class="sd-skeleton-text" aria-hidden="true"><span class="sd-skeleton"></span><span class="sd-skeleton"></span><span class="sd-skeleton"></span></div>
+        <ul class="sd-checks"><li data-tone="success">checks passed · 214 tests</li><li data-tone="pending">monitoring for 7 days</li><li data-tone="danger">budget over by 31%</li><li>no reviewer yet</li></ul>
+      </div>
+      <div class="sd-empty">
+        <span class="sd-dot" data-shape="hollow"></span>
+        <p class="sd-empty-title">Nothing here yet.</p>
+        <p>Items your team creates will show up here.</p>
+        <button class="sd-btn sd-btn-sm">Create an item</button>
+      </div>
+      <p class="demo-usage"><code>sd-note</code> · <code>sd-callout</code> · <code>toast()</code> · <code>sd-cells</code> · <code>sd-progress</code> + <code>--value</code> or <code>data-state="indeterminate"</code> · <code>sd-progress-label</code> · <code>sd-skeleton</code> · <code>sd-checks</code> · <code>sd-empty</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Rows, marker, expand</h3>
+      <div class="max-w-column">
+        <div class="flex justify-center pb-2"><button class="sd-pill">↑ <b>21</b> new above <kbd>Shift+N</kbd></button></div>
+        <article class="sd-row">
+          <span class="sd-dot" data-shape="hollow"></span>
+          <div class="sd-row-body"><p class="sd-row-title">Triage 9 new tickets, close 2 duplicates</p><p class="sd-meta"><span>Support</span><span>07:57</span></p></div>
+        </article>
+        <article class="sd-row" data-tone="danger" data-edge>
+          <span class="sd-dot"></span>
+          <div class="sd-row-body"><p class="sd-row-title">Stop double charges when a payment retries</p><p class="sd-meta"><span>Billing</span><span>07:56</span><span data-tone="danger">risk</span></p></div>
+          <div class="sd-row-end"><button class="sd-btn sd-btn-sm" data-tone="danger">Review</button></div>
+        </article>
+        <article class="sd-row" aria-current="true">
+          <span class="sd-dot" data-tone="warning"></span>
+          <div class="sd-row-body">
+            <p class="sd-row-title">Fix the crash when a customer has no address</p>
+            <p class="sd-meta"><span>Platform</span><span>07:55</span></p>
+          </div>
+          <div class="sd-row-end"><button class="sd-btn sd-btn-sm" data-sd-toggle="detail-21" aria-expanded="false" aria-controls="detail-21">Details <kbd>↵</kbd></button></div>
+        </article>
+        <div class="sd-expand" id="detail-21">
+          <div>
+            <div class="grid gap-5 py-4 pl-[18px] sm:grid-cols-[1fr_1fr]">
+              <div class="grid gap-2">
+                <span class="sd-label">Preview</span>
+                <div class="sd-shot"><span class="sd-shot-caption">0:07 / 0:12</span></div>
+              </div>
+              <div class="grid gap-2 content-start">
+                <span class="sd-label">Checks</span>
+                <ul class="sd-checks"><li data-tone="success">checks passed · 214 tests</li><li data-tone="success">reviewed by Alex</li><li data-tone="pending">monitoring for 7 days</li></ul>
+                <p class="sd-meta"><span>ACME-421</span><span>3 files changed</span></p>
+              </div>
+            </div>
+            <div class="sd-actions pl-[18px] pb-5">
+              <button class="sd-btn sd-btn-primary">Approve <kbd>a</kbd></button>
+              <button class="sd-btn">Request changes <kbd>s</kbd></button>
+              <button class="sd-btn" data-tone="danger">Decline <kbd>x</kbd></button>
+            </div>
+          </div>
+        </div>
+        <div class="sd-marker">
+          <span>You are here</span>
+          <span class="sd-marker-plain">reviewed through #20</span>
+          <span class="sd-marker-end"><kbd>N</kbd> next is #21</span>
+        </div>
+        <article class="sd-row" data-done>
+          <span class="sd-dot" data-tone="warning"></span>
+          <div class="sd-row-body"><p class="sd-row-title">Upgrade the web framework to 11.31.4</p><p class="sd-meta"><span>Platform</span><span>07:50</span></p></div>
+        </article>
+        <article class="sd-row" data-done>
+          <span class="sd-dot" data-shape="hollow"></span>
+          <div class="sd-row-body"><p class="sd-row-title">Fix 6 broken links in the help center</p><p class="sd-meta"><span>Design</span><span>07:40</span></p></div>
+        </article>
+      </div>
+      <p class="demo-usage"><code>sd-row</code> + <code>aria-current</code> (focus edge) · <code>data-edge</code> + tone (risk edge) · <code>data-done</code> · <code>sd-marker</code> · <code>sd-expand</code> + <code>data-sd-toggle</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Data</h3>
+      <div class="grid gap-6 sm:grid-cols-4">
+        <div class="sd-stat"><span class="sd-stat-value">32</span><span class="sd-stat-label">Open</span></div>
+        <div class="sd-stat"><span class="sd-stat-value">8<small>/32</small></span><span class="sd-stat-label">Done</span></div>
+        <div class="sd-stat"><span class="sd-stat-value">260<small>ms</small></span><span class="sd-stat-label">Checkout p95</span><span class="sd-stat-delta" data-tone="success">−150ms</span></div>
+        <div class="sd-stat"><span class="sd-stat-value">6</span><span class="sd-stat-label">High risk</span><span class="sd-stat-delta" data-tone="danger">+2 today</span></div>
+      </div>
+      <div class="grid gap-6 sm:grid-cols-4">
+        <div class="sd-stat-box" data-tone="success">
+          <span class="sd-stat-label">Running</span>
+          <span class="sd-stat-value">4<small>/ 9</small></span>
+          <span class="sd-stat-sub">containers with samples</span>
+        </div>
+        <div class="sd-stat-box" data-tone="accent">
+          <span class="sd-stat-label">Memory</span>
+          <span class="sd-stat-value">2.1<small>GiB</small></span>
+          <span class="sd-stat-sub">of 8.0 GiB granted</span>
+        </div>
+        <div class="sd-stat-box" data-tone="pending">
+          <span class="sd-stat-label">Orphaned</span>
+          <span class="sd-stat-value">1</span>
+          <span class="sd-stat-end"><button class="sd-btn sd-btn-sm">Reap</button></span>
+        </div>
+        <div class="sd-stat-box">
+          <span class="sd-stat-label">Windows</span>
+          <span class="sd-stat-value">31<small>%</small></span>
+          <span class="sd-stat-sub">CPU across 24 cores</span>
+        </div>
+      </div>
+      <div class="grid gap-3 sm:grid-cols-4">
+        <div class="sd-stat-box sd-stat-box-sm"><span class="sd-stat-label">Region</span><span class="sd-stat-value">us-east-1</span></div>
+        <div class="sd-stat-box sd-stat-box-sm"><span class="sd-stat-label">Uptime</span><span class="sd-stat-value">41 days</span></div>
+        <div class="sd-stat-box sd-stat-box-sm" data-tone="pending"><span class="sd-stat-label">Queue</span><span class="sd-stat-value">72 jobs</span></div>
+        <div class="sd-stat-box sd-stat-box-sm"><span class="sd-stat-label">Version</span><span class="sd-stat-value">1.4.2</span></div>
+      </div>
+      <div class="sd-card" data-tone="accent">
+        <div class="sd-card-head">Total CPU<span class="sd-subtle">5 min buckets</span></div>
+        <div class="sd-card-body">
+          <div class="sd-plot" data-tone="accent">
+            <svg viewBox="0 0 600 120" preserveAspectRatio="none" aria-hidden="true">
+              <path class="grid" d="M0 30H600M0 60H600M0 90H600" />
+              <polygon class="area" points="0,120 0,80 60,72 120,88 180,50 240,58 300,34 360,44 420,26 480,40 540,30 600,38 600,120" />
+              <polyline class="line" points="0,80 60,72 120,88 180,50 240,58 300,34 360,44 420,26 480,40 540,30 600,38" />
+            </svg>
+            <span class="sd-plot-readout">14:05<b>31%</b></span>
+          </div>
+        </div>
+      </div>
+      <div class="sd-cluster">
+        <span class="sd-plot sd-plot-inline" data-tone="accent">
+          <svg viewBox="0 0 100 24" preserveAspectRatio="none" aria-hidden="true">
+            <path class="grid" d="M0 6H100M0 12H100M0 18H100" />
+            <polygon class="area" points="0,24 0,16 25,12 50,18 75,8 100,12 100,24" />
+            <polyline class="line" points="0,16 25,12 50,18 75,8 100,12" />
+          </svg>
+        </span>
+        <span class="sd-plot sd-plot-inline" data-tone="extra">
+          <svg viewBox="0 0 100 24" preserveAspectRatio="none" aria-hidden="true">
+            <polygon class="area" points="0,24 0,10 25,14 50,6 75,12 100,4 100,24" />
+            <polyline class="line" points="0,10 25,14 50,6 75,12 100,4" />
+          </svg>
+        </span>
+      </div>
+      <div class="sd-table-wrap">
+        <table class="sd-table sd-table-hover">
+          <thead><tr><th data-sort aria-sort="descending">Team</th><th data-sort>Project</th><th class="sd-num" data-sort>Items</th><th class="sd-num">Done</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Platform</td><td>Website</td><td class="sd-num">12</td><td class="sd-num">9</td><td><span class="sd-status" data-tone="success">live</span></td></tr>
+            <tr aria-selected="true"><td>Sales</td><td>Billing</td><td class="sd-num">4</td><td class="sd-num">1</td><td><span class="sd-badge" data-tone="danger">risk</span></td></tr>
+            <tr><td>Design</td><td>Mobile app</td><td class="sd-num">31</td><td class="sd-num">31</td><td><span class="sd-status">idle</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid gap-6 sm:grid-cols-2 items-start">
+        <dl class="sd-kv">
+          <dt>Plan</dt><dd>Pro <span class="sd-badge" data-tone="accent">trial</span></dd>
+          <dt>Seats</dt><dd>12 of 20</dd>
+          <dt>Notify</dt><dd>important only</dd>
+        </dl>
+        <div class="sd-code">
+          <div class="sd-code-head">app.css <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#snippet-css">Copy</button></div>
+          <pre id="snippet-css"><code>@import "tailwindcss";
+@import "signal-design";</code></pre>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-stat</code> · <code>sd-stat-box</code> + tone edge + <code>-sm</code> · <code>sd-stat-sub</code> · <code>sd-table</code> + <code>-hover|-compact</code> · <code>th[data-sort]</code> + <code>aria-sort</code> · <code>sd-plot</code> + <code>-inline</code> · <code>sd-num</code> · <code>sd-kv</code> · <code>sd-code</code> + <code>data-sd-copy</code> · <code>sd-shot</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Key-value list with long keys</h3>
+      <div class="grid gap-6 sm:grid-cols-2 items-start">
+        <dl class="sd-kv">
+          <dt>Retention period</dt><dd>30 days</dd>
+          <dt>Region</dt><dd>eu-west</dd>
+        </dl>
+        <dl class="sd-kv sd-kv-plain" style="max-width: 20rem">
+          <dt title="Retention period for deleted messages and their attachments">Retention period for deleted messages and their attachments</dt><dd>30 days</dd>
+          <dt>Region</dt><dd>eu-west</dd>
+        </dl>
+      </div>
+      <p class="demo-usage"><code>sd-kv</code> keys are small caps · <code>sd-kv-plain</code> keys are sentence case and truncate with an ellipsis</p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Living tables</h3>
+      <p class="demo-usage">Drag the grip on the trailing edge, or focus it and use the arrow keys. Metadata folds beneath each title as the container narrows. Groups open independently.</p>
+      <div class="sd-actions" id="living-table-widths" aria-label="Living table width previews">
+        <button class="sd-btn sd-btn-sm" type="button" data-living-width="360">Compact</button>
+        <button class="sd-btn sd-btn-sm" type="button" data-living-width="640">Comfortable</button>
+        <button class="sd-btn sd-btn-sm sd-btn-ghost" type="button" data-living-width="fluid">Fill space</button>
+      </div>
+      <div class="sd-living-table" data-sd-living-table id="living-table-demo">
+        <div class="sd-table-wrap" id="living-table-content">
+          <table class="sd-table">
+            <caption>Signal kit / Component work</caption>
+            <thead><tr><th scope="col">Work item</th><th scope="col" data-fold="2">Status</th><th scope="col" data-fold="2">Reference</th><th scope="col" data-fold="1">Owner</th><th scope="col" data-fold="1">Updated</th></tr></thead>
+            <tbody data-id="review">
+              <tr class="sd-living-table-group"><th scope="rowgroup" colspan="5"><button type="button" disabled aria-expanded="true">In review <span class="sd-living-table-count" aria-hidden="true">2</span></button></th></tr>
+              <tr><th scope="row"><a href="#components-buttons">Tighten button focus rings</a></th><td><span class="sd-badge" data-tone="pending">Review</span></td><td><code>SGN-142</code></td><td>Mira Chen</td><td><time datetime="2026-10-19T14:20:00Z">12 min ago</time></td></tr>
+              <tr><th scope="row">Document keyboard shortcuts</th><td><span class="sd-badge" data-tone="pending">Review</span></td><td><code>SGN-139</code></td><td>Jon Bell</td><td><time datetime="2026-10-19T13:32:00Z">1 hour ago</time></td></tr>
+            </tbody>
+            <tbody data-id="progress">
+              <tr class="sd-living-table-group"><th scope="rowgroup" colspan="5"><button type="button" disabled aria-expanded="true">In progress <span class="sd-living-table-count" aria-hidden="true">2</span></button></th></tr>
+              <tr><th scope="row">Keep chart labels readable</th><td><span class="sd-badge" data-tone="accent">Active</span></td><td><code>SGN-146</code></td><td>Ada Reed</td><td><time datetime="2026-10-19T12:32:00Z">2 hours ago</time></td></tr>
+              <tr><th scope="row">Refine the compact shell</th><td><span class="sd-badge" data-tone="accent">Active</span></td><td><code>SGN-144</code></td><td>Sam Ortiz</td><td><time datetime="2026-10-19T11:32:00Z">3 hours ago</time></td></tr>
+            </tbody>
+            <tbody data-id="planned">
+              <tr class="sd-living-table-group"><th scope="rowgroup" colspan="5"><button type="button" disabled aria-expanded="true">Planned <span class="sd-living-table-count" aria-hidden="true">1</span></button></th></tr>
+              <tr><th scope="row">Add empty state recipes</th><td><span class="sd-badge">Queued</span></td><td><code>SGN-151</code></td><td>Lea Park</td><td><time datetime="2026-10-18">Yesterday</time></td></tr>
+            </tbody>
+            <tbody data-id="shipped">
+              <tr class="sd-living-table-group"><th scope="rowgroup" colspan="5"><button type="button" disabled aria-expanded="true">Shipped <span class="sd-living-table-count" aria-hidden="true">1</span></button></th></tr>
+              <tr><th scope="row">Ship the paper theme</th><td><span class="sd-badge" data-tone="success">Done</span></td><td><code>SGN-128</code></td><td>Ravi Shah</td><td><time datetime="2026-10-17">2 days ago</time></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div data-sd-living-resize hidden role="separator" aria-label="Resize component work table" aria-orientation="vertical" aria-controls="living-table-content"></div>
+      </div>
+      <p class="demo-usage">Width only. Arrow keys move 16px, Shift + arrows move 64px, Home fits the minimum, End fills the parent, and Escape cancels a drag. Requires CSS subgrid and container queries, supported in Chromium 117+ and Safari 16+. Call <code>refresh()</code> after changing rows or groups; remount for a different column schema. Without mounting, this is a readable static table.</p>
+      <script type="text/plain" data-demo-js>
+import { mountLivingTable } from "signal-design/js";
+
+const root = document.getElementById("living-table-demo");
+const table = mountLivingTable(root);
+const preview = document.getElementById("living-table-widths");
+for (const button of preview.querySelectorAll("[data-living-width]")) {
+  button.addEventListener("click", () => {
+    const value = button.dataset.livingWidth;
+    table.resize({ width: value === "fluid" ? null : Number(value) });
+  });
+}
+      </script>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Overlays</h3>
+      <div class="sd-actions">
+        <button class="sd-btn" data-sd-open="demo-dialog">Dialog</button>
+        <button class="sd-btn" data-sd-open="demo-sheet">Sheet</button>
+        <button class="sd-btn" data-sd-open="demo-command">Command panel</button>
+        <button class="sd-btn" data-sd-open="demo-dialog-sm">Small dialog</button>
+        <button class="sd-btn" data-sd-open="demo-dialog-lg">Large dialog</button>
+        <button class="sd-btn" data-sd-open="demo-sheet-left">Sheet from the left</button>
+        <button class="sd-btn" data-sd-tip="Tooltips show on hover and focus">Hover for tooltip</button>
+        <button class="sd-btn" data-sd-tip="Below" data-sd-tip-side="bottom">Tooltip below</button>
+      </div>
+
+      <dialog class="sd-dialog" id="demo-dialog" aria-labelledby="demo-dialog-h">
+        <header class="sd-dialog-head"><span id="demo-dialog-h">Request changes on ACME-421?</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">×</button></header>
+        <div class="sd-dialog-body">
+          <div class="sd-field">
+            <label class="sd-field-label" for="sb-note">Note for Platform</label>
+            <textarea id="sb-note">Also handle an expired card; the empty state should say "Update card".</textarea>
+          </div>
+        </div>
+        <footer class="sd-dialog-foot">
+          <button class="sd-btn sd-btn-ghost" data-sd-close>Cancel</button>
+          <button class="sd-btn" data-tone="danger" data-sd-close="send">Request changes</button>
+        </footer>
+      </dialog>
+
+      <dialog class="sd-dialog sd-sheet" id="demo-sheet" aria-labelledby="demo-sheet-h">
+        <header class="sd-dialog-head"><span id="demo-sheet-h">Item details</span><span class="sd-subtle text-sm">ACME-421</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">»</button></header>
+        <div class="sd-dialog-body grid gap-5">
+          <p class="text-sm">These settings apply to this item only. Workspace defaults cover everything else.</p>
+          <div class="sd-field"><span class="sd-field-label">Priority <span class="sd-field-aside">changed</span></span>
+            <div class="sd-seg sd-seg-sm" data-sd-seg><button type="button" aria-pressed="false">low</button><button type="button" aria-pressed="true">normal</button><button type="button" aria-pressed="false">high</button></div></div>
+          <div class="sd-field"><span class="sd-field-label">Due</span>
+            <div class="sd-seg sd-seg-sm" data-sd-seg><button type="button" aria-pressed="false">3d</button><button type="button" aria-pressed="true">7d</button><button type="button" aria-pressed="false">14d</button></div></div>
+          <button class="sd-btn sd-btn-link justify-self-start">Reset to workspace defaults</button>
+        </div>
+      </dialog>
+
+      <dialog class="sd-dialog sd-dialog-sm" id="demo-dialog-sm" aria-labelledby="demo-dialog-sm-h">
+        <header class="sd-dialog-head"><span id="demo-dialog-sm-h">Discard draft?</span></header>
+        <div class="sd-dialog-body sd-muted">Your note will be lost.</div>
+        <footer class="sd-dialog-foot"><button class="sd-btn sd-btn-ghost" data-sd-close>Keep</button><button class="sd-btn" data-tone="danger" data-sd-close>Discard</button></footer>
+      </dialog>
+      <dialog class="sd-dialog sd-dialog-lg" id="demo-dialog-lg" aria-labelledby="demo-dialog-lg-h">
+        <header class="sd-dialog-head"><span id="demo-dialog-lg-h">Compare versions</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">×</button></header>
+        <div class="sd-dialog-body"><pre class="sd-diff"><span data-line="@">@@ -1,3 +1,3 @@</span><span data-line="-">price: 12</span><span data-line="+">price: 14</span><span>currency: USD</span></pre></div>
+      </dialog>
+      <dialog class="sd-dialog sd-sheet sd-sheet-left" id="demo-sheet-left" aria-labelledby="demo-sheet-left-h">
+        <header class="sd-dialog-head"><span id="demo-sheet-left-h">Filters</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">«</button></header>
+        <div class="sd-dialog-body sd-muted">A sheet can come from either side.</div>
+      </dialog>
+
+      <dialog class="sd-command" id="demo-command" aria-label="Remind me">
+        <p class="sd-command-head">Remind me about <b>Fix the crash when a customer has no address</b></p>
+        <div class="sd-menu" role="menu">
+          <button role="menuitem" data-sd-close><kbd>1</kbd> later today</button>
+          <button role="menuitem" data-sd-close><kbd>2</kbd> tomorrow 09:00</button>
+          <button role="menuitem" data-sd-close><kbd>3</kbd> Monday</button>
+          <button role="menuitem" data-sd-close><kbd>4</kbd> custom…</button>
+        </div>
+        <p class="sd-command-foot">Esc to cancel</p>
+      </dialog>
+      <p class="demo-usage"><code>sd-dialog</code> + <code>-head|-body|-foot</code> · <code>sd-dialog-sm|lg</code> · <code>sd-sheet</code> + <code>-left</code> · <code>sd-command</code> · <code>data-sd-open</code> / <code>data-sd-close</code> · <code>data-sd-tip</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Panel widths</h3>
+      <section class="sd-panel">
+        <h3 class="sd-panel-title">Default</h3>
+        <p class="sd-panel-desc">Capped at 560px, for a short form.</p>
+      </section>
+      <section class="sd-panel sd-panel-wide">
+        <h3 class="sd-panel-title">Wide</h3>
+        <p class="sd-panel-desc">Capped at 1024px, for a settings page with two columns of fields.</p>
+      </section>
+      <section class="sd-panel sd-panel-fluid">
+        <h3 class="sd-panel-title">Fluid</h3>
+        <p class="sd-panel-desc">No cap: it fills its parent, so a page in an app shell needs no <code>max-w-none</code>.</p>
+      </section>
+      <p class="demo-usage"><code>sd-panel</code> (560px) · <code>sd-panel-wide</code> (1024px) · <code>sd-panel-fluid</code> (no cap)</p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Layout</h3>
+      <div class="grid gap-4 sm:grid-cols-3">
+        <article class="sd-card">
+          <header class="sd-card-head">Card <span class="sd-badge">3</span></header>
+          <div class="sd-card-body sd-muted">Header, body and footer split by hairlines.</div>
+          <footer class="sd-card-foot"><button class="sd-btn sd-btn-sm">Open</button></footer>
+        </article>
+        <article class="sd-card" data-tone="danger">
+          <header class="sd-card-head">Toned card</header>
+          <div class="sd-card-body sd-muted"><code>data-tone</code> colors the top edge.</div>
+        </article>
+        <a class="sd-card" href="#components">
+          <div class="sd-card-body"><p class="sd-label">Link card</p><p class="mt-2">The whole card is a link.</p></div>
+        </a>
+      </div>
+      <div class="sd-card" data-sd-ornaments data-sd-ornaments-size="220" style="background-color: var(--sd-container)">
+        <div class="sd-card-body grid place-items-center text-center" style="min-height: 260px">
+          <div><p class="sd-label">Ornaments</p><p class="mt-2 sd-muted max-w-[28rem]">Dust in the bottom-right corner: filled squares, outlines and dots, fading as they spread. <code>data-sd-ornaments</code></p></div>
+        </div>
+      </div>
+      <section class="sd-panel">
+        <h3 class="sd-panel-title">Billing cycle</h3>
+        <p class="sd-panel-desc">You are billed at the start of each cycle.</p>
+        <div class="sd-seg" data-sd-seg><button type="button" aria-pressed="false">monthly</button><button type="button" aria-pressed="true">yearly</button><button type="button" aria-pressed="false">custom</button></div>
+      </section>
+      <div class="grid gap-2">
+        <div class="border border-dashed border-line"><div class="sd-page border-x border-line" style="padding-block: 14px"><span class="sd-subtle text-sm">sd-page: the 720px reading column, centered</span></div></div>
+        <div class="border border-dashed border-line"><div class="sd-page sd-page-wide border-x border-line" style="padding-block: 14px"><span class="sd-subtle text-sm">sd-page sd-page-wide: 1024px for dashboards</span></div></div>
+      </div>
+      <div class="grid gap-2">
+        <div class="sd-divider">or</div>
+        <p class="demo-usage"><code>sd-divider</code> with a word; empty, it is a plain rule.</p>
+      </div>
+      <div class="grid gap-6 md:grid-cols-2">
+        <div class="grid gap-2 content-start">
+          <p class="sd-label">sd-stack</p>
+          <div class="sd-stack" style="--gap: 8px; align-items: flex-start"><span class="sd-chip">first</span><span class="sd-chip">second</span><span class="sd-chip">third</span></div>
+        </div>
+        <div class="grid gap-2 content-start">
+          <p class="sd-label">sd-cluster</p>
+          <div class="sd-cluster" style="--gap: 8px"><span class="sd-chip">billing</span><span class="sd-chip">risk</span><span class="sd-chip">platform</span><span class="sd-chip">design</span><span class="sd-chip">support</span></div>
+        </div>
+        <div class="grid gap-2 md:col-span-2">
+          <p class="sd-label">sd-split</p>
+          <div class="sd-split border border-line p-3"><span>12 items selected</span><span class="sd-cluster" style="--gap: 8px"><button class="sd-btn sd-btn-sm sd-btn-ghost">Clear</button><button class="sd-btn sd-btn-sm sd-btn-primary">Approve all</button></span></div>
+        </div>
+        <div class="grid gap-2 md:col-span-2">
+          <p class="sd-label">sd-grid <span class="sd-faint">--min: 10rem</span></p>
+          <div class="sd-grid" style="--min: 10rem; --gap: 8px"><div class="border border-line p-3 sd-muted">one</div><div class="border border-line p-3 sd-muted">two</div><div class="border border-line p-3 sd-muted">three</div><div class="border border-line p-3 sd-muted">four</div><div class="border border-line p-3 sd-muted">five</div></div>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-page</code> (720px column) · <code>sd-header</code> · <code>sd-panel</code> · <code>sd-card</code> · <code>sd-divider</code> · <code>sd-stack</code> / <code>sd-cluster</code> / <code>sd-split</code> / <code>sd-grid</code> (with <code>--gap</code> and <code>--min</code>) for apps without Tailwind</p>
+    </div>
+  </section>
+</body>
+</html>

@@ -19,14 +19,30 @@ exempt so it can fold the fragments into `CHANGELOG.md`.
 ## Where new things go
 
 - **Behavior checks:** a new file, `scripts/checks/<component>.mjs`, with
-  `export default async function checkThing(page, where, fail)`.
-  `scripts/check.mjs` runs every file in that folder on the components page,
-  once per engine (Chromium and WebKit) at 1280px in ink. Do not add a function or a call to
-  `check.mjs`. A check that needs its own page (like
-  `check-sidebar-resize.mjs`) is its own module too.
-- **Showcase:** a new component gets its own `<div class="demo-block">`, placed
-  next to the closest related block, not at the end of the section. The end of
-  a section is where every other pull request adds its block too.
+  `export default async function checkThing(page, where, fail)` and
+  `export const page = "<id>"`, the id of the library page (from
+  `showcase/pages.js`) that holds the component's block. `scripts/check.mjs`
+  runs every file in that folder on its page, once per engine (Chromium and
+  WebKit) at 1280px in ink, and fails when `page` is missing or unknown. Do not
+  add a function or a call to `check.mjs`. A check that needs its own page
+  (like `check-sidebar-resize.mjs`) is its own module too.
+- **Showcase:** the showcase is one page per section, listed in
+  `showcase/pages.js` (the only list of pages; the rail, the nav palette, the
+  overview cards, the vite inputs and the check scripts all read it). A new
+  component gets its own `<div class="demo-block">` in the section on its
+  page, placed next to the closest related block, not at the end of the
+  section. The end of a section is where every other pull request adds its
+  block too. Do not add page chrome to a page file: the rail, sidebar and
+  palette come from `showcase/layout.html` and the registry.
+- **Adding a library page:** an entry in `LIBRARY` in `showcase/pages.js`
+  (`id`, `file`, `title`, `label`, `sections`, `icon`, `summary`); the content
+  in `showcase/lib-<id>.html` (only the `<body>`, with a `.demo-section` whose
+  id is listed in `sections`); the script in `showcase/pages/<id>.js`, which
+  calls `mountLibrary()` first; and the rail symbol `#i-<icon>` in `ICONS` in
+  `showcase/layout-plugin.js`. Nothing else lists pages. `scripts/check.mjs`
+  fails when the file, the script, the icon or a section is missing. A new
+  example app is an entry in `EXAMPLES` and a page of its own that carries
+  `data-page="<key>"` on `<html>` and calls `mountBar()` from its script.
 - **`AGENTS.md` and `README.md` tables:** a new component family gets its own
   row next to related rows. When it belongs in a shared row (Status, Chat and
   feeds), add it at the end of that row, and expect a one-line conflict if
@@ -72,6 +88,7 @@ pnpm build:css
 node scripts/check.mjs http://localhost:5178/   # hard rules and behavior, Chromium and WebKit
 node scripts/check.mjs http://localhost:5178/ --engine webkit --only chat,behaviors   # one engine, some pages
 pnpm a11y                                       # axe-core audit
+node scripts/check-showcase-build.mjs           # production build under /signal-design/, every page
 node scripts/changelog.mjs --check              # changelog fragments
 ```
 

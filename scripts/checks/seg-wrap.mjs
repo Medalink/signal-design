@@ -1,3 +1,4 @@
+export const page = "components";
 /** sd-seg-wrap: in a narrow container the items flow onto several rows and stay inside it; a plain sd-seg stays on one row. */
 export default async function checkSegWrap(page, where, fail) {
   const got = await page.evaluate(() => {

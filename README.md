@@ -34,7 +34,7 @@ The package carries what an AI agent needs to use it well:
 |---|---|
 | `AGENTS.md` | The contract: install, the hard rules, which part for which need, accessibility duties, checking. Point your project's own `AGENTS.md` at `node_modules/signal-design/AGENTS.md`. |
 | `llms.txt`, `llms-full.txt` | The index, and the guide plus every component's HTML in one file. |
-| `ai/components.json` | Every block from the components page: classes, `data-sd-*` attributes, copyable HTML, the JS it needs. |
+| `ai/components.json` | Every block from the library pages: classes, `data-sd-*` attributes, copyable HTML, the JS it needs. |
 | `ai/tokens.json` | Every token resolved per theme (W3C design-token form) with contrast ratios. |
 | `ai/rules/signal-design.mdc` | A Cursor rule; copy it to `.cursor/rules/`. |
 | `vscode/*.json` | Editor completions for `data-sd-*` and `--sd-*` (see below). |
@@ -69,7 +69,7 @@ overflow at 1280/768/375px, fonts that did not load, console errors and (with
 ```
 
 `pnpm build:ai` regenerates the `ai/`, `vscode/` and `llms-full.txt` files from
-the components page; CI fails when they are out of date.
+the library pages; CI fails when they are out of date.
 
 ## Use it with Tailwind v4
 
@@ -1007,12 +1007,17 @@ Server-rendered pages can skip the JS call: put the options as JSON in a
 
 ## Page concepts
 
-The showcase has six pages built only from library parts: the components
-reference (`index.html`, itself an app in the Signal App Shell, with every
-component from the other pages and a Preview / Code flip on each block that
-shows copyable HTML, the JS it needs, and a JS snippet where one applies), an app console (`shell.html`), a chat app
-(`chat.html`), a multi-step form (`form.html`), a landing page
-(`landing.html`) and live charts (`charts.html`).
+The showcase is built only from library parts. `index.html` is the overview,
+with a card for every other page. The library reference is one page per
+section (`lib-tokens.html` through `lib-js.html`), each an app in the Signal
+App Shell that opens with what the section is for and then shows every block
+with a Preview / Code flip (copyable HTML, the JS it needs, and a JS snippet
+where one applies). Five example apps use those parts together: an app console
+(`shell.html`), a chat app (`chat.html`), a multi-step form (`form.html`), a
+landing page (`landing.html`) and live charts (`charts.html`). A bar at the top
+of every page links back to the overview and holds the theme, width and
+settings controls; example apps carry a grey Mock marker in it.
+`showcase/pages.js` lists every page.
 
 ## Accessibility
 

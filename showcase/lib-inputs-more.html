@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+  <section class="demo-section" id="inputs-more" aria-labelledby="inputs-more-h">
+    <header class="demo-intro">
+      <h1 class="sd-display">Inputs, search and data. <em>The keyboard does the work.</em></h1>
+      <p class="sd-lead max-w-[42rem]">Controls for choosing, filtering and finding: combobox, tags, number steppers, steps, a command palette and a shortcut sheet. Small sparklines, bars and diffs need no library.</p>
+      <div class="demo-intro-cols">
+        <div>
+          <p class="sd-label">Principles</p>
+          <ul>
+            <li><b class="text-fg font-semibold">Real inputs underneath.</b> The combobox keeps a text input and a hidden input for the value. Tags keep a hidden input per tag. Forms submit as they always did.</li>
+            <li><b class="text-fg font-semibold">Every action has a key.</b> Arrows move, Enter chooses, Esc closes, Backspace removes the last tag, and <kbd>?</kbd> opens the shortcut sheet.</li>
+            <li><b class="text-fg font-semibold">Shortcuts stay out of text fields.</b> <code>data-sd-key</code> does not fire while you type, except combinations with Ctrl or Cmd such as <kbd>Ctrl K</kbd>.</li>
+            <li><b class="text-fg font-semibold">One key, one owner.</b> <code>data-sd-key</code> clicks the first visible match. Give <kbd>Ctrl K</kbd> to one palette per page.</li>
+            <li><b class="text-fg font-semibold">Small data needs no library.</b> <code>sd-spark</code> reads <code>data-values</code> and <code>sd-bars</code> reads <code>--v</code>. Both are static.</li>
+          </ul>
+        </div>
+        <div class="grid content-start gap-8">
+          <div>
+            <p class="sd-label">Use it for</p>
+            <ul>
+              <li>Forms with search, tags or numeric steps.</li>
+              <li>A command palette for jumping to pages and running actions.</li>
+              <li>A shortcut sheet, so keyboard users can find what exists.</li>
+            </ul>
+          </div>
+          <div>
+            <p class="sd-label">Leave it out when</p>
+            <ul>
+              <li>Time axes, units or live data. Use the Charts page: <code>createChart</code> with Chart.js.</li>
+              <li>A second palette on a page that already has one on <kbd>Ctrl K</kbd>.</li>
+              <li>A short list of options. A native <code>&lt;select&gt;</code> or radio group is simpler.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
+    <p class="sd-label">05</p>
+    <h2 id="inputs-more-h" class="sd-title mt-2">Inputs, search and data</h2>
+    <p class="sd-muted mt-2 max-w-[42rem]">The <a href="./form.html">form example</a> uses these together.</p>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Combobox, tags, number and steps</h3>
+      <div class="grid gap-6 sm:grid-cols-2 items-start">
+        <div class="sd-field">
+          <label class="sd-field-label" for="demo-combo">Combobox</label>
+          <div class="sd-combobox" data-sd-combobox>
+            <input id="demo-combo" role="combobox" aria-controls="demo-combo-list" aria-expanded="false" placeholder="Search a city" autocomplete="off">
+            <input type="hidden" name="city">
+            <div class="sd-menu sd-combobox-list" role="listbox" id="demo-combo-list" hidden>
+              <button type="button" role="option">Berlin</button><button type="button" role="option">Lisbon</button><button type="button" role="option">London</button><button type="button" role="option">New York</button><button type="button" role="option">Tokyo</button>
+            </div>
+          </div>
+        </div>
+        <div class="sd-field">
+          <label class="sd-field-label" for="demo-tags">Tags</label>
+          <div class="sd-tags" data-sd-tags><span class="sd-chip" data-value="design">design <button type="button" aria-label="Remove design">×</button></span><input id="demo-tags" placeholder="Add a tag"></div>
+        </div>
+        <div class="sd-field">
+          <label class="sd-field-label" for="demo-number">Number</label>
+          <div class="sd-number" data-sd-number><button type="button" data-step="-1" aria-label="Less">−</button><input id="demo-number" type="number" value="3" min="1" max="9"><button type="button" data-step="1" aria-label="More">+</button></div>
+        </div>
+        <div class="sd-field">
+          <span class="sd-field-label">Steps</span>
+          <ol class="sd-steps"><li data-state="done">Account</li><li aria-current="step">Workspace</li><li>Invite</li></ol>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-combobox</code> + <code>data-sd-combobox</code> · <code>sd-tags</code> + <code>data-sd-tags</code> · <code>sd-number</code> + <code>data-sd-number</code> · <code>sd-steps</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Command palette and shortcuts</h3>
+      <div class="sd-actions">
+        <button class="sd-btn" data-sd-open="demo-palette" data-sd-key="mod+k">Open palette <kbd>Ctrl K</kbd></button>
+        <button class="sd-btn" data-sd-open="demo-shortcuts">Shortcuts <kbd>?</kbd></button>
+      </div>
+      <dialog class="sd-command" id="demo-palette" aria-label="Search" data-sd-palette>
+        <input type="search" placeholder="Search pages and actions" aria-label="Search">
+        <div class="sd-menu" role="listbox" aria-label="Results">
+          <div class="sd-menu-label" role="presentation">Pages</div>
+          <a role="option" href="./shell.html">App shell <span class="sd-menu-hint">page</span></a>
+          <a role="option" href="./chat.html">Chat <span class="sd-menu-hint">page</span></a>
+          <a role="option" href="./form.html">Form <span class="sd-menu-hint">page</span></a>
+          <div class="sd-menu-label" role="presentation">Actions</div>
+          <button type="button" role="option" data-sd-theme-cycle data-keywords="dark light paper">Next theme <span class="sd-menu-hint">Shift T</span></button>
+          <button type="button" role="option" data-sd-toast="Copied link">Copy link</button>
+        </div>
+        <p class="sd-command-foot">↑↓ move · ↵ open · Esc close</p>
+      </dialog>
+      <dialog class="sd-dialog" id="demo-shortcuts" data-sd-shortcuts aria-labelledby="demo-shortcuts-h">
+        <header class="sd-dialog-head"><span id="demo-shortcuts-h">Keyboard shortcuts</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">×</button></header>
+        <div class="sd-dialog-body">
+          <p class="sd-shortcuts-group">Navigation</p>
+          <dl class="sd-shortcuts">
+            <dt><kbd>Ctrl</kbd><kbd>K</kbd></dt><dd>Search</dd>
+            <dt><kbd>j</kbd> <kbd>k</kbd></dt><dd>Next, previous item</dd>
+            <dt><kbd>[</kbd></dt><dd>Toggle sidebar</dd>
+          </dl>
+          <p class="sd-shortcuts-group">Actions</p>
+          <dl class="sd-shortcuts">
+            <dt><kbd>a</kbd></dt><dd>Approve</dd>
+            <dt><kbd>?</kbd></dt><dd>This list</dd>
+          </dl>
+        </div>
+      </dialog>
+      <p class="demo-usage"><code>dialog.sd-command[data-sd-palette]</code> + <code>setOptions()</code> · <code>dialog[data-sd-shortcuts]</code> opens on <kbd>?</kbd> · <code>sd-shortcuts</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Charts and diffs</h3>
+      <div class="grid gap-6 sm:grid-cols-3 items-end">
+        <div class="sd-stat"><span class="sd-stat-value">260<small>ms</small></span><span class="sd-stat-label">Checkout p95</span><span class="sd-spark" data-values="410 380 395 340 320 300 290 270 260"></span></div>
+        <div class="sd-stat"><span class="sd-stat-value">1.2k</span><span class="sd-stat-label">Messages today</span><span class="sd-spark" data-tone="success" data-values="3 5 4 8 6 9 12 10 14"></span></div>
+        <div class="sd-bars" style="--h: 110px"><span style="--v:40" data-label="M"></span><span style="--v:65" data-label="T"></span><span style="--v:30" data-label="W"></span><span style="--v:80" data-label="T"></span><span style="--v:55" data-label="F" data-current></span></div>
+      </div>
+      <div class="sd-code">
+        <div class="sd-code-head">src/billing.js</div>
+        <pre class="sd-diff"><span data-line="@">@@ -12,6 +12,7 @@</span><span>function charge(customer) {</span><span data-line="-">  return pay(customer.card);</span><span data-line="+">  if (!customer.address) return missingAddress(customer);</span><span data-line="+">  return pay(customer.card);</span><span>}</span></pre>
+      </div>
+      <p class="demo-usage"><code>sd-spark</code> + <code>data-values</code> · <code>sd-bars</code> + <code>--v</code> · <code>sd-diff</code> + <code>data-line="+|-|@"</code></p>
+    </div>
+  </section>
+</body>
+</html>

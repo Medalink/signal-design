@@ -1,10 +1,11 @@
 /**
  * Hard-rule sweep of the showcase pages in Chromium and WebKit.
  *
- *   node scripts/check.mjs [baseUrl] [screenshotDir] [--engine chromium|webkit] [--only|--except components,charts,behaviors,...]
+ *   node scripts/check.mjs [baseUrl] [screenshotDir] [--engine chromium|webkit] [--only|--except lib-components,charts,behaviors,webkit-1,...]
  *
- * Pages: the components page, the Signal App Shell, and the prebuilt
- * dist/signal.css loaded without Tailwind (scripts/standalone.html).
+ * Pages: every page in showcase/pages.js (the overview, the library pages and
+ * the example apps; a page's name here is its file without .html), and the
+ * prebuilt dist/signal.css loaded without Tailwind (scripts/standalone.html).
  * Fails on: console errors, a font face that did not load, any rounded
  * corner, any blurred shadow (glow), any gradient, horizontal scroll at
  * phone width, and broken JS behaviors.
@@ -18,13 +19,24 @@ import { chromium, webkit } from "playwright";
 import { sweep as rulesSweep } from "../bin/rules.mjs";
 import { checkLivingTable, checkLivingTableTypes } from "./check-living-table.mjs";
 import { checkSidebarResize } from "./check-sidebar-resize.mjs";
+import { checkHashRedirects, checkShowcasePages, checkShowcaseRegistry } from "./check-showcase-pages.mjs";
+import { checkShowcaseBar } from "./check-showcase-bar.mjs";
+import { ALL, HOME, LIBRARY, byId, keyOf } from "../showcase/pages.js";
 
 // One file per component in scripts/checks/, each exporting
-// `default async (page, where, fail)`; they run on the components page once
-// per engine, at 1280px in ink. A new check is a new file, not an edit here.
+// `default async (page, where, fail)` and `page`, the id of the library page
+// (showcase/pages.js) whose blocks it tests. They run on that page once per
+// engine, at 1280px in ink. A new check is a new file, not an edit here.
 const checksDir = new URL("./checks/", import.meta.url);
 const componentChecks = await Promise.all(
-  readdirSync(checksDir).filter((f) => f.endsWith(".mjs")).sort().map(async (f) => (await import(new URL(f, checksDir).href)).default),
+  readdirSync(checksDir).filter((f) => f.endsWith(".mjs")).sort().map(async (f) => {
+    const mod = await import(new URL(f, checksDir).href);
+    if (typeof mod.default !== "function" || !byId(mod.page)) {
+      console.log(`FAIL scripts/checks/${f}: needs a default function and \`export const page = "<id>"\` naming a library page (${LIBRARY.map((p) => p.id).join(", ")}); got ${JSON.stringify(mod.page)}`);
+      process.exit(1);
+    }
+    return { file: f, page: mod.page, run: mod.default };
+  }),
 );
 
 const args = process.argv.slice(2);
@@ -33,20 +45,27 @@ function listFlag(flag) {
   const at = args.indexOf(flag);
   return at < 0 ? null : (args.splice(at, 2)[1] ?? "").split(",").filter(Boolean);
 }
+// A group names several parts at once, so a CI job lists neither pages nor
+// edits itself when a page is added. webkit-1 is the first WebKit job: the
+// overview and every library page from the registry, plus the example pages
+// and the standalone page that fill it out. The second WebKit job takes
+// `--except webkit-1`, which leaves every other page and the behavior groups.
+const groups = {
+  "webkit-1": [keyOf(HOME), ...LIBRARY.map(keyOf), "charts", "form", "landing", "standalone"],
+};
+const expand = (names) => names?.flatMap((name) => groups[name] ?? [name]);
 const onlyEngines = listFlag("--engine");
-const onlyParts = listFlag("--only");
-const exceptParts = listFlag("--except");
+const onlyParts = expand(listFlag("--only"));
+const exceptParts = expand(listFlag("--except"));
 const base = (args[0] || "http://localhost:5178/").replace(/\/?$/, "/");
 const apiUrl = `${base}@fs/${fileURLToPath(new URL("../src/js/index.js", import.meta.url)).replace(/\\/g, "/")}`;
+const pageUrl = (page) => `${base}${page.file}`;
 const pages = {
-  components: base,
-  shell: `${base}shell.html`,
-  chat: `${base}chat.html`,
-  form: `${base}form.html`,
-  landing: `${base}landing.html`,
-  charts: `${base}charts.html`,
+  ...Object.fromEntries(ALL.map((p) => [keyOf(p), pageUrl(p)])),
   standalone: new URL("./standalone.html", import.meta.url).href,
 };
+// The behavior tests that build their own elements need only a page that runs init().
+const jsPage = pageUrl(byId("js"));
 if (!existsSync(new URL("../dist/signal.css", import.meta.url))) {
   console.log("FAIL dist/signal.css missing: run pnpm build:css first");
   process.exit(1);
@@ -56,7 +75,7 @@ const parts = [...Object.keys(pages), "behaviors"];
 for (const [flag, given, allowed] of [["--engine", onlyEngines, ["chromium", "webkit"]], ["--only", onlyParts, parts], ["--except", exceptParts, parts]]) {
   const unknown = given?.filter((name) => !allowed.includes(name)) ?? [];
   if (given?.length === 0 || unknown.length) {
-    console.log(`FAIL unknown ${flag} ${unknown.join(", ")}: use ${allowed.join(", ")}`);
+    console.log(`FAIL unknown ${flag} ${unknown.join(", ")}: use ${[...allowed, ...(flag === "--engine" ? [] : Object.keys(groups))].join(", ")}`);
     process.exit(1);
   }
 }
@@ -80,8 +99,14 @@ try {
   console.log("ok   living table types 1 strict consumer compilation");
 } catch (error) { fail("living table types", error.message); }
 
+if (runs("behaviors")) {
+  const problems = checkShowcaseRegistry();
+  for (const problem of problems) fail("showcase registry", problem);
+  if (!problems.length) console.log(`ok   showcase registry ${ALL.length} pages have their files, scripts, icons and sections`);
+}
+
 async function checkCopy(page, name) {
-  await page.goto(base);
+  await page.goto(jsPage);
   const result = await page.evaluate(async () => {
     const errors = [];
     let assertions = 0;
@@ -123,7 +148,7 @@ async function checkCopy(page, name) {
 
 async function checkCountdown(page, name) {
   await page.clock.install({ time: new Date("2026-01-01T00:00:00Z") });
-  await page.goto(base);
+  await page.goto(jsPage);
   await page.clock.pauseAt(new Date("2026-01-01T00:01:00Z"));
   let assertions = 0;
   let failed = false;
@@ -252,7 +277,7 @@ async function checkLegacyRepeat(page, name) {
     if (afterPrevious !== expected) fail(name, `holding k should reach row ${expected}, got ${afterPrevious}`);
   }
   await page.keyboard.up("k");
-  await page.goto(base);
+  await page.goto(jsPage);
   await page.evaluate(async (apiUrl) => {
     const { hotkeys } = await import(apiUrl);
     window.repeatProbe = { calls: 0, repeatedCalls: 0 };
@@ -279,7 +304,7 @@ async function checkLegacyRepeat(page, name) {
 
 
 async function checkModifiedSequence(page, name) {
-  await page.goto(base);
+  await page.goto(jsPage);
   await page.evaluate(async (apiUrl) => {
     const { hotkeys } = await import(apiUrl);
     const root = document.createElement("div");
@@ -314,7 +339,7 @@ async function checkModifiedSequence(page, name) {
 
 async function checkFeedAndHotkeys(page, name) {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto(base);
+  await page.goto(jsPage);
   const result = await page.evaluate(async (apiUrl) => {
     const { mountFeed, hotkeys } = await import(apiUrl);
     const errors = [];
@@ -695,25 +720,30 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
     if (!party) fail(where, "emoji picker did not add a reaction");
   }
 
-  if (pageName === "components" && width === 1280 && theme === "ink") {
+  const library = LIBRARY.find((p) => keyOf(p) === pageName);
+  if (library && width === 1280 && theme === "ink") {
     // Every block flips between preview and code in place.
     const flips = await page.evaluate(() => {
       const blocks = [...document.querySelectorAll(".demo-block")];
       return { blocks: blocks.length, toggles: blocks.filter((b) => b.querySelector(":scope > .demo-head [data-view='code']")).length };
     });
     if (!flips.blocks || flips.toggles !== flips.blocks) fail(where, `code toggles ${flips.toggles} of ${flips.blocks} blocks`);
-    const buttons = page.locator("#components-buttons");
-    await buttons.locator(".demo-head [data-view='code']").click();
-    const view = await buttons.evaluate((b) => ({
-      code: b.querySelector(".demo-code pre")?.textContent ?? "",
-      preview: getComputedStyle(b.querySelector(".sd-actions")).display,
-    }));
-    if (!view.code.startsWith('<div class="sd-actions">') || view.preview !== "none") fail(where, `code view ${JSON.stringify({ start: view.code.slice(0, 30), preview: view.preview })}`);
-    await buttons.locator(".demo-head [data-view='preview']").click();
+    if (library.id === "components") {
+      const buttons = page.locator("#components-buttons");
+      await buttons.locator(".demo-head [data-view='code']").click();
+      const view = await buttons.evaluate((b) => ({
+        code: b.querySelector(".demo-code pre")?.textContent ?? "",
+        preview: getComputedStyle(b.querySelector(".sd-actions")).display,
+      }));
+      if (!view.code.startsWith('<div class="sd-actions">') || view.preview !== "none") fail(where, `code view ${JSON.stringify({ start: view.code.slice(0, 30), preview: view.preview })}`);
+      await buttons.locator(".demo-head [data-view='preview']").click();
+    }
 
+    await checkShowcasePages(page, where, fail, library);
+    for (const check of componentChecks.filter((c) => c.page === library.id)) await check.run(page, where, fail);
+  }
 
-    for (const check of componentChecks) await check(page, where, fail);
-
+  if (library?.id === "components" && width === 1280 && theme === "ink") {
     // Behaviors
     await page.click('[data-sd-open="demo-dialog"]');
     if (!(await page.evaluate(() => document.getElementById("demo-dialog").open))) fail(where, "dialog did not open");
@@ -748,7 +778,9 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
     await page.click('#components [data-sd-seg] button:nth-child(2)');
     const seg = await page.evaluate(() => document.querySelector("#components [data-sd-seg] button:nth-child(2)").getAttribute("aria-pressed"));
     if (seg !== "true") fail(where, "segmented did not select");
+  }
 
+  if (library?.id === "inputs-more" && width === 1280 && theme === "ink") {
     // Combobox: filter, pick with the keyboard.
     await page.locator("#demo-combo").click();
     await page.keyboard.type("lis");
@@ -768,8 +800,8 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
     const n = await page.locator("#demo-number").inputValue();
     const plusDisabled = await page.locator('#inputs-more [data-step="1"]').isDisabled();
     if (n !== "9" || !plusDisabled) fail(where, `number ${n}, plus disabled ${plusDisabled}`);
-    // Palette: Ctrl K opens, typing filters, Escape closes.
-    await page.locator("body").click({ position: { x: 5, y: 5 } });
+    // Palette: Ctrl K opens, typing filters, Escape closes. Click clear of the page chrome first.
+    await page.locator("#inputs-more h2").click();
     await page.keyboard.press("Control+k");
     if (!(await page.evaluate(() => document.getElementById("demo-palette").open))) fail(where, "palette did not open");
     await page.keyboard.type("form");
@@ -780,7 +812,9 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
     await page.keyboard.press("Shift+Slash");
     if (!(await page.evaluate(() => document.getElementById("demo-shortcuts").open))) fail(where, "? did not open shortcuts");
     await page.keyboard.press("Escape");
+  }
 
+  if (library?.id === "tokens" && width === 1280 && theme === "ink") {
     await page.click('[data-sd-theme="paper"]');
     if ((await page.evaluate(() => document.documentElement.dataset.theme)) !== "paper") fail(where, "theme button failed");
     // "light" is the older name for paper: a light button still sets paper.
@@ -946,6 +980,17 @@ for (const [name, engine] of Object.entries(engines)) {
       const resize = await checkSidebarResize(page, base, apiUrl);
       for (const error of resize.errors) fail(`${name} sidebar resize`, error);
       if (!resize.errors.length) console.log(`ok   ${name} sidebar resize ${resize.passed} behavior checks`);
+    },
+    "old links": async (page) => {
+      const redirects = await checkHashRedirects(page, base);
+      for (const error of redirects.errors) fail(`${name} old links`, error);
+      if (!redirects.errors.length) console.log(`ok   ${name} old links ${redirects.passed} hash redirects`);
+    },
+    // The bar check opens its own browser context, so that settings carry from page to page.
+    "showcase bar": async (page) => {
+      const bars = await checkShowcaseBar(page.context().browser(), base, name);
+      for (const error of bars.errors) fail(`${name} showcase bar`, error);
+      if (!bars.errors.length) console.log(`ok   ${name} showcase bar ${bars.passed} behavior checks`);
     },
   };
   // Each group gets a fresh page, and an exception fails that group only.

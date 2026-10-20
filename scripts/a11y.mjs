@@ -2,20 +2,21 @@
  * Accessibility audit of the showcase pages with axe-core (WCAG 2.2 A and
  * AA rules), in every theme, at desktop and phone width.
  *
- *   node scripts/a11y.mjs [baseUrl] [--pages index,chat] [--json]
+ *   node scripts/a11y.mjs [baseUrl] [--pages index,lib-tokens,chat] [--json]
  *
  * Exits non-zero when any violation is found.
  */
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { chromium } from "playwright";
+import { ALL, keyOf } from "../showcase/pages.js";
 
 const require = createRequire(import.meta.url);
 const axeSource = readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
 const args = process.argv.slice(2);
 const base = (args.find((a) => a.startsWith("http")) || "http://localhost:5178/").replace(/\/?$/, "/");
 const i = args.indexOf("--pages");
-const PAGES = { index: "index.html", shell: "shell.html", chat: "chat.html", form: "form.html", landing: "landing.html", charts: "charts.html" };
+const PAGES = Object.fromEntries(ALL.map((p) => [keyOf(p), p.file]));
 const only = (i >= 0 ? args[i + 1] : Object.keys(PAGES).join(",")).split(",");
 const themes = ["ink", "graphite", "paper"];
 const widths = [1280, 390];
