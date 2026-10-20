@@ -106,9 +106,32 @@ export function setChartColors(name, { persist = true } = {}) {
   document.dispatchEvent(new CustomEvent("sd:theme", { detail: { theme: getTheme() } }));
 }
 
-/** A theme the other window already changed: apply it here without storing it, and only when it differs, so the two never echo. */
-function applyTheme(name) {
-  if (getTheme() !== name) setTheme(name, { persist: false });
+/**
+ * Settings the width frame and the page that opened it keep in step. The
+ * sender has already stored a value, so the receiver applies it without
+ * storing it.
+ */
+const SYNCED = {
+  theme: { get: getTheme, valid: (v) => THEMES.includes(v), apply: (v) => setTheme(v, { persist: false }) },
+};
+// What each setting last was here, sent or received. A change that matches it is not news, so a value
+// applied because the other side sent it is never sent back, however many messages are queued.
+const shown = {};
+// The window on the other end: the opener inside a frame, the open frame on a page, otherwise none.
+let peer = () => null;
+
+function announce(key, value) {
+  if (shown[key] === value) return;
+  shown[key] = value;
+  peer()?.postMessage({ sdSync: { key, value } }, location.origin);
+}
+
+function receive(e) {
+  if (e.source !== peer() || e.origin !== location.origin) return;
+  const { key, value } = e.data?.sdSync ?? {};
+  if (!SYNCED[key]?.valid(value)) return;
+  shown[key] = value;
+  SYNCED[key].apply(value);
 }
 
 /** The remembered scrollbar mode, for the init({ scrollbars }) each entry makes. */
@@ -207,15 +230,11 @@ function buildBar() {
     for (const b of document.querySelectorAll("[data-vp]")) b.setAttribute("aria-pressed", String(Number(b.dataset.vp) === 0));
     frame.removeAttribute("src");
   });
-  // The modal frame puts the bar out of reach, so its header carries the theme; pass it on to the framed page.
-  document.addEventListener("sd:theme", ({ detail }) => {
-    if (dialog.open) frame.contentWindow?.postMessage({ sdTheme: detail.theme }, location.origin);
-  });
-  // The framed page can change the theme or close the frame too; follow it.
+  // The modal frame puts the bar out of reach, so its header carries the theme, which syncs to the framed page.
+  peer = () => (dialog.open ? frame.contentWindow : null);
+  // The framed page can close the frame too.
   addEventListener("message", (e) => {
-    if (e.source !== frame.contentWindow || e.origin !== location.origin) return;
-    if (THEMES.includes(e.data?.sdTheme)) applyTheme(e.data.sdTheme);
-    if (e.data?.sdClose) show(0);
+    if (e.source === frame.contentWindow && e.origin === location.origin && e.data?.sdClose) show(0);
   });
   addEventListener("resize", () => dialog.open && fit(current));
 
@@ -230,19 +249,16 @@ function buildBar() {
  * production build. The entry passes savedScrollbars() to init() itself.
  */
 export function mountBar() {
+  for (const [key, setting] of Object.entries(SYNCED)) shown[key] = setting.get();
+  addEventListener("message", receive);
+  document.addEventListener("sd:theme", ({ detail }) => announce("theme", detail.theme));
   if (!inFrame) buildBar();
-  else {
-    // The framed page and the page that framed it keep one theme between them.
-    addEventListener("message", (e) => {
-      if (e.origin === location.origin && THEMES.includes(e.data?.sdTheme)) applyTheme(e.data.sdTheme);
+  else if (window.parent !== window) {
+    peer = () => window.parent;
+    // The frame holds the focus, so Esc never reaches the dialog that holds it.
+    addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !e.defaultPrevented && !document.querySelector(":popover-open, dialog[open]")) window.parent.postMessage({ sdClose: true }, location.origin);
     });
-    if (window.parent !== window) {
-      document.addEventListener("sd:theme", ({ detail }) => window.parent.postMessage({ sdTheme: detail.theme }, location.origin));
-      // The frame holds the focus, so Esc never reaches the dialog that holds it.
-      addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && !e.defaultPrevented && !document.querySelector(":popover-open, dialog[open]")) window.parent.postMessage({ sdClose: true }, location.origin);
-      });
-    }
   }
 
   // After the page script has run, so a library page has already snapshotted its blocks as authored, whether or not the bar mounted.

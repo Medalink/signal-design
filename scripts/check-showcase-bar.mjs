@@ -142,6 +142,30 @@ export async function checkShowcaseBar(browser, base, name) {
   }));
   expect(back.theme === "auto" && back.bar === "auto" && back.header === "auto" && back.events === 1, `a theme changed in the frame reaches the page once ${JSON.stringify(back)}`);
 
+  // Two changes queued in one tick settle on the last one, and the sides do not echo each other while stale messages are in flight.
+  const countEvents = () => {
+    if (window.sdThemeCount === undefined) document.addEventListener("sd:theme", () => window.sdThemeCount++);
+    window.sdThemeCount = 0;
+  };
+  const themes = () => page.evaluate(() => [document.documentElement.dataset.theme, document.querySelector(".vp-dialog iframe").contentDocument.documentElement.dataset.theme]);
+  for (const [from, queue] of [
+    ["page", () => { for (const t of ["paper", "auto"]) document.querySelector(`.vp-dialog [data-sd-theme="${t}"]`).click(); }],
+    ["frame", () => { for (let i = 0; i < 2; i++) document.querySelector("[data-sd-theme-cycle]").click(); }],
+  ]) {
+    await page.evaluate(countEvents);
+    await frame.evaluate(countEvents);
+    const [before] = await themes();
+    const last = from === "page" ? "auto" : ["ink", "graphite", "paper", "auto"][(["ink", "graphite", "paper", "auto"].indexOf(before) + 2) % 4];
+    await (from === "page" ? page : frame).evaluate(queue);
+    await page.waitForFunction((want) => [document.documentElement, document.querySelector(".vp-dialog iframe").contentDocument.documentElement].every((el) => el.dataset.theme === want), last, { timeout: 2000 }).catch(() => {});
+    await page.waitForTimeout(300);
+    const settled = {
+      themes: await themes(),
+      events: [await page.evaluate(() => window.sdThemeCount), await frame.evaluate(() => window.sdThemeCount)],
+    };
+    expect(settled.themes.every((t) => t === last) && settled.events.every((n) => n <= 4), `two theme changes queued from the ${from} settle on ${last} without echoing ${JSON.stringify(settled)}`);
+  }
+
   // Esc inside the frame closes the dialog, unless a palette in the frame takes it first.
   await page.frameLocator(".vp-dialog iframe").locator("#main").focus();
   await page.keyboard.press("Control+k");
