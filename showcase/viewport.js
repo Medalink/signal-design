@@ -104,7 +104,12 @@ function chartColors(name, { persist = true } = {}) {
   document.dispatchEvent(new CustomEvent("sd:theme", { detail: { theme: getTheme() } }));
 }
 
-function scrollbars(mode, { persist = true } = {}) {
+/** A theme the other window already changed: apply it here without storing it, and only when it differs, so the two never echo. */
+function applyTheme(name) {
+  if (getTheme() !== name) setTheme(name, { persist: false });
+}
+
+function scrollbars(mode,{ persist = true } = {}) {
   setScrollbars(mode);
   pick("vp-scrollbars", mode);
   if (persist) store.set("sd-scrollbars", mode);
@@ -201,6 +206,12 @@ function buildBar() {
   document.addEventListener("sd:theme", ({ detail }) => {
     if (dialog.open) frame.contentWindow?.postMessage({ sdTheme: detail.theme }, location.origin);
   });
+  // The framed page can change the theme or close the frame too; follow it.
+  addEventListener("message", (e) => {
+    if (e.source !== frame.contentWindow || e.origin !== location.origin) return;
+    if (THEMES.includes(e.data?.sdTheme)) applyTheme(e.data.sdTheme);
+    if (e.data?.sdClose) show(0);
+  });
   addEventListener("resize", () => dialog.open && fit(current));
 
   pick("vp-chart-colors", store.get("sd-chart-theme") || "mono");
@@ -216,10 +227,17 @@ function buildBar() {
 export function mountBar() {
   if (!inFrame) buildBar();
   else {
-    // The framed page takes theme changes from the page that framed it.
+    // The framed page and the page that framed it keep one theme between them.
     addEventListener("message", (e) => {
-      if (e.origin === location.origin && THEMES.includes(e.data?.sdTheme)) setTheme(e.data.sdTheme, { persist: false });
+      if (e.origin === location.origin && THEMES.includes(e.data?.sdTheme)) applyTheme(e.data.sdTheme);
     });
+    if (window.parent !== window) {
+      document.addEventListener("sd:theme", ({ detail }) => window.parent.postMessage({ sdTheme: detail.theme }, location.origin));
+      // The frame holds the focus, so Esc never reaches the dialog that holds it.
+      addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !e.defaultPrevented && !document.querySelector(":popover-open, dialog[open]")) window.parent.postMessage({ sdClose: true }, location.origin);
+      });
+    }
   }
 
   // Run after init() (which resets scrollbars to "auto"), whether or not the bar mounted.

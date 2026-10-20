@@ -113,7 +113,36 @@ export async function checkShowcaseBar(browser, base, name) {
     return { theme: doc.documentElement.dataset.theme, bar: !!doc.querySelector(".vp-bar") };
   });
   expect(framed.theme === "paper" && !framed.bar, `the framed page follows the theme and has no bar ${JSON.stringify(framed)}`);
+
+  // A theme changed inside the frame reaches the page that framed it, once.
+  const frame = page.frames().find((f) => f.url().includes("frame"));
+  await page.frameLocator(".vp-dialog iframe").locator("#main").focus();
+  await page.evaluate(() => {
+    window.sdThemeEvents = 0;
+    document.addEventListener("sd:theme", () => window.sdThemeEvents++);
+  });
+  await page.keyboard.press("Shift+T");
+  await page.waitForFunction(() => document.documentElement.dataset.theme === "auto", null, { timeout: 2000 }).catch(() => {});
+  await page.waitForTimeout(300);
+  const back = await page.evaluate(() => ({
+    theme: document.documentElement.dataset.theme,
+    bar: document.querySelector('.vp-bar [data-sd-theme][aria-pressed="true"]')?.dataset.sdTheme,
+    header: document.querySelector('.vp-dialog [data-sd-theme][aria-pressed="true"]')?.dataset.sdTheme,
+    events: window.sdThemeEvents,
+  }));
+  expect(back.theme === "auto" && back.bar === "auto" && back.header === "auto" && back.events === 1, `a theme changed in the frame reaches the page once ${JSON.stringify(back)}`);
+
+  // Esc inside the frame closes the dialog, unless a palette in the frame takes it first.
+  await page.frameLocator(".vp-dialog iframe").locator("#main").focus();
+  await page.keyboard.press("Control+k");
+  await frame.waitForFunction(() => [...document.querySelectorAll("dialog")].some((d) => d.open), null, { timeout: 2000 });
   await page.keyboard.press("Escape");
+  await frame.waitForFunction(() => ![...document.querySelectorAll("dialog")].some((d) => d.open), null, { timeout: 2000 });
+  expect(await page.evaluate(() => document.querySelector(".vp-dialog").open), "Esc closes a palette in the frame, not the frame");
+  await page.frameLocator(".vp-dialog iframe").locator("#main").focus();
+  await page.keyboard.press("Escape");
+  await page.waitForFunction(() => !document.querySelector(".vp-dialog").open, null, { timeout: 2000 }).catch(() => {});
+  expect(await page.evaluate(() => !document.querySelector(".vp-dialog").open), "Esc inside the frame closes it");
   await page.close();
 
   // The shell fills exactly the window under the bar, and nothing overflows, at every breakpoint.
