@@ -36,6 +36,10 @@
 - `sd-options` and `sd-option`: selectable option cards with a title,
   description and optional preview, in a wrapping grid. Radios or checkboxes
   inside labels need no JS; buttons use `aria-pressed` or `aria-checked`.
+- Link card variants: `sd-link-card-hero` (image, GIF or video on top),
+  `sd-link-card-compact`, `sd-link-card-type` for documents, `data-blocked`
+  with `sd-link-card-note`, a static loading state on `aria-busy="true"`, and
+  `data-tone` on the edge.
 
 ## 1.1.1 (2026-10-19)
 

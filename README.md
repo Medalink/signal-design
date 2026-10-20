@@ -414,6 +414,7 @@ Generic pieces for chat, comments, feeds and inboxes. See `showcase/chat.html`.
 | `sd-composer` (+ `-row`, `-chips`, `-hint`) | The message box. `data-sd-autogrow`, `data-sd-enter-submit`, and `data-sd-suggest="id"` for an `@` list. |
 | `sd-banner` | A full-width notice with actions. |
 | `sd-file`, `sd-link-card`, `sd-poll` | Attachment, link preview, poll (`--share` per option). |
+| `sd-link-card-hero`, `-compact`, `-type`, `-note` | Link preview variants: image on top, one tight block, a document with its type, and a reason line. `data-blocked` and `aria-busy="true"` are states. |
 | `sd-tiles`, `sd-tile` | Call grid; `data-speaking`, `data-muted`, `data-hand`. |
 | `sd-grid-picker` | An emoji or icon grid (`--cols`). |
 | `sd-level` | A live level meter, such as a microphone input: 2 to 8 `<i>` bars that light up to `--level` (`0`–`1`). |
@@ -437,6 +438,34 @@ its own background, and outside them it is the page canvas. On a panel of
 your own, set it to the panel's background:
 `<div class="bg-surface" style="--sd-ring: var(--sd-surface)">` (Tailwind:
 `[--sd-ring:var(--sd-surface)]`).
+
+Link cards come in a few shapes for one URL preview:
+
+- `sd-link-card-hero` puts the thumb across the top at 1.91:1, the og:image
+  ratio. The thumb can be an `<img>`, an animated GIF or a muted `<video>`.
+- `sd-link-card-compact` is one tight block with a 40px thumb and no
+  description, for a busy chat.
+- `sd-link-card-type` replaces the thumb with a page labelled `pdf`, `docx` and
+  so on; put the page count and size in `sd-link-card-desc`.
+- `data-blocked` marks a preview the app refused to fetch: a dashed border, a
+  danger edge (or the `data-tone` you set) and an `sd-link-card-note` with the
+  reason. Render it as a `<div>`, not a link.
+- `aria-busy="true"` turns the site, title and description slots into static
+  placeholder bars while the preview loads. Add `role="status"` and a
+  `sd-sr-only` line so screen readers hear it.
+
+```html
+<div class="sd-link-card" data-blocked>
+  <span class="sd-link-card-site">free-prizes.example</span>
+  <span class="sd-link-card-title">free-prizes.example/claim?id=4417</span>
+  <span class="sd-link-card-note">Preview blocked: this site is on the unsafe list.</span>
+</div>
+<div class="sd-link-card" aria-busy="true" role="status">
+  <span class="sd-sr-only">Loading link preview</span>
+  <span class="sd-link-card-site"></span><span class="sd-link-card-title"></span>
+  <span class="sd-link-card-desc"></span><span class="sd-link-card-thumb"></span>
+</div>
+```
 
 `data-sd-contextmenu="menu-id"` opens a menu at the pointer on right click,
 Shift+F10 or the menu key, and fires `sd:contextmenu` with the target.

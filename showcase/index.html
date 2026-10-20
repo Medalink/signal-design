@@ -1295,6 +1295,20 @@ function setLevel(level) {
 document.getElementById("demo-level-input").addEventListener("input", (e) => setLevel(Number(e.target.value)));
       </script>
     </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Link cards</h3>
+      <div class="grid gap-4 sm:grid-cols-2 items-start">
+        <a class="sd-link-card sd-link-card-hero" href="#conversation"><img class="sd-link-card-thumb" alt="" width="640" height="336" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 336'%3E%3Crect width='640' height='336' fill='%230A0A0B'/%3E%3Crect x='0' y='0' width='128' height='336' fill='%23111113'/%3E%3Crect x='168' y='44' width='200' height='10' fill='%232A2A2F'/%3E%3Crect x='168' y='96' width='420' height='120' fill='none' stroke='%232A2A2F'/%3E%3Crect x='188' y='120' width='160' height='40' fill='%2300D4FF' fill-opacity='.35'/%3E%3Crect x='168' y='270' width='300' height='8' fill='%231F1F23'/%3E%3C/svg%3E"><span class="sd-link-card-site">acme.example</span><span class="sd-link-card-title">A dashboard for the whole team</span><span class="sd-link-card-desc">One place for status, owners and what changed since you last looked.</span></a>
+        <div class="grid gap-4">
+          <a class="sd-link-card sd-link-card-compact" href="#conversation"><span class="sd-link-card-site">docs.acme.example</span><span class="sd-link-card-title">Getting started with workspaces and roles</span><span class="sd-link-card-thumb"></span></a>
+          <a class="sd-link-card" href="#conversation"><span class="sd-link-card-site">acme.example</span><span class="sd-link-card-title">quarterly-report-q3.pdf</span><span class="sd-link-card-desc">12 pages · 2.4 MB</span><span class="sd-link-card-type">pdf</span></a>
+          <div class="sd-link-card" data-blocked><span class="sd-link-card-site">free-prizes.example</span><span class="sd-link-card-title">free-prizes.example/claim?id=4417</span><span class="sd-link-card-note">Preview blocked: this site is on the unsafe list.</span></div>
+          <div class="sd-link-card" aria-busy="true" role="status"><span class="sd-sr-only">Loading link preview</span><span class="sd-link-card-site"></span><span class="sd-link-card-title"></span><span class="sd-link-card-desc"></span><span class="sd-link-card-thumb"></span></div>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-link-card</code> + <code>sd-link-card-hero</code> (thumb on top: an image, GIF or <code>&lt;video&gt;</code>) · <code>sd-link-card-compact</code> · <code>sd-link-card-type</code> (documents) · <code>data-blocked</code> + <code>sd-link-card-note</code> (render a <code>&lt;div&gt;</code>, not a link) · <code>aria-busy="true"</code> (loading) · <code>data-tone</code></p>
+    </div>
   </section>
 
   <section class="demo-section" id="inputs-more" aria-labelledby="inputs-more-h">
