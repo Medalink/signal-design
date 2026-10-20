@@ -7,13 +7,13 @@
  */
 import { readFileSync } from "node:fs";
 import { basename, resolve } from "node:path";
-import { EXAMPLES, HOME, LIBRARY, byFile, keyOf } from "./pages.js";
+import { EXAMPLES, HOME, LIBRARY, byFile, keyOf, scriptOf } from "./pages.js";
 
 const dir = import.meta.dirname;
 const template = () => readFileSync(resolve(dir, "layout.html"), "utf8");
 
 const symbol = (id, body, view = "0 0 24 24", stroke = "1.5") => `    <symbol id="i-${id}" viewBox="${view}" fill="none" stroke="currentColor" stroke-width="${stroke}">${body}</symbol>`;
-const ICONS = [
+export const ICONS = [
   `    <symbol id="i-mark" viewBox="0 0 28 28"><rect x="1" y="1" width="26" height="26" fill="none" stroke="currentColor" stroke-opacity=".3"/><rect x="6" y="15" width="4" height="7" fill="currentColor" fill-opacity=".45"/><rect x="12" y="11" width="4" height="11" fill="currentColor" fill-opacity=".7"/><rect x="18" y="6" width="4" height="16" fill="var(--sd-accent)"/></symbol>`,
   symbol("tokens", '<rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><path d="M13 16.5h7M16.5 13v7"/>'),
   symbol("elements", '<path d="M4 5h8M4 11h16M4 15h16M4 19h11"/>'),
@@ -170,8 +170,7 @@ export function renderPage(page, html) {
     try { const t = localStorage.getItem("sd-theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
   </script>
   <link rel="stylesheet" href="./app.css">
-  <script type="module" src="./pages/${page === HOME ? "home" : page.id}.js"></script>
-</head>
+${scriptOf(page) ? `  <script type="module" src="./${scriptOf(page)}"></script>\n` : ""}</head>
 <body>
 ${fillIn(before)}${content}
 ${fillIn(after)}

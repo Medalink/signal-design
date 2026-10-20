@@ -19,7 +19,7 @@ import { chromium, webkit } from "playwright";
 import { sweep as rulesSweep } from "../bin/rules.mjs";
 import { checkLivingTable, checkLivingTableTypes } from "./check-living-table.mjs";
 import { checkSidebarResize } from "./check-sidebar-resize.mjs";
-import { checkHashRedirects, checkShowcasePages } from "./check-showcase-pages.mjs";
+import { checkHashRedirects, checkShowcasePages, checkShowcaseRegistry } from "./check-showcase-pages.mjs";
 import { checkShowcaseBar } from "./check-showcase-bar.mjs";
 import { ALL, HOME, LIBRARY, byId, keyOf } from "../showcase/pages.js";
 
@@ -98,6 +98,12 @@ try {
   checkLivingTableTypes();
   console.log("ok   living table types 1 strict consumer compilation");
 } catch (error) { fail("living table types", error.message); }
+
+if (runs("behaviors")) {
+  const problems = checkShowcaseRegistry();
+  for (const problem of problems) fail("showcase registry", problem);
+  if (!problems.length) console.log(`ok   showcase registry ${ALL.length} pages have their files, scripts, icons and sections`);
+}
 
 async function checkCopy(page, name) {
   await page.goto(jsPage);

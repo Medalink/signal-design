@@ -5,7 +5,36 @@
  * are, and old single-page links land on the page that holds them now.
  * Called from scripts/check.mjs.
  */
-import { ALL, LIBRARY, pageOfHash } from "../showcase/pages.js";
+import { existsSync, readFileSync } from "node:fs";
+import { ICONS } from "../showcase/layout-plugin.js";
+import { ALL, EXAMPLES, LIBRARY, keyOf, pageOfHash, scriptOf } from "../showcase/pages.js";
+
+const showcase = new URL("../showcase/", import.meta.url);
+
+/** Every registry entry has the files, rail icon and sections it names. Static; returns the problems. */
+export function checkShowcaseRegistry() {
+  const problems = [];
+  const has = (path) => existsSync(new URL(path, showcase));
+  for (const page of ALL) {
+    if (!has(page.file)) {
+      problems.push(`${page.file} is in showcase/pages.js but the file does not exist`);
+      continue;
+    }
+    const html = readFileSync(new URL(page.file, showcase), "utf8");
+    if (EXAMPLES.includes(page)) {
+      // An example page carries its own script tag and its own key.
+      const script = html.match(/<script type="module" src="\.\/([^"]+)"/)?.[1];
+      if (!script || !has(script)) problems.push(`${page.file} loads ${script ?? "no module"}, which does not exist`);
+      if (!html.includes(`<html lang="en" data-theme="ink" data-page="${keyOf(page)}">`)) problems.push(`${page.file} must carry data-page="${keyOf(page)}" on <html>`);
+      continue;
+    }
+    const script = scriptOf(page);
+    if (script && !has(script)) problems.push(`${page.file}: showcase/${script} does not exist (add it, or set \`script: false\` in the registry)`);
+    if (page.icon && !ICONS.includes(`id="i-${page.icon}"`)) problems.push(`${page.file}: rail icon "${page.icon}" has no symbol in ICONS in showcase/layout-plugin.js`);
+    for (const section of page.sections ?? []) if (!html.includes(`id="${section}"`)) problems.push(`${page.file}: no element with id="${section}", the section the registry lists`);
+  }
+  return problems;
+}
 
 /** Runs on a library page already loaded at 1280px in ink. */
 export async function checkShowcasePages(page, where, fail, library) {

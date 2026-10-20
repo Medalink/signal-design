@@ -10,7 +10,11 @@
 /** The overview: the hero and a card for every other page. */
 export const HOME = { file: "index.html", title: "Library", summary: "Every page of the library and every example app." };
 
-/** `sections` are the ids of the `.demo-section`s a page holds, in order. `icon` names the `#i-<icon>` rail symbol. */
+/**
+ * `sections` are the ids of the `.demo-section`s a page holds, in order. `icon`
+ * names the `#i-<icon>` rail symbol in layout-plugin.js. A page loads
+ * `pages/<id>.js`; `script: false` says it has none.
+ */
 export const LIBRARY = [
   { id: "tokens", file: "lib-tokens.html", title: "Tokens", label: "Tokens", sections: ["tokens"], icon: "tokens", summary: "Roles, signals, greys, type and motion, read live from the current theme." },
   { id: "elements", file: "lib-elements.html", title: "Elements", label: "Elements", sections: ["elements"], icon: "elements", summary: "Plain HTML with no classes: headings, text, lists, tables and form controls." },
@@ -35,6 +39,9 @@ export const ALL = [HOME, ...LIBRARY, ...EXAMPLES];
 
 /** A short name for a page that is unique across all three lists: "index", "lib-tokens", "charts". */
 export const keyOf = (page) => page.file.replace(/\.html$/, "");
+
+/** The module the overview or a library page loads, or null for a page with `script: false`. */
+export const scriptOf = (page) => (page.script === false ? null : page === HOME ? "pages/home.js" : `pages/${page.id}.js`);
 
 export const byId = (id) => LIBRARY.find((p) => p.id === id);
 export const byFile = (file) => LIBRARY.find((p) => p.file === file);

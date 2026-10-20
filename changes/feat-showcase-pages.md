@@ -18,3 +18,8 @@
 - Showcase: a Themes side by side block on the Tokens page.
 - `scripts/check-showcase-pages.mjs` and `scripts/check-showcase-bar.mjs`: checks
   for the page chrome, hash redirects and the bar, run by `scripts/check.mjs`.
+  `check.mjs` also checks that every registry page has its file, script, rail
+  icon and sections, and `--only webkit-1` runs the first WebKit job's pages.
+- `scripts/check-showcase-build.mjs`: builds the showcase under `/signal-design/`
+  and opens every page with and without `.html`, so a bundler that drops the bar
+  fails the check.

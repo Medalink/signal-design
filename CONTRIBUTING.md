@@ -34,6 +34,15 @@ exempt so it can fold the fragments into `CHANGELOG.md`.
   section. The end of a section is where every other pull request adds its
   block too. Do not add page chrome to a page file: the rail, sidebar and
   palette come from `showcase/layout.html` and the registry.
+- **Adding a library page:** an entry in `LIBRARY` in `showcase/pages.js`
+  (`id`, `file`, `title`, `label`, `sections`, `icon`, `summary`); the content
+  in `showcase/lib-<id>.html` (only the `<body>`, with a `.demo-section` whose
+  id is listed in `sections`); the script in `showcase/pages/<id>.js`, which
+  calls `mountLibrary()` first; and the rail symbol `#i-<icon>` in `ICONS` in
+  `showcase/layout-plugin.js`. Nothing else lists pages. `scripts/check.mjs`
+  fails when the file, the script, the icon or a section is missing. A new
+  example app is an entry in `EXAMPLES` and a page of its own that carries
+  `data-page="<key>"` on `<html>` and calls `mountBar()` from its script.
 - **`AGENTS.md` and `README.md` tables:** a new component family gets its own
   row next to related rows. When it belongs in a shared row (Status, Chat and
   feeds), add it at the end of that row, and expect a one-line conflict if
