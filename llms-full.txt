@@ -78,6 +78,7 @@ by `title` or `classes`) rather than inventing markup.
 |---|---|
 | Reading page | `<main class="sd-page">` (720px column) or `sd-page sd-page-wide` |
 | App with navigation | Signal App Shell: `sd-shell` > `sd-rail`, `sd-sidebar`, `sd-shell-main` (`sd-shell-header` or `sd-shell-bar`, `sd-shell-content`, optional `sd-shell-dock`), `sd-shell-aside`, `sd-statusbar sd-shell-status` |
+| A rail of places (groups, servers) | `sd-rail-tile` (picture, initials or icon) in a 72px rail (`--shell-rail: 4.5rem`); `aria-current`, `data-unread`, `data-pending`, corner `sd-badge-count` |
 | Desktop window chrome | `sd-titlebar` with `sd-window-controls` (`data-sd-window`) |
 | Buttons | `sd-btn` + `sd-btn-primary` (one per view) / `sd-btn-ghost` / `sd-btn-link`, sizes `-sm` `-lg` `-icon` `-block` |
 | Icons | `sd-icon-text` > `sd-icon` + text; icons are sized to the text's cap height (`1.5cap`) and scale with it |
@@ -1827,6 +1828,36 @@ JS: init() from signal-design/js wires data-sd-window · data-sd-edges · data-s
 <div popover="" id="demo-attention" class="sd-popover sd-popover-panel" data-sd-align="end">
   <div class="sd-popover-head">Attention <button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" popovertarget="demo-attention" popovertargetaction="hide" aria-label="Close">×</button></div>
   <div class="sd-popover-body"><a class="sd-item" href="#effects" data-unread=""><span class="sd-avatar" data-tone="accent">TP</span><span class="sd-item-body"><span class="sd-item-title">Taylor mentioned you</span><span class="sd-item-sub">can you take the copy?</span></span><span class="sd-item-end">10:05</span></a></div>
+</div>
+```
+
+## Effects / Compact rail of places
+
+A 72px rail of groups, servers or workspaces: square tiles with a picture, initials or an icon, next to ordinary sd-rail-item tools. aria-current draws the edge on the rail's outer side; data-unread a short edge; data-pending a dashed tile for a place still joining. A corner sd-badge-count carries a count; put it in the tile's aria-label too, because the label replaces the tile's text. In the shell, set --shell-rail: 4.5rem on .sd-shell; a rail on its own takes the same variable. sd-rail-tile (a, button, or a span for a tile that is not a control) with an img, initials or an svg · aria-current · data-unread · data-pending · sd-badge-count + data-corner · --tile (48px) · --shell-rail: 4.5rem
+
+Classes: sd-badge-count, sd-rail, sd-rail-item, sd-rail-list, sd-rail-sep, sd-rail-tile, sd-rail-tools, sd-subtle
+
+JS: init() from signal-design/js wires data-sd-tip.
+
+```html
+<div class="flex border border-line" style="height: 34rem">
+  <nav class="sd-rail" aria-label="Places" style="--shell-rail: 4.5rem; width: var(--shell-rail)">
+    <div class="sd-rail-list">
+      <button class="sd-rail-tile" aria-label="Direct messages, 2 unread" data-sd-tip="Direct messages" data-sd-tip-side="right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 5h16v11H9l-5 4z"></path></svg><span class="sd-badge-count" data-corner="">2</span></button>
+      <div class="sd-rail-sep"></div>
+      <a class="sd-rail-tile" href="#effects" aria-current="page" aria-label="Design" data-sd-tip="Design" data-sd-tip-side="right"><img alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' fill='%23111113'/%3E%3Crect x='8' y='8' width='14' height='14' fill='%2300D4FF' fill-opacity='.55'/%3E%3Crect x='26' y='8' width='14' height='14' fill='%232A2A2F'/%3E%3Crect x='8' y='26' width='14' height='14' fill='%232A2A2F'/%3E%3Crect x='26' y='26' width='14' height='14' fill='%23F4F4F5' fill-opacity='.8'/%3E%3C/svg%3E"></a>
+      <a class="sd-rail-tile" href="#effects" data-unread="" aria-label="Operations, 3 unread" data-sd-tip="Operations" data-sd-tip-side="right">OP<span class="sd-badge-count" data-corner="">3</span></a>
+      <a class="sd-rail-tile" href="#effects" data-unread="" aria-label="Book club, 1 mention" data-sd-tip="Book club" data-sd-tip-side="right">BC<span class="sd-badge-count" data-tone="danger" data-corner="">1</span></a>
+      <a class="sd-rail-tile" href="#effects" data-unread="" aria-label="Release notes, unread" data-sd-tip="Release notes" data-sd-tip-side="right">RN</a>
+      <a class="sd-rail-tile" href="#effects" aria-label="Weekend" data-sd-tip="Weekend" data-sd-tip-side="right">WE</a>
+      <span class="sd-rail-tile" data-pending="" role="img" aria-label="Joining Hiking" data-sd-tip="Joining Hiking" data-sd-tip-side="right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h3M10.5 12h3M16 12h3"></path></svg></span>
+    </div>
+    <div class="sd-rail-tools">
+      <button class="sd-rail-tile" aria-label="Add a group" data-sd-tip="Add a group" data-sd-tip-side="right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"></path></svg></button>
+      <button class="sd-rail-item" aria-label="Settings" data-sd-tip="Settings" data-sd-tip-side="right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"></path><rect x="14" y="5" width="4" height="4"></rect><rect x="6" y="15" width="4" height="4"></rect></svg></button>
+    </div>
+  </nav>
+  <div class="flex-1 p-6 sd-subtle text-sm" style="background: var(--sd-shell-bg)">The rail scrolls when it fills; tiles keep a 48px square and an 8px gap, so a corner count never covers the tile above it.</div>
 </div>
 ```
 

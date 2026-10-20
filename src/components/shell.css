@@ -184,6 +184,81 @@
     outline-offset: -1px;
   }
 
+  /* A place: a square image, initials or icon, for a narrow rail of groups,
+     servers or workspaces. Sized for a 72px rail (--shell-rail: 4.5rem).
+     aria-current gets an edge on the rail's outer side, data-unread a short
+     one, data-pending a dashed tile for a place still joining. A
+     .sd-badge-count[data-corner] child pins to the top corner. */
+  .sd-rail-tile {
+    --tile: 48px;
+    position: relative;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    align-self: center;
+    width: var(--tile);
+    height: var(--tile);
+    margin-block: 2px;
+    padding: 0;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-surface);
+    color: var(--sd-fg-muted);
+    font: inherit;
+    font-size: 14px;
+    font-weight: var(--font-weight-semibold);
+    line-height: 1;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 120ms var(--ease-out), background-color 120ms var(--ease-out), color 120ms var(--ease-out);
+  }
+  .sd-rail-tile:not(a, button) {
+    cursor: default;
+  }
+  .sd-rail-tile > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .sd-rail-tile > svg {
+    width: calc(var(--tile) / 2);
+    height: calc(var(--tile) / 2);
+  }
+  .sd-rail-tile:is(a, button):hover {
+    border-color: var(--sd-fg-faint);
+    color: var(--sd-fg);
+  }
+  .sd-rail-tile:is([aria-current]:not([aria-current="false"]), [aria-pressed="true"], [aria-expanded="true"]) {
+    border-color: var(--sd-fg);
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+  .sd-rail-tile[data-pending] {
+    border-style: dashed;
+    color: var(--sd-fg-subtle);
+  }
+  /* The edge sits on the rail's outer side: half the space beside the tile,
+     plus the rail's 1px border and the tile's own. */
+  .sd-rail-tile::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: calc((var(--tile) - var(--shell-rail, 4.5rem) - 1px) / 2);
+    top: 50%;
+    width: 3px;
+    height: 0;
+    translate: 0 -50%;
+    background: var(--sd-fg);
+    transition: height 160ms var(--ease-out);
+  }
+  .sd-rail-tile[data-unread]::before {
+    height: 10px;
+  }
+  .sd-rail-tile[aria-current]:not([aria-current="false"])::before {
+    height: calc(var(--tile) - 8px);
+  }
+
   /* ---- Sidebar ---------------------------------------------------- */
 
   .sd-sidebar {

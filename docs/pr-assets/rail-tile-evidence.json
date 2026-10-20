@@ -1,0 +1,804 @@
+{
+  "base": "http://localhost:5181/",
+  "checks": [
+    {
+      "name": "chromium 72px rail: every edge starts at the rail's left edge",
+      "ok": true,
+      "detail": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "chromium 72px rail: tiles are 48px squares, centered within 1px",
+      "ok": true,
+      "detail": [
+        [
+          11.5,
+          11.5
+        ],
+        [
+          11.5,
+          11.5
+        ],
+        [
+          11.5,
+          11.5
+        ],
+        [
+          11.5,
+          11.5
+        ],
+        [
+          11.5,
+          11.5
+        ],
+        [
+          11.5,
+          11.5
+        ],
+        [
+          11.5,
+          11.5
+        ],
+        [
+          11.5,
+          11.5
+        ]
+      ]
+    },
+    {
+      "name": "chromium 72px rail: list has no hidden horizontal overflow",
+      "ok": true,
+      "detail": [
+        71,
+        71
+      ]
+    },
+    {
+      "name": "chromium 96px rail: every edge starts at the rail's left edge",
+      "ok": true,
+      "detail": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "chromium 96px rail: tiles are 48px squares, centered within 1px",
+      "ok": true,
+      "detail": [
+        [
+          23.5,
+          23.5
+        ],
+        [
+          23.5,
+          23.5
+        ],
+        [
+          23.5,
+          23.5
+        ],
+        [
+          23.5,
+          23.5
+        ],
+        [
+          23.5,
+          23.5
+        ],
+        [
+          23.5,
+          23.5
+        ],
+        [
+          23.5,
+          23.5
+        ],
+        [
+          23.5,
+          23.5
+        ]
+      ]
+    },
+    {
+      "name": "chromium 96px rail: list has no hidden horizontal overflow",
+      "ok": true,
+      "detail": [
+        95,
+        95
+      ]
+    },
+    {
+      "name": "chromium edge heights: current 40, unread 10, idle 0",
+      "ok": true,
+      "detail": [
+        40,
+        10,
+        0
+      ]
+    },
+    {
+      "name": "chromium first badge clears the list's top",
+      "ok": true,
+      "detail": {
+        "top": 5,
+        "right": 7.5
+      }
+    },
+    {
+      "name": "chromium pending tile is dashed",
+      "ok": true,
+      "detail": "dashed"
+    },
+    {
+      "name": "chromium Tab moves focus to the next tile with a visible outline",
+      "ok": true,
+      "detail": {
+        "tile": true,
+        "label": "Book club, 1 mention",
+        "outline": "solid",
+        "width": "1px"
+      }
+    },
+    {
+      "name": "webkit 72px rail: every edge starts at the rail's left edge",
+      "ok": true,
+      "detail": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "webkit 72px rail: tiles are 48px squares, centered within 1px",
+      "ok": true,
+      "detail": [
+        [
+          11.5,
+          11.5
+        ],
+        [
+          11.5,
+          11.5
+        ],
+        [
+          11.5,
+          11.5
+        ],
+        [
+          11.5,
+          11.5
+        ],
+        [
+          11.5,
+          11.5
+        ],
+        [
+          11.5,
+          11.5
+        ],
+        [
+          11.5,
+          11.5
+        ],
+        [
+          11.5,
+          11.5
+        ]
+      ]
+    },
+    {
+      "name": "webkit 72px rail: list has no hidden horizontal overflow",
+      "ok": true,
+      "detail": [
+        71,
+        71
+      ]
+    },
+    {
+      "name": "webkit 96px rail: every edge starts at the rail's left edge",
+      "ok": true,
+      "detail": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "webkit 96px rail: tiles are 48px squares, centered within 1px",
+      "ok": true,
+      "detail": [
+        [
+          23.5,
+          23.5
+        ],
+        [
+          23.5,
+          23.5
+        ],
+        [
+          23.5,
+          23.5
+        ],
+        [
+          23.5,
+          23.5
+        ],
+        [
+          23.5,
+          23.5
+        ],
+        [
+          23.5,
+          23.5
+        ],
+        [
+          23.5,
+          23.5
+        ],
+        [
+          23.5,
+          23.5
+        ]
+      ]
+    },
+    {
+      "name": "webkit 96px rail: list has no hidden horizontal overflow",
+      "ok": true,
+      "detail": [
+        95,
+        95
+      ]
+    },
+    {
+      "name": "webkit edge heights: current 40, unread 10, idle 0",
+      "ok": true,
+      "detail": [
+        40,
+        10,
+        0
+      ]
+    },
+    {
+      "name": "webkit first badge clears the list's top",
+      "ok": true,
+      "detail": {
+        "top": 5,
+        "right": 7.5
+      }
+    },
+    {
+      "name": "webkit pending tile is dashed",
+      "ok": true,
+      "detail": "dashed"
+    },
+    {
+      "name": "webkit Tab moves focus to the next tile with a visible outline",
+      "ok": true,
+      "detail": {
+        "tile": true,
+        "label": "Add a group",
+        "outline": "solid",
+        "width": "1px"
+      }
+    }
+  ],
+  "engines": {
+    "chromium": {
+      "at72": {
+        "railWidth": 72,
+        "listScroll": [
+          71,
+          71
+        ],
+        "tiles": [
+          {
+            "label": "Direct messages, 2 unread",
+            "width": 48,
+            "height": 48,
+            "leftGap": 11.5,
+            "rightGap": 11.5,
+            "edgeLeft": 0,
+            "edgeHeight": 0,
+            "edgeWidth": 3,
+            "badge": {
+              "top": 5,
+              "right": 7.5
+            },
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Design",
+            "width": 48,
+            "height": 48,
+            "leftGap": 11.5,
+            "rightGap": 11.5,
+            "edgeLeft": 0,
+            "edgeHeight": 40,
+            "edgeWidth": 3,
+            "badge": null,
+            "borderStyle": "solid",
+            "borderColor": "rgb(250, 250, 250)"
+          },
+          {
+            "label": "Operations, 3 unread",
+            "width": 48,
+            "height": 48,
+            "leftGap": 11.5,
+            "rightGap": 11.5,
+            "edgeLeft": 0,
+            "edgeHeight": 10,
+            "edgeWidth": 3,
+            "badge": {
+              "top": 122,
+              "right": 7.5
+            },
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Book club, 1 mention",
+            "width": 48,
+            "height": 48,
+            "leftGap": 11.5,
+            "rightGap": 11.5,
+            "edgeLeft": 0,
+            "edgeHeight": 10,
+            "edgeWidth": 3,
+            "badge": {
+              "top": 178,
+              "right": 7.5
+            },
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Release notes, unread",
+            "width": 48,
+            "height": 48,
+            "leftGap": 11.5,
+            "rightGap": 11.5,
+            "edgeLeft": 0,
+            "edgeHeight": 10,
+            "edgeWidth": 3,
+            "badge": null,
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Weekend",
+            "width": 48,
+            "height": 48,
+            "leftGap": 11.5,
+            "rightGap": 11.5,
+            "edgeLeft": 0,
+            "edgeHeight": 0,
+            "edgeWidth": 3,
+            "badge": null,
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Joining Hiking",
+            "width": 48,
+            "height": 48,
+            "leftGap": 11.5,
+            "rightGap": 11.5,
+            "edgeLeft": 0,
+            "edgeHeight": 0,
+            "edgeWidth": 3,
+            "badge": null,
+            "borderStyle": "dashed",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Add a group",
+            "width": 48,
+            "height": 48,
+            "leftGap": 11.5,
+            "rightGap": 11.5,
+            "edgeLeft": 0,
+            "edgeHeight": 0,
+            "edgeWidth": 3,
+            "badge": null,
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          }
+        ]
+      },
+      "at96": {
+        "railWidth": 96,
+        "listScroll": [
+          95,
+          95
+        ],
+        "tiles": [
+          {
+            "label": "Direct messages, 2 unread",
+            "width": 48,
+            "height": 48,
+            "leftGap": 23.5,
+            "rightGap": 23.5,
+            "edgeLeft": 0,
+            "edgeHeight": 0,
+            "edgeWidth": 3,
+            "badge": {
+              "top": 5,
+              "right": 19.5
+            },
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Design",
+            "width": 48,
+            "height": 48,
+            "leftGap": 23.5,
+            "rightGap": 23.5,
+            "edgeLeft": 0,
+            "edgeHeight": 40,
+            "edgeWidth": 3,
+            "badge": null,
+            "borderStyle": "solid",
+            "borderColor": "rgb(250, 250, 250)"
+          },
+          {
+            "label": "Operations, 3 unread",
+            "width": 48,
+            "height": 48,
+            "leftGap": 23.5,
+            "rightGap": 23.5,
+            "edgeLeft": 0,
+            "edgeHeight": 10,
+            "edgeWidth": 3,
+            "badge": {
+              "top": 122,
+              "right": 19.5
+            },
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Book club, 1 mention",
+            "width": 48,
+            "height": 48,
+            "leftGap": 23.5,
+            "rightGap": 23.5,
+            "edgeLeft": 0,
+            "edgeHeight": 10,
+            "edgeWidth": 3,
+            "badge": {
+              "top": 178,
+              "right": 19.5
+            },
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Release notes, unread",
+            "width": 48,
+            "height": 48,
+            "leftGap": 23.5,
+            "rightGap": 23.5,
+            "edgeLeft": 0,
+            "edgeHeight": 10,
+            "edgeWidth": 3,
+            "badge": null,
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Weekend",
+            "width": 48,
+            "height": 48,
+            "leftGap": 23.5,
+            "rightGap": 23.5,
+            "edgeLeft": 0,
+            "edgeHeight": 0,
+            "edgeWidth": 3,
+            "badge": null,
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Joining Hiking",
+            "width": 48,
+            "height": 48,
+            "leftGap": 23.5,
+            "rightGap": 23.5,
+            "edgeLeft": 0,
+            "edgeHeight": 0,
+            "edgeWidth": 3,
+            "badge": null,
+            "borderStyle": "dashed",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Add a group",
+            "width": 48,
+            "height": 48,
+            "leftGap": 23.5,
+            "rightGap": 23.5,
+            "edgeLeft": 0,
+            "edgeHeight": 0,
+            "edgeWidth": 3,
+            "badge": null,
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          }
+        ]
+      }
+    },
+    "webkit": {
+      "at72": {
+        "railWidth": 72,
+        "listScroll": [
+          71,
+          71
+        ],
+        "tiles": [
+          {
+            "label": "Direct messages, 2 unread",
+            "width": 48,
+            "height": 48,
+            "leftGap": 11.5,
+            "rightGap": 11.5,
+            "edgeLeft": 0,
+            "edgeHeight": 0,
+            "edgeWidth": 3,
+            "badge": {
+              "top": 5,
+              "right": 7.5
+            },
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Design",
+            "width": 48,
+            "height": 48,
+            "leftGap": 11.5,
+            "rightGap": 11.5,
+            "edgeLeft": 0,
+            "edgeHeight": 40,
+            "edgeWidth": 3,
+            "badge": null,
+            "borderStyle": "solid",
+            "borderColor": "rgb(250, 250, 250)"
+          },
+          {
+            "label": "Operations, 3 unread",
+            "width": 48,
+            "height": 48,
+            "leftGap": 11.5,
+            "rightGap": 11.5,
+            "edgeLeft": 0,
+            "edgeHeight": 10,
+            "edgeWidth": 3,
+            "badge": {
+              "top": 122,
+              "right": 7.5
+            },
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Book club, 1 mention",
+            "width": 48,
+            "height": 48,
+            "leftGap": 11.5,
+            "rightGap": 11.5,
+            "edgeLeft": 0,
+            "edgeHeight": 10,
+            "edgeWidth": 3,
+            "badge": {
+              "top": 178,
+              "right": 7.5
+            },
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Release notes, unread",
+            "width": 48,
+            "height": 48,
+            "leftGap": 11.5,
+            "rightGap": 11.5,
+            "edgeLeft": 0,
+            "edgeHeight": 10,
+            "edgeWidth": 3,
+            "badge": null,
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Weekend",
+            "width": 48,
+            "height": 48,
+            "leftGap": 11.5,
+            "rightGap": 11.5,
+            "edgeLeft": 0,
+            "edgeHeight": 0,
+            "edgeWidth": 3,
+            "badge": null,
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Joining Hiking",
+            "width": 48,
+            "height": 48,
+            "leftGap": 11.5,
+            "rightGap": 11.5,
+            "edgeLeft": 0,
+            "edgeHeight": 0,
+            "edgeWidth": 3,
+            "badge": null,
+            "borderStyle": "dashed",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Add a group",
+            "width": 48,
+            "height": 48,
+            "leftGap": 11.5,
+            "rightGap": 11.5,
+            "edgeLeft": 0,
+            "edgeHeight": 0,
+            "edgeWidth": 3,
+            "badge": null,
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          }
+        ]
+      },
+      "at96": {
+        "railWidth": 96,
+        "listScroll": [
+          95,
+          95
+        ],
+        "tiles": [
+          {
+            "label": "Direct messages, 2 unread",
+            "width": 48,
+            "height": 48,
+            "leftGap": 23.5,
+            "rightGap": 23.5,
+            "edgeLeft": 0,
+            "edgeHeight": 0,
+            "edgeWidth": 3,
+            "badge": {
+              "top": 5,
+              "right": 19.5
+            },
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Design",
+            "width": 48,
+            "height": 48,
+            "leftGap": 23.5,
+            "rightGap": 23.5,
+            "edgeLeft": 0,
+            "edgeHeight": 40,
+            "edgeWidth": 3,
+            "badge": null,
+            "borderStyle": "solid",
+            "borderColor": "rgb(250, 250, 250)"
+          },
+          {
+            "label": "Operations, 3 unread",
+            "width": 48,
+            "height": 48,
+            "leftGap": 23.5,
+            "rightGap": 23.5,
+            "edgeLeft": 0,
+            "edgeHeight": 10,
+            "edgeWidth": 3,
+            "badge": {
+              "top": 122,
+              "right": 19.5
+            },
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Book club, 1 mention",
+            "width": 48,
+            "height": 48,
+            "leftGap": 23.5,
+            "rightGap": 23.5,
+            "edgeLeft": 0,
+            "edgeHeight": 10,
+            "edgeWidth": 3,
+            "badge": {
+              "top": 178,
+              "right": 19.5
+            },
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Release notes, unread",
+            "width": 48,
+            "height": 48,
+            "leftGap": 23.5,
+            "rightGap": 23.5,
+            "edgeLeft": 0,
+            "edgeHeight": 10,
+            "edgeWidth": 3,
+            "badge": null,
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Weekend",
+            "width": 48,
+            "height": 48,
+            "leftGap": 23.5,
+            "rightGap": 23.5,
+            "edgeLeft": 0,
+            "edgeHeight": 0,
+            "edgeWidth": 3,
+            "badge": null,
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Joining Hiking",
+            "width": 48,
+            "height": 48,
+            "leftGap": 23.5,
+            "rightGap": 23.5,
+            "edgeLeft": 0,
+            "edgeHeight": 0,
+            "edgeWidth": 3,
+            "badge": null,
+            "borderStyle": "dashed",
+            "borderColor": "rgb(51, 51, 51)"
+          },
+          {
+            "label": "Add a group",
+            "width": 48,
+            "height": 48,
+            "leftGap": 23.5,
+            "rightGap": 23.5,
+            "edgeLeft": 0,
+            "edgeHeight": 0,
+            "edgeWidth": 3,
+            "badge": null,
+            "borderStyle": "solid",
+            "borderColor": "rgb(51, 51, 51)"
+          }
+        ]
+      }
+    }
+  },
+  "wallMs": 4291
+}
