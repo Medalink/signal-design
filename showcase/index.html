@@ -1345,7 +1345,17 @@ for (const button of preview.querySelectorAll("[data-living-width]")) {
           </div>
         </article>
       </div>
-      <p class="demo-usage"><code>sd-message-body</code> shrinks with the message, whatever the head holds · <code>sd-message-head &gt; b</code> and <code>sd-reply &gt; b</code> truncate with an ellipsis (60% and 40% of the row at most)</p>
+      <div class="border border-line py-3" id="demo-narrow-button-author" style="width: 20rem; max-width: 100%; background: var(--sd-surface)">
+        <article class="sd-message">
+          <span class="sd-avatar" data-tone="extra">LN</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b><button type="button">anunbrokenauthornamewithnospacestowrapatall</button></b><span class="sd-badge">Lead</span><time>12:30</time></header>
+            <div class="sd-reply"><b><a href="#conversation">anotherunbrokenauthornamewithnospacesatall</a></b><span>A clickable author is cut off the same way.</span></div>
+            <div class="sd-message-text">The author is a button in the head and a link in the reply.</div>
+          </div>
+        </article>
+      </div>
+      <p class="demo-usage"><code>sd-message-body</code> shrinks with the message, whatever the head holds · <code>sd-message-head &gt; b</code> and <code>sd-reply &gt; b</code> truncate with an ellipsis (60% and 40% of the row at most), also when the author is a <code>button</code> or <code>a</code> inside the <code>b</code></p>
     </div>
 
     <div class="demo-block">

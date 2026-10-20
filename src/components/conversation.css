@@ -62,6 +62,17 @@
     font-size: var(--text-base);
     font-weight: var(--font-weight-semibold);
   }
+  /* An author that is a button or a link: <b> clips an atomic inline-block
+     without an ellipsis, so the control itself becomes the truncating box. */
+  .sd-message-head > b > :is(button, a),
+  .sd-reply > b > :is(button, a) {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   .sd-message-head time {
     font-variant-numeric: tabular-nums;
   }

@@ -25,4 +25,26 @@ export default async function checkMessageNarrow(page, where, fail) {
     };
   });
   for (const [key, passed] of Object.entries(got)) if (!passed) fail(`${where} message narrow`, key);
+
+  // The author as a button (head) or a link (reply) inside <b> must truncate too.
+  const control = await page.evaluate(() => {
+    const message = document.querySelector("#demo-narrow-button-author .sd-message");
+    message.scrollIntoView();
+    const box = message.getBoundingClientRect();
+    const head = message.querySelector(".sd-message-head");
+    const reply = message.querySelector(".sd-reply");
+    const truncated = (el) => el.scrollWidth > el.clientWidth && getComputedStyle(el).textOverflow === "ellipsis";
+    const button = head.querySelector("b > button");
+    const link = reply.querySelector("b > a");
+    return {
+      noOverflow: message.scrollWidth <= message.clientWidth,
+      buttonTruncated: truncated(button),
+      buttonInsideName: button.getBoundingClientRect().right <= button.parentElement.getBoundingClientRect().right + 0.5,
+      buttonShare: button.parentElement.getBoundingClientRect().width <= head.getBoundingClientRect().width * 0.6 + 0.5,
+      timeInside: head.querySelector("time").getBoundingClientRect().right <= box.right + 0.5,
+      linkTruncated: truncated(link),
+      linkShare: link.parentElement.getBoundingClientRect().width <= reply.getBoundingClientRect().width * 0.4 + 0.5,
+    };
+  });
+  for (const [key, passed] of Object.entries(control)) if (!passed) fail(`${where} message narrow control author`, key);
 }
