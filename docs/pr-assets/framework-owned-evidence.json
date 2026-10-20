@@ -1,0 +1,99 @@
+{
+  "base": "http://localhost:5182/",
+  "wallMs": 4785,
+  "checks": [
+    {
+      "name": "chromium ink: starts as the page rendered it",
+      "ok": true,
+      "detail": {
+        "view": "list=true board=false",
+        "expanded": "false",
+        "open": false,
+        "panelHeight": 0,
+        "liked": "false",
+        "count": "2",
+        "sdAttributes": []
+      }
+    },
+    {
+      "name": "chromium ink: the block's markup carries no data-sd-* attribute",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "chromium ink: one click each flips the page-owned state once",
+      "ok": true,
+      "detail": {
+        "view": "list=false board=true",
+        "expanded": "true",
+        "open": true,
+        "panelHeight": 43,
+        "liked": "true",
+        "count": "3",
+        "sdAttributes": []
+      }
+    },
+    {
+      "name": "chromium paper: starts as the page rendered it",
+      "ok": true,
+      "detail": {
+        "view": "list=true board=false",
+        "expanded": "false",
+        "open": false,
+        "panelHeight": 0,
+        "liked": "false",
+        "count": "2",
+        "sdAttributes": []
+      }
+    },
+    {
+      "name": "chromium paper: the block's markup carries no data-sd-* attribute",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "chromium paper: one click each flips the page-owned state once",
+      "ok": true,
+      "detail": {
+        "view": "list=false board=true",
+        "expanded": "true",
+        "open": true,
+        "panelHeight": 43,
+        "liked": "true",
+        "count": "3",
+        "sdAttributes": []
+      }
+    },
+    {
+      "name": "webkit ink: starts as the page rendered it",
+      "ok": true,
+      "detail": {
+        "view": "list=true board=false",
+        "expanded": "false",
+        "open": false,
+        "panelHeight": 0,
+        "liked": "false",
+        "count": "2",
+        "sdAttributes": []
+      }
+    },
+    {
+      "name": "webkit ink: the block's markup carries no data-sd-* attribute",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "webkit ink: one click each flips the page-owned state once",
+      "ok": true,
+      "detail": {
+        "view": "list=false board=true",
+        "expanded": "true",
+        "open": true,
+        "panelHeight": 43,
+        "liked": "true",
+        "count": "3",
+        "sdAttributes": []
+      }
+    }
+  ]
+}

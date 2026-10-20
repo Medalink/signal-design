@@ -5,6 +5,7 @@ import { mountCountdownDemo } from "./countdown.js";
 import { mountLivingTableDemo } from "./living-table.js";
 
 import { mountFeedDemo } from "./feed.js";
+import { mountOwnedDemo } from "./owned.js";
 
 /* ---- Preview / code: snapshot every block before any script touches it -- */
 
@@ -101,6 +102,7 @@ for (const panel of document.querySelectorAll(".sd-sidebar-panel[data-sections]"
 
 init();
 mountCountdownDemo();
+mountOwnedDemo();
 mountLivingTableDemo();
 
 mountFeedDemo();
