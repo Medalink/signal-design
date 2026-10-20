@@ -1208,6 +1208,34 @@ for (const button of preview.querySelectorAll("[data-living-width]")) {
       <div popover id="demo-emoji" class="sd-popover sd-popover-pad"><div class="sd-grid-picker" role="listbox" aria-label="Emoji" style="--cols:6"><button role="option">👍</button><button role="option">👀</button><button role="option">🎉</button><button role="option">✅</button><button role="option">❤️</button><button role="option">🔥</button><button role="option">😂</button><button role="option">🙏</button><button role="option">🚀</button><button role="option">🤔</button><button role="option">👏</button><button role="option">💯</button></div></div>
       <p class="demo-usage"><code>sd-banner</code> · <code>sd-file</code> · <code>sd-link-card</code> · <code>sd-poll</code> + <code>data-sd-poll</code> · <code>sd-tiles</code> + <code>sd-tile[data-speaking|muted|hand]</code> · <code>sd-grid-picker</code></p>
     </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Level meter</h3>
+      <div class="flex flex-wrap items-center gap-x-8 gap-y-4">
+        <span class="inline-flex items-center gap-2"><span class="sd-level" role="meter" aria-label="Silent" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" style="--level: 0"><i></i><i></i><i></i></span> silent</span>
+        <span class="inline-flex items-center gap-2"><span class="sd-level" role="meter" aria-label="Quiet" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0.3" style="--level: 0.3"><i></i><i></i><i></i></span> quiet</span>
+        <span class="inline-flex items-center gap-2"><span class="sd-level" data-tone="success" role="meter" aria-label="Speaking" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0.8" style="--level: 0.8"><i></i><i></i><i></i></span> speaking</span>
+        <span class="inline-flex items-center gap-2"><span class="sd-level" data-tone="warning" role="meter" aria-label="Clipping" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" style="--level: 1"><i></i><i></i><i></i><i></i><i></i></span> clipping</span>
+      </div>
+      <div class="sd-field max-w-narrow">
+        <label class="sd-field-label" for="demo-level-input">Input level</label>
+        <div class="flex items-center gap-4">
+          <input id="demo-level-input" type="range" min="0" max="1" step="0.05" value="0.6">
+          <span class="sd-level" id="demo-level" role="meter" aria-label="Microphone level" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0.6" style="--level: 0.6; --h: 20px"><i></i><i></i><i></i><i></i><i></i></span>
+        </div>
+        <p class="sd-field-hint">Drag to set the level. A bar fades in 120ms when the value crosses it and holds still otherwise.</p>
+      </div>
+      <p class="demo-usage"><code>sd-level</code> + 2 to 8 <code>&lt;i&gt;</code> bars · <code>--level</code> (0 to 1) · <code>--h</code> · <code>data-tone</code> · <code>role="meter"</code> + <code>aria-valuenow</code></p>
+      <script type="text/plain" data-demo-js>
+// Feed it your own level, for example the RMS of an AnalyserNode frame.
+const meter = document.getElementById("demo-level");
+function setLevel(level) {
+  meter.style.setProperty("--level", level);
+  meter.setAttribute("aria-valuenow", level.toFixed(2));
+}
+document.getElementById("demo-level-input").addEventListener("input", (e) => setLevel(Number(e.target.value)));
+      </script>
+    </div>
   </section>
 
   <section class="demo-section" id="inputs-more" aria-labelledby="inputs-more-h">

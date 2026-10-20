@@ -524,6 +524,29 @@ async function checkProgressUnknown(page, where) {
   for (const [key, passed] of Object.entries(got)) if (!passed) fail(`${where} progress unknown`, key);
 }
 
+/** A level meter lights the bars at or under --level and holds still between values. */
+async function checkLevelMeter(page, where) {
+  const got = await page.evaluate(async () => {
+    const meter = document.getElementById("demo-level");
+    meter.scrollIntoView();
+    const bars = [...meter.children];
+    const lit = async (level) => {
+      meter.style.setProperty("--level", level);
+      await new Promise((r) => setTimeout(r, 300));
+      return bars.filter((b) => getComputedStyle(b, "::before").opacity === "1").length;
+    };
+    const counts = [await lit(0), await lit(0.55), await lit(1)];
+    const heights = bars.map((b) => b.getBoundingClientRect().height);
+    meter.style.setProperty("--level", "0.6");
+    return {
+      steps: counts.join() === "0,3,5",
+      rising: heights.every((h, i) => i === 0 || h > heights[i - 1]) && Math.abs(heights[4] - meter.clientHeight) <= 1,
+      still: bars.every((b) => getComputedStyle(b, "::before").animationName === "none"),
+    };
+  });
+  for (const [key, passed] of Object.entries(got)) if (!passed) fail(`${where} level meter`, key);
+}
+
 if (!checkFeedTypes()) process.exit(1);
 
 for (const [name, engine] of Object.entries(engines)) {
@@ -696,6 +719,7 @@ for (const [name, engine] of Object.entries(engines)) {
         await buttons.locator(".demo-head [data-view='preview']").click();
 
         await checkProgressUnknown(page, where);
+        await checkLevelMeter(page, where);
 
         // Behaviors
         await page.click('[data-sd-open="demo-dialog"]');
