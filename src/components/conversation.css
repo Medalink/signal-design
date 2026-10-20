@@ -129,6 +129,12 @@
   .sd-message[data-failed][aria-current] {
     border-inline-start-color: var(--sd-danger);
   }
+  /* The danger text of a failed row is only 4.5:1 on --sd-raised, so a failed
+     mention or current row keeps that fill instead of the stronger ones. */
+  .sd-message[data-failed][data-mention],
+  .sd-message[data-failed][aria-current]:not([aria-current="false"]) {
+    background: var(--sd-raised);
+  }
   .sd-message-status {
     display: flex;
     align-items: center;

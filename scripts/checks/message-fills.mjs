@@ -30,12 +30,14 @@ export default async function checkMessageFills(page, where, fail) {
           const m = document.createElement("article");
           m.className = "sd-message";
           for (const [k, v] of Object.entries(attrs)) m.setAttribute(k, v);
-          m.innerHTML = '<div class="sd-message-body"><span class="sd-message-edited">edited</span></div>';
+          m.innerHTML = '<div class="sd-message-body"><span class="sd-message-edited">edited</span><div class="sd-message-status">Not sent</div></div>';
           pane.append(m);
           const s = getComputedStyle(m);
+          const fillColor = over(rgba(s.backgroundColor), base);
           const res = {
-            fill: over(rgba(s.backgroundColor), base),
-            faint: over(rgba(getComputedStyle(m.querySelector(".sd-message-edited")).color), over(rgba(s.backgroundColor), base)),
+            fill: fillColor,
+            faint: over(rgba(getComputedStyle(m.querySelector(".sd-message-edited")).color), fillColor),
+            status: over(rgba(getComputedStyle(m.querySelector(".sd-message-status")).color), fillColor),
           };
           m.remove();
           return res;
@@ -43,7 +45,11 @@ export default async function checkMessageFills(page, where, fail) {
         const own = fill({ "data-own": "" });
         const mention = fill({ "data-mention": "" });
         const current = fill({ "aria-current": "true" });
+        const failedCurrent = fill({ "data-failed": "", "aria-current": "true" });
+        const failedMention = fill({ "data-failed": "", "data-mention": "" });
         const key = `${theme}/${token}`;
+        out[`${key} failed text on current`] = ratio(failedCurrent.status, failedCurrent.fill) >= 4.5;
+        out[`${key} failed text on mention`] = ratio(failedMention.status, failedMention.fill) >= 4.5;
         out[`${key} mention vs pane`] = ratio(mention.fill, base) >= 1.1;
         out[`${key} current vs pane`] = ratio(current.fill, base) >= 1.15;
         out[`${key} current vs mention`] = ratio(current.fill, mention.fill) >= 1.04;
