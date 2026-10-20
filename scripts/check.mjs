@@ -961,7 +961,9 @@ for (const [name, engine] of Object.entries(engines)) {
       await page?.close().catch(() => {});
     }
   }
-  await browser.close();
+  // WebKit on Linux CI takes 30s to close after the behavior groups; Playwright
+  // kills a browser still running when this process exits, so do not wait.
+  await Promise.race([browser.close(), new Promise((resolve) => setTimeout(resolve, 2000))]);
 }
 
 // Chart formatting and scale maths, checked without a browser.
