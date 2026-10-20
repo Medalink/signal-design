@@ -3,14 +3,15 @@ export default async function checkOptionCards(page, where, fail) {
   const ring = (selector) => page.evaluate((s) => getComputedStyle(document.querySelector(s), "::before").opacity, selector);
   const card = (value) => `.sd-option:has(> input[value="${value}"])`;
   await page.locator(card("paper")).scrollIntoViewIfNeeded();
+  const lit = (value) => page.waitForFunction((s) => getComputedStyle(document.querySelector(s), "::before").opacity === "1", card(value), { timeout: 2000 }).catch(() => {});
   await page.click(card("paper"));
-  await page.waitForTimeout(250);
+  await lit("paper");
   const clicked = (await ring(card("paper"))) === "1" && (await ring(card("ink"))) === "0";
   await page.focus('#components-fields button[type="submit"]');
   for (let i = 0; i < 12 && !(await page.evaluate(() => document.activeElement?.name === "demo-option-theme")); i++) await page.keyboard.press("Tab");
   const focus = await page.evaluate(() => getComputedStyle(document.activeElement.parentElement).outlineStyle === "solid");
   await page.keyboard.press("ArrowLeft");
-  await page.waitForTimeout(250);
+  await lit("graphite");
   const keyed = (await page.evaluate((s) => document.querySelector(s).querySelector("input").checked, card("graphite"))) && (await ring(card("graphite"))) === "1";
   const noise = page.locator('[aria-labelledby="demo-option-noise-label"]');
   await noise.locator("button", { hasText: "Strong" }).click();
