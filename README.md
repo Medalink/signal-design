@@ -173,6 +173,10 @@ Never name a family in your own CSS. Use the tokens, which follow the picker:
 | `--sd-font-mono` | `font-mono` | Source Code Pro, for code, charts and numbers |
 | `--sd-font-system` | | The system UI stack every text face falls back to |
 
+To change a face for the whole app, override the `--sd-font-*` token, not
+Tailwind's `--font-sans` or `--font-mono`. Charts, the rain and the picker read
+the tokens, so they follow it.
+
 ## Color roles
 
 | Role | Means |

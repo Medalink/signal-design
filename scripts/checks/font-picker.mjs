@@ -12,6 +12,11 @@ export default async function checkFontPicker(page, where, fail) {
     const codeBefore = family(code);
     const card = document.querySelector('.sd-card[data-font="leon-sans"]');
     const subtree = family(card.querySelector(".font-semibold"));
+    const probe = document.createElement("code");
+    probe.dataset.font = "leon-sans";
+    card.append(probe);
+    const utilityWins = family(probe) === family(code);
+    probe.remove();
 
     button("leon-sans").click();
     await new Promise((r) => document.addEventListener("sd:font", r, { once: true }));
@@ -30,12 +35,13 @@ export default async function checkFontPicker(page, where, fail) {
     const raced = root.dataset.font;
     localStorage.removeItem("sd-font");
 
-    return { defaultFamily, codeBefore, subtree, picked, raced };
+    return { defaultFamily, codeBefore, subtree, utilityWins, picked, raced };
   });
 
-  const { defaultFamily, codeBefore, subtree, picked, raced } = got;
+  const { defaultFamily, codeBefore, subtree, utilityWins, picked, raced } = got;
   if (!defaultFamily.startsWith("-apple-system")) fail(`${where} font picker`, `default text face is ${defaultFamily}`);
   if (!subtree.startsWith("Leon Sans")) fail(`${where} font picker`, `data-font subtree is ${subtree}`);
+  if (!utilityWins) fail(`${where} font picker`, "data-font on <code> replaced the code face");
   if (!picked.body.startsWith("Leon Sans")) fail(`${where} font picker`, `picked leon-sans, body is ${picked.body}`);
   if (!picked.loaded) fail(`${where} font picker`, "Leon Sans 500 did not load");
   if (picked.code !== codeBefore) fail(`${where} font picker`, `code face changed to ${picked.code}`);
