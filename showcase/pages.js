@@ -38,7 +38,8 @@ export const keyOf = (page) => page.file.replace(/\.html$/, "");
 
 export const byId = (id) => LIBRARY.find((p) => p.id === id);
 export const byFile = (file) => LIBRARY.find((p) => p.file === file);
-export const exampleByFile = (file) => EXAMPLES.find((p) => p.file === file);
+/** The page that stamped itself `<html data-page="key">`. GitHub Pages also serves a page without its .html, so the URL cannot name it. */
+export const byKey = (key) => ALL.find((p) => keyOf(p) === key);
 
 /** Where a section lives. */
 export const pageOfSection = (sectionId) => LIBRARY.find((p) => p.sections.includes(sectionId));

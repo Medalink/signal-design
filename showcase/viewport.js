@@ -10,7 +10,7 @@
  * The restore calls at the bottom run in the frame too, so a framed page
  * shows the same chart colors and scrollbars as the page that opened it.
  */
-import { EXAMPLES, HOME, LIBRARY, byFile, exampleByFile } from "./pages.js";
+import { EXAMPLES, HOME, LIBRARY, byKey } from "./pages.js";
 import { getTheme, setScrollbars, setTheme } from "../src/js/index.js";
 
 const SIZES = [
@@ -43,7 +43,7 @@ const store = {
 const mark = `<svg class="sd-mark" viewBox="0 0 28 28" aria-hidden="true"><rect x="1" y="1" width="26" height="26" fill="none" stroke="currentColor" stroke-opacity=".3"/><rect x="6" y="15" width="4" height="7" fill="currentColor" fill-opacity=".45"/><rect x="12" y="11" width="4" height="11" fill="currentColor" fill-opacity=".7"/><rect x="18" y="6" width="4" height="16" fill="var(--sd-accent)"/></svg>`;
 const sliders = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><rect x="14" y="5" width="4" height="4"/><rect x="6" y="15" width="4" height="4"/></svg>`;
 
-const file = () => location.pathname.split("/").pop() || HOME.file;
+const page = byKey(document.documentElement.dataset.page);
 
 function frameUrl() {
   const url = new URL(location.href);
@@ -53,10 +53,8 @@ function frameUrl() {
 
 /** Where this page sits: the library (with its page title) or a mock app (with its title). */
 function here() {
-  const library = byFile(file());
-  if (library) return { mock: false, title: library.title };
-  const example = exampleByFile(file());
-  if (example) return { mock: true, title: example.title };
+  if (LIBRARY.includes(page)) return { mock: false, title: page.title };
+  if (EXAMPLES.includes(page)) return { mock: true, title: page.title };
   return { mock: false, title: null };
 }
 
@@ -64,8 +62,7 @@ const themeSeg = (label) =>
   `<span class="sd-seg sd-seg-sm sd-seg-inline" role="group" aria-label="${label}">${THEMES.map((t) => `<button type="button" data-sd-theme="${t}" aria-pressed="false">${t}</button>`).join("")}</span>`;
 
 function menu() {
-  const current = file();
-  const link = (p) => `<a role="menuitem" href="./${p.file}"${p.file === current ? ' aria-current="page"' : ""}>${p.title}</a>`;
+  const link = (p) => `<a role="menuitem" href="./${p.file}"${p === page ? ' aria-current="page"' : ""}>${p.title}</a>`;
   return (
     `<div class="sd-menu-label" role="presentation">Library</div>` +
     [HOME, ...LIBRARY].map(link).join("") +

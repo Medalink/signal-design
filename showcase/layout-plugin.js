@@ -7,7 +7,7 @@
  */
 import { readFileSync } from "node:fs";
 import { basename, resolve } from "node:path";
-import { EXAMPLES, HOME, LIBRARY, byFile } from "./pages.js";
+import { EXAMPLES, HOME, LIBRARY, byFile, keyOf } from "./pages.js";
 
 const dir = import.meta.dirname;
 const template = () => readFileSync(resolve(dir, "layout.html"), "utf8");
@@ -161,7 +161,7 @@ export function renderPage(page, html) {
   // The page content goes in verbatim: it is never read as a template.
   const [before, after] = template().split("{{content}}");
   return `<!doctype html>
-<html lang="en" data-theme="ink">
+<html lang="en" data-theme="ink" data-page="${keyOf(page)}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">

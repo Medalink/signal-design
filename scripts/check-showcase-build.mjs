@@ -8,7 +8,7 @@
  * showcase with SHOWCASE_BASE=/signal-design/ into a temp dir, serves it under
  * that subpath, and opens every page in Chromium. Each page must have the
  * showcase bar, example pages must carry the Mock badge, and nothing may log a
- * console error or fail to load.
+ * console error or fail to load. Each page opens with and without its .html.
  */
 import { createReadStream, existsSync, mkdtempSync, rmSync, statSync } from "node:fs";
 import { createServer } from "node:http";
@@ -17,7 +17,7 @@ import { extname, join, normalize, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 import { build } from "vite";
-import { ALL, EXAMPLES, HOME } from "../showcase/pages.js";
+import { ALL, EXAMPLES, HOME, keyOf } from "../showcase/pages.js";
 
 const BASE = "/signal-design/";
 const showcase = fileURLToPath(new URL("../showcase/", import.meta.url));
@@ -83,23 +83,26 @@ try {
     if (!problems.length) console.log(`ok   ${where}`);
   };
 
-  for (const entry of ALL) {
+  const barOf = (entry) => async (page) => {
     const example = EXAMPLES.includes(entry);
-    await visit(entry.file, async (page) => {
-      const bar = await page.evaluate(() => ({
-        kind: document.querySelector(".vp-bar")?.dataset.kind,
-        badge: document.querySelector(".vp-bar .sd-badge")?.textContent,
-        title: document.querySelector(".vp-title")?.textContent,
-        current: document.querySelector('#vp-pages [aria-current="page"]')?.getAttribute("href"),
-      }));
-      const problems = [];
-      if (bar.kind !== (example ? "mock" : "library")) problems.push(`bar kind ${bar.kind}`);
-      if (example && bar.badge !== "Mock") problems.push(`Mock badge reads ${JSON.stringify(bar.badge)}`);
-      if (!example && bar.badge) problems.push(`library page shows the badge ${JSON.stringify(bar.badge)}`);
-      if (entry !== HOME && bar.title !== entry.title) problems.push(`bar title ${JSON.stringify(bar.title)}, want ${entry.title}`);
-      if (bar.current !== `./${entry.file}`) problems.push(`pages menu marks ${bar.current} as current, want ./${entry.file}`);
-      return problems;
-    });
+    const bar = await page.evaluate(() => ({
+      kind: document.querySelector(".vp-bar")?.dataset.kind,
+      badge: document.querySelector(".vp-bar .sd-badge")?.textContent,
+      title: document.querySelector(".vp-title")?.textContent,
+      current: document.querySelector('#vp-pages [aria-current="page"]')?.getAttribute("href"),
+    }));
+    const problems = [];
+    if (bar.kind !== (example ? "mock" : "library")) problems.push(`bar kind ${bar.kind}`);
+    if (example && bar.badge !== "Mock") problems.push(`Mock badge reads ${JSON.stringify(bar.badge)}`);
+    if (!example && bar.badge) problems.push(`library page shows the badge ${JSON.stringify(bar.badge)}`);
+    if (entry !== HOME && bar.title !== entry.title) problems.push(`bar title ${JSON.stringify(bar.title)}, want ${entry.title}`);
+    if (bar.current !== `./${entry.file}`) problems.push(`pages menu marks ${bar.current} as current, want ./${entry.file}`);
+    return problems;
+  };
+  for (const entry of ALL) {
+    await visit(entry.file, barOf(entry));
+    // GitHub Pages also serves a page without its .html, and the folder root as the overview.
+    await visit(entry === HOME ? "" : keyOf(entry), barOf(entry));
   }
 } finally {
   await browser?.close();
