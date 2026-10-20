@@ -27,10 +27,10 @@ jobs:
             args: --engine chromium
           - suite: webkit 1/2
             browser: webkit
-            args: --engine webkit --only components,charts,form,standalone
+            args: --engine webkit --only components,charts,form,standalone,landing
           - suite: webkit 2/2
             browser: webkit
-            args: --engine webkit --except components,charts,form,standalone
+            args: --engine webkit --except components,charts,form,standalone,landing
           - suite: a11y
             browser: chromium
     env:
