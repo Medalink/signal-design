@@ -1276,6 +1276,20 @@ for (const button of preview.querySelectorAll("[data-living-width]")) {
     </div>
 
     <div class="demo-block">
+      <h3 class="sd-label">Message in a narrow column</h3>
+      <div class="border border-line py-3" style="width: 20rem; max-width: 100%; background: var(--sd-surface)">
+        <article class="sd-message">
+          <span class="sd-avatar" data-tone="extra">LN</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>anunbrokenauthornamewithnospacestowrapatall</b><time>12:30</time></header>
+            <div class="sd-message-text">The body column is <code>minmax(0, 1fr)</code>, so a long name cannot widen the row past its container.</div>
+          </div>
+        </article>
+      </div>
+      <p class="demo-usage"><code>sd-message-body</code> shrinks with the message, whatever the head holds</p>
+    </div>
+
+    <div class="demo-block">
       <h3 class="sd-label">Composer</h3>
       <form class="sd-composer max-w-column" onsubmit="event.preventDefault(); this.querySelector('textarea').value=''">
         <div class="sd-composer-chips"><span class="sd-chip"><b>Replying to</b> Alex <button type="button" aria-label="Cancel reply">×</button></span></div>

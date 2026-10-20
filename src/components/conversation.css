@@ -40,6 +40,7 @@
   .sd-message-body {
     grid-column: 2;
     display: grid;
+    grid-template-columns: minmax(0, 1fr); /* an implicit auto column would grow to a long author name and push the row off-screen */
     gap: 4px;
     min-width: 0;
   }
