@@ -167,7 +167,7 @@ violations. Needs `playwright` (and `axe-core` for `--a11y`) installed, and
 
 # Component reference (generated)
 
-Every block from the components page, with its copyable HTML. `JS:` says what `init()` must wire.
+Every block from the library pages, with its copyable HTML. `JS:` says what `init()` must wire.
 
 ## Tokens / Hard rules
 
@@ -182,7 +182,7 @@ No JS needed: the HTML works with the CSS alone.
   <li>Square corners everywhere, avatars and checkboxes included.</li>
   <li>Flat surfaces. No glass, grain, glow or shadow. Fades are for borders and edges only.</li>
   <li>Color is for important things: risk, status, success, focus. Everything else is black, white and grey, navigation included.</li>
-  <li>Motion on state change only: 120–200ms transitions and a one-pass hover shimmer. The rain moves only while work runs.</li>
+  <li>Motion on state change only: 120–200ms transitions and a one-pass hover shimmer. The rain moves only while work runs or when the reader turns it on.</li>
   <li>Minimal by default, detail on expand.</li>
   <li>SF Pro for text in regular and medium; Source Code Pro for code. The font picker swaps the text face.</li>
 </ol>
@@ -248,9 +248,43 @@ No JS needed: the HTML works with the CSS alone.
 </div>
 ```
 
+## Tokens / Themes side by side
+
+Any element can carry data-theme to theme its own subtree. Paper deepens the signal colors so they keep their contrast on white. auto picks ink, or paper when the OS asks for light.
+
+Classes: sd-badge, sd-btn, sd-btn-primary, sd-cluster, sd-label
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="grid gap-4 sm:grid-cols-3">
+  <div data-theme="ink" class="grid content-start gap-3 border border-line bg-canvas p-4 text-fg">
+    <p class="sd-label">ink</p>
+    <p class="text-lg">Approve the release</p>
+    <p class="text-fg-muted">Muted text on the canvas.</p>
+    <div class="sd-cluster" style="--gap: 6px"><span class="sd-badge" data-tone="success">passing</span><span class="sd-badge" data-tone="danger">risk</span><span class="sd-badge" data-tone="pending">waiting</span></div>
+    <button type="button" class="sd-btn sd-btn-primary">Approve</button>
+  </div>
+  <div data-theme="graphite" class="grid content-start gap-3 border border-line bg-canvas p-4 text-fg">
+    <p class="sd-label">graphite</p>
+    <p class="text-lg">Approve the release</p>
+    <p class="text-fg-muted">Muted text on the canvas.</p>
+    <div class="sd-cluster" style="--gap: 6px"><span class="sd-badge" data-tone="success">passing</span><span class="sd-badge" data-tone="danger">risk</span><span class="sd-badge" data-tone="pending">waiting</span></div>
+    <button type="button" class="sd-btn sd-btn-primary">Approve</button>
+  </div>
+  <div data-theme="paper" class="grid content-start gap-3 border border-line bg-canvas p-4 text-fg">
+    <p class="sd-label">paper</p>
+    <p class="text-lg">Approve the release</p>
+    <p class="text-fg-muted">Muted text on the canvas.</p>
+    <div class="sd-cluster" style="--gap: 6px"><span class="sd-badge" data-tone="success">passing</span><span class="sd-badge" data-tone="danger">risk</span><span class="sd-badge" data-tone="pending">waiting</span></div>
+    <button type="button" class="sd-btn sd-btn-primary">Approve</button>
+  </div>
+</div>
+```
+
 ## Tokens / Contrast on canvas
 
-WCAG ratio of each text role against the current canvas. Body text needs 4.5. fg-faint is for decoration, disabled states and large display text only.
+WCAG ratio of each text role against the current canvas. Body text needs 4.5. Every text role, fg-faint included, reaches it on the canvas, surface and raised fills of all three themes, so none of them is limited to decoration.
 
 Classes: sd-table, sd-table-compact, sd-table-wrap
 
@@ -293,7 +327,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Tokens / Fonts
 
-data-font sets the text face of a subtree, or of the page on <html>. Code stays in Source Code Pro. Pick the page font under Display.
+data-font sets the text face of a subtree, or of the page on <html>. Code stays in Source Code Pro. Pick the page font under Settings in the bar above.
 
 Classes: sd-card, sd-label
 
@@ -1359,7 +1393,7 @@ JS: init() from signal-design/js wires data-sd-open · data-sd-tip · data-sd-cl
 ```html
 <div class="sd-actions">
   <button class="sd-btn" data-sd-open="demo-dialog">Dialog</button>
-  <button class="sd-btn" data-sd-open="demo-sheet">Sheet <kbd>]</kbd></button>
+  <button class="sd-btn" data-sd-open="demo-sheet">Sheet</button>
   <button class="sd-btn" data-sd-open="demo-command">Command panel</button>
   <button class="sd-btn" data-sd-open="demo-dialog-sm">Small dialog</button>
   <button class="sd-btn" data-sd-open="demo-dialog-lg">Large dialog</button>
@@ -2246,7 +2280,7 @@ JS: init() from signal-design/js wires data-sd-shell.
 
 ## Effects / The full shell
 
-You are in it: this page runs in the Signal App Shell (rail, sidebar panels, fading crumb and action bars with ladder bridges, the inset content box with ornaments and border glow, square rain, display panel, status bar with FPS). shell.html shows it as a work queue.
+You are in it: this page runs in the Signal App Shell (rail, sidebar panels, fading crumb and action bars with ladder bridges, the inset content box with ornaments and border glow, square rain, the Code views panel, status bar with FPS). shell.html shows it as a work queue.
 
 Classes: sd-btn, sd-btn-primary
 
@@ -2452,7 +2486,7 @@ setTheme("paper");                        // ink | graphite | paper | auto</code
 
 <div class="sd-actions">
   <span class="sd-subtle text-sm">Try:</span>
-  <button class="sd-btn sd-btn-sm" data-sd-key="]" data-sd-open="demo-sheet">Sheet <kbd>]</kbd></button>
+  <button class="sd-btn sd-btn-sm" data-sd-key="d" data-sd-open="demo-sheet">Sheet <kbd>D</kbd></button>
   <button class="sd-btn sd-btn-sm" data-sd-key="shift+t" data-sd-theme-cycle="">Next theme <kbd>Shift+T</kbd></button>
 </div>
 ```
