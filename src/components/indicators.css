@@ -202,4 +202,52 @@
     letter-spacing: 0;
     text-align: end;
   }
+
+  /*
+   * Live level: bars that light up to --level (0 to 1), such as a microphone
+   * input. The app writes --level and aria-valuenow; a bar only fades when the
+   * value crosses it, so nothing moves while the level holds. 2 to 8 bars.
+   *   <span class="sd-level" role="meter" aria-label="Microphone" aria-valuemin="0"
+   *     aria-valuemax="1" aria-valuenow="0.6" style="--level: 0.6"><i></i><i></i><i></i></span>
+   */
+  .sd-level {
+    --level: 0;
+    --n: 1;
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: var(--h, 1.05em);
+    height: var(--h, 1.5cap);
+    vertical-align: middle;
+  }
+  .sd-level > i {
+    position: relative;
+    flex: none;
+    width: 3px;
+    height: calc(100% * (1 + var(--i)) / (1 + var(--n)));
+    background: var(--sd-line-strong);
+  }
+  .sd-level > i::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--tone, var(--sd-fg));
+    opacity: clamp(0, (var(--level) * var(--n) - var(--i) + 0.5) * 1000, 1);
+    transition: opacity 120ms var(--ease-out);
+  }
+  .sd-level > i:nth-child(1) { --i: 1; }
+  .sd-level > i:nth-child(2) { --i: 2; }
+  .sd-level > i:nth-child(3) { --i: 3; }
+  .sd-level > i:nth-child(4) { --i: 4; }
+  .sd-level > i:nth-child(5) { --i: 5; }
+  .sd-level > i:nth-child(6) { --i: 6; }
+  .sd-level > i:nth-child(7) { --i: 7; }
+  .sd-level > i:nth-child(8) { --i: 8; }
+  .sd-level:has(> i:nth-child(2):last-child) { --n: 2; }
+  .sd-level:has(> i:nth-child(3):last-child) { --n: 3; }
+  .sd-level:has(> i:nth-child(4):last-child) { --n: 4; }
+  .sd-level:has(> i:nth-child(5):last-child) { --n: 5; }
+  .sd-level:has(> i:nth-child(6):last-child) { --n: 6; }
+  .sd-level:has(> i:nth-child(7):last-child) { --n: 7; }
+  .sd-level:has(> i:nth-child(8):last-child) { --n: 8; }
 }

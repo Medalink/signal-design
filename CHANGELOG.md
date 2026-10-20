@@ -17,6 +17,9 @@
 - `sd-progress[data-state="indeterminate"]`: a static dashed bar in the
   pending tone for work of unknown size, with no looping motion, and
   `sd-progress-label` for the line above a bar.
+- `sd-level`: a live level meter (2 to 8 bars) driven by `--level` from 0 to
+  1, with `role="meter"`. Bars change only when the value crosses them; it
+  never loops.
 
 ## 1.1.1 (2026-10-19)
 
