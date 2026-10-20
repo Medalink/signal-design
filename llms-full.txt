@@ -82,7 +82,7 @@ by `title` or `classes`) rather than inventing markup.
 | Buttons | `sd-btn` + `sd-btn-primary` (one per view) / `sd-btn-ghost` / `sd-btn-link`, sizes `-sm` `-lg` `-icon` `-block` |
 | Icons | `sd-icon-text` > `sd-icon` + text; icons are sized to the text's cap height (`1.5cap`) and scale with it |
 | Forms | `sd-field` > `sd-field-label` + control + `sd-field-hint`; inputs are styled unclassed |
-| Choices | `sd-seg` (segmented), `role="switch"` checkbox, `sd-combobox`, `sd-tags`, `sd-number` |
+| Choices | `sd-seg` (segmented), `sd-options` > `sd-option` (cards with a description or preview), `role="switch"` checkbox, `sd-combobox`, `sd-tags`, `sd-number` |
 | Overlays | `<dialog class="sd-dialog">` + `data-sd-open`; `popover` + `.sd-popover`; `data-sd-tip`; `toast()` |
 | Lists and rows | `sd-item`, `sd-row`, `sd-table`, `sd-kv` |
 | Status | `sd-badge`, `sd-status`, `sd-dot`, `sd-count`, `sd-progress`, `sd-checks` |
@@ -786,6 +786,52 @@ JS: init() from signal-design/js wires data-sd-seg.
     <button class="sd-btn sd-btn-primary" type="submit">Save</button>
   </div>
 </form>
+```
+
+## Components / Option cards
+
+sd-options + --min · sd-option + -preview|-title|-desc · selected by :checked, aria-pressed or aria-checked · disabled by :disabled or aria-disabled
+
+Classes: sd-field, sd-field-hint, sd-field-label, sd-option, sd-option-desc, sd-option-preview, sd-option-title, sd-options, sd-skeleton
+
+JS: init() from signal-design/js wires data-sd-seg.
+
+```html
+<div class="sd-field">
+  <span class="sd-field-label" id="demo-option-theme-label">Theme</span>
+  <div class="sd-options" role="radiogroup" aria-labelledby="demo-option-theme-label">
+    <label class="sd-option">
+      <input type="radio" name="demo-option-theme" value="ink" checked="">
+      <span class="sd-option-preview grid content-start gap-2 p-3" data-theme="ink" aria-hidden="true" style="background: var(--sd-canvas)"><span class="sd-skeleton w-3/4"></span><span class="sd-skeleton w-1/2"></span><span class="sd-skeleton w-1/4" style="background: var(--sd-fg)"></span></span>
+      <span class="sd-option-title">Ink</span>
+      <span class="sd-option-desc">Near-black. The default.</span>
+    </label>
+    <label class="sd-option">
+      <input type="radio" name="demo-option-theme" value="graphite">
+      <span class="sd-option-preview grid content-start gap-2 p-3" data-theme="graphite" aria-hidden="true" style="background: var(--sd-canvas)"><span class="sd-skeleton w-3/4"></span><span class="sd-skeleton w-1/2"></span><span class="sd-skeleton w-1/4" style="background: var(--sd-fg)"></span></span>
+      <span class="sd-option-title">Graphite</span>
+      <span class="sd-option-desc">A lighter dark grey.</span>
+    </label>
+    <label class="sd-option">
+      <input type="radio" name="demo-option-theme" value="paper">
+      <span class="sd-option-preview grid content-start gap-2 p-3" data-theme="paper" aria-hidden="true" style="background: var(--sd-canvas)"><span class="sd-skeleton w-3/4"></span><span class="sd-skeleton w-1/2"></span><span class="sd-skeleton w-1/4" style="background: var(--sd-fg)"></span></span>
+      <span class="sd-option-title">Paper</span>
+      <span class="sd-option-desc">White, for bright rooms.</span>
+    </label>
+  </div>
+  <p class="sd-field-hint">Radios inside labels: arrow keys move the choice, no JS.</p>
+</div>
+
+<div class="sd-field">
+  <span class="sd-field-label" id="demo-option-noise-label">Noise suppression</span>
+  <div class="sd-options" style="--min: 10rem" data-sd-seg="" role="group" aria-labelledby="demo-option-noise-label">
+    <button type="button" class="sd-option" aria-pressed="false"><span class="sd-option-title">Off</span><span class="sd-option-desc">Send the microphone as it is.</span></button>
+    <button type="button" class="sd-option" aria-pressed="true"><span class="sd-option-title">Standard</span><span class="sd-option-desc">Removes fans and keyboards.</span></button>
+    <button type="button" class="sd-option" aria-pressed="false"><span class="sd-option-title">Strong</span><span class="sd-option-desc">Also removes voices nearby.</span></button>
+    <button type="button" class="sd-option" aria-pressed="false" disabled=""><span class="sd-option-title">Studio</span><span class="sd-option-desc">Needs a newer device.</span></button>
+  </div>
+  <p class="sd-field-hint">Buttons with <code>aria-pressed</code>; <code>data-sd-seg</code> keeps one pressed and fires <code>change</code>.</p>
+</div>
 ```
 
 ## Components / Navigation

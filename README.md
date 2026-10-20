@@ -342,6 +342,30 @@ Shift+F10 or the menu key, and fires `sd:contextmenu` with the target.
 | `sd-shortcuts` | `dialog[data-sd-shortcuts]` | Shortcut sheet; `?` opens it. |
 | `sd-spark`, `sd-bars` | `data-values` | Sparkline and bar chart, no library. |
 | `sd-diff` | | Diff lines with `data-line="+"`, `"-"`, `"@"`. |
+| `sd-options`, `sd-option` | `data-sd-seg` (buttons only) | Option cards in a wrapping grid: title, description, optional preview. |
+
+Option cards are for a choice that needs more than a word: a theme with a
+preview, an audio profile with a sentence about it. Put radios (one choice) or
+checkboxes (several) inside labels and the cards need no JS; the input covers
+the card, so clicks, arrow keys and focus are the browser's own. Buttons work
+too, with `aria-pressed` or `aria-checked`, and `data-sd-seg` on the grid
+keeps one of them pressed. The selected card gets a 2px edge, a raised fill
+and a solid corner square. `--min` sets the narrowest column (default 12rem).
+
+```html
+<div class="sd-options" role="radiogroup" aria-label="Theme">
+  <label class="sd-option">
+    <input type="radio" name="theme" value="ink" checked>
+    <span class="sd-option-preview" aria-hidden="true">…</span>
+    <span class="sd-option-title">Ink</span>
+    <span class="sd-option-desc">Near-black. The default.</span>
+  </label>
+  …
+</div>
+```
+
+Mark a decorative preview `aria-hidden="true"` so it stays out of the
+choice's accessible name.
 
 ## Digital rain
 
@@ -549,7 +573,7 @@ gets the same answer:
 |---|---|
 | `data-tone="success\|pending\|danger\|accent\|warning\|extra\|neutral"` | Tones a subtree: cards, chips, items, stat boxes, checks, progress. Resolves to `--tone`. |
 | `aria-selected="true"` | Selection in `sd-tabs`, `sd-item`, `sd-table` rows, `sd-seg`, `sd-grid-picker`, `sd-menu`. |
-| `aria-pressed="true"` | Toggle state in `sd-chip`, `sd-seg`, `sd-poll-option`, `sd-reactions`, `sd-icon-btn`. |
+| `aria-pressed="true"` | Toggle state in `sd-chip`, `sd-seg`, `sd-option`, `sd-poll-option`, `sd-reactions`, `sd-icon-btn`. |
 | `aria-expanded="true"` | `sd-icon-btn` (popover/menu triggers), `sd-rail-item`; `aria-controls` points at the panel. |
 | `aria-current` (any value but `"false"`) | Current location in `sd-nav`, `sd-sidenav`, `sd-sidebar-link`, `sd-breadcrumb`, `sd-pagination`, `sd-rail-item`, `sd-message`; `sd-steps` uses `aria-current="step"`. |
 | `aria-sort="ascending\|descending"` | Sort direction of a `th[data-sort]` in `sd-table`. |

@@ -11,6 +11,9 @@
 - `sd-icon-text` and `sd-icon`: an icon and a word on one baseline, sized to
   the cap height. In Tailwind, `size-[1.5cap]` with `items-baseline` does the
   same.
+- `sd-options` and `sd-option`: selectable option cards with a title,
+  description and optional preview, in a wrapping grid. Radios or checkboxes
+  inside labels need no JS; buttons use `aria-pressed` or `aria-checked`.
 
 ## 1.1.1 (2026-10-19)
 
