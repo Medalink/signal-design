@@ -12,3 +12,6 @@
   narrow container. A plain `sd-seg` still keeps one row.
 - `sd-kv-plain`: key-value keys in sentence case that truncate with an
   ellipsis instead of widening the grid. `sd-kv` keeps its small-caps keys.
+- `sd-sidebar-head-sm`: a 16px title step (the default is 18px) for a sidebar
+  head with an action or a longer title, such as "Direct Messages" in a 240px
+  sidebar.

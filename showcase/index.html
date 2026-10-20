@@ -1744,6 +1744,21 @@ createChart(canvas, {
     </div>
 
     <div class="demo-block">
+      <h3 class="sd-label">Sidebar head sizes</h3>
+      <div class="flex flex-wrap gap-6">
+        <div class="sd-sidebar border border-line" id="demo-head-default" style="--shell-sidebar: 15rem">
+          <div class="sd-sidebar-head"><svg><use href="#i-pages"/></svg><span class="sd-sidebar-title">Direct Messages</span>
+            <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="New message">+</button></div>
+        </div>
+        <div class="sd-sidebar border border-line" id="demo-head-sm" style="--shell-sidebar: 15rem">
+          <div class="sd-sidebar-head sd-sidebar-head-sm"><svg><use href="#i-pages"/></svg><span class="sd-sidebar-title">Direct Messages</span>
+            <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="New message">+</button></div>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-sidebar-head</code> (18px title, cut off with an ellipsis when it does not fit) · <code>sd-sidebar-head-sm</code> (16px title)</p>
+    </div>
+
+    <div class="demo-block">
       <h3 class="sd-label">Resizable sidebar</h3>
       <p class="demo-usage">A <code>role="separator"</code> handle over the sidebar's trailing border. With <code>data-sd-shell="resize"</code>, <code>init()</code> drags it, steps it with the arrow keys (16px, Shift for 64px), Home and End jump to <code>aria-valuemin</code> and <code>aria-valuemax</code>, Escape cancels a drag, and the width is remembered per sidebar <code>id</code>. Inside the shell it sets <code>--shell-sidebar</code> on <code>.sd-shell</code>; this page's own sidebar has one too. When a framework owns the width, leave out <code>data-sd-shell</code>: set <code>--shell-sidebar</code> and <code>aria-valuenow</code> yourself, and <code>data-resizing</code> on the shell while a drag runs.</p>
       <div class="flex border border-line" style="height: 14rem">

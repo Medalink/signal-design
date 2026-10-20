@@ -328,6 +328,12 @@
     flex-shrink: 0;
     color: var(--sd-fg-subtle);
   }
+  /* A smaller title step (16px, was 18px) for a head that also holds actions
+     or a longer title, such as "Direct Messages" in a 240px sidebar. */
+  .sd-sidebar-head-sm {
+    gap: 8px;
+    font-size: var(--text-base);
+  }
   .sd-sidebar-title {
     flex: 1;
     min-width: 0;
