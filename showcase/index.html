@@ -66,7 +66,7 @@
   </nav>
 
   <!-- One sidebar panel per rail section; main.js lists each block in it. -->
-  <aside class="sd-sidebar" aria-label="Library pages">
+  <aside class="sd-sidebar" id="library-sidebar" aria-label="Library pages">
     <div class="sd-sidebar-panel" data-section="foundations" data-sections="tokens elements" data-title="Basics"></div>
     <div class="sd-sidebar-panel" data-section="components" data-sections="components conversation inputs-more" data-title="Parts" hidden></div>
     <div class="sd-sidebar-panel" data-section="charts" data-sections="charts" data-title="Charts" hidden></div>
@@ -87,6 +87,7 @@
       </nav>
       <div class="sd-sidebar-foot">signal-design · 5 example pages</div>
     </div>
+  <div class="sd-sidebar-resize" role="separator" aria-orientation="vertical" aria-label="Resize sidebar" aria-controls="library-sidebar" aria-valuemin="224" aria-valuemax="480" aria-valuenow="288" tabindex="0" data-sd-shell="resize"></div>
   </aside>
 
   <main class="sd-shell-main" id="main">
@@ -1603,6 +1604,24 @@ createChart(canvas, {
         <div class="flex-1 p-6 sd-subtle text-sm" style="background: var(--sd-shell-bg)">The rail scrolls when it fills; tiles keep a 48px square and an 8px gap, so a corner count never covers the tile above it.</div>
       </div>
       <p class="demo-usage"><code>sd-rail-tile</code> (<code>a</code>, <code>button</code>, or a <code>span</code> for a tile that is not a control) with an <code>img</code>, initials or an <code>svg</code> · <code>aria-current</code> · <code>data-unread</code> · <code>data-pending</code> · <code>sd-badge-count</code> + <code>data-corner</code> · <code>--tile</code> (48px) · <code>--shell-rail: 4.5rem</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Resizable sidebar</h3>
+      <p class="demo-usage">A <code>role="separator"</code> handle over the sidebar's trailing border. With <code>data-sd-shell="resize"</code>, <code>init()</code> drags it, steps it with the arrow keys (16px, Shift for 64px), Home and End jump to <code>aria-valuemin</code> and <code>aria-valuemax</code>, Escape cancels a drag, and the width is remembered per sidebar <code>id</code>. Inside the shell it sets <code>--shell-sidebar</code> on <code>.sd-shell</code>; this page's own sidebar has one too. When a framework owns the width, leave out <code>data-sd-shell</code>: set <code>--shell-sidebar</code> and <code>aria-valuenow</code> yourself, and <code>data-resizing</code> on the shell while a drag runs.</p>
+      <div class="flex border border-line" style="height: 14rem">
+        <div class="sd-sidebar" id="demo-resize-sidebar" style="--shell-sidebar: 15rem">
+          <div class="sd-sidebar-head"><span class="sd-sidebar-title">Channels</span></div>
+          <nav class="sd-sidebar-body" aria-label="Demo channels">
+            <a class="sd-sidebar-link" href="#effects" aria-current="page">general</a>
+            <a class="sd-sidebar-link" href="#effects">design-reviews-and-critique</a>
+            <a class="sd-sidebar-link" href="#effects">release</a>
+          </nav>
+          <div class="sd-sidebar-resize" role="separator" aria-orientation="vertical" aria-label="Resize demo sidebar" aria-controls="demo-resize-sidebar" aria-valuemin="160" aria-valuemax="360" aria-valuenow="240" tabindex="0" data-sd-shell="resize"></div>
+        </div>
+        <div class="flex-1 p-6 sd-subtle text-sm" style="background: var(--sd-shell-bg)">Drag the sidebar's edge, or focus it and press the arrow keys.</div>
+      </div>
+      <p class="demo-usage"><code>sd-sidebar-resize</code> + <code>role="separator"</code> <code>aria-orientation="vertical"</code> <code>aria-valuemin|max|now</code> <code>tabindex="0"</code> · <code>data-sd-shell="resize"</code> · <code>setSidebarWidth(shell, px | null)</code> · <code>--shell-sidebar</code> · <code>data-resizing</code></p>
     </div>
 
     <div class="demo-block">

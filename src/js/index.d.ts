@@ -132,6 +132,8 @@ export function place(
 
 /* App shell */
 export function setSidebar(shell: HTMLElement, state: "pinned" | "collapsed"): void;
+/** Set the sidebar width in CSS px, clamped to the resize handle's aria-valuemin and aria-valuemax, and remember it; null returns to the width the page was authored with. `target` is the .sd-shell, or a .sd-sidebar used on its own; only a shell fires sd:shell. */
+export function setSidebarWidth(target: HTMLElement, width: number | null): void;
 export function setAside(shell: HTMLElement, open: boolean): void;
 export function setDrawer(shell: HTMLElement, open: boolean): void;
 export function selectSection(shell: HTMLElement, name: string): void;
@@ -206,7 +208,7 @@ declare global {
 
     "sd:feed": CustomEvent<FeedState>;
     "sd:theme": CustomEvent<{ theme: Theme }>;
-    "sd:shell": CustomEvent<{ sidebar: "pinned" | "collapsed"; aside: "open" | "closed"; drawer: boolean; section?: string }>;
+    "sd:shell": CustomEvent<{ sidebar: "pinned" | "collapsed"; aside: "open" | "closed"; drawer: boolean; section?: string; width?: number }>;
     "sd:window": CustomEvent<{ action: "minimize" | "maximize" | "close" }>;
     "sd:reaction": CustomEvent<{ on: boolean }>;
     "sd:contextmenu": CustomEvent<{ target: HTMLElement }>;

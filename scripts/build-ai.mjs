@@ -45,7 +45,7 @@ const ATTRIBUTES = {
   "data-sd-toast": "Shows this text as a toast on click (data-tone colors it).",
   "data-sd-theme": "Switches the theme (ink, graphite, paper, auto) and remembers it.",
   "data-sd-theme-cycle": "Steps to the next theme on click.",
-  "data-sd-shell": "App shell control: sidebar (pin/collapse), aside (right panel), drawer (phones) or close.",
+  "data-sd-shell": "App shell control: sidebar (pin/collapse), aside (right panel), drawer (phones), close, or resize (on a .sd-sidebar-resize separator: drag, arrow keys, Home and End set the sidebar width between aria-valuemin and aria-valuemax, remembered per sidebar id).",
   "data-sd-section": "On a rail item: shows the sidebar panel with the same data-section.",
   "data-sd-window": "Title bar window button: minimize, maximize or close (Tauri window API, else an sd:window event).",
   "data-sd-ornaments": "Square-dust ornaments painted as the background: br (default), tl, tr, bl, top, bottom, center or none; space-separated.",

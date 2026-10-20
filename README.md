@@ -243,6 +243,7 @@ a drawer. See `showcase/shell.html`.
 | `data-sd-section="name"` on a rail item | Shows that section's sidebar panel. With the sidebar collapsed it peeks over the page; Escape or a click outside closes it. |
 | `data-sd-shell="aside"` | Opens or closes the right panel. |
 | `data-sd-shell="drawer"` | Opens the phone drawer and makes the page inert behind it. |
+| `data-sd-shell="resize"` on a `.sd-sidebar-resize` | Drag, arrow keys (16px, Shift 64px), Home and End resize the sidebar between `aria-valuemin` and `aria-valuemax`; Escape cancels a drag. The width is remembered per sidebar `id`. |
 
 The page sits inset in two lighter boxes (`--sd-container`), a header bar and
 the content, with a gap where the shell background shows. Put a rain canvas
@@ -250,6 +251,49 @@ first in the shell to fill that gap:
 
 ```html
 <canvas class="sd-rain" data-sd-rain aria-hidden="true"></canvas>
+```
+
+### Resizable sidebar
+
+Put a separator last in the sidebar. It sits over the sidebar's trailing
+border and is hidden while the sidebar is collapsed, peeking or in the phone
+drawer.
+
+```html
+<aside class="sd-sidebar" id="sidebar">
+  …
+  <div class="sd-sidebar-resize" role="separator" aria-orientation="vertical"
+       aria-label="Resize sidebar" aria-controls="sidebar" tabindex="0"
+       aria-valuemin="224" aria-valuemax="480" aria-valuenow="288"
+       data-sd-shell="resize"></div>
+</aside>
+```
+
+With `data-sd-shell="resize"`, `init()` sets `--shell-sidebar` on the
+`.sd-shell` (or on a `.sd-sidebar` used on its own), keeps `aria-valuenow`
+current, sets `data-resizing` on it while a drag runs, stores the width in
+`localStorage` under `sd-shell-sidebar-width:<sidebar id>`, and restores it on
+load. `setSidebarWidth(shell, px)` does the same from code; `null` returns to
+the width the page was authored with (an inline `--shell-sidebar`, else the
+stylesheet's) and forgets the stored one. On a shell, `sd:shell` reports the
+committed `width`; drags in progress do not fire it, and a standalone sidebar
+fires nothing.
+
+When a framework owns the width, leave out `data-sd-shell="resize"` and keep
+the class, the role and the ARIA. Render `--shell-sidebar` on `.sd-shell` and
+`aria-valuenow` on the separator from your state, handle the pointer and the
+keys yourself, and set `data-resizing` on `.sd-shell` during a drag to get the
+accent line, the column cursor and no text selection:
+
+```jsx
+<div className="sd-shell" style={{ "--shell-sidebar": `${width}px` }} data-resizing={dragging || undefined}>
+  <aside className="sd-sidebar" id="sidebar">
+    …
+    <div className="sd-sidebar-resize" role="separator" aria-orientation="vertical"
+         aria-label="Resize sidebar" aria-controls="sidebar" tabIndex={0}
+         aria-valuemin={224} aria-valuemax={480} aria-valuenow={width}
+         onPointerDown={startDrag} onKeyDown={stepWidth} />
+  </aside>
 ```
 
 When the sidebar is collapsed, the header's sidebar button flips to `»` and
@@ -644,6 +688,7 @@ gets the same answer:
 | `aria-expanded="true"` | `sd-icon-btn` (popover/menu triggers), `sd-rail-item`; `aria-controls` points at the panel. |
 | `aria-current` (any value but `"false"`) | Current location in `sd-nav`, `sd-sidenav`, `sd-sidebar-link`, `sd-breadcrumb`, `sd-pagination`, `sd-rail-item`, `sd-rail-tile`, `sd-message`; `sd-steps` uses `aria-current="step"`. |
 | `aria-sort="ascending\|descending"` | Sort direction of a `th[data-sort]` in `sd-table`. |
+| `--shell-sidebar` on `.sd-shell`, `aria-valuenow` on `.sd-sidebar-resize`, `data-resizing` | Sidebar width in px, its separator's value, and a drag in progress; written by `data-sd-shell="resize"` and `setSidebarWidth`. |
 | `data-sidebar`, `data-aside`, `data-drawer`, `data-peek` | `sd-shell` layout state; toggled by `setSidebar`/`setAside`/`setDrawer` and read back from `dataset`. `.sd-expand` panels open/close via `data-open` (kept in sync with `aria-expanded`). |
 | `--value` on `.sd-progress` | Progress, unitless `0`–`100`. |
 | `data-state="indeterminate"` on `.sd-progress` | Unknown amount: a static dashed bar in the pending tone. |
