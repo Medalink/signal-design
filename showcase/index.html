@@ -1004,6 +1004,21 @@
     </div>
 
     <div class="demo-block">
+      <h3 class="sd-label">Key-value list with long keys</h3>
+      <div class="grid gap-6 sm:grid-cols-2 items-start">
+        <dl class="sd-kv">
+          <dt>Retention period</dt><dd>30 days</dd>
+          <dt>Region</dt><dd>eu-west</dd>
+        </dl>
+        <dl class="sd-kv sd-kv-plain" style="max-width: 20rem">
+          <dt title="Retention period for deleted messages and their attachments">Retention period for deleted messages and their attachments</dt><dd>30 days</dd>
+          <dt>Region</dt><dd>eu-west</dd>
+        </dl>
+      </div>
+      <p class="demo-usage"><code>sd-kv</code> keys are small caps · <code>sd-kv-plain</code> keys are sentence case and truncate with an ellipsis</p>
+    </div>
+
+    <div class="demo-block">
       <h3 class="sd-label">Living tables</h3>
       <p class="demo-usage">Drag the grip on the trailing edge, or focus it and use the arrow keys. Metadata folds beneath each title as the container narrows. Groups open independently.</p>
       <div class="sd-actions" id="living-table-widths" aria-label="Living table width previews">

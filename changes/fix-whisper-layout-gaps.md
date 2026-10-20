@@ -10,3 +10,5 @@
   settings-style pages; `sd-panel` stays at 560px.
 - `sd-seg-wrap`: a segmented control whose items flow onto more rows in a
   narrow container. A plain `sd-seg` still keeps one row.
+- `sd-kv-plain`: key-value keys in sentence case that truncate with an
+  ellipsis instead of widening the grid. `sd-kv` keeps its small-caps keys.
