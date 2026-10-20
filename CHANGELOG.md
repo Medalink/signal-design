@@ -8,6 +8,9 @@
   font instead of fixed px.
 
 ### Added
+- `sd-rail-tile`: a square picture, initials or icon tile for a 72px rail of
+  places, with `aria-current` and `data-unread` edges, a dashed `data-pending`
+  tile and a corner `sd-badge-count`.
 - `sd-icon-text` and `sd-icon`: an icon and a word on one baseline, sized to
   the cap height. In Tailwind, `size-[1.5cap]` with `items-baseline` does the
   same.

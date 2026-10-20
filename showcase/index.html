@@ -1489,6 +1489,31 @@ createChart(canvas, {
     </div>
 
     <div class="demo-block">
+      <h3 class="sd-label">Compact rail of places</h3>
+      <p class="demo-usage">A 72px rail of groups, servers or workspaces: square tiles with a picture, initials or an icon, next to ordinary <code>sd-rail-item</code> tools. <code>aria-current</code> draws the edge on the rail's outer side; <code>data-unread</code> a short edge; <code>data-pending</code> a dashed tile for a place still joining. A corner <code>sd-badge-count</code> carries a count; put it in the tile's <code>aria-label</code> too, because the label replaces the tile's text. In the shell, set <code>--shell-rail: 4.5rem</code> on <code>.sd-shell</code>; a rail on its own takes the same variable.</p>
+      <div class="flex border border-line" style="height: 34rem">
+        <nav class="sd-rail" aria-label="Places" style="--shell-rail: 4.5rem; width: var(--shell-rail)">
+          <div class="sd-rail-list">
+            <button class="sd-rail-tile" aria-label="Direct messages, 2 unread" data-sd-tip="Direct messages" data-sd-tip-side="right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 5h16v11H9l-5 4z"/></svg><span class="sd-badge-count" data-corner>2</span></button>
+            <div class="sd-rail-sep"></div>
+            <a class="sd-rail-tile" href="#effects" aria-current="page" aria-label="Design" data-sd-tip="Design" data-sd-tip-side="right"><img alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' fill='%23111113'/%3E%3Crect x='8' y='8' width='14' height='14' fill='%2300D4FF' fill-opacity='.55'/%3E%3Crect x='26' y='8' width='14' height='14' fill='%232A2A2F'/%3E%3Crect x='8' y='26' width='14' height='14' fill='%232A2A2F'/%3E%3Crect x='26' y='26' width='14' height='14' fill='%23F4F4F5' fill-opacity='.8'/%3E%3C/svg%3E"></a>
+            <a class="sd-rail-tile" href="#effects" data-unread aria-label="Operations, 3 unread" data-sd-tip="Operations" data-sd-tip-side="right">OP<span class="sd-badge-count" data-corner>3</span></a>
+            <a class="sd-rail-tile" href="#effects" data-unread aria-label="Book club, 1 mention" data-sd-tip="Book club" data-sd-tip-side="right">BC<span class="sd-badge-count" data-tone="danger" data-corner>1</span></a>
+            <a class="sd-rail-tile" href="#effects" data-unread aria-label="Release notes, unread" data-sd-tip="Release notes" data-sd-tip-side="right">RN</a>
+            <a class="sd-rail-tile" href="#effects" aria-label="Weekend" data-sd-tip="Weekend" data-sd-tip-side="right">WE</a>
+            <span class="sd-rail-tile" data-pending role="img" aria-label="Joining Hiking" data-sd-tip="Joining Hiking" data-sd-tip-side="right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h3M10.5 12h3M16 12h3"/></svg></span>
+          </div>
+          <div class="sd-rail-tools">
+            <button class="sd-rail-tile" aria-label="Add a group" data-sd-tip="Add a group" data-sd-tip-side="right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></svg></button>
+            <button class="sd-rail-item" aria-label="Settings" data-sd-tip="Settings" data-sd-tip-side="right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><rect x="14" y="5" width="4" height="4"/><rect x="6" y="15" width="4" height="4"/></svg></button>
+          </div>
+        </nav>
+        <div class="flex-1 p-6 sd-subtle text-sm" style="background: var(--sd-shell-bg)">The rail scrolls when it fills; tiles keep a 48px square and an 8px gap, so a corner count never covers the tile above it.</div>
+      </div>
+      <p class="demo-usage"><code>sd-rail-tile</code> (<code>a</code>, <code>button</code>, or a <code>span</code> for a tile that is not a control) with an <code>img</code>, initials or an <code>svg</code> · <code>aria-current</code> · <code>data-unread</code> · <code>data-pending</code> · <code>sd-badge-count</code> + <code>data-corner</code> · <code>--tile</code> (48px) · <code>--shell-rail: 4.5rem</code></p>
+    </div>
+
+    <div class="demo-block">
       <h3 class="sd-label">The full shell</h3>
       <p class="demo-usage">You are in it: this page runs in the Signal App Shell (rail, sidebar panels, fading crumb and action bars with ladder bridges, the inset content box with ornaments and border glow, square rain, display panel, status bar with FPS). <code>shell.html</code> shows it as a work queue.</p>
       <div><a class="sd-btn sd-btn-primary" href="./shell.html">Open the Signal App Shell</a></div>

@@ -258,6 +258,34 @@ can carry a `.sd-when-collapsed` label such as "Show sidebar".
 The current section and page get a strong border on a raised grey; everything
 else is grey, and nothing has a shadow.
 
+### Compact rail of places
+
+For an app whose rail lists places (groups, servers, workspaces) rather than
+sections: square `sd-rail-tile`s with a picture, initials or an icon, in a
+72px rail. Set `--shell-rail: 4.5rem` on `.sd-shell` (or on a rail used on its
+own). Tiles mix with ordinary `sd-rail-item` tools.
+
+```html
+<div class="sd-rail-list">
+  <a class="sd-rail-tile" href="/g/design" aria-current="page" aria-label="Design"><img alt="" src="design.png"></a>
+  <a class="sd-rail-tile" href="/g/ops" data-unread aria-label="Operations, 3 unread">OP<span class="sd-badge-count" data-corner>3</span></a>
+  <span class="sd-rail-tile" data-pending role="img" aria-label="Joining Hiking"><svg>…</svg></span>
+</div>
+```
+
+| State | Looks like |
+|---|---|
+| `aria-current` (also `aria-pressed="true"`, `aria-expanded="true"`) | Strong border on a raised grey; `aria-current` adds a 40px edge on the rail's outer side. |
+| `data-unread` | A 10px edge on the rail's outer side. |
+| `data-pending` | A dashed border in a quieter grey, for a place that is still joining. |
+| `.sd-badge-count[data-corner]` child | A count on the tile's top corner. Repeat it in `aria-label`, which replaces the tile's text. |
+
+Use `a` or `button` for a tile you can open, which keeps keyboard focus; use a
+`span` with `role="img"` for one that is not a control. `--tile` (48px) sets
+the square; the edge follows `--shell-rail`. `sd-rail-item > .sd-avatar` still
+fits a single avatar in a 96px icon-and-label rail; a tile is for rails that
+are mostly places.
+
 ### Title bar and window controls
 
 For frameless desktop windows (Tauri with `decorations: false`). Put it first in
@@ -316,7 +344,7 @@ Generic pieces for chat, comments, feeds and inboxes. See `showcase/chat.html`.
 |---|---|
 | `sd-item` (+ `-body`, `-title`, `-sub`, `-end`) | A list row with avatar, text and meta; `data-unread`, `data-muted`. |
 | `sd-avatar[data-status]` | `online`, `away`, `busy`, `offline` square. |
-| `sd-badge-count` | A count on an icon, rail item or avatar. |
+| `sd-badge-count` | A count on an icon, rail item, rail tile or avatar. |
 | `sd-message` | Avatar plus body; `data-grouped`, `data-mention`, `data-pending`, `data-failed`. `sd-message-actions` is the hover toolbar. |
 | `sd-reply`, `sd-mention`, `sd-event` | Quoted reply, inline mention, system line. |
 | `sd-reactions` | Toggle buttons with counts; fires `sd:reaction`. |
@@ -551,7 +579,7 @@ gets the same answer:
 | `aria-selected="true"` | Selection in `sd-tabs`, `sd-item`, `sd-table` rows, `sd-seg`, `sd-grid-picker`, `sd-menu`. |
 | `aria-pressed="true"` | Toggle state in `sd-chip`, `sd-seg`, `sd-poll-option`, `sd-reactions`, `sd-icon-btn`. |
 | `aria-expanded="true"` | `sd-icon-btn` (popover/menu triggers), `sd-rail-item`; `aria-controls` points at the panel. |
-| `aria-current` (any value but `"false"`) | Current location in `sd-nav`, `sd-sidenav`, `sd-sidebar-link`, `sd-breadcrumb`, `sd-pagination`, `sd-rail-item`, `sd-message`; `sd-steps` uses `aria-current="step"`. |
+| `aria-current` (any value but `"false"`) | Current location in `sd-nav`, `sd-sidenav`, `sd-sidebar-link`, `sd-breadcrumb`, `sd-pagination`, `sd-rail-item`, `sd-rail-tile`, `sd-message`; `sd-steps` uses `aria-current="step"`. |
 | `aria-sort="ascending\|descending"` | Sort direction of a `th[data-sort]` in `sd-table`. |
 | `data-sidebar`, `data-aside`, `data-drawer`, `data-peek` | `sd-shell` layout state; toggled by `setSidebar`/`setAside`/`setDrawer` and read back from `dataset`. `.sd-expand` panels open/close via `data-open` (kept in sync with `aria-expanded`). |
 | `--value` on `.sd-progress` | Progress, unitless `0`–`100`. |
