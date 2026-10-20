@@ -26,8 +26,7 @@
     background: var(--sd-raised);
   }
   .sd-message > .sd-avatar {
-    width: 36px;
-    height: 36px;
+    --sd-avatar-size: 36px;
     font-size: 13px;
     margin-top: 2px;
   }
@@ -237,8 +236,7 @@
     gap: 2px;
   }
   .sd-receipts > .sd-avatar {
-    width: 16px;
-    height: 16px;
+    --sd-avatar-size: 16px;
     font-size: 8px;
   }
 

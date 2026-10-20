@@ -360,7 +360,8 @@ Generic pieces for chat, comments, feeds and inboxes. See `showcase/chat.html`.
 | Class | What |
 |---|---|
 | `sd-item` (+ `-body`, `-title`, `-sub`, `-end`) | A list row with avatar, text and meta; `data-unread`, `data-muted`. |
-| `sd-avatar[data-status]` | `online`, `away`, `busy`, `offline` square. |
+| `sd-avatar` (+ `-sm`, `-md`, `-lg`, `-xl`) | 22, 28, 34 and 48px squares (24px without a size class). `--sd-avatar-size` sets any other size, such as a profile preview; the initials and the presence square grow with it. |
+| `sd-avatar[data-status]` | `online`, `away` (or `afk`), `busy`, `offline` square on the corner. |
 | `sd-badge-count` | A count on an icon, rail item, rail tile or avatar. |
 | `sd-message` | Avatar plus body; `data-grouped`, `data-mention`, `data-pending`, `data-failed`. `sd-message-actions` is the hover toolbar. |
 | `sd-reply`, `sd-mention`, `sd-event` | Quoted reply, inline mention, system line. |
@@ -383,6 +384,15 @@ holds. Bars rise in height from left to right, `--h` sets the tallest (default
 <span class="sd-level" data-tone="success" role="meter" aria-label="Microphone level"
   aria-valuemin="0" aria-valuemax="1" aria-valuenow="0.6" style="--level: 0.6"><i></i><i></i><i></i></span>
 ```
+
+Cut-outs take the color of what they sit on: the ring around a presence
+square, the ring around a corner `sd-badge-count`, and the gaps in an
+`sd-avatar-stack`. Every Signal surface (rail, sidebar, cards, the content
+box, menus, popovers, dialogs, hovered and current rows) sets `--sd-ring` to
+its own background, and outside them it is the page canvas. On a panel of
+your own, set it to the panel's background:
+`<div class="bg-surface" style="--sd-ring: var(--sd-surface)">` (Tailwind:
+`[--sd-ring:var(--sd-surface)]`).
 
 `data-sd-contextmenu="menu-id"` opens a menu at the pointer on right click,
 Shift+F10 or the menu key, and fires `sd:contextmenu` with the target.
