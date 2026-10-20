@@ -89,7 +89,7 @@ by `title` or `classes`) rather than inventing markup.
 | Lists and rows | `sd-item`, `sd-row`, `sd-table`, `sd-kv` |
 | Status | `sd-badge`, `sd-status`, `sd-dot`, `sd-count`, `sd-progress` (`data-state="indeterminate"` when the amount is unknown; never a looping bar), `sd-checks`, `sd-level` (live level from `--level`, 0–1) |
 | People | `sd-avatar` (`-sm` `-md` `-lg` `-xl`, or `--sd-avatar-size`) with `data-status`; on your own panel set `--sd-ring` to its background so the presence ring matches |
-| Chat and feeds | `sd-message`, `sd-composer`, `sd-reactions`, `sd-banner`, `sd-file`, `sd-link-card` (`-hero`, `-compact`, `-type`, `data-blocked`, `aria-busy`) |
+| Chat and feeds | `sd-message` (`--edge` role color, `data-own`, `data-selected`), `sd-composer`, `sd-reactions`, `sd-banner`, `sd-file`, `sd-link-card` (`-hero`, `-compact`, `-type`, `data-blocked`, `aria-busy`) |
 | Data | `sd-stat`, `sd-stat-box`, `createChart(canvas, { type })`, `sd-plot`, `sd-heatmap`, `sd-uptime`, `sd-meter` |
 | Empty | `sd-empty` (gets a center ornament automatically) |
 
@@ -1480,6 +1480,59 @@ JS: init() from signal-design/js wires data-sd-contextmenu · data-sd-reaction �
 </div>
 
 <div popover="" id="demo-msg-menu" class="sd-popover"><div class="sd-menu" role="menu" aria-label="Message"><button role="menuitem">Reply</button><button role="menuitem">Copy text</button><hr class="sd-menu-sep"><button role="menuitem" data-tone="danger">Delete</button></div></div>
+```
+
+## Conversation / Message edges and selection
+
+--edge (author or role color, user data) · data-own · data-selected + a real checkbox · edge order: data-failed > aria-current > data-selected > data-mention > --edge
+
+Classes: sd-avatar, sd-badge, sd-btn, sd-btn-link, sd-mention, sd-message, sd-message-body, sd-message-edited, sd-message-head, sd-message-status, sd-message-text
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="border border-line py-3" style="background: var(--sd-surface)">
+  <article class="sd-message" style="--edge: var(--sd-extra)">
+    <span class="sd-avatar" data-tone="extra">AL</span>
+    <div class="sd-message-body">
+      <header class="sd-message-head"><b>Alex</b><span class="sd-badge">Moderator</span><time>11:02</time></header>
+      <div class="sd-message-text">An author or role color sits on the start edge through <code>--edge</code>.</div>
+    </div>
+  </article>
+  <article class="sd-message" data-grouped="" style="--edge: var(--sd-extra)">
+    <time>11:03</time>
+    <div class="sd-message-body"><div class="sd-message-text">Grouped follow-ups keep it.</div></div>
+  </article>
+  <article class="sd-message" data-own="">
+    <span class="sd-avatar" data-tone="success">JD</span>
+    <div class="sd-message-body">
+      <header class="sd-message-head"><b>Jane</b><span class="sd-message-edited">you</span><time>11:04</time></header>
+      <div class="sd-message-text">Your own messages get a light tint with <code>data-own</code>.</div>
+    </div>
+  </article>
+  <article class="sd-message" data-selected="" style="--edge: var(--sd-extra)">
+    <span class="sd-avatar" data-tone="extra">AL</span>
+    <div class="sd-message-body">
+      <header class="sd-message-head"><input type="checkbox" checked="" aria-label="Select message from Alex at 11:05"><b>Alex</b><time>11:05</time></header>
+      <div class="sd-message-text">Selected for a bulk action: the accent edge replaces the role color.</div>
+    </div>
+  </article>
+  <article class="sd-message" data-mention="" style="--edge: var(--sd-warning)">
+    <span class="sd-avatar" data-tone="warning">SK</span>
+    <div class="sd-message-body">
+      <header class="sd-message-head"><b>Sam</b><time>11:06</time></header>
+      <div class="sd-message-text"><span class="sd-mention">@Jane</span> a mention edge wins over the role color too.</div>
+    </div>
+  </article>
+  <article class="sd-message" data-own="" data-failed="" aria-current="true">
+    <span class="sd-avatar" data-tone="success">JD</span>
+    <div class="sd-message-body">
+      <header class="sd-message-head"><b>Jane</b><time>11:07</time></header>
+      <div class="sd-message-text">Failed wins over every other edge, even while you reply to it.</div>
+      <div class="sd-message-status">Not sent · <button class="sd-btn sd-btn-link">Retry</button></div>
+    </div>
+  </article>
+</div>
 ```
 
 ## Conversation / Composer

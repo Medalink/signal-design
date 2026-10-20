@@ -8,6 +8,8 @@
   what they sit on (`--sd-ring`, set by each Signal surface; the page canvas
   elsewhere). They were always `surface` (the stack: `canvas`), which showed
   on canvas, raised rows and overlays.
+- A failed message keeps its danger edge while it is `aria-current`; before,
+  the current edge hid it.
 - Icons are sized to the text's cap height (`1.5cap`, with an `em` fallback)
   in buttons, rows, navigation, messages and the shell, so they follow the
   font instead of fixed px.
@@ -40,6 +42,9 @@
   `sd-link-card-compact`, `sd-link-card-type` for documents, `data-blocked`
   with `sd-link-card-note`, a static loading state on `aria-busy="true"`, and
   `data-tone` on the edge.
+- `sd-message` states: `--edge` for an author or role color on the start
+  edge, `data-own` for a light own-message tint and `data-selected` for bulk
+  selection. Edge order: failed > current > selected > mention > `--edge`.
 
 ## 1.1.1 (2026-10-19)
 
