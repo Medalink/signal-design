@@ -3,6 +3,8 @@
 ## Unreleased
 
 ### Changed
+- A failed message keeps its danger edge while it is `aria-current`; before,
+  the current edge hid it.
 - Icons are sized to the text's cap height (`1.5cap`, with an `em` fallback)
   in buttons, rows, navigation, messages and the shell, so they follow the
   font instead of fixed px.
@@ -11,6 +13,9 @@
 - `sd-icon-text` and `sd-icon`: an icon and a word on one baseline, sized to
   the cap height. In Tailwind, `size-[1.5cap]` with `items-baseline` does the
   same.
+- `sd-message` states: `--edge` for an author or role color on the start
+  edge, `data-own` for a light own-message tint and `data-selected` for bulk
+  selection. Edge order: failed > current > selected > mention > `--edge`.
 
 ## 1.1.1 (2026-10-19)
 

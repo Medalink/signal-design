@@ -317,7 +317,7 @@ Generic pieces for chat, comments, feeds and inboxes. See `showcase/chat.html`.
 | `sd-item` (+ `-body`, `-title`, `-sub`, `-end`) | A list row with avatar, text and meta; `data-unread`, `data-muted`. |
 | `sd-avatar[data-status]` | `online`, `away`, `busy`, `offline` square. |
 | `sd-badge-count` | A count on an icon, rail item or avatar. |
-| `sd-message` | Avatar plus body; `data-grouped`, `data-mention`, `data-pending`, `data-failed`. `sd-message-actions` is the hover toolbar. |
+| `sd-message` | Avatar plus body; `data-grouped`, `data-mention`, `data-pending`, `data-failed`, `data-own`, `data-selected`, and `--edge` for an author or role color. `sd-message-actions` is the hover toolbar. |
 | `sd-reply`, `sd-mention`, `sd-event` | Quoted reply, inline mention, system line. |
 | `sd-reactions` | Toggle buttons with counts; fires `sd:reaction`. |
 | `sd-receipts`, `sd-typing` | Read receipts and the typing line. |
@@ -326,6 +326,16 @@ Generic pieces for chat, comments, feeds and inboxes. See `showcase/chat.html`.
 | `sd-file`, `sd-link-card`, `sd-poll` | Attachment, link preview, poll (`--share` per option). |
 | `sd-tiles`, `sd-tile` | Call grid; `data-speaking`, `data-muted`, `data-hand`. |
 | `sd-grid-picker` | An emoji or icon grid (`--cols`). |
+
+A message's start edge carries one color at a time. `--edge` sets an author
+or role color; it is user data, so pass it as a custom property
+(`style="--edge: var(--role-color)"`) rather than a tone, and note that it
+inherits, so a wrapper can set it for a run of messages. State edges win over
+it in a fixed order: `data-failed` > `aria-current` > `data-selected` >
+`data-mention` > `--edge`. `data-own` tints the viewer's own messages with half
+of `--sd-raised`; `data-selected` (an accent edge on `--sd-raised`) marks
+messages picked for a bulk action. `data-selected` is only the look: expose the
+choice with a real control, such as a labelled checkbox in the message.
 
 `data-sd-contextmenu="menu-id"` opens a menu at the pointer on right click,
 Shift+F10 or the menu key, and fires `sd:contextmenu` with the target.
@@ -551,6 +561,7 @@ gets the same answer:
 | `aria-selected="true"` | Selection in `sd-tabs`, `sd-item`, `sd-table` rows, `sd-seg`, `sd-grid-picker`, `sd-menu`. |
 | `aria-pressed="true"` | Toggle state in `sd-chip`, `sd-seg`, `sd-poll-option`, `sd-reactions`, `sd-icon-btn`. |
 | `aria-expanded="true"` | `sd-icon-btn` (popover/menu triggers), `sd-rail-item`; `aria-controls` points at the panel. |
+| `data-own`, `data-selected`, `--edge` on `.sd-message` | Own-message tint, bulk selection, author or role edge color. |
 | `aria-current` (any value but `"false"`) | Current location in `sd-nav`, `sd-sidenav`, `sd-sidebar-link`, `sd-breadcrumb`, `sd-pagination`, `sd-rail-item`, `sd-message`; `sd-steps` uses `aria-current="step"`. |
 | `aria-sort="ascending\|descending"` | Sort direction of a `th[data-sort]` in `sd-table`. |
 | `data-sidebar`, `data-aside`, `data-drawer`, `data-peek` | `sd-shell` layout state; toggled by `setSidebar`/`setAside`/`setDrawer` and read back from `dataset`. `.sd-expand` panels open/close via `data-open` (kept in sync with `aria-expanded`). |
