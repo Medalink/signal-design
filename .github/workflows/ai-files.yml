@@ -1,0 +1,55 @@
+name: ai-files
+
+# Regenerates the files AI tools and editors read (scripts/build-ai.mjs) after
+# every push to main and commits them when they changed. Pull requests do not
+# commit these files, so two pull requests never conflict on them.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ai-files
+  cancel-in-progress: false
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      # The current tip of main, not the commit that triggered this run: a
+      # queued run must build on the previous run's commit, not beside it.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: Regenerate and commit when changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # When main moves between the build and the push, start over from the
+          # new tip rather than rebasing a regeneration of an older tree.
+          for attempt in 1 2 3; do
+            git fetch -q origin main
+            git reset -q --hard origin/main
+            pnpm build:css
+            node scripts/build-ai.mjs
+            git add ai/components.json ai/tokens.json llms-full.txt vscode/html-data.json vscode/css-data.json
+            if git diff --cached --quiet; then echo "AI files unchanged."; exit 0; fi
+            git commit -q -m "Regenerate AI files"
+            if git push origin HEAD:main; then exit 0; fi
+            echo "main moved; regenerating from the new tip."
+          done
+          echo "::error::Could not push regenerated AI files after 3 attempts"
+          exit 1

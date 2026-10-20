@@ -11,6 +11,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
@@ -23,8 +25,20 @@ jobs:
         run: |
           pnpm dev --port 5178 --strictPort > vite.log 2>&1 &
           npx -y wait-on@8.0.3 -t 60000 http-get://localhost:5178/
-      - name: AI files are up to date
-        run: node scripts/build-ai.mjs --check
+      - name: Pull request leaves generated and shared files alone
+        if: github.event_name == 'pull_request' && !startsWith(github.head_ref, 'release/')
+        run: |
+          touched=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD" -- CHANGELOG.md ai/components.json ai/tokens.json llms-full.txt vscode/html-data.json vscode/css-data.json)
+          if [ -n "$touched" ]; then
+            echo "::error::Do not commit these in a pull request: $touched"
+            echo "Generated files are rebuilt on main by the ai-files workflow; changelog entries go in changes/ (see CONTRIBUTING.md)."
+            echo "To drop them: git checkout origin/${{ github.base_ref }} -- $touched"
+            exit 1
+          fi
+      - name: Changelog fragments are well formed
+        run: node scripts/changelog.mjs --check
+      - name: AI files build
+        run: node scripts/build-ai.mjs
       - run: node scripts/check.mjs http://localhost:5178/
       - run: node scripts/a11y.mjs http://localhost:5178/
       - if: failure()

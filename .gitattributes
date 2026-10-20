@@ -3,3 +3,8 @@
 *.png binary
 *.ico binary
 *.icns binary
+# Rebuilt on main by .github/workflows/ai-files.yml; pull requests leave them alone.
+ai/components.json linguist-generated=true
+ai/tokens.json linguist-generated=true
+llms-full.txt linguist-generated=true
+vscode/*.json linguist-generated=true

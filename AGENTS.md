@@ -5,6 +5,8 @@ what to install, the rules the design holds to, the parts to build from, and
 how to check your work. The full component reference, with copyable HTML for
 every part, is in `llms-full.txt` and `ai/components.json`.
 
+Changing Signal itself rather than using it? Read `CONTRIBUTING.md` too.
+
 ## What it is
 
 A flat, square, monochrome design library: CSS components (`sd-` classes) on
