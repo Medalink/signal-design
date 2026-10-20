@@ -11,6 +11,9 @@
 - `sd-icon-text` and `sd-icon`: an icon and a word on one baseline, sized to
   the cap height. In Tailwind, `size-[1.5cap]` with `items-baseline` does the
   same.
+- `sd-progress[data-state="indeterminate"]`: a static dashed bar in the
+  pending tone for work of unknown size, with no looping motion, and
+  `sd-progress-label` for the line above a bar.
 
 ## 1.1.1 (2026-10-19)
 

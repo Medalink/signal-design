@@ -501,6 +501,29 @@ async function checkFeedAndHotkeys(page, name) {
   if (Object.values(motion).every(Boolean)) console.log(`ok   ${name} feed motion 3 behavioral assertions`);
 }
 
+/** Unknown progress is a static, pending-toned full bar that becomes a value bar. */
+async function checkProgressUnknown(page, where) {
+  const got = await page.evaluate(async () => {
+    const bar = document.querySelector('.sd-progress[data-state="indeterminate"]');
+    bar.scrollIntoView();
+    const fill = () => getComputedStyle(bar, "::before");
+    const probe = document.createElement("span");
+    probe.style.color = "var(--sd-pending)";
+    bar.append(probe);
+    const pending = getComputedStyle(probe).color;
+    probe.remove();
+    const unknown = { laidOut: bar.clientWidth > 100, full: Math.abs(parseFloat(fill().width) - bar.clientWidth) <= 1, dashed: fill().borderTopStyle === "dashed", pending: fill().borderTopColor === pending, still: fill().animationName === "none" };
+    bar.removeAttribute("data-state");
+    bar.style.setProperty("--value", "30");
+    await new Promise((r) => setTimeout(r, 400));
+    const known = { value: Math.abs(parseFloat(fill().width) - bar.clientWidth * 0.3) <= 1, plain: fill().borderTopWidth === "0px" };
+    bar.dataset.state = "indeterminate";
+    bar.style.removeProperty("--value");
+    return { ...unknown, ...known };
+  });
+  for (const [key, passed] of Object.entries(got)) if (!passed) fail(`${where} progress unknown`, key);
+}
+
 if (!checkFeedTypes()) process.exit(1);
 
 for (const [name, engine] of Object.entries(engines)) {
@@ -671,6 +694,8 @@ for (const [name, engine] of Object.entries(engines)) {
         }));
         if (!view.code.startsWith('<div class="sd-actions">') || view.preview !== "none") fail(where, `code view ${JSON.stringify({ start: view.code.slice(0, 30), preview: view.preview })}`);
         await buttons.locator(".demo-head [data-view='preview']").click();
+
+        await checkProgressUnknown(page, where);
 
         // Behaviors
         await page.click('[data-sd-open="demo-dialog"]');
