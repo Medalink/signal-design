@@ -1,0 +1,414 @@
+{
+ "900": [
+  {
+   "step": "init()",
+   "el": "html",
+   "attr": "data-theme",
+   "from": "ink",
+   "to": "ink"
+  },
+  {
+   "step": "init()",
+   "el": "html",
+   "attr": "data-sd-scrollbars",
+   "from": null,
+   "to": "auto"
+  },
+  {
+   "step": "init()",
+   "el": "#tab1",
+   "attr": "aria-selected",
+   "from": "false",
+   "to": "false"
+  },
+  {
+   "step": "init()",
+   "el": "#tab1",
+   "attr": "tabindex",
+   "from": null,
+   "to": "-1"
+  },
+  {
+   "step": "init()",
+   "el": "#p1",
+   "attr": "hidden",
+   "from": "",
+   "to": ""
+  },
+  {
+   "step": "init()",
+   "el": "#tab2",
+   "attr": "aria-selected",
+   "from": "true",
+   "to": "true"
+  },
+  {
+   "step": "init()",
+   "el": "#tab2",
+   "attr": "tabindex",
+   "from": null,
+   "to": "0"
+  },
+  {
+   "step": "init()",
+   "el": "#shell",
+   "attr": "data-aside",
+   "from": "open",
+   "to": null
+  },
+  {
+   "step": "init()",
+   "el": "#shell",
+   "attr": "data-sidebar",
+   "from": null,
+   "to": "collapsed"
+  },
+  {
+   "step": "init()",
+   "el": "#empty",
+   "added": "SPAN"
+  },
+  {
+   "step": "init()",
+   "el": ".sd-glints",
+   "added": "I,I,I"
+  },
+  {
+   "step": "init()",
+   "el": ".sd-glints",
+   "added": "I,I,I"
+  },
+  {
+   "step": "click tab1",
+   "el": "#tab1",
+   "attr": "aria-selected",
+   "from": "false",
+   "to": "true"
+  },
+  {
+   "step": "click tab1",
+   "el": "#tab1",
+   "attr": "tabindex",
+   "from": "-1",
+   "to": "0"
+  },
+  {
+   "step": "click tab1",
+   "el": "#p1",
+   "attr": "hidden",
+   "from": "",
+   "to": null
+  },
+  {
+   "step": "click tab1",
+   "el": "#tab2",
+   "attr": "aria-selected",
+   "from": "true",
+   "to": "false"
+  },
+  {
+   "step": "click tab1",
+   "el": "#tab2",
+   "attr": "tabindex",
+   "from": "0",
+   "to": "-1"
+  },
+  {
+   "step": "click tab1",
+   "el": "#p2",
+   "attr": "hidden",
+   "from": null,
+   "to": ""
+  },
+  {
+   "step": "ArrowRight on tablist",
+   "el": "#tab1",
+   "attr": "aria-selected",
+   "from": "true",
+   "to": "false"
+  },
+  {
+   "step": "ArrowRight on tablist",
+   "el": "#tab1",
+   "attr": "tabindex",
+   "from": "0",
+   "to": "-1"
+  },
+  {
+   "step": "ArrowRight on tablist",
+   "el": "#p1",
+   "attr": "hidden",
+   "from": null,
+   "to": ""
+  },
+  {
+   "step": "ArrowRight on tablist",
+   "el": "#tab2",
+   "attr": "aria-selected",
+   "from": "false",
+   "to": "true"
+  },
+  {
+   "step": "ArrowRight on tablist",
+   "el": "#tab2",
+   "attr": "tabindex",
+   "from": "-1",
+   "to": "0"
+  },
+  {
+   "step": "ArrowRight on tablist",
+   "el": "#p2",
+   "attr": "hidden",
+   "from": "",
+   "to": null
+  },
+  {
+   "step": "open popover + click item",
+   "el": "#pop",
+   "attr": "data-side",
+   "from": null,
+   "to": "bottom"
+  },
+  {
+   "step": "open popover + click item",
+   "el": "#pop-btn",
+   "attr": "aria-expanded",
+   "from": null,
+   "to": "true"
+  },
+  {
+   "step": "open popover + click item",
+   "el": "#pop-btn",
+   "attr": "aria-expanded",
+   "from": "true",
+   "to": "false"
+  },
+  {
+   "step": "scroll table",
+   "el": "html",
+   "attr": "data-sd-scrolling-page",
+   "from": null,
+   "to": ""
+  },
+  {
+   "step": "scroll table",
+   "el": "#tw",
+   "attr": "data-sd-scrolling",
+   "from": null,
+   "to": ""
+  }
+ ],
+ "1440": [
+  {
+   "step": "init()",
+   "el": "html",
+   "attr": "data-theme",
+   "from": "ink",
+   "to": "ink"
+  },
+  {
+   "step": "init()",
+   "el": "html",
+   "attr": "data-sd-scrollbars",
+   "from": null,
+   "to": "auto"
+  },
+  {
+   "step": "init()",
+   "el": "#tab1",
+   "attr": "aria-selected",
+   "from": "false",
+   "to": "false"
+  },
+  {
+   "step": "init()",
+   "el": "#tab1",
+   "attr": "tabindex",
+   "from": null,
+   "to": "-1"
+  },
+  {
+   "step": "init()",
+   "el": "#p1",
+   "attr": "hidden",
+   "from": "",
+   "to": ""
+  },
+  {
+   "step": "init()",
+   "el": "#tab2",
+   "attr": "aria-selected",
+   "from": "true",
+   "to": "true"
+  },
+  {
+   "step": "init()",
+   "el": "#tab2",
+   "attr": "tabindex",
+   "from": null,
+   "to": "0"
+  },
+  {
+   "step": "init()",
+   "el": "#empty",
+   "added": "SPAN"
+  },
+  {
+   "step": "init()",
+   "el": ".sd-glints",
+   "added": "I,I,I"
+  },
+  {
+   "step": "init()",
+   "el": ".sd-glints",
+   "added": "I,I,I"
+  },
+  {
+   "step": "click tab1",
+   "el": "#tab1",
+   "attr": "aria-selected",
+   "from": "false",
+   "to": "true"
+  },
+  {
+   "step": "click tab1",
+   "el": "#tab1",
+   "attr": "tabindex",
+   "from": "-1",
+   "to": "0"
+  },
+  {
+   "step": "click tab1",
+   "el": "#p1",
+   "attr": "hidden",
+   "from": "",
+   "to": null
+  },
+  {
+   "step": "click tab1",
+   "el": "#tab2",
+   "attr": "aria-selected",
+   "from": "true",
+   "to": "false"
+  },
+  {
+   "step": "click tab1",
+   "el": "#tab2",
+   "attr": "tabindex",
+   "from": "0",
+   "to": "-1"
+  },
+  {
+   "step": "click tab1",
+   "el": "#p2",
+   "attr": "hidden",
+   "from": null,
+   "to": ""
+  },
+  {
+   "step": "ArrowRight on tablist",
+   "el": "#tab1",
+   "attr": "aria-selected",
+   "from": "true",
+   "to": "false"
+  },
+  {
+   "step": "ArrowRight on tablist",
+   "el": "#tab1",
+   "attr": "tabindex",
+   "from": "0",
+   "to": "-1"
+  },
+  {
+   "step": "ArrowRight on tablist",
+   "el": "#p1",
+   "attr": "hidden",
+   "from": null,
+   "to": ""
+  },
+  {
+   "step": "ArrowRight on tablist",
+   "el": "#tab2",
+   "attr": "aria-selected",
+   "from": "false",
+   "to": "true"
+  },
+  {
+   "step": "ArrowRight on tablist",
+   "el": "#tab2",
+   "attr": "tabindex",
+   "from": "-1",
+   "to": "0"
+  },
+  {
+   "step": "ArrowRight on tablist",
+   "el": "#p2",
+   "attr": "hidden",
+   "from": "",
+   "to": null
+  },
+  {
+   "step": "open popover + click item",
+   "el": "#pop",
+   "attr": "data-side",
+   "from": null,
+   "to": "bottom"
+  },
+  {
+   "step": "open popover + click item",
+   "el": "#pop-btn",
+   "attr": "aria-expanded",
+   "from": null,
+   "to": "true"
+  },
+  {
+   "step": "open popover + click item",
+   "el": "#pop-btn",
+   "attr": "aria-expanded",
+   "from": "true",
+   "to": "false"
+  },
+  {
+   "step": "scroll table",
+   "el": "html",
+   "attr": "data-sd-scrolling-page",
+   "from": null,
+   "to": ""
+  },
+  {
+   "step": "scroll table",
+   "el": "#tw",
+   "attr": "data-sd-scrolling",
+   "from": null,
+   "to": ""
+  }
+ ],
+ "1440-style": [
+  "init() #empty",
+  "init() #empty",
+  "init() #empty",
+  "init() #empty",
+  "init() #empty",
+  "init() #empty",
+  "init() #empty",
+  "init() .sd-glints",
+  "open popover + click item #pop",
+  "open popover + click item #pop",
+  "open popover + click item #pop",
+  "open popover + click item #pop"
+ ],
+ "900-style": [
+  "init() #empty",
+  "init() #empty",
+  "init() #empty",
+  "init() #empty",
+  "init() #empty",
+  "init() #empty",
+  "init() #empty",
+  "init() .sd-glints",
+  "open popover + click item #pop",
+  "open popover + click item #pop",
+  "open popover + click item #pop",
+  "open popover + click item #pop"
+ ]
+}

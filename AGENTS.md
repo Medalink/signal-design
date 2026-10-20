@@ -60,6 +60,12 @@ init(); // once, after the DOM exists; every listener is delegated, so later mar
 7. **Style state, not classes.** The JS writes ARIA and `data-*` (`aria-pressed`,
    `aria-expanded`, `aria-current`, `aria-selected`, `data-open`, `data-tone`);
    the CSS keys on those. Set the same attributes from your own code to drive state.
+8. **One writer per state.** When React, Vue or Svelte renders a piece's state,
+   leave out its `data-sd-*` behavior attribute (`data-sd-seg`, `data-sd-toggle`,
+   `data-sd-shell`, `data-sd-section`, `data-sd-reaction`, `data-sd-poll`,
+   `data-sd-open`, `data-sd-combobox`…) and render the ARIA and `data-*` state
+   yourself. `init()` also wires `role="tab"` and `.sd-shell` without an
+   attribute; see README "Framework-owned state" before calling it there.
 
 ## Themes
 
@@ -137,5 +143,8 @@ violations. Needs `playwright` (and `axe-core` for `--a11y`) installed, and
 - Coloring navigation, headings or icons. Keep them grey; color is for status.
 - Writing `color: #...` or `bg-[#...]`. Use a role token.
 - Forgetting `init()`, so `data-sd-*` attributes do nothing.
+- Keeping `data-sd-seg`, `data-sd-toggle` or `data-sd-reaction` on markup whose
+  `aria-pressed`, `aria-expanded` or `data-open` a framework renders. Two
+  writers drift apart; drop the attribute.
 - Building a custom dropdown, tooltip, modal or tabs. Use the native element plus Signal.
 - Wrapping the app in your own sidebar layout instead of `sd-shell`.

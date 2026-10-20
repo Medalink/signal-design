@@ -26,6 +26,12 @@
   and remembers the width per sidebar id; `setSidebarWidth(shell, px | null)`
   does it from code and `sd:shell` reports `width`. Without the attribute it
   is CSS and ARIA only, for apps that own the width.
+- README "Framework-owned state" and AGENTS.md rule 8: which `data-sd-*`
+  attributes to leave out when a framework renders the state, which classes
+  then work with CSS alone, and what `init()` wires without an attribute
+  (`role="tab"`, `.sd-shell`, popovers, scrollers, `.sd-empty`). The
+  components page shows a framework-owned segmented control, expand and
+  reaction.
 - `sd-icon-text` and `sd-icon`: an icon and a word on one baseline, sized to
   the cap height. In Tailwind, `size-[1.5cap]` with `items-baseline` does the
   same.
