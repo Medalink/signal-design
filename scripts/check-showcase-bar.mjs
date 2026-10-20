@@ -101,6 +101,32 @@ export async function checkShowcaseBar(browser, base, name) {
     stored: localStorage.getItem("sd-chart-theme"),
   }));
   expect(Object.values(both).every((v) => v === "spectrum"), `the example's switch reaches the bar, the page and storage ${JSON.stringify(both)}`);
+
+  // Chart colors chosen in the width frame reach the page that opened it, and the other way round.
+  await page.click('.vp-bar [data-vp="1024"]');
+  await page.waitForSelector(".vp-dialog[open] iframe[src]");
+  await page.frameLocator(".vp-dialog iframe").locator("#chart-theme").waitFor();
+  const colors = () =>
+    page.evaluate(() => {
+      const read = (doc) => [doc.documentElement.dataset.chartTheme, doc.querySelector("#core").dataset.chartTheme, doc.querySelector("#chart-theme [aria-pressed=true]")?.dataset.value, doc.querySelector("#vp-chart-colors [aria-pressed=true]")?.dataset.value ?? doc.querySelector("#chart-theme [aria-pressed=true]")?.dataset.value];
+      return { page: read(document), frame: read(document.querySelector(".vp-dialog iframe").contentDocument) };
+    });
+  const reaches = (want) => page.waitForFunction((v) => [document, document.querySelector(".vp-dialog iframe").contentDocument].every((doc) => doc.documentElement.dataset.chartTheme === v && doc.querySelector("#core").dataset.chartTheme === v && doc.querySelector("#chart-theme [aria-pressed=true]")?.dataset.value === v), want, { timeout: 2000 }).catch(() => {});
+  await page.frameLocator(".vp-dialog iframe").locator('#chart-theme [data-value="mono"]').click();
+  await reaches("mono");
+  const fromFrame = await colors();
+  expect(Object.values(fromFrame).flat().every((v) => v === "mono") && (await page.evaluate(() => document.querySelector("#vp-chart-colors [aria-pressed=true]")?.dataset.value)) === "mono", `chart colors chosen in the frame reach the page's switch, figures and bar ${JSON.stringify(fromFrame)}`);
+  await page.evaluate(() => document.querySelector('#vp-chart-colors [data-value="spectrum"]').click());
+  await reaches("spectrum");
+  const fromPage = await colors();
+  expect(Object.values(fromPage).flat().every((v) => v === "spectrum"), `chart colors chosen on the page reach the frame ${JSON.stringify(fromPage)}`);
+  await page.evaluate(() => {
+    for (const v of ["mono", "spectrum", "mono"]) document.querySelector(`#vp-chart-colors [data-value="${v}"]`).click();
+  });
+  await reaches("mono");
+  await page.waitForTimeout(300);
+  const queued = await colors();
+  expect(Object.values(queued).flat().every((v) => v === "mono"), `three chart color changes queued in one tick settle on the last ${JSON.stringify(queued)}`);
   await page.close();
 
   page = await open("shell.html", 1280);

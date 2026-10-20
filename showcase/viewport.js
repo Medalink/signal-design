@@ -103,6 +103,7 @@ export function setChartColors(name, { persist = true } = {}) {
   for (const el of document.querySelectorAll("[data-chart-theme]")) el.dataset.chartTheme = name;
   pick("[data-chart-colors]", name);
   if (persist) store.set("sd-chart-theme", name);
+  announce("chartColors", name);
   document.dispatchEvent(new CustomEvent("sd:theme", { detail: { theme: getTheme() } }));
 }
 
@@ -113,6 +114,11 @@ export function setChartColors(name, { persist = true } = {}) {
  */
 const SYNCED = {
   theme: { get: getTheme, valid: (v) => THEMES.includes(v), apply: (v) => setTheme(v, { persist: false }) },
+  chartColors: {
+    get: () => document.documentElement.dataset.chartTheme || "mono",
+    valid: (v) => v === "mono" || v === "spectrum",
+    apply: (v) => setChartColors(v, { persist: false }),
+  },
 };
 // What each setting last was here, sent or received. A change that matches it is not news, so a value
 // applied because the other side sent it is never sent back, however many messages are queued.
