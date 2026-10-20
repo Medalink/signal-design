@@ -23,7 +23,7 @@ export const LIBRARY = [
 ];
 
 export const EXAMPLES = [
-  { file: "shell.html", title: "App shell", summary: "A console in the Signal App Shell: rail, sidebar, live feed, palette and display panel." },
+  { file: "shell.html", title: "App shell", summary: "A console in the Signal App Shell: rail, sidebar, live feed, palette and details panel." },
   { file: "chat.html", title: "Chat", summary: "A team chat with mentions, reactions, polls, a context menu and an emoji picker." },
   { file: "form.html", title: "Form", summary: "A three step workspace form with validation, a live price and a dropzone." },
   { file: "landing.html", title: "Landing", summary: "A marketing page with a hero, rain backdrop, pricing and an FAQ." },
