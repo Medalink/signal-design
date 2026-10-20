@@ -3,11 +3,19 @@
 ## Unreleased
 
 ### Changed
+- The ring around a presence square, the ring around a corner
+  `sd-badge-count` and the gaps in an `sd-avatar-stack` take the color of
+  what they sit on (`--sd-ring`, set by each Signal surface; the page canvas
+  elsewhere). They were always `surface` (the stack: `canvas`), which showed
+  on canvas, raised rows and overlays.
 - Icons are sized to the text's cap height (`1.5cap`, with an `em` fallback)
   in buttons, rows, navigation, messages and the shell, so they follow the
   font instead of fixed px.
 
 ### Added
+- `--sd-avatar-size` sets an avatar to any size, with the initials and the
+  presence square following it; `sd-avatar-md` adds a 28px step.
+  `data-status="afk"` is an alias for `away`.
 - `sd-icon-text` and `sd-icon`: an icon and a word on one baseline, sized to
   the cap height. In Tailwind, `size-[1.5cap]` with `items-baseline` does the
   same.

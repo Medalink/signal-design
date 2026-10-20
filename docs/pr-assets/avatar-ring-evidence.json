@@ -1,0 +1,63 @@
+{
+  "branch": "http://localhost:5184/",
+  "base": "http://localhost:5182/",
+  "wallMs": 20865,
+  "checks": [
+    {
+      "name": "branch: 123 cut-outs match the background under them",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "branch: a hovered row's presence ring turns raised with the row",
+      "ok": true,
+      "detail": {
+        "row": "rgb(25, 26, 29)",
+        "cut": "rgb(25, 26, 29)"
+      }
+    },
+    {
+      "name": "base: 51 of 66 cut-outs matched (recorded, not a gate)",
+      "ok": true,
+      "detail": [
+        "ink index.html #Avatars, status, counts #6 avatar JD",
+        "ink index.html #Avatars, status, counts #7 avatar AL",
+        "ink index.html #Avatars, status, counts #8 avatar SK",
+        "ink index.html #Avatars, status, counts #9 avatar TP",
+        "ink index.html #Items, presence, counts #1 avatar AL",
+        "graphite index.html #Avatars, status, counts #6 avatar JD",
+        "graphite index.html #Avatars, status, counts #7 avatar AL",
+        "graphite index.html #Avatars, status, counts #8 avatar SK",
+        "graphite index.html #Avatars, status, counts #9 avatar TP",
+        "graphite index.html #Items, presence, counts #1 avatar AL",
+        "paper index.html #Avatars, status, counts #6 avatar JD",
+        "paper index.html #Avatars, status, counts #7 avatar AL",
+        "paper index.html #Avatars, status, counts #8 avatar SK",
+        "paper index.html #Avatars, status, counts #9 avatar TP",
+        "paper index.html #Items, presence, counts #1 avatar AL"
+      ]
+    },
+    {
+      "name": "avatar and count sizes, initials and presence squares are unchanged from base",
+      "ok": true,
+      "detail": []
+    }
+  ],
+  "wrongBefore": [
+    "ink index.html #Avatars, status, counts #6 avatar JD",
+    "ink index.html #Avatars, status, counts #7 avatar AL",
+    "ink index.html #Avatars, status, counts #8 avatar SK",
+    "ink index.html #Avatars, status, counts #9 avatar TP",
+    "ink index.html #Items, presence, counts #1 avatar AL",
+    "graphite index.html #Avatars, status, counts #6 avatar JD",
+    "graphite index.html #Avatars, status, counts #7 avatar AL",
+    "graphite index.html #Avatars, status, counts #8 avatar SK",
+    "graphite index.html #Avatars, status, counts #9 avatar TP",
+    "graphite index.html #Items, presence, counts #1 avatar AL",
+    "paper index.html #Avatars, status, counts #6 avatar JD",
+    "paper index.html #Avatars, status, counts #7 avatar AL",
+    "paper index.html #Avatars, status, counts #8 avatar SK",
+    "paper index.html #Avatars, status, counts #9 avatar TP",
+    "paper index.html #Items, presence, counts #1 avatar AL"
+  ]
+}

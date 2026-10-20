@@ -86,6 +86,7 @@ by `title` or `classes`) rather than inventing markup.
 | Overlays | `<dialog class="sd-dialog">` + `data-sd-open`; `popover` + `.sd-popover`; `data-sd-tip`; `toast()` |
 | Lists and rows | `sd-item`, `sd-row`, `sd-table`, `sd-kv` |
 | Status | `sd-badge`, `sd-status`, `sd-dot`, `sd-count`, `sd-progress`, `sd-checks` |
+| People | `sd-avatar` (`-sm` `-md` `-lg` `-xl`, or `--sd-avatar-size`) with `data-status`; on your own panel set `--sd-ring` to its background so the presence ring matches |
 | Chat and feeds | `sd-message`, `sd-composer`, `sd-reactions`, `sd-banner`, `sd-file` |
 | Data | `sd-stat`, `sd-stat-box`, `createChart(canvas, { type })`, `sd-plot`, `sd-heatmap`, `sd-uptime`, `sd-meter` |
 | Empty | `sd-empty` (gets a center ornament automatically) |

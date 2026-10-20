@@ -317,9 +317,36 @@
    "attributes": [
     "data-sd-fps"
    ],
-   "usage": "sd-avatar + -sm|lg|xl · sd-avatar-stack · sd-status · sd-count · sd-fps + data-sd-fps",
+   "usage": "sd-avatar + -sm|md|lg|xl · sd-avatar-stack · sd-status · sd-count · sd-fps + data-sd-fps",
    "js": "JS: init() from signal-design/js wires data-sd-fps.",
    "html": "<div class=\"sd-cluster\" style=\"--gap: 16px\">\n  <span class=\"sd-avatar sd-avatar-sm\" data-tone=\"success\">JD</span>\n  <span class=\"sd-avatar\" data-tone=\"extra\">AL</span>\n  <span class=\"sd-avatar sd-avatar-lg\" data-tone=\"warning\">SK</span>\n  <span class=\"sd-avatar sd-avatar-xl\" data-tone=\"accent\">TP</span>\n  <span class=\"sd-avatar\">??</span>\n  <span class=\"sd-avatar-stack\">\n    <span class=\"sd-avatar\" data-tone=\"success\">JD</span><span class=\"sd-avatar\" data-tone=\"extra\">AL</span><span class=\"sd-avatar\" data-tone=\"warning\">SK</span><span class=\"sd-avatar\" data-tone=\"accent\">TP</span>\n  </span>\n  <span class=\"sd-status\" data-tone=\"success\">live</span>\n  <span class=\"sd-status\" data-tone=\"pending\">monitoring</span>\n  <span class=\"sd-status\">offline</span>\n  <span>Saved <span class=\"sd-count\">3</span></span>\n  <span>High risk <span class=\"sd-count\" data-tone=\"danger\">6</span></span>\n  <span class=\"sd-fps\" data-sd-fps=\"\"><b>--</b> fps</span>\n</div>"
+  },
+  {
+   "id": "components-avatar-sizes-and-presence",
+   "section": "Components",
+   "title": "Avatar sizes and presence",
+   "classes": [
+    "sd-avatar",
+    "sd-avatar-lg",
+    "sd-avatar-md",
+    "sd-avatar-sm",
+    "sd-avatar-stack",
+    "sd-avatar-xl",
+    "sd-badge-count",
+    "sd-btn",
+    "sd-btn-icon",
+    "sd-card",
+    "sd-cluster",
+    "sd-item",
+    "sd-item-body",
+    "sd-item-sub",
+    "sd-item-title",
+    "sd-meta"
+   ],
+   "attributes": [],
+   "usage": "Steps at 22, 24, 28, 34 and 48px, or any size with --sd-avatar-size; the initials and the presence square grow with it. The square's ring, a corner count's ring and a stack's gaps take the color of what they sit on: every Signal surface sets --sd-ring, and outside them it is the page canvas. On a panel of your own, set --sd-ring to its background. --sd-avatar-size · sd-avatar-md · data-status=\"online|away|afk|busy|offline\" · --sd-ring",
+   "js": "No JS needed: the HTML works with the CSS alone.",
+   "html": "<div class=\"sd-cluster\" style=\"--gap: 24px; align-items: end\">\n  <span class=\"grid justify-items-center gap-2\"><span class=\"sd-avatar sd-avatar-sm\" data-tone=\"success\" data-status=\"online\">JD</span><span class=\"sd-meta\">sm 22</span></span>\n  <span class=\"grid justify-items-center gap-2\"><span class=\"sd-avatar\" data-tone=\"extra\" data-status=\"online\">AL</span><span class=\"sd-meta\">24</span></span>\n  <span class=\"grid justify-items-center gap-2\"><span class=\"sd-avatar sd-avatar-md\" data-tone=\"warning\" data-status=\"afk\">SK</span><span class=\"sd-meta\">md 28</span></span>\n  <span class=\"grid justify-items-center gap-2\"><span class=\"sd-avatar sd-avatar-lg\" data-tone=\"accent\" data-status=\"busy\">TP</span><span class=\"sd-meta\">lg 34</span></span>\n  <span class=\"grid justify-items-center gap-2\"><span class=\"sd-avatar sd-avatar-xl\" data-tone=\"success\" data-status=\"offline\">JD</span><span class=\"sd-meta\">xl 48</span></span>\n  <span class=\"grid justify-items-center gap-2\"><span class=\"sd-avatar\" data-tone=\"extra\" data-status=\"online\" style=\"--sd-avatar-size: 7rem\">AL</span><span class=\"sd-meta\">--sd-avatar-size: 7rem</span></span>\n</div>\n\n<div class=\"grid gap-4 sm:grid-cols-3 items-start\">\n  <div class=\"sd-card p-4 grid gap-3\"><span class=\"sd-meta\">On canvas (sd-card)</span><div class=\"sd-cluster\" style=\"--gap: 16px\"><span class=\"sd-avatar sd-avatar-md\" data-tone=\"extra\" data-status=\"online\">AL</span><span class=\"sd-avatar sd-avatar-md\" data-tone=\"success\" data-status=\"offline\">JD</span><span class=\"relative inline-grid\"><button class=\"sd-btn sd-btn-icon\" aria-label=\"Inbox, 3 unread\">✉</button><span class=\"sd-badge-count\" data-corner=\"\">3</span></span><span class=\"sd-avatar-stack\"><span class=\"sd-avatar\" data-tone=\"success\">JD</span><span class=\"sd-avatar\" data-tone=\"extra\">AL</span><span class=\"sd-avatar\" data-tone=\"warning\">SK</span></span></div></div>\n  <div class=\"p-4 grid gap-3 border border-line\"><span class=\"sd-meta\">On the content surface</span><div class=\"sd-cluster\" style=\"--gap: 16px\"><span class=\"sd-avatar sd-avatar-md\" data-tone=\"extra\" data-status=\"online\">AL</span><span class=\"sd-avatar sd-avatar-md\" data-tone=\"success\" data-status=\"offline\">JD</span><span class=\"relative inline-grid\"><button class=\"sd-btn sd-btn-icon\" aria-label=\"Inbox, 3 unread\">✉</button><span class=\"sd-badge-count\" data-corner=\"\">3</span></span><span class=\"sd-avatar-stack\"><span class=\"sd-avatar\" data-tone=\"success\">JD</span><span class=\"sd-avatar\" data-tone=\"extra\">AL</span><span class=\"sd-avatar\" data-tone=\"warning\">SK</span></span></div></div>\n  <div class=\"grid gap-3\"><span class=\"sd-meta\">On a current row (raised)</span><a class=\"sd-item\" href=\"#components\" aria-current=\"true\"><span class=\"sd-avatar sd-avatar-md\" data-tone=\"warning\" data-status=\"away\">SK</span><span class=\"sd-item-body\"><span class=\"sd-item-title\">Sam</span><span class=\"sd-item-sub\">Away</span></span></a></div>\n</div>"
   },
   {
    "id": "components-fields",

@@ -554,7 +554,26 @@
         <span>High risk <span class="sd-count" data-tone="danger">6</span></span>
         <span class="sd-fps" data-sd-fps><b>--</b> fps</span>
       </div>
-      <p class="demo-usage"><code>sd-avatar</code> + <code>-sm|lg|xl</code> · <code>sd-avatar-stack</code> · <code>sd-status</code> · <code>sd-count</code> · <code>sd-fps</code> + <code>data-sd-fps</code></p>
+      <p class="demo-usage"><code>sd-avatar</code> + <code>-sm|md|lg|xl</code> · <code>sd-avatar-stack</code> · <code>sd-status</code> · <code>sd-count</code> · <code>sd-fps</code> + <code>data-sd-fps</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Avatar sizes and presence</h3>
+      <p class="demo-usage">Steps at 22, 24, 28, 34 and 48px, or any size with <code>--sd-avatar-size</code>; the initials and the presence square grow with it. The square's ring, a corner count's ring and a stack's gaps take the color of what they sit on: every Signal surface sets <code>--sd-ring</code>, and outside them it is the page canvas. On a panel of your own, set <code>--sd-ring</code> to its background.</p>
+      <div class="sd-cluster" style="--gap: 24px; align-items: end">
+        <span class="grid justify-items-center gap-2"><span class="sd-avatar sd-avatar-sm" data-tone="success" data-status="online">JD</span><span class="sd-meta">sm 22</span></span>
+        <span class="grid justify-items-center gap-2"><span class="sd-avatar" data-tone="extra" data-status="online">AL</span><span class="sd-meta">24</span></span>
+        <span class="grid justify-items-center gap-2"><span class="sd-avatar sd-avatar-md" data-tone="warning" data-status="afk">SK</span><span class="sd-meta">md 28</span></span>
+        <span class="grid justify-items-center gap-2"><span class="sd-avatar sd-avatar-lg" data-tone="accent" data-status="busy">TP</span><span class="sd-meta">lg 34</span></span>
+        <span class="grid justify-items-center gap-2"><span class="sd-avatar sd-avatar-xl" data-tone="success" data-status="offline">JD</span><span class="sd-meta">xl 48</span></span>
+        <span class="grid justify-items-center gap-2"><span class="sd-avatar" data-tone="extra" data-status="online" style="--sd-avatar-size: 7rem">AL</span><span class="sd-meta">--sd-avatar-size: 7rem</span></span>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-3 items-start">
+        <div class="sd-card p-4 grid gap-3"><span class="sd-meta">On canvas (sd-card)</span><div class="sd-cluster" style="--gap: 16px"><span class="sd-avatar sd-avatar-md" data-tone="extra" data-status="online">AL</span><span class="sd-avatar sd-avatar-md" data-tone="success" data-status="offline">JD</span><span class="relative inline-grid"><button class="sd-btn sd-btn-icon" aria-label="Inbox, 3 unread">✉</button><span class="sd-badge-count" data-corner>3</span></span><span class="sd-avatar-stack"><span class="sd-avatar" data-tone="success">JD</span><span class="sd-avatar" data-tone="extra">AL</span><span class="sd-avatar" data-tone="warning">SK</span></span></div></div>
+        <div class="p-4 grid gap-3 border border-line"><span class="sd-meta">On the content surface</span><div class="sd-cluster" style="--gap: 16px"><span class="sd-avatar sd-avatar-md" data-tone="extra" data-status="online">AL</span><span class="sd-avatar sd-avatar-md" data-tone="success" data-status="offline">JD</span><span class="relative inline-grid"><button class="sd-btn sd-btn-icon" aria-label="Inbox, 3 unread">✉</button><span class="sd-badge-count" data-corner>3</span></span><span class="sd-avatar-stack"><span class="sd-avatar" data-tone="success">JD</span><span class="sd-avatar" data-tone="extra">AL</span><span class="sd-avatar" data-tone="warning">SK</span></span></div></div>
+        <div class="grid gap-3"><span class="sd-meta">On a current row (raised)</span><a class="sd-item" href="#components" aria-current="true"><span class="sd-avatar sd-avatar-md" data-tone="warning" data-status="away">SK</span><span class="sd-item-body"><span class="sd-item-title">Sam</span><span class="sd-item-sub">Away</span></span></a></div>
+      </div>
+      <p class="demo-usage"><code>--sd-avatar-size</code> · <code>sd-avatar-md</code> · <code>data-status="online|away|afk|busy|offline"</code> · <code>--sd-ring</code></p>
     </div>
 
     <div class="demo-block">
