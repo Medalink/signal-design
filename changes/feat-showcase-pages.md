@@ -7,8 +7,8 @@
 - Showcase: every page, library and example, has a bar at the top. It links back
   to the library, says where you are (a grey Mock badge on example apps), lists
   every page in a menu, and holds the theme, the width switch and a settings
-  popover for chart colors, scrollbars and digital rain. It is compact on
-  phones. The scrollbars choice is now remembered like the theme.
+  popover for the text font, chart colors, scrollbars and digital rain. It is
+  compact on phones. The scrollbars choice is now remembered like the theme.
 - Behavior checks in `scripts/checks/` declare the page they run on with
   `export const page = "<id>"`. See `CONTRIBUTING.md`.
 

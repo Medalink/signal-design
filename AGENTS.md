@@ -56,8 +56,10 @@ init(); // once, after the DOM exists; every listener is delegated, so later mar
 4. **Tokens, not values.** Colors come from `--sd-*` variables or the Tailwind
    utilities built on them (`bg-canvas`, `bg-surface`, `text-fg-muted`, `border-line`).
    Never hard-code a hex value; themes would break.
-5. **Two faces.** SF Pro (the system UI font; Segoe UI on Windows) in regular and medium for text,
-   Source Code Pro (bundled) for code. No other families or weights.
+5. **Two faces.** One text face in regular and medium, Source Code Pro (bundled) for code.
+   The text face is SF Pro (the system UI font; Segoe UI on Windows) unless the
+   font picker swaps it (see Fonts). Set families through `font-sans` / `font-mono`
+   or `var(--sd-font-sans)` / `var(--sd-font-mono)`, never by name. No other weights.
 6. **Motion on state change only.** 120–200ms transitions. Nothing loops for decoration.
 7. **Style state, not classes.** The JS writes ARIA and `data-*` (`aria-pressed`,
    `aria-expanded`, `aria-current`, `aria-selected`, `data-open`, `data-tone`);
@@ -76,6 +78,15 @@ init(); // once, after the DOM exists; every listener is delegated, so later mar
 asks for light). `setTheme("paper")` switches and remembers; Shift+T cycles.
 Any element can carry `data-theme` to theme a subtree. Charts add
 `data-chart-theme="mono"` (default, greys) or `"spectrum"` (full palette).
+
+## Fonts
+
+`<html data-font="system">` (default, SF Pro) · `leon-sans` (Leon Sans, bundled) ·
+`source-code-pro` (Source Code Pro as the text face). `setFont("leon-sans")`
+loads the face, then switches and remembers it; `<button data-sd-font="leon-sans">`
+does the same on click. Any element can carry `data-font`. Only the text face
+changes: code, charts and the rain stay in `--sd-font-mono`. A framework that
+renders the choice sets `data-font` itself.
 
 ## Building pages
 

@@ -214,7 +214,7 @@ try {
       return {
         themes: out,
         typography: {
-          family: { $type: "fontFamily", $value: getComputedStyle(document.body).fontFamily, $description: "SF Pro (system UI font) for text, regular 400 and medium 500; Source Code Pro for code." },
+          family: { $type: "fontFamily", $value: getComputedStyle(document.body).fontFamily, $description: "The default text face (--sd-font-sans: SF Pro, the system UI font), regular 400 and medium 500; data-font swaps it for Leon Sans or Source Code Pro. Code uses --sd-font-mono (Source Code Pro)." },
           size: sizes,
           tracking,
         },

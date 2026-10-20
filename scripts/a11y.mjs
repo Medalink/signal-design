@@ -21,37 +21,50 @@ const only = (i >= 0 ? args[i + 1] : Object.keys(PAGES).join(",")).split(",");
 const themes = ["ink", "graphite", "paper"];
 const widths = [1280, 390];
 
-const browser = await chromium.launch();
-const found = new Map();
-for (const key of only) {
-  for (const theme of themes) {
-    for (const width of widths) {
-      const page = await browser.newPage({ viewport: { width, height: 900 } });
-      await page.addInitScript((t) => localStorage.setItem("sd-theme", t), theme);
-      await page.goto(base + PAGES[key]);
-      await page.waitForTimeout(1200);
-      // Render every section: content-visibility skips off-screen ones, which
-      // makes axe think their controls are covered.
-      await page.addStyleTag({ content: "*{content-visibility:visible!important}" });
-      await page.waitForTimeout(150);
-      await page.addScriptTag({ content: axeSource });
-      const result = await page.evaluate(async () =>
-        window.axe.run(document, {
-          runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "best-practice"] },
-          resultTypes: ["violations"],
-        }),
-      );
-      for (const v of result.violations) {
-        for (const n of v.nodes) {
-          const k = `${key} · ${v.id} · ${n.target.join(" ")}`;
-          if (!found.has(k)) found.set(k, { page: key, rule: v.id, impact: v.impact, help: v.help, target: n.target.join(" "), html: n.html.slice(0, 140), where: [], summary: n.failureSummary?.split("\n").slice(1, 3).join(" ") });
-          found.get(k).where.push(`${theme}@${width}`);
-        }
-      }
-      await page.close();
+// Settled means loaded, fonts in, and every finite animation (entrances,
+// fades) finished, so axe never measures contrast mid-fade.
+async function settle(page) {
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    const finite = document.getAnimations().filter((a) => a.effect?.getComputedTiming().endTime !== Infinity);
+    await Promise.race([Promise.all(finite.map((a) => a.finished.catch(() => {}))), new Promise((resolve) => setTimeout(resolve, 3000))]);
+  });
+}
+
+async function audit(browser, key, theme, width) {
+  const page = await browser.newPage({ viewport: { width, height: 900 } });
+  await page.addInitScript((t) => localStorage.setItem("sd-theme", t), theme);
+  await page.goto(base + PAGES[key], { waitUntil: "load" });
+  await settle(page);
+  // Render every section: content-visibility skips off-screen ones, which
+  // makes axe think their controls are covered.
+  await page.addStyleTag({ content: "*{content-visibility:visible!important}" });
+  await settle(page);
+  await page.addScriptTag({ content: axeSource });
+  const result = await page.evaluate(async () =>
+    window.axe.run(document, {
+      runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "best-practice"] },
+      resultTypes: ["violations"],
+    }),
+  );
+  for (const v of result.violations) {
+    for (const n of v.nodes) {
+      const k = `${key} · ${v.id} · ${n.target.join(" ")}`;
+      if (!found.has(k)) found.set(k, { page: key, rule: v.id, impact: v.impact, help: v.help, target: n.target.join(" "), html: n.html.slice(0, 140), where: [], summary: n.failureSummary?.split("\n").slice(1, 3).join(" ") });
+      found.get(k).where.push(`${theme}@${width}`);
     }
   }
+  await page.close();
 }
+
+const browser = await chromium.launch();
+const found = new Map();
+const queue = only.flatMap((key) => themes.flatMap((theme) => widths.map((width) => [key, theme, width])));
+// Pages are independent and take no input, so a few run at once.
+await Promise.all(Array.from({ length: 4 }, async () => {
+  while (queue.length) await audit(browser, ...queue.shift());
+}));
 await browser.close();
 
 const list = [...found.values()];

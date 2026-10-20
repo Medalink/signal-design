@@ -3,13 +3,13 @@
  * chart factory keeps: { theme, options, hoverX, selection, ceiling }.
  * Everything is square: no arcs, no blur, no gradients.
  */
-import { FONT, rgba } from "./theme.js";
+import { rgba } from "./theme.js";
 import { formatValue } from "./format.js";
 import { formatTime } from "./time.js";
 
 const reduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 const color = (chart, name, alpha) => rgba(chart.$sd.theme.colors[name], alpha);
-const font = (size, weight = 400) => `${weight} ${size}px ${FONT}`;
+const font = (chart, size, weight = 400) => `${weight} ${size}px ${chart.$sd.theme.font}`;
 
 /** Newest drawn point of a dataset: { x, y, value } in pixels. */
 export function newestPoint(chart, index) {
@@ -74,7 +74,7 @@ export const panelLabels = {
     if (compact || !labels) return;
     const { ctx, chartArea: a, legend } = chart;
     ctx.save();
-    ctx.font = font(11);
+    ctx.font = font(chart, 11);
     ctx.textBaseline = "middle";
     // The main panel's title sits above the plot, on the legend row (the
     // keys align right) or in the top padding, so it never covers data.
@@ -134,7 +134,7 @@ export const ranges = {
         let row = 0;
         while (rows.some((o) => o.row === row && o.x1 > x0 && o.x0 < x1)) row++;
         rows.push({ row, x0, x1 });
-        ctx.font = font(11, 600);
+        ctx.font = font(chart, 11, 600);
         ctx.textBaseline = "top";
         ctx.fillStyle = color(chart, RANGE_STROKE[kind] || "label");
         ctx.fillText(String(r.label).slice(0, 32), x0 + 6, top + 4 + row * 15);
@@ -182,7 +182,7 @@ export const forecast = {
     ctx.lineTo(Math.round(left) + 0.5, a.bottom);
     ctx.stroke();
     ctx.setLineDash([]);
-    ctx.font = font(10);
+    ctx.font = font(chart, 10);
     ctx.textBaseline = "top";
     ctx.fillStyle = color(chart, "forecast", 0.8);
     ctx.fillText("FORECAST", left + 6, a.top + 4);
@@ -272,7 +272,7 @@ export const valueTags = {
     tags.sort((m, n) => m.y - n.y);
     for (let k = 1; k < tags.length; k++) tags[k].y = Math.max(tags[k].y, tags[k - 1].y + 18);
     ctx.save();
-    ctx.font = font(10, 600);
+    ctx.font = font(chart, 10, 600);
     ctx.textBaseline = "middle";
     for (const t of tags) {
       const w = ctx.measureText(t.text).width + 10;
@@ -312,7 +312,7 @@ export const offScaleCaps = {
     }
     if (!caps.length) return;
     ctx.save();
-    ctx.font = font(11, 600);
+    ctx.font = font(chart, 11, 600);
     ctx.textBaseline = "top";
     caps.sort((m, n) => m.x - n.x);
     let lastRight = -Infinity;

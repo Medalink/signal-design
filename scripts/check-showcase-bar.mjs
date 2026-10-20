@@ -46,6 +46,7 @@ export async function checkShowcaseBar(browser, base, name) {
   expect(!covered.length, `closed panels must not cover bar controls: ${covered.join(", ")}`);
 
   await page.click('.vp-bar [popovertarget="vp-pages"]');
+  await page.waitForFunction(() => document.getElementById("vp-pages").matches(":popover-open"), null, { timeout: 2000 });
   const menu = await page.evaluate(() => ({
     open: document.getElementById("vp-pages").matches(":popover-open"),
     items: [...document.querySelectorAll('#vp-pages [role="menuitem"]')].map((a) => a.getAttribute("href")),
@@ -59,6 +60,7 @@ export async function checkShowcaseBar(browser, base, name) {
   await page.click('.vp-bar [data-sd-theme="ink"]');
 
   await page.click('.vp-bar [popovertarget="vp-settings"]');
+  await page.waitForFunction(() => document.getElementById("vp-settings").matches(":popover-open"), null, { timeout: 2000 });
   const sets = await page.evaluate(() => ({
     open: document.getElementById("vp-settings").matches(":popover-open"),
     charts: !!document.getElementById("vp-chart-colors"),
@@ -77,6 +79,7 @@ export async function checkShowcaseBar(browser, base, name) {
   page = await open("lib-charts.html", 1280);
   expect((await page.evaluate(() => document.documentElement.dataset.sdScrollbars)) === "always", "the scrollbars choice follows to the next page");
   await page.click('.vp-bar [popovertarget="vp-settings"]');
+  await page.waitForFunction(() => document.getElementById("vp-settings").matches(":popover-open"), null, { timeout: 2000 });
   await page.click('#vp-chart-colors [data-value="spectrum"]');
   await page.reload({ waitUntil: "networkidle" });
   expect((await page.evaluate(() => [document.documentElement.dataset.chartTheme, localStorage.getItem("sd-chart-theme")].join())) === "spectrum,spectrum", "chart colors apply and are remembered");
@@ -85,6 +88,7 @@ export async function checkShowcaseBar(browser, base, name) {
   page = await open("charts.html", 1280);
   expect((await page.evaluate(() => document.querySelector("#chart-theme [aria-pressed=true]")?.dataset.value)) === "spectrum", "the charts example follows the remembered chart colors");
   await page.click('.vp-bar [popovertarget="vp-settings"]');
+  await page.waitForFunction(() => document.getElementById("vp-settings").matches(":popover-open"), null, { timeout: 2000 });
   await page.click('#vp-chart-colors [data-value="mono"]');
   expect((await page.evaluate(() => document.querySelector("#chart-theme [aria-pressed=true]")?.dataset.value)) === "mono", "the bar's chart colors reach the example's own switch");
   await page.close();

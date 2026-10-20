@@ -14,8 +14,9 @@ export default async function checkProgressUnknown(page, where, fail) {
     const unknown = { laidOut: bar.clientWidth > 100, full: Math.abs(parseFloat(fill().width) - bar.clientWidth) <= 1, dashed: fill().borderTopStyle === "dashed", pending: fill().borderTopColor === pending, still: fill().animationName === "none" };
     bar.removeAttribute("data-state");
     bar.style.setProperty("--value", "30");
-    await new Promise((r) => setTimeout(r, 400));
-    const known = { value: Math.abs(parseFloat(fill().width) - bar.clientWidth * 0.3) <= 1, plain: fill().borderTopWidth === "0px" };
+    const atValue = () => Math.abs(parseFloat(fill().width) - bar.clientWidth * 0.3) <= 1;
+    for (const end = performance.now() + 2000; !atValue() && performance.now() < end; ) await new Promise((r) => setTimeout(r, 20));
+    const known = { value: atValue(), plain: fill().borderTopWidth === "0px" };
     bar.dataset.state = "indeterminate";
     bar.style.removeProperty("--value");
     return { ...unknown, ...known };

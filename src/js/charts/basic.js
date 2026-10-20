@@ -15,7 +15,7 @@
 import { Chart } from "chart.js";
 import { formatValue } from "./format.js";
 import { formatTime } from "./time.js";
-import { FONT, readTheme, rgba } from "./theme.js";
+import { readTheme, rgba } from "./theme.js";
 import { pointer, crosshair, cursorPositioner } from "./plugins.js";
 
 const DASHES = [[], [6, 3], [2, 3], [8, 3, 2, 3], [1, 2], [10, 4]];
@@ -28,7 +28,7 @@ const barLabels = {
     if (!st?.barLabels) return;
     const { ctx } = chart;
     ctx.save();
-    ctx.font = `400 12px ${FONT}`;
+    ctx.font = `400 12px ${st.theme.font}`;
     ctx.textBaseline = "middle";
     ctx.fillStyle = rgba(st.theme.colors.label);
     const horizontal = chart.options.indexAxis === "y";
@@ -55,7 +55,7 @@ const markers = {
     if (!st?.markers?.length) return;
     const { ctx, chartArea: a, scales } = chart;
     ctx.save();
-    ctx.font = `600 11px ${FONT}`;
+    ctx.font = `600 11px ${st.theme.font}`;
     ctx.textBaseline = "top";
     for (const m of st.markers) {
       const c = st.theme.colors[m.tone ?? "accent"] ?? st.theme.colors.accent;
@@ -137,7 +137,7 @@ export function createBasicChart(canvas, opts) {
   function scales() {
     const t = state.theme.colors;
     const grid = { color: rgba(t.grid), drawTicks: false };
-    const ticks = { color: rgba(t.tick), font: { family: FONT, size: 12 }, padding: 8 };
+    const ticks = { color: rgba(t.tick), font: { family: state.theme.font, size: 12 }, padding: 8 };
     const valueTicks = { ...ticks, maxTicksLimit: 6, callback: (v) => formatValue(v, unit) };
     const stacked = !!opts.stacked;
     const horizontal = type === "hbar";
@@ -170,8 +170,8 @@ export function createBasicChart(canvas, opts) {
       cornerRadius: 0,
       caretSize: 0,
       padding: { top: 10, right: 12, bottom: 10, left: 12 },
-      titleFont: { family: FONT, size: 13, weight: 600 },
-      bodyFont: { family: FONT, size: 13 },
+      titleFont: { family: state.theme.font, size: 13, weight: 600 },
+      bodyFont: { family: state.theme.font, size: 13 },
       titleMarginBottom: 6,
       boxWidth: 10,
       boxHeight: 10,
@@ -193,7 +193,7 @@ export function createBasicChart(canvas, opts) {
         labelColor: (item) => ({ borderColor: rgba(item.dataset._color), backgroundColor: rgba(item.dataset._color), borderWidth: 0, borderRadius: 0 }),
       },
       footerColor: rgba(t["tooltip-title"]),
-      footerFont: { family: FONT, size: 12, weight: 600 },
+      footerFont: { family: state.theme.font, size: 12, weight: 600 },
     };
   }
 
@@ -205,7 +205,7 @@ export function createBasicChart(canvas, opts) {
       align: "end",
       labels: {
         color: rgba(t.tick),
-        font: { family: FONT, size: 12 },
+        font: { family: state.theme.font, size: 12 },
         boxWidth: type === "line" || type === "step" ? 14 : 10,
         boxHeight: type === "line" || type === "step" ? 2 : 10,
         padding: 14,
@@ -249,7 +249,7 @@ export function createBasicChart(canvas, opts) {
   document.addEventListener("sd:theme", refresh);
   const scheme = matchMedia("(prefers-color-scheme: light)");
   scheme.addEventListener("change", refresh);
-  document.fonts?.load?.(`13px ${FONT}`).then(() => chart.update("none"), () => {});
+  document.fonts?.load?.(`13px ${state.theme.font}`).then(() => chart.update("none"), () => {});
 
   const api = {
     chart,

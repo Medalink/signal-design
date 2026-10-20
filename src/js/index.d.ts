@@ -3,12 +3,15 @@
 export type Theme = "ink" | "graphite" | "paper" | "auto";
 /** "light" is the older name for "paper" and is still accepted. */
 export type ThemeName = Theme | "light";
+export type Font = "system" | "leon-sans" | "source-code-pro";
 export type Tone = "accent" | "success" | "danger" | "warning" | "pending" | "extra" | "neutral";
 
 /** Wire up every behavior (delegated, so later markup works too). Call once. */
 export function init(options?: {
   /** Restore the remembered theme. Default true. */
   theme?: boolean;
+  /** Restore the remembered text font. Default true. */
+  font?: boolean;
   /** "auto" hides scrollbars 2s after scrolling stops. Default "auto". */
   scrollbars?: "auto" | "always";
   /** Key combo that steps the theme; false turns it off. Default "shift+t". */
@@ -123,6 +126,13 @@ export function restoreTheme(fallback?: ThemeName): void;
 /** Step to the next theme: ink → graphite → paper → auto. */
 export function cycleTheme(): void;
 
+/* Font */
+export const FONTS: readonly Font[];
+/** Resolves once the font applies (after its face loads, or a short wait). The last overlapping call wins. */
+export function setFont(name: Font, options?: { persist?: boolean }): Promise<void>;
+export function getFont(): Font;
+export function restoreFont(fallback?: Font): void;
+
 /* Positioning */
 export function place(
   floating: HTMLElement,
@@ -208,6 +218,7 @@ declare global {
 
     "sd:feed": CustomEvent<FeedState>;
     "sd:theme": CustomEvent<{ theme: Theme }>;
+    "sd:font": CustomEvent<{ font: Font }>;
     "sd:shell": CustomEvent<{ sidebar: "pinned" | "collapsed"; aside: "open" | "closed"; drawer: boolean; section?: string; width?: number }>;
     "sd:window": CustomEvent<{ action: "minimize" | "maximize" | "close" }>;
     "sd:reaction": CustomEvent<{ on: boolean }>;

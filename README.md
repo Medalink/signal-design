@@ -3,7 +3,7 @@
 A flat, square, mono design library for Tailwind CSS v4. It works in web apps,
 Tauri apps and plain HTML.
 
-- **Two faces, two weights.** SF Pro (system UI font, Segoe UI on Windows) in regular and medium for text; Source Code Pro (bundled, OFL) for code, charts and numbers.
+- **Two faces, two weights.** SF Pro (system UI font, Segoe UI on Windows) in regular and medium for text; Source Code Pro (bundled, OFL) for code, charts and numbers. A font picker swaps the text face for Leon Sans or Source Code Pro.
 - **Square corners everywhere**, avatars and checkboxes included.
 - **Flat surfaces.** No glass, glow, shadow or gradient.
 - **Color is for important things:** risk, status, success and focus. Everything else, navigation included, is black, white and grey.
@@ -146,6 +146,36 @@ Set `data-theme` on `<html>` or on any element to theme a subtree.
 | `auto` | `ink`, or `paper` when the OS asks for light |
 
 `setTheme("paper")` switches and remembers it; `<button data-sd-theme="paper">` does the same declaratively. `"light"` still works and means paper.
+
+## Fonts
+
+The text face is a role, like the colors. Set `data-font` on `<html>` or on any
+element to change it for a subtree. Code stays in Source Code Pro whatever the
+text face is.
+
+| Font | |
+|---|---|
+| `system` (default) | SF Pro, the system UI font (Segoe UI on Windows) |
+| `leon-sans` | Leon Sans, a geometric sans by Jongmin Kim (bundled, OFL, 115 KB, fetched only when picked) |
+| `source-code-pro` | Source Code Pro for all text, with a real medium weight |
+
+`setFont("leon-sans")` fetches the face, then switches and remembers it, so
+text changes once instead of flashing through the fallback. It gives up waiting
+after 400ms and switches anyway; the face fills in when it lands. When calls
+overlap, the last one wins. `<button data-sd-font="leon-sans">` does the same on
+click and keeps `aria-pressed` in sync.
+
+Never name a family in your own CSS. Use the tokens, which follow the picker:
+
+| Token | Tailwind | Is |
+|---|---|---|
+| `--sd-font-sans` | `font-sans` | The current text face |
+| `--sd-font-mono` | `font-mono` | Source Code Pro, for code, charts and numbers |
+| `--sd-font-system` | | The system UI stack every text face falls back to |
+
+To change a face for the whole app, override the `--sd-font-*` token, not
+Tailwind's `--font-sans` or `--font-mono`. Charts, the rain and the picker read
+the tokens, so they follow it.
 
 ## Color roles
 
@@ -605,6 +635,7 @@ const off = hotkeys({ j: next, k: prev, "shift+n": newest, "mod+k": search });
 | `data-sd-copy="#id"` | Copy text and confirm with a toast; if the browser cannot copy, explain that the text can be selected instead. |
 | `data-sd-toast="text"` | Show a toast on click. |
 | `data-sd-theme="name"` | Switch theme and remember it. |
+| `data-sd-font="name"` | Switch the text font (`system`, `leon-sans`, `source-code-pro`) and remember it. |
 | <kbd>Shift</kbd>+<kbd>T</kbd> | Steps the theme on every page (`init({ themeKey })` changes or turns it off; `cycleTheme()` does it from code). |
 | `data-sd-window="minimize\|maximize\|close"` | Window buttons (Tauri or `sd:window`). |
 
@@ -734,9 +765,10 @@ gets the same answer:
 | `data-state="indeterminate"` on `.sd-progress` | Unknown amount: a static dashed bar in the pending tone. |
 | `--level` on `.sd-level` | Live level, unitless `0`–`1`; pair it with `aria-valuenow`. |
 | `data-theme` (element or `<html>`) | Themes a subtree; `setTheme` also remembers it in `localStorage`. |
+| `data-font` (element or `<html>`) | Sets the text face of a subtree; `setFont` also remembers it in `localStorage`. |
 | `data-sd-scrolling` on `<html>` | Present while the page is scrolling; drives the auto-hiding scrollbars. |
 
-Events bubble on `document`: `sd:tab`, `sd:theme`, `sd:shell`, `sd:window`,
+Events bubble on `document`: `sd:tab`, `sd:theme`, `sd:font`, `sd:shell`, `sd:window`,
 `sd:contextmenu`, `sd:reaction` — with `detail` payloads typed in
 `src/js/index.d.ts`.
 
@@ -776,7 +808,7 @@ These classes work with CSS alone once you render their state:
 
 Safe to keep in framework apps, because they write only nodes and attributes
 Signal creates: `toast()`, `hotkeys()`, `data-sd-key`, `data-sd-copy`,
-`data-sd-toast`, `data-sd-theme`, and `data-sd-tip` (it adds a tooltip to
+`data-sd-toast`, `data-sd-theme`, `data-sd-font`, and `data-sd-tip` (it adds a tooltip to
 `<body>` and sets `aria-describedby` on the owner while it shows, so do not
 render `aria-describedby` there yourself). `mountFeed`, `mountCountdown` and
 `mountLivingTable` own the subtree you mount them on. Do not render state
@@ -1041,4 +1073,4 @@ request.
 
 ## License
 
-MIT. Source Code Pro is under the SIL Open Font License 1.1 (`src/fonts/OFL.txt`).
+MIT. Source Code Pro and Leon Sans are under the SIL Open Font License 1.1 (`src/fonts/OFL.txt`, `src/fonts/OFL-LeonSans.txt`).
