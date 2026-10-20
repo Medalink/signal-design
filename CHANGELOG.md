@@ -11,6 +11,10 @@
 - `sd-icon-text` and `sd-icon`: an icon and a word on one baseline, sized to
   the cap height. In Tailwind, `size-[1.5cap]` with `items-baseline` does the
   same.
+- Link card variants: `sd-link-card-hero` (image, GIF or video on top),
+  `sd-link-card-compact`, `sd-link-card-type` for documents, `data-blocked`
+  with `sd-link-card-note`, a static loading state on `aria-busy="true"`, and
+  `data-tone` on the edge.
 
 ## 1.1.1 (2026-10-19)
 

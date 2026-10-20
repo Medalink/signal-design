@@ -302,6 +302,81 @@
   a.sd-link-card:hover {
     border-inline-start-color: var(--sd-fg);
   }
+  /* Hero: the thumb (an og:image, a GIF or a <video>) spans the card above the text. */
+  .sd-link-card-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .sd-link-card-hero > .sd-link-card-thumb {
+    grid-column: 1;
+    grid-row: 1;
+    width: calc(100% + 28px);
+    max-width: none;
+    height: auto;
+    aspect-ratio: 1.91 / 1;
+    margin: -12px -14px 6px;
+    border: 0;
+    border-block-end: 1px solid var(--sd-line);
+  }
+  /* Compact: one tight block for a chat line; the description is dropped. */
+  .sd-link-card-compact {
+    align-items: center;
+    gap: 2px 12px;
+    padding: 8px 10px;
+  }
+  .sd-link-card-compact > .sd-link-card-thumb {
+    grid-row: 1 / span 2;
+    width: 40px;
+    height: 40px;
+  }
+  .sd-link-card-compact > .sd-link-card-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sd-link-card-compact > .sd-link-card-desc {
+    display: none;
+  }
+  /* Document: a page with its type label (PDF, DOCX) in place of the thumb. */
+  .sd-link-card-type {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    align-self: start;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 56px;
+    border: 1px solid var(--sd-line-strong);
+    border-block-start-width: 6px;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+  /* A tone or a block colors the edge; blocked cards are not links and fetch nothing. */
+  .sd-link-card:is([data-tone], [data-blocked]) {
+    border-inline-start-color: var(--tone);
+  }
+  .sd-link-card[data-blocked]:not([data-tone]) {
+    --tone: var(--sd-danger);
+  }
+  .sd-link-card[data-blocked] {
+    border-style: dashed;
+    border-inline-start-style: solid;
+    background: transparent;
+  }
+  .sd-link-card-note {
+    grid-column: 1;
+    color: var(--tone, var(--sd-fg-subtle));
+    font-size: var(--text-sm);
+  }
+  /* Loading: static placeholder bars in the text slots, no shimmer. */
+  .sd-link-card[aria-busy="true"] > :is(.sd-link-card-site, .sd-link-card-title, .sd-link-card-desc) {
+    height: 0.9em;
+    background: var(--sd-raised);
+  }
+  .sd-link-card[aria-busy="true"] > .sd-link-card-site { width: 6em; }
+  .sd-link-card[aria-busy="true"] > .sd-link-card-title { width: 80%; }
+  .sd-link-card[aria-busy="true"] > .sd-link-card-desc { width: 60%; }
 
   /*
    * Poll: a question with options. Each option is a button with a fill bar
