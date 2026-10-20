@@ -17,6 +17,7 @@ import { fileURLToPath } from "node:url";
 import { chromium, webkit } from "playwright";
 import { sweep as rulesSweep } from "../bin/rules.mjs";
 import { checkLivingTable, checkLivingTableTypes } from "./check-living-table.mjs";
+import { checkSidebarResize } from "./check-sidebar-resize.mjs";
 
 const base = (process.argv[2] || "http://localhost:5178/").replace(/\/?$/, "/");
 const apiUrl = `${base}@fs/${fileURLToPath(new URL("../src/js/index.js", import.meta.url)).replace(/\\/g, "/")}`;
@@ -866,6 +867,11 @@ for (const [name, engine] of Object.entries(engines)) {
   for (const error of living.errors) fail("living tables", error);
   console.log(`ok   ${name} living tables ${living.passed} behavior checks`);
   await livingPage.close();
+  const resizePage = await browser.newPage();
+  const resize = await checkSidebarResize(resizePage, base, apiUrl);
+  for (const error of resize.errors) fail(`${name} sidebar resize`, error);
+  if (!resize.errors.length) console.log(`ok   ${name} sidebar resize ${resize.passed} behavior checks`);
+  await resizePage.close();
   await browser.close();
 }
 
