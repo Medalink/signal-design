@@ -206,6 +206,21 @@
     outline: 1px solid var(--sd-fg);
     outline-offset: -1px;
   }
+  /* Wrapping: in a container too narrow for one row the items flow onto more
+     rows, each row filling the width. Each item owns its start and bottom
+     hairline, pulled over its neighbour so a row break never doubles one. */
+  .sd-seg-wrap {
+    flex-wrap: wrap;
+    border-block-end-width: 0;
+  }
+  .sd-seg-wrap > button,
+  .sd-seg-wrap > label {
+    flex: 1 1 auto;
+    margin-inline-start: -1px;
+    border-inline-start: 1px solid var(--sd-line-strong);
+    border-inline-end: 0;
+    border-block-end: 1px solid var(--sd-line-strong);
+  }
   .sd-seg-sm > button,
   .sd-seg-sm > label {
     min-height: 26px;
