@@ -9,7 +9,7 @@
  * corner, any blurred shadow (glow), any gradient, horizontal scroll at
  * phone width, and broken JS behaviors.
  */
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import ts from "typescript";
@@ -18,6 +18,14 @@ import { chromium, webkit } from "playwright";
 import { sweep as rulesSweep } from "../bin/rules.mjs";
 import { checkLivingTable, checkLivingTableTypes } from "./check-living-table.mjs";
 import { checkSidebarResize } from "./check-sidebar-resize.mjs";
+
+// One file per component in scripts/checks/, each exporting
+// `default async (page, where, fail)`; they run on the components page once
+// per engine, at 1280px in ink. A new check is a new file, not an edit here.
+const checksDir = new URL("./checks/", import.meta.url);
+const componentChecks = await Promise.all(
+  readdirSync(checksDir).filter((f) => f.endsWith(".mjs")).sort().map(async (f) => (await import(new URL(f, checksDir).href)).default),
+);
 
 const base = (process.argv[2] || "http://localhost:5178/").replace(/\/?$/, "/");
 const apiUrl = `${base}@fs/${fileURLToPath(new URL("../src/js/index.js", import.meta.url)).replace(/\\/g, "/")}`;
@@ -502,152 +510,6 @@ async function checkFeedAndHotkeys(page, name) {
   if (Object.values(motion).every(Boolean)) console.log(`ok   ${name} feed motion 3 behavioral assertions`);
 }
 
-/** Unknown progress is a static, pending-toned full bar that becomes a value bar. */
-async function checkProgressUnknown(page, where) {
-  const got = await page.evaluate(async () => {
-    const bar = document.querySelector('.sd-progress[data-state="indeterminate"]');
-    bar.scrollIntoView();
-    const fill = () => getComputedStyle(bar, "::before");
-    const probe = document.createElement("span");
-    probe.style.color = "var(--sd-pending)";
-    bar.append(probe);
-    const pending = getComputedStyle(probe).color;
-    probe.remove();
-    const unknown = { laidOut: bar.clientWidth > 100, full: Math.abs(parseFloat(fill().width) - bar.clientWidth) <= 1, dashed: fill().borderTopStyle === "dashed", pending: fill().borderTopColor === pending, still: fill().animationName === "none" };
-    bar.removeAttribute("data-state");
-    bar.style.setProperty("--value", "30");
-    await new Promise((r) => setTimeout(r, 400));
-    const known = { value: Math.abs(parseFloat(fill().width) - bar.clientWidth * 0.3) <= 1, plain: fill().borderTopWidth === "0px" };
-    bar.dataset.state = "indeterminate";
-    bar.style.removeProperty("--value");
-    return { ...unknown, ...known };
-  });
-  for (const [key, passed] of Object.entries(got)) if (!passed) fail(`${where} progress unknown`, key);
-}
-
-/** A level meter lights the bars at or under --level and holds still between values. */
-async function checkLevelMeter(page, where) {
-  const got = await page.evaluate(async () => {
-    const meter = document.getElementById("demo-level");
-    meter.scrollIntoView();
-    const bars = [...meter.children];
-    const lit = async (level) => {
-      meter.style.setProperty("--level", level);
-      // Let the 120ms fades finish: a fixed sleep raced them on a busy CI runner.
-      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-      await Promise.all(meter.getAnimations({ subtree: true }).map((a) => a.finished));
-      return bars.filter((b) => getComputedStyle(b, "::before").opacity === "1").length;
-    };
-    const counts = [await lit(0), await lit(0.55), await lit(1)];
-    const heights = bars.map((b) => b.getBoundingClientRect().height);
-    meter.style.setProperty("--level", "0.6");
-    return {
-      counts: counts.join(),
-      steps: counts.join() === "0,3,5",
-      rising: heights.every((h, i) => i === 0 || h > heights[i - 1]) && Math.abs(heights[4] - meter.clientHeight) <= 1,
-      still: bars.every((b) => getComputedStyle(b, "::before").animationName === "none"),
-    };
-  });
-  const { counts, ...checks } = got;
-  for (const [key, passed] of Object.entries(checks)) if (!passed) fail(`${where} level meter`, `${key} (lit ${counts}, want 0,3,5)`);
-}
-
-/** Option cards select by click and arrow keys, show focus, and keep one button pressed. */
-async function checkOptionCards(page, where) {
-  const ring = (selector) => page.evaluate((s) => getComputedStyle(document.querySelector(s), "::before").opacity, selector);
-  const card = (value) => `.sd-option:has(> input[value="${value}"])`;
-  await page.locator(card("paper")).scrollIntoViewIfNeeded();
-  await page.click(card("paper"));
-  await page.waitForTimeout(250);
-  const clicked = (await ring(card("paper"))) === "1" && (await ring(card("ink"))) === "0";
-  await page.focus('#components-fields button[type="submit"]');
-  for (let i = 0; i < 12 && !(await page.evaluate(() => document.activeElement?.name === "demo-option-theme")); i++) await page.keyboard.press("Tab");
-  const focus = await page.evaluate(() => getComputedStyle(document.activeElement.parentElement).outlineStyle === "solid");
-  await page.keyboard.press("ArrowLeft");
-  await page.waitForTimeout(250);
-  const keyed = (await page.evaluate((s) => document.querySelector(s).querySelector("input").checked, card("graphite"))) && (await ring(card("graphite"))) === "1";
-  const noise = page.locator('[aria-labelledby="demo-option-noise-label"]');
-  await noise.locator("button", { hasText: "Strong" }).click();
-  const pressed = await noise.evaluate((g) => [...g.children].filter((b) => b.getAttribute("aria-pressed") === "true").map((b) => b.textContent.trim()));
-  const disabled = await noise.evaluate((g) => getComputedStyle(g.querySelector(":disabled")).opacity === "0.5");
-  await page.click(card("ink"));
-  const got = { clicked, focus, keyed, pressed: pressed.length === 1 && pressed[0].startsWith("Strong"), disabled };
-  for (const [key, passed] of Object.entries(got)) if (!passed) fail(`${where} option cards`, key);
-}
-
-/** Link card variants: hero bleed, compact, document type, blocked tone and a static loading state. */
-async function checkLinkCards(page, where) {
-  const got = await page.evaluate(() => {
-    const block = document.getElementById("conversation-link-cards");
-    block.scrollIntoView();
-    const color = (expr, host) => {
-      const probe = document.createElement("span");
-      probe.style.color = expr;
-      host.append(probe);
-      const c = getComputedStyle(probe).color;
-      probe.remove();
-      return c;
-    };
-    const hero = block.querySelector(".sd-link-card-hero");
-    const heroThumb = hero.querySelector(".sd-link-card-thumb").getBoundingClientRect();
-    const heroBox = hero.getBoundingClientRect();
-    const compact = block.querySelector(".sd-link-card-compact");
-    const blocked = block.querySelector("[data-blocked]");
-    const busy = block.querySelector('[aria-busy="true"]');
-    const raised = color("var(--sd-raised)", busy);
-    return {
-      heroBleeds: Math.abs(heroThumb.left - (heroBox.left + 2)) <= 1 && Math.abs(heroThumb.right - (heroBox.right - 1)) <= 1 && heroThumb.top - heroBox.top <= 2,
-      heroAbove: heroThumb.bottom <= hero.querySelector(".sd-link-card-site").getBoundingClientRect().top,
-      compactShort: compact.getBoundingClientRect().height < 80 && compact.querySelector(".sd-link-card-thumb").getBoundingClientRect().width === 40,
-      docType: getComputedStyle(block.querySelector(".sd-link-card-type")).gridColumnStart === "2",
-      blockedEdge: getComputedStyle(blocked).borderInlineStartColor === color("var(--sd-danger)", blocked) && blocked.tagName === "DIV",
-      blockedNote: getComputedStyle(blocked.querySelector(".sd-link-card-note")).color === color("var(--sd-danger)", blocked),
-      busyBars: [...busy.querySelectorAll(".sd-link-card-site, .sd-link-card-title, .sd-link-card-desc")].every((s) => getComputedStyle(s).backgroundColor === raised && getComputedStyle(s).animationName === "none" && s.offsetHeight > 0),
-    };
-  });
-  for (const [key, passed] of Object.entries(got)) if (!passed) fail(`${where} link cards`, key);
-}
-
-/** Message edges: --edge for the author, state edges over it in a fixed order, own and selected fills. */
-async function checkMessageStates(page, where) {
-  const got = await page.evaluate(() => {
-    const block = document.getElementById("conversation-message-edges-and-selection");
-    block.scrollIntoView();
-    const resolve = (prop, value) => {
-      const probe = document.createElement("i");
-      probe.style.setProperty(prop, value);
-      block.append(probe);
-      const v = getComputedStyle(probe).getPropertyValue(prop);
-      probe.remove();
-      return v;
-    };
-    const color = (token) => resolve("color", `var(${token})`);
-    const make = (attrs) => {
-      const m = document.createElement("article");
-      m.className = "sd-message";
-      for (const [k, v] of Object.entries(attrs)) k.startsWith("--") ? m.style.setProperty(k, v) : m.setAttribute(k, v);
-      block.append(m);
-      const s = getComputedStyle(m);
-      const out = { edge: s.borderInlineStartColor, fill: s.backgroundColor };
-      m.remove();
-      return out;
-    };
-    const role = { "--edge": "var(--sd-extra)" };
-    return {
-      author: make(role).edge === color("--sd-extra"),
-      plain: make({}).edge === "rgba(0, 0, 0, 0)",
-      mention: make({ ...role, "data-mention": "" }).edge === color("--sd-fg"),
-      selected: make({ ...role, "data-mention": "", "data-selected": "" }).edge === color("--sd-accent"),
-      current: make({ ...role, "data-selected": "", "aria-current": "true" }).edge === color("--sd-fg-subtle"),
-      failed: make({ ...role, "data-selected": "", "aria-current": "true", "data-failed": "" }).edge === color("--sd-danger"),
-      currentFalse: make({ ...role, "aria-current": "false" }).edge === color("--sd-extra"),
-      own: make({ "data-own": "" }).fill === resolve("background-color", "color-mix(in srgb, var(--sd-raised) 50%, transparent)"),
-      selectedFill: make({ "data-own": "", "data-selected": "" }).fill === color("--sd-raised"),
-    };
-  });
-  for (const [key, passed] of Object.entries(got)) if (!passed) fail(`${where} message states`, key);
-}
-
 if (!checkFeedTypes()) process.exit(1);
 
 for (const [name, engine] of Object.entries(engines)) {
@@ -819,11 +681,8 @@ for (const [name, engine] of Object.entries(engines)) {
         if (!view.code.startsWith('<div class="sd-actions">') || view.preview !== "none") fail(where, `code view ${JSON.stringify({ start: view.code.slice(0, 30), preview: view.preview })}`);
         await buttons.locator(".demo-head [data-view='preview']").click();
 
-        await checkProgressUnknown(page, where);
-        await checkLevelMeter(page, where);
-        await checkOptionCards(page, where);
-        await checkLinkCards(page, where);
-        await checkMessageStates(page, where);
+
+        for (const check of componentChecks) await check(page, where, fail);
 
         // Behaviors
         await page.click('[data-sd-open="demo-dialog"]');
