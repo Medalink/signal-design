@@ -1654,7 +1654,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Conversation / Message in a narrow column
 
-sd-message-body shrinks with the message, whatever the head holds · sd-message-head > b and sd-reply > b truncate with an ellipsis (60% and 40% of the row at most)
+sd-message-body shrinks with the message, whatever the head holds · sd-message-head > b and sd-reply > b truncate with an ellipsis (60% and 40% of the row at most), also when the author is a button or a inside the b
 
 Classes: sd-avatar, sd-badge, sd-message, sd-message-body, sd-message-head, sd-message-text, sd-reply
 
@@ -1668,6 +1668,17 @@ No JS needed: the HTML works with the CSS alone.
       <header class="sd-message-head"><b>anunbrokenauthornamewithnospacestowrapatall</b><span class="sd-badge">Lead</span><time>12:30</time></header>
       <div class="sd-reply"><b>anotherunbrokenauthornamewithnospacesatall</b><span>The quoted text keeps the rest of the line.</span></div>
       <div class="sd-message-text">The body column is <code>minmax(0, 1fr)</code>, so a long name cannot widen the row past its container. Names in the head and in a reply cut off with an ellipsis.</div>
+    </div>
+  </article>
+</div>
+
+<div class="border border-line py-3" id="demo-narrow-button-author" style="width: 20rem; max-width: 100%; background: var(--sd-surface)">
+  <article class="sd-message">
+    <span class="sd-avatar" data-tone="extra">LN</span>
+    <div class="sd-message-body">
+      <header class="sd-message-head"><b><button type="button">anunbrokenauthornamewithnospacestowrapatall</button></b><span class="sd-badge">Lead</span><time>12:30</time></header>
+      <div class="sd-reply"><b><a href="#conversation">anotherunbrokenauthornamewithnospacesatall</a></b><span>A clickable author is cut off the same way.</span></div>
+      <div class="sd-message-text">The author is a button in the head and a link in the reply.</div>
     </div>
   </article>
 </div>
@@ -2183,7 +2194,7 @@ JS: init() from signal-design/js wires data-sd-tip.
 
 ## Effects / Sidebar head sizes
 
-sd-sidebar-head (18px title, cut off with an ellipsis when it does not fit) · sd-sidebar-head-sm (16px title)
+sd-sidebar-head (18px title, cut off with an ellipsis when it does not fit) · sd-sidebar-head-sm (16px title) · the title follows the head's size on a span or an h2
 
 Classes: sd-btn, sd-btn-ghost, sd-btn-icon, sd-btn-sm, sd-sidebar, sd-sidebar-head, sd-sidebar-head-sm, sd-sidebar-title
 
@@ -2197,6 +2208,14 @@ No JS needed: the HTML works with the CSS alone.
   </div>
   <div class="sd-sidebar border border-line" id="demo-head-sm" style="--shell-sidebar: 15rem">
     <div class="sd-sidebar-head sd-sidebar-head-sm"><svg><use href="#i-pages"></use></svg><span class="sd-sidebar-title">Direct Messages</span>
+      <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="New message">+</button></div>
+  </div>
+  <div class="sd-sidebar border border-line" id="demo-head-h2" style="--shell-sidebar: 15rem">
+    <div class="sd-sidebar-head"><h2 class="sd-sidebar-title">Direct Messages</h2>
+      <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="New message">+</button></div>
+  </div>
+  <div class="sd-sidebar border border-line" id="demo-head-h2-sm" style="--shell-sidebar: 15rem">
+    <div class="sd-sidebar-head sd-sidebar-head-sm"><h2 class="sd-sidebar-title">Direct Messages</h2>
       <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="New message">+</button></div>
   </div>
 </div>
