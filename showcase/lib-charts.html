@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+  <section class="demo-section" id="charts" aria-labelledby="charts-h">
+    <p class="sd-label">06</p>
+    <h2 id="charts-h" class="sd-title mt-2">Charts</h2>
+    <p class="sd-muted mt-2 max-w-[42rem]">Time series, generic chart types and square charts, all on the <code>--sd-chart-*</code> tokens. Switch <b>mono</b> and <b>spectrum</b> in the display panel (<kbd>]</kbd>). Live charts need Chart.js; square charts and <code>sd-plot</code> are CSS only.</p>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Live time series</h3>
+      <figure class="sd-chart" style="--h: 340px" id="demo-core">
+        <div class="sd-chart-bar">
+          <div><span class="sd-label sd-label-strong">Core</span><span class="sd-status" data-tone="success">live</span></div>
+          <div class="sd-seg sd-seg-sm sd-seg-inline" data-sd-chart-scale aria-label="Scale">
+            <button type="button" data-value="clamp">clamp</button><button type="button" data-value="p95">p95</button><button type="button" data-value="p90">p90</button><button type="button" data-value="linear">linear</button><button type="button" data-value="log">log</button>
+          </div>
+        </div>
+        <div class="sd-chart-plot"><canvas role="img" aria-label="Core bandwidth and round-trip time"></canvas></div>
+      </figure>
+      <script type="text/plain" data-demo-js>import { createChart } from "signal-design/charts";
+
+const core = createChart(document.querySelector("#demo-core canvas"), {
+  preset: "core",                      // bandwidth over latency, one time axis
+  bucketSeconds: 10, live: 2, envelope: 60,
+  series: [
+    { label: "Core ↓", data: down },   // [{ x: ms, y: Mbps }]
+    { label: "Core ↑", data: up },
+    { label: "Core → MDF RTT", unit: " ms", data: rtt, min: jitterLow, max: jitterHigh },
+  ],
+});
+core.append({ "Core ↓": [{ x: Date.now(), y: 4200 }] });</script>
+      <p class="demo-usage"><code>sd-chart</code> + <code>-bar|-plot</code> · <code>data-sd-chart-scale</code> · <code>createChart({ preset })</code> · <code>data-chart-theme="mono|spectrum"</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Chart types</h3>
+      <div class="grid gap-8 lg:grid-cols-2">
+        <figure class="sd-chart" style="--h: 220px" id="demo-line"><div class="sd-chart-bar"><span class="sd-label">type "line"</span></div><div class="sd-chart-plot"><canvas role="img" aria-label="Line chart"></canvas></div></figure>
+        <figure class="sd-chart" style="--h: 220px" id="demo-bar"><div class="sd-chart-bar"><span class="sd-label">type "bar" · stacked</span></div><div class="sd-chart-plot"><canvas role="img" aria-label="Stacked bar chart"></canvas></div></figure>
+        <figure class="sd-chart" style="--h: 220px" id="demo-hbar"><div class="sd-chart-bar"><span class="sd-label">type "hbar"</span></div><div class="sd-chart-plot"><canvas role="img" aria-label="Ranking"></canvas></div></figure>
+        <figure class="sd-chart" style="--h: 220px" id="demo-hist"><div class="sd-chart-bar"><span class="sd-label">type "histogram"</span></div><div class="sd-chart-plot"><canvas role="img" aria-label="Histogram"></canvas></div></figure>
+      </div>
+      <script type="text/plain" data-demo-js>import { createChart } from "signal-design/charts";
+
+createChart(canvas, {
+  type: "line",            // line | area | step | bar | hbar | histogram | scatter
+  labels: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+  unit: " ms",
+  series: [{ label: "p50", data: [82, 80, 91, 88, 79] }, { label: "p95", data: [190, 210, 260, 230, 200] }],
+  markers: [{ axis: "y", value: 250, label: "SLO", tone: "warning" }],
+});</script>
+      <p class="demo-usage"><code>createChart(canvas, { type })</code> · <code>stacked</code> · <code>markers</code> · series colors <code>--sd-chart-1…6</code> or a <code>tone</code>. More in <a href="./charts.html">the chart gallery</a>.</p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Square charts</h3>
+      <div class="grid gap-8 lg:grid-cols-2">
+        <div class="grid gap-3">
+          <p class="sd-label">sd-heatmap</p>
+          <div class="sd-heatmap" style="--cols: 24" id="demo-heat"></div>
+          <div class="sd-heatmap-key">less <i style="--v: 0"></i><i style="--v: .25"></i><i style="--v: .5"></i><i style="--v: .75"></i><i style="--v: 1"></i> more</div>
+        </div>
+        <div class="flex flex-wrap items-center gap-6">
+          <div class="sd-waffle" style="--w: 150px" id="demo-waffle"></div>
+          <ul class="sd-key flex-1 min-w-[10rem]"><li><i data-s="1"></i>API<b>42%</b></li><li><i data-s="2"></i>Web<b>31%</b></li><li><i data-s="3"></i>Mobile<b>19%</b></li></ul>
+        </div>
+        <div class="grid gap-2">
+          <div class="flex justify-between text-sm"><span>api</span><span class="sd-subtle">99.58%</span></div>
+          <div class="sd-uptime" id="demo-uptime"></div>
+        </div>
+        <div class="grid gap-2">
+          <div class="flex justify-between text-sm"><span>Memory</span><span class="sd-subtle">84% · target 75%</span></div>
+          <div class="sd-meter" style="--value: 84; --target: 75; --warn: 80; --crit: 95"><i data-at="warn"></i><i data-at="crit"></i></div>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-heatmap</code> + <code>--v</code> · <code>sd-waffle</code> + <code>data-s</code> · <code>sd-key</code> · <code>sd-uptime</code> + <code>data-state</code> · <code>sd-meter</code> + <code>--value|--target|--warn|--crit</code>. CSS only.</p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Small plots</h3>
+      <div class="grid gap-6 lg:grid-cols-2">
+        <div class="sd-plot" data-series="down" style="--h: 120px">
+          <svg viewBox="0 0 600 100" preserveAspectRatio="none" aria-hidden="true">
+            <path class="grid" d="M0 25H600M0 50H600M0 75H600" />
+            <polygon class="area" points="0,100 0,70 60,64 120,72 180,40 240,48 300,26 360,36 420,20 480,30 540,24 600,32 600,100" />
+            <polyline class="line" points="0,70 60,64 120,72 180,40 240,48 300,26 360,36 420,20 480,30 540,24 600,32" />
+          </svg>
+          <span class="sd-plot-readout" style="left: 52%">5:46 pm<b>4.8 Gbps</b></span>
+        </div>
+        <div class="sd-plot" style="--h: 120px">
+          <svg viewBox="0 0 600 100" preserveAspectRatio="none" aria-hidden="true"><path class="grid" d="M0 25H600M0 50H600M0 75H600" /></svg>
+          <span class="sd-plot-note">No samples yet</span>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-plot</code> + <code>data-series</code> · <code>.grid|.area|.line|.dot|.cross</code> · <code>sd-plot-readout</code> · <code>sd-plot-note</code> · <code>sd-plot-inline</code></p>
+    </div>
+  </section>
+</body>
+</html>

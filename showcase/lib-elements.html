@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+  <section class="demo-section" id="elements" aria-labelledby="elements-h">
+    <p class="sd-label">02</p>
+    <h2 id="elements-h" class="sd-title mt-2">Elements</h2>
+    <p class="sd-muted mt-2 max-w-[42rem]">Plain HTML, no classes. The base layer styles every element after Tailwind's reset; any <code>sd-</code> class or utility still wins because it sits in a later layer.</p>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Headings</h3>
+      <div>
+        <h1>32 open. <em>8 done.</em></h1>
+        <h2>Heading two</h2>
+        <h3>Heading three</h3>
+        <h4>Heading four</h4>
+        <h5>Heading five</h5>
+        <h6>Heading six</h6>
+      </div>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Text</h3>
+      <div class="max-w-[42rem]">
+        <p>Paragraph text sits at 16px on a 1.5 line height. It holds a <a href="#elements">link</a>, <strong>strong</strong>, <em>emphasis</em>, <i>idiomatic</i>, <b>bold</b>, <small>small print</small>, <mark>marked</mark>, <del>deleted</del>, <ins>inserted</ins>, <s>struck</s>, <u>underlined</u>, H<sub>2</sub>O, x<sup>2</sup>, <abbr title="Continuous integration">CI</abbr>, <cite>a cited title</cite>, <q>an inline quote</q>, <dfn>a definition</dfn>, <time datetime="2026-10-18T07:55">07:55</time>, <var>count</var>, <samp>exit 0</samp>, <code>code()</code> and <kbd><kbd>Shift</kbd>+<kbd>N</kbd></kbd>.</p>
+        <p>A second paragraph follows with flow spacing. Margins only appear between siblings, never after the last one.</p>
+        <address>ACME Inc. · 100 Main Street · Springfield</address>
+      </div>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Lists</h3>
+      <div class="grid gap-8 sm:grid-cols-3">
+        <ul>
+          <li>Square markers</li>
+          <li>Faint marker color
+            <ul><li>Nested item</li><li>Another</li></ul>
+          </li>
+          <li>Third item</li>
+        </ul>
+        <ol>
+          <li>Leading zeros</li>
+          <li>Tabular numbers</li>
+          <li>Third step</li>
+        </ol>
+        <dl>
+          <dt>Plan</dt><dd>Pro</dd>
+          <dt>Billing cycle</dt><dd>Monthly</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Quote, code, rule</h3>
+      <blockquote>
+        <p>Color only where it means something.</p>
+        <footer>Signal hard rule 3</footer>
+      </blockquote>
+      <pre><code>@import "tailwindcss";
+@import "signal-design";</code></pre>
+      <hr>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Table</h3>
+      <div class="sd-table-wrap">
+        <table>
+          <caption>Recent items</caption>
+          <thead><tr><th scope="col">#</th><th scope="col">Team</th><th scope="col">Item</th><th scope="col">Time</th></tr></thead>
+          <tbody>
+            <tr><td>21</td><td>Platform</td><td>Fix the crash when a customer has no address</td><td>07:55</td></tr>
+            <tr><td>22</td><td>Billing</td><td>Stop double charges when a payment retries</td><td>07:56</td></tr>
+            <tr><td>23</td><td>Support</td><td>Triage 9 new tickets, close 2 duplicates</td><td>07:57</td></tr>
+          </tbody>
+          <tfoot><tr><td colspan="3">3 items</td><td>2 min</td></tr></tfoot>
+        </table>
+      </div>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Form controls</h3>
+      <form class="grid gap-6" onsubmit="return false">
+        <fieldset>
+          <legend>Text inputs</legend>
+          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <label class="grid gap-1.5">text <input type="text" placeholder="Placeholder"></label>
+            <label class="grid gap-1.5">email (required) <input type="email" required placeholder="you@example.com"></label>
+            <label class="grid gap-1.5">password <input type="password" value="hunter22"></label>
+            <label class="grid gap-1.5">search <input type="search" placeholder="Search"></label>
+            <label class="grid gap-1.5">number <input type="number" value="42"></label>
+            <label class="grid gap-1.5">tel <input type="tel" placeholder="+1 555 0100"></label>
+            <label class="grid gap-1.5">url <input type="url" placeholder="https://"></label>
+            <label class="grid gap-1.5">date <input type="date"></label>
+            <label class="grid gap-1.5">time <input type="time"></label>
+            <label class="grid gap-1.5">datetime-local <input type="datetime-local"></label>
+            <label class="grid gap-1.5">month <input type="month"></label>
+            <label class="grid gap-1.5">week <input type="week"></label>
+            <label class="grid gap-1.5">readonly <input type="text" readonly value="read only"></label>
+            <label class="grid gap-1.5">disabled <input type="text" disabled value="disabled"></label>
+            <label class="grid gap-1.5">datalist <input list="teams" placeholder="Team"></label>
+          </div>
+          <datalist id="teams"><option value="Platform"></option><option value="Design"></option><option value="Billing"></option></datalist>
+        </fieldset>
+
+        <fieldset>
+          <legend>Choice and range</legend>
+          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="grid gap-3">
+              <label class="flex gap-2.5 items-center"><input type="checkbox" checked> checked</label>
+              <label class="flex gap-2.5 items-center"><input type="checkbox"> unchecked</label>
+              <label class="flex gap-2.5 items-center"><input type="checkbox" data-indeterminate> indeterminate</label>
+              <label class="flex gap-2.5 items-center"><input type="checkbox" disabled> disabled</label>
+            </div>
+            <div class="grid gap-3">
+              <label class="flex gap-2.5 items-center"><input type="radio" name="r" checked> monthly</label>
+              <label class="flex gap-2.5 items-center"><input type="radio" name="r"> yearly</label>
+              <label class="flex gap-2.5 items-center"><input type="radio" name="r"> custom</label>
+              <label class="flex gap-2.5 items-center"><input type="checkbox" role="switch" checked> switch on</label>
+              <label class="flex gap-2.5 items-center"><input type="checkbox" role="switch"> switch off</label>
+            </div>
+            <div class="grid gap-4">
+              <label class="grid gap-2">range <input type="range" value="60"></label>
+              <label class="flex gap-3 items-center">color <input type="color" value="#00d4ff"></label>
+              <label class="grid gap-2">file <input type="file"></label>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Select and textarea</legend>
+          <div class="grid gap-4 sm:grid-cols-3">
+            <label class="grid gap-1.5">select
+              <select>
+                <optgroup label="Plans"><option>Starter</option><option selected>Pro</option><option>Enterprise</option></optgroup>
+              </select>
+            </label>
+            <label class="grid gap-1.5">multiple
+              <select multiple size="4"><option selected>Website</option><option>Mobile app</option><option selected>Billing</option><option>Support</option></select>
+            </label>
+            <label class="grid gap-1.5">textarea <textarea placeholder="Leave a note"></textarea></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Output, progress, meter</legend>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <label class="grid gap-2">progress 64% <progress value="64" max="100"></progress></label>
+            <label class="grid gap-2">progress indeterminate <progress></progress></label>
+            <label class="grid gap-2">meter optimum <meter value="0.9" low="0.3" high="0.7" optimum="1"></meter></label>
+            <label class="grid gap-2">meter suboptimum <meter value="0.5" low="0.3" high="0.7" optimum="1"></meter></label>
+            <label class="grid gap-2">meter poor <meter value="0.1" low="0.3" high="0.7" optimum="1"></meter></label>
+            <p>output: <output>214</output> tests</p>
+          </div>
+        </fieldset>
+
+        <div class="flex flex-wrap gap-2.5">
+          <input type="submit" value="Submit">
+          <button>Button</button>
+          <input type="reset" value="Reset">
+          <button disabled>Disabled</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Details, dialog, popover</h3>
+      <div>
+        <details open>
+          <summary>What happens when I approve?</summary>
+          <p>The item moves to Done and the owner is notified.</p>
+        </details>
+        <details>
+          <summary>What does Request changes do?</summary>
+          <p>It asks for a note and sends it to the owner.</p>
+        </details>
+      </div>
+      <div class="flex flex-wrap gap-2.5">
+        <button data-sd-open="plain-dialog">Open a plain &lt;dialog&gt;</button>
+        <button popovertarget="plain-popover">Toggle a plain [popover]</button>
+      </div>
+      <dialog id="plain-dialog">
+        <h4>Plain dialog</h4>
+        <p>Unclassed, styled by the base layer. Click the backdrop or the button to close.</p>
+        <button data-sd-close>Close</button>
+      </dialog>
+      <div popover id="plain-popover"><p>Plain popover, centered by the browser.</p></div>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Media</h3>
+      <div class="grid gap-6 sm:grid-cols-2">
+        <figure>
+          <img alt="Abstract square grid" width="640" height="360" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 360'%3E%3Crect width='640' height='360' fill='%230A0A0B'/%3E%3Crect x='0' y='0' width='128' height='360' fill='%23111113'/%3E%3Crect x='168' y='44' width='200' height='10' fill='%232A2A2F'/%3E%3Crect x='168' y='96' width='420' height='120' fill='none' stroke='%232A2A2F'/%3E%3Crect x='188' y='120' width='160' height='40' fill='%2300D4FF' fill-opacity='.35'/%3E%3Crect x='168' y='290' width='300' height='8' fill='%231F1F23'/%3E%3C/svg%3E">
+          <figcaption>Figure caption</figcaption>
+        </figure>
+        <div class="grid gap-4 content-start">
+          <audio controls></audio>
+          <iframe title="Inline frame" srcdoc="<body style='margin:0;font:12px monospace;color:#9A9AA2;background:#0A0A0B;display:grid;place-items:center;height:100vh'>iframe</body>" height="120" class="w-full"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

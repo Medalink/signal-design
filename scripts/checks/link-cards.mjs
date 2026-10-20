@@ -1,3 +1,5 @@
+export const page = "conversation";
+
 /** Link card variants: hero bleed, compact, document type, blocked tone and a static loading state. */
 export default async function checkLinkCards(page, where, fail) {
   const got = await page.evaluate(() => {

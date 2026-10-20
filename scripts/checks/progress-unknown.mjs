@@ -1,3 +1,5 @@
+export const page = "components";
+
 /** Unknown progress is a static, pending-toned full bar that becomes a value bar. */
 export default async function checkProgressUnknown(page, where, fail) {
   const got = await page.evaluate(async () => {

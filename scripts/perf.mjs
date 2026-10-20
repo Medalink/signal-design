@@ -2,7 +2,7 @@
  * Performance pass over the showcase pages, in a real (headed) Chromium with
  * the GPU on and the CPU slowed down to stand in for a modest laptop.
  *
- *   node scripts/perf.mjs [baseUrl] [--throttle 4] [--pages index,chat]
+ *   node scripts/perf.mjs [baseUrl] [--throttle 4] [--pages index,lib-tokens,chat]
  *
  * Per page it reports:
  *   load     main-thread time until the page settles, and the longest task
@@ -12,6 +12,7 @@
  *   heap     JS heap after load
  */
 import { chromium } from "playwright";
+import { ALL, keyOf } from "../showcase/pages.js";
 
 const args = process.argv.slice(2);
 const base = (args.find((a) => a.startsWith("http")) || "http://localhost:5178/").replace(/\/?$/, "/");
@@ -20,7 +21,7 @@ const opt = (name, fallback) => {
   return i >= 0 ? args[i + 1] : fallback;
 };
 const throttle = Number(opt("throttle", "4"));
-const PAGES = { index: "index.html", shell: "shell.html", chat: "chat.html", form: "form.html", landing: "landing.html", charts: "charts.html" };
+const PAGES = Object.fromEntries(ALL.map((p) => [keyOf(p), p.file]));
 const only = opt("pages", Object.keys(PAGES).join(",")).split(",");
 
 const browser = await chromium.launch({ headless: false, args: ["--enable-gpu", "--ignore-gpu-blocklist"] });

@@ -1,0 +1,85 @@
+<a class="sd-skip" href="#main">Skip to content</a>
+
+<!-- Icons: square strokes only. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+{{icons}}
+  </defs>
+</svg>
+
+<!-- Every library page is an app in the Signal App Shell. This chrome is shared; layout-plugin.js fills it per page. -->
+<div class="sd-shell" id="shell">
+  <canvas class="sd-rain" data-sd-rain data-sd-rain-style="squares" aria-hidden="true"></canvas>
+
+  <header class="sd-shell-topbar">
+    <button class="sd-btn sd-btn-ghost sd-btn-icon" data-sd-shell="drawer" aria-controls="shell-rail" aria-label="Open navigation"><svg><use href="#i-menu"/></svg></button>
+    <a href="./index.html" class="sd-wordmark" aria-label="Signal home"><svg class="sd-mark" style="width:22px;height:22px"><use href="#i-mark"/></svg> Signal</a>
+    <span class="sd-shell-topbar-label" data-page-label>{{label}}</span>
+    <button class="sd-btn sd-btn-ghost sd-btn-icon" data-sd-open="nav-palette"{{search_key}} aria-label="Search"><svg><use href="#i-search"/></svg></button>
+  </header>
+
+{{rail}}
+
+{{sidebar}}
+
+  <main class="sd-shell-main" id="main" tabindex="-1">
+    <div class="sd-shell-header">
+      <div class="sd-shell-crumbs">
+        <button class="sd-btn sd-btn-icon sd-btn-sm sd-shell-pin" data-sd-shell="sidebar" data-sd-key="[" data-sd-tip="Show sidebar ([)" data-sd-tip-side="bottom" aria-label="Pin sidebar open"><svg><use href="#i-collapse"/></svg></button>
+        <ol class="sd-breadcrumb" aria-label="Breadcrumb">
+          <li><a href="./index.html" aria-label="Home"><svg><use href="#i-home"/></svg></a></li>
+          <li><span data-crumb-section>{{title}}</span></li>
+          <li><span aria-current="page" data-crumb-page>{{crumb}}</span></li>
+        </ol>
+      </div>
+      <div class="sd-shell-header-end">
+        <div class="sd-seg sd-seg-inline sd-seg-sm hdr-theme" aria-label="Theme">
+          <button type="button" data-sd-theme="ink">ink</button>
+          <button type="button" data-sd-theme="graphite">graphite</button>
+          <button type="button" data-sd-theme="paper">paper</button>
+          <button type="button" data-sd-theme="auto">auto</button>
+        </div>
+        <button class="sd-btn sd-btn-sm" data-sd-shell="aside" data-sd-key="]" aria-controls="settings-panel"><svg><use href="#i-panel"/></svg><span class="sd-desktop-only">Display</span> <kbd>]</kbd></button>
+      </div>
+    </div>
+
+    <div class="sd-shell-content" data-sd-ornaments data-sd-edges id="top" tabindex="-1">
+    <div class="demo-wrap">
+
+{{content}}
+    </div>
+    </div>
+  </main>
+
+  <!-- Display settings -->
+  <aside class="sd-shell-aside" id="settings-panel" aria-label="Display settings">
+    <div class="sd-shell-aside-head"><span class="flex-1">Display</span>
+      <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="aside" aria-label="Close settings"><svg><use href="#i-close"/></svg></button></div>
+    <div class="sd-shell-aside-section text-sm sd-subtle">These apply to this page and are remembered in this browser.</div>
+    <div class="sd-shell-aside-section sd-field">
+      <span class="sd-field-label">Chart colors</span>
+      <div class="sd-seg sd-seg-sm" id="chart-theme"><button type="button" data-value="mono" aria-pressed="true">mono</button><button type="button" data-value="spectrum" aria-pressed="false">spectrum</button></div>
+    </div>
+    <div class="sd-shell-aside-section sd-field">
+      <span class="sd-field-label">Scrollbars</span>
+      <div class="sd-seg sd-seg-sm" id="scrollbar-mode"><button type="button" data-value="auto" aria-pressed="true">hide when idle</button><button type="button" data-value="always" aria-pressed="false">always</button></div>
+    </div>
+{{code_views}}
+    <div class="sd-shell-aside-section sd-field">
+      <span class="sd-field-label">Backdrop</span>
+      <button class="sd-btn sd-btn-sm" data-sd-rain-toggle aria-pressed="false">Digital rain</button>
+    </div>
+  </aside>
+
+  <footer class="sd-statusbar sd-shell-status">
+    <span><kbd>Ctrl</kbd><kbd>K</kbd> search</span>
+    <span><kbd>[</kbd> sidebar</span>
+    <span><kbd>]</kbd> display</span>
+    <span><kbd>Shift</kbd><kbd>T</kbd> theme</span>
+    <span class="sd-status" data-tone="success">signal-design · {{label}}</span>
+    <span class="sd-statusbar-end"><span class="sd-fps" data-sd-fps><b>--</b> fps</span> · v0.0</span>
+  </footer>
+  <div class="sd-shell-scrim" data-sd-shell="close"></div>
+</div>
+
+{{palette}}

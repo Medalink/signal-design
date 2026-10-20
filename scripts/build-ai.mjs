@@ -17,6 +17,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createServer } from "vite";
 import { chromium } from "playwright";
+import { LIBRARY } from "../showcase/pages.js";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const check = process.argv.includes("--check");
@@ -111,27 +112,31 @@ const browser = await chromium.launch();
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await page.addInitScript(() => localStorage.setItem("sd-theme", "ink"));
-  await page.goto(`http://localhost:${port}/index.html`);
-  await page.waitForSelector(".demo-code pre", { state: "attached" });
-
-  /* ---- components ------------------------------------------------------ */
-  const blocks = await page.evaluate(() =>
-    [...document.querySelectorAll(".demo-block")].map((b) => {
-      const section = b.closest(".demo-section");
-      const pres = [...b.querySelectorAll(":scope > .demo-code pre")];
-      const html = pres[0]?.textContent ?? "";
-      const usage = [...b.querySelectorAll(":scope > .demo-usage")].map((u) => u.textContent.trim().replace(/\s+/g, " ")).join(" ");
-      return {
-        id: b.id,
-        section: section?.querySelector("h2")?.textContent.trim(),
-        title: b.querySelector("h3")?.textContent.trim(),
-        usage,
-        needsJs: b.querySelector(".demo-code .demo-usage")?.textContent.trim().replace(/\s+/g, " ").replace(/ CSS: .*$/, "") ?? "",
-        html,
-        js: pres[1]?.textContent ?? null,
-      };
-    }),
-  );
+  /* ---- components: every block of every library page, in registry order --- */
+  const blocks = [];
+  for (const { file } of LIBRARY) {
+    await page.goto(`http://localhost:${port}/${file}`);
+    await page.waitForSelector(".demo-code pre", { state: "attached" });
+    blocks.push(
+      ...(await page.evaluate(() =>
+        [...document.querySelectorAll(".demo-block")].map((b) => {
+          const section = b.closest(".demo-section");
+          const pres = [...b.querySelectorAll(":scope > .demo-code pre")];
+          const html = pres[0]?.textContent ?? "";
+          const usage = [...b.querySelectorAll(":scope > .demo-usage")].map((u) => u.textContent.trim().replace(/\s+/g, " ")).join(" ");
+          return {
+            id: b.id,
+            section: section?.querySelector("h2")?.textContent.trim(),
+            title: b.querySelector("h3")?.textContent.trim(),
+            usage,
+            needsJs: b.querySelector(".demo-code .demo-usage")?.textContent.trim().replace(/\s+/g, " ").replace(/ CSS: .*$/, "") ?? "",
+            html,
+            js: pres[1]?.textContent ?? null,
+          };
+        }),
+      )),
+    );
+  }
   const unknown = new Set();
   const components = blocks.map((b) => {
     // Classes come from class="" only (data-sd-tip is an attribute, not sd-tip).

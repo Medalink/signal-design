@@ -1,3 +1,5 @@
+export const page = "conversation";
+
 /** Message edges: --edge for the author, state edges over it in a fixed order, own and selected fills. */
 export default async function checkMessageStates(page, where, fail) {
   const got = await page.evaluate(() => {

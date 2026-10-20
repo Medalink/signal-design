@@ -1,3 +1,5 @@
+export const page = "components";
+
 /** Option cards select by click and arrow keys, show focus, and keep one button pressed. */
 export default async function checkOptionCards(page, where, fail) {
   const ring = (selector) => page.evaluate((s) => getComputedStyle(document.querySelector(s), "::before").opacity, selector);

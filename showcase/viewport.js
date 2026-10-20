@@ -5,14 +5,9 @@
  * widths without resizing the window. Esc or Full closes. The bar sits in the
  * page flow (nothing is covered) and is hidden on phones and inside the frame.
  */
-const PAGES = [
-  ["index.html", "Components"],
-  ["shell.html", "App shell"],
-  ["chat.html", "Chat"],
-  ["form.html", "Form"],
-  ["landing.html", "Landing"],
-  ["charts.html", "Charts"],
-];
+import { EXAMPLES, HOME } from "./pages.js";
+
+const PAGES = [HOME, ...EXAMPLES].map((p) => [p.file, p.title]);
 const SIZES = [
   { label: "Full", w: 0 },
   { label: "1440", w: 1440, h: 900, name: "Desktop 1440 × 900" },

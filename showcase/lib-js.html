@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+  <section class="demo-section" id="js" aria-labelledby="js-h">
+    <p class="sd-label">08</p>
+    <h2 id="js-h" class="sd-title mt-2">JS</h2>
+    <p class="sd-muted mt-2 max-w-[42rem]">Optional, under 5 KB gzipped, no dependencies. Every listener is delegated, so markup added later just works. It only sets ARIA and <code>data-*</code> state; the CSS styles that state.</p>
+    <div class="demo-block" id="js-copy-feedback">
+      <h3 class="sd-label">Copy feedback</h3>
+      <p class="demo-usage">Copy needs browser clipboard access. On an insecure LAN connection, or when permission is denied, the danger toast says "Copy unavailable. Select the line instead." The command stays selectable. Successful copies still say "Copied". No insecure clipboard bypass is used.</p>
+      <div class="sd-code">
+        <div class="sd-code-head">Command <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#copy-command">Copy</button></div>
+        <pre id="copy-command" tabindex="0"><code>npm test</code></pre>
+      </div>
+    </div>
+    <div class="demo-block" id="js-countdown">
+      <h3 class="sd-label">Pauseable countdown</h3>
+      <p class="demo-usage">Call <code>mountCountdown(root)</code>, then <code>set({ remainingMs, running })</code> with authoritative time. <code>init()</code> does not mount it. Progress uses the largest remaining time since mount or the last completion. Remount for a different task; call <code>dispose()</code> on teardown. <code>sd:countdown</code> reports state changes, not every tick. The application owns eligibility and actions.</p>
+      <div class="sd-stack" id="demo-countdown" data-sd-countdown data-state="paused">
+        <p class="sd-note" data-tone="pending">Next step in <span data-sd-countdown-value>5</span>s.</p>
+        <div class="sd-progress" role="progressbar" aria-label="Elapsed countdown time" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="--value: 0"></div>
+        <p class="sd-meta" id="countdown-state" role="status">paused</p>
+      </div>
+      <div class="sd-actions"><button class="sd-btn sd-btn-sm" id="countdown-resume">Resume</button><button class="sd-btn sd-btn-sm" id="countdown-pause">Pause</button><button class="sd-btn sd-btn-sm" id="countdown-resync">Resync to 5s</button></div>
+      <script type="text/plain" data-demo-js>
+import { mountCountdown } from "signal-design/js";
+const root = document.getElementById("demo-countdown");
+const countdown = mountCountdown(root);
+let remainingMs = 5000;
+let startedAt = null;
+root.addEventListener("sd:countdown", ({ detail }) => {
+  document.getElementById("countdown-state").textContent = detail.state;
+  if (detail.state === "complete") { remainingMs = 0; startedAt = null; }
+});
+function set(running) {
+  if (startedAt !== null) remainingMs = Math.max(0, remainingMs - (performance.now() - startedAt));
+  startedAt = running ? performance.now() : null;
+  countdown.set({ remainingMs, running });
+}
+set(false);
+document.getElementById("countdown-resume").onclick = () => set(true);
+document.getElementById("countdown-pause").onclick = () => set(false);
+document.getElementById("countdown-resync").onclick = () => {
+  remainingMs = 5000;
+  startedAt = null;
+  set(false);
+};
+      </script>
+    </div>
+    <div class="demo-block" id="js-live-feed">
+      <h3 class="sd-label">Live feed navigation</h3>
+      <p class="demo-usage">Focus the feed for <kbd>j</kbd>/<kbd>k</kbd>, <kbd>g</kbd> then <kbd>t</kbd> for newest, and <kbd>n</kbd> for oldest. Insert a row while reading to keep your place. Rows need stable <code>data-id</code> and numeric <code>data-order</code>. Call <code>beforeUpdate()</code> before replacing rows and <code>afterUpdate()</code> afterward. <code>select(id)</code> handles application targets. <code>refresh()</code> reconciles selection; <code>suspend(true)</code> cancels idle return and motion; <code>dispose()</code> removes listeners and timers. DOM order controls next/previous, numeric order controls oldest/newest.</p>
+      <div class="sd-stack">
+        <div class="sd-actions"><button class="sd-btn sd-btn-sm" id="feed-insert">Insert row</button><button class="sd-btn sd-btn-sm" id="feed-oldest">Oldest</button><button class="sd-btn sd-btn-sm" id="feed-newest">Newest</button><span class="sd-pill" id="feed-above" role="status">0 above</span></div>
+        <div class="sd-stack" id="demo-feed" data-sd-feed data-sd-scroll-tab tabindex="0" role="region" aria-label="Activity feed" style="max-height: 14rem; overflow-y: auto">
+          <article class="sd-row" data-id="activity-3" data-order="3"><div class="sd-row-body"><p class="sd-row-title">Build completed</p></div></article>
+          <article class="sd-row" data-id="activity-2" data-order="2" aria-current="true"><div class="sd-row-body"><p class="sd-row-title">Export finished</p></div><button class="sd-btn sd-btn-sm" data-sd-toggle="feed-detail" aria-controls="feed-detail" aria-expanded="false">Details</button></article>
+          <div class="sd-expand" id="feed-detail"><div><p class="sd-note">The export is ready to download.</p></div></div>
+          <article class="sd-row" data-id="activity-1" data-order="1"><div class="sd-row-body"><p class="sd-row-title">Sync started</p></div></article>
+        </div>
+      </div>
+      <script type="text/plain" data-demo-js>
+import { mountFeed, hotkeys } from "signal-design/js";
+const root = document.getElementById("demo-feed");
+root.addEventListener("sd:feed", ({ detail }) => {
+  document.getElementById("feed-above").textContent = `${detail.aboveCount} above`;
+});
+const feed = mountFeed(root);
+const off = hotkeys({ j: () => feed.move(1), k: () => feed.move(-1),
+  "g t": () => feed.newest(), n: () => feed.oldest() },
+  { target: root, sequenceTimeout: 900, enabled: () => !root.hidden });
+document.getElementById("feed-oldest").onclick = () => feed.oldest();
+document.getElementById("feed-newest").onclick = () => feed.newest();
+let order = 3;
+document.getElementById("feed-insert").onclick = () => {
+  feed.beforeUpdate();
+  const row = document.createElement("article");
+  row.className = "sd-row";
+  row.dataset.id = `activity-${++order}`;
+  row.dataset.order = String(order);
+  row.textContent = `Activity ${order} received`;
+  root.prepend(row);
+  feed.afterUpdate();
+};
+      </script>
+    </div>
+    <div class="demo-block" id="js-framework-owned">
+      <h3 class="sd-label">Framework-owned state</h3>
+      <p class="demo-usage">When React, Vue or Svelte renders a piece's state, leave out its <code>data-sd-*</code> attribute and render the ARIA and <code>data-*</code> attributes the CSS keys on. These three have no <code>data-sd-*</code>: this page's own code keeps the state and writes the attributes, as a framework would. README "Framework-owned state" lists every piece and what <code>init()</code> wires without an attribute (<code>role="tab"</code>, <code>.sd-shell</code>, popovers, scrollers).</p>
+      <div class="sd-cluster" style="--gap: 16px">
+        <div class="sd-seg sd-seg-inline" id="owned-view" role="group" aria-label="View"><button type="button" data-value="list" aria-pressed="true">list</button><button type="button" data-value="board" aria-pressed="false">board</button></div>
+        <button class="sd-btn sd-btn-sm" id="owned-toggle" aria-expanded="false" aria-controls="owned-details">Details</button>
+        <div class="sd-reactions"><button id="owned-reaction" aria-pressed="false">👍 <b>2</b></button></div>
+      </div>
+      <div class="sd-expand" id="owned-details"><div><p class="sd-note">Shown because the page set <code>data-open</code> on this panel and <code>aria-expanded="true"</code> on its button.</p></div></div>
+      <div class="sd-table-wrap">
+        <table class="sd-table">
+          <thead><tr><th>Piece</th><th>Render</th><th>Leave out</th></tr></thead>
+          <tbody>
+            <tr><td><code>sd-seg</code></td><td><code>aria-pressed</code></td><td><code>data-sd-seg</code></td></tr>
+            <tr><td><code>sd-expand</code></td><td><code>data-open</code>, <code>aria-expanded</code></td><td><code>data-sd-toggle</code></td></tr>
+            <tr><td><code>sd-reactions</code></td><td><code>aria-pressed</code>, the count</td><td><code>data-sd-reaction</code></td></tr>
+            <tr><td><code>sd-shell</code></td><td><code>data-sidebar</code>, <code>data-aside</code>, <code>data-drawer</code>, <code>--shell-sidebar</code></td><td><code>data-sd-shell</code>, <code>data-sd-section</code></td></tr>
+            <tr><td><code>dialog.sd-dialog</code></td><td><code>showModal()</code>, <code>close()</code></td><td><code>data-sd-open</code>, <code>data-sd-close</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <script type="text/plain" data-demo-js>
+// React: the state lives in the component; no data-sd-* attributes.
+function Toolbar() {
+  const [view, setView] = useState("list");
+  const [open, setOpen] = useState(false);
+  const [liked, setLiked] = useState(false);
+  return (
+    <>
+      <div className="sd-seg sd-seg-inline" role="group" aria-label="View">
+        {["list", "board"].map((v) => (
+          <button key={v} type="button" aria-pressed={view === v} onClick={() => setView(v)}>{v}</button>
+        ))}
+      </div>
+      <button className="sd-btn sd-btn-sm" aria-expanded={open} aria-controls="details" onClick={() => setOpen(!open)}>Details</button>
+      <div className="sd-reactions">
+        <button aria-pressed={liked} onClick={() => setLiked(!liked)}>👍 <b>{2 + (liked ? 1 : 0)}</b></button>
+      </div>
+      <div className="sd-expand" id="details" data-open={open || undefined}><div>…</div></div>
+    </>
+  );
+}
+      </script>
+    </div>
+    <div class="demo-block">
+      <h3 class="sd-label">Setup and attributes</h3>
+      <div class="sd-code">
+        <div class="sd-code-head">main.js <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#snippet-js">Copy</button></div>
+        <pre id="snippet-js" tabindex="0"><code>import { init, toast, hotkeys, setTheme } from "signal-design/js";
+
+init();                                   // dialogs, popovers, menus, tabs, tooltips, toggles
+toast("Saved", { tone: "success" });
+const off = hotkeys({ j: next, k: prev, "shift+n": newest, "mod+k": search });
+setTheme("paper");                        // ink | graphite | paper | auto</code></pre>
+      </div>
+      <div class="sd-table-wrap">
+        <table class="sd-table">
+          <thead><tr><th>Attribute</th><th>Does</th></tr></thead>
+          <tbody>
+            <tr><td><code>data-sd-open="id"</code> · <code>data-sd-close</code></td><td>Opens a dialog as modal; closes the nearest dialog. Backdrop click closes unless <code>data-sd-static</code>.</td></tr>
+            <tr><td><code>popovertarget</code> + <code>.sd-popover</code></td><td>Places the popover next to its trigger, flips at edges, keyboard for menus.</td></tr>
+            <tr><td><code>role="tab"</code></td><td>Selects tabs and panels, arrow keys, roving focus.</td></tr>
+            <tr><td><code>data-sd-toggle="id"</code></td><td>Opens and closes an <code>.sd-expand</code>, keeps <code>aria-expanded</code> in sync.</td></tr>
+            <tr><td><code>data-sd-seg</code></td><td>Single-select button group; fires <code>change</code>.</td></tr>
+            <tr><td><code>data-sd-key="a"</code></td><td>Clicks the element when the key is pressed (ignored while typing).</td></tr>
+            <tr><td><code>data-sd-tip="text"</code></td><td>Tooltip on hover and focus.</td></tr>
+            <tr><td><code>data-sd-copy="#id"</code></td><td>Copies text, or explains that copying is unavailable.</td></tr>
+            <tr><td><code>data-sd-toast="text"</code></td><td>Shows a toast on click.</td></tr>
+            <tr><td><code>data-sd-theme="paper"</code></td><td>Switches theme and remembers it.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sd-actions">
+        <span class="sd-subtle text-sm">Try:</span>
+        <button class="sd-btn sd-btn-sm" data-sd-key="]" data-sd-open="demo-sheet">Sheet <kbd>]</kbd></button>
+        <button class="sd-btn sd-btn-sm" data-sd-key="shift+t" data-sd-theme-cycle>Next theme <kbd>Shift+T</kbd></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- The "Try" button in the shortcuts block opens this sheet; the Parts page holds the full one. -->
+  <dialog class="sd-dialog sd-sheet" id="demo-sheet" aria-labelledby="demo-sheet-h">
+    <header class="sd-dialog-head"><span id="demo-sheet-h">Item details</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">×</button></header>
+    <div class="sd-dialog-body"><p class="sd-muted">A sheet slides in from the side and closes with Esc.</p></div>
+  </dialog>
+</body>
+</html>
