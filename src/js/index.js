@@ -14,7 +14,7 @@ import { onTipOver, onTipOut, onTipKeydown, hideTooltip } from "./tooltip.js";
 import { onKeyAttr, isKey } from "./hotkeys.js";
 import { onControlsClick, onDrag } from "./controls.js";
 import { onThemeClick, restoreTheme, cycleTheme } from "./theme.js";
-import { onShellClick, onShellKeydown, initShell } from "./shell.js";
+import { onShellClick, onShellKeydown, onShellPointerdown, initShell } from "./shell.js";
 import { onRainClick, initRain } from "./rain.js";
 import { initFps } from "./fps.js";
 import { initOrnaments } from "./ornaments.js";
@@ -36,7 +36,7 @@ export { mountLivingTable } from "./living-table.js";
 export { setExpanded } from "./controls.js";
 export { setTheme, getTheme, restoreTheme, cycleTheme, THEMES } from "./theme.js";
 export { place } from "./position.js";
-export { setSidebar, setAside, setDrawer, selectSection } from "./shell.js";
+export { setSidebar, setSidebarWidth, setAside, setDrawer, selectSection } from "./shell.js";
 export { rain, mountRain } from "./rain.js";
 export { fps } from "./fps.js";
 export { paintOrnaments, ornamentShapes, ORNAMENT_STYLES } from "./ornaments.js";
@@ -117,6 +117,7 @@ export function init({ theme = true, scrollbars = "auto", themeKey = "shift+t" }
     onListboxInput(event);
     onInputsInput(event);
   });
+  document.addEventListener("pointerdown", onShellPointerdown);
   document.addEventListener("contextmenu", onContextMenu);
   document.addEventListener("dblclick", onWindowDblClick);
 }

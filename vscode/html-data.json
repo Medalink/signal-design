@@ -83,7 +83,7 @@
   },
   {
    "name": "data-sd-shell",
-   "description": "App shell control: sidebar (pin/collapse), aside (right panel), drawer (phones) or close."
+   "description": "App shell control: sidebar (pin/collapse), aside (right panel), drawer (phones), close, or resize (on a .sd-sidebar-resize separator: drag, arrow keys, Home and End set the sidebar width between aria-valuemin and aria-valuemax, remembered per sidebar id)."
   },
   {
    "name": "data-sd-section",

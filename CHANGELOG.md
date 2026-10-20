@@ -19,6 +19,11 @@
 - `--sd-avatar-size` sets an avatar to any size, with the initials and the
   presence square following it; `sd-avatar-md` adds a 28px step.
   `data-status="afk"` is an alias for `away`.
+- `sd-sidebar-resize`: a separator on the sidebar's edge. With
+  `data-sd-shell="resize"` it drags, steps with the arrow keys, Home and End,
+  and remembers the width per sidebar id; `setSidebarWidth(shell, px | null)`
+  does it from code and `sd:shell` reports `width`. Without the attribute it
+  is CSS and ARIA only, for apps that own the width.
 - `sd-icon-text` and `sd-icon`: an icon and a word on one baseline, sized to
   the cap height. In Tailwind, `size-[1.5cap]` with `items-baseline` does the
   same.
