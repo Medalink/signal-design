@@ -114,18 +114,19 @@
     color: var(--sd-fg);
   }
 
-  /* Square avatar. Tone colors the fill. */
+  /* Square avatar. Tone colors the fill. --sd-avatar-size sets any size;
+     the initials follow it unless a size class sets them. */
   .sd-avatar {
     display: inline-grid;
     place-items: center;
     flex-shrink: 0;
-    width: 24px;
-    height: 24px;
+    width: var(--sd-avatar-size, 24px);
+    height: var(--sd-avatar-size, 24px);
     overflow: hidden;
     background: var(--tone, var(--sd-raised));
     /* Dark ink on the bright dark-theme tones, white on the deep light ones. */
     color: var(--sd-on-tone, #050505);
-    font-size: 12px;
+    font-size: max(12px, calc(var(--sd-avatar-size, 24px) * 0.36));
     font-weight: var(--font-weight-semibold);
     letter-spacing: 0;
     text-transform: uppercase;
@@ -140,15 +141,16 @@
     height: 100%;
     object-fit: cover;
   }
-  .sd-avatar-sm { width: 22px; height: 22px; font-size: 11px; }
-  .sd-avatar-lg { width: 34px; height: 34px; font-size: 15px; }
-  .sd-avatar-xl { width: 48px; height: 48px; font-size: var(--text-md); }
+  .sd-avatar-sm { --sd-avatar-size: 22px; font-size: 11px; }
+  .sd-avatar-md { --sd-avatar-size: 28px; font-size: 13px; }
+  .sd-avatar-lg { --sd-avatar-size: 34px; font-size: 15px; }
+  .sd-avatar-xl { --sd-avatar-size: 48px; font-size: var(--text-md); }
 
   .sd-avatar-stack {
     display: inline-flex;
   }
   .sd-avatar-stack > .sd-avatar {
-    outline: 2px solid var(--sd-canvas);
+    outline: 2px solid var(--sd-ring, var(--sd-canvas));
   }
   .sd-avatar-stack > .sd-avatar + .sd-avatar {
     margin-inline-start: -2px;

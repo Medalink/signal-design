@@ -116,30 +116,64 @@
     margin-inline-start: auto;
   }
 
-  /* Presence: a square on the avatar's corner.
+  /* Presence: a square on the avatar's corner. It grows with the avatar
+     (8px up to an 80px avatar, at most 20px).
      <span class="sd-avatar" data-status="online">AL</span> */
   .sd-avatar[data-status] {
     position: relative;
     overflow: visible;
   }
   .sd-avatar[data-status]::after {
+    --dot: clamp(8px, calc(var(--sd-avatar-size, 24px) / 10), 20px);
     content: "";
     position: absolute;
     right: -3px;
     bottom: -3px;
-    width: 8px;
-    height: 8px;
-    border: 2px solid var(--sd-surface);
+    width: var(--dot);
+    height: var(--dot);
+    border: 2px solid var(--sd-ring, var(--sd-canvas));
     box-sizing: content-box;
     background: var(--sd-fg-faint);
   }
   .sd-avatar[data-status="online"]::after { background: var(--sd-success); }
-  .sd-avatar[data-status="away"]::after { background: var(--sd-pending); }
+  .sd-avatar:is([data-status="away"], [data-status="afk"])::after { background: var(--sd-pending); }
   .sd-avatar[data-status="busy"]::after { background: var(--sd-danger); }
   .sd-avatar[data-status="offline"]::after {
-    background: var(--sd-surface);
+    background: var(--sd-ring, var(--sd-canvas));
     outline: 1px solid var(--sd-fg-faint);
     outline-offset: -3px;
+  }
+
+  /* Cut-outs (the presence square, a corner count, a stacked avatar's gap)
+     take the color of what they sit on. Each Signal surface sets --sd-ring;
+     outside them it is the page canvas. On a panel of your own, set
+     --sd-ring to its background. Hover and current rows come last. */
+  :where(.sd-rail, .sd-sidebar, .sd-shell-aside, .sd-shell-topbar, .sd-titlebar, .sd-statusbar,
+    .sd-banner, .sd-file, .sd-link-card, .sd-poll, .sd-tile, .sd-composer, .sd-message[data-mention],
+    .sd-callout, .sd-chip, .sd-tags, .sd-code, .sd-sidenav :is(a, button):hover, .sd-table-hover tbody tr:hover) {
+    --sd-ring: var(--sd-surface);
+  }
+  :where(.sd-card, .sd-stat-box, .sd-pill, .sd-topbar, .sd-living-table) {
+    --sd-ring: var(--sd-canvas);
+  }
+  :where(.sd-shell-content, .sd-shell-crumbs, .sd-shell-header-end, .sd-shell-bar, .sd-shell-dock) {
+    --sd-ring: var(--sd-container);
+  }
+  :where(dialog, [popover], .sd-suggest, .sd-toast, .sd-combobox-list, .sd-tooltip, .sd-message-actions) {
+    --sd-ring: var(--sd-overlay);
+  }
+  :where(
+    :is(a, button, label).sd-item:hover,
+    .sd-item:is([aria-current]:not([aria-current="false"]), [aria-selected="true"]),
+    .sd-message:not([data-mention]):is(:hover, :focus-within, [aria-current]:not([aria-current="false"])),
+    .sd-rail-item:is(:hover, [aria-current]:not([aria-current="false"]), [aria-pressed="true"], [aria-expanded="true"]),
+    .sd-sidebar-link:is(:hover, [aria-current]:not([aria-current="false"])),
+    .sd-icon-btn:is(:hover, [aria-expanded="true"], [aria-pressed="true"]),
+    .sd-menu :is([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item):is(:hover, :focus, [data-active]),
+    .sd-sidenav :is(a, button):is([aria-current]:not([aria-current="false"]), [aria-selected="true"]),
+    .sd-table tbody tr[aria-selected="true"]
+  ) {
+    --sd-ring: var(--sd-raised);
   }
 
   /* Count: a small solid number, e.g. unread messages on an icon or avatar.
@@ -162,13 +196,12 @@
     position: absolute;
     top: -6px;
     right: -6px;
-    outline: 2px solid var(--sd-surface);
+    outline: 2px solid var(--sd-ring, var(--sd-canvas));
   }
 
   /* Rail items can carry an avatar or a group image instead of an icon. */
   .sd-rail-item > .sd-avatar {
-    width: 36px;
-    height: 36px;
+    --sd-avatar-size: 36px;
     font-size: 13px;
   }
   .sd-rail-item[data-unread]::after {
@@ -390,8 +423,7 @@
     font-size: var(--text-sm);
   }
   .sd-tile > .sd-avatar {
-    width: 56px;
-    height: 56px;
+    --sd-avatar-size: 56px;
     font-size: 18px;
   }
   .sd-tile-name {
