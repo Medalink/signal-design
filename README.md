@@ -740,6 +740,74 @@ Events bubble on `document`: `sd:tab`, `sd:theme`, `sd:shell`, `sd:window`,
 `sd:contextmenu`, `sd:reaction` — with `detail` payloads typed in
 `src/js/index.d.ts`.
 
+### Framework-owned state
+
+When React, Vue, Svelte or any other framework renders a piece's state, that
+framework is the only writer. Leave out the piece's `data-sd-*` behavior
+attribute and render the state attributes from the State contract above. The
+JS writes the same attributes the framework renders. With both writing, the
+DOM and the framework's state drift apart, and the next render undoes the
+click.
+
+```jsx
+// React owns the view: no data-sd-seg, aria-pressed comes from state.
+<div className="sd-seg" role="group" aria-label="View">
+  {["list", "board"].map((v) => (
+    <button key={v} type="button" aria-pressed={view === v} onClick={() => setView(v)}>{v}</button>
+  ))}
+</div>
+```
+
+These classes work with CSS alone once you render their state:
+
+| Class | Render this | Leave out | You handle |
+|---|---|---|---|
+| `sd-seg` | `aria-pressed` on each button | `data-sd-seg` | Clicks; the `change` event is gone. |
+| `sd-expand` + its trigger | `data-open` on the panel, `aria-expanded` and `aria-controls` on the trigger | `data-sd-toggle` | Clicks. |
+| `sd-shell` | `data-sidebar="collapsed"`, `data-aside="open"`, `data-drawer`, `data-peek`, `--shell-sidebar` | `data-sd-shell`, `data-sd-section` | Toggles, Escape, `inert` on `.sd-shell-main` while the drawer is open, focus. |
+| `sd-rail-item`, `sd-sidebar-link`, `sd-nav`, `sd-sidenav`, `sd-breadcrumb`, `sd-pagination`, `sd-item`, `sd-message` | `aria-current`, `aria-selected`, `aria-expanded` | `data-sd-section` | Routing. |
+| `sd-sidebar-panel` | `hidden` on the panels that are not shown | `data-sd-section` | Which panel shows. |
+| `sd-reactions` | `aria-pressed` and the count in `<b>` | `data-sd-reaction` | Counting; `sd:reaction` is gone. |
+| `sd-poll` | `aria-pressed` on options, `--share` on each | `data-sd-poll` | Single or multiple choice. |
+| `dialog.sd-dialog` | `showModal()` and `close()` from your code | `data-sd-open`, `data-sd-close` | Focus return in WebKit (`openDialog` does it). |
+| `sd-composer` | your textarea height, `hidden` on `.sd-suggest`, `aria-selected` on its options | `data-sd-autogrow`, `data-sd-enter-submit`, `data-sd-suggest` | Growing, Enter to send, mentions. |
+| `sd-combobox`, `sd-tags`, `sd-number`, `sd-command` | `aria-expanded`, `aria-selected`, `hidden` on options, chips, the value | `data-sd-combobox`, `data-sd-tags`, `data-sd-number`, `data-sd-palette` | Filtering, keys, values. |
+| `sd-progress`, `sd-table th[data-sort]`, `data-tone` | `--value`, `aria-sort`, `data-tone` | (none) | Nothing: these have no JS. |
+
+Safe to keep in framework apps, because they write only nodes and attributes
+Signal creates: `toast()`, `hotkeys()`, `data-sd-key`, `data-sd-copy`,
+`data-sd-toast`, `data-sd-theme`, and `data-sd-tip` (it adds a tooltip to
+`<body>` and sets `aria-describedby` on the owner while it shows, so do not
+render `aria-describedby` there yourself). `mountFeed`, `mountCountdown` and
+`mountLivingTable` own the subtree you mount them on. Do not render state
+inside it.
+
+`init()` also acts on some markup that has no `data-sd-*` attribute. If your
+framework owns one of these, do not call `init()` on that page, or let Signal
+own the piece and copy its events into your state:
+
+- `role="tablist"` and `role="tab"`: on load and on every click or arrow key,
+  it writes `aria-selected` and `tabindex` on the tabs and `hidden` on their
+  panels (`sd:tab` reports it).
+- `.sd-shell`:
+  - On load it applies the stored `sd-shell-sidebar` choice as `data-sidebar`.
+  - Between 48rem and 64rem it sets `data-sidebar="collapsed"`, on load and
+    when the window crosses that range.
+  - Below 75rem it removes `data-aside="open"`.
+  - Escape, or a click on an `sd-sidebar-link` while the sidebar peeks or
+    the drawer is open, clears `data-peek` and `data-drawer`, and below
+    75rem also `data-aside` (`sd:shell` reports it).
+- `[popovertarget]` with a `[popover].sd-popover`: positions the popover
+  (inline `style`, `data-side`), sets `aria-expanded` on the invoker, and
+  closes the popover when a `menuitem` or `option` in it is clicked.
+- `<dialog open>`: Escape closes it unless it has `data-sd-static`.
+- `.sd-table-wrap`, `.sd-code > pre`, `pre.sd-diff`, `.sd-statusbar`: get
+  `tabindex="0"` when they overflow and `data-sd-scrolling` while they
+  scroll. `<html>` gets `data-sd-scrollbars` and `data-sd-scrolling-page`.
+- `.sd-empty`: gets inline background styles, and an `aria-hidden` span unless
+  it has `data-sd-ornaments="none"`.
+- `.sd-titlebar`: gets `data-maximized` from the Tauri window.
+
 ## Charts
 
 Two ways to chart, with one set of colors:

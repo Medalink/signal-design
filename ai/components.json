@@ -1253,6 +1253,36 @@
    "script": "import { mountFeed, hotkeys } from \"signal-design/js\";\nconst root = document.getElementById(\"demo-feed\");\nroot.addEventListener(\"sd:feed\", ({ detail }) => {\n  document.getElementById(\"feed-above\").textContent = `${detail.aboveCount} above`;\n});\nconst feed = mountFeed(root);\nconst off = hotkeys({ j: () => feed.move(1), k: () => feed.move(-1),\n  \"g t\": () => feed.newest(), n: () => feed.oldest() },\n  { target: root, sequenceTimeout: 900, enabled: () => !root.hidden });\ndocument.getElementById(\"feed-oldest\").onclick = () => feed.oldest();\ndocument.getElementById(\"feed-newest\").onclick = () => feed.newest();\nlet order = 3;\ndocument.getElementById(\"feed-insert\").onclick = () => {\n  feed.beforeUpdate();\n  const row = document.createElement(\"article\");\n  row.className = \"sd-row\";\n  row.dataset.id = `activity-${++order}`;\n  row.dataset.order = String(order);\n  row.textContent = `Activity ${order} received`;\n  root.prepend(row);\n  feed.afterUpdate();\n};"
   },
   {
+   "id": "js-framework-owned",
+   "section": "JS",
+   "title": "Framework-owned state",
+   "classes": [
+    "sd-btn",
+    "sd-btn-sm",
+    "sd-cluster",
+    "sd-expand",
+    "sd-note",
+    "sd-reactions",
+    "sd-seg",
+    "sd-seg-inline",
+    "sd-table",
+    "sd-table-wrap"
+   ],
+   "attributes": [
+    "data-sd-close",
+    "data-sd-open",
+    "data-sd-reaction",
+    "data-sd-section",
+    "data-sd-seg",
+    "data-sd-shell",
+    "data-sd-toggle"
+   ],
+   "usage": "When React, Vue or Svelte renders a piece's state, leave out its data-sd-* attribute and render the ARIA and data-* attributes the CSS keys on. These three have no data-sd-*: this page's own code keeps the state and writes the attributes, as a framework would. README \"Framework-owned state\" lists every piece and what init() wires without an attribute (role=\"tab\", .sd-shell, popovers, scrollers).",
+   "js": "JS: init() from signal-design/js wires data-sd-seg · data-sd-toggle · data-sd-reaction · data-sd-shell · data-sd-section · data-sd-open · data-sd-close.",
+   "html": "<div class=\"sd-cluster\" style=\"--gap: 16px\">\n  <div class=\"sd-seg sd-seg-inline\" id=\"owned-view\" role=\"group\" aria-label=\"View\"><button type=\"button\" data-value=\"list\" aria-pressed=\"true\">list</button><button type=\"button\" data-value=\"board\" aria-pressed=\"false\">board</button></div>\n  <button class=\"sd-btn sd-btn-sm\" id=\"owned-toggle\" aria-expanded=\"false\" aria-controls=\"owned-details\">Details</button>\n  <div class=\"sd-reactions\"><button id=\"owned-reaction\" aria-pressed=\"false\">👍 <b>2</b></button></div>\n</div>\n\n<div class=\"sd-expand\" id=\"owned-details\"><div><p class=\"sd-note\">Shown because the page set <code>data-open</code> on this panel and <code>aria-expanded=\"true\"</code> on its button.</p></div></div>\n\n<div class=\"sd-table-wrap\">\n  <table class=\"sd-table\">\n    <thead><tr><th>Piece</th><th>Render</th><th>Leave out</th></tr></thead>\n    <tbody>\n      <tr><td><code>sd-seg</code></td><td><code>aria-pressed</code></td><td><code>data-sd-seg</code></td></tr>\n      <tr><td><code>sd-expand</code></td><td><code>data-open</code>, <code>aria-expanded</code></td><td><code>data-sd-toggle</code></td></tr>\n      <tr><td><code>sd-reactions</code></td><td><code>aria-pressed</code>, the count</td><td><code>data-sd-reaction</code></td></tr>\n      <tr><td><code>sd-shell</code></td><td><code>data-sidebar</code>, <code>data-aside</code>, <code>data-drawer</code>, <code>--shell-sidebar</code></td><td><code>data-sd-shell</code>, <code>data-sd-section</code></td></tr>\n      <tr><td><code>dialog.sd-dialog</code></td><td><code>showModal()</code>, <code>close()</code></td><td><code>data-sd-open</code>, <code>data-sd-close</code></td></tr>\n    </tbody>\n  </table>\n</div>",
+   "script": "// React: the state lives in the component; no data-sd-* attributes.\nfunction Toolbar() {\n  const [view, setView] = useState(\"list\");\n  const [open, setOpen] = useState(false);\n  const [liked, setLiked] = useState(false);\n  return (\n    <>\n      <div className=\"sd-seg sd-seg-inline\" role=\"group\" aria-label=\"View\">\n        {[\"list\", \"board\"].map((v) => (\n          <button key={v} type=\"button\" aria-pressed={view === v} onClick={() => setView(v)}>{v}</button>\n        ))}\n      </div>\n      <button className=\"sd-btn sd-btn-sm\" aria-expanded={open} aria-controls=\"details\" onClick={() => setOpen(!open)}>Details</button>\n      <div className=\"sd-reactions\">\n        <button aria-pressed={liked} onClick={() => setLiked(!liked)}>👍 <b>{2 + (liked ? 1 : 0)}</b></button>\n      </div>\n      <div className=\"sd-expand\" id=\"details\" data-open={open || undefined}><div>…</div></div>\n    </>\n  );\n}"
+  },
+  {
    "id": "js-setup-and-attributes",
    "section": "JS",
    "title": "Setup and attributes",
