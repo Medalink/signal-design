@@ -10,6 +10,8 @@ export default async function checkSidebarHeadSm(page, where, fail) {
       defaultSize: getComputedStyle(title("demo-head-default")).fontSize === "18px",
       smallSize: getComputedStyle(small).fontSize === "16px",
       smallFits: fits(small),
+      h2Size: getComputedStyle(title("demo-head-h2")).fontSize === "18px",
+      h2SmallSize: getComputedStyle(title("demo-head-h2-sm")).fontSize === "16px",
       actionInside: document.querySelector("#demo-head-sm .sd-btn").getBoundingClientRect().right <= document.getElementById("demo-head-sm").getBoundingClientRect().right,
     };
   });
