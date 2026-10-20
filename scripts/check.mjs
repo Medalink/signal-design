@@ -1,7 +1,7 @@
 /**
  * Hard-rule sweep of the showcase pages in Chromium and WebKit.
  *
- *   node scripts/check.mjs [baseUrl] [screenshotDir] [--engine chromium|webkit]
+ *   node scripts/check.mjs [baseUrl] [screenshotDir] [--engine chromium|webkit] [--only|--except components,charts,behaviors,...]
  *
  * Pages: the components page, the Signal App Shell, and the prebuilt
  * dist/signal.css loaded without Tailwind (scripts/standalone.html).
@@ -28,8 +28,14 @@ const componentChecks = await Promise.all(
 );
 
 const args = process.argv.slice(2);
-const engineFlag = args.indexOf("--engine");
-const onlyEngines = engineFlag >= 0 ? args.splice(engineFlag, 2)[1].split(",") : null;
+/** Remove `--flag a,b` from args; null when absent. */
+function listFlag(flag) {
+  const at = args.indexOf(flag);
+  return at < 0 ? null : (args.splice(at, 2)[1] ?? "").split(",").filter(Boolean);
+}
+const onlyEngines = listFlag("--engine");
+const onlyParts = listFlag("--only");
+const exceptParts = listFlag("--except");
 const base = (args[0] || "http://localhost:5178/").replace(/\/?$/, "/");
 const apiUrl = `${base}@fs/${fileURLToPath(new URL("../src/js/index.js", import.meta.url)).replace(/\\/g, "/")}`;
 const pages = {
@@ -46,13 +52,16 @@ if (!existsSync(new URL("../dist/signal.css", import.meta.url))) {
   process.exit(1);
 }
 const shots = args[1];
-const allEngines = { chromium, webkit };
-const unknownEngines = (onlyEngines ?? []).filter((name) => !(name in allEngines));
-if (unknownEngines.length) {
-  console.log(`FAIL unknown --engine ${unknownEngines.join(", ")}: use ${Object.keys(allEngines).join(" or ")}`);
-  process.exit(1);
+const parts = [...Object.keys(pages), "behaviors"];
+for (const [flag, given, allowed] of [["--engine", onlyEngines, ["chromium", "webkit"]], ["--only", onlyParts, parts], ["--except", exceptParts, parts]]) {
+  const unknown = given?.filter((name) => !allowed.includes(name)) ?? [];
+  if (given?.length === 0 || unknown.length) {
+    console.log(`FAIL unknown ${flag} ${unknown.join(", ")}: use ${allowed.join(", ")}`);
+    process.exit(1);
+  }
 }
-const engines = Object.fromEntries(Object.entries(allEngines).filter(([name]) => !onlyEngines || onlyEngines.includes(name)));
+const engines = Object.fromEntries(Object.entries({ chromium, webkit }).filter(([name]) => !onlyEngines || onlyEngines.includes(name)));
+const runs =(part) => (!onlyParts || onlyParts.includes(part)) && !exceptParts?.includes(part);
 const themes = ["ink", "graphite", "paper"];
 // Desktop, small laptop, tablet, phone. The in-between widths run in ink only.
 const widths = [1280, 1024, 768, 375];
@@ -894,7 +903,7 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
 
 for (const [name, engine] of Object.entries(engines)) {
   let browser = await engine.launch();
-  for (const [pageName, url] of Object.entries(pages)) {
+  for (const [pageName, url] of Object.entries(pages).filter(([pageName]) => runs(pageName))) {
     for (const width of widths) {
       for (const theme of themes) {
         if ((width === 1024 || width === 768) && theme !== "ink") continue;
@@ -940,7 +949,7 @@ for (const [name, engine] of Object.entries(engines)) {
     },
   };
   // Each group gets a fresh page, and an exception fails that group only.
-  for (const [label, run] of Object.entries(behaviors)) {
+  for (const [label, run] of runs("behaviors") ? Object.entries(behaviors) : []) {
     if (!browser.isConnected()) browser = await engine.launch();
     let page;
     try {

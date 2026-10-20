@@ -70,7 +70,7 @@ pnpm install
 pnpm dev                                        # showcase at http://localhost:5178
 pnpm build:css
 node scripts/check.mjs http://localhost:5178/   # hard rules and behavior, Chromium and WebKit
-node scripts/check.mjs http://localhost:5178/ --engine webkit   # one engine, as each CI job runs it
+node scripts/check.mjs http://localhost:5178/ --engine webkit --only chat,behaviors   # one engine, some pages
 pnpm a11y                                       # axe-core audit
 node scripts/changelog.mjs --check              # changelog fragments
 ```

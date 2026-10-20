@@ -18,9 +18,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [chromium, webkit, a11y]
+        # WebKit is the slowest engine, so its pages split across two jobs of
+        # about equal length. The second takes everything the first does not,
+        # so a new page is checked without editing this list.
+        include:
+          - suite: chromium
+            browser: chromium
+            args: --engine chromium
+          - suite: webkit 1/2
+            browser: webkit
+            args: --engine webkit --only components,charts,form,standalone
+          - suite: webkit 2/2
+            browser: webkit
+            args: --engine webkit --except components,charts,form,standalone
+          - suite: a11y
+            browser: chromium
     env:
-      BROWSER: ${{ matrix.suite == 'webkit' && 'webkit' || 'chromium' }}
+      BROWSER: ${{ matrix.browser }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -67,7 +81,7 @@ jobs:
         run: node scripts/build-ai.mjs
 
       - if: matrix.suite != 'a11y'
-        run: node scripts/check.mjs http://localhost:5178/ --engine ${{ matrix.suite }}
+        run: node scripts/check.mjs http://localhost:5178/ ${{ matrix.args }}
       - if: matrix.suite == 'a11y'
         run: node scripts/a11y.mjs http://localhost:5178/
       - if: failure()
