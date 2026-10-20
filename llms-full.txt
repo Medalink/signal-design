@@ -103,9 +103,10 @@ by `title` or `classes`) rather than inventing markup.
 | Buttons | `sd-btn` + `sd-btn-primary` (one per view) / `sd-btn-ghost` / `sd-btn-link`, sizes `-sm` `-lg` `-icon` `-block` |
 | Icons | `sd-icon-text` > `sd-icon` + text; icons are sized to the text's cap height (`1.5cap`) and scale with it |
 | Forms | `sd-field` > `sd-field-label` + control + `sd-field-hint`; inputs are styled unclassed |
-| Choices | `sd-seg` (segmented), `sd-options` > `sd-option` (cards with a description or preview), `role="switch"` checkbox, `sd-combobox`, `sd-tags`, `sd-number` |
+| Choices | `sd-seg` (segmented; `sd-seg-wrap` in a narrow container), `sd-options` > `sd-option` (cards with a description or preview), `role="switch"` checkbox, `sd-combobox`, `sd-tags`, `sd-number` |
 | Overlays | `<dialog class="sd-dialog">` + `data-sd-open`; `popover` + `.sd-popover`; `data-sd-tip`; `toast()` |
-| Lists and rows | `sd-item`, `sd-row`, `sd-table`, `sd-kv` |
+| Lists and rows | `sd-item`, `sd-row`, `sd-table`, `sd-kv` (`sd-kv-plain` for sentence-case, truncating keys) |
+| Settings groups | `sd-panel` (560px), `sd-panel-wide` (1024px), `sd-panel-fluid` (no cap) |
 | Status | `sd-badge`, `sd-status`, `sd-dot`, `sd-count`, `sd-progress` (`data-state="indeterminate"` when the amount is unknown; never a looping bar), `sd-checks`, `sd-level` (live level from `--level`, 0–1) |
 | People | `sd-avatar` (`-sm` `-md` `-lg` `-xl`, or `--sd-avatar-size`) with `data-status`; on your own panel set `--sd-ring` to its background so the presence ring matches |
 | Chat and feeds | `sd-message` (`--edge` role color, `data-own`, `data-selected`), `sd-composer`, `sd-reactions`, `sd-banner`, `sd-file`, `sd-link-card` (`-hero`, `-compact`, `-type`, `data-blocked`, `aria-busy`) |
@@ -900,6 +901,31 @@ JS: init() from signal-design/js wires data-sd-seg.
 </div>
 ```
 
+## Components / Segmented control in a narrow container
+
+sd-seg + sd-seg-wrap · without it, items stay on one line and a narrow container overflows
+
+Classes: sd-field-hint, sd-seg, sd-seg-wrap
+
+JS: init() from signal-design/js wires data-sd-seg.
+
+```html
+<div class="grid gap-6 sm:grid-cols-2 items-start">
+  <div class="grid gap-2">
+    <p class="sd-field-hint">One row, as wide as the container allows.</p>
+    <div class="sd-seg sd-seg-wrap" data-sd-seg="" aria-label="Range">
+      <button type="button" aria-pressed="false">hour</button><button type="button" aria-pressed="true">day</button><button type="button" aria-pressed="false">week</button>
+    </div>
+  </div>
+  <div class="grid gap-2" style="width: 13rem; max-width: 100%">
+    <p class="sd-field-hint">Wraps in a 13rem container.</p>
+    <div class="sd-seg sd-seg-wrap" data-sd-seg="" aria-label="Range, narrow">
+      <button type="button" aria-pressed="false">last hour</button><button type="button" aria-pressed="true">last day</button><button type="button" aria-pressed="false">last week</button><button type="button" aria-pressed="false">last month</button><button type="button" aria-pressed="false">custom</button>
+    </div>
+  </div>
+</div>
+```
+
 ## Components / Navigation
 
 sd-nav · sd-tabs + sd-tabpanel · sd-breadcrumb · sd-pagination · sd-sidenav · sd-topbar · sd-statusbar
@@ -1243,6 +1269,27 @@ JS: init() from signal-design/js wires data-sd-copy.
       </div>
 ```
 
+## Components / Key-value list with long keys
+
+sd-kv keys are small caps · sd-kv-plain keys are sentence case and truncate with an ellipsis
+
+Classes: sd-kv, sd-kv-plain
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="grid gap-6 sm:grid-cols-2 items-start">
+  <dl class="sd-kv">
+    <dt>Retention period</dt><dd>30 days</dd>
+    <dt>Region</dt><dd>eu-west</dd>
+  </dl>
+  <dl class="sd-kv sd-kv-plain" style="max-width: 20rem">
+    <dt title="Retention period for deleted messages and their attachments">Retention period for deleted messages and their attachments</dt><dd>30 days</dd>
+    <dt>Region</dt><dd>eu-west</dd>
+  </dl>
+</div>
+```
+
 ## Components / Living tables
 
 Drag the grip on the trailing edge, or focus it and use the arrow keys. Metadata folds beneath each title as the container narrows. Groups open independently. Width only. Arrow keys move 16px, Shift + arrows move 64px, Home fits the minimum, End fills the parent, and Escape cancels a drag. Requires CSS subgrid and container queries, supported in Chromium 117+ and Safari 16+. Call refresh() after changing rows or groups; remount for a different column schema. Without mounting, this is a readable static table.
@@ -1373,6 +1420,31 @@ JS: init() from signal-design/js wires data-sd-open · data-sd-tip · data-sd-cl
   </div>
   <p class="sd-command-foot">Esc to cancel</p>
 </dialog>
+```
+
+## Components / Panel widths
+
+sd-panel (560px) · sd-panel-wide (1024px) · sd-panel-fluid (no cap)
+
+Classes: sd-panel, sd-panel-desc, sd-panel-fluid, sd-panel-title, sd-panel-wide
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<section class="sd-panel">
+  <h3 class="sd-panel-title">Default</h3>
+  <p class="sd-panel-desc">Capped at 560px, for a short form.</p>
+</section>
+
+<section class="sd-panel sd-panel-wide">
+  <h3 class="sd-panel-title">Wide</h3>
+  <p class="sd-panel-desc">Capped at 1024px, for a settings page with two columns of fields.</p>
+</section>
+
+<section class="sd-panel sd-panel-fluid">
+  <h3 class="sd-panel-title">Fluid</h3>
+  <p class="sd-panel-desc">No cap: it fills its parent, so a page in an app shell needs no <code>max-w-none</code>.</p>
+</section>
 ```
 
 ## Components / Layout
@@ -1522,7 +1594,7 @@ JS: init() from signal-design/js wires data-sd-contextmenu · data-sd-reaction �
 
 ## Conversation / Message edges and selection
 
---edge (author or role color, user data) · data-own · data-selected + a real checkbox · edge order: data-failed > aria-current > data-selected > data-mention > --edge
+--edge (author or role color, user data) · data-own · data-selected + a real checkbox · fills --sd-mention-fill and --sd-current-fill · edge order: data-failed > aria-current > data-selected > data-mention > --edge
 
 Classes: sd-avatar, sd-badge, sd-btn, sd-btn-link, sd-mention, sd-message, sd-message-body, sd-message-edited, sd-message-head, sd-message-status, sd-message-text
 
@@ -1562,12 +1634,40 @@ No JS needed: the HTML works with the CSS alone.
       <div class="sd-message-text"><span class="sd-mention">@Jane</span> a mention edge wins over the role color too.</div>
     </div>
   </article>
+  <article class="sd-message" aria-current="true" style="--edge: var(--sd-extra)">
+    <span class="sd-avatar" data-tone="extra">AL</span>
+    <div class="sd-message-body">
+      <header class="sd-message-head"><b>Alex</b><time>11:06</time></header>
+      <div class="sd-message-text">The message you are replying to or jumped to: <code>aria-current</code> has its own fill, stronger than hover.</div>
+    </div>
+  </article>
   <article class="sd-message" data-own="" data-failed="" aria-current="true">
     <span class="sd-avatar" data-tone="success">JD</span>
     <div class="sd-message-body">
       <header class="sd-message-head"><b>Jane</b><time>11:07</time></header>
       <div class="sd-message-text">Failed wins over every other edge, even while you reply to it.</div>
       <div class="sd-message-status">Not sent · <button class="sd-btn sd-btn-link">Retry</button></div>
+    </div>
+  </article>
+</div>
+```
+
+## Conversation / Message in a narrow column
+
+sd-message-body shrinks with the message, whatever the head holds · sd-message-head > b and sd-reply > b truncate with an ellipsis (60% and 40% of the row at most)
+
+Classes: sd-avatar, sd-badge, sd-message, sd-message-body, sd-message-head, sd-message-text, sd-reply
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="border border-line py-3" style="width: 20rem; max-width: 100%; background: var(--sd-surface)">
+  <article class="sd-message">
+    <span class="sd-avatar" data-tone="extra">LN</span>
+    <div class="sd-message-body">
+      <header class="sd-message-head"><b>anunbrokenauthornamewithnospacestowrapatall</b><span class="sd-badge">Lead</span><time>12:30</time></header>
+      <div class="sd-reply"><b>anotherunbrokenauthornamewithnospacesatall</b><span>The quoted text keeps the rest of the line.</span></div>
+      <div class="sd-message-text">The body column is <code>minmax(0, 1fr)</code>, so a long name cannot widen the row past its container. Names in the head and in a reply cut off with an ellipsis.</div>
     </div>
   </article>
 </div>
@@ -2078,6 +2178,27 @@ JS: init() from signal-design/js wires data-sd-tip.
     </div>
   </nav>
   <div class="flex-1 p-6 sd-subtle text-sm" style="background: var(--sd-shell-bg)">The rail scrolls when it fills; tiles keep a 48px square and an 8px gap, so a corner count never covers the tile above it.</div>
+</div>
+```
+
+## Effects / Sidebar head sizes
+
+sd-sidebar-head (18px title, cut off with an ellipsis when it does not fit) · sd-sidebar-head-sm (16px title)
+
+Classes: sd-btn, sd-btn-ghost, sd-btn-icon, sd-btn-sm, sd-sidebar, sd-sidebar-head, sd-sidebar-head-sm, sd-sidebar-title
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="flex flex-wrap gap-6">
+  <div class="sd-sidebar border border-line" id="demo-head-default" style="--shell-sidebar: 15rem">
+    <div class="sd-sidebar-head"><svg><use href="#i-pages"></use></svg><span class="sd-sidebar-title">Direct Messages</span>
+      <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="New message">+</button></div>
+  </div>
+  <div class="sd-sidebar border border-line" id="demo-head-sm" style="--shell-sidebar: 15rem">
+    <div class="sd-sidebar-head sd-sidebar-head-sm"><svg><use href="#i-pages"></use></svg><span class="sd-sidebar-title">Direct Messages</span>
+      <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="New message">+</button></div>
+  </div>
 </div>
 ```
 

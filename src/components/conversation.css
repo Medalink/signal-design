@@ -40,6 +40,7 @@
   .sd-message-body {
     grid-column: 2;
     display: grid;
+    grid-template-columns: minmax(0, 1fr); /* an implicit auto column would grow to a long author name and push the row off-screen */
     gap: 4px;
     min-width: 0;
   }
@@ -52,6 +53,11 @@
     font-size: var(--text-sm);
   }
   .sd-message-head > b {
+    min-width: 0;
+    max-width: 60%; /* a long name leaves room for the badge and the time */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     color: var(--sd-fg);
     font-size: var(--text-base);
     font-weight: var(--font-weight-semibold);
@@ -99,17 +105,22 @@
   .sd-message[data-grouped]:hover > time {
     opacity: 1;
   }
+  /* Mention and current have their own fills (--sd-mention-fill, --sd-current-fill),
+     lighter than --sd-raised and visible on a surface pane. Faint text is lifted
+     to subtle on them so it keeps 4.5:1. */
   .sd-message[data-mention] {
+    --sd-fg-faint: var(--sd-fg-subtle);
     border-inline-start-color: var(--sd-fg);
-    background: var(--sd-surface);
+    background: var(--sd-mention-fill);
   }
   .sd-message[data-selected] {
     border-inline-start-color: var(--sd-accent);
     background: var(--sd-raised);
   }
   .sd-message[aria-current]:not([aria-current="false"]) {
+    --sd-fg-faint: var(--sd-fg-subtle);
     border-inline-start-color: var(--sd-fg-subtle);
-    background: var(--sd-raised);
+    background: var(--sd-current-fill);
   }
   .sd-message[data-pending] .sd-message-text {
     opacity: 0.55;
@@ -117,6 +128,12 @@
   .sd-message[data-failed],
   .sd-message[data-failed][aria-current] {
     border-inline-start-color: var(--sd-danger);
+  }
+  /* The danger text of a failed row is only 4.5:1 on --sd-raised, so a failed
+     mention or current row keeps that fill instead of the stronger ones. */
+  .sd-message[data-failed][data-mention],
+  .sd-message[data-failed][aria-current]:not([aria-current="false"]) {
+    background: var(--sd-raised);
   }
   .sd-message-status {
     display: flex;
@@ -176,7 +193,12 @@
     font-size: var(--text-sm);
   }
   .sd-reply > b {
-    flex-shrink: 0;
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 40%; /* the quoted text keeps the rest of the line */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     color: var(--sd-fg-muted);
     font-weight: var(--font-weight-semibold);
   }

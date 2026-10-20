@@ -141,6 +141,13 @@
             <div class="sd-message-text"><span class="sd-mention">@Jane</span> a mention edge wins over the role color too.</div>
           </div>
         </article>
+        <article class="sd-message" aria-current="true" style="--edge: var(--sd-extra)">
+          <span class="sd-avatar" data-tone="extra">AL</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>Alex</b><time>11:06</time></header>
+            <div class="sd-message-text">The message you are replying to or jumped to: <code>aria-current</code> has its own fill, stronger than hover.</div>
+          </div>
+        </article>
         <article class="sd-message" data-own data-failed aria-current="true">
           <span class="sd-avatar" data-tone="success">JD</span>
           <div class="sd-message-body">
@@ -150,7 +157,22 @@
           </div>
         </article>
       </div>
-      <p class="demo-usage"><code>--edge</code> (author or role color, user data) · <code>data-own</code> · <code>data-selected</code> + a real checkbox · edge order: <code>data-failed</code> &gt; <code>aria-current</code> &gt; <code>data-selected</code> &gt; <code>data-mention</code> &gt; <code>--edge</code></p>
+      <p class="demo-usage"><code>--edge</code> (author or role color, user data) · <code>data-own</code> · <code>data-selected</code> + a real checkbox · fills <code>--sd-mention-fill</code> and <code>--sd-current-fill</code> · edge order: <code>data-failed</code> &gt; <code>aria-current</code> &gt; <code>data-selected</code> &gt; <code>data-mention</code> &gt; <code>--edge</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Message in a narrow column</h3>
+      <div class="border border-line py-3" style="width: 20rem; max-width: 100%; background: var(--sd-surface)">
+        <article class="sd-message">
+          <span class="sd-avatar" data-tone="extra">LN</span>
+          <div class="sd-message-body">
+            <header class="sd-message-head"><b>anunbrokenauthornamewithnospacestowrapatall</b><span class="sd-badge">Lead</span><time>12:30</time></header>
+            <div class="sd-reply"><b>anotherunbrokenauthornamewithnospacesatall</b><span>The quoted text keeps the rest of the line.</span></div>
+            <div class="sd-message-text">The body column is <code>minmax(0, 1fr)</code>, so a long name cannot widen the row past its container. Names in the head and in a reply cut off with an ellipsis.</div>
+          </div>
+        </article>
+      </div>
+      <p class="demo-usage"><code>sd-message-body</code> shrinks with the message, whatever the head holds · <code>sd-message-head &gt; b</code> and <code>sd-reply &gt; b</code> truncate with an ellipsis (60% and 40% of the row at most)</p>
     </div>
 
     <div class="demo-block">

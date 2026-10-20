@@ -103,9 +103,10 @@ by `title` or `classes`) rather than inventing markup.
 | Buttons | `sd-btn` + `sd-btn-primary` (one per view) / `sd-btn-ghost` / `sd-btn-link`, sizes `-sm` `-lg` `-icon` `-block` |
 | Icons | `sd-icon-text` > `sd-icon` + text; icons are sized to the text's cap height (`1.5cap`) and scale with it |
 | Forms | `sd-field` > `sd-field-label` + control + `sd-field-hint`; inputs are styled unclassed |
-| Choices | `sd-seg` (segmented), `sd-options` > `sd-option` (cards with a description or preview), `role="switch"` checkbox, `sd-combobox`, `sd-tags`, `sd-number` |
+| Choices | `sd-seg` (segmented; `sd-seg-wrap` in a narrow container), `sd-options` > `sd-option` (cards with a description or preview), `role="switch"` checkbox, `sd-combobox`, `sd-tags`, `sd-number` |
 | Overlays | `<dialog class="sd-dialog">` + `data-sd-open`; `popover` + `.sd-popover`; `data-sd-tip`; `toast()` |
-| Lists and rows | `sd-item`, `sd-row`, `sd-table`, `sd-kv` |
+| Lists and rows | `sd-item`, `sd-row`, `sd-table`, `sd-kv` (`sd-kv-plain` for sentence-case, truncating keys) |
+| Settings groups | `sd-panel` (560px), `sd-panel-wide` (1024px), `sd-panel-fluid` (no cap) |
 | Status | `sd-badge`, `sd-status`, `sd-dot`, `sd-count`, `sd-progress` (`data-state="indeterminate"` when the amount is unknown; never a looping bar), `sd-checks`, `sd-level` (live level from `--level`, 0–1) |
 | People | `sd-avatar` (`-sm` `-md` `-lg` `-xl`, or `--sd-avatar-size`) with `data-status`; on your own panel set `--sd-ring` to its background so the presence ring matches |
 | Chat and feeds | `sd-message` (`--edge` role color, `data-own`, `data-selected`), `sd-composer`, `sd-reactions`, `sd-banner`, `sd-file`, `sd-link-card` (`-hero`, `-compact`, `-type`, `data-blocked`, `aria-busy`) |

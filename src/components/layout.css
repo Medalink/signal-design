@@ -34,6 +34,13 @@
     padding: 22px;
     border: 1px solid var(--sd-line);
   }
+  /* Wider panels for settings pages: 1024px, or the full width of the parent. */
+  .sd-panel-wide {
+    max-width: var(--container-wide);
+  }
+  .sd-panel-fluid {
+    max-width: none;
+  }
   .sd-panel-title {
     margin-block-end: 8px;
     font-size: var(--text-xs);

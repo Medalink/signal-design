@@ -504,7 +504,11 @@ inherits, so a wrapper can set it for a run of messages. State edges win over
 it in a fixed order: `data-failed` > `aria-current` > `data-selected` >
 `data-mention` > `--edge`. `data-own` tints the viewer's own messages with half
 of `--sd-raised`; `data-selected` (an accent edge on `--sd-raised`) marks
-messages picked for a bulk action. `data-selected` is only the look: expose the
+messages picked for a bulk action. `data-mention` and `aria-current` have their
+own fills, `--sd-mention-fill` and `--sd-current-fill`, which read against both
+`--sd-canvas` and `--sd-surface`. Author names in `sd-message-head` and
+`sd-reply` truncate with an ellipsis, and the body column shrinks, so a long
+unbroken name cannot push a row off-screen. `data-selected` is only the look: expose the
 choice with a real control, such as a labelled checkbox in the message.
 
 `data-sd-contextmenu="menu-id"` opens a menu at the pointer on right click,

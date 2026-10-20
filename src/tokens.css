@@ -255,6 +255,10 @@
   --sd-surface: #0a0a0a;
   --sd-raised: #191a1d;
   --sd-overlay: #191a1d;
+  /* Message row fills: a mention and the current (replied-to, jumped-to) row. Mixed from the
+     text color so they read against canvas and surface alike; the own-message tint is lighter. */
+  --sd-mention-fill: color-mix(in srgb, var(--sd-fg) 7%, transparent);
+  --sd-current-fill: color-mix(in srgb, var(--sd-fg) 10%, transparent);
   --sd-line: #262626;
   --sd-line-strong: #333333;
   --sd-fg: #fafafa;
@@ -289,6 +293,8 @@
   --sd-surface: #1a1a1a;
   --sd-raised: #242424;
   --sd-overlay: #242424;
+  --sd-mention-fill: color-mix(in srgb, var(--sd-fg) 7%, transparent);
+  --sd-current-fill: color-mix(in srgb, var(--sd-fg) 10%, transparent);
   --sd-line: #2e2e2e;
   --sd-line-strong: #3d3d3d;
   --sd-fg: #f5f5f5;
@@ -322,6 +328,8 @@
   --sd-surface: #f6f6f7;
   --sd-raised: #eeeef0;
   --sd-overlay: #ffffff;
+  --sd-mention-fill: color-mix(in srgb, var(--sd-fg) 7%, transparent);
+  --sd-current-fill: color-mix(in srgb, var(--sd-fg) 10%, transparent);
   --sd-line: rgb(0 0 0 / 0.1);
   --sd-line-strong: rgb(0 0 0 / 0.22);
   --sd-fg: var(--color-ink-1000);
@@ -356,6 +364,8 @@
     --sd-surface: #f6f6f7;
     --sd-raised: #eeeef0;
     --sd-overlay: #ffffff;
+    --sd-mention-fill: color-mix(in srgb, var(--sd-fg) 7%, transparent);
+    --sd-current-fill: color-mix(in srgb, var(--sd-fg) 10%, transparent);
     --sd-line: rgb(0 0 0 / 0.1);
     --sd-line-strong: rgb(0 0 0 / 0.22);
     --sd-fg: var(--color-ink-1000);
