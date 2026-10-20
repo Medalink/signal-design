@@ -77,6 +77,9 @@
     text-transform: uppercase;
     white-space: nowrap;
   }
+  .sd-timeline-label[data-tone] {
+    color: var(--tone);
+  }
   .sd-timeline-plot {
     position: relative;
     display: grid;
