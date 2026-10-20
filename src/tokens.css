@@ -10,7 +10,7 @@
  *      without a rebuild.
  *
  * Hard rules this file enforces: square corners (every radius is 0),
- * flat surfaces (no shadow scale), SF Pro text in 400 and 500, Source Code Pro for code.
+ * flat surfaces (no shadow scale), text in 400 and 500, Source Code Pro for code.
  */
 
 @font-face {
@@ -43,6 +43,40 @@
   src: url("./fonts/source-code-pro-600-italic.woff2") format("woff2");
 }
 
+/* Medium (500) Source Code Pro for the source-code-pro text font only. A
+   separate family, so code set in var(--font-mono) renders as it always has. */
+@font-face {
+  font-family: "Source Code Pro Text";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/source-code-pro-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Source Code Pro Text";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("./fonts/source-code-pro-500-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Source Code Pro Text";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("./fonts/source-code-pro-500-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* Leon Sans, cut to the 400-500 range Signal uses (the full 100-900 file is 3x the size). */
+@font-face {
+  font-family: "Leon Sans";
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url("./fonts/leon-sans.woff2") format("woff2");
+}
+
 /* static: emit every variable even when no utility uses it, so apps can
    read var(--color-ink-850) from CSS or JS without it being tree-shaken. */
 @theme static {
@@ -57,10 +91,6 @@
   --font-weight-*: initial;
   --tracking-*: initial;
   --animate-*: initial;
-
-  /* Type: SF Pro (the system UI face) for text, Source Code Pro for code. */
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", system-ui, sans-serif;
-  --font-mono: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   --font-weight-normal: 400;
   --font-weight-semibold: 500;
@@ -186,6 +216,8 @@
 
 /* Semantic roles as utilities. inline = the utility reads the live variable. */
 @theme inline {
+  --font-sans: var(--sd-font-sans); /* text; follows [data-font] */
+  --font-mono: var(--sd-font-mono); /* code, charts, numbers */
   --color-canvas: var(--sd-canvas); /* page background */
   --color-surface: var(--sd-surface); /* wells, inputs, media frames */
   --color-raised: var(--sd-raised); /* hover rows, selected segments */
@@ -347,6 +379,34 @@
     --sd-icon-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%235C5C66' stroke-width='1.5' stroke-linecap='square'/%3E%3C/svg%3E");
     --sd-icon-thumb: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect width='12' height='12' fill='%235C5C66'/%3E%3C/svg%3E");
     --sd-icon-thumb-on: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect width='12' height='12' fill='%23FFFFFF'/%3E%3C/svg%3E");
+  }
+}
+
+/*
+ * Fonts. The text face is a role like the colors: set data-font on <html>
+ * or on any element: system (default) | leon-sans | source-code-pro. Code
+ * stays in --sd-font-mono whatever the text face is. Every stack ends in
+ * the system one, so a face that has not loaded yet falls back cleanly.
+ */
+:root {
+  --sd-font-system: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", system-ui, sans-serif;
+  --sd-font-mono: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sd-font-sans: var(--sd-font-system);
+}
+[data-font="system"] {
+  --sd-font-sans: var(--sd-font-system);
+}
+[data-font="leon-sans"] {
+  --sd-font-sans: "Leon Sans", var(--sd-font-system);
+}
+[data-font="source-code-pro"] {
+  --sd-font-sans: "Source Code Pro Text", var(--sd-font-system);
+}
+/* font-family inherits as a resolved value, so a subtree restates it.
+   Base layer and zero specificity, so code, font-mono and app CSS still win. */
+@layer base {
+  :where([data-font]) {
+    font-family: var(--sd-font-sans);
   }
 }
 

@@ -25,7 +25,7 @@ import { formatValue, formatDelta } from "./format.js";
 import { SCALE_MODES, scaleBounds, smooth, envelope, bursts, significance, flowRate, upsertTail } from "./data.js";
 import { createSymlogScale } from "./scales.js";
 import { timeAdapter, formatTime } from "./time.js";
-import { FONT, readTheme, rgba, mix, kindOf } from "./theme.js";
+import { readTheme, rgba, mix, kindOf } from "./theme.js";
 import * as plugins from "./plugins.js";
 import { createLayer, effectsLevel } from "./effects.js";
 import { createBasicChart } from "./basic.js";
@@ -276,7 +276,7 @@ export function createChart(canvas, options = {}) {
     const t = theme.colors;
     const size = opts.compact ? 11 : 13;
     const grid = { color: rgba(t.grid), drawTicks: false };
-    const ticks = { color: rgba(t.tick), font: { family: FONT, size }, padding: 8 };
+    const ticks = { color: rgba(t.tick), font: { family: theme.font, size }, padding: 8 };
     const b = yBounds();
     const stacked = preset === "core";
     const primaryUnit = PRESETS[preset].unit;
@@ -357,7 +357,7 @@ export function createChart(canvas, options = {}) {
       align: "end",
       labels: {
         color: rgba(t.tick),
-        font: { family: FONT, size: 12 },
+        font: { family: theme.font, size: 12 },
         boxWidth: 14,
         boxHeight: 2,
         padding: 14,
@@ -407,8 +407,8 @@ export function createChart(canvas, options = {}) {
       cornerRadius: 0,
       caretSize: 0,
       padding: { top: 10, right: 12, bottom: 10, left: 12 },
-      titleFont: { family: FONT, size: 13, weight: 600 },
-      bodyFont: { family: FONT, size: 13 },
+      titleFont: { family: theme.font, size: 13, weight: 600 },
+      bodyFont: { family: theme.font, size: 13 },
       titleMarginBottom: 6,
       displayColors: true,
       boxWidth: 10,
@@ -482,7 +482,7 @@ export function createChart(canvas, options = {}) {
   const scheme = matchMedia("(prefers-color-scheme: light)");
   scheme.addEventListener("change", onTheme);
   // Canvas text needs the font loaded before the first real layout.
-  document.fonts?.load?.(`13px ${FONT}`).then(() => chart.update("none"), () => {});
+  document.fonts?.load?.(`13px ${theme.font}`).then(() => chart.update("none"), () => {});
 
   /* ---- scale mode toolbar ------------------------------------------------ */
 
