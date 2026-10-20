@@ -91,6 +91,16 @@ export async function checkShowcaseBar(browser, base, name) {
   await page.waitForFunction(() => document.getElementById("vp-settings").matches(":popover-open"), null, { timeout: 2000 });
   await page.click('#vp-chart-colors [data-value="mono"]');
   expect((await page.evaluate(() => document.querySelector("#chart-theme [aria-pressed=true]")?.dataset.value)) === "mono", "the bar's chart colors reach the example's own switch");
+  await page.keyboard.press("Escape");
+  await page.click('#chart-theme [data-value="spectrum"]');
+  const both = await page.evaluate(() => ({
+    bar: document.querySelector("#vp-chart-colors [aria-pressed=true]")?.dataset.value,
+    own: document.querySelector("#chart-theme [aria-pressed=true]")?.dataset.value,
+    root: document.documentElement.dataset.chartTheme,
+    figure: document.querySelector("#core").dataset.chartTheme,
+    stored: localStorage.getItem("sd-chart-theme"),
+  }));
+  expect(Object.values(both).every((v) => v === "spectrum"), `the example's switch reaches the bar, the page and storage ${JSON.stringify(both)}`);
   await page.close();
 
   page = await open("shell.html", 1280);

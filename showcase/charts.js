@@ -1,4 +1,4 @@
-import { mountBar } from "./viewport.js";
+import { mountBar, setChartColors } from "./viewport.js";
 import { init } from "../src/js/index.js";
 import { createChart, formatValue } from "../src/js/charts/index.js";
 import { lazyChart } from "./lazy.js";
@@ -331,32 +331,10 @@ document.querySelector("[data-uptime]").innerHTML = services
   .join("");
 
 /* ---- theme switch for every chart -------------------------------------- */
-const themeSeg = document.querySelector("#chart-theme");
-let chartTheme = "mono";
-try {
-  chartTheme = localStorage.getItem("sd-chart-theme") || "mono";
-} catch {}
-function applyChartTheme(name) {
-  chartTheme = name;
-  for (const fig of document.querySelectorAll(".sd-chart, .sd-plot, .sd-heatmap, .sd-waffle, .sd-uptime, .sd-meter")) fig.dataset.chartTheme = name;
-  for (const b of themeSeg.querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.value === name));
-  try {
-    localStorage.setItem("sd-chart-theme", name);
-  } catch {}
-  document.dispatchEvent(new CustomEvent("sd:theme", { detail: { theme: document.documentElement.dataset.theme } }));
-}
-themeSeg.addEventListener("click", (e) => {
+// This switch and the showcase bar's chart colors share one setter, which also restores the remembered choice.
+document.querySelector("#chart-theme").addEventListener("click", (e) => {
   const b = e.target.closest("button[data-value]");
-  if (b) applyChartTheme(b.dataset.value);
-});
-applyChartTheme(chartTheme);
-// The showcase bar (viewport.js) sets the same remembered choice; follow it.
-document.addEventListener("sd:theme", () => {
-  let saved = chartTheme;
-  try {
-    saved = localStorage.getItem("sd-chart-theme") || "mono";
-  } catch {}
-  if (saved !== chartTheme) applyChartTheme(saved);
+  if (b) setChartColors(b.dataset.value);
 });
 
 /* ---- formatter table --------------------------------------------------- */

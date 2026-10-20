@@ -74,8 +74,8 @@ function menu() {
   );
 }
 
-const seg = (id, label, options) =>
-  `<div class="sd-field"><span class="sd-field-label" id="${id}-label">${label}</span><div class="sd-seg sd-seg-sm" id="${id}" role="group" aria-labelledby="${id}-label">${options.map(([value, text]) => `<button type="button" data-value="${value}" aria-pressed="false">${text}</button>`).join("")}</div></div>`;
+const seg = (id, label, options, attrs = "") =>
+  `<div class="sd-field"><span class="sd-field-label" id="${id}-label">${label}</span><div class="sd-seg sd-seg-sm" id="${id}"${attrs} role="group" aria-labelledby="${id}-label">${options.map(([value, text]) => `<button type="button" data-value="${value}" aria-pressed="false">${text}</button>`).join("")}</div></div>`;
 
 const hasCharts = () => !!document.querySelector(".sd-chart, .sd-plot, .sd-heatmap, .sd-waffle, .sd-uptime, .sd-meter, [data-sd-chart]");
 const hasRain = () => !!document.querySelector("canvas[data-sd-rain]");
@@ -85,21 +85,26 @@ function settings() {
     `<div class="sd-field vp-phone-only"><span class="sd-field-label">Theme</span>${themeSeg("Theme")}</div>` +
     // init() restores the remembered font and keeps these buttons' aria-pressed in sync.
     `<div class="sd-field"><span class="sd-field-label" id="vp-font-label">Text font</span><div class="sd-seg sd-seg-sm" role="group" aria-labelledby="vp-font-label"><button type="button" data-sd-font="system" aria-pressed="false">system</button><button type="button" data-sd-font="leon-sans" aria-pressed="false">leon sans</button><button type="button" data-sd-font="source-code-pro" aria-pressed="false" aria-label="Source Code Pro">mono</button></div></div>` +
-    (hasCharts() ? seg("vp-chart-colors", "Chart colors", [["mono", "mono"], ["spectrum", "spectrum"]]) : "") +
+    (hasCharts() ? seg("vp-chart-colors", "Chart colors", [["mono", "mono"], ["spectrum", "spectrum"]], " data-chart-colors") : "") +
     seg("vp-scrollbars", "Scrollbars", [["auto", "hide when idle"], ["always", "always"]]) +
     (hasRain() ? `<div class="sd-field"><span class="sd-field-label">Backdrop</span><button class="sd-btn sd-btn-sm" data-sd-rain-toggle aria-pressed="false">Digital rain</button></div>` : "")
   );
 }
 
 function pick(group, value) {
-  for (const b of document.querySelectorAll(`#${group} [data-value]`)) b.setAttribute("aria-pressed", String(b.dataset.value === value));
+  for (const b of document.querySelectorAll(`${group} [data-value]`)) b.setAttribute("aria-pressed", String(b.dataset.value === value));
 }
 
-function chartColors(name, { persist = true } = {}) {
+/**
+ * The one setter for chart colors. The bar's control and a page's own switch
+ * (the charts example marks its with data-chart-colors) both call it, so they
+ * agree with the page and with what is remembered.
+ */
+export function setChartColors(name, { persist = true } = {}) {
   document.documentElement.dataset.chartTheme = name;
   // Pages that mark their own figures (the charts example) follow the same choice.
   for (const el of document.querySelectorAll("[data-chart-theme]")) el.dataset.chartTheme = name;
-  pick("vp-chart-colors", name);
+  pick("[data-chart-colors]", name);
   if (persist) store.set("sd-chart-theme", name);
   document.dispatchEvent(new CustomEvent("sd:theme", { detail: { theme: getTheme() } }));
 }
@@ -111,7 +116,7 @@ function applyTheme(name) {
 
 function scrollbars(mode,{ persist = true } = {}) {
   setScrollbars(mode);
-  pick("vp-scrollbars", mode);
+  pick("#vp-scrollbars", mode);
   if (persist) store.set("sd-scrollbars", mode);
 }
 
@@ -194,7 +199,7 @@ function buildBar() {
     if (b) show(Number(b.dataset.vp));
     else if (e.target === dialog || e.target === stage) show(0);
     const chart = e.target.closest("#vp-chart-colors [data-value]");
-    if (chart) chartColors(chart.dataset.value);
+    if (chart) setChartColors(chart.dataset.value);
     const bars = e.target.closest("#vp-scrollbars [data-value]");
     if (bars) scrollbars(bars.dataset.value);
   });
@@ -214,8 +219,8 @@ function buildBar() {
   });
   addEventListener("resize", () => dialog.open && fit(current));
 
-  pick("vp-chart-colors", store.get("sd-chart-theme") || "mono");
-  pick("vp-scrollbars", store.get("sd-scrollbars") || "auto");
+  pick("[data-chart-colors]", store.get("sd-chart-theme") || "mono");
+  pick("#vp-scrollbars", store.get("sd-scrollbars") || "auto");
 }
 
 /**
@@ -243,7 +248,7 @@ export function mountBar() {
   // Run after init() (which resets scrollbars to "auto"), whether or not the bar mounted.
   document.addEventListener("DOMContentLoaded", () => {
     const colors = store.get("sd-chart-theme");
-    if (colors && colors !== "mono") chartColors(colors, { persist: false });
+    if (colors && colors !== "mono") setChartColors(colors, { persist: false });
     const bars = store.get("sd-scrollbars");
     if (bars && bars !== "auto") scrollbars(bars, { persist: false });
   });
