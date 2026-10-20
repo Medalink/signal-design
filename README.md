@@ -917,6 +917,40 @@ Four more charts are plain HTML and CSS, built from squares:
 | `sd-uptime` | `<i data-state="ok\|degraded\|down\|none">` per period |
 | `sd-meter` | `--value`, `--target`, `--warn`, `--crit` (0–100); `data-over` turns it critical |
 
+### Timelines: `sd-timeline`
+
+Ranges over one axis: eras, phases, windows. A label column and a plot
+column; every row shares the same percentage scale. CSS only.
+
+```html
+<figure class="sd-timeline">
+  <div class="sd-timeline-head">
+    <span class="sd-label sd-label-strong">Platform eras</span>
+    <span class="sd-status" data-tone="accent">now</span>
+  </div>
+  <div class="sd-timeline-body">
+    <div class="sd-timeline-labels">
+      <span class="sd-timeline-label">Web · 1</span>
+    </div>
+    <div class="sd-timeline-plot">
+      <div class="sd-timeline-grid"><i style="--at: 0"></i></div>
+      <span class="sd-timeline-now" style="--at: 100"></span>
+      <div class="sd-timeline-row">
+        <span class="sd-timeline-track">
+          <span class="sd-timeline-bar" style="--from: 0; --to: 24"><b>2001</b><b>2007</b></span>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="sd-timeline-axis"><span style="--at: 0">2001</span></div>
+  <figcaption class="sd-meta"><span>Twenty-five years of platform eras</span></figcaption>
+</figure>
+```
+
+Bars use `--from` and `--to` (percent). `sd-timeline-now` and the grid use
+`--at`; the axis ticks do too. `sd-timeline-mark` brackets a span with
+`--from`/`--to` and a label. `data-tone` colors a bar, its label and the mark.
+
 ### Live charts: `createChart`
 
 Time-series charts for bandwidth and latency, on Chart.js. Chart.js is an

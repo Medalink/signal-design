@@ -1,0 +1,243 @@
+@layer components {
+  /*
+   * Timeline: ranges over a shared axis, one lane per row.
+   *
+   * A label column on the left, a plot column on the right. Bars sit in a
+   * track at --from and --to percentages; the grid, the now line, the axis
+   * and the mark use the same percentages, so every row shares one scale.
+   * CSS only: no canvas, no Chart.js.
+   *
+   *   <figure class="sd-timeline">
+   *     <div class="sd-timeline-head">
+   *       <span class="sd-label sd-label-strong">Platform eras</span>
+   *       <span class="sd-status" data-tone="accent">now</span>
+   *     </div>
+   *     <div class="sd-timeline-body">
+   *       <div class="sd-timeline-labels">
+   *         <span class="sd-timeline-label">Web · 1</span>
+   *       </div>
+   *       <div class="sd-timeline-plot">
+   *         <div class="sd-timeline-grid"><i style="--at: 0"></i></div>
+   *         <span class="sd-timeline-now" style="--at: 100"></span>
+   *         <div class="sd-timeline-row">
+   *           <span class="sd-timeline-track">
+   *             <span class="sd-timeline-bar" style="--from: 0; --to: 24"><b>2001</b><b>2007</b></span>
+   *           </span>
+   *         </div>
+   *       </div>
+   *     </div>
+   *     <div class="sd-timeline-axis">
+   *       <span style="--at: 0">2001</span>
+   *     </div>
+   *     <figcaption class="sd-meta"><span>Twenty-five years of platform eras</span></figcaption>
+   *   </figure>
+   *
+   * data-tone colors a bar, its label and the mark. --row-h, --label-w and
+   * --label-gap tune the geometry; the defaults fit a 720px column.
+   */
+  .sd-timeline {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+    container-type: inline-size;
+    --row-h: 30px;
+    --row-gap: 6px;
+    --label-w: 8rem;
+    --label-gap: 12px;
+  }
+  .sd-timeline-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 28px;
+  }
+  .sd-timeline-body {
+    display: grid;
+    grid-template-columns: var(--label-w) minmax(0, 1fr);
+    column-gap: var(--label-gap);
+    align-items: start;
+    min-width: 0;
+  }
+  .sd-timeline-labels {
+    display: grid;
+    gap: var(--row-gap);
+    min-width: 0;
+  }
+  .sd-timeline-label {
+    display: flex;
+    align-items: center;
+    height: var(--row-h);
+    overflow: hidden;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-caps);
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .sd-timeline-plot {
+    position: relative;
+    display: grid;
+    gap: var(--row-gap);
+    min-width: 0;
+  }
+  .sd-timeline-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .sd-timeline-grid > i {
+    position: absolute;
+    inset-block: 0;
+    left: calc(var(--at) * 1%);
+    width: 1px;
+    background: var(--sd-line);
+  }
+  .sd-timeline-now {
+    position: absolute;
+    inset-block: 0;
+    left: calc(var(--at) * 1%);
+    width: 1px;
+    background: var(--sd-accent);
+    pointer-events: none;
+  }
+  .sd-timeline-row {
+    position: relative;
+    height: var(--row-h);
+    min-width: 0;
+  }
+  .sd-timeline-track {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .sd-timeline-track::before {
+    content: "";
+    position: absolute;
+    inset: 50% 0 auto;
+    height: 1px;
+    background: var(--sd-line);
+  }
+  .sd-timeline-bar {
+    position: absolute;
+    left: calc(var(--from) * 1%);
+    top: 50%;
+    width: calc((var(--to) - var(--from)) * 1%);
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    overflow: hidden;
+    padding-inline: 4px;
+    border: 1px solid var(--tone, var(--sd-line-strong));
+    background: var(--sd-canvas);
+    color: var(--sd-fg-faint);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    line-height: 1;
+    white-space: nowrap;
+    translate: 0 -50%;
+  }
+  .sd-timeline-bar > b {
+    font-weight: 400;
+  }
+  .sd-timeline-bar > b + b {
+    color: var(--tone, var(--sd-fg-subtle));
+  }
+  .sd-timeline-bar[data-tone] {
+    color: var(--tone);
+  }
+  .sd-timeline-axis {
+    position: relative;
+    height: 22px;
+    margin-inline-start: calc(var(--label-w) + var(--label-gap));
+    border-block-start: 1px solid var(--sd-line-strong);
+    color: var(--sd-fg-faint);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.04em;
+  }
+  .sd-timeline-axis > span {
+    position: absolute;
+    top: 5px;
+    left: calc(var(--at) * 1%);
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+  .sd-timeline-axis > span::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    width: 1px;
+    height: 4px;
+    background: var(--sd-line-strong);
+  }
+  .sd-timeline-axis > span:first-child {
+    transform: none;
+  }
+  .sd-timeline-axis > span:first-child::before {
+    left: 0;
+  }
+  .sd-timeline-axis > span:last-child {
+    transform: translateX(-100%);
+  }
+  .sd-timeline-axis > span:last-child::before {
+    left: auto;
+    right: 0;
+  }
+  .sd-timeline-mark {
+    position: relative;
+    height: 22px;
+    margin-block-start: 4px;
+    color: var(--tone, var(--sd-accent));
+  }
+  .sd-timeline-mark::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 0;
+    left: calc(var(--from) * 1%);
+    width: calc((var(--to) - var(--from)) * 1%);
+    height: 1px;
+    background: currentColor;
+  }
+  .sd-timeline-mark > i {
+    position: absolute;
+    inset-block-start: -2px;
+    left: calc(var(--at) * 1%);
+    width: 1px;
+    height: 5px;
+    background: currentColor;
+  }
+  .sd-timeline-mark > b {
+    position: absolute;
+    inset-block-start: 5px;
+    left: calc((var(--from) + var(--to)) / 2 * 1%);
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  @container (max-width: 30rem) {
+    .sd-timeline-bar > b {
+      display: none;
+    }
+  }
+  @media (max-width: 40rem) {
+    .sd-timeline {
+      --label-w: 7rem;
+      --label-gap: 10px;
+      --row-h: 36px;
+    }
+    .sd-timeline-label {
+      overflow: visible;
+      white-space: normal;
+    }
+  }
+}
