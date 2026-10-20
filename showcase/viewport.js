@@ -7,7 +7,7 @@
  * settings popover. The bar sits in the page flow (nothing is covered), is
  * compact on phones, and is absent inside the frame.
  *
- * The restore calls at the bottom run in the frame too, so a framed page
+ * mountBar() and savedScrollbars() run in the frame too, so a framed page
  * shows the same chart colors and scrollbars as the page that opened it.
  */
 import { EXAMPLES, HOME, LIBRARY, byKey } from "./pages.js";
@@ -111,10 +111,13 @@ function applyTheme(name) {
   if (getTheme() !== name) setTheme(name, { persist: false });
 }
 
-function scrollbars(mode,{ persist = true } = {}) {
+/** The remembered scrollbar mode, for the init({ scrollbars }) each entry makes. */
+export const savedScrollbars = () => (store.get("sd-scrollbars") === "always" ? "always" : "auto");
+
+function scrollbars(mode) {
   setScrollbars(mode);
   pick("#vp-scrollbars", mode);
-  if (persist) store.set("sd-scrollbars", mode);
+  store.set("sd-scrollbars", mode);
 }
 
 function buildBar() {
@@ -217,14 +220,14 @@ function buildBar() {
   addEventListener("resize", () => dialog.open && fit(current));
 
   pick("[data-chart-colors]", store.get("sd-chart-theme") || "mono");
-  pick("#vp-scrollbars", store.get("sd-scrollbars") || "auto");
+  pick("#vp-scrollbars", savedScrollbars());
 }
 
 /**
- * Mount the bar (not in a frame) and restore the saved chart colors and
- * scrollbars. Each page entry calls it before init(): the package marks only
- * CSS as side-effect free, so a bare `import "./viewport.js"` is tree-shaken
- * out of the production build.
+ * Mount the bar (not in a frame) and restore the saved chart colors. Each page
+ * entry calls it before init(): the package marks only CSS as side-effect
+ * free, so a bare `import "./viewport.js"` is tree-shaken out of the
+ * production build. The entry passes savedScrollbars() to init() itself.
  */
 export function mountBar() {
   if (!inFrame) buildBar();
@@ -242,11 +245,9 @@ export function mountBar() {
     }
   }
 
-  // Run after init() (which resets scrollbars to "auto"), whether or not the bar mounted.
+  // After the page script has run, so a library page has already snapshotted its blocks as authored, whether or not the bar mounted.
   document.addEventListener("DOMContentLoaded", () => {
     const colors = store.get("sd-chart-theme");
     if (colors && colors !== "mono") setChartColors(colors, { persist: false });
-    const bars = store.get("sd-scrollbars");
-    if (bars && bars !== "auto") scrollbars(bars, { persist: false });
   });
 }

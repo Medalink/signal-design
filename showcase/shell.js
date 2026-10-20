@@ -1,8 +1,8 @@
-import { mountBar } from "./viewport.js";
+import { mountBar, savedScrollbars } from "./viewport.js";
 import { init, hotkeys, toast, setExpanded, rain, setOptions, openDialog } from "../src/js/index.js";
 
 mountBar();
-init();
+init({ scrollbars: savedScrollbars() });
 
 const shell = document.getElementById("shell");
 const content = document.querySelector(".sd-shell-content");

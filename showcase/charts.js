@@ -1,10 +1,10 @@
-import { mountBar, setChartColors } from "./viewport.js";
+import { mountBar, savedScrollbars, setChartColors } from "./viewport.js";
 import { init } from "../src/js/index.js";
 import { createChart, formatValue } from "../src/js/charts/index.js";
 import { lazyChart } from "./lazy.js";
 
 mountBar();
-init();
+init({ scrollbars: savedScrollbars() });
 
 // Seeded noise so every load (and every test run) draws the same chart.
 let seed = 42;

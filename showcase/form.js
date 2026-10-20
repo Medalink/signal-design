@@ -1,8 +1,8 @@
-import { mountBar } from "./viewport.js";
+import { mountBar, savedScrollbars } from "./viewport.js";
 import { init, toast } from "../src/js/index.js";
 
 mountBar();
-init();
+init({ scrollbars: savedScrollbars() });
 
 const form = document.querySelector("[data-form]");
 const error = document.querySelector("[data-form-error]");

@@ -1,8 +1,8 @@
-import { mountBar } from "./viewport.js";
+import { mountBar, savedScrollbars } from "./viewport.js";
 import { init, rain } from "../src/js/index.js";
 
 mountBar();
-init();
+init({ scrollbars: savedScrollbars() });
 
 // The hero rain moves for a few seconds on arrival (a state change: the page
 // just loaded), then settles to its still frame.
