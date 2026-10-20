@@ -8,3 +8,5 @@
 ### Added
 - `sd-panel-wide` (capped at 1024px) and `sd-panel-fluid` (no cap) for
   settings-style pages; `sd-panel` stays at 560px.
+- `sd-seg-wrap`: a segmented control whose items flow onto more rows in a
+  narrow container. A plain `sd-seg` still keeps one row.

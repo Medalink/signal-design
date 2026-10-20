@@ -689,6 +689,25 @@
     </div>
 
     <div class="demo-block">
+      <h3 class="sd-label">Segmented control in a narrow container</h3>
+      <div class="grid gap-6 sm:grid-cols-2 items-start">
+        <div class="grid gap-2">
+          <p class="sd-field-hint">One row, as wide as the container allows.</p>
+          <div class="sd-seg sd-seg-wrap" data-sd-seg aria-label="Range">
+            <button type="button" aria-pressed="false">hour</button><button type="button" aria-pressed="true">day</button><button type="button" aria-pressed="false">week</button>
+          </div>
+        </div>
+        <div class="grid gap-2" style="width: 13rem; max-width: 100%">
+          <p class="sd-field-hint">Wraps in a 13rem container.</p>
+          <div class="sd-seg sd-seg-wrap" data-sd-seg aria-label="Range, narrow">
+            <button type="button" aria-pressed="false">last hour</button><button type="button" aria-pressed="true">last day</button><button type="button" aria-pressed="false">last week</button><button type="button" aria-pressed="false">last month</button><button type="button" aria-pressed="false">custom</button>
+          </div>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-seg</code> + <code>sd-seg-wrap</code> · without it, items stay on one line and a narrow container overflows</p>
+    </div>
+
+    <div class="demo-block">
       <h3 class="sd-label">Navigation</h3>
       <nav class="sd-nav" aria-label="Filters">
         <a href="#components" aria-current="page">All</a>
