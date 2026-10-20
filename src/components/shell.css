@@ -335,6 +335,7 @@
     font-size: var(--text-base);
   }
   .sd-sidebar-title {
+    font-size: inherit; /* on an h2 the base heading size would win over the head's step */
     flex: 1;
     min-width: 0;
     overflow: hidden;
