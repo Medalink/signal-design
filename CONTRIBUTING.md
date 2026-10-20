@@ -1,0 +1,70 @@
+# Contributing to Signal
+
+`AGENTS.md` is the contract for building with Signal. This file is for
+changing Signal itself. Most of it exists so that parallel pull requests,
+usually one component each, merge without conflicts.
+
+## Files a pull request does not edit
+
+| File | Instead |
+|---|---|
+| `CHANGELOG.md` | Add `changes/<branch-name>.md` with a `### Added` / `Changed` / `Fixed` / `Removed` heading and bullets. See `changes/README.md`. |
+| `ai/components.json`, `ai/tokens.json`, `llms-full.txt`, `vscode/html-data.json`, `vscode/css-data.json` | Nothing. The `ai-files` workflow rebuilds them on `main` after every merge and commits them as `github-actions[bot]`. |
+
+CI fails a pull request that changes any of them. You can still run
+`pnpm build:ai` locally to look at the output; drop it before you commit with
+`git checkout origin/main -- ai vscode llms-full.txt`. A `release/*` branch is
+exempt so it can fold the fragments into `CHANGELOG.md`.
+
+## Where new things go
+
+- **Behavior checks:** a new file, `scripts/checks/<component>.mjs`, with
+  `export default async function checkThing(page, where, fail)`.
+  `scripts/check.mjs` runs every file in that folder on the components page,
+  once per engine (Chromium and WebKit) at 1280px in ink. Do not add a function or a call to
+  `check.mjs`. A check that needs its own page (like
+  `check-sidebar-resize.mjs`) is its own module too.
+- **Showcase:** a new component gets its own `<div class="demo-block">`, placed
+  next to the closest related block, not at the end of the section. The end of
+  a section is where every other pull request adds its block too.
+- **`AGENTS.md` and `README.md` tables:** a new component family gets its own
+  row next to related rows. When it belongs in a shared row (Status, Chat and
+  feeds), add it at the end of that row, and expect a one-line conflict if
+  another open pull request edits the same row.
+- One component per pull request. A second component that does not depend on
+  the first gets its own branch from `main`.
+
+## Merging
+
+- Merge with a merge commit, not squash or rebase. Merge commits keep the
+  ancestry, so an updated branch that already contains another pull request
+  still merges cleanly after that pull request lands.
+- Merge green pull requests promptly, oldest first. A pull request that waits
+  while others land is the one that conflicts.
+- When several open pull requests conflict, resolve them as a chain instead of
+  one by one against `main`: merge `main` into the oldest branch, then merge
+  that result into the next branch, and so on. Push each result to its own
+  branch (a fast-forward, no force push), then merge them in the same order.
+  Each step is then conflict-free.
+- `git config rerere.enabled true` makes git reuse a conflict resolution it
+  has already seen.
+
+## Develop
+
+```bash
+pnpm install
+pnpm dev                                        # showcase at http://localhost:5178
+pnpm build:css
+node scripts/check.mjs http://localhost:5178/   # hard rules and behavior, Chromium and WebKit
+pnpm a11y                                       # axe-core audit
+node scripts/changelog.mjs --check              # changelog fragments
+```
+
+## Releasing
+
+1. On a `release/<version>` branch, run `node scripts/changelog.mjs`. It moves
+   every fragment under `## Unreleased` in `CHANGELOG.md` and deletes them.
+2. Rename `## Unreleased` to `## <version> (<date>)`, add an empty
+   `## Unreleased` above it, and bump `version` in `package.json`.
+3. Merge, wait for the `ai-files` commit on `main` (it stamps the new
+   version), then tag that commit `v<version>`.

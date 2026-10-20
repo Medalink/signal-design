@@ -1030,6 +1030,10 @@ pnpm a11y          # axe-core audit of every page, theme and width
 shadow, any gradient, horizontal scroll on phones, and broken dialog, popover,
 menu, tabs, expand or segmented behavior.
 
+Before opening a pull request, read `CONTRIBUTING.md`: changelog entries go in
+`changes/`, and the generated AI files are rebuilt on `main`, not in the pull
+request.
+
 ## License
 
 MIT. Source Code Pro is under the SIL Open Font License 1.1 (`src/fonts/OFL.txt`).
