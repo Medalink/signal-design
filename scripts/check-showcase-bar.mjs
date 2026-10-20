@@ -129,10 +129,15 @@ export async function checkShowcaseBar(browser, base, name) {
         pages: shown(".vp-pages-btn"),
         theme: shown(".vp-theme"),
         settings: shown('.vp-bar [popovertarget="vp-settings"]'),
+        // Every library page is reachable from the rail without scrolling it, at 768px tall and up.
+        rail: (() => {
+          const list = document.querySelector(".sd-rail-list");
+          return !list || !list.getClientRects().length || list.scrollHeight <= list.clientHeight + 1;
+        })(),
       };
     });
     const phone = width < 768;
-    expect(m.bar === 36 && m.gap === 0 && m.fits && m.scrolls <= 0 && m.overflow <= 0 && m.settings && m.widths === width >= 1024 && m.pages === !phone && m.theme === !phone, `${file} at ${width}px ${JSON.stringify(m)}`);
+    expect(m.bar === 36 && m.gap === 0 && m.fits && m.scrolls <= 0 && m.overflow <= 0 && m.rail && m.settings && m.widths === width >= 1024 && m.pages === !phone && m.theme === !phone, `${file} at ${width}px ${JSON.stringify(m)}`);
     await page.close();
   }
   await context.close();

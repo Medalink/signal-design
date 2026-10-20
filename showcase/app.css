@@ -202,6 +202,11 @@
       display: grid;
     }
   }
+  /* Eight pages plus home and search: tighter rail items so the whole rail shows at 768px tall and up. Shorter windows scroll the list. */
+  .sd-rail > .sd-rail-list > .sd-rail-item {
+    padding-block: 5px 4px;
+    gap: 4px;
+  }
   /* The app shell fills the window under the bar. */
   .has-vp-bar .sd-shell {
     height: calc(100dvh - var(--vp-bar-h));

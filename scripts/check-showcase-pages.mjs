@@ -50,8 +50,16 @@ export async function checkHashRedirects(page, base) {
     await page.waitForURL((url) => url.pathname.endsWith(".html") && !url.pathname.endsWith(ALL[0].file));
     const want = `${pageOfHash(hash).file}${hash}`;
     const got = new URL(page.url()).pathname.split("/").pop() + new URL(page.url()).hash;
-    if (got === want) passed++;
-    else errors.push(`${hash} went to ${got}, want ${want}`);
+    // Block ids are assigned by the page script after load, so check the scroll landed too.
+    await page.waitForLoadState("networkidle");
+    const inView = await page.evaluate((id) => {
+      const el = document.getElementById(id);
+      const box = document.querySelector(".sd-shell-content").getBoundingClientRect();
+      const r = el?.getBoundingClientRect();
+      return !!r && r.top < box.bottom && r.bottom > box.top;
+    }, hash.slice(1));
+    if (got === want && inView) passed++;
+    else errors.push(`${hash} went to ${got}, want ${want}; target in view: ${inView}`);
   }
   await page.goto(`${base}${ALL[0].file}#top`);
   await page.waitForLoadState("networkidle");
