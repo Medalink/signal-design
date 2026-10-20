@@ -84,72 +84,104 @@
     border: 1px solid var(--sd-line);
   }
 
-  /* The header's theme switch needs room; below 80rem the rail button and
-     Shift+T switch themes instead. */
-  .hdr-theme {
-    display: none;
+  /* Showcase bar (showcase/viewport.js). One height, read by the shell below. */
+  .has-vp-bar {
+    --vp-bar-h: 36px;
   }
-  @media (min-width: 80rem) {
-    .hdr-theme {
-      display: inline-flex;
-    }
-  }
-
-  /* Width toggle (showcase/viewport.js). */
-  /* Showcase bar (showcase/viewport.js): page links and a width switch. */
   .vp-bar {
     display: flex;
     align-items: center;
-    gap: 24px;
-    height: 36px;
+    gap: 16px;
+    height: var(--vp-bar-h);
     padding: 0 12px;
     border-block-end: 1px solid var(--sd-line);
     background: var(--sd-surface);
     font-size: var(--text-xs);
   }
-  .vp-brand {
-    color: var(--sd-fg-faint);
-    letter-spacing: var(--tracking-caps);
-    text-transform: uppercase;
-    font-size: var(--text-2xs);
+  /* A mock app is marked: the edge under the bar is dashed. */
+  .vp-bar[data-kind="mock"] {
+    border-block-end-style: dashed;
+    border-block-end-color: var(--sd-line-strong);
   }
-  .vp-pages {
-    display: flex;
-    gap: 16px;
-  }
-  .vp-pages > a {
-    color: var(--sd-fg-subtle);
+  .vp-home {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 8px;
+    color: var(--sd-fg);
     text-decoration: none;
   }
-  .vp-pages > a:hover,
-  .vp-pages > a[aria-current] {
+  .vp-home > svg {
+    width: 18px;
+    height: 18px;
+  }
+  .vp-home:hover > span {
+    text-decoration: underline;
+  }
+  .vp-here {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    color: var(--sd-fg-muted);
+  }
+  .vp-here > .sd-badge {
+    flex: none;
+  }
+  .vp-sep {
+    color: var(--sd-fg-faint);
+  }
+  .vp-title {
+    overflow: hidden;
     color: var(--sd-fg);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .vp-end {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 16px;
+    margin-inline-start: auto;
   }
   .vp-widths {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-inline-start: auto;
     color: var(--sd-fg-faint);
   }
-  /* Tablets: just the width switch. */
+  .vp-settings {
+    gap: 14px;
+    width: 18rem;
+  }
+  .vp-settings:popover-open {
+    display: grid;
+  }
+  .vp-phone-only {
+    display: none;
+  }
+  /* The width switch needs a window wider than the frames it opens. */
   @media (max-width: 63.99rem) {
-    .vp-brand,
-    .vp-pages {
+    .vp-widths {
       display: none;
     }
   }
-  /* The app-shell pages fill the window; make room for the bar. */
-  .has-vp-bar .sd-shell {
-    height: calc(100dvh - 36px);
-  }
+  /* Phones: a compact bar with the way back, where you are, and settings. */
   @media (max-width: 47.99rem) {
     .vp-bar {
+      gap: 12px;
+    }
+    .vp-pages-btn,
+    .vp-theme {
       display: none;
     }
-    .has-vp-bar .sd-shell {
-      height: 100dvh;
+    .vp-phone-only {
+      display: grid;
     }
+  }
+  /* The app shell fills the window under the bar. */
+  .has-vp-bar .sd-shell {
+    height: calc(100dvh - var(--vp-bar-h));
   }
   .vp-dialog {
     width: 100vw;
@@ -180,6 +212,11 @@
   .vp-name {
     color: var(--sd-fg-muted);
     font-size: var(--text-sm);
+  }
+  .vp-head-end {
+    display: flex;
+    align-items: center;
+    gap: 16px;
   }
   .vp-stage {
     display: grid;

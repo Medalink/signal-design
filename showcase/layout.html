@@ -32,15 +32,7 @@
           <li><span aria-current="page" data-crumb-page>{{crumb}}</span></li>
         </ol>
       </div>
-      <div class="sd-shell-header-end">
-        <div class="sd-seg sd-seg-inline sd-seg-sm hdr-theme" aria-label="Theme">
-          <button type="button" data-sd-theme="ink">ink</button>
-          <button type="button" data-sd-theme="graphite">graphite</button>
-          <button type="button" data-sd-theme="paper">paper</button>
-          <button type="button" data-sd-theme="auto">auto</button>
-        </div>
-        <button class="sd-btn sd-btn-sm" data-sd-shell="aside" data-sd-key="]" aria-controls="settings-panel"><svg><use href="#i-panel"/></svg><span class="sd-desktop-only">Display</span> <kbd>]</kbd></button>
-      </div>
+{{aside_button}}
     </div>
 
     <div class="sd-shell-content" data-sd-ornaments data-sd-edges id="top" tabindex="-1">
@@ -51,31 +43,12 @@
     </div>
   </main>
 
-  <!-- Display settings -->
-  <aside class="sd-shell-aside" id="settings-panel" aria-label="Display settings">
-    <div class="sd-shell-aside-head"><span class="flex-1">Display</span>
-      <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="aside" aria-label="Close settings"><svg><use href="#i-close"/></svg></button></div>
-    <div class="sd-shell-aside-section text-sm sd-subtle">These apply to this page and are remembered in this browser.</div>
-    <div class="sd-shell-aside-section sd-field">
-      <span class="sd-field-label">Chart colors</span>
-      <div class="sd-seg sd-seg-sm" id="chart-theme"><button type="button" data-value="mono" aria-pressed="true">mono</button><button type="button" data-value="spectrum" aria-pressed="false">spectrum</button></div>
-    </div>
-    <div class="sd-shell-aside-section sd-field">
-      <span class="sd-field-label">Scrollbars</span>
-      <div class="sd-seg sd-seg-sm" id="scrollbar-mode"><button type="button" data-value="auto" aria-pressed="true">hide when idle</button><button type="button" data-value="always" aria-pressed="false">always</button></div>
-    </div>
-{{code_views}}
-    <div class="sd-shell-aside-section sd-field">
-      <span class="sd-field-label">Backdrop</span>
-      <button class="sd-btn sd-btn-sm" data-sd-rain-toggle aria-pressed="false">Digital rain</button>
-    </div>
-  </aside>
+{{aside}}
 
   <footer class="sd-statusbar sd-shell-status">
     <span><kbd>Ctrl</kbd><kbd>K</kbd> search</span>
     <span><kbd>[</kbd> sidebar</span>
-    <span><kbd>]</kbd> display</span>
-    <span><kbd>Shift</kbd><kbd>T</kbd> theme</span>
+{{aside_hint}}    <span><kbd>Shift</kbd><kbd>T</kbd> theme</span>
     <span class="sd-status" data-tone="success">signal-design · {{label}}</span>
     <span class="sd-statusbar-end"><span class="sd-fps" data-sd-fps><b>--</b> fps</span> · v0.0</span>
   </footer>

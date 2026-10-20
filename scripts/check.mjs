@@ -20,6 +20,7 @@ import { sweep as rulesSweep } from "../bin/rules.mjs";
 import { checkLivingTable, checkLivingTableTypes } from "./check-living-table.mjs";
 import { checkSidebarResize } from "./check-sidebar-resize.mjs";
 import { checkHashRedirects, checkShowcasePages } from "./check-showcase-pages.mjs";
+import { checkShowcaseBar } from "./check-showcase-bar.mjs";
 import { ALL, LIBRARY, byId, keyOf } from "../showcase/pages.js";
 
 // One file per component in scripts/checks/, each exporting
@@ -906,6 +907,9 @@ for (const [name, engine] of Object.entries(engines)) {
   for (const error of redirects.errors) fail(`${name} old links`, error);
   if (!redirects.errors.length) console.log(`ok   ${name} old links ${redirects.passed} hash redirects`);
   await redirectPage.close();
+  const bars = await checkShowcaseBar(browser, base, name);
+  for (const error of bars.errors) fail(`${name} showcase bar`, error);
+  if (!bars.errors.length) console.log(`ok   ${name} showcase bar ${bars.passed} behavior checks`);
   await browser.close();
 }
 

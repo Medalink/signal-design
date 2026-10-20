@@ -25,9 +25,6 @@ const ICONS = [
   symbol("code", '<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 5l-3 14"/>'),
   symbol("pages", '<rect x="4.5" y="3.5" width="12" height="15"/><path d="M8 21.5h11.5V7"/>'),
   symbol("search", '<rect x="4" y="4" width="11" height="11"/><path d="M15 15l5.5 5.5"/>'),
-  symbol("theme", '<rect x="4" y="4" width="16" height="16"/><path d="M12 4h8v16h-8z" fill="currentColor" stroke="none"/>'),
-  symbol("rain", '<path d="M6 3v6M6 12v2M12 6v9M12 18v2M18 3v4M18 10v8"/>'),
-  symbol("settings", '<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><rect x="14" y="5" width="4" height="4"/><rect x="6" y="15" width="4" height="4"/>'),
   symbol("menu", '<path d="M4 6h16M4 12h16M4 18h16"/>'),
   symbol("close", '<path d="M6 6l12 12M18 6L6 18"/>'),
   symbol("collapse", '<path d="M8 4L4 8l4 4M12 4L8 8l4 4"/>', "0 0 16 16"),
@@ -47,11 +44,6 @@ function rail(page) {
     <div class="sd-rail-sep" style="margin-block:8px"></div>
     <div class="sd-rail-list">
 ${items}
-    </div>
-    <div class="sd-rail-tools">
-      <button class="sd-rail-item" data-sd-rain-toggle data-sd-tip="Digital rain" data-sd-tip-side="right" aria-label="Digital rain" aria-pressed="false"><svg><use href="#i-rain"/></svg></button>
-      <button class="sd-rail-item" data-sd-theme-cycle data-sd-tip="Next theme (Shift+T)" data-sd-tip-side="right" aria-label="Next theme"><svg><use href="#i-theme"/></svg></button>
-      <button class="sd-rail-item" data-sd-shell="aside" data-sd-tip="Display settings (])" data-sd-tip-side="right" aria-label="Display settings"><svg><use href="#i-settings"/></svg></button>
     </div>
   </nav>`;
 }
@@ -104,10 +96,18 @@ ${EXAMPLES.map((p) => option(p, "example")).join("\n")}
 </dialog>`;
 }
 
-const codeViews = `    <div class="sd-shell-aside-section sd-field">
-      <span class="sd-field-label">Code views</span>
-      <div class="sd-actions"><button class="sd-btn sd-btn-sm" data-code-all="code">Show all code</button><button class="sd-btn sd-btn-sm sd-btn-ghost" data-code-all="preview">Show all previews</button></div>
-    </div>`;
+/** The right panel holds only what applies to this page: every block as code or as a preview. Theme, chart colors, scrollbars and rain live in the showcase bar. */
+const aside = `  <aside class="sd-shell-aside" id="settings-panel" aria-label="Code views">
+    <div class="sd-shell-aside-head"><span class="flex-1">Code views</span>
+      <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="aside" aria-label="Close code views"><svg><use href="#i-close"/></svg></button></div>
+    <div class="sd-shell-aside-section text-sm sd-subtle">Show every block on this page as copyable code, or as a preview.</div>
+    <div class="sd-shell-aside-section sd-actions"><button class="sd-btn sd-btn-sm" data-code-all="code">Show all code</button><button class="sd-btn sd-btn-sm sd-btn-ghost" data-code-all="preview">Show all previews</button></div>
+  </aside>`;
+const asideButton = `      <div class="sd-shell-header-end">
+        <button class="sd-btn sd-btn-sm" data-sd-shell="aside" data-sd-key="]" aria-controls="settings-panel"><svg><use href="#i-panel"/></svg><span class="sd-desktop-only">Code views</span> <kbd>]</kbd></button>
+      </div>`;
+const asideHint = `    <span><kbd>]</kbd> code views</span>
+`;
 
 const blockCount = (file) => (readFileSync(resolve(dir, file), "utf8").match(/<div class="demo-block"/g) || []).length;
 
@@ -153,7 +153,9 @@ export function renderPage(page, html) {
     search_key: own ? "" : ' data-sd-key="mod+k"',
     rail: rail(page),
     sidebar: sidebar(page),
-    code_views: library ? codeViews : "",
+    aside: library ? aside : "",
+    aside_button: library ? asideButton : "",
+    aside_hint: library ? asideHint : "",
     palette: palette(),
   };
   const fillIn = (text) => text.replace(/\{\{(\w+)\}\}/g, (_, key) => (key in fill ? fillIn(fill[key]) : `{{${key}}}`));

@@ -1,11 +1,12 @@
 /**
  * What every library page shares: the Preview / Code flip on each block, the
- * sidebar list of this page's blocks, scroll-aware crumbs, and the display
- * settings. A page module calls mountLibrary() first, before any demo code,
- * so the snapshots below capture each block's markup as authored.
+ * sidebar list of this page's blocks and scroll-aware crumbs. Theme, chart
+ * colors, scrollbars and rain live in the showcase bar (viewport.js). A page
+ * module calls mountLibrary() first, before any demo code, so the snapshots
+ * below capture each block's markup as authored.
  */
 import "./viewport.js";
-import { init, getTheme, setScrollbars } from "../src/js/index.js";
+import { init } from "../src/js/index.js";
 
 const slug = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const esc = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -139,38 +140,6 @@ function followScroll(blocks) {
   content.addEventListener("scroll", () => settle && later(), { passive: true });
 }
 
-/* ---- Display settings ----------------------------------------------------- */
-
-function pick(group, value) {
-  for (const b of document.querySelectorAll(`${group} [data-value]`)) b.setAttribute("aria-pressed", String(b.dataset.value === value));
-}
-function chartTheme(name) {
-  document.documentElement.dataset.chartTheme = name;
-  pick("#chart-theme", name);
-  try {
-    localStorage.setItem("sd-chart-theme", name);
-  } catch {}
-  document.dispatchEvent(new CustomEvent("sd:theme", { detail: { theme: getTheme() } }));
-}
-
-export function mountDisplaySettings() {
-  document.querySelector("#chart-theme").addEventListener("click", (e) => {
-    const b = e.target.closest("[data-value]");
-    if (b) chartTheme(b.dataset.value);
-  });
-  document.querySelector("#scrollbar-mode").addEventListener("click", (e) => {
-    const b = e.target.closest("[data-value]");
-    if (!b) return;
-    setScrollbars(b.dataset.value);
-    pick("#scrollbar-mode", b.dataset.value);
-  });
-  try {
-    const saved = localStorage.getItem("sd-chart-theme");
-    if (saved && saved !== "mono") chartTheme(saved);
-  } catch {}
-  for (const b of document.querySelectorAll("[data-sd-theme]")) b.setAttribute("aria-pressed", String(b.dataset.sdTheme === getTheme()));
-}
-
 /** Wire the page shell. Call first: it snapshots the blocks, then runs init(). */
 export function mountLibrary() {
   const blocks = [...document.querySelectorAll(".demo-block")];
@@ -178,5 +147,4 @@ export function mountLibrary() {
   buildSidebar();
   init();
   if (blocks.length) followScroll(blocks);
-  mountDisplaySettings();
 }

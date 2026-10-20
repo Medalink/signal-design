@@ -1,4 +1,3 @@
-import { getTheme } from "../../src/js/index.js";
 import { mountLibrary } from "../library.js";
 
 mountLibrary();
@@ -110,7 +109,6 @@ function refresh() {
 document.addEventListener("sd:theme", () => requestAnimationFrame(refresh));
 matchMedia("(prefers-color-scheme: light)").addEventListener("change", refresh);
 refresh();
-for (const b of document.querySelectorAll("[data-sd-theme]")) b.setAttribute("aria-pressed", String(b.dataset.sdTheme === getTheme()));
 
 /* ---- Motion replay ------------------------------------------------------- */
 

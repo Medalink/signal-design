@@ -349,6 +349,14 @@ themeSeg.addEventListener("click", (e) => {
   if (b) applyChartTheme(b.dataset.value);
 });
 applyChartTheme(chartTheme);
+// The showcase bar (viewport.js) sets the same remembered choice; follow it.
+document.addEventListener("sd:theme", () => {
+  let saved = chartTheme;
+  try {
+    saved = localStorage.getItem("sd-chart-theme") || "mono";
+  } catch {}
+  if (saved !== chartTheme) applyChartTheme(saved);
+});
 
 /* ---- formatter table --------------------------------------------------- */
 const rows = [[1500, "Mbps"], [250000, "Mbps"], [0.5, "Mbps"], [1.2e6, "Mbps"], [12.3, " ms"]];
