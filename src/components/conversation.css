@@ -53,6 +53,11 @@
     font-size: var(--text-sm);
   }
   .sd-message-head > b {
+    min-width: 0;
+    max-width: 60%; /* a long name leaves room for the badge and the time */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     color: var(--sd-fg);
     font-size: var(--text-base);
     font-weight: var(--font-weight-semibold);
@@ -177,7 +182,12 @@
     font-size: var(--text-sm);
   }
   .sd-reply > b {
-    flex-shrink: 0;
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 40%; /* the quoted text keeps the rest of the line */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     color: var(--sd-fg-muted);
     font-weight: var(--font-weight-semibold);
   }
