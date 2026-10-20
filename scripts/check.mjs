@@ -46,7 +46,13 @@ if (!existsSync(new URL("../dist/signal.css", import.meta.url))) {
   process.exit(1);
 }
 const shots = args[1];
-const engines = Object.fromEntries(Object.entries({ chromium, webkit }).filter(([name]) => !onlyEngines || onlyEngines.includes(name)));
+const allEngines = { chromium, webkit };
+const unknownEngines = (onlyEngines ?? []).filter((name) => !(name in allEngines));
+if (unknownEngines.length) {
+  console.log(`FAIL unknown --engine ${unknownEngines.join(", ")}: use ${Object.keys(allEngines).join(" or ")}`);
+  process.exit(1);
+}
+const engines = Object.fromEntries(Object.entries(allEngines).filter(([name]) => !onlyEngines || onlyEngines.includes(name)));
 const themes = ["ink", "graphite", "paper"];
 // Desktop, small laptop, tablet, phone. The in-between widths run in ink only.
 const widths = [1280, 1024, 768, 375];
@@ -894,8 +900,10 @@ for (const [name, engine] of Object.entries(engines)) {
         if ((width === 1024 || width === 768) && theme !== "ink") continue;
         const where = `${name} ${pageName} ${width}px ${theme}`;
         for (let attempt = 1; ; attempt++) {
-          const page = await browser.newPage({ viewport: { width, height: 900 } });
+          if (!browser.isConnected()) browser = await engine.launch();
+          let page;
           try {
+            page = await browser.newPage({ viewport: { width, height: 900 } });
             await checkPage(page, where, name, pageName, url, width, theme);
             console.log(`ok   ${where}`);
           } catch (error) {
@@ -903,12 +911,11 @@ for (const [name, engine] of Object.entries(engines)) {
             // relaunch and run the page once more. A crash that repeats fails.
             if (!browser.isConnected() && attempt === 1) {
               console.log(`::warning::${where}: ${name} crashed (${error.message.split("\n")[0]}); relaunched and retrying`);
-              browser = await engine.launch();
               continue;
             }
             fail(where, error.message.split("\n")[0]);
           } finally {
-            await page.close().catch(() => {});
+            await page?.close().catch(() => {});
           }
           break;
         }
@@ -935,13 +942,14 @@ for (const [name, engine] of Object.entries(engines)) {
   // Each group gets a fresh page, and an exception fails that group only.
   for (const [label, run] of Object.entries(behaviors)) {
     if (!browser.isConnected()) browser = await engine.launch();
-    const page = await browser.newPage();
+    let page;
     try {
+      page = await browser.newPage();
       await run(page);
     } catch (error) {
       fail(`${name} ${label}`, error.message.split("\n")[0]);
     } finally {
-      await page.close().catch(() => {});
+      await page?.close().catch(() => {});
     }
   }
   await browser.close();
