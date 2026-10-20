@@ -227,7 +227,7 @@ try {
 
   /* ---- write ------------------------------------------------------------- */
   const header = { $schema: undefined, name: "signal-design", version: pkg.version, generatedBy: "scripts/build-ai.mjs" };
-  const componentsFile = { ...header, about: "Every block from the components page: classes, attributes, copyable HTML, the JS it needs, and a usage note.", components };
+  const componentsFile = { ...header, about: "Every block from the library pages: classes, attributes, copyable HTML, the JS it needs, and a usage note.", components };
   const tokensFile = { ...header, about: "Signal tokens resolved per theme, in W3C design-token form. Use the CSS variables (--sd-<role>, --sd-chart-<name>) in code, never these values.", ...tokens };
 
   const htmlData = {
@@ -246,7 +246,7 @@ try {
   const agents = readFileSync(resolve(root, "AGENTS.md"), "utf8").replace(/\r\n/g, "\n");
   const full =
     agents.trimEnd() +
-    "\n\n---\n\n# Component reference (generated)\n\nEvery block from the components page, with its copyable HTML. " +
+    "\n\n---\n\n# Component reference (generated)\n\nEvery block from the library pages, with its copyable HTML. " +
     "`JS:` says what `init()` must wire.\n" +
     components
       .map(

@@ -34,7 +34,7 @@ The package carries what an AI agent needs to use it well:
 |---|---|
 | `AGENTS.md` | The contract: install, the hard rules, which part for which need, accessibility duties, checking. Point your project's own `AGENTS.md` at `node_modules/signal-design/AGENTS.md`. |
 | `llms.txt`, `llms-full.txt` | The index, and the guide plus every component's HTML in one file. |
-| `ai/components.json` | Every block from the components page: classes, `data-sd-*` attributes, copyable HTML, the JS it needs. |
+| `ai/components.json` | Every block from the library pages: classes, `data-sd-*` attributes, copyable HTML, the JS it needs. |
 | `ai/tokens.json` | Every token resolved per theme (W3C design-token form) with contrast ratios. |
 | `ai/rules/signal-design.mdc` | A Cursor rule; copy it to `.cursor/rules/`. |
 | `vscode/*.json` | Editor completions for `data-sd-*` and `--sd-*` (see below). |
@@ -69,7 +69,7 @@ overflow at 1280/768/375px, fonts that did not load, console errors and (with
 ```
 
 `pnpm build:ai` regenerates the `ai/`, `vscode/` and `llms-full.txt` files from
-the components page; CI fails when they are out of date.
+the library pages; CI fails when they are out of date.
 
 ## Use it with Tailwind v4
 
