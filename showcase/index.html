@@ -139,7 +139,7 @@
         <li>Color is for important things: risk, status, success, focus. Everything else is black, white and grey, navigation included.</li>
         <li>Motion on state change only: 120–200ms transitions and a one-pass hover shimmer. The rain moves only while work runs.</li>
         <li>Minimal by default, detail on expand.</li>
-        <li>SF Pro for text in regular and medium; Source Code Pro for code.</li>
+        <li>SF Pro for text in regular and medium; Source Code Pro for code. The font picker swaps the text face.</li>
       </ol>
     </div>
 
@@ -197,6 +197,16 @@
         <p class="text-2xs uppercase tracking-widest text-fg-subtle">widest 0.16em · labels</p>
         <p class="text-xs uppercase tracking-wordmark font-semibold">wordmark 0.28em</p>
         <p class="text-lg"><span class="font-normal">400 regular</span> · <span class="font-semibold">500 medium</span></p>
+      </div>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Fonts</h3>
+      <p class="demo-usage"><code>data-font</code> sets the text face of a subtree, or of the page on <code>&lt;html&gt;</code>. Code stays in Source Code Pro. Pick the page font under Display.</p>
+      <div class="grid gap-4 sm:grid-cols-3">
+        <div class="sd-card" data-font="system"><p class="sd-label">system</p><p class="text-lg mt-2"><span class="font-normal">Regular</span> · <span class="font-semibold">Medium</span></p><p class="text-sm text-fg-muted mt-1">Approved 21 of 24 <code>sd-btn</code></p></div>
+        <div class="sd-card" data-font="leon-sans"><p class="sd-label">leon-sans</p><p class="text-lg mt-2"><span class="font-normal">Regular</span> · <span class="font-semibold">Medium</span></p><p class="text-sm text-fg-muted mt-1">Approved 21 of 24 <code>sd-btn</code></p></div>
+        <div class="sd-card" data-font="source-code-pro"><p class="sd-label">source-code-pro</p><p class="text-lg mt-2"><span class="font-normal">Regular</span> · <span class="font-semibold">Medium</span></p><p class="text-sm text-fg-muted mt-1">Approved 21 of 24 <code>sd-btn</code></p></div>
       </div>
     </div>
 
@@ -1863,6 +1873,10 @@ setTheme("paper");                        // ink | graphite | paper | auto</code
     <div class="sd-shell-aside-head"><span class="flex-1">Display</span>
       <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="aside" aria-label="Close settings"><svg><use href="#i-close"/></svg></button></div>
     <div class="sd-shell-aside-section text-sm sd-subtle">These apply to this page and are remembered in this browser.</div>
+    <div class="sd-shell-aside-section sd-field">
+      <span class="sd-field-label" id="font-label">Text font</span>
+      <div class="sd-seg sd-seg-sm" aria-labelledby="font-label"><button type="button" data-sd-font="system">system</button><button type="button" data-sd-font="leon-sans">leon sans</button><button type="button" data-sd-font="source-code-pro" aria-label="Source Code Pro">mono</button></div>
+    </div>
     <div class="sd-shell-aside-section sd-field">
       <span class="sd-field-label">Chart colors</span>
       <div class="sd-seg sd-seg-sm" id="chart-theme"><button type="button" data-value="mono" aria-pressed="true">mono</button><button type="button" data-value="spectrum" aria-pressed="false">spectrum</button></div>

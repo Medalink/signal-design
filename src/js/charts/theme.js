@@ -11,8 +11,6 @@ export const TOKENS = [
 ];
 const DASHES = ["up", "in", "out"];
 
-export const FONT = "'Source Code Pro', ui-monospace, monospace";
-
 /** "rgb(1 2 3)", "rgba(1, 2, 3, .5)" or "color(srgb .1 .2 .3 / .5)" → {r,g,b,a}. */
 export function parseColor(text) {
   const nums = (text.match(/-?[\d.]+(e-?\d+)?/g) || []).map(Number);
@@ -55,7 +53,9 @@ export function readTheme(el) {
   const band = parseFloat(style.getPropertyValue("--sd-chart-band")) || 0.1;
   const series = ["1", "2", "3", "4", "5", "6"].map((k) => colors[k]);
   const mono = style.getPropertyValue("--sd-chart-dashes").trim() === "on";
-  return { colors, dashes, band, series, mono };
+  // Chart text is set in the code face, read from the token like the colors.
+  const font = style.getPropertyValue("--sd-font-mono").trim() || "monospace";
+  return { colors, dashes, band, series, mono, font };
 }
 
 /** Which palette slot a series uses, from its label when not given. */

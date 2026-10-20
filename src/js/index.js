@@ -14,6 +14,7 @@ import { onTipOver, onTipOut, onTipKeydown, hideTooltip } from "./tooltip.js";
 import { onKeyAttr, isKey } from "./hotkeys.js";
 import { onControlsClick, onDrag } from "./controls.js";
 import { onThemeClick, restoreTheme, cycleTheme } from "./theme.js";
+import { onFontClick, restoreFont } from "./font.js";
 import { onShellClick, onShellKeydown, onShellPointerdown, initShell } from "./shell.js";
 import { onRainClick, initRain } from "./rain.js";
 import { initFps } from "./fps.js";
@@ -35,6 +36,7 @@ export { mountFeed } from "./feed.js";
 export { mountLivingTable } from "./living-table.js";
 export { setExpanded } from "./controls.js";
 export { setTheme, getTheme, restoreTheme, cycleTheme, THEMES } from "./theme.js";
+export { setFont, getFont, restoreFont, FONTS } from "./font.js";
 export { place } from "./position.js";
 export { setSidebar, setSidebarWidth, setAside, setDrawer, selectSection } from "./shell.js";
 export { rain, mountRain } from "./rain.js";
@@ -48,12 +50,14 @@ export { windowAction } from "./window.js";
 let started = false;
 
 /**
- * @param {{ theme?: boolean, scrollbars?: "auto" | "always" }} [opts]
+ * @param {{ theme?: boolean, font?: boolean, scrollbars?: "auto" | "always" }} [opts]
  *   theme: restore the saved theme (default true)
+ *   font: restore the saved text font (default true)
  *   scrollbars: "auto" hides them 2s after scrolling stops (default)
  */
-export function init({ theme = true, scrollbars = "auto", themeKey = "shift+t" } = {}) {
+export function init({ theme = true, font = true, scrollbars = "auto", themeKey = "shift+t" } = {}) {
   if (theme) restoreTheme(document.documentElement.dataset.theme || "ink");
+  if (font) restoreFont(document.documentElement.dataset.font);
   setScrollbars(scrollbars);
   initTabs();
   initShell();
@@ -70,6 +74,7 @@ export function init({ theme = true, scrollbars = "auto", themeKey = "shift+t" }
 
   document.addEventListener("click", (event) => {
     onThemeClick(event);
+    onFontClick(event);
     onDialogClick(event);
     onPopoverClick(event);
     onTabClick(event);
