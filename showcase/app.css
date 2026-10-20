@@ -22,6 +22,29 @@
     padding-block: 56px;
     border-block-start: 1px solid var(--sd-line);
   }
+  /* The featured intro at the top of a library page: prose only, never a demo block. */
+  .demo-intro {
+    display: grid;
+    gap: 28px;
+    margin-block-end: 48px;
+    padding-block-end: 48px;
+    border-block-end: 1px solid var(--sd-line);
+  }
+  .demo-intro-cols {
+    display: grid;
+    gap: 40px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    align-items: start;
+  }
+  .demo-intro li {
+    color: var(--sd-fg-muted);
+  }
+  .demo-intro li + li {
+    margin-block-start: 10px;
+  }
+  .demo-intro .sd-label {
+    margin-block-end: 12px;
+  }
   .home-section {
     padding-block: 40px;
     border-block-start: 1px solid var(--sd-line);

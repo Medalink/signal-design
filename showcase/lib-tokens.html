@@ -3,6 +3,40 @@
 <head></head>
 <body>
   <section class="demo-section" id="tokens" aria-labelledby="tokens-h">
+    <header class="demo-intro">
+      <h1 class="sd-display">Tokens. <em>Roles, not values.</em></h1>
+      <p class="sd-lead max-w-[42rem]">Every color, size and duration is a token. Your markup reads roles such as <code>--sd-fg</code> and <code>--sd-danger</code>, so a theme change needs no rebuild.</p>
+      <div class="demo-intro-cols">
+        <div>
+          <p class="sd-label">Principles</p>
+          <ul>
+            <li><b class="text-fg font-semibold">Name the job, not the hue.</b> Use <code>text-danger</code>, never <code>text-pink</code> or a hex value. Paper deepens the signal colors, and a hard-coded value would not follow.</li>
+            <li><b class="text-fg font-semibold">Color means something.</b> Only status and focus are colored. Everything else, navigation included, is black, white and grey.</li>
+            <li><b class="text-fg font-semibold">Text stays readable.</b> Every text role meets 4.5:1 on every surface of its theme. The contrast block below shows each ratio live.</li>
+            <li><b class="text-fg font-semibold">Two faces, two weights.</b> SF Pro (Segoe UI on Windows) in regular and medium for text, and Source Code Pro for code.</li>
+            <li><b class="text-fg font-semibold">Motion marks a state change.</b> Transitions run 120 to 200ms on <code>ease-out</code>. Nothing loops for decoration.</li>
+          </ul>
+        </div>
+        <div class="grid content-start gap-8">
+          <div>
+            <p class="sd-label">Use it for</p>
+            <ul>
+              <li>Choosing a color, size or duration for your own component.</li>
+              <li>Checking a theme before you ship. Switch ink, graphite and paper in the bar above.</li>
+              <li>Reading how a role looks: the swatches and ratios below follow the current theme.</li>
+            </ul>
+          </div>
+          <div>
+            <p class="sd-label">Leave it out when</p>
+            <ul>
+              <li>Reaching for a brand hue. Color is reserved for status, so Signal has no decorative colors.</li>
+              <li>Hard-coding a hex value or a pixel size. Themes and the type scale would stop applying.</li>
+              <li>Adding a shadow, glow or gradient. Surfaces are flat and use hairlines only.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
     <p class="sd-label">01</p>
     <h2 id="tokens-h" class="sd-title mt-2">Tokens</h2>
     <p class="sd-muted mt-2 max-w-[42rem]">Raw values live in <code>@theme</code> and become utilities. Semantic roles switch per theme at runtime, so <code>bg-canvas</code> or <code>text-fg-muted</code> follow the theme with no rebuild. Values below are read live from the current theme.</p>
@@ -51,6 +85,34 @@
           </tbody>
         </table>
       </div>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Themes side by side</h3>
+      <div class="grid gap-4 sm:grid-cols-3">
+        <div data-theme="ink" class="grid content-start gap-3 border border-line bg-canvas p-4 text-fg">
+          <p class="sd-label">ink</p>
+          <p class="text-lg">Approve the release</p>
+          <p class="text-fg-muted">Muted text on the canvas.</p>
+          <div class="sd-cluster" style="--gap: 6px"><span class="sd-badge" data-tone="success">passing</span><span class="sd-badge" data-tone="danger">risk</span><span class="sd-badge" data-tone="pending">waiting</span></div>
+          <button type="button" class="sd-btn sd-btn-primary">Approve</button>
+        </div>
+        <div data-theme="graphite" class="grid content-start gap-3 border border-line bg-canvas p-4 text-fg">
+          <p class="sd-label">graphite</p>
+          <p class="text-lg">Approve the release</p>
+          <p class="text-fg-muted">Muted text on the canvas.</p>
+          <div class="sd-cluster" style="--gap: 6px"><span class="sd-badge" data-tone="success">passing</span><span class="sd-badge" data-tone="danger">risk</span><span class="sd-badge" data-tone="pending">waiting</span></div>
+          <button type="button" class="sd-btn sd-btn-primary">Approve</button>
+        </div>
+        <div data-theme="paper" class="grid content-start gap-3 border border-line bg-canvas p-4 text-fg">
+          <p class="sd-label">paper</p>
+          <p class="text-lg">Approve the release</p>
+          <p class="text-fg-muted">Muted text on the canvas.</p>
+          <div class="sd-cluster" style="--gap: 6px"><span class="sd-badge" data-tone="success">passing</span><span class="sd-badge" data-tone="danger">risk</span><span class="sd-badge" data-tone="pending">waiting</span></div>
+          <button type="button" class="sd-btn sd-btn-primary">Approve</button>
+        </div>
+      </div>
+      <p class="demo-usage">Any element can carry <code>data-theme</code> to theme its own subtree. Paper deepens the signal colors so they keep their contrast on white. <code>auto</code> picks ink, or paper when the OS asks for light.</p>
     </div>
 
     <div class="demo-block">

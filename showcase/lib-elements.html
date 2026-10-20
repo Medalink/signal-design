@@ -3,6 +3,39 @@
 <head></head>
 <body>
   <section class="demo-section" id="elements" aria-labelledby="elements-h">
+    <header class="demo-intro">
+      <h1 class="sd-display">Elements. <em>Plain HTML, styled.</em></h1>
+      <p class="sd-lead max-w-[42rem]">The base layer styles every HTML element without a class. Write the right element first, and add an <code>sd-</code> class only when the element cannot say enough.</p>
+      <div class="demo-intro-cols">
+        <div>
+          <p class="sd-label">Principles</p>
+          <ul>
+            <li><b class="text-fg font-semibold">Semantics first.</b> Headings, lists, tables, form controls, details, dialog and popover look right as written, so the markup stays plain HTML.</li>
+            <li><b class="text-fg font-semibold">Classes win.</b> The base layer comes after Tailwind's reset, and any <code>sd-</code> class or utility sits in a later layer, so it overrides the base.</li>
+            <li><b class="text-fg font-semibold">Native before custom.</b> A <code>&lt;dialog&gt;</code>, a <code>popover</code> or <code>&lt;details&gt;</code> gets its behavior from the browser. Signal adds the look and, for popovers, placement.</li>
+            <li><b class="text-fg font-semibold">Square and flat.</b> Inputs, checkboxes and media have square corners and no shadows.</li>
+          </ul>
+        </div>
+        <div class="grid content-start gap-8">
+          <div>
+            <p class="sd-label">Use it for</p>
+            <ul>
+              <li>Articles, docs and settings pages where plain markup is enough.</li>
+              <li>Forms with native controls: every input type, select, textarea, checkbox, radio, switch, range and file.</li>
+              <li>Anywhere you would rather write a table than a component.</li>
+            </ul>
+          </div>
+          <div>
+            <p class="sd-label">Leave it out when</p>
+            <ul>
+              <li>A state the element cannot express, such as a tone or a selected row. Use the component and its <code>data-tone</code> or ARIA state.</li>
+              <li>Building your own dropdown, tooltip, modal or tabs. Use the native element plus Signal.</li>
+              <li>Adding an <code>sd-</code> class out of habit. The unclassed element is already styled.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
     <p class="sd-label">02</p>
     <h2 id="elements-h" class="sd-title mt-2">Elements</h2>
     <p class="sd-muted mt-2 max-w-[42rem]">Plain HTML, no classes. The base layer styles every element after Tailwind's reset; any <code>sd-</code> class or utility still wins because it sits in a later layer.</p>

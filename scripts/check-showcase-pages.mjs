@@ -13,14 +13,15 @@ export async function checkShowcasePages(page, where, fail, library) {
     current: [...document.querySelectorAll('.sd-rail-item[aria-current="page"]')].map((a) => a.getAttribute("href")),
     blocks: document.querySelectorAll(".demo-block").length,
     links: document.querySelectorAll(".sd-sidebar-link[data-block]").length,
-    h1: document.querySelectorAll(".demo-wrap > h1").length,
+    h1: document.querySelectorAll(".demo-intro > h1").length,
+    sectionH1: document.querySelectorAll(".demo-section > h1, .demo-wrap > h1").length,
     skip: document.querySelector("body > .sd-skip")?.getAttribute("href"),
     main: document.getElementById("main")?.getAttribute("tabindex"),
     chart: performance.getEntriesByType("resource").some((e) => /\/charts\/|chart[._]+js/.test(e.name)),
   }));
   if (chrome.current.join() !== `./${library.file}`) fail(where, `rail marks ${JSON.stringify(chrome.current)} as current, want ./${library.file}`);
   if (!chrome.blocks || chrome.links !== chrome.blocks) fail(where, `sidebar lists ${chrome.links} links for ${chrome.blocks} blocks`);
-  if (chrome.h1 !== 1) fail(where, `page has ${chrome.h1} h1 of its own, want 1`);
+  if (chrome.h1 !== 1 || chrome.sectionH1 !== 0) fail(where, `page has ${chrome.h1} intro h1 and ${chrome.sectionH1} stray h1, want 1 and 0`);
   if (chrome.skip !== "#main" || chrome.main !== "-1") fail(where, `skip link ${chrome.skip}, main tabindex ${chrome.main}`);
   if (chrome.chart !== (library.id === "charts")) fail(where, chrome.chart ? "Chart.js loaded on a page without charts" : "Chart.js did not load on the charts page");
 

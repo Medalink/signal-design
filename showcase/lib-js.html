@@ -3,6 +3,40 @@
 <head></head>
 <body>
   <section class="demo-section" id="js" aria-labelledby="js-h">
+    <header class="demo-intro">
+      <h1 class="sd-display">JS. <em>Attributes in, attributes out.</em></h1>
+      <p class="sd-lead max-w-[42rem]">Optional and dependency-free. It reads <code>data-sd-*</code> attributes and writes only ARIA and <code>data-*</code> state. The CSS styles that state.</p>
+      <div class="demo-intro-cols">
+        <div>
+          <p class="sd-label">Principles</p>
+          <ul>
+            <li><b class="text-fg font-semibold">Delegated listeners.</b> Every listener is delegated, so markup added later works without calling <code>init()</code> again.</li>
+            <li><b class="text-fg font-semibold">State is attributes, never classes.</b> Your Tailwind build never needs to contain a class the JS adds, and tests or app code can set the same attributes.</li>
+            <li><b class="text-fg font-semibold">One writer per state.</b> If a framework renders a piece's state, leave out its <code>data-sd-*</code> behavior attribute. The Framework-owned state block shows how.</li>
+            <li><b class="text-fg font-semibold">Heavy parts mount explicitly.</b> Living tables, countdowns and feeds use <code>mountLivingTable</code>, <code>mountCountdown</code> and <code>mountFeed</code>. <code>init()</code> does not mount them.</li>
+            <li><b class="text-fg font-semibold">Typing is never hijacked.</b> <code>data-sd-key</code> and <code>hotkeys</code> ignore keys typed into a field, except Ctrl or Cmd combinations.</li>
+          </ul>
+        </div>
+        <div class="grid content-start gap-8">
+          <div>
+            <p class="sd-label">Use it for</p>
+            <ul>
+              <li>Dialogs, popovers, tabs, toggles, tooltips and copy buttons from attributes alone.</li>
+              <li>Live lists that must keep the reader's place: <code>mountFeed</code>.</li>
+              <li>Theme switching: <code>setTheme</code>, <code>data-sd-theme</code> and <kbd>Shift T</kbd>.</li>
+            </ul>
+          </div>
+          <div>
+            <p class="sd-label">Leave it out when</p>
+            <ul>
+              <li>Loading it where the HTML works with CSS alone. Each block says whether it needs JS.</li>
+              <li>Driving a piece's state from both <code>init()</code> and a framework.</li>
+              <li>Reading classes the JS never adds. Read ARIA and <code>data-*</code> instead.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
     <p class="sd-label">08</p>
     <h2 id="js-h" class="sd-title mt-2">JS</h2>
     <p class="sd-muted mt-2 max-w-[42rem]">Optional, under 5 KB gzipped, no dependencies. Every listener is delegated, so markup added later just works. It only sets ARIA and <code>data-*</code> state; the CSS styles that state.</p>

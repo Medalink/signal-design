@@ -143,7 +143,6 @@ export function renderPage(page, html) {
   const library = page !== HOME;
   const title = page === HOME ? "Signal design library" : `${page.title} · Signal design library`;
   const own = /<dialog[^>]*data-sd-palette/.test(content);
-  const h1 = library ? `  <h1 class="sd-sr-only">Signal design library: ${page.title}</h1>\n` : "";
   const fill = {
     icons: ICONS,
     label: page === HOME ? "Library" : page.label,
@@ -174,7 +173,7 @@ export function renderPage(page, html) {
   <script type="module" src="./pages/${page === HOME ? "home" : page.id}.js"></script>
 </head>
 <body>
-${fillIn(before)}${h1}${content}
+${fillIn(before)}${content}
 ${fillIn(after)}
 </body>
 </html>

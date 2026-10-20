@@ -3,6 +3,40 @@
 <head></head>
 <body>
   <section class="demo-section" id="inputs-more" aria-labelledby="inputs-more-h">
+    <header class="demo-intro">
+      <h1 class="sd-display">Inputs, search and data. <em>The keyboard does the work.</em></h1>
+      <p class="sd-lead max-w-[42rem]">Controls for choosing, filtering and finding: combobox, tags, number steppers, steps, a command palette and a shortcut sheet. Small sparklines, bars and diffs need no library.</p>
+      <div class="demo-intro-cols">
+        <div>
+          <p class="sd-label">Principles</p>
+          <ul>
+            <li><b class="text-fg font-semibold">Real inputs underneath.</b> The combobox keeps a text input and a hidden input for the value. Tags keep a hidden input per tag. Forms submit as they always did.</li>
+            <li><b class="text-fg font-semibold">Every action has a key.</b> Arrows move, Enter chooses, Esc closes, Backspace removes the last tag, and <kbd>?</kbd> opens the shortcut sheet.</li>
+            <li><b class="text-fg font-semibold">Shortcuts stay out of text fields.</b> <code>data-sd-key</code> does not fire while you type, except combinations with Ctrl or Cmd such as <kbd>Ctrl K</kbd>.</li>
+            <li><b class="text-fg font-semibold">One key, one owner.</b> <code>data-sd-key</code> clicks the first visible match. Give <kbd>Ctrl K</kbd> to one palette per page.</li>
+            <li><b class="text-fg font-semibold">Small data needs no library.</b> <code>sd-spark</code> reads <code>data-values</code> and <code>sd-bars</code> reads <code>--v</code>. Both are static.</li>
+          </ul>
+        </div>
+        <div class="grid content-start gap-8">
+          <div>
+            <p class="sd-label">Use it for</p>
+            <ul>
+              <li>Forms with search, tags or numeric steps.</li>
+              <li>A command palette for jumping to pages and running actions.</li>
+              <li>A shortcut sheet, so keyboard users can find what exists.</li>
+            </ul>
+          </div>
+          <div>
+            <p class="sd-label">Leave it out when</p>
+            <ul>
+              <li>Time axes, units or live data. Use the Charts page: <code>createChart</code> with Chart.js.</li>
+              <li>A second palette on a page that already has one on <kbd>Ctrl K</kbd>.</li>
+              <li>A short list of options. A native <code>&lt;select&gt;</code> or radio group is simpler.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
     <p class="sd-label">05</p>
     <h2 id="inputs-more-h" class="sd-title mt-2">Inputs, search and data</h2>
     <p class="sd-muted mt-2 max-w-[42rem]">The <a href="./form.html">form example</a> uses these together.</p>

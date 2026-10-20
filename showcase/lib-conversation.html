@@ -3,6 +3,40 @@
 <head></head>
 <body>
   <section class="demo-section" id="conversation" aria-labelledby="conversation-h">
+    <header class="demo-intro">
+      <h1 class="sd-display">Conversation. <em>Parts for people and messages.</em></h1>
+      <p class="sd-lead max-w-[42rem]">Messages, composer, reactions, banners, files and link cards. Nothing in them assumes chat, so the same parts build a comment thread, an activity feed or an inbox.</p>
+      <div class="demo-intro-cols">
+        <div>
+          <p class="sd-label">Principles</p>
+          <ul>
+            <li><b class="text-fg font-semibold">Color identifies, never decorates.</b> A message edge takes an author or role color through <code>--edge</code>. Pending, failed and selected messages change the edge or the fill in a fixed order.</li>
+            <li><b class="text-fg font-semibold">Presence is a square.</b> <code>data-status</code> puts online, away, busy or offline on the avatar corner. Set <code>--sd-ring</code> to the panel color so the ring matches.</li>
+            <li><b class="text-fg font-semibold">State sits in attributes.</b> <code>data-own</code>, <code>data-selected</code>, <code>data-pending</code>, <code>data-failed</code>, <code>data-grouped</code> and <code>data-mention</code> restyle a message. Your code sets them.</li>
+            <li><b class="text-fg font-semibold">Live values hold still between changes.</b> The level meter lights bars up to <code>--level</code>, fades for 120ms when the value moves, and rests otherwise.</li>
+            <li><b class="text-fg font-semibold">Unknown stays visible.</b> A link card has <code>data-blocked</code> and <code>aria-busy="true"</code> states, so a blocked or loading link says so.</li>
+          </ul>
+        </div>
+        <div class="grid content-start gap-8">
+          <div>
+            <p class="sd-label">Use it for</p>
+            <ul>
+              <li>Chat, comment threads, activity feeds and inboxes.</li>
+              <li>Call grids with <code>sd-tiles</code>, which show speaking, muted and raised-hand states.</li>
+              <li>Composers that grow with the text and send on Enter.</li>
+            </ul>
+          </div>
+          <div>
+            <p class="sd-label">Leave it out when</p>
+            <ul>
+              <li>Sending, receiving or storing messages. These parts style state. Transport and data are yours.</li>
+              <li>Author colors that do not name an author or a role. Color is for meaning.</li>
+              <li>Hand-rolled reaction or poll toggles. Use <code>sd-reactions</code> and <code>sd-poll</code>.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
     <p class="sd-label">04</p>
     <h2 id="conversation-h" class="sd-title mt-2">Conversation</h2>
     <p class="sd-muted mt-2 max-w-[42rem]">Generic pieces for anything with people and messages: chat, comments, activity, inboxes. The <a href="./chat.html">chat example</a> puts them together.</p>

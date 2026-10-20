@@ -3,9 +3,43 @@
 <head></head>
 <body>
   <section class="demo-section" id="charts" aria-labelledby="charts-h">
+    <header class="demo-intro">
+      <h1 class="sd-display">Charts. <em>One set of colors.</em></h1>
+      <p class="sd-lead max-w-[42rem]">Two ways to chart, both on the <code>--sd-chart-*</code> tokens. <code>sd-plot</code> and the square charts are CSS only. <code>createChart</code> adds time axes, units, bands and live data on Chart.js.</p>
+      <div class="demo-intro-cols">
+        <div>
+          <p class="sd-label">Principles</p>
+          <ul>
+            <li><b class="text-fg font-semibold">Mono by default.</b> Series are greys until <code>data-chart-theme</code> is <code>spectrum</code>. Switch it from the settings button in the bar above.</li>
+            <li><b class="text-fg font-semibold">Square marks.</b> Heatmaps, waffles and uptime strips are squares. Nothing glows or fades into a gradient.</li>
+            <li><b class="text-fg font-semibold">One palette everywhere.</b> A sparkline in a table matches the full chart above it, because both follow <code>data-chart-theme</code> on the element or any element above it.</li>
+            <li><b class="text-fg font-semibold">Scales stay honest.</b> A scale mode (clamp, p95, p90, linear or log) keeps one spike from flattening the rest, and the choice is remembered.</li>
+            <li><b class="text-fg font-semibold">Load Chart.js only where you chart.</b> It is an optional peer dependency. This is the only library page that loads it.</li>
+          </ul>
+        </div>
+        <div class="grid content-start gap-8">
+          <div>
+            <p class="sd-label">Use it for</p>
+            <ul>
+              <li>A handful of points with no axes: <code>sd-plot</code>.</li>
+              <li>Bandwidth, latency and other series over time: <code>createChart</code>, with live appends.</li>
+              <li>Counts of states over a grid: heatmaps, waffles and uptime strips.</li>
+            </ul>
+          </div>
+          <div>
+            <p class="sd-label">Leave it out when</p>
+            <ul>
+              <li>Spectrum colors for anything but data. Navigation, headings and icons stay grey.</li>
+              <li>Loading Chart.js for a sparkline. <code>sd-spark</code> and <code>sd-plot</code> need no library.</li>
+              <li>Reading a value from color alone. Tooltips and legends carry the numbers.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
     <p class="sd-label">06</p>
     <h2 id="charts-h" class="sd-title mt-2">Charts</h2>
-    <p class="sd-muted mt-2 max-w-[42rem]">Time series, generic chart types and square charts, all on the <code>--sd-chart-*</code> tokens. Switch <b>mono</b> and <b>spectrum</b> in the display panel (<kbd>]</kbd>). Live charts need Chart.js; square charts and <code>sd-plot</code> are CSS only.</p>
+    <p class="sd-muted mt-2 max-w-[42rem]">Time series, generic chart types and square charts, all on the <code>--sd-chart-*</code> tokens. Switch <b>mono</b> and <b>spectrum</b> from the settings button in the bar above. Live charts need Chart.js; square charts and <code>sd-plot</code> are CSS only.</p>
 
     <div class="demo-block">
       <h3 class="sd-label">Live time series</h3>

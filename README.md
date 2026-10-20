@@ -971,12 +971,17 @@ Server-rendered pages can skip the JS call: put the options as JSON in a
 
 ## Page concepts
 
-The showcase has six pages built only from library parts: the components
-reference (`index.html`, itself an app in the Signal App Shell, with every
-component from the other pages and a Preview / Code flip on each block that
-shows copyable HTML, the JS it needs, and a JS snippet where one applies), an app console (`shell.html`), a chat app
-(`chat.html`), a multi-step form (`form.html`), a landing page
-(`landing.html`) and live charts (`charts.html`).
+The showcase is built only from library parts. `index.html` is the overview,
+with a card for every other page. The library reference is one page per
+section (`lib-tokens.html` through `lib-js.html`), each an app in the Signal
+App Shell that opens with what the section is for and then shows every block
+with a Preview / Code flip (copyable HTML, the JS it needs, and a JS snippet
+where one applies). Five example apps use those parts together: an app console
+(`shell.html`), a chat app (`chat.html`), a multi-step form (`form.html`), a
+landing page (`landing.html`) and live charts (`charts.html`). A bar at the top
+of every page links back to the overview and holds the theme, width and
+settings controls; example apps carry a grey Mock marker in it.
+`showcase/pages.js` lists every page.
 
 ## Accessibility
 

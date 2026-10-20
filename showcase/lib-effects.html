@@ -3,6 +3,40 @@
 <head></head>
 <body>
   <section class="demo-section" id="effects" aria-labelledby="effects-h">
+    <header class="demo-intro">
+      <h1 class="sd-display">Effects. <em>Optional, and quiet.</em></h1>
+      <p class="sd-lead max-w-[42rem]">Backdrops, ornaments and motion, all black, white and grey. Each one is optional and switched on with an attribute.</p>
+      <div class="demo-intro-cols">
+        <div>
+          <p class="sd-label">Principles</p>
+          <ul>
+            <li><b class="text-fg font-semibold">Motion marks a state change.</b> Rain is a still frame and moves only while work runs, through <code>rain.busy(true)</code>. It respects the reader's choice and <code>prefers-reduced-motion</code>.</li>
+            <li><b class="text-fg font-semibold">Theme text color only.</b> Rain and ornaments draw in the theme's text color, white on dark and black on light. No glow.</li>
+            <li><b class="text-fg font-semibold">Idle motion is rare and pauses.</b> The ornament sparkle rests most of a slow cycle, pauses while the page scrolls, and stops under reduced motion. <code>data-sd-ornaments-still</code> turns it off for one element.</li>
+            <li><b class="text-fg font-semibold">The browser remembers.</b> The rain switch is remembered, and a resized sidebar keeps its width per sidebar.</li>
+            <li><b class="text-fg font-semibold">Effects stay behind content.</b> Inside a shell, rain skips the content, bars and dock. Elsewhere, list what covers it with <code>data-sd-rain-skip</code>.</li>
+          </ul>
+        </div>
+        <div class="grid content-start gap-8">
+          <div>
+            <p class="sd-label">Use it for</p>
+            <ul>
+              <li>A shell or hero backdrop that shows work in progress.</li>
+              <li>Dust ornaments to give an empty state or a corner some texture.</li>
+              <li>Title bars, a compact rail and a resizable sidebar for desktop apps.</li>
+            </ul>
+          </div>
+          <div>
+            <p class="sd-label">Leave it out when</p>
+            <ul>
+              <li>Decorative animation. If nothing changed, nothing should move.</li>
+              <li>Rain behind body text. Mark the covering elements with <code>data-sd-rain-skip</code>.</li>
+              <li>Color in effects. They stay black, white and grey.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
     <p class="sd-label">07</p>
     <h2 id="effects-h" class="sd-title mt-2">Effects</h2>
     <p class="sd-muted mt-2 max-w-[42rem]">Backdrops, ornaments and motion. All black, white and grey, all optional, all switched on with an attribute.</p>
