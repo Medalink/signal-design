@@ -28,6 +28,9 @@
 - `sd-level`: a live level meter (2 to 8 bars) driven by `--level` from 0 to
   1, with `role="meter"`. Bars change only when the value crosses them; it
   never loops.
+- `sd-options` and `sd-option`: selectable option cards with a title,
+  description and optional preview, in a wrapping grid. Radios or checkboxes
+  inside labels need no JS; buttons use `aria-pressed` or `aria-checked`.
 
 ## 1.1.1 (2026-10-19)
 

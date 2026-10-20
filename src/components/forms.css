@@ -212,6 +212,104 @@
     padding: 0 10px;
   }
 
+  /*
+   * Option cards: a choice with a title, a description and an optional
+   * preview, in a wrapping grid. Radios (or checkboxes) inside labels need no
+   * JS; buttons use aria-pressed or aria-checked.
+   *   <div class="sd-options" role="radiogroup" aria-label="Theme">
+   *     <label class="sd-option"><input type="radio" name="theme" checked>
+   *       <span class="sd-option-preview" aria-hidden="true">…</span>
+   *       <span class="sd-option-title">Ink</span><span class="sd-option-desc">…</span></label> ...
+   * --min sets the narrowest column (default 12rem).
+   */
+  .sd-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--min, 12rem)), 1fr));
+    gap: 12px;
+  }
+  .sd-option {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    padding: 14px 16px;
+    border: 1px solid var(--sd-line-strong);
+    background: transparent;
+    color: var(--sd-fg-subtle);
+    font: inherit;
+    font-size: var(--text-sm);
+    text-align: start;
+    cursor: pointer;
+    transition: border-color 120ms var(--ease-out), background-color 120ms var(--ease-out);
+  }
+  .sd-option:hover {
+    border-color: var(--sd-fg-subtle);
+  }
+  .sd-option > input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .sd-option-preview {
+    display: block;
+    margin: -14px -16px 10px;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-block-end: 1px solid var(--sd-line);
+    background: var(--sd-raised);
+  }
+  .sd-option-title {
+    padding-inline-end: 12px;
+    color: var(--sd-fg);
+    font-size: var(--text-base);
+  }
+  /* Selected: a 2px edge drawn over the preview, a lifted fill and a solid
+     corner square. */
+  .sd-option::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border: 2px solid var(--sd-fg);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 120ms var(--ease-out);
+  }
+  .sd-option::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    background: var(--sd-fg);
+    opacity: 0;
+    transition: opacity 120ms var(--ease-out);
+  }
+  .sd-option:is([aria-pressed="true"], [aria-checked="true"], :has(> input:checked)) {
+    border-color: var(--sd-fg);
+    background: var(--sd-raised);
+  }
+  .sd-option:is([aria-pressed="true"], [aria-checked="true"], :has(> input:checked))::before,
+  .sd-option:is([aria-pressed="true"], [aria-checked="true"], :has(> input:checked))::after {
+    opacity: 1;
+  }
+  .sd-option:has(> input:focus-visible) {
+    outline: 1px solid var(--sd-fg);
+    outline-offset: 2px;
+  }
+  .sd-option:is(:disabled, [aria-disabled="true"], :has(> input:disabled)) {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .sd-option:has(> input:disabled) > input {
+    cursor: not-allowed;
+  }
+
   /* File drop target. JS sets data-dragging while a file hovers. */
   .sd-dropzone {
     display: grid;
