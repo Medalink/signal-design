@@ -40,7 +40,7 @@ function rail(page) {
   ).join("\n");
   return `  <nav class="sd-rail" id="shell-rail" aria-label="Library" data-sd-ornaments="bottom" data-sd-ornaments-size="200">
     <a class="sd-rail-home" href="./${HOME.file}" aria-label="Signal home"${current(page === HOME)}><svg class="sd-mark"><use href="#i-mark"/></svg></a>
-    <button class="sd-rail-item" style="margin-top:8px" data-sd-open="nav-palette"{{search_key}} aria-label="Search (Ctrl K)"><svg><use href="#i-search"/></svg><span><kbd>Ctrl K</kbd></span></button>
+    <button class="sd-rail-item" style="margin-top:8px" data-sd-open="nav-palette"{{search_key}} data-sd-tip="{{search_label}}" data-sd-tip-side="right" aria-label="{{search_label}}"><svg><use href="#i-search"/></svg></button>
     <div class="sd-rail-sep" style="margin-block:8px"></div>
     <div class="sd-rail-list">
 ${items}
@@ -150,6 +150,7 @@ export function renderPage(page, html) {
     crumb: page === HOME ? "Signal" : content.match(/<h3 class="sd-label">([^<]*)</)?.[1] ?? page.title,
     // A page whose own content has a command palette keeps Ctrl K for it.
     search_key: own ? "" : ' data-sd-key="mod+k"',
+    search_label: own ? "Go to a page" : "Go to a page (Ctrl K)",
     rail: rail(page),
     sidebar: sidebar(page),
     aside: library ? aside : "",

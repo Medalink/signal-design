@@ -237,9 +237,13 @@ export async function checkShowcaseBar(browser, base, name) {
         theme: shown(".vp-theme"),
         settings: shown('.vp-bar [popovertarget="vp-settings"]'),
         // Every library page is reachable from the rail without scrolling it, at 768px tall and up.
+        // The 16px of spare height absorbs other platforms' font metrics (CI runs on Linux fallbacks).
         rail: (() => {
           const list = document.querySelector(".sd-rail-list");
-          return !list || !list.getClientRects().length || list.scrollHeight <= list.clientHeight + 1;
+          if (!list || !list.getClientRects().length) return true;
+          const items = [...list.children];
+          const used = items.at(-1).getBoundingClientRect().bottom - items[0].getBoundingClientRect().top;
+          return list.scrollHeight <= list.clientHeight + 1 && list.clientHeight - used >= 16;
         })(),
       };
     });
