@@ -67,6 +67,15 @@ export default async function checkSchedule(page, where, fail) {
     .catch(() => {});
   const hover = { rowRaised: await row.evaluate((el) => getComputedStyle(el).backgroundColor !== "rgba(0, 0, 0, 0)") };
 
+  // Hover-expand: a long block widens over later slots and collapses on mouse-out.
+  const expander = page.locator("#charts-schedule .sd-schedule-row").first().locator(".sd-schedule-block").nth(2);
+  const resting = await expander.evaluate((el) => el.getBoundingClientRect().width);
+  await expander.hover();
+  const expanded = await expander.evaluate((el) => el.getBoundingClientRect().width);
+  await page.mouse.move(5, 5);
+  const collapsed = await expander.evaluate((el) => el.getBoundingClientRect().width);
+  const expand = { expands: expanded > resting + 10, collapses: Math.abs(collapsed - resting) <= 1 };
+
   // Spectrum recolors the same status: the first driving block of each board differs.
   const themes = await page.evaluate(() => {
     const driving = [...document.querySelectorAll("#charts-schedule .sd-schedule")].map(
@@ -79,7 +88,7 @@ export default async function checkSchedule(page, where, fail) {
     noPageOverflow: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
   }));
 
-  for (const [key, passed] of Object.entries({ ...got, ...hover, ...themes, ...overflow })) {
+  for (const [key, passed] of Object.entries({ ...got, ...hover, ...expand, ...themes, ...overflow })) {
     if (typeof passed !== "boolean") continue;
     if (!passed) fail(`${where} schedule`, key === "blocksPlaced" ? `blocksPlaced (${got.blocksOffenders})` : key);
   }

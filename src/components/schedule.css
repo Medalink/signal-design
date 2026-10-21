@@ -23,7 +23,7 @@
    *         <div class="sd-schedule-row">
    *           <div class="sd-schedule-resource"><b>Budi Santoso</b><span>VH-028 · 2h of 8h</span></div>
    *           <div class="sd-schedule-track">
-   *             <span class="sd-schedule-block" data-status="driving" style="--from: 12.75; --to: 21">SHP-10482</span>
+   *             <span class="sd-schedule-block" data-status="driving" style="--from: 12.75; --to: 21">SHP-10482<span class="sd-schedule-more"> → Semarang</span></span>
    *           </div>
    *         </div>
    *         <span class="sd-schedule-now" style="--at: 14.33" data-label="14:20"></span>
@@ -171,8 +171,11 @@
     min-width: 0;
   }
 
-  /* Blocks: --from/--to in schedule hours, tinted by --block. Text stays
-     fg in mono so every grey label reads; conflict keeps its alert color. */
+  /* Blocks: --from/--to in schedule hours, tinted by --block. A block rests
+     on its short label (ellipsis when tight); hovering expands it to the
+     full label over later slots, never past the board end, and it
+     collapses on mouse-out. Text stays fg in mono so every grey label
+     reads; conflict keeps its alert color. */
   .sd-schedule-block {
     --block: var(--sd-fg-subtle);
     position: absolute;
@@ -180,8 +183,6 @@
     left: calc((var(--from) - var(--start)) / var(--span) * 100%);
     width: calc((var(--to) - var(--from)) / var(--span) * 100%);
     height: var(--block-h);
-    display: flex;
-    align-items: center;
     overflow: hidden;
     padding-inline: 8px;
     border: 1px solid color-mix(in srgb, var(--block) 55%, transparent);
@@ -189,8 +190,9 @@
     color: var(--sd-fg);
     font-family: var(--font-mono);
     font-size: 10px;
-    line-height: 1;
+    line-height: calc(var(--block-h) - 2px);
     letter-spacing: 0.02em;
+    text-overflow: ellipsis;
     white-space: nowrap;
     translate: 0 -50%;
     transition:
@@ -199,9 +201,22 @@
       color 160ms var(--ease-out);
   }
   .sd-schedule-block:hover {
-    z-index: 1;
+    z-index: 2;
+    width: max-content;
+    min-width: calc((var(--to) - var(--from)) / var(--span) * 100%);
+    max-width: calc((var(--end) - var(--from)) / var(--span) * 100%);
     border-color: var(--block);
-    background: color-mix(in srgb, var(--block) 18%, transparent);
+    /* Opaque, so labels of the blocks it passes over stay hidden. */
+    background: color-mix(in srgb, var(--block) 16%, var(--sd-canvas));
+  }
+  /* The optional long tail of a label: hidden while the block rests,
+     shown while it is expanded. Give the block an aria-label or title
+     with the full text when you use one. */
+  .sd-schedule-more {
+    display: none;
+  }
+  .sd-schedule-block:hover .sd-schedule-more {
+    display: inline;
   }
   .sd-schedule [data-status="driving"] {
     --block: var(--sd-chart-1);

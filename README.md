@@ -995,6 +995,13 @@ tokens: `data-chart-theme="spectrum"` (on the schedule or any ancestor)
 recolors the whole board; mono is black and white with color kept for
 conflicts and the now line.
 
+Labels rest short and ellipsize when tight. A block may carry a
+`<span class="sd-schedule-more">` suffix — the long tail of the label,
+hidden while the block rests and shown while it is hovered; give the
+block an `aria-label` or `title` with the full text when you use one.
+Hovering any block temporarily expands it over later slots (never past
+the board end) so the whole label reads, and it collapses on mouse-out.
+
 ### Live charts: `createChart`
 
 Time-series charts for bandwidth and latency, on Chart.js. Chart.js is an
