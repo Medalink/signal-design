@@ -21,9 +21,9 @@
    *           <div><span style="--at: 7">07:00</span></div>
    *         </div>
    *         <div class="sd-schedule-row">
-   *           <div class="sd-schedule-resource"><b>Budi Santoso</b><span>VH-028 · 2h of 8h</span></div>
+   *           <div class="sd-schedule-resource" id="schedule-budi"><b>Budi Santoso</b><span>VH-028 · 2h of 8h</span></div>
    *           <div class="sd-schedule-track">
-   *             <span class="sd-schedule-block" tabindex="0" data-status="driving" style="--from: 12.75; --to: 21"><span class="sd-schedule-label">SHP-10482 → Semarang</span></span>
+   *             <span class="sd-schedule-block" tabindex="0" aria-describedby="schedule-budi" data-status="driving" style="--from: 12.75; --to: 21"><span class="sd-schedule-label">SHP-10482 → Semarang · 12:45–21:00 · Driving</span></span>
    *           </div>
    *         </div>
    *         <span class="sd-schedule-now" style="--at: 14.33" data-label="14:20"></span>
@@ -124,7 +124,6 @@
     transition: background-color 160ms var(--ease-out);
   }
   .sd-schedule-row:is(:hover, :focus-within) {
-    z-index: 1;
     background: var(--sd-raised);
   }
   .sd-schedule-row[aria-selected="true"],
@@ -147,27 +146,26 @@
     padding-inline-end: 8px;
   }
   .sd-schedule-resource > b {
-    overflow: hidden;
     color: var(--sd-fg);
     font-size: var(--text-sm);
     font-weight: 500;
     line-height: 1.3;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
   }
   .sd-schedule-resource > span {
-    overflow: hidden;
     color: var(--tone, var(--sd-fg-faint));
     font-family: var(--font-mono);
     font-size: 10px;
     line-height: 1.3;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
   }
   .sd-schedule-track {
     position: relative;
     min-width: 0;
     container-type: inline-size;
+  }
+  .sd-schedule-track:is(:hover, :focus-within) {
+    z-index: 2;
   }
 
   /* The time bar stays fixed. Its label can cover adjacent slots, clamped
@@ -210,13 +208,25 @@
   .sd-schedule-block:is(:hover, :focus) {
     z-index: 2;
   }
+  .sd-schedule-block:is(:hover, :focus)::after {
+    content: "";
+    position: absolute;
+    top: calc(100% + 2px);
+    inset-inline: 0;
+    height: 3px;
+    border-inline: 1px solid var(--block);
+    border-block-end: 1px solid var(--block);
+  }
   .sd-schedule-block:is(:hover, :focus) > .sd-schedule-label {
+    top: auto;
+    bottom: 0;
     left: calc(clamp(0px, var(--offset), 100cqi - var(--reveal)) - var(--offset));
     width: var(--reveal);
     height: auto;
     overflow: visible;
     padding-inline: var(--label-pad);
     border-color: var(--block);
+    background: var(--sd-canvas);
     background: rgb(from color-mix(in srgb, var(--block) 16%, var(--sd-canvas)) r g b / 1);
     white-space: normal;
     overflow-wrap: anywhere;
@@ -254,6 +264,7 @@
   /* The now line, over the rows. data-label pins a small readout at the top. */
   .sd-schedule-now {
     position: absolute;
+    z-index: 1;
     inset-block: var(--axis-h) 0;
     left: calc(var(--label-w) + var(--label-gap) + (var(--at) - var(--start)) / var(--span) * var(--plot));
     width: 1px;

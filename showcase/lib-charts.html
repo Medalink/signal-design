@@ -204,57 +204,57 @@ createChart(canvas, {
                 <div><span style="--at: 6">06:00</span><span style="--at: 10">10:00</span><span style="--at: 14">14:00</span><span style="--at: 18">18:00</span><span style="--at: 22">22:00</span></div>
               </div>
               <div class="sd-schedule-row">
-                <div class="sd-schedule-resource"><b>Budi Santoso</b><span>VH-028 · 2h 40m of 8h</span></div>
+                <div class="sd-schedule-resource" id="schedule-mono-resource-1"><b>Budi Santoso</b><span>VH-028 · 2h 40m of 8h</span></div>
                 <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" data-status="planned" style="--from: 6; --to: 12" tabindex="0"><span class="sd-schedule-label">SHP-10481</span></span>
-                  <span class="sd-schedule-block" style="--from: 12; --to: 12.75" tabindex="0"><span class="sd-schedule-label">Hold · Kudus</span></span>
-                  <span class="sd-schedule-block" data-status="driving" style="--from: 12.75; --to: 21" tabindex="0"><span class="sd-schedule-label">SHP-10482 → Semarang, ETA 20:10</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-1" data-status="planned" style="--from: 6; --to: 12" tabindex="0"><span class="sd-schedule-label">SHP-10481 · 06:00–12:00 · Planned</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-1" style="--from: 12; --to: 12.75" tabindex="0"><span class="sd-schedule-label">Hold · Kudus · 12:00–12:45 · Off duty</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-1" data-status="driving" style="--from: 12.75; --to: 21" tabindex="0"><span class="sd-schedule-label">SHP-10482 → Semarang, ETA 20:10 · 12:45–21:00 · Driving</span></span>
                 </div>
               </div>
               <div class="sd-schedule-row" data-state="conflict">
-                <div class="sd-schedule-resource"><b>Slamet Riyadi</b><span data-tone="danger">VH-022 · limit at 14:55</span></div>
+                <div class="sd-schedule-resource" id="schedule-mono-resource-2"><b>Slamet Riyadi</b><span data-tone="danger">VH-022 · limit at 14:55</span></div>
                 <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" data-status="driving" style="--from: 8; --to: 14.5" tabindex="0"><span class="sd-schedule-label">SHP-10476 → Surabaya</span></span>
-                  <span class="sd-schedule-block" style="--from: 15.25; --to: 16.5" tabindex="0"><span class="sd-schedule-label">Rest</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-2" data-status="driving" style="--from: 8; --to: 14.5" tabindex="0"><span class="sd-schedule-label">SHP-10476 → Surabaya · 08:00–14:30 · Driving</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-2" style="--from: 15.25; --to: 16.5" tabindex="0"><span class="sd-schedule-label">Rest · 15:15–16:30 · Off duty</span></span>
+                </div>
+              </div>
+              <div class="sd-schedule-row" data-selected>
+                <div class="sd-schedule-resource" id="schedule-mono-resource-3"><b>Rizky Ramadhan</b><span>VH-031 · 5h 45m of 8h</span></div>
+                <div class="sd-schedule-track">
+                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-3" data-status="driving" style="--from: 9; --to: 13" tabindex="0"><span class="sd-schedule-label">SHP-10485 · 09:00–13:00 · Driving</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-3" style="--from: 13; --to: 13.5" tabindex="0"><span class="sd-schedule-label">Relief · 13:00–13:30 · Off duty</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-3" data-status="driving" style="--from: 13.5; --to: 19.5" tabindex="0"><span class="sd-schedule-label">SHP-10485 → Semarang · 13:30–19:30 · Driving</span></span>
                 </div>
               </div>
               <div class="sd-schedule-row">
-                <div class="sd-schedule-resource"><b>Rizky Ramadhan</b><span>VH-031 · 5h 45m of 8h</span></div>
+                <div class="sd-schedule-resource" id="schedule-mono-resource-4"><b>Agus Setiawan</b><span>VH-014 · 1h 30m of 8h</span></div>
                 <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" data-status="driving" style="--from: 9; --to: 13" tabindex="0"><span class="sd-schedule-label">SHP-10485</span></span>
-                  <span class="sd-schedule-block" style="--from: 13; --to: 13.5" tabindex="0"><span class="sd-schedule-label">Relief</span></span>
-                  <span class="sd-schedule-block" data-status="driving" style="--from: 13.5; --to: 19.5" tabindex="0"><span class="sd-schedule-label">SHP-10485 → Semarang</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-4" data-status="driving" style="--from: 12.5; --to: 16" tabindex="0"><span class="sd-schedule-label">SHP-10479 → Bandung · 12:30–16:00 · Driving</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-4" style="--from: 17; --to: 19.5" tabindex="0"><span class="sd-schedule-label">Return to Cakung · 17:00–19:30 · Off duty</span></span>
                 </div>
               </div>
               <div class="sd-schedule-row">
-                <div class="sd-schedule-resource"><b>Agus Setiawan</b><span>VH-014 · 1h 30m of 8h</span></div>
+                <div class="sd-schedule-resource" id="schedule-mono-resource-5"><b>Teguh Wibowo</b><span>VH-044 · 1h 55m of 8h</span></div>
                 <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" data-status="driving" style="--from: 12.5; --to: 16" tabindex="0"><span class="sd-schedule-label">SHP-10479 → Bandung</span></span>
-                  <span class="sd-schedule-block" style="--from: 17; --to: 19.5" tabindex="0"><span class="sd-schedule-label">Return to Cakung</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-5" data-status="completed" style="--from: 8.5; --to: 11" tabindex="0"><span class="sd-schedule-label">SHP-10483 · 08:30–11:00 · Completed</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-5" data-status="planned" style="--from: 11.75; --to: 16" tabindex="0"><span class="sd-schedule-label">SHP-10490 and return · 11:45–16:00 · Planned</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-5" data-status="proposed" style="--from: 17; --to: 20.5" tabindex="0"><span class="sd-schedule-label">SHP-10495 → Cirebon · 17:00–20:30 · Proposed</span></span>
                 </div>
               </div>
               <div class="sd-schedule-row">
-                <div class="sd-schedule-resource"><b>Teguh Wibowo</b><span>VH-044 · 1h 55m of 8h</span></div>
+                <div class="sd-schedule-resource" id="schedule-mono-resource-6"><b>Eko Prasetyo</b><span>VH-026 · 0h 00m of 8h</span></div>
                 <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" data-status="completed" style="--from: 8.5; --to: 11" tabindex="0"><span class="sd-schedule-label">SHP-10483</span></span>
-                  <span class="sd-schedule-block" data-status="planned" style="--from: 11.75; --to: 16" tabindex="0"><span class="sd-schedule-label">SHP-10490 and return</span></span>
-                  <span class="sd-schedule-block" data-status="proposed" style="--from: 17; --to: 20.5" tabindex="0"><span class="sd-schedule-label">SHP-10495 → Cirebon · proposed</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-6" style="--from: 12.5; --to: 13.5" tabindex="0"><span class="sd-schedule-label">Loading · 12:30–13:30 · Off duty</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-6" data-status="planned" style="--from: 13.5; --to: 15" tabindex="0"><span class="sd-schedule-label">SHP-10496 · 13:30–15:00 · Planned</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-6" style="--from: 16; --to: 17.5" tabindex="0"><span class="sd-schedule-label">Return · 16:00–17:30 · Off duty</span></span>
                 </div>
               </div>
               <div class="sd-schedule-row">
-                <div class="sd-schedule-resource"><b>Eko Prasetyo</b><span>VH-026 · 0h 00m of 8h</span></div>
+                <div class="sd-schedule-resource" id="schedule-mono-resource-7"><b>Rudi Hartono</b><span data-tone="warning">No vehicle · 6h 10m of 8h</span></div>
                 <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" style="--from: 12.5; --to: 13.5" tabindex="0"><span class="sd-schedule-label">Loading</span></span>
-                  <span class="sd-schedule-block" data-status="planned" style="--from: 13.5; --to: 15" tabindex="0"><span class="sd-schedule-label">SHP-10496</span></span>
-                  <span class="sd-schedule-block" style="--from: 16; --to: 17.5" tabindex="0"><span class="sd-schedule-label">Return</span></span>
-                </div>
-              </div>
-              <div class="sd-schedule-row">
-                <div class="sd-schedule-resource"><b>Rudi Hartono</b><span data-tone="warning">No vehicle · 6h 10m of 8h</span></div>
-                <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" data-status="completed" style="--from: 7.5; --to: 10.5" tabindex="0"><span class="sd-schedule-label">SHP-10478</span></span>
-                  <span class="sd-schedule-block" data-status="planned" style="--from: 11; --to: 14.5" tabindex="0"><span class="sd-schedule-label">SHP-10484</span></span>
-                  <span class="sd-schedule-block" style="--from: 14.75; --to: 16" tabindex="0"><span class="sd-schedule-label">Rest until 15:30</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-7" data-status="completed" style="--from: 7.5; --to: 10.5" tabindex="0"><span class="sd-schedule-label">SHP-10478 · 07:30–10:30 · Completed</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-7" data-status="planned" style="--from: 11; --to: 14.5" tabindex="0"><span class="sd-schedule-label">SHP-10484 · 11:00–14:30 · Planned</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-7" style="--from: 14.75; --to: 16" tabindex="0"><span class="sd-schedule-label">Rest until 15:30 · 14:45–16:00 · Off duty</span></span>
                 </div>
               </div>
               <span class="sd-schedule-now" style="--at: 14.33" data-label="14:20"></span>
@@ -285,57 +285,57 @@ createChart(canvas, {
                 <div><span style="--at: 6">06:00</span><span style="--at: 10">10:00</span><span style="--at: 14">14:00</span><span style="--at: 18">18:00</span><span style="--at: 22">22:00</span></div>
               </div>
               <div class="sd-schedule-row">
-                <div class="sd-schedule-resource"><b>Budi Santoso</b><span>VH-028 · 2h 40m of 8h</span></div>
+                <div class="sd-schedule-resource" id="schedule-spectrum-resource-1"><b>Budi Santoso</b><span>VH-028 · 2h 40m of 8h</span></div>
                 <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" data-status="planned" style="--from: 6; --to: 12" tabindex="0"><span class="sd-schedule-label">SHP-10481</span></span>
-                  <span class="sd-schedule-block" style="--from: 12; --to: 12.75" tabindex="0"><span class="sd-schedule-label">Hold · Kudus</span></span>
-                  <span class="sd-schedule-block" data-status="driving" style="--from: 12.75; --to: 21" tabindex="0"><span class="sd-schedule-label">SHP-10482 → Semarang, ETA 20:10</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-1" data-status="planned" style="--from: 6; --to: 12" tabindex="0"><span class="sd-schedule-label">SHP-10481 · 06:00–12:00 · Planned</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-1" style="--from: 12; --to: 12.75" tabindex="0"><span class="sd-schedule-label">Hold · Kudus · 12:00–12:45 · Off duty</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-1" data-status="driving" style="--from: 12.75; --to: 21" tabindex="0"><span class="sd-schedule-label">SHP-10482 → Semarang, ETA 20:10 · 12:45–21:00 · Driving</span></span>
                 </div>
               </div>
               <div class="sd-schedule-row" data-state="conflict">
-                <div class="sd-schedule-resource"><b>Slamet Riyadi</b><span data-tone="danger">VH-022 · limit at 14:55</span></div>
+                <div class="sd-schedule-resource" id="schedule-spectrum-resource-2"><b>Slamet Riyadi</b><span data-tone="danger">VH-022 · limit at 14:55</span></div>
                 <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" data-status="driving" style="--from: 8; --to: 14.5" tabindex="0"><span class="sd-schedule-label">SHP-10476 → Surabaya</span></span>
-                  <span class="sd-schedule-block" style="--from: 15.25; --to: 16.5" tabindex="0"><span class="sd-schedule-label">Rest</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-2" data-status="driving" style="--from: 8; --to: 14.5" tabindex="0"><span class="sd-schedule-label">SHP-10476 → Surabaya · 08:00–14:30 · Driving</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-2" style="--from: 15.25; --to: 16.5" tabindex="0"><span class="sd-schedule-label">Rest · 15:15–16:30 · Off duty</span></span>
+                </div>
+              </div>
+              <div class="sd-schedule-row" data-selected>
+                <div class="sd-schedule-resource" id="schedule-spectrum-resource-3"><b>Rizky Ramadhan</b><span>VH-031 · 5h 45m of 8h</span></div>
+                <div class="sd-schedule-track">
+                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-3" data-status="driving" style="--from: 9; --to: 13" tabindex="0"><span class="sd-schedule-label">SHP-10485 · 09:00–13:00 · Driving</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-3" style="--from: 13; --to: 13.5" tabindex="0"><span class="sd-schedule-label">Relief · 13:00–13:30 · Off duty</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-3" data-status="driving" style="--from: 13.5; --to: 19.5" tabindex="0"><span class="sd-schedule-label">SHP-10485 → Semarang · 13:30–19:30 · Driving</span></span>
                 </div>
               </div>
               <div class="sd-schedule-row">
-                <div class="sd-schedule-resource"><b>Rizky Ramadhan</b><span>VH-031 · 5h 45m of 8h</span></div>
+                <div class="sd-schedule-resource" id="schedule-spectrum-resource-4"><b>Agus Setiawan</b><span>VH-014 · 1h 30m of 8h</span></div>
                 <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" data-status="driving" style="--from: 9; --to: 13" tabindex="0"><span class="sd-schedule-label">SHP-10485</span></span>
-                  <span class="sd-schedule-block" style="--from: 13; --to: 13.5" tabindex="0"><span class="sd-schedule-label">Relief</span></span>
-                  <span class="sd-schedule-block" data-status="driving" style="--from: 13.5; --to: 19.5" tabindex="0"><span class="sd-schedule-label">SHP-10485 → Semarang</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-4" data-status="driving" style="--from: 12.5; --to: 16" tabindex="0"><span class="sd-schedule-label">SHP-10479 → Bandung · 12:30–16:00 · Driving</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-4" style="--from: 17; --to: 19.5" tabindex="0"><span class="sd-schedule-label">Return to Cakung · 17:00–19:30 · Off duty</span></span>
                 </div>
               </div>
               <div class="sd-schedule-row">
-                <div class="sd-schedule-resource"><b>Agus Setiawan</b><span>VH-014 · 1h 30m of 8h</span></div>
+                <div class="sd-schedule-resource" id="schedule-spectrum-resource-5"><b>Teguh Wibowo</b><span>VH-044 · 1h 55m of 8h</span></div>
                 <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" data-status="driving" style="--from: 12.5; --to: 16" tabindex="0"><span class="sd-schedule-label">SHP-10479 → Bandung</span></span>
-                  <span class="sd-schedule-block" style="--from: 17; --to: 19.5" tabindex="0"><span class="sd-schedule-label">Return to Cakung</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-5" data-status="completed" style="--from: 8.5; --to: 11" tabindex="0"><span class="sd-schedule-label">SHP-10483 · 08:30–11:00 · Completed</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-5" data-status="planned" style="--from: 11.75; --to: 16" tabindex="0"><span class="sd-schedule-label">SHP-10490 and return · 11:45–16:00 · Planned</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-5" data-status="proposed" style="--from: 17; --to: 20.5" tabindex="0"><span class="sd-schedule-label">SHP-10495 → Cirebon · 17:00–20:30 · Proposed</span></span>
                 </div>
               </div>
               <div class="sd-schedule-row">
-                <div class="sd-schedule-resource"><b>Teguh Wibowo</b><span>VH-044 · 1h 55m of 8h</span></div>
+                <div class="sd-schedule-resource" id="schedule-spectrum-resource-6"><b>Eko Prasetyo</b><span>VH-026 · 0h 00m of 8h</span></div>
                 <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" data-status="completed" style="--from: 8.5; --to: 11" tabindex="0"><span class="sd-schedule-label">SHP-10483</span></span>
-                  <span class="sd-schedule-block" data-status="planned" style="--from: 11.75; --to: 16" tabindex="0"><span class="sd-schedule-label">SHP-10490 and return</span></span>
-                  <span class="sd-schedule-block" data-status="proposed" style="--from: 17; --to: 20.5" tabindex="0"><span class="sd-schedule-label">SHP-10495 → Cirebon · proposed</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-6" style="--from: 12.5; --to: 13.5" tabindex="0"><span class="sd-schedule-label">Loading · 12:30–13:30 · Off duty</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-6" data-status="planned" style="--from: 13.5; --to: 15" tabindex="0"><span class="sd-schedule-label">SHP-10496 · 13:30–15:00 · Planned</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-6" style="--from: 16; --to: 17.5" tabindex="0"><span class="sd-schedule-label">Return · 16:00–17:30 · Off duty</span></span>
                 </div>
               </div>
               <div class="sd-schedule-row">
-                <div class="sd-schedule-resource"><b>Eko Prasetyo</b><span>VH-026 · 0h 00m of 8h</span></div>
+                <div class="sd-schedule-resource" id="schedule-spectrum-resource-7"><b>Rudi Hartono</b><span data-tone="warning">No vehicle · 6h 10m of 8h</span></div>
                 <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" style="--from: 12.5; --to: 13.5" tabindex="0"><span class="sd-schedule-label">Loading</span></span>
-                  <span class="sd-schedule-block" data-status="planned" style="--from: 13.5; --to: 15" tabindex="0"><span class="sd-schedule-label">SHP-10496</span></span>
-                  <span class="sd-schedule-block" style="--from: 16; --to: 17.5" tabindex="0"><span class="sd-schedule-label">Return</span></span>
-                </div>
-              </div>
-              <div class="sd-schedule-row">
-                <div class="sd-schedule-resource"><b>Rudi Hartono</b><span data-tone="warning">No vehicle · 6h 10m of 8h</span></div>
-                <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" data-status="completed" style="--from: 7.5; --to: 10.5" tabindex="0"><span class="sd-schedule-label">SHP-10478</span></span>
-                  <span class="sd-schedule-block" data-status="planned" style="--from: 11; --to: 14.5" tabindex="0"><span class="sd-schedule-label">SHP-10484</span></span>
-                  <span class="sd-schedule-block" style="--from: 14.75; --to: 16" tabindex="0"><span class="sd-schedule-label">Rest until 15:30</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-7" data-status="completed" style="--from: 7.5; --to: 10.5" tabindex="0"><span class="sd-schedule-label">SHP-10478 · 07:30–10:30 · Completed</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-7" data-status="planned" style="--from: 11; --to: 14.5" tabindex="0"><span class="sd-schedule-label">SHP-10484 · 11:00–14:30 · Planned</span></span>
+                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-7" style="--from: 14.75; --to: 16" tabindex="0"><span class="sd-schedule-label">Rest until 15:30 · 14:45–16:00 · Off duty</span></span>
                 </div>
               </div>
               <span class="sd-schedule-now" style="--at: 14.33" data-label="14:20"></span>

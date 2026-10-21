@@ -27,6 +27,7 @@ export default async function checkSchedule(page, where, fail) {
     const box = label.getBoundingClientRect();
     const trackBox = track.getBoundingClientRect();
     const boardBox = board.getBoundingClientRect();
+    const barBox = el.getBoundingClientRect();
     const range = document.createRange();
     range.selectNodeContents(label);
     const textBoxes = [...range.getClientRects()].filter((r) => r.width && r.height);
@@ -39,6 +40,34 @@ export default async function checkSchedule(page, where, fail) {
         [r.top + 0.5, (r.top + r.bottom) / 2, r.bottom - 0.5].every((y) => label.contains(document.elementFromPoint(x, y))),
       ),
     );
+    const marker = getComputedStyle(el, "::after");
+    const markerBox = {
+      left: barBox.left + parseFloat(marker.left),
+      top: barBox.top + parseFloat(marker.top),
+      width: parseFloat(marker.width),
+      height: parseFloat(marker.height),
+    };
+    const markerVisible = marker.content !== "none" && marker.visibility === "visible" &&
+      parseFloat(marker.opacity) > 0 && parseFloat(marker.borderBottomWidth) > 0 &&
+      marker.borderBottomStyle !== "none" && marker.borderBottomColor !== "rgba(0, 0, 0, 0)" &&
+      Math.abs(markerBox.left - barBox.left) <= 0.5 && Math.abs(markerBox.width - barBox.width) <= 0.5 &&
+      markerBox.top >= box.bottom && textBoxes.every((r) => r.bottom < markerBox.top) &&
+      markerBox.top + markerBox.height <= boardBox.bottom &&
+      [markerBox.left + 0.5, markerBox.left + markerBox.width / 2, markerBox.left + markerBox.width - 0.5]
+        .every((x) => document.elementFromPoint(x, markerBox.top + markerBox.height - 0.5) === el);
+    const resource = row.querySelector(".sd-schedule-resource");
+    const time = (hour) => {
+      const minutes = Math.round(Number(hour) * 60);
+      return `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
+    };
+    const status = { driving: "Driving", planned: "Planned", proposed: "Proposed", completed: "Completed", conflict: "Conflict" }[el.dataset.status] ?? "Off duty";
+    const interval = `${time(el.style.getPropertyValue("--from"))}–${time(el.style.getPropertyValue("--to"))}`;
+    const now = el.closest(".sd-schedule").querySelector(".sd-schedule-now");
+    const nowBox = now.getBoundingClientRect();
+    const crossesNow = nowBox.left >= box.left && nowBox.right <= box.right;
+    now.style.pointerEvents = "auto";
+    const labelOverNow = !crossesNow || label.contains(document.elementFromPoint(nowBox.left + 0.5, box.top + box.height / 2));
+    now.style.removeProperty("pointer-events");
     return {
       bar: rect(el),
       row: rect(row),
@@ -46,6 +75,10 @@ export default async function checkSchedule(page, where, fail) {
       text: label.textContent.trim(),
       opaque: !style.backgroundColor.includes("/") && !style.backgroundColor.startsWith("rgba("),
       textVisible,
+      markerVisible,
+      labelOverNow,
+      intervalAndStatus: label.textContent.trim().endsWith(` · ${interval} · ${status}`),
+      resourceAssociated: resource.id && el.getAttribute("aria-describedby") === resource.id && document.getElementById(resource.id) === resource,
       withinTrack: box.left >= trackBox.left - 0.5 && box.right <= trackBox.right + 0.5,
       coversBar: box.left <= el.getBoundingClientRect().left + 0.5 && box.right >= el.getBoundingClientRect().right - 0.5,
       compact: style.whiteSpace === "nowrap" && style.textOverflow === "ellipsis" && style.overflow === "hidden",
@@ -97,9 +130,47 @@ export default async function checkSchedule(page, where, fail) {
               tickOnLine: close(tick.left + tick.width / 2 - line.left, 0.5),
               legend: el.querySelectorAll(".sd-schedule-legend > span").length === 6,
               conflict: getComputedStyle(el.querySelector('[data-state="conflict"]')).boxShadow !== "none",
+              staticSelection: [...el.querySelectorAll(".sd-schedule-row[data-selected]")].some((row) =>
+                !row.hasAttribute("aria-selected") && !row.hasAttribute("role") &&
+                getComputedStyle(row).backgroundColor !== getComputedStyle(el.querySelector(".sd-schedule-row")).backgroundColor,
+              ),
             };
           });
           for (const [key, passed] of Object.entries(geometry)) assert(passed, `${context} ${key}`);
+
+          const resources = board.locator(".sd-schedule-resource");
+          for (let index = 0; index < await resources.count(); index++) {
+            const resource = resources.nth(index);
+            await resource.scrollIntoViewIfNeeded();
+            await resource.hover();
+            await resource.evaluate(async (el) => {
+              await Promise.all(el.closest(".sd-schedule-row").getAnimations({ subtree: true }).map((animation) => animation.finished));
+            });
+            const details = await resource.evaluate((el) => {
+              const box = el.getBoundingClientRect();
+              const boardBox = el.closest(".sd-schedule-board").getBoundingClientRect();
+              const complete = [...el.children].every((child) => {
+                const range = document.createRange();
+                range.selectNodeContents(child);
+                const rects = [...range.getClientRects()].filter((r) => r.width && r.height);
+                return child.scrollWidth <= child.clientWidth + 1 && rects.length > 0 && rects.every((r) =>
+                  r.left >= box.left - 0.5 && r.right <= box.right + 0.5 &&
+                  r.top >= box.top - 0.5 && r.bottom <= box.bottom + 0.5 &&
+                  r.top >= boardBox.top && r.bottom <= boardBox.bottom &&
+                  child.contains(document.elementFromPoint((r.left + r.right) / 2, (r.top + r.bottom) / 2)),
+                );
+              });
+              const now = el.closest(".sd-schedule").querySelector(".sd-schedule-now");
+              const line = now.getBoundingClientRect();
+              now.style.pointerEvents = "auto";
+              const lineVisible = getComputedStyle(now).backgroundColor !== "rgba(0, 0, 0, 0)" &&
+                document.elementFromPoint(line.left + 0.5, box.top + box.height / 2) === now;
+              now.style.removeProperty("pointer-events");
+              return { complete, lineVisible, text: el.innerText.replaceAll("\n", " · ") };
+            });
+            assert(details.complete, `${context} ${details.text} wraps without clipping or occlusion`);
+            assert(details.lineVisible, `${context} now line stays above the resource-hovered row`);
+          }
 
           for (let index = 0; index < count; index++) {
             const block = blocks.nth(index);
@@ -111,6 +182,8 @@ export default async function checkSchedule(page, where, fail) {
             assert(resting.compact, `${name} ellipsizes at rest`);
             assert(resting.withinTrack && resting.noPageOverflow, `${name} rests inside the track without page overflow`);
             assert((await block.ariaSnapshot()).includes(resting.text), `${name} has its full text in the accessible tree at rest`);
+            assert(resting.intervalAndStatus, `${name} exposes the interval and status matching its geometry`);
+            assert(resting.resourceAssociated, `${name} is described by its own row resource`);
 
             await block.hover();
             await page.waitForFunction((el) => getComputedStyle(el.querySelector(".sd-schedule-label")).whiteSpace === "normal", await block.elementHandle());
@@ -125,6 +198,8 @@ export default async function checkSchedule(page, where, fail) {
             assert(sameRect(resting.bar, hovered.bar) && sameRect(resting.row, hovered.row), `${name} keeps time bar and row bounds on hover`);
             assert(hovered.withinTrack && hovered.coversBar && hovered.noPageOverflow, `${name} reveals within the track and covers its original hit region`);
             assert(hovered.rowRaised, `${name} highlights its hovered row`);
+            assert(hovered.markerVisible, `${name} paints an unoccluded bracket at the original interval below its text`);
+            assert(hovered.labelOverNow, `${name} paints expanded text above the now line`);
 
             const hit = await block.locator(".sd-schedule-label").boundingBox();
             await page.mouse.move(hit.x + hit.width / 2, hit.y + hit.height / 2);
@@ -140,6 +215,7 @@ export default async function checkSchedule(page, where, fail) {
             assert(focused.focused && focused.textVisible, `${name} reveals all text on plain focus`);
             assert(sameRect(resting.bar, focused.bar) && sameRect(resting.row, focused.row), `${name} keeps time bar and row bounds on focus`);
             assert(focused.withinTrack && focused.noPageOverflow && focused.focusRing, `${name} keeps focus visible within the track`);
+            assert(focused.markerVisible && focused.labelOverNow, `${name} keeps its fixed marker visible and text above the now line on focus`);
             await page.keyboard.press("Tab");
             assert(!(await block.evaluate(read)).focused, `${name} supports keyboard navigation away`);
             await page.evaluate(() => document.activeElement.blur());
