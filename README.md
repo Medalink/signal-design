@@ -977,7 +977,7 @@ tick and the now line place by the same hour scale. CSS only.
       <div class="sd-schedule-row">
         <div class="sd-schedule-resource"><b>Budi Santoso</b><span>VH-028 · 2h of 8h</span></div>
         <div class="sd-schedule-track">
-          <span class="sd-schedule-block" data-status="driving" style="--from: 12.75; --to: 21">SHP-10482</span>
+          <span class="sd-schedule-block" tabindex="0" data-status="driving" style="--from: 12.75; --to: 21"><span class="sd-schedule-label">SHP-10482 → Semarang</span></span>
         </div>
       </div>
       <span class="sd-schedule-now" style="--at: 14.33" data-label="14:20"></span>
@@ -995,12 +995,20 @@ tokens: `data-chart-theme="spectrum"` (on the schedule or any ancestor)
 recolors the whole board; mono is black and white with color kept for
 conflicts and the now line.
 
-Labels rest short and ellipsize when tight. A block may carry a
-`<span class="sd-schedule-more">` suffix — the long tail of the label,
-hidden while the block rests and shown while it is hovered; give the
-block an `aria-label` or `title` with the full text when you use one.
-Hovering any block temporarily expands it over later slots (never past
-the board end) so the whole label reads, and it collapses on mouse-out.
+Each block contains one `sd-schedule-label` with its complete text. The label
+ellipsizes at rest. Hovering or focusing the block temporarily expands the
+label over adjacent slots, within the track edges, and wraps the full text.
+The time bar and row keep their original size and position. Add `tabindex="0"`
+to static blocks so keyboard and touch users can focus them. These are text,
+with no activation action. The full text remains available to assistive
+technology without a duplicate `aria-label` or `title`.
+
+The label collapses after the pointer leaves and focus moves away. Touch
+focus can remain until another element receives focus. Expanded labels are
+at most `20rem` wide unless the time bar is wider. The board scrolls
+horizontally when `--min-w` requires it. Its scroll viewport can also clip
+very tall labels at the bottom, so leave enough vertical room for your label
+lengths or provide a separate detail view for unusually long descriptions.
 
 ### Live charts: `createChart`
 

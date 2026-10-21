@@ -1,6 +1,6 @@
 @layer components {
   /*
-   * Schedule: a roster over hours — who is on what, when.
+   * Schedule: a roster over hours.
    *
    * A label column on the left, an hour plot on the right. The board covers
    * --start to --end (hours); blocks, grid lines, ticks and the now line all
@@ -23,7 +23,7 @@
    *         <div class="sd-schedule-row">
    *           <div class="sd-schedule-resource"><b>Budi Santoso</b><span>VH-028 · 2h of 8h</span></div>
    *           <div class="sd-schedule-track">
-   *             <span class="sd-schedule-block" data-status="driving" style="--from: 12.75; --to: 21">SHP-10482<span class="sd-schedule-more"> → Semarang</span></span>
+   *             <span class="sd-schedule-block" tabindex="0" data-status="driving" style="--from: 12.75; --to: 21"><span class="sd-schedule-label">SHP-10482 → Semarang</span></span>
    *           </div>
    *         </div>
    *         <span class="sd-schedule-now" style="--at: 14.33" data-label="14:20"></span>
@@ -119,6 +119,7 @@
   /* Rows: resource cell and track cell on one grid, so hover and state
      paint the whole row. */
   .sd-schedule-row {
+    position: relative;
     display: grid;
     grid-template-columns: var(--label-w) minmax(0, 1fr);
     column-gap: var(--label-gap);
@@ -126,7 +127,8 @@
     border-block-start: 1px solid var(--sd-line);
     transition: background-color 160ms var(--ease-out);
   }
-  .sd-schedule-row:hover {
+  .sd-schedule-row:is(:hover, :focus-within) {
+    z-index: 1;
     background: var(--sd-raised);
   }
   .sd-schedule-row[aria-selected="true"],
@@ -169,54 +171,65 @@
   .sd-schedule-track {
     position: relative;
     min-width: 0;
+    container-type: inline-size;
   }
 
-  /* Blocks: --from/--to in schedule hours, tinted by --block. A block rests
-     on its short label (ellipsis when tight); hovering expands it to the
-     full label over later slots, never past the board end, and it
-     collapses on mouse-out. Text stays fg in mono so every grey label
-     reads; conflict keeps its alert color. */
+  /* The time bar stays fixed. Its label can cover adjacent slots, clamped
+     to the track so late intervals have room to reveal their text. */
   .sd-schedule-block {
     --block: var(--sd-fg-subtle);
+    --label-pad: 8px;
+    --offset: calc((var(--from) - var(--start)) / var(--span) * 100cqi);
+    --interval: calc((var(--to) - var(--from)) / var(--span) * 100cqi);
+    --reveal: max(var(--interval), min(20rem, 100cqi));
     position: absolute;
     top: 50%;
     left: calc((var(--from) - var(--start)) / var(--span) * 100%);
     width: calc((var(--to) - var(--from)) / var(--span) * 100%);
     height: var(--block-h);
-    overflow: hidden;
-    padding-inline: 8px;
-    border: 1px solid color-mix(in srgb, var(--block) 55%, transparent);
-    background: color-mix(in srgb, var(--block) 10%, transparent);
     color: var(--sd-fg);
     font-family: var(--font-mono);
     font-size: 10px;
-    line-height: calc(var(--block-h) - 2px);
+    line-height: 1.4;
     letter-spacing: 0.02em;
+    translate: 0 -50%;
+  }
+  .sd-schedule-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-height: var(--block-h);
+    overflow: hidden;
+    padding: 4px min(var(--label-pad), 10%);
+    border: 1px solid color-mix(in srgb, var(--block) 55%, transparent);
+    background: color-mix(in srgb, var(--block) 10%, transparent);
     text-overflow: ellipsis;
     white-space: nowrap;
-    translate: 0 -50%;
     transition:
-      background-color 160ms var(--ease-out),
       border-color 160ms var(--ease-out),
       color 160ms var(--ease-out);
   }
-  .sd-schedule-block:hover {
+  .sd-schedule-block:is(:hover, :focus) {
     z-index: 2;
-    width: max-content;
-    min-width: calc((var(--to) - var(--from)) / var(--span) * 100%);
-    max-width: calc((var(--end) - var(--from)) / var(--span) * 100%);
+  }
+  .sd-schedule-block:is(:hover, :focus) > .sd-schedule-label {
+    left: calc(clamp(0px, var(--offset), 100cqi - var(--reveal)) - var(--offset));
+    width: var(--reveal);
+    height: auto;
+    overflow: visible;
+    padding-inline: var(--label-pad);
     border-color: var(--block);
-    /* Opaque, so labels of the blocks it passes over stay hidden. */
-    background: color-mix(in srgb, var(--block) 16%, var(--sd-canvas));
+    /* Chart tokens can include alpha. Flatten the mixed fill so adjacent
+       labels stay hidden from the first expanded frame. */
+    background: rgb(from color-mix(in srgb, var(--block) 16%, var(--sd-canvas)) r g b / 1);
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
-  /* The optional long tail of a label: hidden while the block rests,
-     shown while it is expanded. Give the block an aria-label or title
-     with the full text when you use one. */
-  .sd-schedule-more {
-    display: none;
-  }
-  .sd-schedule-block:hover .sd-schedule-more {
-    display: inline;
+  .sd-schedule-block:focus-visible > .sd-schedule-label {
+    outline: 1px solid var(--sd-fg);
+    outline-offset: -1px;
   }
   .sd-schedule [data-status="driving"] {
     --block: var(--sd-chart-1);
@@ -233,7 +246,7 @@
   .sd-schedule [data-status="conflict"] {
     --block: var(--sd-chart-critical);
   }
-  .sd-schedule-block[data-status="proposed"] {
+  .sd-schedule-block[data-status="proposed"] > .sd-schedule-label {
     border-style: dashed;
   }
   .sd-schedule-block[data-status="conflict"] {
@@ -299,7 +312,7 @@
       display: none;
     }
     .sd-schedule-block {
-      padding-inline: 5px;
+      --label-pad: 5px;
       font-size: 9px;
     }
   }
