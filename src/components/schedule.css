@@ -72,7 +72,6 @@
     border-block-end: 1px solid var(--sd-line);
   }
 
-  /* Hour grid, drawn under the rows, over the plot area only. */
   .sd-schedule-grid {
     position: absolute;
     inset: var(--axis-h) 0 0 calc(var(--label-w) + var(--label-gap));
@@ -86,7 +85,6 @@
     background: var(--sd-chart-grid);
   }
 
-  /* The hour header: a label-column cell plus the ticks. */
   .sd-schedule-axis {
     display: grid;
     grid-template-columns: var(--label-w) minmax(0, 1fr);
@@ -116,8 +114,6 @@
     translate: -100% -50%;
   }
 
-  /* Rows: resource cell and track cell on one grid, so hover and state
-     paint the whole row. */
   .sd-schedule-row {
     position: relative;
     display: grid;
@@ -221,8 +217,6 @@
     overflow: visible;
     padding-inline: var(--label-pad);
     border-color: var(--block);
-    /* Chart tokens can include alpha. Flatten the mixed fill so adjacent
-       labels stay hidden from the first expanded frame. */
     background: rgb(from color-mix(in srgb, var(--block) 16%, var(--sd-canvas)) r g b / 1);
     white-space: normal;
     overflow-wrap: anywhere;
@@ -252,7 +246,6 @@
   .sd-schedule-block[data-status="conflict"] {
     color: var(--block);
   }
-  /* Spectrum: the label takes its series hue, like the border and fill. */
   .sd-schedule:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *)
     .sd-schedule-block {
     color: var(--block);
@@ -307,7 +300,6 @@
   }
 
   @container (max-width: 30rem) {
-    /* Ticks collide on a phone; keep every second one. */
     .sd-schedule-axis > div > span:nth-child(even) {
       display: none;
     }
