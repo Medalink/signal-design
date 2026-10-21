@@ -179,6 +179,174 @@ createChart(canvas, {
       <p class="demo-usage"><code>sd-timeline</code> + <code>-head|-body|-labels|-label|-plot|-grid|-row|-track|-bar|-now|-axis|-mark</code> · <code>--from|--to|--at</code> · <code>data-tone</code> · CSS only</p>
     </div>
 
+    <div class="demo-block" id="charts-schedule">
+      <h3 class="sd-label">Schedule</h3>
+      <div class="grid gap-10 xl:grid-cols-2">
+        <figure class="sd-schedule" style="--start: 6; --end: 22; --label-w: 8rem" aria-labelledby="schedule-roster-h">
+          <div class="sd-schedule-head">
+            <span class="sd-label sd-label-strong" id="schedule-roster-h">Driver roster · Fri 9 Oct</span>
+            <div class="sd-schedule-legend">
+              <span data-status="driving"><i></i>Driving</span>
+              <span data-status="planned"><i></i>Planned</span>
+              <span data-status="proposed"><i></i>Proposed</span>
+              <span data-status="completed"><i></i>Completed</span>
+              <span data-status="conflict"><i></i>Conflict</span>
+              <span><i></i>Off duty</span>
+            </div>
+          </div>
+          <div class="sd-schedule-board">
+            <div class="sd-schedule-canvas">
+              <div class="sd-schedule-grid" aria-hidden="true">
+                <i style="--at: 6"></i><i style="--at: 8"></i><i style="--at: 10"></i><i style="--at: 12"></i><i style="--at: 14"></i><i style="--at: 16"></i><i style="--at: 18"></i><i style="--at: 20"></i><i style="--at: 22"></i>
+              </div>
+              <div class="sd-schedule-axis" aria-hidden="true">
+                <span>Driver</span>
+                <div><span style="--at: 6">06:00</span><span style="--at: 10">10:00</span><span style="--at: 14">14:00</span><span style="--at: 18">18:00</span><span style="--at: 22">22:00</span></div>
+              </div>
+              <div class="sd-schedule-row">
+                <div class="sd-schedule-resource"><b>Budi Santoso</b><span>VH-028 · 2h 40m of 8h</span></div>
+                <div class="sd-schedule-track">
+                  <span class="sd-schedule-block" data-status="planned" style="--from: 6; --to: 12">SHP-10481</span>
+                  <span class="sd-schedule-block" style="--from: 12; --to: 12.75">Held · Kudus</span>
+                  <span class="sd-schedule-block" data-status="driving" style="--from: 12.75; --to: 21">SHP-10482 → Semarang, ETA 20:10</span>
+                </div>
+              </div>
+              <div class="sd-schedule-row" data-state="conflict">
+                <div class="sd-schedule-resource"><b>Slamet Riyadi</b><span data-tone="danger">VH-022 · limit at 14:55</span></div>
+                <div class="sd-schedule-track">
+                  <span class="sd-schedule-block" data-status="driving" style="--from: 8; --to: 14.5">SHP-10476 → Surabaya</span>
+                  <span class="sd-schedule-block" style="--from: 15.25; --to: 16.5">Rest</span>
+                </div>
+              </div>
+              <div class="sd-schedule-row">
+                <div class="sd-schedule-resource"><b>Rizky Ramadhan</b><span>VH-031 · 5h 45m of 8h</span></div>
+                <div class="sd-schedule-track">
+                  <span class="sd-schedule-block" data-status="driving" style="--from: 9; --to: 13">SHP-10485</span>
+                  <span class="sd-schedule-block" style="--from: 13; --to: 13.5">Relief</span>
+                  <span class="sd-schedule-block" data-status="driving" style="--from: 13.5; --to: 19.5">SHP-10485 → Semarang</span>
+                </div>
+              </div>
+              <div class="sd-schedule-row">
+                <div class="sd-schedule-resource"><b>Agus Setiawan</b><span>VH-014 · 1h 30m of 8h</span></div>
+                <div class="sd-schedule-track">
+                  <span class="sd-schedule-block" data-status="driving" style="--from: 12.5; --to: 16">SHP-10479 → Bandung</span>
+                  <span class="sd-schedule-block" style="--from: 17; --to: 19.5">Return to Cakung</span>
+                </div>
+              </div>
+              <div class="sd-schedule-row">
+                <div class="sd-schedule-resource"><b>Teguh Wibowo</b><span>VH-044 · 1h 55m of 8h</span></div>
+                <div class="sd-schedule-track">
+                  <span class="sd-schedule-block" data-status="completed" style="--from: 8.5; --to: 11">SHP-10483</span>
+                  <span class="sd-schedule-block" data-status="planned" style="--from: 11.75; --to: 16">SHP-10490 and return</span>
+                  <span class="sd-schedule-block" data-status="proposed" style="--from: 17; --to: 20.5">SHP-10495 → Cirebon · proposed</span>
+                </div>
+              </div>
+              <div class="sd-schedule-row">
+                <div class="sd-schedule-resource"><b>Eko Prasetyo</b><span>VH-026 · 0h 00m of 8h</span></div>
+                <div class="sd-schedule-track">
+                  <span class="sd-schedule-block" style="--from: 12.5; --to: 13.5">Loading</span>
+                  <span class="sd-schedule-block" data-status="planned" style="--from: 13.5; --to: 15">SHP-10496</span>
+                  <span class="sd-schedule-block" style="--from: 16; --to: 17.5">Return</span>
+                </div>
+              </div>
+              <div class="sd-schedule-row">
+                <div class="sd-schedule-resource"><b>Rudi Hartono</b><span data-tone="warning">No vehicle · 6h 10m of 8h</span></div>
+                <div class="sd-schedule-track">
+                  <span class="sd-schedule-block" data-status="completed" style="--from: 7.5; --to: 10.5">SHP-10478</span>
+                  <span class="sd-schedule-block" data-status="planned" style="--from: 11; --to: 14.5">SHP-10484</span>
+                  <span class="sd-schedule-block" style="--from: 14.75; --to: 16">Rest until 15:30</span>
+                </div>
+              </div>
+              <span class="sd-schedule-now" style="--at: 14.33" data-label="14:20"></span>
+            </div>
+          </div>
+          <figcaption class="sd-meta"><span>Black and white by default; color only where it means something</span></figcaption>
+        </figure>
+
+        <figure class="sd-schedule" data-chart-theme="spectrum" style="--start: 6; --end: 22; --label-w: 8rem" aria-labelledby="schedule-spectrum-h">
+          <div class="sd-schedule-head">
+            <span class="sd-label sd-label-strong" id="schedule-spectrum-h">Driver roster · spectrum</span>
+            <div class="sd-schedule-legend">
+              <span data-status="driving"><i></i>Driving</span>
+              <span data-status="planned"><i></i>Planned</span>
+              <span data-status="proposed"><i></i>Proposed</span>
+              <span data-status="completed"><i></i>Completed</span>
+              <span data-status="conflict"><i></i>Conflict</span>
+              <span><i></i>Off duty</span>
+            </div>
+          </div>
+          <div class="sd-schedule-board">
+            <div class="sd-schedule-canvas">
+              <div class="sd-schedule-grid" aria-hidden="true">
+                <i style="--at: 6"></i><i style="--at: 8"></i><i style="--at: 10"></i><i style="--at: 12"></i><i style="--at: 14"></i><i style="--at: 16"></i><i style="--at: 18"></i><i style="--at: 20"></i><i style="--at: 22"></i>
+              </div>
+              <div class="sd-schedule-axis" aria-hidden="true">
+                <span>Driver</span>
+                <div><span style="--at: 6">06:00</span><span style="--at: 10">10:00</span><span style="--at: 14">14:00</span><span style="--at: 18">18:00</span><span style="--at: 22">22:00</span></div>
+              </div>
+              <div class="sd-schedule-row">
+                <div class="sd-schedule-resource"><b>Budi Santoso</b><span>VH-028 · 2h 40m of 8h</span></div>
+                <div class="sd-schedule-track">
+                  <span class="sd-schedule-block" data-status="planned" style="--from: 6; --to: 12">SHP-10481</span>
+                  <span class="sd-schedule-block" style="--from: 12; --to: 12.75">Held · Kudus</span>
+                  <span class="sd-schedule-block" data-status="driving" style="--from: 12.75; --to: 21">SHP-10482 → Semarang, ETA 20:10</span>
+                </div>
+              </div>
+              <div class="sd-schedule-row" data-state="conflict">
+                <div class="sd-schedule-resource"><b>Slamet Riyadi</b><span data-tone="danger">VH-022 · limit at 14:55</span></div>
+                <div class="sd-schedule-track">
+                  <span class="sd-schedule-block" data-status="driving" style="--from: 8; --to: 14.5">SHP-10476 → Surabaya</span>
+                  <span class="sd-schedule-block" style="--from: 15.25; --to: 16.5">Rest</span>
+                </div>
+              </div>
+              <div class="sd-schedule-row">
+                <div class="sd-schedule-resource"><b>Rizky Ramadhan</b><span>VH-031 · 5h 45m of 8h</span></div>
+                <div class="sd-schedule-track">
+                  <span class="sd-schedule-block" data-status="driving" style="--from: 9; --to: 13">SHP-10485</span>
+                  <span class="sd-schedule-block" style="--from: 13; --to: 13.5">Relief</span>
+                  <span class="sd-schedule-block" data-status="driving" style="--from: 13.5; --to: 19.5">SHP-10485 → Semarang</span>
+                </div>
+              </div>
+              <div class="sd-schedule-row">
+                <div class="sd-schedule-resource"><b>Agus Setiawan</b><span>VH-014 · 1h 30m of 8h</span></div>
+                <div class="sd-schedule-track">
+                  <span class="sd-schedule-block" data-status="driving" style="--from: 12.5; --to: 16">SHP-10479 → Bandung</span>
+                  <span class="sd-schedule-block" style="--from: 17; --to: 19.5">Return to Cakung</span>
+                </div>
+              </div>
+              <div class="sd-schedule-row">
+                <div class="sd-schedule-resource"><b>Teguh Wibowo</b><span>VH-044 · 1h 55m of 8h</span></div>
+                <div class="sd-schedule-track">
+                  <span class="sd-schedule-block" data-status="completed" style="--from: 8.5; --to: 11">SHP-10483</span>
+                  <span class="sd-schedule-block" data-status="planned" style="--from: 11.75; --to: 16">SHP-10490 and return</span>
+                  <span class="sd-schedule-block" data-status="proposed" style="--from: 17; --to: 20.5">SHP-10495 → Cirebon · proposed</span>
+                </div>
+              </div>
+              <div class="sd-schedule-row">
+                <div class="sd-schedule-resource"><b>Eko Prasetyo</b><span>VH-026 · 0h 00m of 8h</span></div>
+                <div class="sd-schedule-track">
+                  <span class="sd-schedule-block" style="--from: 12.5; --to: 13.5">Loading</span>
+                  <span class="sd-schedule-block" data-status="planned" style="--from: 13.5; --to: 15">SHP-10496</span>
+                  <span class="sd-schedule-block" style="--from: 16; --to: 17.5">Return</span>
+                </div>
+              </div>
+              <div class="sd-schedule-row">
+                <div class="sd-schedule-resource"><b>Rudi Hartono</b><span data-tone="warning">No vehicle · 6h 10m of 8h</span></div>
+                <div class="sd-schedule-track">
+                  <span class="sd-schedule-block" data-status="completed" style="--from: 7.5; --to: 10.5">SHP-10478</span>
+                  <span class="sd-schedule-block" data-status="planned" style="--from: 11; --to: 14.5">SHP-10484</span>
+                  <span class="sd-schedule-block" style="--from: 14.75; --to: 16">Rest until 15:30</span>
+                </div>
+              </div>
+              <span class="sd-schedule-now" style="--at: 14.33" data-label="14:20"></span>
+            </div>
+          </div>
+          <figcaption class="sd-meta"><span>data-chart-theme="spectrum" recolors the whole board</span></figcaption>
+        </figure>
+      </div>
+      <p class="demo-usage"><code>sd-schedule</code> + <code>-head|-legend|-board|-canvas|-grid|-axis|-row|-resource|-track|-block|-now</code> · <code>--start|--end</code> hours and <code>--from|--to|--at</code> on the same scale · <code>data-status="driving|planned|proposed|completed|conflict"</code> · <code>data-state="conflict"</code> rows · <code>data-chart-theme="mono|spectrum"</code> · CSS only</p>
+    </div>
+
     <div class="demo-block">
       <h3 class="sd-label">Small plots</h3>
       <div class="grid gap-6 lg:grid-cols-2">

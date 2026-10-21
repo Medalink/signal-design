@@ -1,0 +1,293 @@
+@layer components {
+  /*
+   * Schedule: a roster over hours — who is on what, when.
+   *
+   * A label column on the left, an hour plot on the right. The board covers
+   * --start to --end (hours); blocks, grid lines, ticks and the now line all
+   * place by the same hour scale, so rows share one axis. CSS only.
+   *
+   *   <figure class="sd-schedule" style="--start: 6; --end: 22">
+   *     <div class="sd-schedule-head">
+   *       <span class="sd-label sd-label-strong">Driver roster</span>
+   *       <div class="sd-schedule-legend">
+   *         <span data-status="driving"><i></i>Driving</span>…
+   *       </div>
+   *     </div>
+   *     <div class="sd-schedule-board">
+   *       <div class="sd-schedule-canvas">
+   *         <div class="sd-schedule-grid" aria-hidden="true"><i style="--at: 7"></i></div>
+   *         <div class="sd-schedule-axis" aria-hidden="true">
+   *           <span>Driver</span>
+   *           <div><span style="--at: 7">07:00</span></div>
+   *         </div>
+   *         <div class="sd-schedule-row">
+   *           <div class="sd-schedule-resource"><b>Budi Santoso</b><span>VH-028 · 2h of 8h</span></div>
+   *           <div class="sd-schedule-track">
+   *             <span class="sd-schedule-block" data-status="driving" style="--from: 12.75; --to: 21">SHP-10482</span>
+   *           </div>
+   *         </div>
+   *         <span class="sd-schedule-now" style="--at: 14.33" data-label="14:20"></span>
+   *       </div>
+   *     </div>
+   *     <figcaption class="sd-meta"><span>Friday, 38 drivers</span></figcaption>
+   *   </figure>
+   *
+   * data-status names what a block means: driving, planned (reserved),
+   * proposed (dashed, unconfirmed), completed, conflict. No attribute is
+   * off duty. Colors come from the chart tokens, so data-chart-theme
+   * ("mono" default, "spectrum") switches the whole board black/white
+   * or full palette, on this element or any ancestor.
+   */
+  .sd-schedule {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+    container-type: inline-size;
+    --row-h: 44px;
+    --label-w: 10rem;
+    --label-gap: 12px;
+    --axis-h: 26px;
+    --block-h: 26px;
+    /* The covered range, in the unit the demo chooses (hours here). */
+    --start: 0;
+    --end: 24;
+    --span: calc(var(--end) - var(--start));
+  }
+  .sd-schedule-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px 16px;
+    min-height: 28px;
+  }
+  .sd-schedule-board {
+    min-width: 0;
+    overflow-x: auto;
+  }
+  .sd-schedule-canvas {
+    --plot: calc(100% - var(--label-w) - var(--label-gap));
+    position: relative;
+    min-width: var(--min-w, 0);
+    border-block-end: 1px solid var(--sd-line);
+  }
+
+  /* Hour grid, drawn under the rows, over the plot area only. */
+  .sd-schedule-grid {
+    position: absolute;
+    inset: var(--axis-h) 0 0 calc(var(--label-w) + var(--label-gap));
+    pointer-events: none;
+  }
+  .sd-schedule-grid > i {
+    position: absolute;
+    inset-block: 0;
+    left: calc((var(--at) - var(--start)) / var(--span) * 100%);
+    width: 1px;
+    background: var(--sd-chart-grid);
+  }
+
+  /* The hour header: a label-column cell plus the ticks. */
+  .sd-schedule-axis {
+    display: grid;
+    grid-template-columns: var(--label-w) minmax(0, 1fr);
+    column-gap: var(--label-gap);
+    height: var(--axis-h);
+    align-items: center;
+    color: var(--sd-fg-faint);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
+  .sd-schedule-axis > div {
+    position: relative;
+    height: 100%;
+  }
+  .sd-schedule-axis > div > span {
+    position: absolute;
+    top: 50%;
+    left: calc((var(--at) - var(--start)) / var(--span) * 100%);
+    translate: -50% -50%;
+    white-space: nowrap;
+  }
+  .sd-schedule-axis > div > span:first-child {
+    translate: 0 -50%;
+  }
+  .sd-schedule-axis > div > span:last-child {
+    translate: -100% -50%;
+  }
+
+  /* Rows: resource cell and track cell on one grid, so hover and state
+     paint the whole row. */
+  .sd-schedule-row {
+    display: grid;
+    grid-template-columns: var(--label-w) minmax(0, 1fr);
+    column-gap: var(--label-gap);
+    min-height: var(--row-h);
+    border-block-start: 1px solid var(--sd-line);
+    transition: background-color 160ms var(--ease-out);
+  }
+  .sd-schedule-row:hover {
+    background: var(--sd-raised);
+  }
+  .sd-schedule-row[aria-selected="true"],
+  .sd-schedule-row[data-selected] {
+    background: var(--sd-current-fill);
+  }
+  .sd-schedule-row[data-state="conflict"] {
+    background: var(--sd-chart-alert);
+    box-shadow: inset 2px 0 0 var(--sd-chart-critical);
+  }
+  .sd-schedule-row[data-state="conflict"]:hover {
+    background: color-mix(in srgb, var(--sd-chart-critical) 18%, transparent);
+  }
+  .sd-schedule-resource {
+    display: grid;
+    gap: 2px;
+    align-content: center;
+    min-width: 0;
+    padding-block: 6px;
+    padding-inline-end: 8px;
+  }
+  .sd-schedule-resource > b {
+    overflow: hidden;
+    color: var(--sd-fg);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    line-height: 1.3;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sd-schedule-resource > span {
+    overflow: hidden;
+    color: var(--tone, var(--sd-fg-faint));
+    font-family: var(--font-mono);
+    font-size: 10px;
+    line-height: 1.3;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sd-schedule-track {
+    position: relative;
+    min-width: 0;
+  }
+
+  /* Blocks: --from/--to in schedule hours, tinted by --block. Text stays
+     fg in mono so every grey label reads; conflict keeps its alert color. */
+  .sd-schedule-block {
+    --block: var(--sd-fg-subtle);
+    position: absolute;
+    top: 50%;
+    left: calc((var(--from) - var(--start)) / var(--span) * 100%);
+    width: calc((var(--to) - var(--from)) / var(--span) * 100%);
+    height: var(--block-h);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    padding-inline: 8px;
+    border: 1px solid color-mix(in srgb, var(--block) 55%, transparent);
+    background: color-mix(in srgb, var(--block) 10%, transparent);
+    color: var(--sd-fg);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    translate: 0 -50%;
+    transition:
+      background-color 160ms var(--ease-out),
+      border-color 160ms var(--ease-out),
+      color 160ms var(--ease-out);
+  }
+  .sd-schedule-block:hover {
+    z-index: 1;
+    border-color: var(--block);
+    background: color-mix(in srgb, var(--block) 18%, transparent);
+  }
+  .sd-schedule [data-status="driving"] {
+    --block: var(--sd-chart-1);
+  }
+  .sd-schedule [data-status="planned"] {
+    --block: var(--sd-chart-3);
+  }
+  .sd-schedule [data-status="proposed"] {
+    --block: var(--sd-chart-4);
+  }
+  .sd-schedule [data-status="completed"] {
+    --block: var(--sd-chart-2);
+  }
+  .sd-schedule [data-status="conflict"] {
+    --block: var(--sd-chart-critical);
+  }
+  .sd-schedule-block[data-status="proposed"] {
+    border-style: dashed;
+  }
+  .sd-schedule-block[data-status="conflict"] {
+    color: var(--block);
+  }
+  /* Spectrum: the label takes its series hue, like the border and fill. */
+  .sd-schedule:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *)
+    .sd-schedule-block {
+    color: var(--block);
+  }
+
+  /* The now line, over the rows. data-label pins a small readout at the top. */
+  .sd-schedule-now {
+    position: absolute;
+    inset-block: var(--axis-h) 0;
+    left: calc(var(--label-w) + var(--label-gap) + (var(--at) - var(--start)) / var(--span) * var(--plot));
+    width: 1px;
+    background: var(--sd-chart-accent);
+    pointer-events: none;
+  }
+  .sd-schedule-now[data-label]::after {
+    content: attr(data-label);
+    position: absolute;
+    top: 0;
+    left: 3px;
+    padding: 1px 4px;
+    background: var(--sd-canvas);
+    color: var(--sd-chart-accent);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  /* Legend: the same data-status, the same --block. */
+  .sd-schedule-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-2xs);
+    line-height: 1.4;
+  }
+  .sd-schedule-legend > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .sd-schedule-legend > span > i {
+    flex-shrink: 0;
+    width: 9px;
+    height: 9px;
+    border: 1px solid var(--block, var(--sd-fg-subtle));
+    background: color-mix(in srgb, var(--block, var(--sd-fg-subtle)) 25%, transparent);
+  }
+  .sd-schedule-legend > span[data-status="proposed"] > i {
+    border-style: dashed;
+  }
+
+  @container (max-width: 34rem) {
+    .sd-schedule-block {
+      padding-inline: 5px;
+      font-size: 9px;
+    }
+  }
+  @media (max-width: 40rem) {
+    .sd-schedule {
+      --label-w: 7rem;
+      --label-gap: 10px;
+    }
+  }
+}
