@@ -1086,6 +1086,34 @@
    "html": "<div class=\"grid gap-8 lg:grid-cols-2\">\n  <div class=\"grid gap-3\">\n    <p class=\"sd-label\">sd-heatmap</p>\n    <div class=\"sd-heatmap\" style=\"--cols: 24\" id=\"demo-heat\"></div>\n    <div class=\"sd-heatmap-key\">less <i style=\"--v: 0\"></i><i style=\"--v: .25\"></i><i style=\"--v: .5\"></i><i style=\"--v: .75\"></i><i style=\"--v: 1\"></i> more</div>\n  </div>\n  <div class=\"flex flex-wrap items-center gap-6\">\n    <div class=\"sd-waffle\" style=\"--w: 150px\" id=\"demo-waffle\"></div>\n    <ul class=\"sd-key flex-1 min-w-[10rem]\"><li><i data-s=\"1\"></i>API<b>42%</b></li><li><i data-s=\"2\"></i>Web<b>31%</b></li><li><i data-s=\"3\"></i>Mobile<b>19%</b></li></ul>\n  </div>\n  <div class=\"grid gap-2\">\n    <div class=\"flex justify-between text-sm\"><span>api</span><span class=\"sd-subtle\">99.58%</span></div>\n    <div class=\"sd-uptime\" id=\"demo-uptime\"></div>\n  </div>\n  <div class=\"grid gap-2\">\n    <div class=\"flex justify-between text-sm\"><span>Memory</span><span class=\"sd-subtle\">84% · target 75%</span></div>\n    <div class=\"sd-meter\" style=\"--value: 84; --target: 75; --warn: 80; --crit: 95\"><i data-at=\"warn\"></i><i data-at=\"crit\"></i></div>\n  </div>\n</div>"
   },
   {
+   "id": "charts-timeline",
+   "section": "Charts",
+   "title": "Timeline",
+   "classes": [
+    "sd-label",
+    "sd-label-strong",
+    "sd-meta",
+    "sd-status",
+    "sd-timeline",
+    "sd-timeline-axis",
+    "sd-timeline-bar",
+    "sd-timeline-body",
+    "sd-timeline-grid",
+    "sd-timeline-head",
+    "sd-timeline-label",
+    "sd-timeline-labels",
+    "sd-timeline-mark",
+    "sd-timeline-now",
+    "sd-timeline-plot",
+    "sd-timeline-row",
+    "sd-timeline-track"
+   ],
+   "attributes": [],
+   "usage": "sd-timeline + -head|-body|-labels|-label|-plot|-grid|-row|-track|-bar|-now|-axis|-mark · --from|--to|--at · data-tone · CSS only",
+   "js": "No JS needed: the HTML works with the CSS alone.",
+   "html": "<div class=\"grid gap-10 xl:grid-cols-2\">\n  <figure class=\"sd-timeline\" aria-labelledby=\"timeline-eras-h\">\n    <div class=\"sd-timeline-head\">\n      <span class=\"sd-label sd-label-strong\" id=\"timeline-eras-h\">Platform eras</span>\n      <span class=\"sd-status\" data-tone=\"accent\">now</span>\n    </div>\n    <div class=\"sd-timeline-body\">\n      <div class=\"sd-timeline-labels\">\n        <span class=\"sd-timeline-label\">Web · 1</span>\n        <span class=\"sd-timeline-label\">Web · 2</span>\n        <span class=\"sd-timeline-label\">Mobile</span>\n        <span class=\"sd-timeline-label\">Cloud / API</span>\n        <span class=\"sd-timeline-label\" data-tone=\"accent\">AI augmented</span>\n      </div>\n      <div class=\"sd-timeline-plot\">\n        <div class=\"sd-timeline-grid\" aria-hidden=\"true\">\n          <i style=\"--at: 0\"></i><i style=\"--at: 28\"></i><i style=\"--at: 52\"></i><i style=\"--at: 76\"></i><i style=\"--at: 100\"></i>\n        </div>\n        <span class=\"sd-timeline-now\" style=\"--at: 100\" aria-hidden=\"true\"></span>\n        <div class=\"sd-timeline-row\"><span class=\"sd-timeline-track\"><span class=\"sd-timeline-bar\" style=\"--from: 0; --to: 24\"><b>2001</b><b>2007</b></span></span></div>\n        <div class=\"sd-timeline-row\"><span class=\"sd-timeline-track\"><span class=\"sd-timeline-bar\" style=\"--from: 16; --to: 48\"><b>2005</b><b>2013</b></span></span></div>\n        <div class=\"sd-timeline-row\"><span class=\"sd-timeline-track\"><span class=\"sd-timeline-bar\" style=\"--from: 32; --to: 68\"><b>2009</b><b>2018</b></span></span></div>\n        <div class=\"sd-timeline-row\"><span class=\"sd-timeline-track\"><span class=\"sd-timeline-bar\" style=\"--from: 44; --to: 92\"><b>2012</b><b>2024</b></span></span></div>\n        <div class=\"sd-timeline-row\"><span class=\"sd-timeline-track\"><span class=\"sd-timeline-bar\" data-tone=\"accent\" style=\"--from: 88; --to: 100\"><b>2023</b><b>2026</b></span></span></div>\n      </div>\n    </div>\n    <div class=\"sd-timeline-axis\" aria-hidden=\"true\">\n      <span style=\"--at: 0\">2001</span><span style=\"--at: 28\">2008</span><span style=\"--at: 52\">2014</span><span style=\"--at: 76\">2020</span><span style=\"--at: 100\">2026</span>\n    </div>\n    <figcaption class=\"sd-meta\"><span>Twenty-five years of platform eras</span></figcaption>\n  </figure>\n\n  <figure class=\"sd-timeline\" aria-labelledby=\"timeline-build-h\">\n    <div class=\"sd-timeline-head\">\n      <span class=\"sd-label sd-label-strong\" id=\"timeline-build-h\">Eight-week build</span>\n      <span class=\"sd-status\">in motion</span>\n    </div>\n    <div class=\"sd-timeline-body\">\n      <div class=\"sd-timeline-labels\">\n        <span class=\"sd-timeline-label\">Listen</span>\n        <span class=\"sd-timeline-label\">Frame</span>\n        <span class=\"sd-timeline-label\">Build</span>\n        <span class=\"sd-timeline-label\">Hand off</span>\n      </div>\n      <div class=\"sd-timeline-plot\">\n        <div class=\"sd-timeline-grid\" aria-hidden=\"true\">\n          <i style=\"--at: 0\"></i><i style=\"--at: 25\"></i><i style=\"--at: 50\"></i><i style=\"--at: 75\"></i><i style=\"--at: 100\"></i>\n        </div>\n        <div class=\"sd-timeline-row\"><span class=\"sd-timeline-track\"><span class=\"sd-timeline-bar\" style=\"--from: 0; --to: 12.5\"></span></span></div>\n        <div class=\"sd-timeline-row\"><span class=\"sd-timeline-track\"><span class=\"sd-timeline-bar\" style=\"--from: 7.5; --to: 25\"></span></span></div>\n        <div class=\"sd-timeline-row\"><span class=\"sd-timeline-track\"><span class=\"sd-timeline-bar\" data-tone=\"accent\" style=\"--from: 20; --to: 87.5\"></span></span></div>\n        <div class=\"sd-timeline-row\"><span class=\"sd-timeline-track\"><span class=\"sd-timeline-bar\" style=\"--from: 82.5; --to: 100\"></span></span></div>\n        <span class=\"sd-timeline-mark\" style=\"--from: 25; --to: 50\">\n          <i style=\"--at: 25\"></i><i style=\"--at: 50\"></i><b>2-WEEK LOOP</b>\n        </span>\n      </div>\n    </div>\n    <div class=\"sd-timeline-axis\" aria-hidden=\"true\">\n      <span style=\"--at: 0\">W0</span><span style=\"--at: 25\">W2</span><span style=\"--at: 50\">W4</span><span style=\"--at: 75\">W6</span><span style=\"--at: 100\">W8</span>\n    </div>\n    <figcaption class=\"sd-meta\"><span>An eight-week build, drawn the way it runs</span></figcaption>\n  </figure>\n</div>"
+  },
+  {
    "id": "charts-small-plots",
    "section": "Charts",
    "title": "Small plots",
