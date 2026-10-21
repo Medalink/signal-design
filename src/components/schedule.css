@@ -278,7 +278,11 @@
     border-style: dashed;
   }
 
-  @container (max-width: 34rem) {
+  @container (max-width: 30rem) {
+    /* Ticks collide on a phone; keep every second one. */
+    .sd-schedule-axis > div > span:nth-child(even) {
+      display: none;
+    }
     .sd-schedule-block {
       padding-inline: 5px;
       font-size: 9px;
