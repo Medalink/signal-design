@@ -111,6 +111,74 @@ createChart(canvas, {
       <p class="demo-usage"><code>sd-heatmap</code> + <code>--v</code> · <code>sd-waffle</code> + <code>data-s</code> · <code>sd-key</code> · <code>sd-uptime</code> + <code>data-state</code> · <code>sd-meter</code> + <code>--value|--target|--warn|--crit</code>. CSS only.</p>
     </div>
 
+    <div class="demo-block" id="charts-timeline">
+      <h3 class="sd-label">Timeline</h3>
+      <div class="grid gap-10 xl:grid-cols-2">
+        <figure class="sd-timeline" aria-labelledby="timeline-eras-h">
+          <div class="sd-timeline-head">
+            <span class="sd-label sd-label-strong" id="timeline-eras-h">Platform eras</span>
+            <span class="sd-status" data-tone="accent">now</span>
+          </div>
+          <div class="sd-timeline-body">
+            <div class="sd-timeline-labels">
+              <span class="sd-timeline-label">Web · 1</span>
+              <span class="sd-timeline-label">Web · 2</span>
+              <span class="sd-timeline-label">Mobile</span>
+              <span class="sd-timeline-label">Cloud / API</span>
+              <span class="sd-timeline-label" data-tone="accent">AI augmented</span>
+            </div>
+            <div class="sd-timeline-plot">
+              <div class="sd-timeline-grid" aria-hidden="true">
+                <i style="--at: 0"></i><i style="--at: 28"></i><i style="--at: 52"></i><i style="--at: 76"></i><i style="--at: 100"></i>
+              </div>
+              <span class="sd-timeline-now" style="--at: 100" aria-hidden="true"></span>
+              <div class="sd-timeline-row"><span class="sd-timeline-track"><span class="sd-timeline-bar" style="--from: 0; --to: 24"><b>2001</b><b>2007</b></span></span></div>
+              <div class="sd-timeline-row"><span class="sd-timeline-track"><span class="sd-timeline-bar" style="--from: 16; --to: 48"><b>2005</b><b>2013</b></span></span></div>
+              <div class="sd-timeline-row"><span class="sd-timeline-track"><span class="sd-timeline-bar" style="--from: 32; --to: 68"><b>2009</b><b>2018</b></span></span></div>
+              <div class="sd-timeline-row"><span class="sd-timeline-track"><span class="sd-timeline-bar" style="--from: 44; --to: 92"><b>2012</b><b>2024</b></span></span></div>
+              <div class="sd-timeline-row"><span class="sd-timeline-track"><span class="sd-timeline-bar" data-tone="accent" style="--from: 88; --to: 100"><b>2023</b><b>2026</b></span></span></div>
+            </div>
+          </div>
+          <div class="sd-timeline-axis" aria-hidden="true">
+            <span style="--at: 0">2001</span><span style="--at: 28">2008</span><span style="--at: 52">2014</span><span style="--at: 76">2020</span><span style="--at: 100">2026</span>
+          </div>
+          <figcaption class="sd-meta"><span>Twenty-five years of platform eras</span></figcaption>
+        </figure>
+
+        <figure class="sd-timeline" aria-labelledby="timeline-build-h">
+          <div class="sd-timeline-head">
+            <span class="sd-label sd-label-strong" id="timeline-build-h">Eight-week build</span>
+            <span class="sd-status">in motion</span>
+          </div>
+          <div class="sd-timeline-body">
+            <div class="sd-timeline-labels">
+              <span class="sd-timeline-label">Listen</span>
+              <span class="sd-timeline-label">Frame</span>
+              <span class="sd-timeline-label">Build</span>
+              <span class="sd-timeline-label">Hand off</span>
+            </div>
+            <div class="sd-timeline-plot">
+              <div class="sd-timeline-grid" aria-hidden="true">
+                <i style="--at: 0"></i><i style="--at: 25"></i><i style="--at: 50"></i><i style="--at: 75"></i><i style="--at: 100"></i>
+              </div>
+              <div class="sd-timeline-row"><span class="sd-timeline-track"><span class="sd-timeline-bar" style="--from: 0; --to: 12.5"></span></span></div>
+              <div class="sd-timeline-row"><span class="sd-timeline-track"><span class="sd-timeline-bar" style="--from: 7.5; --to: 25"></span></span></div>
+              <div class="sd-timeline-row"><span class="sd-timeline-track"><span class="sd-timeline-bar" data-tone="accent" style="--from: 20; --to: 87.5"></span></span></div>
+              <div class="sd-timeline-row"><span class="sd-timeline-track"><span class="sd-timeline-bar" style="--from: 82.5; --to: 100"></span></span></div>
+              <span class="sd-timeline-mark" style="--from: 25; --to: 50">
+                <i style="--at: 25"></i><i style="--at: 50"></i><b>2-WEEK LOOP</b>
+              </span>
+            </div>
+          </div>
+          <div class="sd-timeline-axis" aria-hidden="true">
+            <span style="--at: 0">W0</span><span style="--at: 25">W2</span><span style="--at: 50">W4</span><span style="--at: 75">W6</span><span style="--at: 100">W8</span>
+          </div>
+          <figcaption class="sd-meta"><span>An eight-week build, drawn the way it runs</span></figcaption>
+        </figure>
+      </div>
+      <p class="demo-usage"><code>sd-timeline</code> + <code>-head|-body|-labels|-label|-plot|-grid|-row|-track|-bar|-now|-axis|-mark</code> · <code>--from|--to|--at</code> · <code>data-tone</code> · CSS only</p>
+    </div>
+
     <div class="demo-block">
       <h3 class="sd-label">Small plots</h3>
       <div class="grid gap-6 lg:grid-cols-2">
