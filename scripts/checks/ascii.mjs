@@ -164,6 +164,29 @@ export default async function checkAscii(page, where, fail) {
     });
   });
 
+  got.removedElementReleasesObservers = await page.evaluate(async () => {
+    const a = window.__ascii;
+    const proto = IntersectionObserver.prototype;
+    const real = proto.disconnect;
+    let calls = 0;
+    proto.disconnect = function () {
+      calls++;
+      return real.call(this);
+    };
+    const el = document.createElement("div");
+    a.host.append(el);
+    a.mountAscii(el, a.torus);
+    el.remove();
+    a.colored.destroy();
+    a.braille.destroy();
+    const held = calls;
+    document.documentElement.setAttribute("aria-busy", "false");
+    document.documentElement.removeAttribute("aria-busy");
+    await a.settle();
+    proto.disconnect = real;
+    return held === 0 && calls === 1;
+  });
+
   await page.evaluate(() => {
     const a = window.__ascii;
     a.colored.destroy();

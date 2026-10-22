@@ -174,6 +174,7 @@ export function mountAscii(el, piece, { at = 0, look, speed = 1 } = {}) {
       if (mounts.get(el) === mount) unwatch(mount);
     },
     sync() {
+      if (!el.isConnected) return mount.destroy();
       const busy = forced ?? el.closest("[aria-busy]")?.getAttribute("aria-busy") === "true";
       const playing = busy && this.visible && !observers.reduced.matches && !document.hidden && !meta.still;
       if (playing && !raf) {

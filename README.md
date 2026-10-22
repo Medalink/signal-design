@@ -613,6 +613,13 @@ element, or its closest ancestor with `aria-busy`, says `aria-busy="true"`, or
 to be on screen and in a visible tab, and `prefers-reduced-motion` keeps it
 still. When it stops it keeps the frame it is on.
 
+Call `destroy()` when you remove the element: it is the normal teardown, and
+it releases the shared observers once the last mount is gone. A mount whose
+element has left the document drops itself the next time the page's `aria-busy`
+or visibility state changes, which is a backstop and not a replacement.
+Mounting again on an element destroys the mount that was there, and the old
+handle then does nothing.
+
 The text fits the width of its box and never scrolls sideways: size it with
 `--sd-ascii-size` (12px by default, the largest it draws). Load pieces with a
 dynamic `import()` so a page only fetches the ones it shows.
