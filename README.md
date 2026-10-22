@@ -951,6 +951,74 @@ Bars use `--from` and `--to` (percent). `sd-timeline-now` and the grid use
 `--at`; the axis ticks do too. `sd-timeline-mark` brackets a span with
 `--from`/`--to` and a label. `data-tone` colors a bar, its label and the mark.
 
+### Schedules: `sd-schedule`
+
+A roster over hours: who is on what, when. A resource column and an hour
+plot; the board covers `--start` to `--end` and every block, grid line,
+tick and the now line place by the same hour scale. CSS only.
+
+```html
+<figure class="sd-schedule" style="--start: 6; --end: 22">
+  <div class="sd-schedule-head">
+    <span class="sd-label sd-label-strong">Driver roster</span>
+    <div class="sd-schedule-legend">
+      <span data-status="driving"><i></i>Driving</span>
+      <span data-status="planned"><i></i>Planned</span>
+      <span><i></i>Off duty</span>
+    </div>
+  </div>
+  <div class="sd-schedule-board">
+    <div class="sd-schedule-canvas">
+      <div class="sd-schedule-grid" aria-hidden="true"><i style="--at: 8"></i></div>
+      <div class="sd-schedule-axis" aria-hidden="true">
+        <span>Driver</span>
+        <div><span style="--at: 8">08:00</span></div>
+      </div>
+      <div class="sd-schedule-row" data-selected>
+        <div class="sd-schedule-resource" id="schedule-budi"><b>Budi Santoso</b><span>VH-028 · 2h of 8h</span></div>
+        <div class="sd-schedule-track">
+          <span class="sd-schedule-block" tabindex="0" aria-describedby="schedule-budi" data-status="driving" style="--from: 12.75; --to: 21"><span class="sd-schedule-label">SHP-10482 → Semarang · 12:45–21:00 · Driving</span></span>
+        </div>
+      </div>
+      <span class="sd-schedule-now" style="--at: 14.33" data-label="14:20"></span>
+    </div>
+  </div>
+  <figcaption class="sd-meta"><span>Friday, 38 drivers</span></figcaption>
+</figure>
+```
+
+`data-status` names what a block means: `driving`, `planned`, `proposed`
+(dashed), `completed`, `conflict`; no attribute is off duty. A row takes
+`data-state="conflict"` for the tinted exception row and
+`data-selected` for a selected static row. Use `aria-selected="true"` only
+with a supporting role and container, such as `role="row"` inside a
+`role="grid"`. Colors come from the chart tokens:
+`data-chart-theme="spectrum"` (on the schedule or any ancestor)
+recolors the whole board; mono is black and white with color kept for
+conflicts and the now line.
+
+Each block contains one `sd-schedule-label` with its job, time range, and
+human-readable status. Derive this text, `--from`, `--to`, and `data-status`
+from the same schedule data. CSS hour positions and status attributes are
+not spoken by assistive technology. Give each resource a unique `id` and
+reference it from its blocks with `aria-describedby`. Resource names and
+details wrap at rest and can increase the row's height.
+
+The label ellipsizes at rest. Hovering or focusing the block temporarily expands the
+label over adjacent slots, within the track edges, and wraps the full text.
+The time bar and row keep their original size and position. A bracket below
+the bar marks its original interval while the label expands. Add `tabindex="0"`
+to static blocks so keyboard and touch users can focus them. These are text,
+with no activation action. The full text remains available to assistive
+technology without a duplicate `aria-label` or `title`.
+
+The label collapses after the pointer leaves and focus moves away. Touch
+or mouse-click focus can remain until another element receives focus.
+Expanded labels are at most `20rem` wide unless the time bar is wider. The board scrolls
+horizontally when `--min-w` requires it. Its scroll viewport can also clip
+very tall labels at its edges, so leave enough vertical room for your label
+lengths or provide a separate detail view for unusually long descriptions.
+
 ### Live charts: `createChart`
 
 Time-series charts for bandwidth and latency, on Chart.js. Chart.js is an

@@ -16,7 +16,7 @@
  * Set data-chart-theme on the chart, the plot, or any element above them.
  */
 @layer components {
-  :is(.sd-chart, .sd-plot, .sd-heatmap, .sd-waffle, .sd-uptime, .sd-meter) {
+  :is(.sd-chart, .sd-plot, .sd-heatmap, .sd-waffle, .sd-uptime, .sd-meter, .sd-schedule) {
     /* Frame */
     --sd-chart-grid: var(--sd-line);
     --sd-chart-tick: var(--sd-fg-faint);
@@ -83,7 +83,7 @@
   }
 
   /* The full signal palette. */
-  :is(.sd-chart, .sd-plot, .sd-heatmap, .sd-waffle, .sd-uptime, .sd-meter):is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *) {
+  :is(.sd-chart, .sd-plot, .sd-heatmap, .sd-waffle, .sd-uptime, .sd-meter, .sd-schedule):is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *) {
     --sd-chart-down: #22c55e;
     --sd-chart-up: #ff3366;
     --sd-chart-up-dash: none;
@@ -124,7 +124,7 @@
   }
 
   /* spectrum on paper (light surfaces): the same hues, deep enough to read. */
-  :is(.sd-chart, .sd-plot, .sd-heatmap, .sd-waffle, .sd-uptime, .sd-meter):is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="paper"], [data-theme="paper"] *, [data-theme="light"], [data-theme="light"] *) {
+  :is(.sd-chart, .sd-plot, .sd-heatmap, .sd-waffle, .sd-uptime, .sd-meter, .sd-schedule):is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="paper"], [data-theme="paper"] *, [data-theme="light"], [data-theme="light"] *) {
     --sd-chart-down: #15803d;
     --sd-chart-up: #c8003a;
     --sd-chart-in: #8a5a32;
@@ -153,7 +153,7 @@
     --sd-chart-ok: #15803d;
   }
   @media (prefers-color-scheme: light) {
-    :is(.sd-chart, .sd-plot, .sd-heatmap, .sd-waffle, .sd-uptime, .sd-meter):is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="auto"], [data-theme="auto"] *) {
+    :is(.sd-chart, .sd-plot, .sd-heatmap, .sd-waffle, .sd-uptime, .sd-meter, .sd-schedule):is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="auto"], [data-theme="auto"] *) {
       --sd-chart-down: #15803d;
       --sd-chart-up: #c8003a;
       --sd-chart-in: #8a5a32;
