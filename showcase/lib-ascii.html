@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+  <section class="demo-section" id="ascii" aria-labelledby="ascii-h">
+    <header class="demo-intro">
+      <h1 class="sd-display">ASCII.</h1>
+      <p class="sd-muted">Art from <a href="https://github.com/kailashsr38/ascii-magic-art">ascii-magic-art</a> by ASCII Magic, MIT.</p>
+    </header>
+    <h2 id="ascii-h" class="sd-title">ASCII</h2>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Looks</h3>
+      <div class="grid justify-items-center gap-6 border border-line bg-surface p-6" id="ascii-stage">
+        <div class="sd-ascii" style="--sd-ascii-size: 20px" data-piece="spinning-torus" data-at="1.4" role="img" aria-label="Spinning torus"></div>
+        <div class="sd-actions w-full justify-center">
+          <div class="sd-seg sd-seg-wrap" data-sd-seg aria-label="Look">
+            <button type="button" value="original" aria-pressed="true">Original</button>
+            <button type="button" value="dots" aria-pressed="false">Dots</button>
+            <button type="button" value="blocks" aria-pressed="false">Blocks</button>
+            <button type="button" value="binary" aria-pressed="false">Binary</button>
+            <button type="button" value="dense" aria-pressed="false">Dense</button>
+          </div>
+          <button class="sd-btn" type="button" aria-pressed="false" data-ascii-run>Run</button>
+        </div>
+      </div>
+      <script type="text/plain" data-demo-js>import { mountAscii } from "signal-design/ascii";
+import * as piece from "ascii-magic-art/pieces/spinning-torus.js";
+
+const stage = document.querySelector("#ascii-stage");
+let art = mountAscii(stage.querySelector(".sd-ascii"), piece, { at: 1.4 });
+
+// A look redraws the piece in other characters.
+art.destroy();
+art = mountAscii(stage.querySelector(".sd-ascii"), piece, { at: 1.4, look: "dots" });
+
+// Still until the stage says it is busy.
+stage.setAttribute("aria-busy", "true");</script>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">While work runs</h3>
+      <section class="sd-panel sd-panel-wide grid gap-4" id="ascii-job">
+        <div class="sd-actions justify-between">
+          <h4 class="sd-panel-title m-0">Pipeline</h4>
+          <button class="sd-btn sd-btn-primary" type="button" data-ascii-job>Run job</button>
+        </div>
+        <div class="sd-ascii" data-piece="ci-pipeline" data-at="4" role="img" aria-label="A pipeline running its stages"></div>
+        <div>
+          <p class="sd-progress-label"><span>Tests</span><span data-ascii-percent>Idle</span></p>
+          <div class="sd-progress" style="--value: 0" role="progressbar" aria-label="Tests" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+      </section>
+      <script type="text/plain" data-demo-js>import { mountAscii } from "signal-design/ascii";
+import * as piece from "ascii-magic-art/pieces/ci-pipeline.js";
+
+const panel = document.querySelector("#ascii-job");
+mountAscii(panel.querySelector(".sd-ascii"), piece, { at: 4 });
+
+// The art follows aria-busy on its closest ancestor that has it.
+panel.setAttribute("aria-busy", "true");   // plays
+panel.removeAttribute("aria-busy");        // holds the frame it is on</script>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Gallery</h3>
+      <div class="grid gap-4 md:grid-cols-2">
+        <article class="sd-card" data-ascii-card>
+          <div class="sd-card-head">Torus knot<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
+          <div class="sd-card-body"><div class="sd-ascii" data-piece="torus-knot" data-at="2" role="img" aria-label="Torus knot"></div></div>
+        </article>
+        <article class="sd-card" data-ascii-card>
+          <div class="sd-card-head">Owl<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
+          <div class="sd-card-body"><div class="sd-ascii" data-piece="owl-blink" data-at="3" role="img" aria-label="An owl blinking"></div></div>
+        </article>
+        <article class="sd-card md:col-span-2" data-ascii-card>
+          <div class="sd-card-head">Dijkstra path<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
+          <div class="sd-card-body"><div class="sd-ascii" data-piece="dijkstra-path" data-at="3" role="img" aria-label="Dijkstra shortest path"></div></div>
+        </article>
+        <article class="sd-card" data-ascii-card>
+          <div class="sd-card-head">Terminal session<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
+          <div class="sd-card-body"><div class="sd-ascii" data-piece="terminal-session" data-at="8" role="img" aria-label="A terminal session"></div></div>
+        </article>
+        <article class="sd-card" data-ascii-card>
+          <div class="sd-card-head">Tunnel<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
+          <div class="sd-card-body"><div class="sd-ascii" data-piece="tunnel" data-at="3" role="img" aria-label="A tunnel"></div></div>
+        </article>
+        <article class="sd-card md:col-span-2" data-ascii-card>
+          <div class="sd-card-head">Spiral galaxy<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
+          <div class="sd-card-body"><div class="sd-ascii" data-piece="spiral-galaxy" data-at="3" role="img" aria-label="Spiral galaxy"></div></div>
+        </article>
+        <article class="sd-card" data-ascii-card>
+          <div class="sd-card-head">Lorenz attractor<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
+          <div class="sd-card-body"><div class="sd-ascii" data-piece="lorenz-attractor" data-at="6" role="img" aria-label="Lorenz attractor"></div></div>
+        </article>
+        <article class="sd-card" data-ascii-card>
+          <div class="sd-card-head">Extruded word<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
+          <div class="sd-card-body"><div class="sd-ascii" data-piece="extruded-word-spin" data-at="3" role="img" aria-label="A spinning extruded word"></div></div>
+        </article>
+        <article class="sd-card md:col-span-2" data-ascii-card>
+          <div class="sd-card-head">Sort race<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
+          <div class="sd-card-body"><div class="sd-ascii" data-piece="sort-race" data-at="4" role="img" aria-label="Two sorting algorithms racing"></div></div>
+        </article>
+        <article class="sd-card md:col-span-2" data-ascii-card>
+          <div class="sd-card-head">Gauge cluster<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
+          <div class="sd-card-body"><div class="sd-ascii" data-piece="gauge-cluster" data-at="3" role="img" aria-label="Server gauges"></div></div>
+        </article>
+      </div>
+      <script type="text/plain" data-demo-js>import { mountAscii } from "signal-design/ascii";
+import * as piece from "ascii-magic-art/pieces/tunnel.js";
+
+const card = document.querySelector("[data-ascii-card]");
+mountAscii(card.querySelector(".sd-ascii"), piece, { at: 3 });
+
+// Hover or focus plays the card, leaving holds it.
+card.addEventListener("pointerenter", () => card.setAttribute("aria-busy", "true"));
+card.addEventListener("pointerleave", () => card.removeAttribute("aria-busy"));</script>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Empty state</h3>
+      <div class="sd-empty">
+        <div class="sd-ascii" style="--sd-ascii-size: 8px" data-piece="sleeping-cat" data-at="3" role="img" aria-label="A cat asleep"></div>
+        <p class="sd-empty-title">No matches</p>
+        <p>Nothing fits those filters.</p>
+        <button class="sd-btn" type="button">Clear filters</button>
+      </div>
+      <script type="text/plain" data-demo-js>import { mountAscii } from "signal-design/ascii";
+import * as piece from "ascii-magic-art/pieces/sleeping-cat.js";
+
+mountAscii(document.querySelector(".sd-empty .sd-ascii"), piece, { at: 3 });</script>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Tone</h3>
+      <div class="grid gap-4 md:grid-cols-2">
+        <article class="sd-card" data-ascii-card>
+          <div class="sd-card-head">Failed<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
+          <div class="sd-card-body"><div class="sd-ascii" data-tone="danger" data-piece="empty-payment-failed" data-at="4" role="img" aria-label="Payment declined"></div></div>
+        </article>
+        <article class="sd-card" data-ascii-card>
+          <div class="sd-card-head">Paid<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
+          <div class="sd-card-body"><div class="sd-ascii" data-tone="success" data-piece="empty-payment-success" data-at="4" role="img" aria-label="Payment successful"></div></div>
+        </article>
+      </div>
+      <script type="text/plain" data-demo-js>import { mountAscii } from "signal-design/ascii";
+import * as piece from "ascii-magic-art/pieces/empty-payment-failed.js";
+
+// data-tone paints the brightest grey of the piece with the tone.
+const art = document.querySelector('.sd-ascii[data-tone="danger"]');
+mountAscii(art, piece, { at: 4 });</script>
+    </div>
+  </section>
+</body>
+</html>

@@ -23,6 +23,7 @@ export const LIBRARY = [
   { id: "inputs-more", file: "lib-inputs-more.html", title: "Inputs, search and data", label: "Inputs", sections: ["inputs-more"], icon: "inputs", summary: "Combobox, tags, number, steps, command palette, shortcuts, sparklines and diffs." },
   { id: "charts", file: "lib-charts.html", title: "Charts", label: "Charts", sections: ["charts"], icon: "charts", summary: "Live time series, generic chart types and square CSS charts on the chart tokens." },
   { id: "effects", file: "lib-effects.html", title: "Effects", label: "Effects", sections: ["effects"], icon: "effects", summary: "Backdrops, ornaments and motion, each switched on with an attribute." },
+  { id: "ascii", file: "lib-ascii.html", title: "ASCII", label: "ASCII", sections: ["ascii"], icon: "ascii", summary: "Animated ASCII art in greys, still until the work behind it is running." },
   { id: "js", file: "lib-js.html", title: "JS", label: "JS", sections: ["js"], icon: "code", summary: "The optional script: init, attributes, hotkeys, live feeds and framework-owned state." },
 ];
 

@@ -22,6 +22,7 @@ export const ICONS = [
   symbol("inputs", '<rect x="3.5" y="8.5" width="17" height="7"/><path d="M7 11v2"/>'),
   symbol("charts", '<path d="M4 20h16"/><rect x="5.5" y="12" width="3" height="6"/><rect x="10.5" y="7" width="3" height="11"/><rect x="15.5" y="10" width="3" height="8"/>'),
   symbol("effects", '<path d="M6 3v6M6 12v2M12 6v9M12 18v2M18 3v4M18 10v8"/>'),
+  symbol("ascii", '<path d="M4 7h3M10 7h5M18 7h2M4 12h6M13 12h3M19 12h1M4 17h2M9 17h4M16 17h4"/>'),
   symbol("code", '<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 5l-3 14"/>'),
   symbol("pages", '<rect x="4.5" y="3.5" width="12" height="15"/><path d="M8 21.5h11.5V7"/>'),
   symbol("search", '<rect x="4" y="4" width="11" height="11"/><path d="M15 15l5.5 5.5"/>'),
@@ -40,8 +41,8 @@ function rail(page) {
   ).join("\n");
   return `  <nav class="sd-rail" id="shell-rail" aria-label="Library" data-sd-ornaments="bottom" data-sd-ornaments-size="200">
     <a class="sd-rail-home" href="./${HOME.file}" aria-label="Signal home"${current(page === HOME)}><svg class="sd-mark"><use href="#i-mark"/></svg></a>
-    <button class="sd-rail-item" style="margin-top:8px" data-sd-open="nav-palette"{{search_key}} data-sd-tip="{{search_label}}" data-sd-tip-side="right" aria-label="{{search_label}}"><svg><use href="#i-search"/></svg></button>
-    <div class="sd-rail-sep" style="margin-block:8px"></div>
+    <button class="sd-rail-item" style="margin-top:4px" data-sd-open="nav-palette"{{search_key}} data-sd-tip="{{search_label}}" data-sd-tip-side="right" aria-label="{{search_label}}"><svg><use href="#i-search"/></svg></button>
+    <div class="sd-rail-sep" style="margin-block:4px"></div>
     <div class="sd-rail-list">
 ${items}
     </div>
