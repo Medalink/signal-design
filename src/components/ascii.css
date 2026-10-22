@@ -1,0 +1,49 @@
+@layer components {
+  /*
+   * ASCII art: a piece from ascii-magic-art as selectable text in a <pre>
+   * (signal-design/ascii writes it). Greys only: the brightest level is
+   * --sd-fg, the rest of the ink --sd-fg-muted, the darkest --sd-fg-subtle.
+   * data-tone paints the brightest level with the tone and nothing else.
+   *
+   *   <div class="sd-ascii" role="img" aria-label="Spinning torus" data-tone="danger"></div>
+   *
+   * --cols and --rows come from the piece. The text is sized to fit the width
+   * (never wider than --sd-ascii-size, 12px), so it never scrolls sideways.
+   * The art keeps the width of its columns, 1ch each in the mono face.
+   */
+  .sd-ascii {
+    container-type: inline-size;
+    inline-size: 100%;
+    max-inline-size: calc(var(--cols, 80) * 0.6 * var(--sd-ascii-size, 12px));
+  }
+  .sd-ascii > pre {
+    inline-size: max-content;
+    max-inline-size: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    background: none;
+    color: var(--sd-fg-muted);
+    font-family: var(--sd-font-mono);
+    font-size: min(var(--sd-ascii-size, 12px), calc(100cqi / (var(--cols, 80) * 0.6)));
+    font-style: normal;
+    font-variant-ligatures: none;
+    font-kerning: none;
+    letter-spacing: 0;
+    line-height: 1;
+    white-space: pre;
+  }
+  .sd-ascii-hi { color: var(--sd-fg); }
+  .sd-ascii-lo { color: var(--sd-fg-subtle); }
+  .sd-ascii[data-tone] .sd-ascii-hi { color: var(--tone); }
+  /* A glyph the mono face lacks (braille, some symbols) falls back to a wider
+     font; boxing it to one column keeps the rows aligned. */
+  .sd-ascii > pre i {
+    display: inline-block;
+    inline-size: 1ch;
+    overflow: hidden;
+    vertical-align: top;
+    font-style: normal;
+  }
+}
