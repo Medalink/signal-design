@@ -574,6 +574,55 @@ Rain only draws where it shows. Inside a shell it skips the content, bars and
 dock. Elsewhere, list what covers it: `data-sd-rain-skip=".hero > *"`.
 `data-sd-rain-style="squares"` swaps glyphs for squares.
 
+## ASCII art
+
+Pieces from [ascii-magic-art](https://github.com/kailashsr38/ascii-magic-art)
+(by ASCII Magic) play as text inside Signal's rules. The package is an
+optional peer dependency, and nothing in `signal-design/js` imports
+`signal-design/ascii`.
+
+```bash
+pnpm add ascii-magic-art
+```
+
+```html
+<div class="sd-ascii" role="img" aria-label="Spinning torus"></div>
+```
+
+```js
+import { mountAscii } from "signal-design/ascii";
+import * as piece from "ascii-magic-art/pieces/spinning-torus.js";
+
+const art = mountAscii(document.querySelector(".sd-ascii"), piece, { at: 1.4, look: "dots" });
+art.busy(true);   // play now; art.busy() follows aria-busy again
+art.destroy();
+```
+
+The art is DOM text in a `<pre>`, so it is selectable and takes the theme. The
+piece's own colors are not painted: each palette color becomes one of three
+greys by its brightness (`--sd-fg`, `--sd-fg-muted`, `--sd-fg-subtle`), and the
+brightest is the strongest, so every theme reads. `data-tone="danger"` (or any
+tone) colors the brightest level and nothing else. `look` redraws a piece in
+other characters: `dots`, `ascii`, `dense`, `numbers`, `binary`, `letters`,
+`blocks`, `squares`, `lines` or `dither`. `at` is the second of the still frame
+and `speed` scales playback. Square-cell pieces (photos) are not drawn.
+
+**Motion.** A piece is a still frame. It plays only while it is busy: the
+element, or its closest ancestor with `aria-busy`, says `aria-busy="true"`, or
+`busy(true)` was called (an explicit call wins until `busy()`). It also needs
+to be on screen and in a visible tab, and `prefers-reduced-motion` keeps it
+still. When it stops it keeps the frame it is on.
+
+The text fits the width of its box and never scrolls sideways: size it with
+`--sd-ascii-size` (12px by default, the largest it draws). Load pieces with a
+dynamic `import()` so a page only fetches the ones it shows.
+
+**License.** The package and its pieces are MIT, except `ocean-sunset` and
+`starry-ridge`: halftones of Unsplash photos, under the Unsplash License. They
+are square-cell pieces, which `mountAscii` does not draw, and the showcase does
+not load them. Credit the source where you show the art: "Art from
+ascii-magic-art by ASCII Magic, MIT".
+
 ## Ornaments
 
 ```html
