@@ -18,7 +18,7 @@
  * The art is DOM text in a <pre>, so it is selectable and inherits the theme.
  * The piece's palette is not painted: each color becomes one of three greys by
  * its brightness (see ascii.css), and data-tone colors the brightest.
- * Square-cell pieces (photos) are not supported.
+ * Square-cell pieces (picture scenes and photos) are not supported.
  */
 import { withLook } from "ascii-magic-art/runtime/glyphs.js";
 
@@ -135,7 +135,7 @@ function unwatch(mount) {
  */
 export function mountAscii(el, piece, { at = 0, look, speed = 1 } = {}) {
   const { meta } = piece;
-  if (meta.cell === "square") throw new TypeError(`${meta.slug} is a photo piece; mountAscii draws text pieces`);
+  if (meta.cell === "square") throw new TypeError(`${meta.slug} is a square-cell piece; mountAscii draws text-cell pieces`);
   mounts.get(el)?.destroy();
   const draw = withLook(piece.default(), meta.palette, look ? { look } : undefined);
   const pre = document.createElement("pre");

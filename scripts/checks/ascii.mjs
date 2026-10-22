@@ -145,6 +145,17 @@ export default async function checkAscii(page, where, fail) {
     return a.until(() => a.host.querySelector(".colored pre").textContent !== before, 3000);
   });
 
+  got.squareCellPieceThrows = await page.evaluate(() => {
+    const a = window.__ascii;
+    const piece = { meta: { slug: "scene", cols: 2, rows: 1, fps: 1, cell: "square" }, default: () => () => "ab" };
+    try {
+      a.mountAscii(document.createElement("div"), piece);
+      return false;
+    } catch (error) {
+      return error instanceof TypeError && error.message.includes("square-cell");
+    }
+  });
+
   got.offScreenBusyNeverPlays = await page.evaluate(async () => {
     const a = window.__ascii;
     const seen = [];

@@ -23,7 +23,7 @@ export interface PieceMeta {
   fps: number;
   /** Palette key to hex. Only its brightness is used: the art draws in greys. */
   palette?: Record<string, string>;
-  /** "square" marks a photo piece, which mountAscii does not draw. */
+  /** "square" marks a square-cell piece (a picture scene or photo), which mountAscii does not draw. */
   cell?: "square";
   /** A piece that never moves. */
   still?: boolean;

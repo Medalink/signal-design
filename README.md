@@ -605,7 +605,8 @@ brightest is the strongest, so every theme reads. `data-tone="danger"` (or any
 tone) colors the brightest level and nothing else. `look` redraws a piece in
 other characters: `dots`, `ascii`, `dense`, `numbers`, `binary`, `letters`,
 `blocks`, `squares`, `lines` or `dither`. `at` is the second of the still frame
-and `speed` scales playback. Square-cell pieces (photos) are not drawn.
+and `speed` scales playback. Square-cell pieces (`meta.cell === "square"`) are not drawn: `mountAscii`
+throws a `TypeError` for them.
 
 **Motion.** A piece is a still frame. It plays only while it is busy: the
 element, or its closest ancestor with `aria-busy`, says `aria-busy="true"`, or
@@ -627,10 +628,13 @@ nothing in a shrink-to-fit box such as an auto-width flex item, an absolutely
 positioned box without a width, or a table cell. Load pieces with a
 dynamic `import()` so a page only fetches the ones it shows.
 
+**Pieces.** 54 of the package's pieces are square-cell, mostly hand-built
+picture scenes. `mountAscii` does not draw them, and the showcase does not load
+them.
+
 **License.** The package and its pieces are MIT, except `ocean-sunset` and
-`starry-ridge`: halftones of Unsplash photos, under the Unsplash License. They
-are square-cell pieces, which `mountAscii` does not draw, and the showcase does
-not load them. Credit the source where you show the art: "Art from
+`starry-ridge`: halftones of Unsplash photos, under the Unsplash License. Both
+are among the square-cell pieces. Credit the source where you show the art: "Art from
 ascii-magic-art by ASCII Magic, MIT".
 
 ## Ornaments
