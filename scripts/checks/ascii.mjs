@@ -145,6 +145,24 @@ export default async function checkAscii(page, where, fail) {
     return a.until(() => a.host.querySelector(".colored pre").textContent !== before, 3000);
   });
 
+  got.firstFrameNeverRunsBackwards = await page.evaluate(async () => {
+    const a = window.__ascii;
+    const real = window.requestAnimationFrame;
+    window.requestAnimationFrame = (cb) => real((ts) => cb(ts - 50));
+    const seen = [];
+    const piece = { meta: { slug: "clock", cols: 2, rows: 1, fps: 60 }, default: () => (t) => (seen.push(t), "ab") };
+    const el = document.createElement("div");
+    a.host.append(el);
+    const art = a.mountAscii(el, piece);
+    seen.length = 0;
+    art.busy(true);
+    await a.until(() => seen.length > 3);
+    art.destroy();
+    window.requestAnimationFrame = real;
+    el.remove();
+    return seen.length > 3 && seen[0] === 0 && seen.every((t) => t >= 0);
+  });
+
   got.mountingTwiceKeepsTheSecond = await page.evaluate(() => {
     const a = window.__ascii;
     a.host.removeAttribute("aria-busy");

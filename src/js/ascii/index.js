@@ -146,7 +146,7 @@ export function mountAscii(el, piece, { at = 0, look, speed = 1 } = {}) {
   let shown = "";
   let forced = null;
   let raf = 0;
-  let previous = 0;
+  let previous = null;
   let drawn = 0;
 
   function render(t) {
@@ -158,7 +158,7 @@ export function mountAscii(el, piece, { at = 0, look, speed = 1 } = {}) {
 
   function loop(now) {
     raf = requestAnimationFrame(loop);
-    elapsed += ((now - previous) / 1000) * speed;
+    elapsed = Math.max(0, elapsed + ((now - (previous ?? now)) / 1000) * speed);
     previous = now;
     if (now - drawn < 1000 / meta.fps - 1) return;
     drawn = now;
@@ -178,7 +178,7 @@ export function mountAscii(el, piece, { at = 0, look, speed = 1 } = {}) {
       const busy = forced ?? el.closest("[aria-busy]")?.getAttribute("aria-busy") === "true";
       const playing = busy && this.visible && !observers.reduced.matches && !document.hidden && !meta.still;
       if (playing && !raf) {
-        previous = performance.now();
+        previous = null;
         raf = requestAnimationFrame(loop);
       } else if (!playing && raf) {
         cancelAnimationFrame(raf);
