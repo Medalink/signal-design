@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.2.0 (2026-10-22)
+
 ### Changed
 - The ring around a presence square, the ring around a corner
   `sd-badge-count` and the gaps in an `sd-avatar-stack` take the color of
@@ -13,6 +15,30 @@
 - Icons are sized to the text's cap height (`1.5cap`, with an `em` fallback)
   in buttons, rows, navigation, messages and the shell, so they follow the
   font instead of fixed px.
+- Contributing: changelog entries go in `changes/` fragments, the generated AI
+  files are rebuilt on `main` by the `ai-files` workflow, and behavior checks
+  live one per file in `scripts/checks/`. See `CONTRIBUTING.md`.
+- `font-sans` and `font-mono` now read `--sd-font-sans` and `--sd-font-mono`,
+  so Tailwind utilities follow the picker. Charts and the digital rain read
+  the code face from `--sd-font-mono` instead of naming it.
+- Showcase: the single components page is now an overview plus one page per
+  section (Tokens, Elements, Components, Conversation, Inputs, Charts, Effects,
+  JS). The overview has a card for every page, and old `#section` links
+  redirect to the page that holds them. `showcase/pages.js` is the one list of
+  pages; the rail, nav palette, vite inputs and check scripts read it.
+- Showcase: every page, library and example, has a bar at the top. It links back
+  to the library, says where you are (a grey Mock badge on example apps), lists
+  every page in a menu, and holds the theme, the width switch and a settings
+  popover for the text font, chart colors, scrollbars and digital rain. It is
+  compact on phones. The scrollbars choice is now remembered like the theme.
+- Behavior checks in `scripts/checks/` declare the page they run on with
+  `export const page = "<id>"`. See `CONTRIBUTING.md`.
+- `sd-message[data-mention]` and `[aria-current]` no longer share a fill with the
+  pane or with each other: they use new tokens `--sd-mention-fill` (7% of the
+  text color) and `--sd-current-fill` (10%), defined in every theme and
+  readable on both `--sd-canvas` and `--sd-surface`. Secondary text on those
+  rows is lifted from `--sd-fg-faint` to `--sd-fg-subtle` to keep 4.5:1.
+  `data-own` and `data-selected` are unchanged.
 
 ### Added
 - `sd-rail-tile`: a square picture, initials or icon tile for a 72px rail of
@@ -51,6 +77,86 @@
 - `sd-message` states: `--edge` for an author or role color on the start
   edge, `data-own` for a light own-message tint and `data-selected` for bulk
   selection. Edge order: failed > current > selected > mention > `--edge`.
+- `signal-design/ascii`: `mountAscii(el, piece, { at, look, speed })` plays a
+  piece from the optional peer `ascii-magic-art` as DOM text in `sd-ascii`.
+  Palette colors become three greys by brightness and `data-tone` colors the
+  brightest. It is still by default and plays only while the element or its
+  closest `[aria-busy]` ancestor is `aria-busy="true"` (or `busy(true)`), on
+  screen, in a visible tab and without `prefers-reduced-motion`. The text
+  scales to fit its box and never scrolls sideways.
+- An ASCII library page with a look switcher, a job that plays its art while it
+  runs, a gallery that plays on hover or focus, an empty state and tones.
+- Font picker: `data-font="system | leon-sans | source-code-pro"` on `<html>`
+  or any element sets the text face; `setFont`, `getFont`, `restoreFont`,
+  `FONTS`, `data-sd-font` and the `sd:font` event drive it. `system` (SF Pro)
+  stays the default. Code, charts and the rain keep Source Code Pro.
+- Leon Sans (OFL, 400-500, 115 KB) and a medium Source Code Pro text face are
+  bundled. Each is fetched only when picked.
+- Font tokens `--sd-font-sans`, `--sd-font-mono` and `--sd-font-system`.
+- `sd-schedule`: a resource schedule grid, a roster over hours with a
+  resource column, hour plot, `data-status` blocks (`driving`, `planned`,
+  `proposed`, `completed`, `conflict`, unmarked off duty), a now line and
+  a legend. Blocks, grid, ticks and the now line share one `--start`/`--end`
+  hour scale. Each block has one full-text `sd-schedule-label` that ellipsizes
+  at rest. Hover or focus reveals a wrapping label over adjacent slots,
+  bounded by the track edges, without moving the time bar or resizing rows.
+  A fixed bracket keeps the original interval visible during reveal. Full
+  labels include time and status, with each block described by its resource.
+  Resource names and details wrap at rest. The now line remains visible over
+  highlighted rows and behind expanded labels. Static selection uses
+  `data-selected`.
+  Focusable static blocks support keyboard and touch access. Labels collapse
+  when both hover and focus leave. Rows highlight on `--sd-raised` for hover
+  and focus, conflicts tint on `--sd-chart-alert`, and
+  `data-chart-theme="mono|spectrum"` switches the whole board black/white
+  or full palette via the chart tokens.
+- Showcase: each library page opens with what the section is for, its
+  principles, and when to use it or leave it out, before the blocks.
+- Showcase: a Themes side by side block on the Tokens page.
+- `scripts/check-showcase-pages.mjs` and `scripts/check-showcase-bar.mjs`: checks
+  for the page chrome, hash redirects and the bar, run by `scripts/check.mjs`.
+  `check.mjs` also checks that every registry page has its file, script, rail
+  icon and sections, and `--only webkit-1` runs the first WebKit job's pages.
+- `scripts/check-showcase-build.mjs`: builds the showcase under `/signal-design/`
+  and opens every page with and without `.html`, so a bundler that drops the bar
+  fails the check.
+- Stream scenes for OBS browser sources: `sd-scene`, a 16:9 frame laid out in
+  1920×1080 units (`--sd-u`), with a masked fade, copy (kicker, title, count,
+  line), a bottom bar of latest-event labels and socials, a webcam frame with
+  a name tag, a goal in square cells, rolling credits and `sd-live`.
+- `sd-stream-alert` and `mountStream(scene)`: queued follow, sub, raid and bits
+  alerts in their tones, with a burst of flat square particles, a one-pass
+  shimmer on the name, `sd:alert` events, and labels, goals and timers that
+  update themselves.
+- The Stream example: starting soon, in game, BRB and ending scenes on the
+  rain field. `stream.html?scene=start|game|brb|end` is one scene alone, ready
+  to add to OBS at 1920×1080; `&demo` plays sample alerts.
+- `sd-timeline`: CSS-only ranges over a shared axis. A label column, one
+  lane per row, bars placed with `--from`/`--to` percentages, a grid and a
+  `--now` line on the same scale, axis ticks with `--at`, and an optional
+  bracket `sd-timeline-mark` for a span inside the timeline. Tones a bar with
+  `data-tone`; `--row-h`, `--label-w` and `--label-gap` tune the geometry.
+- `sd-panel-wide` (capped at 1024px) and `sd-panel-fluid` (no cap) for
+  settings-style pages; `sd-panel` stays at 560px.
+- `sd-seg-wrap`: a segmented control whose items flow onto more rows in a
+  narrow container. A plain `sd-seg` still keeps one row.
+- `sd-kv-plain`: key-value keys in sentence case that truncate with an
+  ellipsis instead of widening the grid. `sd-kv` keeps its small-caps keys.
+- `sd-sidebar-head-sm`: a 16px title step (the default is 18px) for a sidebar
+  head with an action or a longer title, such as "Direct Messages" in a 240px
+  sidebar.
+
+### Fixed
+- `sd-sidebar-title` takes its size from its head (`font-size: inherit`), so
+  on an `h2` the base heading size no longer overrides `sd-sidebar-head-sm`.
+- `sd-message-head > b` and `sd-reply > b`: an author rendered as a `button` or
+  `a` inside the `<b>` now truncates with an ellipsis. `<b>` clipped the
+  atomic inline-block without one.
+- `sd-message-body`: the content column is `minmax(0, 1fr)`, so a long
+  unbroken author name no longer widens the row past its container.
+- `sd-message-head > b` and `sd-reply > b`: author names truncate with an
+  ellipsis (at most 60% and 40% of the row) instead of overflowing; the reply
+  name was `flex-shrink: 0`.
 
 ## 1.1.1 (2026-10-19)
 
