@@ -230,25 +230,25 @@ export default async function checkAscii(page, where, fail) {
 
   got.removedElementReleasesObservers = await page.evaluate(async () => {
     const a = window.__ascii;
+    // The page's own art shares this module, so the shared observers stay up;
+    // what must happen is that the removed element is let go.
     const proto = IntersectionObserver.prototype;
-    const real = proto.disconnect;
-    let calls = 0;
-    proto.disconnect = function () {
-      calls++;
-      return real.call(this);
+    const real = proto.unobserve;
+    const released = new Set();
+    proto.unobserve = function (target) {
+      released.add(target);
+      return real.call(this, target);
     };
     const el = document.createElement("div");
     a.host.append(el);
     a.mountAscii(el, a.torus);
     el.remove();
-    a.colored.destroy();
-    a.braille.destroy();
-    const held = calls;
+    const held = released.has(el);
     document.documentElement.setAttribute("aria-busy", "false");
     document.documentElement.removeAttribute("aria-busy");
-    await a.settle();
-    proto.disconnect = real;
-    return held === 0 && calls === 1;
+    const letGo = await a.until(() => released.has(el));
+    proto.unobserve = real;
+    return !held && letGo;
   });
 
   await page.evaluate(() => {
