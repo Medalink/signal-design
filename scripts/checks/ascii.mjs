@@ -104,6 +104,7 @@ export default async function checkAscii(page, where, fail) {
   for (const [key, ok] of Object.entries(got.paintsGreysOnly)) if (!ok) bad(`paints greys only: ${key}`);
   delete got.paintsGreysOnly;
 
+  await page.evaluate(() => document.fonts.ready);
   got.boxedGlyphsAreOneColumn = await page.evaluate(() => {
     const pre = window.__ascii.host.querySelector(".braille pre");
     const boxed = [...pre.querySelectorAll("i")];
