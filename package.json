@@ -37,6 +37,10 @@
       "types": "./src/js/charts/index.d.ts",
       "default": "./src/js/charts/index.js"
     },
+    "./ascii": {
+      "types": "./src/js/ascii/index.d.ts",
+      "default": "./src/js/ascii/index.js"
+    },
     "./ai/*": "./ai/*",
     "./vscode/*": "./vscode/*",
     "./package.json": "./package.json"
@@ -59,10 +63,14 @@
     "*.css"
   ],
   "peerDependencies": {
+    "ascii-magic-art": "^1.0.2",
     "chart.js": "^4.5.1",
     "tailwindcss": "^4.3.0"
   },
   "peerDependenciesMeta": {
+    "ascii-magic-art": {
+      "optional": true
+    },
     "tailwindcss": {
       "optional": true
     },
@@ -87,6 +95,7 @@
     "@fontsource/source-code-pro": "5.3.1",
     "@tailwindcss/cli": "4.3.3",
     "@tailwindcss/vite": "4.3.3",
+    "ascii-magic-art": "1.0.2",
     "axe-core": "4.10.3",
     "chart.js": "4.5.1",
     "esbuild": "^0.28.2",
