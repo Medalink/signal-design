@@ -62,6 +62,31 @@ export interface CountdownMount {
  * time since mount or the last completion as its duration. Remount for a new task. */
 export function mountCountdown(root: HTMLElement): CountdownMount;
 
+/* Stream scenes */
+export type AlertKind = "follow" | "sub" | "raid" | "bits";
+export interface StreamAlert {
+  /** follow, sub, raid and bits have default tones and labels; any other string needs `tone`. */
+  kind: AlertKind | (string & {});
+  name: string;
+  detail?: string;
+  label?: string;
+  tone?: Tone;
+  size?: "big";
+  /** Added to a matching [data-sd-goal]. Default 1. */
+  amount?: number;
+  /** Milliseconds on screen. */
+  hold?: number;
+}
+export const ALERT_KINDS: Record<AlertKind, { tone: Tone; label: string; detail: string; size?: "big" }>;
+export interface StreamMount {
+  /** Queue an alert; each shows in turn. Dispatches `sd:alert` on the scene. */
+  alert(alert: StreamAlert): void;
+  readonly pending: number;
+  dispose(): void;
+}
+/** Alerts, latest-event labels, goals and timers for an `.sd-scene`. */
+export function mountStream(scene: HTMLElement, options?: { hold?: number; burst?: boolean }): StreamMount;
+
 /* Live feeds */
 export interface FeedState {
   activeId: string | null;

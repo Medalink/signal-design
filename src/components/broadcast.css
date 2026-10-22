@@ -1,0 +1,401 @@
+/*
+ * Broadcast: stream scenes for OBS browser sources. A scene is a 16:9 frame
+ * laid out in 1920x1080 units, so the same markup reads right as a small
+ * preview and as a full 1080p source.
+ *
+ *   <div class="sd-scene" data-sd-stream>
+ *     <canvas class="sd-rain sd-scene-layer" data-sd-rain="play"></canvas>
+ *     <div class="sd-scene-fade" data-side="left"></div>
+ *     <div class="sd-scene-copy">…</div>
+ *     <div class="sd-scene-bar">…</div>
+ *     <div class="sd-stream-alert" hidden>…</div>
+ *   </div>
+ *
+ * Inside a scene, size things in var(--sd-u): one pixel of the 1920 frame.
+ * A stream scene may loop (rain, credits, the live square); that is the one
+ * exception to Signal's state-change-only motion rule. prefers-reduced-motion
+ * still turns it off.
+ */
+@layer components {
+  .sd-scene {
+    --sd-u: calc(100cqw / 1920);
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 16 / 9;
+    container-type: inline-size;
+    overflow: hidden;
+    background: var(--sd-canvas);
+    color: var(--sd-fg);
+  }
+  /* A full-viewport source: OBS sizes the page, the scene fills it. */
+  .sd-scene[data-full] {
+    width: 100vw;
+    height: 100vh;
+    aspect-ratio: auto;
+  }
+  /* Over game capture: only the overlay pieces paint. */
+  .sd-scene[data-clear] {
+    background: transparent;
+  }
+  .sd-scene > * {
+    position: absolute;
+  }
+  .sd-scene-layer {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* A flat canvas-colored layer, masked so the backdrop shows through on one side. */
+  .sd-scene-fade {
+    inset: 0;
+    pointer-events: none;
+    background: var(--sd-canvas);
+    -webkit-mask-image: linear-gradient(90deg, #000 36%, transparent 72%);
+    mask-image: linear-gradient(90deg, #000 36%, transparent 72%);
+  }
+  .sd-scene-fade[data-side="center"] {
+    -webkit-mask-image: radial-gradient(ellipse 46% 50% at 50% 50%, #000 30%, transparent 100%);
+    mask-image: radial-gradient(ellipse 46% 50% at 50% 50%, #000 30%, transparent 100%);
+  }
+
+  /* Copy block: kicker, title, count, line. */
+  .sd-scene-copy {
+    left: calc(var(--sd-u) * 120);
+    top: calc(var(--sd-u) * 360);
+    display: grid;
+    gap: calc(var(--sd-u) * 32);
+  }
+  .sd-scene-copy[data-align="center"] {
+    left: 0;
+    right: 0;
+    justify-items: center;
+    text-align: center;
+  }
+  .sd-scene-kicker {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--sd-u) * 18);
+    font: var(--font-weight-semibold) calc(var(--sd-u) * 26) / 1 var(--sd-font-mono);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--sd-fg-muted);
+  }
+  .sd-scene-title {
+    font-size: calc(var(--sd-u) * 180);
+    font-weight: var(--font-weight-normal);
+    line-height: 0.92;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+  }
+  .sd-scene-title[data-size="md"] {
+    font-size: calc(var(--sd-u) * 150);
+  }
+  .sd-scene-count {
+    display: flex;
+    align-items: baseline;
+    gap: calc(var(--sd-u) * 28);
+    font: var(--font-weight-semibold) calc(var(--sd-u) * 96) / 1 var(--sd-font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+  .sd-scene-count > small,
+  .sd-scene-label-kind {
+    font: var(--font-weight-semibold) calc(var(--sd-u) * 22) / 1 var(--sd-font-mono);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--sd-fg-faint);
+  }
+  .sd-scene-line {
+    font-size: calc(var(--sd-u) * 30);
+    line-height: 1.3;
+    color: var(--sd-fg-muted);
+  }
+  .sd-scene-line b {
+    font-weight: var(--font-weight-semibold);
+    color: var(--tone, var(--sd-fg));
+  }
+
+  /* The live square: blinks, in the tone of the scene's state. */
+  @keyframes sd-live {
+    50% { opacity: 0; }
+  }
+  .sd-live {
+    display: inline-block;
+    flex: none;
+    width: calc(var(--sd-u, 1px) * 16);
+    height: calc(var(--sd-u, 1px) * 16);
+    background: var(--tone, var(--sd-pending));
+    animation: sd-live 1.2s steps(1, end) infinite;
+  }
+
+  /* Bottom bar: latest events at the start, socials at the end. */
+  .sd-scene-bar {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: calc(var(--sd-u) * 84);
+    display: flex;
+    align-items: center;
+    gap: calc(var(--sd-u) * 56);
+    padding-inline: calc(var(--sd-u) * 120);
+    border-top: 1px solid var(--sd-line);
+    background: var(--sd-canvas);
+  }
+  .sd-scene-bar-end {
+    margin-inline-start: auto;
+    display: flex;
+    gap: calc(var(--sd-u) * 40);
+    font: calc(var(--sd-u) * 22) / 1 var(--sd-font-mono);
+    color: var(--sd-fg-muted);
+    white-space: nowrap;
+  }
+  .sd-scene-bar-end b {
+    margin-inline-end: calc(var(--sd-u) * 10);
+    font-weight: var(--font-weight-normal);
+    color: var(--sd-fg-faint);
+  }
+
+  /* Latest-event label, in the bar or as a stack over the game. */
+  .sd-scene-label {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--sd-u) * 14);
+    font-size: calc(var(--sd-u) * 26);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .sd-scene-label::before {
+    content: "";
+    width: calc(var(--sd-u) * 12);
+    height: calc(var(--sd-u) * 12);
+    background: var(--tone, var(--sd-fg-subtle));
+  }
+  .sd-scene-label-kind {
+    font-size: calc(var(--sd-u) * 18);
+  }
+  .sd-scene-labels {
+    right: calc(var(--sd-u) * 40);
+    top: calc(var(--sd-u) * 40);
+    display: grid;
+    justify-items: end;
+    gap: calc(var(--sd-u) * 6);
+  }
+  .sd-scene-labels > .sd-scene-label {
+    padding: calc(var(--sd-u) * 12) calc(var(--sd-u) * 18);
+    background: var(--sd-canvas);
+    font-size: calc(var(--sd-u) * 24);
+  }
+  .sd-scene-label[data-new] {
+    animation: sd-alert-in 220ms var(--ease-out);
+  }
+
+  /* Webcam frame with a name tag. The feed area stays clear for the camera source. */
+  .sd-cam {
+    left: calc(var(--sd-u) * 40);
+    bottom: calc(var(--sd-u) * 40);
+    width: calc(var(--sd-u) * 480);
+    display: grid;
+    border: 2px solid var(--sd-fg);
+  }
+  .sd-cam-feed {
+    aspect-ratio: 16 / 9;
+  }
+  .sd-cam-tag {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: calc(var(--sd-u) * 12) calc(var(--sd-u) * 18);
+    border-top: 2px solid var(--sd-fg);
+    background: var(--sd-canvas);
+    font: var(--font-weight-semibold) calc(var(--sd-u) * 22) / 1 var(--sd-font-mono);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+  .sd-cam-tag > :last-child {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--sd-u) * 10);
+    color: var(--sd-danger);
+  }
+  .sd-cam-tag .sd-live {
+    --tone: var(--sd-danger);
+    width: calc(var(--sd-u) * 12);
+    height: calc(var(--sd-u) * 12);
+  }
+
+  /* A goal as square cells, sized to the frame. */
+  .sd-scene-goal {
+    display: grid;
+    gap: calc(var(--sd-u) * 10);
+    padding: calc(var(--sd-u) * 14) calc(var(--sd-u) * 18);
+    background: var(--sd-canvas);
+  }
+  .sd-scene-goal-head {
+    display: flex;
+    justify-content: space-between;
+    font: var(--font-weight-semibold) calc(var(--sd-u) * 20) / 1 var(--sd-font-mono);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--sd-fg-faint);
+  }
+  .sd-scene-goal-head b {
+    font-weight: var(--font-weight-semibold);
+    color: var(--sd-fg);
+    font-variant-numeric: tabular-nums;
+  }
+  .sd-scene-goal .sd-cells {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: calc(var(--sd-u) * 4);
+  }
+  .sd-scene-goal .sd-cells > i {
+    width: auto;
+    height: calc(var(--sd-u) * 14);
+  }
+  @keyframes sd-cell-hit {
+    from { background: var(--sd-flash); transform: scaleY(1.8); }
+  }
+  .sd-scene-goal .sd-cells > i[data-hit] {
+    animation: sd-cell-hit 380ms var(--ease-out);
+  }
+
+  /* Credits: a column of names that rolls up, one tone per group. */
+  .sd-credits {
+    right: calc(var(--sd-u) * 120);
+    top: 0;
+    bottom: calc(var(--sd-u) * 84);
+    width: calc(var(--sd-u) * 520);
+    overflow: hidden;
+    border-inline: 1px solid var(--sd-line);
+    background: var(--sd-canvas);
+  }
+  @keyframes sd-credits {
+    from { transform: translateY(calc(var(--sd-u) * 200)); }
+    to { transform: translateY(-100%); }
+  }
+  .sd-credits-roll {
+    display: grid;
+    gap: calc(var(--sd-u) * 48);
+    padding: calc(var(--sd-u) * 80) calc(var(--sd-u) * 48);
+    animation: sd-credits var(--duration, 30s) linear infinite;
+  }
+  .sd-credits-roll > section {
+    display: grid;
+    gap: calc(var(--sd-u) * 14);
+    font-size: calc(var(--sd-u) * 32);
+    line-height: 1.2;
+  }
+  .sd-credits-roll h3 {
+    margin: 0 0 calc(var(--sd-u) * 6);
+    font: var(--font-weight-semibold) calc(var(--sd-u) * 22) / 1 var(--sd-font-mono);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--tone, var(--sd-fg-muted));
+  }
+
+  /* The alert: a square card with a tone block and the name in large type. */
+  .sd-stream-alert {
+    z-index: 6;
+    left: calc(var(--sd-u) * 120);
+    top: calc(var(--sd-u) * 80);
+    display: grid;
+    grid-template-columns: calc(var(--sd-u) * 20) auto;
+    min-width: calc(var(--sd-u) * 640);
+    background: var(--sd-surface);
+    border: 1px solid var(--sd-line-strong);
+  }
+  .sd-stream-alert[hidden] {
+    display: none;
+  }
+  .sd-stream-alert::before {
+    content: "";
+    background: var(--tone, var(--sd-fg));
+  }
+  .sd-stream-alert[data-place="top"] {
+    left: 0;
+    right: 0;
+    top: calc(var(--sd-u) * 70);
+    width: max-content;
+    margin-inline: auto;
+  }
+  .sd-stream-alert-body {
+    display: grid;
+    gap: calc(var(--sd-u) * 12);
+    padding: calc(var(--sd-u) * 26) calc(var(--sd-u) * 40) calc(var(--sd-u) * 30);
+  }
+  .sd-stream-alert-kind {
+    font: var(--font-weight-semibold) calc(var(--sd-u) * 22) / 1 var(--sd-font-mono);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--tone, var(--sd-fg-muted));
+  }
+  .sd-stream-alert-name {
+    font-size: calc(var(--sd-u) * 64);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .sd-stream-alert-detail {
+    font: calc(var(--sd-u) * 26) / 1.3 var(--sd-font-mono);
+    color: var(--sd-fg-muted);
+  }
+  .sd-stream-alert[data-size="big"] {
+    min-width: calc(var(--sd-u) * 900);
+  }
+  .sd-stream-alert[data-size="big"] .sd-stream-alert-name {
+    font-size: calc(var(--sd-u) * 110);
+    font-weight: var(--font-weight-normal);
+    letter-spacing: -0.03em;
+  }
+  @keyframes sd-alert-in {
+    from { transform: translateY(calc(var(--sd-u, 1px) * -50)) scale(0.96); opacity: 0; }
+  }
+  @keyframes sd-alert-out {
+    to { transform: translateY(calc(var(--sd-u) * -20)); opacity: 0; }
+  }
+  .sd-stream-alert[data-state="in"] {
+    animation: sd-alert-in 220ms cubic-bezier(0.3, 1.4, 0.5, 1);
+  }
+  .sd-stream-alert[data-state="out"] {
+    animation: sd-alert-out 180ms var(--ease-out) forwards;
+  }
+  /* The name shimmers once as the card lands, like a hover sweep. */
+  .sd-stream-alert[data-state="in"] .sd-stream-alert-name {
+    background-image: linear-gradient(90deg, currentColor 0 40%, var(--sd-flash) 50%, var(--sd-fg-subtle) 60% 100%);
+    background-size: 300% 100%;
+    background-position: 0% 0;
+    background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: sd-sweep 700ms linear 240ms both;
+  }
+
+  /* Square particles from mountStream's burst. */
+  .sd-scene-fx {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sd-live,
+    .sd-credits-roll,
+    .sd-scene-label[data-new],
+    .sd-scene-goal .sd-cells > i[data-hit],
+    .sd-stream-alert[data-state] {
+      animation: none;
+    }
+    .sd-stream-alert[data-state] .sd-stream-alert-name {
+      animation: none;
+      -webkit-text-fill-color: currentColor;
+      background-image: none;
+    }
+  }
+}
