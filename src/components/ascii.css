@@ -30,7 +30,9 @@
     background: none;
     color: var(--sd-fg-muted);
     font-family: var(--sd-font-mono);
-    font-size: min(var(--sd-ascii-size, 12px), calc(100cqi / (var(--cols, 80) * 0.6)));
+    /* Linux Chromium rounds each glyph's advance to a whole pixel, so the
+       column width is snapped down to one first; 0.6em is the face's advance. */
+    font-size: min(var(--sd-ascii-size, 12px), calc(max(1px, round(down, 100cqi / var(--cols, 80), 1px)) / 0.6));
     font-style: normal;
     font-variant-ligatures: none;
     font-kerning: none;
