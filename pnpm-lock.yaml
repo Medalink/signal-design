@@ -17,6 +17,9 @@ importers:
       '@tailwindcss/vite':
         specifier: 4.3.3
         version: 4.3.3(vite@8.3.4(esbuild@0.28.2)(jiti@2.7.0))
+      ascii-magic-art:
+        specifier: 1.0.2
+        version: 1.0.2
       axe-core:
         specifier: 4.10.3
         version: 4.10.3
@@ -506,6 +509,11 @@ packages:
     resolution: {integrity: sha512-yYU8cogLeSh/ms2jh8Fj7jaba/EWa7Ja6GoUqYZaraEuCI5YS6ms6ObZgjjedm+jm6XZjdNRWBpPP6Z86oOxcw==}
     peerDependencies:
       vite: ^5.2.0 || ^6 || ^7 || ^8
+
+  ascii-magic-art@1.0.2:
+    resolution: {integrity: sha512-c3TGcWiGSS+mZQiP2d8yHC7+FuS0P0zbG+NvXcD/VEFoadUHk5LKmbs7SqeHpaUJiyFyhLS8CWHEOfEJ2Vyu6w==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   axe-core@4.10.3:
     resolution: {integrity: sha512-Xm7bpRXnDSX2YE2YFfBk2FnF0ep6tmG7xPh8iHee8MIcrgq762Nkce856dYtJYLkuIoYZvGfTs/PbZhideTcEg==}
@@ -1127,6 +1135,8 @@ snapshots:
       '@tailwindcss/oxide': 4.3.3
       tailwindcss: 4.3.3
       vite: 8.3.4(esbuild@0.28.2)(jiti@2.7.0)
+
+  ascii-magic-art@1.0.2: {}
 
   axe-core@4.10.3: {}
 
