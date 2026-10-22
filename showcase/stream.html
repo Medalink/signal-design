@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en" data-theme="ink" data-page="stream">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Signal Stream Example</title>
+  <script>
+    // ?scene=start|game|brb|end is the OBS browser source: one scene, full frame, ink unless ?theme= says otherwise.
+    try {
+      const q = new URLSearchParams(location.search);
+      const t = q.get("scene") ? q.get("theme") || "ink" : localStorage.getItem("sd-theme");
+      if (t) document.documentElement.dataset.theme = t;
+      if (q.get("scene")) document.documentElement.dataset.source = q.get("scene");
+    } catch {}
+  </script>
+  <link rel="stylesheet" href="./app.css">
+  <script type="module" src="./stream.js"></script>
+  <style>
+    /* Page layout only. Every piece inside a scene is a library component. */
+    .st-wrap { width: 100%; max-width: 76rem; margin-inline: auto; padding: 56px 24px 96px; display: grid; gap: 72px; }
+    .st-intro { display: grid; gap: 16px; padding-block-end: 40px; border-block-end: 1px solid var(--sd-line); }
+    .st-intro h1 { font-size: clamp(2rem, 5vw, 3.125rem); line-height: 1.1; letter-spacing: -0.03em; font-weight: 400; text-wrap: balance; }
+    .st-block { display: grid; gap: 16px; }
+    .st-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; }
+    .st-head > div { display: grid; gap: 4px; }
+    .st-head h2 { font-size: var(--text-xl); font-weight: 400; }
+    .st-scene { outline: 1px solid var(--sd-line); }
+    .st-fire { display: flex; flex-wrap: wrap; gap: 8px; }
+    .st-game { inset: 0; display: grid; place-items: center; background: var(--sd-raised); color: var(--sd-fg-faint); font: calc(var(--sd-u) * 28) / 1 var(--sd-font-mono); letter-spacing: 0.3em; }
+    .st-cam-feed { display: grid; place-items: center; background: var(--sd-surface); color: var(--sd-fg-faint); font: calc(var(--sd-u) * 20) / 1 var(--sd-font-mono); letter-spacing: 0.2em; }
+    .st-goal { left: calc(var(--sd-u) * 560); bottom: calc(var(--sd-u) * 40); width: calc(var(--sd-u) * 420); }
+
+    /* As an OBS source: only the chosen scene, edge to edge. */
+    [data-source] body { overflow: hidden; background: transparent; }
+    [data-source] .st-chrome, [data-source] .sd-skip { display: none; }
+    [data-source] .st-wrap { max-width: none; padding: 0; display: block; }
+    [data-source] .st-block { display: none; }
+    [data-source="start"] #start, [data-source="game"] #game, [data-source="brb"] #brb, [data-source="end"] #end { display: block; }
+    [data-source] .st-head, [data-source] .st-note { display: none; }
+    [data-source] .st-scene { outline: 0; }
+    [data-source="game"] .st-game { display: none; }
+    /* Game and camera come from OBS sources under this one. */
+    html[data-source="game"], [data-source="game"] body { background: transparent; }
+    [data-source] .st-cam-feed { background: transparent; color: transparent; }
+  </style>
+</head>
+<body>
+<a class="sd-skip" href="#main">Skip to content</a>
+
+<main id="main" tabindex="-1" class="st-wrap">
+  <header class="st-intro st-chrome">
+    <span class="sd-label">Example · Twitch overlay package</span>
+    <h1>Stream scenes on the rain field</h1>
+    <p class="sd-muted max-w-column">Starting soon, in game, be right back and ending, each a 1920×1080 scene built from the broadcast components. Fire test alerts with the buttons. To use one in OBS, add a Browser Source at 1920×1080 pointing at this page with <code>?scene=start</code>, <code>game</code>, <code>brb</code> or <code>end</code>. Add <code>&amp;demo</code> to play sample alerts.</p>
+  </header>
+
+  <section class="st-block" id="start" aria-labelledby="start-title">
+    <div class="st-head">
+      <div><span class="sd-label">Scene 1</span><h2 id="start-title">Starting soon</h2></div>
+      <div class="st-fire" data-fire-for="start">
+        <button class="sd-btn sd-btn-sm" data-fire="follow"><span class="sd-dot" data-tone="extra"></span>Follow</button>
+        <button class="sd-btn sd-btn-sm" data-fire="sub"><span class="sd-dot" data-tone="success"></span>Sub</button>
+        <button class="sd-btn sd-btn-sm" data-fire="bits"><span class="sd-dot" data-tone="warning"></span>Bits</button>
+      </div>
+    </div>
+    <div class="sd-scene st-scene" data-scene="start">
+      <canvas class="sd-rain sd-scene-layer" data-sd-rain="play" aria-hidden="true"></canvas>
+      <div class="sd-scene-fade"></div>
+      <div class="sd-scene-copy">
+        <span class="sd-scene-kicker"><span class="sd-live"></span>Stream starting</span>
+        <p class="sd-scene-title" data-font="leon-sans">Starting<br>soon</p>
+        <span class="sd-scene-count"><small>Live in</small><span data-sd-timer="300">05:00</span></span>
+        <p class="sd-scene-line">Tonight: <b>ranked to Diamond</b>, then viewer games</p>
+      </div>
+      <div class="sd-scene-bar">
+        <span class="sd-scene-label" data-tone="extra"><span class="sd-scene-label-kind">Follow</span><span data-sd-latest="follow">nightowl_42</span></span>
+        <span class="sd-scene-label" data-tone="success"><span class="sd-scene-label-kind">Sub</span><span data-sd-latest="sub">pixelmoth</span></span>
+        <span class="sd-scene-bar-end"><span><b>X</b>@medalink</span><span><b>YT</b>/medalink</span><span><b>DC</b>discord.gg/medalink</span></span>
+      </div>
+      <div class="sd-stream-alert" role="status" hidden><div class="sd-stream-alert-body"><span class="sd-stream-alert-kind"></span><span class="sd-stream-alert-name"></span><span class="sd-stream-alert-detail"></span></div></div>
+    </div>
+  </section>
+
+  <section class="st-block" id="game" aria-labelledby="game-title">
+    <div class="st-head">
+      <div><span class="sd-label">Scene 2</span><h2 id="game-title">In game</h2></div>
+      <div class="st-fire" data-fire-for="game">
+        <button class="sd-btn sd-btn-sm" data-fire="follow"><span class="sd-dot" data-tone="extra"></span>Follow</button>
+        <button class="sd-btn sd-btn-sm" data-fire="sub"><span class="sd-dot" data-tone="success"></span>Sub</button>
+        <button class="sd-btn sd-btn-sm" data-fire="raid"><span class="sd-dot" data-tone="accent"></span>Raid</button>
+        <button class="sd-btn sd-btn-sm" data-fire="bits"><span class="sd-dot" data-tone="warning"></span>Bits</button>
+      </div>
+    </div>
+    <div class="sd-scene st-scene" data-scene="game" data-clear>
+      <div class="st-game" aria-hidden="true">GAME CAPTURE</div>
+      <div class="sd-scene-labels">
+        <span class="sd-scene-label" data-tone="extra"><span class="sd-scene-label-kind">Follow</span><span data-sd-latest="follow">nightowl_42</span></span>
+        <span class="sd-scene-label" data-tone="success"><span class="sd-scene-label-kind">Sub</span><span data-sd-latest="sub">pixelmoth</span></span>
+      </div>
+      <div class="sd-cam">
+        <div class="sd-cam-feed st-cam-feed" aria-hidden="true">WEBCAM</div>
+        <div class="sd-cam-tag"><span>Medalink</span><span><span class="sd-live"></span>Live</span></div>
+      </div>
+      <div class="sd-scene-goal st-goal" data-sd-goal="sub" data-value="38" data-max="50">
+        <div class="sd-scene-goal-head"><span>Sub goal</span><b data-sd-goal-value>38 / 50</b></div>
+        <div class="sd-cells" role="presentation"></div>
+      </div>
+      <div class="sd-stream-alert" data-place="top" data-tone="accent" data-size="big" role="status"><div class="sd-stream-alert-body"><span class="sd-stream-alert-kind">Raid</span><span class="sd-stream-alert-name">tidepool</span><span class="sd-stream-alert-detail">Raiding with 42 viewers</span></div></div>
+    </div>
+  </section>
+
+  <section class="st-block" id="brb" aria-labelledby="brb-title">
+    <div class="st-head">
+      <div><span class="sd-label">Scene 3</span><h2 id="brb-title">Be right back</h2></div>
+      <div class="st-fire" data-fire-for="brb">
+        <button class="sd-btn sd-btn-sm" data-fire="follow"><span class="sd-dot" data-tone="extra"></span>Follow</button>
+        <button class="sd-btn sd-btn-sm" data-fire="sub"><span class="sd-dot" data-tone="success"></span>Sub</button>
+      </div>
+    </div>
+    <div class="sd-scene st-scene" data-scene="brb">
+      <canvas class="sd-rain sd-scene-layer" data-sd-rain="play" aria-hidden="true"></canvas>
+      <div class="sd-scene-fade" data-side="center"></div>
+      <div class="sd-scene-copy" data-align="center" style="top: calc(var(--sd-u) * 340)">
+        <span class="sd-scene-kicker"><span class="sd-live"></span>Grabbing a drink</span>
+        <p class="sd-scene-title" data-font="leon-sans">Be right back</p>
+        <span class="sd-scene-kicker">Away <span data-sd-timer="up">00:00</span></span>
+      </div>
+      <div class="sd-scene-bar">
+        <span class="sd-scene-label" data-tone="extra"><span class="sd-scene-label-kind">Follow</span><span data-sd-latest="follow">nightowl_42</span></span>
+        <span class="sd-scene-label" data-tone="success"><span class="sd-scene-label-kind">Sub</span><span data-sd-latest="sub">pixelmoth</span></span>
+        <span class="sd-scene-bar-end"><span><b>X</b>@medalink</span><span><b>YT</b>/medalink</span><span><b>DC</b>discord.gg/medalink</span></span>
+      </div>
+      <div class="sd-stream-alert" role="status" hidden><div class="sd-stream-alert-body"><span class="sd-stream-alert-kind"></span><span class="sd-stream-alert-name"></span><span class="sd-stream-alert-detail"></span></div></div>
+    </div>
+  </section>
+
+  <section class="st-block" id="end" aria-labelledby="end-title">
+    <div class="st-head">
+      <div><span class="sd-label">Scene 4</span><h2 id="end-title">Ending</h2></div>
+    </div>
+    <div class="sd-scene st-scene" data-scene="end">
+      <canvas class="sd-rain sd-scene-layer" data-sd-rain="play" aria-hidden="true"></canvas>
+      <div class="sd-scene-fade"></div>
+      <div class="sd-scene-copy">
+        <span class="sd-scene-kicker" data-tone="danger"><span class="sd-live"></span>Stream ending</span>
+        <p class="sd-scene-title" data-size="md" data-font="leon-sans">Thanks for<br>hanging out</p>
+        <p class="sd-scene-line" data-tone="accent">Raiding <b>tidepool</b> next. Stick around.</p>
+      </div>
+      <div class="sd-credits">
+        <div class="sd-credits-roll">
+          <section data-tone="accent"><h3>Raiders</h3><span>tidepool</span><span>northdial</span></section>
+          <section data-tone="success"><h3>Subs</h3><span>pixelmoth</span><span>byteharbor</span><span>fernlight</span></section>
+          <section data-tone="warning"><h3>Bits</h3><span>quietkey</span><span>hexagram</span></section>
+          <section data-tone="extra"><h3>New followers</h3><span>nightowl_42</span><span>lumen_fox</span><span>graywave</span><span>kitebox</span><span>ostrander</span></section>
+          <section><h3>Thanks for watching</h3><span>See you next stream</span></section>
+        </div>
+      </div>
+      <div class="sd-scene-bar">
+        <span class="sd-scene-label" data-tone="extra"><span class="sd-scene-label-kind">Followers today</span><span>+24</span></span>
+        <span class="sd-scene-label" data-tone="success"><span class="sd-scene-label-kind">Subs today</span><span>+6</span></span>
+      </div>
+    </div>
+  </section>
+</main>
+</body>
+</html>

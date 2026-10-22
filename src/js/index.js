@@ -31,6 +31,7 @@ export { selectTab } from "./tabs.js";
 export { toast } from "./toast.js";
 export { hotkeys, keyOf } from "./hotkeys.js";
 export { mountCountdown } from "./countdown.js";
+export { mountStream, ALERT_KINDS } from "./broadcast.js";
 
 export { mountFeed } from "./feed.js";
 export { mountLivingTable } from "./living-table.js";
