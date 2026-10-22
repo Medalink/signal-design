@@ -169,7 +169,7 @@ export function mountAscii(el, piece, { at = 0, look, speed = 1 } = {}) {
 
   const mount = {
     el,
-    visible: true,
+    visible: false,
     destroy() {
       cancelAnimationFrame(raf);
       raf = 0;

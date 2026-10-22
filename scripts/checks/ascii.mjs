@@ -145,6 +145,21 @@ export default async function checkAscii(page, where, fail) {
     return a.until(() => a.host.querySelector(".colored pre").textContent !== before, 3000);
   });
 
+  got.offScreenBusyNeverPlays = await page.evaluate(async () => {
+    const a = window.__ascii;
+    const seen = [];
+    const piece = { meta: { slug: "offscreen", cols: 2, rows: 1, fps: 60 }, default: () => (t) => (seen.push(t), "ab") };
+    const el = document.createElement("div");
+    el.style.cssText = "position:fixed;top:-5000px;left:0;width:200px";
+    el.setAttribute("aria-busy", "true");
+    a.host.append(el);
+    const art = a.mountAscii(el, piece);
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    art.destroy();
+    el.remove();
+    return seen.length === 1;
+  });
+
   got.flatAndOddPalettesStayMid = await page.evaluate(() => {
     const a = window.__ascii;
     const html = (palette, text, color) => {
