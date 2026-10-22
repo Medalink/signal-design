@@ -145,6 +145,25 @@ export default async function checkAscii(page, where, fail) {
     return a.until(() => a.host.querySelector(".colored pre").textContent !== before, 3000);
   });
 
+  got.flatAndOddPalettesStayMid = await page.evaluate(() => {
+    const a = window.__ascii;
+    const html = (palette, text, color) => {
+      const el = document.createElement("div");
+      a.host.append(el);
+      const piece = { meta: { slug: "palette", cols: 3, rows: 1, fps: 1, palette, still: true }, default: () => () => ({ text, color }) };
+      const art = a.mountAscii(el, piece);
+      const out = el.querySelector("pre").innerHTML;
+      art.destroy();
+      el.remove();
+      return out;
+    };
+    return (
+      html({ a: "#808080", b: "#808080" }, "abb", "abb") === "abb" &&
+      html({ a: "#808080" }, "aaa", "aaa") === "aaa" &&
+      html({ a: "#000000", b: "#ffffff", c: "red" }, "acb", "acb") === '<span class="sd-ascii-lo">a</span>c<span class="sd-ascii-hi">b</span>'
+    );
+  });
+
   got.firstFrameNeverRunsBackwards = await page.evaluate(async () => {
     const a = window.__ascii;
     const real = window.requestAnimationFrame;

@@ -44,15 +44,17 @@ function cellHTML(ch) {
 }
 
 const levels = new WeakMap();
-const brightness = (hex) => (0.2126 * parseInt(hex.slice(1, 3), 16) + 0.7152 * parseInt(hex.slice(3, 5), 16) + 0.0722 * parseInt(hex.slice(5, 7), 16)) / 255;
-/** Palette key to grey level, split in thirds of the palette's own brightness range. */
+const brightness = (hex) => (/^#[0-9a-f]{6}$/i.test(hex) ? (0.2126 * parseInt(hex.slice(1, 3), 16) + 0.7152 * parseInt(hex.slice(3, 5), 16) + 0.0722 * parseInt(hex.slice(5, 7), 16)) / 255 : NaN);
+/** Palette key to grey level, split in thirds of the palette's own brightness range. A flat palette, or a color that is not #rrggbb, stays in the middle. */
 function levelsOf(palette) {
   let table = levels.get(palette);
   if (!table) {
-    const entries = Object.entries(palette).map(([key, hex]) => [key, brightness(hex)]);
+    const entries = Object.entries(palette)
+      .map(([key, hex]) => [key, brightness(hex)])
+      .filter(([, b]) => !Number.isNaN(b));
     const lows = Math.min(...entries.map(([, b]) => b));
-    const span = Math.max(...entries.map(([, b]) => b)) - lows || 1;
-    table = Object.fromEntries(entries.map(([key, b]) => [key, Math.min(HI, Math.floor(((b - lows) / span) * 3))]));
+    const span = Math.max(...entries.map(([, b]) => b)) - lows;
+    table = Object.fromEntries(entries.map(([key, b]) => [key, span ? Math.min(HI, Math.floor(((b - lows) / span) * 3)) : MID]));
     levels.set(palette, table);
   }
   return table;
