@@ -621,7 +621,10 @@ Mounting again on an element destroys the mount that was there, and the old
 handle then does nothing.
 
 The text fits the width of its box and never scrolls sideways: size it with
-`--sd-ascii-size` (12px by default, the largest it draws). Load pieces with a
+`--sd-ascii-size` (12px by default, the largest it draws). Give `.sd-ascii` a
+definite width: block flow, or an explicit width or flex-basis. It collapses to
+nothing in a shrink-to-fit box such as an auto-width flex item, an absolutely
+positioned box without a width, or a table cell. Load pieces with a
 dynamic `import()` so a page only fetches the ones it shows.
 
 **License.** The package and its pieces are MIT, except `ocean-sunset` and

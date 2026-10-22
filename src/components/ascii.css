@@ -10,6 +10,10 @@
    * --cols and --rows come from the piece. The text is sized to fit the width
    * (never wider than --sd-ascii-size, 12px), so it never scrolls sideways.
    * The art keeps the width of its columns, 1ch each in the mono face.
+   * The element needs a definite width: block flow, or an explicit width or
+   * flex-basis. Inline-size containment makes it collapse to nothing in a
+   * shrink-to-fit box (an auto-width flex item, an absolutely positioned box
+   * without a width, a table cell).
    */
   .sd-ascii {
     container-type: inline-size;
