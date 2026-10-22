@@ -1353,6 +1353,98 @@
    "html": "<div><a class=\"sd-btn sd-btn-primary\" href=\"./shell.html\">Open the Signal App Shell</a></div>"
   },
   {
+   "id": "ascii-looks",
+   "section": "ASCII",
+   "title": "Looks",
+   "classes": [
+    "sd-actions",
+    "sd-ascii",
+    "sd-btn",
+    "sd-seg",
+    "sd-seg-wrap"
+   ],
+   "attributes": [
+    "data-sd-seg"
+   ],
+   "usage": "",
+   "js": "JS: init() from signal-design/js wires data-sd-seg.",
+   "html": "<div class=\"grid justify-items-center gap-6 border border-line bg-surface p-6\" id=\"ascii-stage\">\n  <div class=\"sd-ascii\" style=\"--sd-ascii-size: 20px\" data-piece=\"spinning-torus\" data-at=\"1.4\" role=\"img\" aria-label=\"Spinning torus\"></div>\n  <div class=\"sd-actions w-full justify-center\">\n    <div class=\"sd-seg sd-seg-wrap\" data-sd-seg=\"\" aria-label=\"Look\">\n      <button type=\"button\" value=\"original\" aria-pressed=\"true\">Original</button>\n      <button type=\"button\" value=\"dots\" aria-pressed=\"false\">Dots</button>\n      <button type=\"button\" value=\"blocks\" aria-pressed=\"false\">Blocks</button>\n      <button type=\"button\" value=\"binary\" aria-pressed=\"false\">Binary</button>\n      <button type=\"button\" value=\"dense\" aria-pressed=\"false\">Dense</button>\n    </div>\n    <button class=\"sd-btn\" type=\"button\" aria-pressed=\"false\" data-ascii-run=\"\">Run</button>\n  </div>\n</div>",
+   "script": "import { mountAscii } from \"signal-design/ascii\";\nimport * as piece from \"ascii-magic-art/pieces/spinning-torus.js\";\n\nconst stage = document.querySelector(\"#ascii-stage\");\nlet art = mountAscii(stage.querySelector(\".sd-ascii\"), piece, { at: 1.4 });\n\n// A look redraws the piece in other characters.\nart.destroy();\nart = mountAscii(stage.querySelector(\".sd-ascii\"), piece, { at: 1.4, look: \"dots\" });\n\n// Still until the stage says it is busy.\nstage.setAttribute(\"aria-busy\", \"true\");"
+  },
+  {
+   "id": "ascii-while-work-runs",
+   "section": "ASCII",
+   "title": "While work runs",
+   "classes": [
+    "sd-actions",
+    "sd-ascii",
+    "sd-btn",
+    "sd-btn-primary",
+    "sd-panel",
+    "sd-panel-title",
+    "sd-panel-wide",
+    "sd-progress",
+    "sd-progress-label"
+   ],
+   "attributes": [],
+   "usage": "",
+   "js": "No JS needed: the HTML works with the CSS alone.",
+   "html": "<section class=\"sd-panel sd-panel-wide grid gap-4\" id=\"ascii-job\">\n  <div class=\"sd-actions justify-between\">\n    <h4 class=\"sd-panel-title m-0\">Pipeline</h4>\n    <button class=\"sd-btn sd-btn-primary\" type=\"button\" data-ascii-job=\"\">Run job</button>\n  </div>\n  <div class=\"sd-ascii\" data-piece=\"ci-pipeline\" data-at=\"4\" role=\"img\" aria-label=\"A pipeline running its stages\"></div>\n  <div>\n    <p class=\"sd-progress-label\"><span>Tests</span><span data-ascii-percent=\"\">Idle</span></p>\n    <div class=\"sd-progress\" style=\"--value: 0\" role=\"progressbar\" aria-label=\"Tests\" aria-valuenow=\"0\" aria-valuemin=\"0\" aria-valuemax=\"100\"></div>\n  </div>\n</section>",
+   "script": "import { mountAscii } from \"signal-design/ascii\";\nimport * as piece from \"ascii-magic-art/pieces/ci-pipeline.js\";\n\nconst panel = document.querySelector(\"#ascii-job\");\nmountAscii(panel.querySelector(\".sd-ascii\"), piece, { at: 4 });\n\n// The art follows aria-busy on its closest ancestor that has it.\npanel.setAttribute(\"aria-busy\", \"true\");   // plays\npanel.removeAttribute(\"aria-busy\");        // holds the frame it is on"
+  },
+  {
+   "id": "ascii-gallery",
+   "section": "ASCII",
+   "title": "Gallery",
+   "classes": [
+    "sd-ascii",
+    "sd-btn",
+    "sd-btn-sm",
+    "sd-card",
+    "sd-card-body",
+    "sd-card-head"
+   ],
+   "attributes": [],
+   "usage": "",
+   "js": "No JS needed: the HTML works with the CSS alone.",
+   "html": "<div class=\"grid gap-4 md:grid-cols-2\">\n  <article class=\"sd-card\" data-ascii-card=\"\">\n    <div class=\"sd-card-head\">Torus knot<button class=\"sd-btn sd-btn-sm\" type=\"button\" aria-pressed=\"false\">Play</button></div>\n    <div class=\"sd-card-body\"><div class=\"sd-ascii\" data-piece=\"torus-knot\" data-at=\"2\" role=\"img\" aria-label=\"Torus knot\"></div></div>\n  </article>\n  <article class=\"sd-card\" data-ascii-card=\"\">\n    <div class=\"sd-card-head\">Owl<button class=\"sd-btn sd-btn-sm\" type=\"button\" aria-pressed=\"false\">Play</button></div>\n    <div class=\"sd-card-body\"><div class=\"sd-ascii\" data-piece=\"owl-blink\" data-at=\"3\" role=\"img\" aria-label=\"An owl blinking\"></div></div>\n  </article>\n  <article class=\"sd-card md:col-span-2\" data-ascii-card=\"\">\n    <div class=\"sd-card-head\">Dijkstra path<button class=\"sd-btn sd-btn-sm\" type=\"button\" aria-pressed=\"false\">Play</button></div>\n    <div class=\"sd-card-body\"><div class=\"sd-ascii\" data-piece=\"dijkstra-path\" data-at=\"3\" role=\"img\" aria-label=\"Dijkstra shortest path\"></div></div>\n  </article>\n  <article class=\"sd-card\" data-ascii-card=\"\">\n    <div class=\"sd-card-head\">Terminal session<button class=\"sd-btn sd-btn-sm\" type=\"button\" aria-pressed=\"false\">Play</button></div>\n    <div class=\"sd-card-body\"><div class=\"sd-ascii\" data-piece=\"terminal-session\" data-at=\"8\" role=\"img\" aria-label=\"A terminal session\"></div></div>\n  </article>\n  <article class=\"sd-card\" data-ascii-card=\"\">\n    <div class=\"sd-card-head\">Tunnel<button class=\"sd-btn sd-btn-sm\" type=\"button\" aria-pressed=\"false\">Play</button></div>\n    <div class=\"sd-card-body\"><div class=\"sd-ascii\" data-piece=\"tunnel\" data-at=\"3\" role=\"img\" aria-label=\"A tunnel\"></div></div>\n  </article>\n  <article class=\"sd-card md:col-span-2\" data-ascii-card=\"\">\n    <div class=\"sd-card-head\">Spiral galaxy<button class=\"sd-btn sd-btn-sm\" type=\"button\" aria-pressed=\"false\">Play</button></div>\n    <div class=\"sd-card-body\"><div class=\"sd-ascii\" data-piece=\"spiral-galaxy\" data-at=\"3\" role=\"img\" aria-label=\"Spiral galaxy\"></div></div>\n  </article>\n  <article class=\"sd-card\" data-ascii-card=\"\">\n    <div class=\"sd-card-head\">Lorenz attractor<button class=\"sd-btn sd-btn-sm\" type=\"button\" aria-pressed=\"false\">Play</button></div>\n    <div class=\"sd-card-body\"><div class=\"sd-ascii\" data-piece=\"lorenz-attractor\" data-at=\"6\" role=\"img\" aria-label=\"Lorenz attractor\"></div></div>\n  </article>\n  <article class=\"sd-card\" data-ascii-card=\"\">\n    <div class=\"sd-card-head\">Extruded word<button class=\"sd-btn sd-btn-sm\" type=\"button\" aria-pressed=\"false\">Play</button></div>\n    <div class=\"sd-card-body\"><div class=\"sd-ascii\" data-piece=\"extruded-word-spin\" data-at=\"3\" role=\"img\" aria-label=\"A spinning extruded word\"></div></div>\n  </article>\n  <article class=\"sd-card md:col-span-2\" data-ascii-card=\"\">\n    <div class=\"sd-card-head\">Sort race<button class=\"sd-btn sd-btn-sm\" type=\"button\" aria-pressed=\"false\">Play</button></div>\n    <div class=\"sd-card-body\"><div class=\"sd-ascii\" data-piece=\"sort-race\" data-at=\"4\" role=\"img\" aria-label=\"Two sorting algorithms racing\"></div></div>\n  </article>\n  <article class=\"sd-card md:col-span-2\" data-ascii-card=\"\">\n    <div class=\"sd-card-head\">Gauge cluster<button class=\"sd-btn sd-btn-sm\" type=\"button\" aria-pressed=\"false\">Play</button></div>\n    <div class=\"sd-card-body\"><div class=\"sd-ascii\" data-piece=\"gauge-cluster\" data-at=\"3\" role=\"img\" aria-label=\"Server gauges\"></div></div>\n  </article>\n</div>",
+   "script": "import { mountAscii } from \"signal-design/ascii\";\nimport * as piece from \"ascii-magic-art/pieces/tunnel.js\";\n\nconst card = document.querySelector(\"[data-ascii-card]\");\nmountAscii(card.querySelector(\".sd-ascii\"), piece, { at: 3 });\n\n// Hover or focus plays the card, leaving holds it.\ncard.addEventListener(\"pointerenter\", () => card.setAttribute(\"aria-busy\", \"true\"));\ncard.addEventListener(\"pointerleave\", () => card.removeAttribute(\"aria-busy\"));"
+  },
+  {
+   "id": "ascii-empty-state",
+   "section": "ASCII",
+   "title": "Empty state",
+   "classes": [
+    "sd-ascii",
+    "sd-btn",
+    "sd-empty",
+    "sd-empty-title"
+   ],
+   "attributes": [],
+   "usage": "",
+   "js": "No JS needed: the HTML works with the CSS alone.",
+   "html": "<div class=\"sd-empty\">\n  <div class=\"sd-ascii\" style=\"--sd-ascii-size: 8px\" data-piece=\"sleeping-cat\" data-at=\"3\" role=\"img\" aria-label=\"A cat asleep\"></div>\n  <p class=\"sd-empty-title\">No matches</p>\n  <p>Nothing fits those filters.</p>\n  <button class=\"sd-btn\" type=\"button\">Clear filters</button>\n</div>",
+   "script": "import { mountAscii } from \"signal-design/ascii\";\nimport * as piece from \"ascii-magic-art/pieces/sleeping-cat.js\";\n\nmountAscii(document.querySelector(\".sd-empty .sd-ascii\"), piece, { at: 3 });"
+  },
+  {
+   "id": "ascii-tone",
+   "section": "ASCII",
+   "title": "Tone",
+   "classes": [
+    "sd-ascii",
+    "sd-btn",
+    "sd-btn-sm",
+    "sd-card",
+    "sd-card-body",
+    "sd-card-head"
+   ],
+   "attributes": [],
+   "usage": "",
+   "js": "No JS needed: the HTML works with the CSS alone.",
+   "html": "<div class=\"grid gap-4 md:grid-cols-2\">\n  <article class=\"sd-card\" data-ascii-card=\"\">\n    <div class=\"sd-card-head\">Failed<button class=\"sd-btn sd-btn-sm\" type=\"button\" aria-pressed=\"false\">Play</button></div>\n    <div class=\"sd-card-body\"><div class=\"sd-ascii\" data-tone=\"danger\" data-piece=\"empty-payment-failed\" data-at=\"4\" role=\"img\" aria-label=\"Payment declined\"></div></div>\n  </article>\n  <article class=\"sd-card\" data-ascii-card=\"\">\n    <div class=\"sd-card-head\">Paid<button class=\"sd-btn sd-btn-sm\" type=\"button\" aria-pressed=\"false\">Play</button></div>\n    <div class=\"sd-card-body\"><div class=\"sd-ascii\" data-tone=\"success\" data-piece=\"empty-payment-success\" data-at=\"4\" role=\"img\" aria-label=\"Payment successful\"></div></div>\n  </article>\n</div>",
+   "script": "import { mountAscii } from \"signal-design/ascii\";\nimport * as piece from \"ascii-magic-art/pieces/empty-payment-failed.js\";\n\n// data-tone paints the brightest grey of the piece with the tone.\nconst art = document.querySelector('.sd-ascii[data-tone=\"danger\"]');\nmountAscii(art, piece, { at: 4 });"
+  },
+  {
    "id": "js-copy-feedback",
    "section": "JS",
    "title": "Copy feedback",
