@@ -134,6 +134,7 @@ function unwatch(mount) {
 export function mountAscii(el, piece, { at = 0, look, speed = 1 } = {}) {
   const { meta } = piece;
   if (meta.cell === "square") throw new TypeError(`${meta.slug} is a photo piece; mountAscii draws text pieces`);
+  mounts.get(el)?.destroy();
   const draw = withLook(piece.default(), meta.palette, look ? { look } : undefined);
   const pre = document.createElement("pre");
   el.classList.add("sd-ascii");
@@ -167,6 +168,11 @@ export function mountAscii(el, piece, { at = 0, look, speed = 1 } = {}) {
   const mount = {
     el,
     visible: true,
+    destroy() {
+      cancelAnimationFrame(raf);
+      raf = 0;
+      if (mounts.get(el) === mount) unwatch(mount);
+    },
     sync() {
       const busy = forced ?? el.closest("[aria-busy]")?.getAttribute("aria-busy") === "true";
       const playing = busy && this.visible && !observers.reduced.matches && !document.hidden && !meta.still;
@@ -190,12 +196,8 @@ export function mountAscii(el, piece, { at = 0, look, speed = 1 } = {}) {
     /** Play while true, hold while false; with no argument, follow aria-busy again. */
     busy(on) {
       forced = on ?? null;
-      if (mounts.has(el)) mount.sync();
+      if (mounts.get(el) === mount) mount.sync();
     },
-    destroy() {
-      cancelAnimationFrame(raf);
-      raf = 0;
-      if (mounts.has(el)) unwatch(mount);
-    },
+    destroy: mount.destroy,
   };
 }

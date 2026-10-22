@@ -145,6 +145,25 @@ export default async function checkAscii(page, where, fail) {
     return a.until(() => a.host.querySelector(".colored pre").textContent !== before, 3000);
   });
 
+  got.mountingTwiceKeepsTheSecond = await page.evaluate(() => {
+    const a = window.__ascii;
+    a.host.removeAttribute("aria-busy");
+    const el = document.createElement("div");
+    a.host.append(el);
+    const first = a.mountAscii(el, a.torus, { at: 1 });
+    a.twice = a.mountAscii(el, a.torus, { at: 1 });
+    first.destroy();
+    first.busy(false);
+    const pre = el.querySelector("pre");
+    const before = pre.textContent;
+    a.host.setAttribute("aria-busy", "true");
+    return a.until(() => pre.textContent !== before).then((played) => {
+      a.twice.destroy();
+      el.remove();
+      return played;
+    });
+  });
+
   await page.evaluate(() => {
     const a = window.__ascii;
     a.colored.destroy();
