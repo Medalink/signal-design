@@ -574,6 +574,36 @@ Rain only draws where it shows. Inside a shell it skips the content, bars and
 dock. Elsewhere, list what covers it: `data-sd-rain-skip=".hero > *"`.
 `data-sd-rain-style="squares"` swaps glyphs for squares.
 
+## Stream scenes
+
+`sd-scene` is a 16:9 broadcast frame for OBS browser sources, laid out in
+1920×1080 units (`--sd-u` is one pixel of that frame), so the same markup reads
+as a small preview and as a full 1080p source. `data-full` fills the viewport;
+`data-clear` drops the background for a scene that sits over game capture.
+
+Pieces: `sd-scene-fade` (a flat canvas layer masked open on one side, or
+`data-side="center"`), `sd-scene-copy` > `sd-scene-kicker`, `sd-scene-title`,
+`sd-scene-count`, `sd-scene-line`; `sd-scene-bar` with `sd-scene-label`s and
+`sd-scene-bar-end`; `sd-scene-labels`; `sd-cam` > `sd-cam-feed` + `sd-cam-tag`;
+`sd-scene-goal` around an `sd-cells`; `sd-credits` > `sd-credits-roll`; and the
+alert, `sd-stream-alert` > `sd-stream-alert-body`. `sd-live` is the blinking
+live square.
+
+```js
+import { mountStream } from "signal-design/js";
+const stream = mountStream(document.querySelector(".sd-scene"));
+stream.alert({ kind: "follow", name: "nightowl_42" });
+stream.alert({ kind: "raid", name: "tidepool", detail: "Raiding with 42 viewers" });
+```
+
+Alerts queue and show one at a time, in their tone (follow is `extra`, sub
+`success`, raid `accent` and big, bits `warning`), with a burst of flat square
+particles and one shimmer across the name. `[data-sd-latest="follow"]`,
+`[data-sd-goal="sub"]` and `[data-sd-timer="300"]` / `"up"` update on their own.
+A stream scene may loop (rain, credits, the live square): it is the one place
+Signal allows it, and `prefers-reduced-motion` still stops it. See
+`showcase/stream.html`; `stream.html?scene=start` is the scene alone as a source.
+
 ## Ornaments
 
 ```html
