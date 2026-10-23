@@ -165,6 +165,10 @@ violations. Needs `playwright` (and `axe-core` for `--a11y`) installed, and
 - Building a custom dropdown, tooltip, modal or tabs. Use the native element plus Signal.
 - Wrapping the app in your own sidebar layout instead of `sd-shell`.
 
+## Agent Traffic Control
+
+Before working on an issue, follow [the ATC contributor skill](skills/atc/SKILL.md).
+
 ---
 
 # Component reference (generated)
