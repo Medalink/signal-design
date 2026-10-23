@@ -5,18 +5,36 @@ mountBar();
 init({ scrollbars: savedScrollbars() });
 
 const feed = document.querySelector("[data-feed]");
+const jump = document.querySelector("[data-jump]");
 const form = document.querySelector("[data-composer]");
 const input = form.querySelector("textarea");
-const chips = form.querySelector("[data-chips]");
 let lastTarget = null;
 let replyTo = null;
 
 const escape = (text) => text.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const now = () => new Date().toTimeString().slice(0, 5);
+const author = (message) => {
+  for (let m = message; m; m = m.previousElementSibling) {
+    const b = m.querySelector?.(".sd-message-author");
+    if (b) return { name: b.textContent, who: m.style.getPropertyValue("--who") };
+  }
+  return { name: "message", who: "" };
+};
 
 feed.scrollTop = feed.scrollHeight;
 
-/* Remember which message a menu or picker was opened from. */
+/* Jump to present: shown while the feed is scrolled away from the newest message. */
+function syncJump() {
+  const away = feed.scrollHeight - feed.scrollTop - feed.clientHeight > Math.max(120, feed.clientHeight / 5);
+  if (away === !jump.hidden) return;
+  jump.hidden = !away;
+  if (away) jump.setAttribute("data-new", "");
+}
+feed.addEventListener("scroll", syncJump, { passive: true });
+jump.addEventListener("click", () => feed.scrollTo({ top: feed.scrollHeight, behavior: "smooth" }));
+jump.addEventListener("animationend", () => jump.removeAttribute("data-new"));
+
+/* Remember which message a menu or picker was opened from, and hold its hover while the menu is open. */
 document.addEventListener("click", (event) => {
   const message = event.target.closest(".sd-message");
   if (message) lastTarget = message;
@@ -24,28 +42,64 @@ document.addEventListener("click", (event) => {
 document.addEventListener("sd:contextmenu", (event) => {
   lastTarget = event.detail.target;
 });
+for (const id of ["msg-menu", "emoji"]) {
+  document.getElementById(id).addEventListener("toggle", (event) => {
+    const open = event.newState === "open";
+    lastTarget?.toggleAttribute("data-hover", open);
+    lastTarget?.querySelector(`[popovertarget="${id}"]`)?.setAttribute("aria-expanded", String(open));
+  });
+}
 
-/* Reply: show a chip in the composer. */
+/* Reply: a bar across the top of the composer, and aria-current on the message. */
 function setReply(message) {
-  const author = message.querySelector(".sd-message-head b")?.textContent ?? message.previousElementSibling?.querySelector(".sd-message-head b")?.textContent ?? "message";
-  const text = message.querySelector(".sd-message-text")?.textContent.trim() ?? "";
-  replyTo = { author, text };
-  chips.innerHTML = `<span class="sd-chip"><b>Replying to</b> ${escape(author)} <button type="button" aria-label="Cancel reply" data-cancel-reply>×</button></span>`;
+  document.querySelector('.sd-message[aria-current="true"]')?.removeAttribute("aria-current");
+  const { name, who } = author(message);
+  const text = message.querySelector(".sd-message-text")?.childNodes;
+  const quote = [...(text ?? [])].filter((n) => !n.classList?.contains("sd-message-author") && !n.classList?.contains("sd-message-meta")).map((n) => n.textContent).join("").trim();
+  replyTo = { name, who, text: quote };
+  message.setAttribute("aria-current", "true");
+  form.querySelector(".sd-composer-reply")?.remove();
+  form.insertAdjacentHTML("afterbegin", `<div class="sd-composer-reply"><svg><use href="#i-reply2"/></svg><span>Replying to <b style="--who:${who}">${escape(name)}</b> · ${escape(quote)}</span><button type="button" class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="Cancel reply" data-cancel-reply><svg width="14" height="14"><use href="#i-close"/></svg></button></div>`);
   input.focus();
 }
-document.addEventListener("click", (event) => {
-  if (event.target.closest("[data-reply]")) setReply(event.target.closest(".sd-message"));
-  if (event.target.closest("[data-menu-reply]") && lastTarget) setReply(lastTarget);
-  if (event.target.closest("[data-cancel-reply]")) {
-    replyTo = null;
-    chips.innerHTML = "";
+function clearReply() {
+  replyTo = null;
+  form.querySelector(".sd-composer-reply")?.remove();
+  document.querySelector('.sd-message[aria-current="true"]')?.removeAttribute("aria-current");
+}
+
+/* Reactions from the action bar's quick emoji or the picker. */
+function react(message, emoji) {
+  let bar = message.querySelector(".sd-reactions");
+  if (!bar) {
+    message.querySelector(".sd-message-body").insertAdjacentHTML("beforeend", '<div class="sd-reactions"><button class="sd-reactions-add" aria-label="Add reaction" popovertarget="emoji"><svg><use href="#i-react"/></svg></button></div>');
+    bar = message.querySelector(".sd-reactions");
   }
-  if (event.target.closest("[data-dismiss]")) event.target.closest(".sd-banner").remove();
+  const existing = [...bar.querySelectorAll("[data-sd-reaction]")].find((b) => b.querySelector("span").textContent === emoji);
+  if (existing) return existing.click();
+  bar.querySelector(".sd-reactions-add").insertAdjacentHTML("beforebegin", `<button data-sd-reaction aria-pressed="true" data-new><span>${emoji}</span><b>1</b></button>`);
+}
+
+document.addEventListener("click", (event) => {
+  const quick = event.target.closest(".sd-message-actions [data-emoji]");
+  if (quick) react(quick.closest(".sd-message"), quick.textContent);
+  if (event.target.closest("[data-reply]")) setReply(event.target.closest(".sd-message"));
+  if (event.target.closest("[data-menu-reply]") && lastTarget) {
+    document.getElementById("msg-menu").hidePopover();
+    setReply(lastTarget);
+  }
+  if (event.target.closest("[data-cancel-reply]")) clearReply();
   if (event.target.closest("[data-retry]")) {
     const message = event.target.closest(".sd-message");
     message.removeAttribute("data-failed");
     message.querySelector(".sd-message-status").remove();
     toast("Sent", { tone: "success" });
+  }
+  const head = event.target.closest("[data-roster-toggle]");
+  if (head) {
+    const open = head.getAttribute("aria-expanded") !== "true";
+    head.setAttribute("aria-expanded", String(open));
+    head.closest(".sd-roster-group").querySelector("ul").hidden = !open;
   }
   const tab = event.target.closest("[data-show-tab]");
   if (tab) {
@@ -53,50 +107,68 @@ document.addEventListener("click", (event) => {
     document.getElementById(`t-${tab.dataset.showTab}`).click();
   }
 });
+document.addEventListener("sd:reaction", (event) => {
+  const chip = event.target;
+  if (chip.querySelector("b")?.textContent === "0") chip.remove();
+});
 
-/* Emoji picker: add a reaction to the message it came from, or insert into the composer. */
-document.querySelector("[data-emoji]").addEventListener("click", (event) => {
-  const option = event.target.closest('[role="option"]');
+/* Emoji picker: categories, search, the name under the pointer, and the pick. */
+const picker = document.getElementById("emoji");
+const scroll = picker.querySelector("[data-emoji]");
+const foot = picker.querySelector("[data-emoji-foot]");
+const search = picker.querySelector("[data-emoji-search]");
+picker.addEventListener("pointerover", (event) => {
+  const option = event.target.closest(".sd-emoji-grid > button");
+  if (!option) return;
+  foot.children[0].textContent = option.textContent;
+  foot.children[1].textContent = option.getAttribute("aria-label");
+  foot.children[2].textContent = "";
+});
+picker.addEventListener("click", (event) => {
+  const cat = event.target.closest("[data-emoji-cat]");
+  if (cat) {
+    for (const b of picker.querySelectorAll("[data-emoji-cat]")) b.setAttribute("aria-pressed", String(b === cat));
+    scroll.scrollTo({ top: document.getElementById(`emoji-${cat.dataset.emojiCat}`).offsetTop - scroll.offsetTop });
+    return;
+  }
+  const option = event.target.closest(".sd-emoji-grid > button");
   if (!option) return;
   const emoji = option.textContent;
-  document.getElementById("emoji").hidePopover();
+  picker.hidePopover();
   const fromComposer = document.activeElement?.closest?.(".sd-composer") || !lastTarget;
   if (fromComposer) {
     input.setRangeText(emoji, input.selectionStart, input.selectionEnd, "end");
     input.focus();
     return;
   }
-  let bar = lastTarget.querySelector(".sd-reactions");
-  if (!bar) {
-    bar = document.createElement("div");
-    bar.className = "sd-reactions";
-    lastTarget.querySelector(".sd-message-body").append(bar);
-  }
-  const existing = [...bar.querySelectorAll("[data-sd-reaction]")].find((b) => b.firstChild.textContent.trim() === emoji);
-  if (existing) existing.click();
-  else bar.insertAdjacentHTML("afterbegin", `<button data-sd-reaction aria-pressed="true">${emoji} <b>1</b></button>`);
+  react(lastTarget, emoji);
+});
+search.addEventListener("input", () => {
+  const q = search.value.trim();
+  for (const b of picker.querySelectorAll(".sd-emoji-grid > button")) b.hidden = q !== "" && !b.textContent.includes(q);
 });
 
-/* Send: append a message, grouped if the last one was ours. */
+/* Send: append a message, grouped if the last one was ours within five minutes. */
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   const text = input.value.trim();
   if (!text) return;
   const last = [...feed.querySelectorAll(".sd-message")].at(-1);
-  const grouped = last && !replyTo && (last.querySelector(".sd-message-head b")?.textContent === "Jane" || ("grouped" in last.dataset && last.previousElementSibling?.querySelector?.(".sd-message-head b")?.textContent === "Jane"));
+  const grouped = last && !replyTo && author(last).name === "Jane";
   const body = escape(text).replace(/@(\w+)/g, '<span class="sd-mention">@$1</span>');
-  const reply = replyTo ? `<div class="sd-reply"><b>${escape(replyTo.author)}</b><span>${escape(replyTo.text)}</span></div>` : "";
+  const ref = replyTo ? `<span class="sd-message-ref-mark"><svg><use href="#i-reply2"/></svg></span><button class="sd-message-ref"><b style="--who:${replyTo.who}">${escape(replyTo.name)}</b><span>${escape(replyTo.text)}</span></button>` : "";
+  const actions = feed.querySelector(".sd-message-actions").outerHTML;
   feed.insertAdjacentHTML(
     "beforeend",
     grouped
-      ? `<article class="sd-message" data-grouped data-pending data-sd-contextmenu="msg-menu"><time>${now()}</time><div class="sd-message-body"><div class="sd-message-text">${body}</div></div></article>`
-      : `<article class="sd-message" data-pending data-sd-contextmenu="msg-menu"><span class="sd-avatar" data-tone="success">JD</span><div class="sd-message-body"><header class="sd-message-head"><b>Jane</b><time>${now()}</time></header>${reply}<div class="sd-message-text">${body}</div></div></article>`,
+      ? `<article class="sd-message" data-own data-grouped data-pending data-new data-sd-contextmenu="msg-menu" title="${now()}" style="--who: var(--sd-success)"><div class="sd-message-body"><div class="sd-message-text">${body}</div></div>${actions}</article>`
+      : `<article class="sd-message" data-own${replyTo ? " data-reply" : ""} data-pending data-new data-sd-contextmenu="msg-menu" style="--who: var(--sd-success)">${ref}<time class="sd-message-time">${now()}</time><div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Jane</b>${body}</div></div>${actions}</article>`,
   );
   const added = feed.lastElementChild;
+  added.addEventListener("animationend", () => added.removeAttribute("data-new"), { once: true });
   setTimeout(() => added.removeAttribute("data-pending"), 600);
   input.value = "";
   input.dispatchEvent(new Event("input", { bubbles: true }));
-  replyTo = null;
-  chips.innerHTML = "";
+  clearReply();
   feed.scrollTop = feed.scrollHeight;
 });

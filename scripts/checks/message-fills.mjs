@@ -1,5 +1,5 @@
 export const page = "conversation";
-/** Message fills: mention and current rows read against both panes in every theme, differ from each other and from the own tint, and keep 4.5:1 for their secondary text. */
+/** Message fills: mention and current rows read against both panes in every theme, differ from each other, and keep 4.5:1 for their secondary text. */
 export default async function checkMessageFills(page, where, fail) {
   const got = await page.evaluate(() => {
     const block = document.getElementById("conversation-message-edges-and-selection");
@@ -43,7 +43,6 @@ export default async function checkMessageFills(page, where, fail) {
           m.remove();
           return res;
         };
-        const own = fill({ "data-own": "" });
         const mention = fill({ "data-mention": "" });
         const current = fill({ "aria-current": "true" });
         const failedCurrent = fill({ "data-failed": "", "aria-current": "true" });
@@ -54,7 +53,6 @@ export default async function checkMessageFills(page, where, fail) {
         out[`${key} mention vs pane`] = ratio(mention.fill, base) >= 1.1;
         out[`${key} current vs pane`] = ratio(current.fill, base) >= 1.15;
         out[`${key} current vs mention`] = ratio(current.fill, mention.fill) >= 1.04;
-        out[`${key} current vs own`] = ratio(current.fill, own.fill) >= 1.1;
         out[`${key} text on mention`] = ratio(mention.faint, mention.fill) >= 4.5;
         out[`${key} text on current`] = ratio(current.faint, current.fill) >= 4.5;
       }

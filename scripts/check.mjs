@@ -714,10 +714,23 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
     if (!(await page.evaluate(() => document.getElementById("msg-menu").matches(":popover-open")))) fail(where, "context menu did not open");
     await page.keyboard.press("Escape");
     await page.locator(".sd-message").first().hover();
-    await page.locator('.sd-message >> nth=0 >> [aria-label="React"]').click();
-    await page.locator('[data-emoji] [role="option"]', { hasText: "🎉" }).click();
+    await page.locator('.sd-message >> nth=0 >> .sd-message-actions [aria-label="Add reaction"]').click();
+    await page.locator("#emoji .sd-emoji-grid > button", { hasText: "🎉" }).click();
     const party = await page.evaluate(() => [...document.querySelectorAll(".sd-message")][0].querySelector(".sd-reactions").textContent.includes("🎉"));
     if (!party) fail(where, "emoji picker did not add a reaction");
+    await page.locator(".sd-message").nth(2).hover();
+    await page.locator('.sd-message >> nth=2 >> .sd-message-actions [aria-label="React 🔥"]').click();
+    const fire = await page.evaluate(() => [...document.querySelectorAll(".sd-message")][2].querySelector(".sd-reactions")?.textContent.includes("🔥"));
+    if (!fire) fail(where, "quick reaction did not add a reaction");
+    await page.locator(".sd-message").nth(2).hover();
+    await page.locator('.sd-message >> nth=2 >> .sd-message-actions [aria-label="Reply"]').click();
+    const reply = await page.evaluate(() => ({ bar: document.querySelector(".sd-composer-reply b")?.textContent, current: document.querySelectorAll('.sd-message[aria-current="true"]').length }));
+    if (reply.bar !== "Sam" || reply.current !== 1) fail(where, `reply bar ${JSON.stringify(reply)}`);
+    await page.locator("[data-cancel-reply]").click();
+    await page.evaluate(() => { const f = document.querySelector("[data-feed]"); f.scrollTop = 0; f.dispatchEvent(new Event("scroll")); });
+    if (await page.locator("[data-jump]").isHidden()) fail(where, "jump to present did not show when scrolled up");
+    await page.locator("[data-jump] button").click();
+    await page.waitForFunction(() => document.querySelector("[data-jump]").hidden, null, { timeout: 2000 }).catch(() => fail(where, "jump to present did not return to the newest message"));
   }
 
   const library = LIBRARY.find((p) => keyOf(p) === pageName);

@@ -1,72 +1,132 @@
 @layer components {
   /*
    * Message: one entry in a conversation, a comment thread or an activity log.
+   * A 64px time column on the left, then the text. The author's name opens
+   * the first line and the text follows it; wrapped lines hang at the text.
    *   <article class="sd-message">
-   *     <span class="sd-avatar">AL</span>
+   *     <time class="sd-message-time" datetime="…">9:41 PM</time>
    *     <div class="sd-message-body">
-   *       <header class="sd-message-head"><b>Alex</b><time>09:42</time></header>
-   *       <div class="sd-message-text">…</div>
+   *       <div class="sd-message-text"><b class="sd-message-author">Maya</b>So my dog…
+   *         <span class="sd-message-meta">…</span></div>
    *     </div>
-   *     <div class="sd-message-actions">…buttons…</div>
+   *     <div class="sd-message-actions" role="toolbar">…</div>
    *   </article>
-   * Variants: data-grouped (a follow-up from the same author: no avatar or
-   * head), data-mention (mentions the viewer), data-pending, data-failed,
-   * aria-current (being replied to or jumped to), data-own (the viewer's own
-   * message: a light tint), data-selected (picked for a bulk action).
+   * Variants: data-grouped (a follow-up from the same author within a few
+   * minutes: no time, no name), data-mention (mentions the viewer),
+   * data-pending, data-failed, aria-current (being replied to or jumped to),
+   * data-own (the viewer's own message: a grey edge), data-selected (picked
+   * for a bulk action), data-reply (opens with a quoted line, sd-message-ref),
+   * data-editing (the text is an sd-message-edit field), data-hover (an app
+   * holding the hover state, e.g. while the row's menu is open).
    * --edge colors the start edge per author or role (user data, so a custom
    * property, not a tone). State edges win over it, in this order:
-   * failed > current > selected > mention > --edge.
+   * failed > current > selected > mention > own > --edge.
+   * --who is a person's name color (user data too). Names (the author, an
+   * @mention, a quoted author, the reply bar) take it, and fall back to
+   * extra: in a conversation every name is colored. Name text mixes 30% of
+   * --sd-fg into it, so a name keeps 4.5:1 on the hover, current and
+   * mention fills.
+   * --sd-message-line is the text's line height. The time and the column
+   * icons use the same line box, so they center on the first line.
    */
   .sd-message {
+    --sd-message-line: 24px;
     position: relative;
     display: grid;
-    grid-template-columns: 36px minmax(0, 1fr);
+    grid-template-columns: 64px minmax(0, 1fr);
     column-gap: 12px;
-    padding: 8px 16px 8px 14px;
+    padding: 4px 16px 4px 14px;
     border-inline-start: 2px solid var(--edge, transparent);
   }
-  .sd-message[data-own] {
-    background: color-mix(in srgb, var(--sd-raised) 50%, transparent);
+  .sd-message[data-own]:not([data-mention], [data-selected], [data-failed], [data-editing], [aria-current]:not([aria-current="false"])) {
+    border-inline-start-color: var(--sd-line-strong);
   }
   .sd-message:hover,
-  .sd-message:focus-within {
+  .sd-message:focus-within,
+  .sd-message[data-hover] {
     background: var(--sd-raised);
   }
-  .sd-message > .sd-avatar {
-    --sd-avatar-size: 36px;
-    font-size: 13px;
-    margin-top: 2px;
+  .sd-message-time {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+    justify-self: end;
+    color: var(--sd-fg-faint);
+    font-family: var(--sd-font-mono);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    line-height: var(--sd-message-line);
+    white-space: nowrap;
+  }
+  /* A follow-up shows no time; the row's title can carry it. */
+  .sd-message[data-grouped] > .sd-message-time {
+    display: none;
   }
   .sd-message-body {
     grid-column: 2;
+    align-self: start;
     display: grid;
     grid-template-columns: minmax(0, 1fr); /* an implicit auto column would grow to a long author name and push the row off-screen */
-    gap: 4px;
+    gap: 3px;
     min-width: 0;
   }
+  .sd-message-text {
+    color: var(--sd-fg);
+    line-height: var(--sd-message-line);
+    overflow-wrap: anywhere;
+  }
+  .sd-message-text > :where(p, ul, ol, pre, blockquote):not(:last-child) {
+    margin-block-end: 0.5em;
+  }
+  /* The author leads the first line in the name color. A clickable author is
+     a button or a link inside it. */
+  .sd-message-author {
+    margin-inline-end: 8px;
+    color: color-mix(in srgb, var(--who, var(--sd-extra)) 70%, var(--sd-fg));
+    font-weight: var(--font-weight-semibold);
+  }
+  :is(.sd-message-author, .sd-message-head > b, .sd-message-ref > b) > :is(button, a) {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  :is(.sd-message-author, .sd-message-head > b, .sd-message-ref > b) > :is(button, a):hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  /* Head: the name on its own line, for rows that need one (while editing,
+     or a thread with long names). Status follows the name. */
   .sd-message-head {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 4px 10px;
-    color: var(--sd-fg-subtle);
-    font-size: var(--text-sm);
+    gap: 2px 8px;
+    color: var(--sd-fg-faint);
+    font-size: 13px;
+    line-height: var(--sd-message-line);
   }
   .sd-message-head > b {
     min-width: 0;
-    max-width: 60%; /* a long name leaves room for the badge and the time */
+    max-width: 60%; /* a long name leaves room for the tags and the status */
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: var(--sd-fg);
+    color: color-mix(in srgb, var(--who, var(--sd-extra)) 70%, var(--sd-fg));
     font-size: var(--text-base);
     font-weight: var(--font-weight-semibold);
   }
   /* An author that is a button or a link: <b> clips an atomic inline-block
      without an ellipsis, so the control itself becomes the truncating box. */
   .sd-message-head > b > :is(button, a),
-  .sd-reply > b > :is(button, a) {
+  .sd-reply > b > :is(button, a),
+  .sd-message-ref > b > :is(button, a) {
     display: block;
+    min-height: 24px; /* a 24px target */
+    line-height: 24px;
     min-width: 0;
     max-width: 100%;
     overflow: hidden;
@@ -76,45 +136,50 @@
   .sd-message-head time {
     font-variant-numeric: tabular-nums;
   }
-  .sd-message-text {
-    color: var(--sd-fg);
-    line-height: 1.6;
-    overflow-wrap: anywhere;
+  /* Tags (pinned, a role) and status: faint, with icons on the cap height. */
+  .sd-message-tag {
+    margin-inline-end: 8px;
+    color: var(--sd-fg-subtle);
+    font-size: 13px;
   }
-  .sd-message-text > :where(p, ul, ol, pre, blockquote):not(:last-child) {
-    margin-block-end: 0.5em;
+  .sd-message-tag[data-tone] {
+    color: var(--tone);
   }
-  /* An @mention inside text. */
+  .sd-message-meta {
+    display: inline;
+    margin-inline-start: 8px;
+    color: var(--sd-fg-faint);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .sd-message-meta > * + * {
+    margin-inline-start: 8px;
+  }
+  .sd-message-meta [data-state="read"] {
+    color: var(--sd-fg-muted);
+  }
+  .sd-message-timer {
+    color: var(--sd-warning);
+  }
+  :is(.sd-message-tag, .sd-message-meta) svg {
+    display: inline-block;
+    width: 1.5cap;
+    height: 1.5cap;
+    margin-inline-end: 3px;
+    vertical-align: -0.25cap;
+  }
+  .sd-message-tag:not(:has(> :not(svg))) > svg:only-child {
+    margin-inline-end: 0;
+  }
+  /* An @mention inside text: the person's name color, no fill. */
   .sd-mention {
-    padding: 0 3px;
-    background: var(--sd-raised);
-    color: var(--sd-fg);
+    color: color-mix(in srgb, var(--who, var(--sd-extra)) 70%, var(--sd-fg));
     font-weight: var(--font-weight-semibold);
   }
   .sd-message-edited {
     color: var(--sd-fg-faint);
-    font-size: var(--text-sm);
-  }
-  .sd-message[data-grouped] {
-    padding-block-start: 2px;
-  }
-  .sd-message[data-grouped] > .sd-avatar,
-  .sd-message[data-grouped] .sd-message-head {
-    display: none;
-  }
-  /* Grouped rows show their time in the avatar column on hover. */
-  .sd-message[data-grouped] > time {
-    grid-column: 1;
-    grid-row: 1;
-    align-self: start;
-    padding-top: 3px;
-    color: var(--sd-fg-faint);
-    font-size: 11px;
-    text-align: center;
-    opacity: 0;
-  }
-  .sd-message[data-grouped]:hover > time {
-    opacity: 1;
+    font-size: 13px;
   }
   /* Mention and current have their own fills (--sd-mention-fill, --sd-current-fill),
      lighter than --sd-raised and visible on a surface pane. Faint text is lifted
@@ -128,10 +193,14 @@
     border-inline-start-color: var(--sd-accent);
     background: var(--sd-raised);
   }
-  .sd-message[aria-current]:not([aria-current="false"]) {
+  .sd-message[aria-current]:not([aria-current="false"]),
+  .sd-message[data-editing] {
     --sd-fg-faint: var(--sd-fg-subtle);
     border-inline-start-color: var(--sd-fg-subtle);
     background: var(--sd-current-fill);
+  }
+  .sd-message[data-editing] {
+    border-inline-start-color: var(--sd-fg);
   }
   .sd-message[data-pending] .sd-message-text {
     opacity: 0.55;
@@ -156,43 +225,100 @@
   .sd-message[data-failed] .sd-message-status {
     color: var(--sd-danger);
   }
-
-  /* Hover toolbar: small square buttons in the top-right corner. */
-  .sd-message-actions {
-    position: absolute;
-    top: -14px;
-    right: 14px;
-    display: none;
-    border: 1px solid var(--sd-line-strong);
-    background: var(--sd-overlay);
+  /* Embeds in a message share one width and sit 3px under the text. */
+  .sd-message-body > :is(.sd-file, .sd-link-card, .sd-reactions, .sd-poll) {
+    margin-top: 3px;
   }
-  .sd-message:hover > .sd-message-actions,
-  .sd-message:focus-within > .sd-message-actions {
-    display: flex;
+  .sd-message-body > :is(.sd-file, .sd-link-card, .sd-poll) {
+    width: 100%;
+    max-width: 30rem;
   }
-  .sd-message-actions > button {
+  /* Cards in the feed take the soft hairline; hover restores the strong one. */
+  .sd-message-body :is(.sd-file, .sd-file-type, .sd-poll) {
+    border-color: var(--sd-line);
+  }
+  .sd-message-body :is(.sd-file, .sd-poll):hover {
+    border-color: var(--sd-line-strong);
+  }
+  .sd-file-dl {
     display: grid;
     place-items: center;
-    width: 30px;
-    height: 28px;
-    border: 0;
-    background: none;
+    width: 32px;
+    height: 32px;
+    margin-inline-start: auto;
     color: var(--sd-fg-subtle);
     cursor: pointer;
+    transition: background-color 120ms, color 120ms;
   }
-  .sd-message-actions > button:hover {
+  .sd-file-dl:hover {
     background: var(--sd-raised);
     color: var(--sd-fg);
   }
-  .sd-message-actions svg {
-    width: 15px;
-    height: 15px;
-    width: 1.5cap;
-    height: 1.5cap;
-    max-width: none; /* the base max-width: 100% collapses icons in grid-centered buttons */
-  }
 
-  /* Reply preview: a quoted line above a message or in the composer. */
+  /*
+   * Reply: the quoted line above a message. Its mark sits in the time column,
+   * the author keeps their whole name and the quote truncates.
+   *   <article class="sd-message" data-reply>
+   *     <span class="sd-message-ref-mark"><svg/></span>
+   *     <button class="sd-message-ref"><b>Kai</b><span>Check out this sunset…</span></button>
+   *     <time class="sd-message-time">…</time> <div class="sd-message-body">…</div>
+   *   </article>
+   */
+  .sd-message-ref {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    margin-bottom: 2px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--sd-fg-subtle);
+    font: inherit;
+    font-size: 13px;
+    text-align: start;
+    cursor: pointer;
+  }
+  .sd-message-ref > b {
+    flex: 0 0 auto; /* the name keeps its width; the quote truncates */
+    max-width: 40%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: color-mix(in srgb, var(--who, var(--sd-extra)) 70%, var(--sd-fg));
+    font-weight: var(--font-weight-semibold);
+  }
+  .sd-message-ref > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sd-message-ref:hover {
+    color: var(--sd-fg-muted);
+  }
+  .sd-message-ref-mark {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: end;
+    align-self: center;
+    margin-bottom: 2px;
+    color: var(--sd-fg-faint);
+  }
+  .sd-message-ref-mark > svg {
+    display: block;
+    width: 14px;
+    height: 14px;
+  }
+  .sd-message:has(.sd-message-ref:hover) .sd-message-ref-mark {
+    color: var(--sd-fg-muted);
+  }
+  .sd-message[data-reply] > :not(.sd-message-ref, .sd-message-ref-mark, .sd-message-actions) {
+    grid-row: 2;
+  }
+  /* The older quote block, for a reply inside a body or a chip. */
   .sd-reply {
     display: flex;
     align-items: center;
@@ -204,43 +330,398 @@
     font-size: var(--text-sm);
   }
   .sd-reply > b {
-    flex: 0 1 auto;
+    flex: 0 0 auto; /* the name keeps its width; the quote truncates */
     min-width: 0;
-    max-width: 40%; /* the quoted text keeps the rest of the line */
+    max-width: 40%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: var(--sd-fg-muted);
+    color: color-mix(in srgb, var(--who, var(--sd-extra)) 70%, var(--sd-fg));
     font-weight: var(--font-weight-semibold);
   }
   .sd-reply > span {
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  /* System event: a quiet line between messages, e.g. "Alex joined". */
-  .sd-event {
+  /*
+   * Action bar: quick reactions first, then the likeliest actions, then More.
+   * 32px targets on a 3px inset; rules split reactions, actions and the
+   * overflow. Revealed by opacity, so Tab still reaches it. A button with
+   * data-key shows its action and key in a tip.
+   *   <div class="sd-message-actions" role="toolbar" aria-label="Message actions">
+   *     <button data-emoji aria-label="React 👍">👍</button>…<hr>
+   *     <button aria-label="Add reaction" data-key="E"><svg/></button>
+   *     <button aria-label="Reply" data-key="R"><svg/></button><hr>
+   *     <button aria-label="More" aria-haspopup="menu" aria-expanded="false"><svg/></button>
+   *   </div>
+   */
+  .sd-message-actions {
+    position: absolute;
+    top: -20px;
+    right: 16px;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    padding: 3px;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-overlay);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(2px);
+    transition: opacity 120ms var(--ease-out), transform 120ms var(--ease-out);
+  }
+  .sd-message:is(:hover, :focus-within, [data-hover]) > .sd-message-actions {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+  .sd-message-actions > button {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--sd-fg-muted);
+    cursor: pointer;
+    transition: background-color 120ms, color 120ms;
+  }
+  .sd-message-actions > button:is(:hover, :focus-visible),
+  .sd-message-actions > button[aria-expanded="true"] {
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+  .sd-message-actions > button:focus-visible {
+    outline: 1px solid var(--sd-fg-subtle);
+    outline-offset: -1px;
+  }
+  .sd-message-actions > button[data-tone="danger"]:hover {
+    color: var(--sd-danger);
+  }
+  .sd-message-actions > button[data-emoji] {
+    font-size: 18px;
+    line-height: 1;
+  }
+  .sd-message-actions svg {
+    width: 17px;
+    height: 17px;
+    max-width: none; /* the base max-width: 100% collapses icons in grid-centered buttons */
+  }
+  .sd-message-actions > hr {
+    flex: none;
+    width: 1px;
+    height: 18px;
+    margin: 0 4px;
+    border: 0;
+    background: var(--sd-line-strong);
+  }
+  .sd-message-actions > button[data-key]::after {
+    content: attr(aria-label) "  " attr(data-key);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    translate: -50% 0;
+    padding: 4px 8px;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-overlay);
+    color: var(--sd-fg);
+    font-size: 12px;
+    white-space: pre;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 120ms 300ms;
+  }
+  .sd-message-actions > button[data-key]:is(:hover, :focus-visible)::after {
+    opacity: 1;
+  }
+  .sd-message-actions > button[aria-expanded="true"]::after {
+    display: none;
+  }
+
+  /*
+   * Message menu (More): dense rows with an icon, a label and its key.
+   * Destructive actions sit last, after a rule, in danger. Open it flush
+   * under the action bar at the bar's width.
+   *   <div popover class="sd-popover sd-message-menu"><div class="sd-menu" role="menu">
+   *     <button role="menuitem"><svg/>Reply<kbd>R</kbd></button>…
+   */
+  .sd-message-menu {
+    width: 240px;
+    min-width: 0;
+    padding: 4px;
+  }
+  .sd-message-menu .sd-menu {
+    min-width: 0;
+  }
+  .sd-message-menu .sd-menu [role="menuitem"] {
+    gap: 10px;
+    min-height: 34px;
+    padding: 0 8px;
+    border: 0;
+    color: var(--sd-fg-muted);
+    font-size: 14px;
+  }
+  .sd-message-menu .sd-menu [role="menuitem"]:is(:hover, :focus-visible) {
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+  .sd-message-menu .sd-menu [role="menuitem"] > svg {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    color: var(--sd-fg-faint);
+  }
+  .sd-message-menu .sd-menu [role="menuitem"]:is(:hover, :focus-visible) > svg {
+    color: var(--sd-fg-muted);
+  }
+  .sd-message-menu .sd-menu [role="menuitem"] > kbd {
+    margin-inline-start: auto;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--sd-fg-faint);
+    font-family: var(--sd-font-mono);
+    font-size: 12px;
+  }
+  .sd-message-menu .sd-menu [role="menuitem"][data-tone="danger"],
+  .sd-message-menu .sd-menu [role="menuitem"][data-tone="danger"] > svg {
+    color: var(--sd-danger);
+  }
+  .sd-message-menu .sd-menu [role="menuitem"][data-tone="danger"]:hover {
+    background: color-mix(in srgb, var(--sd-danger) 12%, transparent);
+  }
+  .sd-message-menu .sd-menu-sep {
+    margin: 4px 0;
+    background: var(--sd-line);
+  }
+
+  /*
+   * Emoji picker: search, a category strip in grey (the current one in
+   * color), an 8-column grid, and a footer that names the emoji under the
+   * pointer.
+   *   <div popover class="sd-popover sd-emoji-picker" role="dialog">
+   *     <div class="sd-emoji-search"><svg/><input type="search"></div>
+   *     <div class="sd-emoji-cats"><button aria-pressed="true">😀</button>…</div>
+   *     <div class="sd-emoji-scroll"><h4>Smileys</h4><div class="sd-emoji-grid"><button>😀</button>…</div></div>
+   *     <div class="sd-emoji-foot"><span>👍</span><span>thumbs up</span><code>:+1:</code></div>
+   *   </div>
+   */
+  .sd-emoji-picker {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    width: 344px;
+    height: 392px;
+    max-height: min(392px, 70dvh);
+    padding: 0;
+    overflow: hidden;
+  }
+  .sd-emoji-search {
+    position: relative;
+    padding: 8px;
+    border-bottom: 1px solid var(--sd-line);
+  }
+  .sd-emoji-search > svg {
+    position: absolute;
+    top: 50%;
+    left: 18px;
+    width: 15px;
+    height: 15px;
+    translate: 0 -50%;
+    color: var(--sd-fg-faint);
+    pointer-events: none;
+  }
+  .sd-emoji-search > input {
+    width: 100%;
+    height: 34px;
+    padding: 0 10px 0 32px;
+    font-size: 14px;
+  }
+  .sd-emoji-cats {
+    display: flex;
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--sd-line);
+  }
+  .sd-emoji-cats > button {
+    flex: 1;
+    height: 32px;
+    border: 0;
+    border-bottom: 1px solid transparent;
+    background: none;
+    font-size: 16px;
+    line-height: 1;
+    filter: grayscale(1);
+    opacity: 0.55;
+    cursor: pointer;
+    transition: opacity 120ms, filter 120ms;
+  }
+  .sd-emoji-cats > button:hover {
+    opacity: 1;
+  }
+  .sd-emoji-cats > button[aria-pressed="true"] {
+    border-bottom-color: var(--sd-fg);
+    filter: none;
+    opacity: 1;
+  }
+  .sd-emoji-scroll {
+    padding: 0 8px 8px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+  .sd-emoji-scroll > :is(h2, h3, h4) {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    margin: 0;
+    padding: 10px 2px 6px;
+    background: var(--sd-overlay);
+    color: var(--sd-fg-subtle);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+  .sd-emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+  }
+  .sd-emoji-grid > button {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .sd-emoji-grid > button:is(:hover, :focus-visible) {
+    background: var(--sd-raised);
+    outline: none;
+  }
+  .sd-emoji-grid > button[aria-pressed="true"] {
+    outline: 1px solid var(--sd-line-strong);
+    outline-offset: -1px;
+  }
+  .sd-emoji-empty {
+    padding: 24px 4px;
+    color: var(--sd-fg-faint);
+    font-size: 13px;
+    text-align: center;
+  }
+  .sd-emoji-foot {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 6px 16px 6px 62px;
+    height: 44px;
+    padding: 0 12px;
+    border-top: 1px solid var(--sd-line);
     color: var(--sd-fg-subtle);
-    font-size: var(--text-sm);
+    font-size: 13px;
   }
-  .sd-event > b {
+  .sd-emoji-foot > span:first-child {
+    font-size: 24px;
+    line-height: 1;
+  }
+  .sd-emoji-foot > code {
+    margin-inline-start: auto;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--sd-fg-faint);
+    font-family: var(--sd-font-mono);
+    font-size: 12px;
+  }
+
+  /* Day and event lines. The day sticks to the top of the scroller over
+     the rows (--sd-feed-bg, the pane color); an event's icon sits in the
+     time column and its text on the text line.
+     <div class="sd-divider sd-feed-day">Today</div>
+     <div class="sd-event"><svg/><span><b>Leo</b> joined the group<time>10:10 PM</time></span></div> */
+  .sd-feed-day {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    margin: 0;
+    padding: 13px 16px 10px;
+    background: var(--sd-feed-bg, var(--sd-surface));
+  }
+  .sd-event {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr);
+    column-gap: 12px;
+    align-items: center;
+    padding: 4px 16px;
+    color: var(--sd-fg-subtle);
+    font-size: 13px;
+    line-height: var(--sd-message-line, 24px);
+  }
+  .sd-event > :is(svg, .sd-dot) {
+    justify-self: end;
+    width: 16px;
+    height: 16px;
+    color: var(--sd-fg-faint);
+  }
+  .sd-event > .sd-dot {
+    width: auto;
+    height: auto;
+  }
+  .sd-event b {
     color: var(--sd-fg-muted);
     font-weight: var(--font-weight-semibold);
   }
-  .sd-event > time {
-    margin-inline-start: auto;
+  .sd-event time {
+    margin-inline-start: 8px;
     color: var(--sd-fg-faint);
   }
 
   /*
-   * Reactions: toggles with a mark and a count. aria-pressed = the viewer
-   * reacted. The JS keeps the count in sync when toggled.
-   *   <div class="sd-reactions"><button aria-pressed="true" data-sd-reaction>👍 <b>3</b></button>…</div>
+   * Jump to present: a bar over the bottom of the feed while it is scrolled
+   * away from the newest message. Place it right after the scroller; the app
+   * sets hidden and data-new.
+   *   <div class="sd-feed-jump" hidden><span>Viewing older messages</span>
+   *     <button class="sd-btn sd-btn-sm">Jump to present <svg/></button></div>
+   */
+  .sd-feed-jump {
+    position: relative;
+    z-index: 4;
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    height: 40px;
+    margin-top: -40px;
+    padding: 0 6px 0 16px;
+    border-top: 1px solid var(--sd-line);
+    background: var(--sd-overlay);
+    color: var(--sd-fg-subtle);
+    font-size: 13px;
+  }
+  .sd-feed-jump[hidden] {
+    display: none;
+  }
+  .sd-feed-jump .sd-btn {
+    gap: 6px;
+  }
+  .sd-feed-jump .sd-btn > svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /*
+   * Reactions: the emoji leads, the count is small and quiet, the borders are
+   * dark hairlines and pressed (the viewer reacted) is a fill. The JS keeps
+   * the count in sync when toggled.
+   *   <div class="sd-reactions"><button aria-pressed="true" data-sd-reaction><span>👍</span><b>3</b></button>…
+   *     <button class="sd-reactions-add" aria-label="Add reaction"><svg/></button></div>
    */
   .sd-reactions {
     display: flex;
@@ -250,28 +731,46 @@
   .sd-reactions > button {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    min-height: 26px;
-    padding: 0 8px;
-    border: 1px solid var(--sd-line-strong);
+    gap: 4px;
+    min-height: 28px;
+    padding: 0 7px 0 6px;
+    overflow: hidden;
+    border: 1px solid var(--sd-line);
     background: transparent;
-    color: var(--sd-fg-muted);
+    color: var(--sd-fg-faint);
     font: inherit;
-    font-size: var(--text-sm);
+    font-size: 19px;
+    line-height: 1;
     cursor: pointer;
+    transition: border-color 120ms var(--ease-out), background-color 120ms var(--ease-out);
   }
   .sd-reactions > button > b {
+    font-size: 12px;
     font-weight: 400;
     font-variant-numeric: tabular-nums;
   }
   .sd-reactions > button:hover {
-    border-color: var(--sd-fg-faint);
-    color: var(--sd-fg);
+    border-color: var(--sd-line-strong);
+    background: var(--sd-raised);
+    color: var(--sd-fg-muted);
   }
   .sd-reactions > button[aria-pressed="true"] {
-    border-color: var(--sd-fg);
+    border-color: var(--sd-line-strong);
     background: var(--sd-raised);
-    color: var(--sd-fg);
+    color: var(--sd-fg-muted);
+  }
+  .sd-reactions > .sd-reactions-add {
+    color: var(--sd-fg-faint);
+    opacity: 0;
+    transition: opacity 120ms;
+  }
+  .sd-reactions > .sd-reactions-add > svg {
+    width: 15px;
+    height: 15px;
+  }
+  .sd-message:is(:hover, :focus-within, [data-hover]) .sd-reactions-add,
+  .sd-reactions-add:focus-visible {
+    opacity: 1;
   }
 
   /* Read receipts: tiny avatars at the end of a message. */
@@ -285,7 +784,9 @@
     font-size: 8px;
   }
 
-  /* Typing indicator: who is typing, with three still squares (nothing loops). */
+  /* Typing indicator: who is typing, with three squares. While someone types,
+     the bright square steps along them like a cursor: live activity, the one
+     loop a conversation has. Reduced motion holds them still. */
   .sd-typing {
     display: inline-flex;
     align-items: center;
@@ -293,9 +794,14 @@
     color: var(--sd-fg-subtle);
     font-size: var(--text-sm);
   }
+  /* Who is typing: <b style="--who: …">Maya</b> is typing. */
+  .sd-typing b:not(i > b) {
+    color: color-mix(in srgb, var(--who, var(--sd-extra)) 70%, var(--sd-fg));
+    font-weight: var(--font-weight-semibold);
+  }
   .sd-typing > i {
     display: inline-flex;
-    gap: 3px;
+    gap: 2px;
   }
   .sd-typing > i::before,
   .sd-typing > i::after,
@@ -303,28 +809,44 @@
     content: "";
     width: 4px;
     height: 4px;
-    background: var(--sd-fg-subtle);
+    background: var(--sd-fg-faint);
+    animation: sd-typing-step 900ms infinite;
   }
   .sd-typing > i > b {
     display: block;
+    animation-delay: 300ms;
   }
-  .sd-typing > i::before { background: var(--sd-fg); }
+  .sd-typing > i::before {
+    background: var(--sd-fg);
+  }
+  .sd-typing > i::after {
+    animation-delay: 600ms;
+  }
+  @keyframes sd-typing-step {
+    0%, 33.32% { background: var(--sd-fg); }
+    33.33%, 100% { background: var(--sd-fg-faint); }
+  }
 
   /*
-   * Composer: where people write. A growing textarea, a toolbar, and room
-   * for chips above it (a reply, attachments).
+   * Composer: where people write. A reply bar, then the row: one + that opens
+   * everything a message can carry (sd-composer-add, aria-expanded while its
+   * menu is open), the growing textarea, and a send that stays quiet until
+   * there is text. A status line above it holds the typing indicator, so the
+   * feed never jumps when someone starts typing.
+   *   <div class="sd-composer-status"><span class="sd-typing"><i><b></b></i>Maya is typing</span></div>
    *   <form class="sd-composer">
-   *     <div class="sd-composer-chips">…</div>
+   *     <div class="sd-composer-reply"><svg/><span>Replying to <b>Leo</b> · Count me in…</span><button aria-label="Cancel reply">×</button></div>
    *     <div class="sd-composer-row">
-   *       <button class="sd-btn sd-btn-icon sd-btn-ghost">+</button>
+   *       <button class="sd-btn sd-btn-icon sd-btn-ghost sd-composer-add" aria-haspopup="menu">+</button>
    *       <textarea rows="1" data-sd-autogrow placeholder="Message #general"></textarea>
-   *       <button class="sd-btn sd-btn-primary">Send</button>
+   *       <button class="sd-btn sd-btn-primary sd-btn-icon sd-composer-send" aria-label="Send">…</button>
    *     </div>
    *   </form>
    */
   .sd-composer {
     position: relative;
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 8px;
     padding: 8px;
     border: 1px solid var(--sd-line-strong);
@@ -336,13 +858,42 @@
   .sd-composer-row {
     display: flex;
     align-items: flex-end;
-    gap: 6px;
+    gap: 0;
+  }
+  .sd-composer-row > .sd-btn-icon:not(.sd-composer-send) {
+    width: 32px;
+    min-width: 32px;
+    padding: 0;
+  }
+  .sd-composer-row > .sd-btn-ghost.sd-btn-icon {
+    color: var(--sd-fg-subtle);
+    transition: background-color 120ms, color 120ms;
+  }
+  .sd-composer-row > .sd-btn-ghost.sd-btn-icon:hover,
+  .sd-composer-add[aria-expanded="true"] {
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+  .sd-composer-row > .sd-composer-send {
+    margin-inline-start: 6px;
+    transition: background-color 120ms, color 120ms, border-color 120ms;
+  }
+  .sd-composer:has(textarea:placeholder-shown) .sd-composer-send {
+    border-color: transparent;
+    background: transparent;
+    color: var(--sd-fg-faint);
+  }
+  .sd-composer:has(textarea:placeholder-shown) .sd-composer-send:hover {
+    background: var(--sd-raised);
+    color: var(--sd-fg-muted);
   }
   .sd-composer textarea {
     flex: 1;
+    min-width: 0;
     min-height: 34px;
     max-height: 40vh;
-    padding: 7px 4px;
+    margin-inline-start: 2px;
+    padding: 7px 0;
     border: 0;
     background: transparent;
     resize: none;
@@ -360,6 +911,64 @@
   .sd-composer-chips:empty {
     display: none;
   }
+  /* Reply bar: across the top of the composer, the arrow on the + icon's
+     left edge and the text on the input's text line. */
+  .sd-composer-reply {
+    display: grid;
+    grid-template-columns: 16px minmax(0, 1fr) 34px;
+    column-gap: 10px;
+    align-items: center;
+    min-height: 34px;
+    margin: -8px -8px 0;
+    padding: 0 8px 0 16px;
+    border-bottom: 1px solid var(--sd-line);
+    color: var(--sd-fg-subtle);
+    font-size: 13px;
+  }
+  .sd-composer-reply > svg {
+    width: 16px;
+    height: 16px;
+  }
+  .sd-composer-reply > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sd-composer-reply b {
+    color: color-mix(in srgb, var(--who, var(--sd-extra)) 70%, var(--sd-fg));
+    font-weight: var(--font-weight-semibold);
+  }
+  .sd-composer-reply > button {
+    justify-self: end;
+    width: 34px;
+    height: 28px;
+  }
+  /* Status line: the typing indicator, its squares on the + icon's left
+     edge. Equal space from the top edge to the capitals and from the
+     baseline to the line under it. */
+  .sd-composer-status {
+    display: flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 9px 8px 7px 17px;
+    color: var(--sd-fg-subtle);
+    font-size: 13px;
+    line-height: 20px;
+  }
+  .sd-composer-status > .sd-typing {
+    font-size: inherit;
+  }
+  /* In a dock: one box, the status line over the composer. */
+  .sd-shell-dock:has(> .sd-composer) {
+    padding: 0;
+  }
+  .sd-shell-dock > .sd-composer {
+    border: 0;
+  }
+  .sd-shell-dock > .sd-composer-status {
+    border-bottom: 1px solid var(--sd-line);
+  }
   .sd-composer-hint {
     display: flex;
     gap: 14px;
@@ -373,6 +982,11 @@
       display: none;
     }
   }
+  /* The + menu: everything a message can carry, opened above the dock with
+     its left edge on the button's. Same rows as the message menu. */
+  .sd-add-menu {
+    width: 200px;
+  }
   /* Suggestions (mentions, commands) float above the composer. */
   .sd-suggest {
     position: absolute;
@@ -385,4 +999,279 @@
   .sd-suggest[hidden] {
     display: none;
   }
+
+  /* Editing in place: the field keeps the text column (inset by its border
+     and padding) and a one-line hint names the keys. */
+  .sd-message-edit {
+    display: grid;
+    gap: 6px;
+    margin-inline: -11px;
+  }
+  .sd-message-edit textarea {
+    width: 100%;
+    min-height: 0;
+    padding: 7px 10px;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-surface);
+    color: var(--sd-fg);
+    font: inherit;
+    line-height: 1.5;
+    resize: none;
+  }
+  .sd-message-edit textarea:focus {
+    border-color: var(--sd-fg-subtle);
+    outline: none;
+  }
+  .sd-message-edit-hint {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    padding-inline: 11px;
+    color: var(--sd-fg-faint);
+    font-size: 13px;
+  }
+  .sd-message-edit-hint button {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--sd-fg-muted);
+    font: inherit;
+    cursor: pointer;
+  }
+  .sd-message-edit-hint button:hover {
+    color: var(--sd-fg);
+    text-decoration: underline;
+  }
+
+  /*
+   * Roster: the people in a conversation, built for large groups. One section
+   * per role; the head sticks while its rows scroll, shows online / total and
+   * collapses (aria-expanded). Rows are online first, then offline (dimmed),
+   * then unresolved ids (a dashed tile, mono). An app shows the top 25 of a
+   * role and pages in more with sd-roster-more.
+   *   <div class="sd-roster">
+   *     <section class="sd-roster-group">
+   *       <h3 class="sd-roster-head"><button aria-expanded="true"><span class="sd-roster-label">Admins</span>
+   *         <span class="sd-roster-count"><b>1</b> / 3</span><svg/></button></h3>
+   *       <ul><li><button class="sd-roster-row" data-presence="online"><span class="sd-roster-avatar"><img></span>
+   *         <span class="sd-roster-name">Maya</span></button></li>…</ul>
+   *       <button class="sd-roster-more">Show 25 more<span>763 hidden</span></button>
+   *     </section>
+   *   </div>
+   */
+  .sd-roster {
+    padding: 0 0 16px;
+  }
+  .sd-roster-group + .sd-roster-group {
+    margin-top: 4px;
+  }
+  .sd-roster-head {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    margin: 0;
+    background: var(--sd-ring, var(--sd-surface));
+  }
+  .sd-roster-head > button {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto 16px;
+    align-items: center;
+    column-gap: 8px;
+    width: 100%;
+    height: 36px;
+    padding: 0 12px 0 16px;
+    border: 0;
+    border-bottom: 1px solid var(--sd-line);
+    background: none;
+    color: var(--sd-fg-subtle);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+  .sd-roster-head > button:hover {
+    color: var(--sd-fg);
+  }
+  .sd-roster-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 11px;
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+  .sd-roster-count {
+    color: var(--sd-fg-faint);
+    font-family: var(--sd-font-mono);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .sd-roster-count > b {
+    color: var(--sd-fg-muted);
+    font-weight: 400;
+  }
+  .sd-roster-head svg {
+    width: 16px;
+    height: 16px;
+    color: var(--sd-fg-faint);
+    transition: transform 120ms;
+  }
+  .sd-roster-head > button[aria-expanded="false"] svg {
+    transform: rotate(-90deg);
+  }
+  .sd-roster ul {
+    margin: 0;
+    padding: 4px 0 0;
+    list-style: none;
+  }
+  .sd-roster-row {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 10px;
+    width: 100%;
+    height: 36px;
+    padding: 0 16px;
+    border: 0;
+    background: none;
+    color: color-mix(in srgb, var(--who, var(--sd-extra)) 70%, var(--sd-fg));
+    font: inherit;
+    font-size: 15px;
+    text-align: start;
+    cursor: pointer;
+    transition: background-color 120ms;
+  }
+  .sd-roster-row:hover {
+    --sd-ring: var(--sd-raised);
+    background: var(--sd-raised);
+  }
+  .sd-roster-avatar {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+  }
+  .sd-roster-avatar > img {
+    display: block;
+    width: 24px;
+    height: 24px;
+  }
+  .sd-roster-row[data-presence="online"] .sd-roster-avatar::after {
+    content: "";
+    position: absolute;
+    right: -5px;
+    bottom: -5px;
+    box-sizing: content-box;
+    width: 8px;
+    height: 8px;
+    border: 2px solid var(--sd-ring, var(--sd-surface));
+    background: var(--sd-success);
+  }
+  .sd-roster-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sd-roster-row[data-presence="offline"] {
+    color: var(--sd-fg-subtle);
+  }
+  .sd-roster-row[data-presence="offline"] img {
+    filter: grayscale(1);
+    opacity: 0.45;
+  }
+  .sd-roster-row[data-presence="offline"]:hover {
+    color: var(--sd-fg-muted);
+  }
+  .sd-roster-avatar[data-unresolved] {
+    border: 1px dashed var(--sd-line-strong);
+    color: var(--sd-fg-faint);
+    font-family: var(--sd-font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+  }
+  .sd-roster-row[data-presence="unresolved"] {
+    color: var(--sd-fg-faint);
+  }
+  .sd-roster-row[data-presence="unresolved"] .sd-roster-name {
+    font-family: var(--sd-font-mono);
+    font-size: 13px;
+  }
+  .sd-roster-more {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    width: 100%;
+    height: 32px;
+    padding: 0 16px 0 50px;
+    border: 0;
+    background: none;
+    color: var(--sd-fg-muted);
+    font: inherit;
+    font-size: 13px;
+    text-align: start;
+    cursor: pointer;
+  }
+  .sd-roster-more > span {
+    color: var(--sd-fg-faint);
+    font-family: var(--sd-font-mono);
+    font-size: 12px;
+  }
+  .sd-roster-more:hover {
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+  :is(.sd-roster-head > button, .sd-roster-row, .sd-roster-more):focus-visible {
+    outline: 1px solid var(--sd-fg-subtle);
+    outline-offset: -1px;
+  }
+  .sd-roster-empty {
+    margin: 0;
+    padding: 16px;
+    color: var(--sd-fg-subtle);
+    font-size: 14px;
+  }
+
+  /* Paper: conversation hairlines are lighter (7% and 14% black instead of
+     10% and 22%), so cards, chips and dividers stop outlining everything.
+     The composer and form fields keep the strong line for a 3:1 input edge. */
+  :is([data-theme="paper"], [data-theme="light"]) :is(.sd-message, .sd-event, .sd-feed-day, .sd-feed-jump, .sd-composer-status, .sd-composer-reply, .sd-message-menu, .sd-emoji-picker, .sd-roster) {
+    --sd-line: rgb(0 0 0 / 0.07);
+    --sd-line-strong: rgb(0 0 0 / 0.14);
+  }
+  :is([data-theme="paper"], [data-theme="light"]) :is(.sd-message-edit textarea, .sd-emoji-search > input) {
+    --sd-line-strong: rgb(0 0 0 / 0.22);
+  }
+  @media (prefers-color-scheme: light) {
+    [data-theme="auto"] :is(.sd-message, .sd-event, .sd-feed-day, .sd-feed-jump, .sd-composer-status, .sd-composer-reply, .sd-message-menu, .sd-emoji-picker, .sd-roster) {
+      --sd-line: rgb(0 0 0 / 0.07);
+      --sd-line-strong: rgb(0 0 0 / 0.14);
+    }
+  }
+
+  /*
+   * Motion, on state change: entrances play only where the app marks an
+   * element data-new (a row that just arrived, a status or reaction that
+   * just changed), so a virtualized list that remounts rows while scrolling
+   * stays still. data-flash fades a jumped-to row; data-leaving folds a row
+   * out before it is removed. Reduced motion stops all of it (base layer).
+   */
+  @keyframes sd-msg-in { from { opacity: 0; transform: translateY(6px); } }
+  @keyframes sd-fade-up { from { opacity: 0; transform: translateY(3px); } }
+  @keyframes sd-count-in { from { opacity: 0; transform: translateY(60%); } }
+  @keyframes sd-chip-press { 50% { transform: scale(0.92); } }
+  @keyframes sd-swap-in { from { opacity: 0; transform: scale(0.6); } }
+  @keyframes sd-current-fade { from { border-inline-start-color: var(--sd-fg-subtle); background-color: var(--sd-current-fill); } }
+  @keyframes sd-fold { to { max-height: 0; margin-top: 0; padding-block: 0; opacity: 0; } }
+  @keyframes sd-jump-in { from { transform: translateY(8px); opacity: 0; } }
+  .sd-message[data-new] { animation: sd-msg-in 200ms var(--ease-out); }
+  :is(.sd-event, .sd-feed-day)[data-new] { animation: sd-fade-up 160ms var(--ease-out); }
+  .sd-message-meta > [data-new] > svg { animation: sd-swap-in 160ms var(--ease-out); }
+  .sd-reactions > button[data-new] { animation: sd-chip-press 160ms var(--ease-out); }
+  .sd-reactions > button[data-new] > b { display: inline-block; animation: sd-count-in 160ms var(--ease-out); }
+  .sd-message[data-flash] { animation: sd-current-fade 1200ms var(--ease-out); }
+  .sd-message[data-leaving] { overflow: hidden; animation: sd-fold 180ms var(--ease-out) forwards; }
+  .sd-composer-reply,
+  .sd-composer-status > .sd-typing { animation: sd-fade-up 160ms var(--ease-out); }
+  .sd-feed-jump[data-new] { animation: sd-jump-in 140ms var(--ease-out); }
 }
