@@ -100,3 +100,13 @@ node scripts/changelog.mjs --check              # changelog fragments
    `## Unreleased` above it, and bump `version` in `package.json`.
 3. Merge, wait for the `ai-files` commit on `main` (it stamps the new
    version), then tag that commit `v<version>`.
+
+## Coding agents and Agent Traffic Control
+
+This repository coordinates issue work with Agent Traffic Control (ATC). If you or your agent are about to work on an issue:
+
+1. Run `npx github:ashhart/ATC check <issue>`. Start only when it says `free` or `yours`.
+2. Claim it with `npx github:ashhart/ATC claim <issue>`, or open a draft pull request early with `Fixes #<issue>` in the description.
+3. Run `npx github:ashhart/ATC overlap` before opening or updating a pull request, and coordinate if it reports a conflict.
+
+Agents follow [the ATC contributor skill](skills/atc/SKILL.md). Coordination comments contain typed `/atc` commands only.

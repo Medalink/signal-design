@@ -1,0 +1,21 @@
+{
+  "areaIds": {
+    "code": 1,
+    "docs": 2,
+    "tests": 3
+  },
+  "areas": {
+    "code": [
+      "src/"
+    ],
+    "docs": [
+      "docs/",
+      "README.md"
+    ],
+    "tests": [
+      "tests/",
+      "test/"
+    ]
+  },
+  "presence": "git"
+}
