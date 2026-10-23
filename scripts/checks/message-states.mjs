@@ -1,6 +1,6 @@
 export const page = "conversation";
 
-/** Message edges: --edge for the author, state edges over it in a fixed order, own and selected fills. */
+/** Message edges: --edge for the author, state edges over it in a fixed order, the grey own edge (no fill) and the selected fill. */
 export default async function checkMessageStates(page, where, fail) {
   const got = await page.evaluate(() => {
     const block = document.getElementById("conversation-message-edges-and-selection");
@@ -33,7 +33,10 @@ export default async function checkMessageStates(page, where, fail) {
       current: make({ ...role, "data-selected": "", "aria-current": "true" }).edge === color("--sd-fg-subtle"),
       failed: make({ ...role, "data-selected": "", "aria-current": "true", "data-failed": "" }).edge === color("--sd-danger"),
       currentFalse: make({ ...role, "aria-current": "false" }).edge === color("--sd-extra"),
-      own: make({ "data-own": "" }).fill === resolve("background-color", "color-mix(in srgb, var(--sd-raised) 50%, transparent)"),
+      ownEdge: make({ ...role, "data-own": "" }).edge === color("--sd-line-strong"),
+      ownNoFill: make({ "data-own": "" }).fill === "rgba(0, 0, 0, 0)",
+      ownMention: make({ "data-own": "", "data-mention": "" }).edge === color("--sd-fg"),
+      ownSelected: make({ "data-own": "", "data-selected": "" }).edge === color("--sd-accent"),
       selectedFill: make({ "data-own": "", "data-selected": "" }).fill === color("--sd-raised"),
     };
   });

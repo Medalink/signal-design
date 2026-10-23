@@ -407,6 +407,9 @@ the rain skips them.
 </main>
 ```
 
+`data-flush` on the dock rests it on the bottom of the window: the shell gap
+under it and its bottom border go, and its bridges still tie it to the content.
+
 `sd-popover-panel` with `sd-popover-head` and `sd-popover-body` makes a larger
 popover for an inbox or a pinned list.
 
@@ -437,11 +440,16 @@ Generic pieces for chat, comments, feeds and inboxes. See `showcase/chat.html`.
 | `sd-avatar` (+ `-sm`, `-md`, `-lg`, `-xl`) | 22, 28, 34 and 48px squares (24px without a size class). `--sd-avatar-size` sets any other size, such as a profile preview; the initials and the presence square grow with it. |
 | `sd-avatar[data-status]` | `online`, `away` (or `afk`), `busy`, `offline` square on the corner. |
 | `sd-badge-count` | A count on an icon, rail item, rail tile or avatar. |
-| `sd-message` | Avatar plus body; `data-grouped`, `data-mention`, `data-pending`, `data-failed`, `data-own`, `data-selected`, and `--edge` for an author or role color. `sd-message-actions` is the hover toolbar. |
-| `sd-reply`, `sd-mention`, `sd-event` | Quoted reply, inline mention, system line. |
-| `sd-reactions` | Toggle buttons with counts; fires `sd:reaction`. |
-| `sd-receipts`, `sd-typing` | Read receipts and the typing line. |
-| `sd-composer` (+ `-row`, `-chips`, `-hint`) | The message box. `data-sd-autogrow`, `data-sd-enter-submit`, and `data-sd-suggest="id"` for an `@` list. |
+| `sd-message` (+ `-time`, `-body`, `-text`, `-author`, `-tag`, `-meta`, `-timer`, `-head`, `-status`, `-edit`) | A 64px time column, then the text; the author's name opens the first line in their color (`--who`). `data-grouped` (no time or name), `data-mention`, `data-pending`, `data-failed`, `data-own` (grey edge), `data-selected`, `data-reply`, `data-editing`, `data-hover`, and `--edge` for an author or role color. |
+| `sd-message-actions` | The hover bar: quick reactions, then actions with `data-key` tips, then More. Revealed by opacity, so Tab reaches it. |
+| `sd-message-menu`, `sd-add-menu`, `sd-emoji-picker` | The More menu (icon, label, key), the composer's + menu, and the emoji picker (search, categories, grid, a footer naming the emoji). |
+| `sd-message-ref` (+ `sd-message-ref-mark`) | The quoted line above a reply; its mark sits in the time column. |
+| `sd-reply`, `sd-mention`, `sd-event` | Quoted reply in a body or chip, inline mention (name color, no fill), system line with its icon in the time column. |
+| `sd-feed-day`, `sd-feed-jump` | A day line that sticks to the top of the scroller (`--sd-feed-bg` is the pane color), and the Jump to present bar after the scroller. |
+| `sd-reactions` (+ `-add`) | Emoji-first toggle buttons with a small count; fires `sd:reaction`. |
+| `sd-receipts`, `sd-typing` | Read receipts and the typing line (its squares step while someone types). |
+| `sd-composer` (+ `-row`, `-add`, `-send`, `-reply`, `-status`, `-chips`, `-hint`) | The message box: one + for every content type, the textarea, and a send that stays quiet until there is text. `-status` holds the typing line above it. In an `sd-shell-dock` they share one box. `data-sd-autogrow`, `data-sd-enter-submit`, and `data-sd-suggest="id"` for an `@` list. |
+| `sd-roster` (+ `-group`, `-head`, `-label`, `-count`, `-row`, `-avatar`, `-name`, `-more`) | People in a large conversation: a section per role with a sticky, collapsible head, rows by `data-presence` (`online`, `offline`, `unresolved`), and a Show more row. |
 | `sd-banner` | A full-width notice with actions. |
 | `sd-file`, `sd-link-card`, `sd-poll` | Attachment, link preview, poll (`--share` per option). |
 | `sd-link-card-hero`, `-compact`, `-type`, `-note` | Link preview variants: image on top, one tight block, a document with its type, and a reason line. `data-blocked` and `aria-busy="true"` are states. |
@@ -502,11 +510,15 @@ or role color; it is user data, so pass it as a custom property
 (`style="--edge: var(--role-color)"`) rather than a tone, and note that it
 inherits, so a wrapper can set it for a run of messages. State edges win over
 it in a fixed order: `data-failed` > `aria-current` > `data-selected` >
-`data-mention` > `--edge`. `data-own` tints the viewer's own messages with half
-of `--sd-raised`; `data-selected` (an accent edge on `--sd-raised`) marks
+`data-mention` > `data-own` > `--edge`. `data-own` gives the viewer's own messages a grey
+edge (`--sd-line-strong`) and no fill; `data-selected` (an accent edge on `--sd-raised`) marks
 messages picked for a bulk action. `data-mention` and `aria-current` have their
 own fills, `--sd-mention-fill` and `--sd-current-fill`, which read against both
-`--sd-canvas` and `--sd-surface`. Author names in `sd-message-head` and
+`--sd-canvas` and `--sd-surface`. Names take `--who`, the person's name color
+(user data, like `--edge`), on the author, an `sd-mention`, a quoted author and
+the reply bar, and fall back to `extra`: every name in a conversation is colored.
+The app decides grouping (same author within a few minutes) and sets
+`data-grouped`. Author names in `sd-message-head`, `sd-message-ref` and
 `sd-reply` truncate with an ellipsis, and the body column shrinks, so a long
 unbroken name cannot push a row off-screen. `data-selected` is only the look: expose the
 choice with a real control, such as a labelled checkbox in the message.
@@ -853,7 +865,7 @@ gets the same answer:
 | `aria-selected="true"` | Selection in `sd-tabs`, `sd-item`, `sd-table` rows, `sd-seg`, `sd-grid-picker`, `sd-menu`. |
 | `aria-pressed="true"` | Toggle state in `sd-chip`, `sd-seg`, `sd-option`, `sd-poll-option`, `sd-reactions`, `sd-icon-btn`. |
 | `aria-expanded="true"` | `sd-icon-btn` (popover/menu triggers), `sd-rail-item`; `aria-controls` points at the panel. |
-| `data-own`, `data-selected`, `--edge` on `.sd-message` | Own-message tint, bulk selection, author or role edge color. |
+| `data-own`, `data-selected`, `--edge`, `--who` on `.sd-message` | Own-message grey edge, bulk selection, author or role edge color, name color. |
 | `aria-current` (any value but `"false"`) | Current location in `sd-nav`, `sd-sidenav`, `sd-sidebar-link`, `sd-breadcrumb`, `sd-pagination`, `sd-rail-item`, `sd-rail-tile`, `sd-message`; `sd-steps` uses `aria-current="step"`. |
 | `aria-sort="ascending\|descending"` | Sort direction of a `th[data-sort]` in `sd-table`. |
 | `--shell-sidebar` on `.sd-shell`, `aria-valuenow` on `.sd-sidebar-resize`, `data-resizing` | Sidebar width in px, its separator's value, and a drag in progress; written by `data-sd-shell="resize"` and `setSidebarWidth`. |

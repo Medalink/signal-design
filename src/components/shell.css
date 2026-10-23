@@ -651,6 +651,14 @@
     border: 1px solid var(--sd-line);
     background: var(--sd-container);
   }
+  /* A flush dock rests on the bottom of the window: no gap under it and no
+     bottom border against the edge. <div class="sd-shell-dock" data-flush> */
+  .sd-shell-main:has(> .sd-shell-dock[data-flush]) {
+    padding-bottom: 0;
+  }
+  .sd-shell-dock[data-flush] {
+    border-bottom: 0;
+  }
 
   /* Rain backdrop: covers only the page area (the rail, sidebar and panel
      are opaque), and the JS skips the boxes on top of it. */

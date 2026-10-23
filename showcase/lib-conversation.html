@@ -10,9 +10,10 @@
         <div>
           <p class="sd-label">Principles</p>
           <ul>
-            <li><b class="text-fg font-semibold">Color identifies, never decorates.</b> A message edge takes an author or role color through <code>--edge</code>. Pending, failed and selected messages change the edge or the fill in a fixed order.</li>
+            <li><b class="text-fg font-semibold">Color identifies, never decorates.</b> A message edge takes an author or role color through <code>--edge</code>; your own messages get a grey edge. Pending, failed and selected messages change the edge or the fill in a fixed order.</li>
             <li><b class="text-fg font-semibold">Presence is a square.</b> <code>data-status</code> puts online, away, busy or offline on the avatar corner. Set <code>--sd-ring</code> to the panel color so the ring matches.</li>
-            <li><b class="text-fg font-semibold">State sits in attributes.</b> <code>data-own</code>, <code>data-selected</code>, <code>data-pending</code>, <code>data-failed</code>, <code>data-grouped</code> and <code>data-mention</code> restyle a message. Your code sets them.</li>
+            <li><b class="text-fg font-semibold">Every name is colored.</b> An author, an @mention, a quoted author and the reply bar take the person's color through <code>--who</code>, and fall back to <code>extra</code>. Text only, never a fill.</li>
+            <li><b class="text-fg font-semibold">State sits in attributes.</b> <code>data-own</code>, <code>data-selected</code>, <code>data-pending</code>, <code>data-failed</code>, <code>data-grouped</code>, <code>data-reply</code>, <code>data-editing</code> and <code>data-mention</code> restyle a message. Your code sets them, including grouping (same author within a few minutes).</li>
             <li><b class="text-fg font-semibold">Live values hold still between changes.</b> The level meter lights bars up to <code>--level</code>, fades for 120ms when the value moves, and rests otherwise.</li>
             <li><b class="text-fg font-semibold">Unknown stays visible.</b> A link card has <code>data-blocked</code> and <code>aria-busy="true"</code> states, so a blocked or loading link says so.</li>
           </ul>
@@ -68,142 +69,215 @@
 
     <div class="demo-block">
       <h3 class="sd-label">Messages</h3>
-      <div class="border border-line py-3" style="background: var(--sd-surface)">
-        <article class="sd-message" data-sd-contextmenu="demo-msg-menu">
-          <span class="sd-avatar" data-tone="extra">AL</span>
+      <div class="border border-line pb-3" style="--sd-feed-bg: var(--sd-surface); background: var(--sd-surface)">
+        <div class="sd-divider sd-feed-day">Today</div>
+        <article class="sd-message" data-sd-contextmenu="demo-msg-menu" style="--who: var(--sd-extra)">
+          <time class="sd-message-time" datetime="09:42">09:42</time>
           <div class="sd-message-body">
-            <header class="sd-message-head"><b>Alex</b><span class="sd-badge">Lead</span><time>09:42</time></header>
-            <div class="sd-message-text">A first message shows the avatar and the head. Right-click it for the menu.</div>
-            <div class="sd-reactions"><button data-sd-reaction aria-pressed="true">👍 <b>3</b></button><button data-sd-reaction aria-pressed="false">👀 <b>1</b></button></div>
+            <div class="sd-message-text"><b class="sd-message-author">Alex</b><span class="sd-message-tag">Lead</span>A message opens with its author in their name color, and the text follows on the same line. Right-click it for the menu.</div>
+            <div class="sd-reactions"><button data-sd-reaction aria-pressed="true"><span>👍</span><b>3</b></button><button data-sd-reaction aria-pressed="false"><span>👀</span><b>1</b></button><button class="sd-reactions-add" aria-label="Add reaction"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M8.5 2.5h-6v11h11v-6"/><path d="M5.5 10h5"/><path d="M5.75 6.25h.5M9.75 6.25h.5"/><path d="M12.5 1.5v4M10.5 3.5h4"/></svg></button></div>
           </div>
-          <div class="sd-message-actions" role="toolbar" aria-label="Message actions"><button aria-label="Reply">↩</button><button aria-label="More" popovertarget="demo-msg-menu">⋯</button></div>
+          <div class="sd-message-actions" role="toolbar" aria-label="Message actions"><button data-emoji aria-label="React 👍">👍</button><button data-emoji aria-label="React 😂">😂</button><button data-emoji aria-label="React 🔥">🔥</button><hr><button aria-label="Reply" data-key="R"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6.5 4 2.5 8l4 4M3 8h7a3.5 3.5 0 0 1 3.5 3.5V13"/></svg></button><hr><button aria-label="More" aria-haspopup="menu" popovertarget="demo-msg-menu"><svg viewBox="0 0 16 16" fill="currentColor"><rect x="2.5" y="7" width="2" height="2"/><rect x="7" y="7" width="2" height="2"/><rect x="11.5" y="7" width="2" height="2"/></svg></button></div>
         </article>
-        <article class="sd-message" data-grouped>
-          <time>09:43</time>
-          <div class="sd-message-body"><div class="sd-message-text">A follow-up is grouped: no avatar, the time shows on hover. <span class="sd-message-edited">(edited)</span></div></div>
+        <article class="sd-message" data-grouped title="09:43" style="--who: var(--sd-extra)">
+          <div class="sd-message-body"><div class="sd-message-text">A follow-up within five minutes is grouped: no time, no name, the same rhythm.<span class="sd-message-meta"><span>edited</span></span></div></div>
         </article>
-        <div class="sd-event"><span class="sd-dot" data-shape="hollow"></span><b>Taylor</b> joined <time>09:50</time></div>
-        <article class="sd-message" data-mention>
-          <span class="sd-avatar" data-tone="accent">TP</span>
+        <div class="sd-event"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M2 8h8M7 5l3 3-3 3M10.5 2.5h3v11h-3"/></svg><span><b>Taylor</b> joined<time>09:50</time></span></div>
+        <article class="sd-message" data-mention data-reply style="--who: var(--sd-accent)">
+          <span class="sd-message-ref-mark"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M6 3 2.5 6.5 6 10"/><path d="M3.5 6.5h5.5a4.5 4.5 0 0 1 4.5 4.5v2"/></svg></span>
+          <button class="sd-message-ref"><b style="--who: var(--sd-extra)">Alex</b><span>A message opens with its author in their name color.</span></button>
+          <time class="sd-message-time">10:05</time>
           <div class="sd-message-body">
-            <header class="sd-message-head"><b>Taylor</b><time>10:05</time></header>
-            <div class="sd-reply"><b>Alex</b><span>A first message shows the avatar and the head.</span></div>
-            <div class="sd-message-text"><span class="sd-mention">@Jane</span> a mention of you gets an edge and a lifted background.</div>
+            <div class="sd-message-text"><b class="sd-message-author">Taylor</b><span class="sd-mention" style="--who: var(--sd-success)">@Jane</span> a reply quotes its source above, and a mention of you gets an edge and a lifted fill.</div>
             <div class="sd-receipts" aria-label="Seen by 2"><span class="sd-avatar" data-tone="extra">AL</span><span class="sd-avatar" data-tone="warning">SK</span></div>
           </div>
         </article>
-        <article class="sd-message" data-pending>
-          <span class="sd-avatar" data-tone="success">JD</span>
-          <div class="sd-message-body"><header class="sd-message-head"><b>Jane</b><time>10:06</time></header><div class="sd-message-text">Pending: dimmed until it is confirmed.</div></div>
+        <article class="sd-message" data-own data-pending style="--who: var(--sd-success)">
+          <time class="sd-message-time">10:06</time>
+          <div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Jane</b>Your own messages get a grey edge. Pending: dimmed until it is confirmed.<span class="sd-message-meta"><span class="sd-message-timer"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M6 2h4M8 2v2"/><rect x="3" y="4" width="10" height="9.5"/><path d="M8 7v3"/></svg>1h</span><span data-state="sending">Sending</span></span></div></div>
         </article>
-        <article class="sd-message" data-failed data-grouped>
-          <time>10:07</time>
+        <article class="sd-message" data-own data-failed data-grouped title="10:07" style="--who: var(--sd-success)">
           <div class="sd-message-body"><div class="sd-message-text">Failed: a red edge and a retry.</div><div class="sd-message-status">Not sent · <button class="sd-btn sd-btn-link">Retry</button></div></div>
         </article>
-        <div class="px-4 pt-2"><span class="sd-typing"><i><b></b></i> Alex is typing…</span></div>
+        <div class="sd-composer-status"><span class="sd-typing"><i><b></b></i><span><b style="--who: var(--sd-extra)">Alex</b> is typing</span></span></div>
       </div>
-      <div popover id="demo-msg-menu" class="sd-popover"><div class="sd-menu" role="menu" aria-label="Message"><button role="menuitem">Reply</button><button role="menuitem">Copy text</button><hr class="sd-menu-sep"><button role="menuitem" data-tone="danger">Delete</button></div></div>
-      <p class="demo-usage"><code>sd-message</code> + <code>-body|-head|-text|-actions|-status|-edited</code> · <code>data-grouped|mention|pending|failed</code> · <code>sd-reply</code> · <code>sd-mention</code> · <code>sd-event</code> · <code>sd-reactions</code> + <code>data-sd-reaction</code> · <code>sd-receipts</code> · <code>sd-typing</code> · <code>data-sd-contextmenu</code></p>
+      <div popover id="demo-msg-menu" class="sd-popover sd-message-menu"><div class="sd-menu" role="menu" aria-label="Message"><button role="menuitem"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6.5 4 2.5 8l4 4M3 8h7a3.5 3.5 0 0 1 3.5 3.5V13"/></svg>Reply<kbd>R</kbd></button><button role="menuitem"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><rect x="5.5" y="5.5" width="8" height="8"/><path d="M10.5 5.5v-3h-8v8h3"/></svg>Copy text<kbd>C</kbd></button><hr class="sd-menu-sep"><button role="menuitem" data-tone="danger"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M2.5 4.5h11M6 4.5v-2h4v2M4 4.5l.5 9h7l.5-9M6.75 7v4M9.25 7v4"/></svg>Delete</button></div></div>
+      <p class="demo-usage"><code>sd-message</code> + <code>-time|-body|-text|-author|-tag|-meta|-timer|-actions|-status</code> · <code>--who</code> (name color) · <code>data-grouped|mention|own|pending|failed|reply</code> · <code>sd-message-ref</code> + <code>sd-message-ref-mark</code> · <code>sd-mention</code> · <code>sd-feed-day</code> · <code>sd-event</code> · <code>sd-reactions</code> + <code>data-sd-reaction</code> + <code>sd-reactions-add</code> · <code>sd-receipts</code> · <code>sd-typing</code> · <code>sd-message-menu</code> · <code>data-sd-contextmenu</code></p>
     </div>
 
     <div class="demo-block">
       <h3 class="sd-label">Message edges and selection</h3>
       <div class="border border-line py-3" style="background: var(--sd-surface)">
-        <article class="sd-message" style="--edge: var(--sd-extra)">
-          <span class="sd-avatar" data-tone="extra">AL</span>
-          <div class="sd-message-body">
-            <header class="sd-message-head"><b>Alex</b><span class="sd-badge">Moderator</span><time>11:02</time></header>
-            <div class="sd-message-text">An author or role color sits on the start edge through <code>--edge</code>.</div>
-          </div>
+        <article class="sd-message" style="--edge: var(--sd-extra); --who: var(--sd-extra)">
+          <time class="sd-message-time">11:02</time>
+          <div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Alex</b><span class="sd-message-tag">Moderator</span>An author or role color sits on the start edge through <code>--edge</code>.</div></div>
         </article>
-        <article class="sd-message" data-grouped style="--edge: var(--sd-extra)">
-          <time>11:03</time>
+        <article class="sd-message" data-grouped style="--edge: var(--sd-extra); --who: var(--sd-extra)">
           <div class="sd-message-body"><div class="sd-message-text">Grouped follow-ups keep it.</div></div>
         </article>
-        <article class="sd-message" data-own>
-          <span class="sd-avatar" data-tone="success">JD</span>
-          <div class="sd-message-body">
-            <header class="sd-message-head"><b>Jane</b><span class="sd-message-edited">you</span><time>11:04</time></header>
-            <div class="sd-message-text">Your own messages get a light tint with <code>data-own</code>.</div>
-          </div>
+        <article class="sd-message" data-own style="--who: var(--sd-success)">
+          <time class="sd-message-time">11:04</time>
+          <div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Jane</b>Your own messages get a grey edge with <code>data-own</code>, no fill.</div></div>
         </article>
-        <article class="sd-message" data-selected style="--edge: var(--sd-extra)">
-          <span class="sd-avatar" data-tone="extra">AL</span>
+        <article class="sd-message" data-selected style="--edge: var(--sd-extra); --who: var(--sd-extra)">
+          <time class="sd-message-time">11:05</time>
           <div class="sd-message-body">
-            <header class="sd-message-head"><input type="checkbox" checked aria-label="Select message from Alex at 11:05"><b>Alex</b><time>11:05</time></header>
+            <header class="sd-message-head"><input type="checkbox" checked aria-label="Select message from Alex at 11:05"><b>Alex</b></header>
             <div class="sd-message-text">Selected for a bulk action: the accent edge replaces the role color.</div>
           </div>
         </article>
-        <article class="sd-message" data-mention style="--edge: var(--sd-warning)">
-          <span class="sd-avatar" data-tone="warning">SK</span>
+        <article class="sd-message" data-mention style="--edge: var(--sd-warning); --who: var(--sd-warning)">
+          <time class="sd-message-time">11:06</time>
+          <div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Sam</b><span class="sd-mention" style="--who: var(--sd-success)">@Jane</span> a mention edge wins over the role color too.</div></div>
+        </article>
+        <article class="sd-message" aria-current="true" style="--edge: var(--sd-extra); --who: var(--sd-extra)">
+          <time class="sd-message-time">11:06</time>
+          <div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Alex</b>The message you are replying to or jumped to: <code>aria-current</code> has its own fill, stronger than hover.</div></div>
+        </article>
+        <article class="sd-message" data-own data-editing style="--who: var(--sd-success)">
+          <time class="sd-message-time">11:07</time>
           <div class="sd-message-body">
-            <header class="sd-message-head"><b>Sam</b><time>11:06</time></header>
-            <div class="sd-message-text"><span class="sd-mention">@Jane</span> a mention edge wins over the role color too.</div>
+            <header class="sd-message-head"><b>Jane</b><span>Editing</span></header>
+            <div class="sd-message-edit"><textarea rows="2" aria-label="Edit message">Editing in place keeps the text column.</textarea><div class="sd-message-edit-hint"><span><button type="button">Esc</button> cancel</span><span><button type="button">Enter</button> save</span></div></div>
           </div>
         </article>
-        <article class="sd-message" aria-current="true" style="--edge: var(--sd-extra)">
-          <span class="sd-avatar" data-tone="extra">AL</span>
+        <article class="sd-message" data-own data-failed aria-current="true" style="--who: var(--sd-success)">
+          <time class="sd-message-time">11:08</time>
           <div class="sd-message-body">
-            <header class="sd-message-head"><b>Alex</b><time>11:06</time></header>
-            <div class="sd-message-text">The message you are replying to or jumped to: <code>aria-current</code> has its own fill, stronger than hover.</div>
-          </div>
-        </article>
-        <article class="sd-message" data-own data-failed aria-current="true">
-          <span class="sd-avatar" data-tone="success">JD</span>
-          <div class="sd-message-body">
-            <header class="sd-message-head"><b>Jane</b><time>11:07</time></header>
-            <div class="sd-message-text">Failed wins over every other edge, even while you reply to it.</div>
+            <div class="sd-message-text"><b class="sd-message-author">Jane</b>Failed wins over every other edge, even while you reply to it.</div>
             <div class="sd-message-status">Not sent · <button class="sd-btn sd-btn-link">Retry</button></div>
           </div>
         </article>
       </div>
-      <p class="demo-usage"><code>--edge</code> (author or role color, user data) · <code>data-own</code> · <code>data-selected</code> + a real checkbox · fills <code>--sd-mention-fill</code> and <code>--sd-current-fill</code> · edge order: <code>data-failed</code> &gt; <code>aria-current</code> &gt; <code>data-selected</code> &gt; <code>data-mention</code> &gt; <code>--edge</code></p>
+      <p class="demo-usage"><code>--edge</code> (author or role color, user data) · <code>data-own</code> (grey edge) · <code>data-selected</code> + a real checkbox · <code>data-editing</code> + <code>sd-message-edit</code> · fills <code>--sd-mention-fill</code> and <code>--sd-current-fill</code> · edge order: <code>data-failed</code> &gt; <code>aria-current</code> &gt; <code>data-selected</code> &gt; <code>data-mention</code> &gt; <code>data-own</code> &gt; <code>--edge</code></p>
     </div>
 
     <div class="demo-block">
       <h3 class="sd-label">Message in a narrow column</h3>
       <div class="border border-line py-3" style="width: 20rem; max-width: 100%; background: var(--sd-surface)">
-        <article class="sd-message">
-          <span class="sd-avatar" data-tone="extra">LN</span>
+        <article class="sd-message" data-reply style="--who: var(--sd-extra)">
+          <span class="sd-message-ref-mark"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M6 3 2.5 6.5 6 10"/><path d="M3.5 6.5h5.5a4.5 4.5 0 0 1 4.5 4.5v2"/></svg></span>
+          <button class="sd-message-ref"><b>anotherunbrokenauthornamewithnospacesatall</b><span>The quoted text keeps the rest of the line.</span></button>
+          <time class="sd-message-time">12:30</time>
           <div class="sd-message-body">
             <header class="sd-message-head"><b>anunbrokenauthornamewithnospacestowrapatall</b><span class="sd-badge">Lead</span><time>12:30</time></header>
-            <div class="sd-reply"><b>anotherunbrokenauthornamewithnospacesatall</b><span>The quoted text keeps the rest of the line.</span></div>
-            <div class="sd-message-text">The body column is <code>minmax(0, 1fr)</code>, so a long name cannot widen the row past its container. Names in the head and in a reply cut off with an ellipsis.</div>
+            <div class="sd-message-text">The body column is <code>minmax(0, 1fr)</code>, so a long name cannot widen the row past its container. Names in the head and in a quote cut off with an ellipsis.</div>
           </div>
+        </article>
+        <article class="sd-message" style="--who: var(--sd-warning)">
+          <time class="sd-message-time">12:31</time>
+          <div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">yetanotherunbrokenauthornamewithnospaces</b>An inline author wraps with the text.</div></div>
         </article>
       </div>
       <div class="border border-line py-3" id="demo-narrow-button-author" style="width: 20rem; max-width: 100%; background: var(--sd-surface)">
-        <article class="sd-message">
-          <span class="sd-avatar" data-tone="extra">LN</span>
+        <article class="sd-message" data-reply style="--who: var(--sd-extra)">
+          <span class="sd-message-ref-mark"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M6 3 2.5 6.5 6 10"/><path d="M3.5 6.5h5.5a4.5 4.5 0 0 1 4.5 4.5v2"/></svg></span>
+          <div class="sd-message-ref"><b><a href="#conversation">anotherunbrokenauthornamewithnospacesatall</a></b><span>A clickable author is cut off the same way.</span></div>
+          <time class="sd-message-time">12:30</time>
           <div class="sd-message-body">
             <header class="sd-message-head"><b><button type="button">anunbrokenauthornamewithnospacestowrapatall</button></b><span class="sd-badge">Lead</span><time>12:30</time></header>
-            <div class="sd-reply"><b><a href="#conversation">anotherunbrokenauthornamewithnospacesatall</a></b><span>A clickable author is cut off the same way.</span></div>
-            <div class="sd-message-text">The author is a button in the head and a link in the reply.</div>
+            <div class="sd-message-text">The author is a button in the head and a link in the quote.</div>
           </div>
         </article>
       </div>
-      <p class="demo-usage"><code>sd-message-body</code> shrinks with the message, whatever the head holds · <code>sd-message-head &gt; b</code> and <code>sd-reply &gt; b</code> truncate with an ellipsis (60% and 40% of the row at most), also when the author is a <code>button</code> or <code>a</code> inside the <code>b</code></p>
+      <p class="demo-usage"><code>sd-message-body</code> shrinks with the message, whatever it holds · <code>sd-message-head &gt; b</code> and <code>sd-message-ref &gt; b</code> truncate with an ellipsis (60% and 40% of the row at most), also when the author is a <code>button</code> or <code>a</code> inside the <code>b</code> · <code>sd-message-author</code> wraps with the text</p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Feed and jump to present</h3>
+      <div class="border border-line flex flex-col" style="height: 18rem; --sd-feed-bg: var(--sd-surface); background: var(--sd-surface)">
+        <div class="flex-1 overflow-y-auto pb-2" id="demo-feed" tabindex="0" role="log" aria-label="Messages" style="min-height: 0">
+          <div class="sd-divider sd-feed-day">Yesterday</div>
+          <article class="sd-message" style="--who: var(--sd-warning)"><time class="sd-message-time">16:02</time><div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Sam</b>The day line sticks to the top of the scroller over the rows.</div></div></article>
+          <article class="sd-message" data-grouped style="--who: var(--sd-warning)"><div class="sd-message-body"><div class="sd-message-text">Scroll this feed up: a bar offers the way back.</div></div></article>
+          <div class="sd-event"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M14 8H6M9 5 6 8l3 3M5.5 2.5h-3v11h3"/></svg><span><b>Kai</b> left<time>16:40</time></span></div>
+          <div class="sd-divider sd-feed-day">Today</div>
+          <article class="sd-message" style="--who: var(--sd-extra)"><time class="sd-message-time">09:10</time><div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Alex</b>Morning. Events put their icon in the time column.</div></div></article>
+          <article class="sd-message" data-grouped style="--who: var(--sd-extra)"><div class="sd-message-body"><div class="sd-message-text">Set <code>--sd-feed-bg</code> to the pane color so the day line covers what scrolls under it.</div></div></article>
+          <article class="sd-message" data-own style="--who: var(--sd-success)"><time class="sd-message-time">09:12</time><div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Jane</b>And the newest message is at the bottom.</div></div></article>
+        </div>
+        <div class="sd-feed-jump" id="demo-jump" hidden><span>Viewing older messages</span><button class="sd-btn sd-btn-sm sd-btn-ghost">Jump to present <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M8 2.5v10M4 9l4 4 4-4"/></svg></button></div>
+      </div>
+      <p class="demo-usage"><code>sd-feed-day</code> (sticky, on <code>--sd-feed-bg</code>) · <code>sd-event</code> (icon in the time column) · <code>sd-feed-jump</code> after the scroller, <code>hidden</code> while at the bottom, <code>data-new</code> when it appears</p>
+      <script type="text/plain" data-demo-js>
+const feed = document.getElementById("demo-feed");
+const jump = document.getElementById("demo-jump");
+feed.scrollTop = feed.scrollHeight;
+feed.addEventListener("scroll", () => {
+  const away = feed.scrollHeight - feed.scrollTop - feed.clientHeight > 80;
+  if (away === jump.hidden) jump.hidden = !away;
+});
+jump.querySelector("button").addEventListener("click", () => feed.scrollTo({ top: feed.scrollHeight, behavior: "smooth" }));
+      </script>
     </div>
 
     <div class="demo-block">
       <h3 class="sd-label">Composer</h3>
-      <form class="sd-composer max-w-column" onsubmit="event.preventDefault(); this.querySelector('textarea').value=''">
-        <div class="sd-composer-chips"><span class="sd-chip"><b>Replying to</b> Alex <button type="button" aria-label="Cancel reply">×</button></span></div>
-        <div class="sd-composer-row">
-          <button type="button" class="sd-btn sd-btn-ghost sd-btn-icon" aria-label="Attach">+</button>
-          <textarea rows="1" data-sd-autogrow data-sd-enter-submit data-sd-suggest="demo-mentions" placeholder="Type @ to mention someone" aria-label="Message"></textarea>
-          <button class="sd-btn sd-btn-primary">Send</button>
-        </div>
-        <div class="sd-suggest" id="demo-mentions" hidden>
-          <div class="sd-menu" role="listbox" aria-label="Mention">
-            <button type="button" role="option" data-value="Alex"><span class="sd-avatar sd-avatar-sm" data-tone="extra">AL</span> Alex</button>
-            <button type="button" role="option" data-value="Sam"><span class="sd-avatar sd-avatar-sm" data-tone="warning">SK</span> Sam</button>
-            <button type="button" role="option" data-value="Taylor"><span class="sd-avatar sd-avatar-sm" data-tone="accent">TP</span> Taylor</button>
+      <div class="max-w-column border border-line" style="background: var(--sd-container)">
+        <div class="sd-composer-status" style="border-bottom: 1px solid var(--sd-line)"><span class="sd-typing"><i><b></b></i><span><b style="--who: var(--sd-extra)">Alex</b> is typing</span></span></div>
+        <form class="sd-composer" style="border: 0" onsubmit="event.preventDefault(); this.querySelector('textarea').value=''">
+          <div class="sd-composer-reply"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M6 3 2.5 6.5 6 10"/><path d="M3.5 6.5h5.5a4.5 4.5 0 0 1 4.5 4.5v2"/></svg><span>Replying to <b style="--who: var(--sd-extra)">Alex</b> · A message opens with its author in their name color.</span><button type="button" class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="Cancel reply">×</button></div>
+          <div class="sd-composer-row">
+            <button type="button" class="sd-btn sd-btn-ghost sd-btn-icon sd-composer-add" aria-label="Add" aria-haspopup="menu" popovertarget="demo-add-menu" data-sd-side="top"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 3v10M3 8h10"/></svg></button>
+            <textarea rows="1" data-sd-autogrow data-sd-enter-submit data-sd-suggest="demo-mentions" placeholder="Type @ to mention someone" aria-label="Message"></textarea>
+            <button class="sd-btn sd-btn-primary sd-btn-icon sd-composer-send" aria-label="Send"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2.5l12 5.5-12 5.5 2-5.5z"/></svg></button>
           </div>
-        </div>
-      </form>
+          <div class="sd-suggest" id="demo-mentions" hidden>
+            <div class="sd-menu" role="listbox" aria-label="Mention">
+              <button type="button" role="option" data-value="Alex"><span class="sd-avatar sd-avatar-sm" data-tone="extra">AL</span> Alex</button>
+              <button type="button" role="option" data-value="Sam"><span class="sd-avatar sd-avatar-sm" data-tone="warning">SK</span> Sam</button>
+              <button type="button" role="option" data-value="Taylor"><span class="sd-avatar sd-avatar-sm" data-tone="accent">TP</span> Taylor</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div popover id="demo-add-menu" class="sd-popover sd-message-menu sd-add-menu"><div class="sd-menu" role="menu" aria-label="Add"><button role="menuitem"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M2.5 2.5h11v11h-11z"/><path d="M2.5 11l3.5-3.5 3 3 2-2 2.5 2.5"/></svg>Photo or video</button><button role="menuitem"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M3.5 1.5h6l3 3v10h-9z"/><path d="M9.5 1.5v3h3"/></svg>File</button><button role="menuitem"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M3.5 13.5v-4M8 13.5v-10M12.5 13.5v-6"/></svg>Poll</button></div></div>
       <p class="sd-composer-hint"><span><kbd>Enter</kbd> send</span><span><kbd>Shift</kbd>+<kbd>Enter</kbd> new line</span><span><kbd>@</kbd> mention</span></p>
-      <p class="demo-usage"><code>sd-composer</code> + <code>-row|-chips|-hint</code> · <code>data-sd-autogrow</code> · <code>data-sd-enter-submit</code> · <code>data-sd-suggest</code> + <code>data-sd-trigger</code> · <code>sd-suggest</code></p>
+      <p class="demo-usage"><code>sd-composer</code> + <code>-row|-add|-send|-reply|-status|-chips|-hint</code> · send stays quiet until there is text · <code>sd-add-menu</code> (the + opens every content type) · in an <code>sd-shell-dock</code> (<code>data-flush</code> to rest on the window bottom) the status line and composer share one box · <code>data-sd-autogrow</code> · <code>data-sd-enter-submit</code> · <code>data-sd-suggest</code> + <code>data-sd-trigger</code> · <code>sd-suggest</code></p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Emoji picker</h3>
+      <div class="sd-actions"><button class="sd-btn" popovertarget="demo-emoji-picker">Emoji picker</button></div>
+      <div popover id="demo-emoji-picker" class="sd-popover sd-emoji-picker" role="dialog" aria-label="Emoji">
+        <div class="sd-emoji-search"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><rect x="2.5" y="2.5" width="8" height="8"/><path d="M10.5 10.5l3.5 3.5"/></svg><input type="search" placeholder="Search emoji" aria-label="Search emoji"></div>
+        <div class="sd-emoji-cats"><button aria-pressed="true" aria-label="Smileys">😀</button><button aria-pressed="false" aria-label="People">👍</button><button aria-pressed="false" aria-label="Symbols">🔥</button></div>
+        <div class="sd-emoji-scroll">
+          <h4>Smileys</h4><div class="sd-emoji-grid"><button>😀</button><button>😂</button><button>🥲</button><button>😊</button><button>😍</button><button>🤔</button><button>😮</button><button>😴</button><button>😎</button><button>🥳</button><button>😅</button><button>🙃</button></div>
+          <h4>People</h4><div class="sd-emoji-grid"><button aria-pressed="true">👍</button><button>👎</button><button>👏</button><button>🙏</button><button>👀</button><button>💪</button><button>🤝</button><button>👋</button></div>
+          <h4>Symbols</h4><div class="sd-emoji-grid"><button>🔥</button><button>❤️</button><button>✅</button><button>❌</button><button>💯</button><button>⭐</button><button>⚡</button><button>🎉</button></div>
+        </div>
+        <div class="sd-emoji-foot"><span>👍</span><span>thumbs up</span><code>:+1:</code></div>
+      </div>
+      <p class="demo-usage"><code>sd-emoji-picker</code> in a <code>popover</code> + <code>-search|-cats|-scroll|-grid|-foot|-empty</code> · <code>aria-pressed</code> on the current category and on emoji the viewer already reacted with</p>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Roster</h3>
+      <div class="border border-line" style="width: 18rem; max-width: 100%; max-height: 22rem; overflow-y: auto; --sd-ring: var(--sd-surface); background: var(--sd-surface)">
+        <div class="sd-roster">
+          <section class="sd-roster-group">
+            <h3 class="sd-roster-head"><button aria-expanded="true"><span class="sd-roster-label">Admins</span><span class="sd-roster-count"><b>1</b> / 2</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M4 6l4 4 4-4"/></svg></button></h3>
+            <ul>
+              <li><button class="sd-roster-row" data-presence="online" style="--who: var(--sd-extra)"><span class="sd-roster-avatar"><span class="sd-avatar sd-avatar-sm" data-tone="extra">AL</span></span><span class="sd-roster-name">Alex</span></button></li>
+              <li><button class="sd-roster-row" data-presence="offline"><span class="sd-roster-avatar"><span class="sd-avatar sd-avatar-sm" data-tone="accent">TP</span></span><span class="sd-roster-name">Taylor</span></button></li>
+            </ul>
+          </section>
+          <section class="sd-roster-group">
+            <h3 class="sd-roster-head"><button aria-expanded="true"><span class="sd-roster-label">Members</span><span class="sd-roster-count"><b>212</b> / 788</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M4 6l4 4 4-4"/></svg></button></h3>
+            <ul>
+              <li><button class="sd-roster-row" data-presence="online" style="--who: var(--sd-success)"><span class="sd-roster-avatar"><span class="sd-avatar sd-avatar-sm" data-tone="success">JD</span></span><span class="sd-roster-name">Jane</span></button></li>
+              <li><button class="sd-roster-row" data-presence="online" style="--who: var(--sd-warning)"><span class="sd-roster-avatar"><span class="sd-avatar sd-avatar-sm" data-tone="warning">SK</span></span><span class="sd-roster-name">Sam</span></button></li>
+              <li><button class="sd-roster-row" data-presence="unresolved"><span class="sd-roster-avatar" data-unresolved>7f</span><span class="sd-roster-name">7f3a…c21e</span></button></li>
+            </ul>
+            <button class="sd-roster-more">Show 25 more<span>785 hidden</span></button>
+          </section>
+          <section class="sd-roster-group">
+            <h3 class="sd-roster-head"><button aria-expanded="false"><span class="sd-roster-label">Guests</span><span class="sd-roster-count"><b>3</b> / 40</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M4 6l4 4 4-4"/></svg></button></h3>
+          </section>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-roster</code> &gt; <code>sd-roster-group</code> (one per role) · <code>sd-roster-head</code> (sticky, <code>aria-expanded</code>) + <code>-label|-count</code> · <code>sd-roster-row</code> + <code>data-presence="online|offline|unresolved"</code> + <code>--who</code> · <code>sd-roster-avatar</code> (<code>data-unresolved</code>) · <code>sd-roster-more</code> pages in the next 25 · set <code>--sd-ring</code> to the panel color</p>
     </div>
 
     <div class="demo-block">
