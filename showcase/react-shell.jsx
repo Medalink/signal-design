@@ -102,7 +102,7 @@ const sections = [
       ["Teams", ["Platform", "Billing", "Design"]],
     ],
   },
-  { id: "history", label: "History", groups: [["Recent", ["Today", "Yesterday", "Earlier"]]] },
+  { id: "history", label: "History", groups: [["Recent", ["Today", "Yesterday", "Earlier"]], ["Pinned", ["Starred"], true]] },
   { id: "settings", label: "Settings", groups: [["Workspace", ["General", "Members", "Billing"]]] },
 ];
 
@@ -159,8 +159,8 @@ function Shell() {
               </ShellToggle>
             </SidebarHead>
             <SidebarBody aria-label={`${section.label} pages`}>
-              {section.groups.map(([title, links]) => (
-                <SidebarGroup key={title} title={title}>
+              {section.groups.map(([title, links, pinned]) => (
+                <SidebarGroup key={title} title={title} {...(pinned ? { open: true, onOpenChange: () => {}, "data-pinned": "" } : {})}>
                   {links.map((link) => (
                     <SidebarLink
                       key={link}

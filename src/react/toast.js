@@ -11,7 +11,9 @@ const ToastContext = createContext(null);
 const LEAVE_MS = 160;
 
 export function useToast() {
-  return useContext(ToastContext);
+  const toast = useContext(ToastContext);
+  if (!toast) throw new Error("useToast() needs a <ToastProvider> above the component that calls it.");
+  return toast;
 }
 
 function Toast({ toast, dismiss }) {
@@ -51,14 +53,26 @@ export function ToastProvider({ timeout: defaultTimeout = 2400, children }) {
   const [toasts, setToasts] = useState([]);
   const next = useRef(0);
 
-  const remove = useCallback((id) => setToasts((all) => all.filter((t) => t.id !== id)), []);
+  const removals = useRef(new Map());
+  const remove = useCallback((id) => {
+    removals.current.delete(id);
+    setToasts((all) => all.filter((t) => t.id !== id));
+  }, []);
   const dismiss = useCallback(
     (id) => {
+      if (removals.current.has(id)) return;
       setToasts((all) => all.map((t) => (t.id === id ? { ...t, leaving: true } : t)));
-      setTimeout(() => remove(id), LEAVE_MS);
+      removals.current.set(id, setTimeout(() => remove(id), LEAVE_MS));
     },
     [remove],
   );
+  useEffect(() => {
+    const pending = removals.current;
+    return () => {
+      pending.forEach(clearTimeout);
+      pending.clear();
+    };
+  }, []);
   const toast = useCallback(
     (message, { tone, timeout = defaultTimeout, action } = {}) => {
       const id = ++next.current;

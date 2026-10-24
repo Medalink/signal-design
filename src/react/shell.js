@@ -6,8 +6,8 @@
  * closes overlays on Escape and returns focus into the drawer, so none of
  * that needs init(). Layout and breakpoints stay in the CSS.
  */
-import { createContext, createElement as h, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { chain, cx, mergeRefs, onPhone, useControllable } from "./util.js";
+import { createContext, createElement as h, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { chain, cx, mergeRefs, onPhone, useControllable, useIsomorphicLayoutEffect } from "./util.js";
 
 const ShellContext = createContext(null);
 
@@ -149,9 +149,9 @@ function RailEntry({ kind, section, current, unread, pending, href, onClick, cla
     ...props,
     onClick: (event) => {
       onClick?.(event);
-      if (event.defaultPrevented || section === undefined) return;
+      if (event.defaultPrevented) return;
       if (href === "#") event.preventDefault();
-      shell.selectSection(section);
+      if (section !== undefined) shell.selectSection(section);
     },
   });
 }
@@ -174,11 +174,29 @@ export const SidebarTitle = ({ className, ...props }) => h("span", { className: 
 export const SidebarBody = ({ className, ...props }) => h("nav", { className: cx("sd-sidebar-body", className), ...props });
 
 /** A collapsible group of links. React owns `open`. */
-export function SidebarGroup({ title, open, defaultOpen = true, onOpenChange, className, children, ...props }) {
+export function SidebarGroup({ title, open, defaultOpen = true, onOpenChange, className, children, ref, onToggle, ...props }) {
   const [isOpen, setOpen] = useControllable(open, defaultOpen, onOpenChange);
+  const node = useRef(null);
+  const [, rerender] = useReducer((n) => n + 1, 0);
+
+  // Run after every render: a parent that refuses a toggle gets the group put back.
+  useIsomorphicLayoutEffect(() => {
+    if (node.current.open !== isOpen) node.current.open = isOpen;
+  });
+
   return h(
     "details",
-    { className: cx("sd-sidebar-group", className), open: isOpen, onToggle: (event) => setOpen(event.currentTarget.open), ...props },
+    {
+      className: cx("sd-sidebar-group", className),
+      open: isOpen,
+      ...props,
+      ref: mergeRefs(node, ref),
+      onToggle: (event) => {
+        onToggle?.(event);
+        setOpen(event.currentTarget.open);
+        rerender();
+      },
+    },
     h("summary", null, title),
     children,
   );
