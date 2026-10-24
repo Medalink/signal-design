@@ -949,6 +949,87 @@ own the piece and copy its events into your state:
   it has `data-sd-ornaments="none"`.
 - `.sd-titlebar`: gets `data-maximized` from the Tauri window.
 
+## React
+
+`signal-design/react` is a set of typed React 19 components for the parts that
+carry state. They render the `sd-` classes and the ARIA and `data-*` state from
+the State contract, so React is the only writer and none of them needs
+`init()`. It is part of this package: `react` and `react-dom` are optional peer
+dependencies, and nothing changes for a project without React.
+
+```jsx
+import { Button, Dialog, DialogBody, DialogClose, DialogFooter, DialogHeader, Field, Input } from "signal-design/react";
+
+function Rename({ name, save }) {
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(name);
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Rename</Button>
+      <Dialog open={open} onOpenChange={setOpen} size="sm">
+        <DialogHeader>Rename</DialogHeader>
+        <DialogBody>
+          <Field label="Name" error={value ? undefined : "Name is required."}>
+            <Input value={value} onChange={(event) => setValue(event.target.value)} />
+          </Field>
+        </DialogBody>
+        <DialogFooter>
+          <DialogClose><Button variant="ghost">Cancel</Button></DialogClose>
+          <Button variant="primary" onClick={() => { save(value); setOpen(false); }}>Save</Button>
+        </DialogFooter>
+      </Dialog>
+    </>
+  );
+}
+```
+
+| Part | Components | State |
+|---|---|---|
+| Buttons | `Button`, `IconButton`, `buttonClass()` for links | `busy` sets `aria-busy` |
+| Fields | `Field`, `Input`, `Textarea`, `Select`, `Checkbox`, `Switch` | `Field` gives its control the id, `aria-describedby`, `aria-invalid` and `required`; the controls are native, so `value` or `defaultValue` and `checked` or `defaultChecked` both work |
+| Status | `Badge`, `CountBadge`, `Avatar`, `AvatarStack` | `tone` is `data-tone`, `status` is `data-status` |
+| Surfaces | `Card`, `Panel`, `EmptyState`, `Table` with its rows, headers and cells | `TableHeader sort` is `aria-sort`, `TableRow selected` is `aria-selected` |
+| Overlays | `Dialog`, `Sheet`, `Popover`, `Menu`, `Tooltip`, `ToastProvider` with `useToast()` | `open` or `defaultOpen` with `onOpenChange` |
+| Navigation | `Tabs`, `TabList`, `Tab`, `TabPanel` | `value` or `defaultValue` with `onValueChange` |
+| Shell | `AppShell`, `Rail`, `RailItem`, `Sidebar`, `SidebarPanel`, `SidebarGroup`, `SidebarLink`, `ShellMain`, `ShellToggle`, `ShellAside`, `Statusbar`, `useShell()` | `sidebar`, `aside`, `drawer` and `section`, each controlled or default |
+
+What they take over from `init()`:
+
+- **Dialog and Sheet** run on the native `<dialog>`. `showModal()` follows
+  `open`, the browser keeps focus inside and handles Escape, and its `close`
+  event reaches `onOpenChange`. Focus returns to the opener and a backdrop
+  click closes it. `static` turns off both Escape and the backdrop.
+- **Popover and Menu** run on the native popover API. The trigger links to the
+  panel with `popovertarget`, so a click on it toggles instead of dismissing
+  and reopening. The panel is placed next to the trigger and flips at the
+  viewport edge. In a menu the arrows, Home and End move focus, a letter jumps
+  to the next item that starts with it, disabled items are skipped, and
+  choosing an item closes the menu and returns focus to the trigger.
+- **Tabs** are roving: arrows, Home and End move focus and select.
+- **Toasts** are rendered by React inside one live region. A toast fades with
+  `data-leaving` for 160ms before it is removed, and hovering one holds it.
+- **AppShell** renders `data-sidebar`, `data-aside`, `data-drawer` and
+  `data-peek`, makes the page `inert` behind the drawer, closes the peek, the
+  drawer and a floating right panel on Escape, and moves focus into the drawer.
+
+What stays yours: remembering the sidebar choice (`sidebar` is a plain prop, so
+use your own storage), collapsing the sidebar on tablets, resizing it (the
+Resizable sidebar section has the framework recipe), and routing. A `RailItem`
+or `SidebarLink` renders an `<a>` when it has `href`; call your router in
+`onClick`. `SidebarLink` still closes the peek or drawer when `onClick` prevents
+the default.
+
+Every module is safe to import on the server, and a closed dialog, popover or
+tooltip renders without touching `window` or `document`. jsdom has no
+`showModal` or `showPopover`: stub them in the test setup before opening one.
+
+Do not call `init()` on a page that uses these. It would write the same
+attributes a second time (tabs, `.sd-shell`, `[popovertarget]`,
+`<dialog open>`); the list under Framework-owned state says what it touches.
+The helpers that write only their own nodes stay safe beside React:
+`hotkeys()`, `setTheme()`, `data-sd-theme`, `data-sd-copy` and `data-sd-key`.
+`react.html` and `react-shell.html` in the showcase use every component above.
+
 ## Charts
 
 Two ways to chart, with one set of colors:
@@ -1219,9 +1300,10 @@ with a card for every other page. The library reference is one page per
 section (`lib-tokens.html` through `lib-js.html`), each an app in the Signal
 App Shell that opens with what the section is for and then shows every block
 with a Preview / Code flip (copyable HTML, the JS it needs, and a JS snippet
-where one applies). Five example apps use those parts together: an app console
+where one applies). Example apps use those parts together: an app console
 (`shell.html`), a chat app (`chat.html`), a multi-step form (`form.html`), a
-landing page (`landing.html`) and live charts (`charts.html`). A bar at the top
+landing page (`landing.html`), live charts (`charts.html`), and two built from
+the React components (`react.html`, `react-shell.html`). A bar at the top
 of every page links back to the overview and holds the theme, width and
 settings controls; example apps carry a grey Mock marker in it.
 `showcase/pages.js` lists every page.
