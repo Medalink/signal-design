@@ -8,7 +8,7 @@ import { createElement as h } from "react";
 import { buttonClass } from "./button.js";
 import { Menu, MenuContent, MenuTrigger } from "./popover.js";
 import { RovingProvider, useRoving, useRovingItem } from "./roving.js";
-import { chain, cx } from "./util.js";
+import { chain, cx, mergeRefs } from "./util.js";
 
 const KEYS = { ArrowRight: 1, ArrowLeft: -1, Home: "first", End: "last" };
 
@@ -23,7 +23,7 @@ export function Toolbar({ label, className, onFocus, onKeyDown, ref, ...props })
       "aria-orientation": "horizontal",
       className: cx("sd-toolbar", className),
       ...props,
-      ref: roving.props.ref,
+      ref: mergeRefs(roving.props.ref, ref),
       tabIndex: roving.props.tabIndex,
       onFocus: (event) => {
         onFocus?.(event);

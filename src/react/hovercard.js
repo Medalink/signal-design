@@ -6,10 +6,10 @@
  * output has none. It is a preview: it is not in the tab order, so what it
  * shows must be reachable elsewhere too.
  */
-import { Fragment, cloneElement, createElement as h, useEffect, useId, useLayoutEffect, useRef } from "react";
+import { Fragment, cloneElement, createElement as h, useEffect, useId, useRef } from "react";
 import { createPortal } from "react-dom";
 import { place } from "../js/position.js";
-import { cx, mergeRefs, useControllable } from "./util.js";
+import { cx, mergeRefs, useControllable, useIsomorphicLayoutEffect } from "./util.js";
 
 export function HoverCard({ content, label = "Preview", side = "bottom", align = "start", open, defaultOpen = false, onOpenChange, openDelay = 300, closeDelay = 150, className, children }) {
   const [isOpen, setOpen] = useControllable(open, defaultOpen, onOpenChange);
@@ -26,12 +26,12 @@ export function HoverCard({ content, label = "Preview", side = "bottom", align =
   };
   useEffect(() => cancel, []);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (isOpen) place(card.current, anchor.current, { side, align });
   }, [isOpen, side, align, content]);
 
   // A layout effect, so the listener exists in the same commit that shows the card.
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!isOpen) return;
     const onKey = (event) => {
       if (event.key !== "Escape") return;

@@ -6,9 +6,9 @@
  * `onMove` and the app reorders its own data. No drag library; the drag is
  * the browser's own.
  */
-import { Children, createContext, createElement as h, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Children, createContext, createElement as h, useCallback, useContext, useMemo, useRef, useState } from "react";
 import { RovingProvider, useRoving, useRovingItem } from "./roving.js";
-import { cx, useControllable } from "./util.js";
+import { cx, mergeRefs, useControllable, useIsomorphicLayoutEffect } from "./util.js";
 
 const TreeContext = createContext(null);
 const LevelContext = createContext(0);
@@ -34,6 +34,7 @@ export function Tree({
   className,
   onFocus,
   onKeyDown,
+  ref,
   ...props
 }) {
   const [current, select] = useControllable(selected, defaultSelected ?? null, onSelectedChange);
@@ -46,7 +47,7 @@ export function Tree({
   const toggle = useCallback((id, next = !open.includes(id)) => setOpen(next ? [...open, id] : open.filter((x) => x !== id)), [open, setOpen]);
 
   // A move that reorders the DOM can drop focus; give it back to the item that moved.
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const id = restore.current;
     if (id === null) return;
     restore.current = null;
@@ -102,7 +103,7 @@ export function Tree({
         "aria-label": label,
         className: cx("sd-tree", className),
         ...props,
-        ref: roving.props.ref,
+        ref: mergeRefs(roving.props.ref, ref),
         tabIndex: roving.props.tabIndex,
         onFocus: (event) => {
           onFocus?.(event);
