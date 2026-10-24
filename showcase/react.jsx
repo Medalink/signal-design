@@ -323,7 +323,7 @@ function Overlays() {
     <Demo
       id="react-dialog"
       title="Dialog and sheet"
-      code={`<Dialog open={open} onOpenChange={setOpen} aria-label="Request changes">
+      code={`<Dialog open={open} onOpenChange={setOpen}>
   <DialogHeader>Request changes on ACME-421?</DialogHeader>
   <DialogBody><Field label="Note"><Textarea /></Field></DialogBody>
   <DialogFooter>
@@ -541,7 +541,7 @@ toast("Archived", { action: { label: "Undo", onClick: undo }, timeout: 0 });`}
       <div className="sd-actions">
         <Button onClick={() => toast("Approved ACME-421", { tone: "success" })}>Toast: success</Button>
         <Button onClick={() => toast("Archived", { action: { label: "Undo", onClick: () => toast("Restored") }, timeout: 0 })}>Toast with undo</Button>
-        <Button onClick={() => toast("Quick", { timeout: 300 })}>Quick toast</Button>
+        <Button onClick={() => toast("Quick", { timeout: 1200 })}>Quick toast</Button>
       </div>
     </Demo>
   );

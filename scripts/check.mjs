@@ -18,6 +18,7 @@ import { fileURLToPath } from "node:url";
 import { chromium, webkit } from "playwright";
 import { sweep as rulesSweep } from "../bin/rules.mjs";
 import { checkLivingTable, checkLivingTableTypes } from "./check-living-table.mjs";
+import { checkReact, checkReactSsr, checkReactTypes } from "./check-react.mjs";
 import { checkSidebarResize } from "./check-sidebar-resize.mjs";
 import { checkHashRedirects, checkShowcasePages, checkShowcaseRegistry } from "./check-showcase-pages.mjs";
 import { checkShowcaseBar } from "./check-showcase-bar.mjs";
@@ -98,6 +99,14 @@ try {
   checkLivingTableTypes();
   console.log("ok   living table types 1 strict consumer compilation");
 } catch (error) { fail("living table types", error.message); }
+
+try {
+  checkReactTypes();
+  console.log("ok   react types 1 strict consumer compilation");
+} catch (error) { fail("react types", error.message); }
+try {
+  console.log(`ok   react server render ${await checkReactSsr()} components without a DOM`);
+} catch (error) { fail("react server render", error.message); }
 
 if (runs("behaviors")) {
   const problems = checkShowcaseRegistry();
@@ -993,6 +1002,11 @@ for (const [name, engine] of Object.entries(engines)) {
       const resize = await checkSidebarResize(page, base, apiUrl);
       for (const error of resize.errors) fail(`${name} sidebar resize`, error);
       if (!resize.errors.length) console.log(`ok   ${name} sidebar resize ${resize.passed} behavior checks`);
+    },
+    "react bindings": async (page) => {
+      const react = await checkReact(page, base);
+      for (const error of react.errors) fail(`${name} react bindings`, error);
+      if (!react.errors.length) console.log(`ok   ${name} react bindings ${react.passed} behavior checks`);
     },
     "old links": async (page) => {
       const redirects = await checkHashRedirects(page, base);
