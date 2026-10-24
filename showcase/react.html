@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en" data-theme="ink" data-page="react">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Signal for React</title>
+  <script>
+    try { const t = localStorage.getItem("sd-theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
+  </script>
+  <link rel="stylesheet" href="./app.css">
+  <script type="module" src="./react.jsx"></script>
+</head>
+<body>
+<a class="sd-skip" href="#main">Skip to content</a>
+
+<header class="sd-topbar">
+  <a class="sd-wordmark" href="./index.html">Signal</a>
+  <nav class="sd-nav sd-desktop-only" aria-label="Examples">
+    <a href="./index.html">Library</a>
+    <a href="./shell.html">App shell</a>
+    <a href="./react.html" aria-current="page">React</a>
+    <a href="./react-shell.html">React shell</a>
+  </nav>
+</header>
+
+<main class="sd-page sd-page-wide" id="main" tabindex="-1">
+  <header class="sd-header">
+    <span class="sd-wordmark">signal-design/react</span>
+    <h1 class="sd-display">React owns the state. <em>Signal draws it.</em></h1>
+    <p class="sd-lead max-w-[42rem]">Every part on this page is a React component with no <code>init()</code> on the page. State is props and ARIA and <code>data-*</code> attributes, so it is the same state the CSS keys on in plain HTML.</p>
+  </header>
+  <div id="root"></div>
+</main>
+</body>
+</html>

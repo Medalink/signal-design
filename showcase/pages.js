@@ -33,6 +33,7 @@ export const EXAMPLES = [
   { file: "form.html", title: "Form", summary: "A three step workspace form with validation, a live price and a dropzone." },
   { file: "landing.html", title: "Landing", summary: "A marketing page with a hero, rain backdrop, pricing and an FAQ." },
   { file: "charts.html", title: "Charts", summary: "Live bandwidth and latency charts with scale modes and the full chart gallery." },
+  { file: "react.html", title: "React", summary: "Every React binding on one page with no init(): buttons, fields, overlays, menus, tabs, tables and toasts." },
   { file: "stream.html", title: "Stream", summary: "A Twitch overlay package: starting soon, in game, BRB and ending scenes with live alerts, ready for OBS." },
 ];
 

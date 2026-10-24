@@ -41,6 +41,10 @@
       "types": "./src/js/ascii/index.d.ts",
       "default": "./src/js/ascii/index.js"
     },
+    "./react": {
+      "types": "./src/react/index.d.ts",
+      "default": "./src/react/index.js"
+    },
     "./ai/*": "./ai/*",
     "./vscode/*": "./vscode/*",
     "./package.json": "./package.json"
@@ -65,7 +69,9 @@
   "peerDependencies": {
     "ascii-magic-art": "^1.0.2",
     "chart.js": "^4.5.1",
-    "tailwindcss": "^4.3.0"
+    "tailwindcss": "^4.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "peerDependenciesMeta": {
     "ascii-magic-art": {
@@ -75,6 +81,12 @@
       "optional": true
     },
     "chart.js": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
       "optional": true
     }
   },
@@ -95,11 +107,15 @@
     "@fontsource/source-code-pro": "5.3.1",
     "@tailwindcss/cli": "4.3.3",
     "@tailwindcss/vite": "4.3.3",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "ascii-magic-art": "1.0.2",
     "axe-core": "4.10.3",
     "chart.js": "4.5.1",
     "esbuild": "^0.28.2",
     "playwright": "^1.64.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "tailwindcss": "^4.3.3",
     "typescript": "5.9.3",
     "vite": "8.3.4"
