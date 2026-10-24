@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
 import { mountBar } from "./viewport.js";
-import { cycleTheme } from "../src/js/index.js";
+import { cycleTheme, hotkeys } from "../src/js/index.js";
 import {
   AppShell,
   Avatar,
@@ -47,6 +47,7 @@ import {
 } from "../src/react/index.js";
 
 mountBar();
+hotkeys({ "shift+t": cycleTheme });
 
 const icons = {
   projects: (

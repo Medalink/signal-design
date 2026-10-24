@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { mountBar } from "./viewport.js";
+import { cycleTheme, hotkeys } from "../src/js/index.js";
 import {
   Avatar,
   AvatarStack,
@@ -55,6 +56,7 @@ import {
 } from "../src/react/index.js";
 
 mountBar();
+hotkeys({ "shift+t": cycleTheme });
 
 function Demo({ id, title, code, children }) {
   return (
@@ -319,6 +321,10 @@ function Overlays() {
   const [sheet, setSheet] = useState(false);
   const [note, setNote] = useState("Also handle an expired card.");
   const [result, setResult] = useState("none");
+  const [guard, setGuard] = useState(false);
+  // Counted without a render, so refusing a close changes no React state at all.
+  const refused = useRef(0);
+  const refusedLabel = useRef(null);
   return (
     <Demo
       id="react-dialog"
@@ -332,6 +338,7 @@ function Overlays() {
   </DialogFooter>
 </Dialog>
 <Sheet open={sheet} onOpenChange={setSheet}>…</Sheet>
+<Dialog open={guard} onOpenChange={(next) => (next ? setGuard(true) : refuse())}>…</Dialog>
 <Dialog trigger={<Button>Uncontrolled</Button>} size="sm">…</Dialog>`}
     >
       <div className="sd-actions">
@@ -361,10 +368,31 @@ function Overlays() {
             </DialogClose>
           </DialogFooter>
         </Dialog>
+        <Button onClick={() => setGuard(true)}>Guarded dialog</Button>
         <span className="sd-subtle text-sm" data-result>
           result: {result}
         </span>
+        <span className="sd-subtle text-sm" data-blocked ref={refusedLabel}>
+          blocked: 0
+        </span>
       </div>
+
+      <Dialog
+        open={guard}
+        size="sm"
+        onOpenChange={(next) => {
+          if (next) setGuard(true);
+          else refusedLabel.current.textContent = `blocked: ${++refused.current}`;
+        }}
+      >
+        <DialogHeader>Unsaved changes</DialogHeader>
+        <DialogBody>Closing is refused until you discard them.</DialogBody>
+        <DialogFooter>
+          <Button tone="danger" onClick={() => setGuard(false)}>
+            Discard changes
+          </Button>
+        </DialogFooter>
+      </Dialog>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogHeader>Request changes on ACME-421?</DialogHeader>

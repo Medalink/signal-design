@@ -238,6 +238,16 @@ export async function checkReact(page, base) {
   expect(await isOpen(fixed), "a static dialog ignores Escape and the backdrop");
   await fixed.getByRole("button", { name: "Done" }).click();
   expect(await closed(fixed), "a static dialog still closes from its own button");
+  const guarded = dialogOf("Closing is refused until you discard them.");
+  await opener("Guarded dialog").click();
+  await until(() => [...document.querySelectorAll("dialog")].some((d) => d.open && d.textContent.includes("refused")), null);
+  await page.keyboard.press("Escape");
+  expect(await until(() => document.querySelector("[data-blocked]").textContent === "blocked: 1", null), "the parent hears Escape on a guarded dialog");
+  expect(await until(() => [...document.querySelectorAll("dialog")].some((d) => d.open && d.textContent.includes("refused")), null), "a parent that refuses a close gets the dialog reopened");
+  await page.keyboard.press("Escape");
+  expect(await until(() => document.querySelector("[data-blocked]").textContent === "blocked: 2", null) && await isOpen(guarded), "the dialog stays reopenable after a refused close");
+  await guarded.getByRole("button", { name: "Discard changes" }).click();
+  expect(await closed(guarded), "the parent can still close it");
   const sheet = dialogOf("These settings apply to this item only.");
   await opener("Sheet").click();
   await until(() => [...document.querySelectorAll("dialog")].some((d) => d.open && d.classList.contains("sd-sheet")), null);

@@ -4,7 +4,7 @@
  * Nothing is called while the dialog stays closed, so a closed mount is safe
  * on the server and wherever `showModal` is missing.
  */
-import { Fragment, cloneElement, createContext, createElement as h, useContext, useEffect, useId, useMemo, useRef } from "react";
+import { Fragment, cloneElement, createContext, createElement as h, useContext, useEffect, useId, useMemo, useReducer, useRef } from "react";
 import { closeDialog, openDialog } from "../js/dialog.js";
 import { IconButton } from "./button.js";
 import { chain, cx, mergeRefs, useControllable } from "./util.js";
@@ -15,7 +15,9 @@ export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size,
   const [isOpen, setOpen] = useControllable(open, defaultOpen, onOpenChange);
   const titleId = useId();
   const node = useRef(null);
+  const [, rerender] = useReducer((n) => n + 1, 0);
 
+  // Run after every render: a parent that refuses a close gets the dialog put back.
   useEffect(() => {
     const dialog = node.current;
     if (isOpen && !dialog.open) openDialog(dialog);
@@ -37,6 +39,7 @@ export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size,
         onClose: (event) => {
           onClose?.(event);
           setOpen(false);
+          rerender();
         },
         onCancel: (event) => {
           onCancel?.(event);
