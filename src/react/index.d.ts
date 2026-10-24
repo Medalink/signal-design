@@ -448,6 +448,8 @@ export function Mark(props: MarkProps): ReactElement;
 export interface HoverCardProps {
   /** What the card shows. */
   content: ReactNode;
+  /** The card's accessible name. Default "Preview". */
+  label?: string;
   side?: "top" | "bottom" | "left" | "right";
   align?: "start" | "center" | "end";
   open?: boolean;
@@ -507,3 +509,74 @@ export interface TreeItemProps extends Omit<ComponentProps<"li">, "id" | "role" 
   children?: ReactNode;
 }
 export function TreeItem(props: TreeItemProps): ReactElement;
+
+/* ---- Combobox and command palette -------------------------------------- */
+
+export interface ListItem {
+  /** The id of the item: what the combobox hands to `onValueChange`, what the palette hands to `onSelect`. Unique in the list. */
+  value: string;
+  label: string;
+  /** Extra text the default filter also matches. */
+  keywords?: string;
+  /** A label above the first item of each run with the same group. */
+  group?: string;
+  /** Text at the end of the row, such as a shortcut. */
+  hint?: string;
+  /** Renders the option as a link. */
+  href?: string;
+  disabled?: boolean;
+}
+/** `false` shows the items as given, for results you fetched yourself; a function replaces the default match on label, keywords and value. */
+export type ListFilter = false | ((item: ListItem, query: string) => boolean);
+
+export interface ComboboxProps extends Omit<ComponentProps<"input">, "value" | "defaultValue" | "role" | "type" | "onChange"> {
+  items: ListItem[];
+  /** The chosen item's `value`; null for none. */
+  value?: string | null;
+  defaultValue?: string | null;
+  onValueChange?: (value: string) => void;
+  /** The text in the box. Leave out and it follows the chosen item's label. */
+  inputValue?: string;
+  defaultInputValue?: string;
+  onInputValueChange?: (text: string) => void;
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  filter?: ListFilter;
+  /** Sets `aria-busy` on the list and shows "Loading" when there are no items. */
+  busy?: boolean;
+  /** Shown when nothing matches. Default "No matches". */
+  emptyText?: string;
+  /** The list's accessible name. Default "Suggestions". */
+  listLabel?: string;
+  /** Adds a hidden input carrying the chosen value to a form. */
+  name?: string;
+  onChange?: ComponentProps<"input">["onChange"];
+}
+/** A searchable select: type to filter, arrows and Enter to choose, Escape to close. Use it inside `Field`. */
+export function Combobox(props: ComboboxProps): ReactElement;
+
+export interface CommandPaletteProps extends Omit<DialogProps, "open" | "defaultOpen" | "onOpenChange" | "trigger" | "size" | "side" | "static" | "children" | "onSelect"> {
+  items: ListItem[];
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** What has been typed. It is cleared when the palette closes. */
+  query?: string;
+  defaultQuery?: string;
+  onQueryChange?: (query: string) => void;
+  /** Called when an item is chosen; the palette closes after. A link follows its `href` unless you call `event.preventDefault()`, as a router does. */
+  onSelect?: (item: ListItem, event: MouseEvent<HTMLElement>) => void;
+  filter?: ListFilter;
+  busy?: boolean;
+  emptyText?: string;
+  /** The palette's name and its search box's. Default "Search". */
+  label?: string;
+  placeholder?: string;
+  /** The list's accessible name. Default "Results". */
+  listLabel?: string;
+  /** A line under the list, such as the keys. */
+  foot?: ReactNode;
+}
+/** A command palette: a search box over a filtered list, on a modal dialog. */
+export function CommandPalette(props: CommandPaletteProps): ReactElement;

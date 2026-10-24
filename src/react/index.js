@@ -39,6 +39,8 @@ export { Manuscript, StatusSegment } from "./editor.js";
 export { Mark } from "./marks.js";
 export { HoverCard } from "./hovercard.js";
 export { Tree, TreeItem } from "./tree.js";
+export { Combobox } from "./combobox.js";
+export { CommandPalette } from "./command.js";
 export { ToastProvider, useToast } from "./toast.js";
 export {
   AppShell,

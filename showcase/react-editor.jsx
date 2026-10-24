@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { mountBar } from "./viewport.js";
 import { cycleTheme, hotkeys } from "../src/js/index.js";
 import { Demo } from "./react-demo.jsx";
-import { HoverCard, Manuscript, Mark, MenuItem, StatusSegment, Tree, TreeItem, Toolbar, ToolbarButton, ToolbarGroup, ToolbarMore, ToolbarSeparator } from "../src/react/index.js";
+import { Button, Combobox, CommandPalette, Field, HoverCard, Manuscript, Mark, MenuItem, StatusSegment, Tree, TreeItem, Toolbar, ToolbarButton, ToolbarGroup, ToolbarMore, ToolbarSeparator } from "../src/react/index.js";
 
 mountBar();
 hotkeys({ "shift+t": cycleTheme });
@@ -228,12 +228,111 @@ function DocumentTree() {
   );
 }
 
+const PEOPLE = [
+  { value: "jane", label: "Jane Okafor", keywords: "editor", group: "Editors" },
+  { value: "sam", label: "Sam Reyes", keywords: "copy editor", group: "Editors" },
+  { value: "ines", label: "Ines Duarte", keywords: "translator", group: "Contributors" },
+  { value: "omar", label: "Omar Haddad", keywords: "illustrator", group: "Contributors" },
+  { value: "wren", label: "Wren Calloway", keywords: "proofreader", group: "Contributors", disabled: true },
+];
+
+const DOCUMENTS = [
+  { value: "ch-1", label: "The harbour" },
+  { value: "ch-2", label: "The long way round" },
+  { value: "ch-3", label: "Forty drafts" },
+  { value: "ch-4", label: "Lisbon" },
+  { value: "ch-5", label: "The ferry" },
+  { value: "notes", label: "Notes" },
+];
+
+const COMMANDS = [
+  { value: "open-ch-1", label: "The harbour", hint: "chapter", group: "Documents", keywords: "open go to" },
+  { value: "open-ch-4", label: "Lisbon", hint: "chapter", group: "Documents", keywords: "open go to" },
+  { value: "open-notes", label: "Notes", hint: "page", group: "Documents", href: "#choices" },
+  { value: "focus", label: "Toggle focus mode", hint: "Ctrl .", group: "Actions" },
+  { value: "export", label: "Export as PDF", group: "Actions", keywords: "download print" },
+  { value: "delete", label: "Delete chapter", group: "Actions", disabled: true },
+];
+
+function Choices() {
+  const [person, setPerson] = useState("sam");
+  const [query, setQuery] = useState("");
+  const [found, setFound] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [ran, setRan] = useState("none");
+
+  // Stands in for a request: the combobox only sees the items that come back.
+  useEffect(() => {
+    if (!query.trim()) {
+      setFound([]);
+      return;
+    }
+    setSearching(true);
+    const timer = setTimeout(() => {
+      setFound(DOCUMENTS.filter((doc) => doc.label.toLowerCase().includes(query.trim().toLowerCase())));
+      setSearching(false);
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  return (
+    <Demo
+      id="react-editor-choices"
+      title="Combobox and command palette"
+      code={`<Field label="Editor">
+  <Combobox items={people} value={person} onValueChange={setPerson} placeholder="Find a person" />
+</Field>
+<Field label="Jump to">
+  <Combobox items={found} filter={false} busy={searching} inputValue={query} onInputValueChange={setQuery} />
+</Field>
+<CommandPalette items={commands} open={open} onOpenChange={setOpen} onSelect={(item) => run(item.value)} />`}
+    >
+      <div className="sd-form-row">
+        <Field label="Editor">
+          <Combobox items={PEOPLE} value={person} onValueChange={setPerson} placeholder="Find a person" listLabel="People" />
+        </Field>
+        <Field label="Jump to a chapter" hint="Results arrive after you stop typing.">
+          <Combobox
+            items={found}
+            filter={false}
+            busy={searching}
+            inputValue={query}
+            onInputValueChange={setQuery}
+            placeholder="Type a title"
+            listLabel="Chapters"
+            emptyText={query.trim() ? "No chapter" : "Start typing"}
+          />
+        </Field>
+      </div>
+      <div className="sd-actions">
+        <Button onClick={() => setPaletteOpen(true)}>Open palette</Button>
+        <span className="sd-subtle text-sm" data-choice-state>
+          editor: {person ?? "none"} · ran: {ran}
+        </span>
+      </div>
+      <CommandPalette
+        items={COMMANDS}
+        open={paletteOpen}
+        onOpenChange={setPaletteOpen}
+        onSelect={(item, event) => {
+          setRan(item.value);
+          if (item.href) event.preventDefault();
+        }}
+        placeholder="Search chapters and actions"
+        foot="Up and down move, Enter chooses, Esc closes"
+      />
+    </Demo>
+  );
+}
+
 function App() {
   return (
     <>
       <EditorChrome />
       <Marks />
       <DocumentTree />
+      <Choices />
     </>
   );
 }

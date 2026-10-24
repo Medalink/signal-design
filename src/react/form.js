@@ -32,7 +32,7 @@ export function Field({ label, hint, error, aside, required, id, className, chil
 }
 
 /** What a control takes from its Field: an id, the description it points at, invalid and required. */
-function useControl(props) {
+export function useControl(props) {
   const field = useContext(FieldContext);
   if (!field) return props;
   const describedBy = cx(props["aria-describedby"], field.describedBy) || undefined;

@@ -11,7 +11,7 @@ import { createPortal } from "react-dom";
 import { place } from "../js/position.js";
 import { cx, mergeRefs, useControllable } from "./util.js";
 
-export function HoverCard({ content, side = "bottom", align = "start", open, defaultOpen = false, onOpenChange, openDelay = 300, closeDelay = 150, className, children }) {
+export function HoverCard({ content, label = "Preview", side = "bottom", align = "start", open, defaultOpen = false, onOpenChange, openDelay = 300, closeDelay = 150, className, children }) {
   const [isOpen, setOpen] = useControllable(open, defaultOpen, onOpenChange);
   const id = useId();
   const anchor = useRef(null);
@@ -66,7 +66,7 @@ export function HoverCard({ content, side = "bottom", align = "start", open, def
     isOpen &&
       typeof document !== "undefined" &&
       createPortal(
-        h("div", { id, ref: card, className: cx("sd-hovercard", className), onPointerEnter: cancel, onPointerLeave: () => later(false, closeDelay) }, content),
+        h("div", { id, ref: card, role: "dialog", "aria-label": label, className: cx("sd-hovercard", className), onPointerEnter: cancel, onPointerLeave: () => later(false, closeDelay) }, content),
         document.body,
       ),
   );

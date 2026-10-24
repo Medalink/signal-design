@@ -32,7 +32,8 @@
     background: var(--sd-fg);
   }
   /* Palette list scrolls inside the dialog. */
-  [data-sd-palette] [role="listbox"] {
+  [data-sd-palette] [role="listbox"],
+  .sd-command-list {
     max-height: min(50vh, 24rem);
     margin-block-start: 10px;
     overflow-y: auto;
