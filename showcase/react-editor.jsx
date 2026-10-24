@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { mountBar } from "./viewport.js";
 import { cycleTheme, hotkeys } from "../src/js/index.js";
 import { Demo } from "./react-demo.jsx";
-import { Button, Combobox, CommandPalette, Field, HoverCard, Manuscript, Mark, MenuItem, StatusSegment, Tree, TreeItem, Toolbar, ToolbarButton, ToolbarGroup, ToolbarMore, ToolbarSeparator } from "../src/react/index.js";
+import { Button, Combobox, CommandPalette, Field, HoverCard, Manuscript, Mark, Menu, MenuContent, MenuItem, MenuItemCheckbox, MenuItemRadio, MenuLabel, MenuRadioGroup, MenuTrigger, Radio, RadioGroup, Segment, SegmentedControl, StatusSegment, Tree, TreeItem, Toolbar, ToolbarButton, ToolbarGroup, ToolbarMore, ToolbarSeparator } from "../src/react/index.js";
 
 mountBar();
 hotkeys({ "shift+t": cycleTheme });
@@ -326,6 +326,74 @@ function Choices() {
   );
 }
 
+function Pickers() {
+  const [format, setFormat] = useState("pdf");
+  const [mode, setMode] = useState("draft");
+  const [words, setWords] = useState(true);
+  const [spacing, setSpacing] = useState("comfortable");
+  return (
+    <Demo
+      id="react-editor-pickers"
+      title="Radio group, segmented control and menu choices"
+      code={`<RadioGroup label="Export as" value={format} onValueChange={setFormat}>
+  <Radio value="pdf" label="PDF" description="Print layout" />
+  <Radio value="epub" label="EPUB" />
+</RadioGroup>
+<SegmentedControl label="Stage" inline value={mode} onValueChange={setMode}>
+  <Segment value="draft">Draft</Segment>
+  <Segment value="review">Review</Segment>
+</SegmentedControl>
+<Menu>
+  <MenuTrigger><Button>View</Button></MenuTrigger>
+  <MenuContent label="View">
+    <MenuItemCheckbox checked={words} onCheckedChange={setWords}>Word count</MenuItemCheckbox>
+    <MenuRadioGroup label="Line spacing" value={spacing} onValueChange={setSpacing}>
+      <MenuItemRadio value="comfortable">Comfortable</MenuItemRadio>
+      <MenuItemRadio value="compact">Compact</MenuItemRadio>
+    </MenuRadioGroup>
+  </MenuContent>
+</Menu>`}
+    >
+      <div className="sd-form-row">
+        <RadioGroup label="Export as" value={format} onValueChange={setFormat}>
+          <Radio value="pdf" label="PDF" description="Print layout, fixed pages" />
+          <Radio value="epub" label="EPUB" description="Reflowable, for readers" />
+          <Radio value="md" label="Markdown" />
+          <Radio value="docx" label="Word" disabled />
+        </RadioGroup>
+        <div className="grid content-start gap-4">
+          <SegmentedControl label="Stage" value={mode} onValueChange={setMode}>
+            <Segment value="draft">Draft</Segment>
+            <Segment value="review">Review</Segment>
+            <Segment value="final">Final</Segment>
+          </SegmentedControl>
+          <div className="sd-actions">
+            <Menu>
+              <MenuTrigger>
+                <Button>View</Button>
+              </MenuTrigger>
+              <MenuContent label="View">
+                <MenuLabel>Show</MenuLabel>
+                <MenuItemCheckbox checked={words} onCheckedChange={setWords}>
+                  Word count
+                </MenuItemCheckbox>
+                <MenuLabel>Line spacing</MenuLabel>
+                <MenuRadioGroup label="Line spacing" value={spacing} onValueChange={setSpacing}>
+                  <MenuItemRadio value="comfortable">Comfortable</MenuItemRadio>
+                  <MenuItemRadio value="compact">Compact</MenuItemRadio>
+                </MenuRadioGroup>
+              </MenuContent>
+            </Menu>
+          </div>
+        </div>
+      </div>
+      <p className="sd-subtle text-sm" data-picker-state>
+        format: {format} · stage: {mode} · words: {words ? "on" : "off"} · spacing: {spacing}
+      </p>
+    </Demo>
+  );
+}
+
 function App() {
   return (
     <>
@@ -333,6 +401,7 @@ function App() {
       <Marks />
       <DocumentTree />
       <Choices />
+      <Pickers />
     </>
   );
 }

@@ -20,7 +20,7 @@ export function checkReactTypes() {
   writeFileSync(
     fixture,
     `import { useState } from "react";
-import { AppShell, Button, Dialog, DialogHeader, Field, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
+import { AppShell, Button, Dialog, DialogHeader, Field, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 
 export function Consumer() {
   const [open, setOpen] = useState(false);
@@ -47,6 +47,10 @@ export function Consumer() {
       <Manuscript measure="30rem" face="mono" ref={(node: HTMLElement | null) => node?.focus()} />
       <HoverCard content="Preview" openDelay={0}><Mark kind="entity" tabIndex={0} who="var(--sd-success)" /></HoverCard>
       <Tree label="Outline" selected="a" onSelectedChange={(id) => id.length} defaultExpanded={["a"]} onMove={(move: TreeMove) => move.position.length}><TreeItem id="a" label="A" meta={1}><TreeItem id="b" label="B" disabled /></TreeItem></Tree>
+      <RadioGroup label="Cycle" value="m" onValueChange={(value) => value.length}><Radio value="m" label="Monthly" description="Billed monthly" /></RadioGroup>
+      <SegmentedControl label="View" defaultValue="a" inline wrap size="sm"><Segment value="a">A</Segment></SegmentedControl>
+      <MenuRadioGroup label="Spacing" defaultValue="a"><MenuItemRadio value="a" onSelect={(event) => event.preventDefault()}>A</MenuItemRadio></MenuRadioGroup>
+      <MenuItemCheckbox checked onCheckedChange={(checked) => console.log(checked)}>Words</MenuItemCheckbox>
       <Combobox items={[{ value: "a", label: "A", group: "G", hint: "h" } satisfies ListItem]} value="a" onValueChange={(value) => value.length} filter={(item, query) => item.label.startsWith(query)} name="who" placeholder="Pick" />
       <CommandPalette items={[{ value: "go", label: "Go", href: "/go" }]} open={open} onOpenChange={setOpen} onSelect={(item, event) => { event.preventDefault(); console.log(item.value); }} onQueryChange={(query) => query.length} />
       <Mark kind="comment" active onClick={(event) => event.currentTarget.focus()}>Comment</Mark>
@@ -55,6 +59,10 @@ export function Consumer() {
       <Button variant="huge" />
       {/* @ts-expect-error an icon button needs its accessible name */}
       <IconButton />
+      {/* @ts-expect-error a radio group needs its accessible name */}
+      <RadioGroup />
+      {/* @ts-expect-error a checkbox item needs its state */}
+      <MenuItemCheckbox>Words</MenuItemCheckbox>
       {/* @ts-expect-error a combobox needs items */}
       <Combobox />
       {/* @ts-expect-error a list item needs a label */}
@@ -160,6 +168,11 @@ export async function checkReactSsr() {
             h(sd.ToolbarButton, null, "Heading"),
             h(sd.ToolbarMore, null, h(sd.MenuItem, null, "Clear"))),
           h(sd.Manuscript, { measure: "30rem", face: "mono" }, h("p", null, "Text", h(sd.Mark, { kind: "comment", active: true, onClick() {} }, "c"), h(sd.Mark, { kind: "insert" }, "i"), h(sd.HoverCard, { content: "card", defaultOpen: true }, h(sd.Mark, { kind: "entity", tabIndex: 0 }, "e")))),
+          h(sd.RadioGroup, { label: "Cycle", defaultValue: "m", name: "cycle" }, h(sd.Radio, { value: "m", label: "Monthly", description: "d" }), h(sd.Radio, { value: "y", label: "Yearly", disabled: true })),
+          h(sd.SegmentedControl, { label: "View", defaultValue: "a", inline: true }, h(sd.Segment, { value: "a" }, "A"), h(sd.Segment, { value: "b" }, "B")),
+          h(sd.Menu, null, h(sd.MenuTrigger, null, h(sd.Button, null, "v")),
+            h(sd.MenuContent, { label: "View" }, h(sd.MenuItemCheckbox, { checked: true }, "Words"),
+              h(sd.MenuRadioGroup, { label: "Spacing", defaultValue: "a" }, h(sd.MenuItemRadio, { value: "a" }, "A"), h(sd.MenuItemRadio, { value: "b" }, "B")))),
           h(sd.Field, { label: "Who" }, h(sd.Combobox, { items: [{ value: "a", label: "Ada", group: "G" }, { value: "b", label: "Bo", disabled: true }], defaultValue: "a", name: "who", placeholder: "Pick" })),
           h(sd.CommandPalette, { items: [{ value: "go", label: "Go", hint: "g" }], foot: "Esc" }),
           h(sd.Tree, { label: "Outline", defaultSelected: "b", defaultExpanded: ["a"], onMove() {} },
@@ -172,6 +185,9 @@ export async function checkReactSsr() {
     ['class="sd-shell"', "the shell"],
     ['role="tree"', "the tree"],
     ['role="combobox"', "the combobox"],
+    ['role="radiogroup"', "the radio group"],
+    ['role="menuitemcheckbox" aria-checked="true"', "the checked menu checkbox"],
+    ['role="menuitemradio" aria-checked="true"', "the checked menu radio"],
     ['name="who" value="a"', "the combobox's hidden value"],
     ['aria-level="2"', "a nested tree item"],
     ['aria-current="true"', "the current rail section"],

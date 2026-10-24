@@ -227,8 +227,64 @@ export interface MenuItemProps extends ComponentProps<"button"> {
   onSelect?: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 export function MenuItem(props: MenuItemProps): ReactElement;
+export interface MenuItemCheckboxProps extends Omit<MenuItemProps, "role" | "aria-checked"> {
+  checked: boolean;
+  onCheckedChange?: (checked: boolean) => void;
+}
+/** An item that is on or off. Choosing it leaves the menu open, so several can be set in a row. */
+export function MenuItemCheckbox(props: MenuItemCheckboxProps): ReactElement;
+export interface MenuRadioGroupProps extends Omit<ComponentProps<"div">, "role" | "aria-label" | "defaultValue"> {
+  /** The group's accessible name. */
+  label: string;
+  value?: string | null;
+  defaultValue?: string | null;
+  onValueChange?: (value: string) => void;
+}
+export function MenuRadioGroup(props: MenuRadioGroupProps): ReactElement;
+export interface MenuItemRadioProps extends Omit<MenuItemProps, "role" | "aria-checked"> {
+  value: string;
+}
+/** One choice of a `MenuRadioGroup`. Choosing it checks it and closes the menu. */
+export function MenuItemRadio(props: MenuItemRadioProps): ReactElement;
 export function MenuLabel(props: ComponentProps<"div">): ReactElement;
 export function MenuSeparator(props: ComponentProps<"hr">): ReactElement;
+
+/* ---- Radio group and segmented control ---------------------------------- */
+
+export interface RadioGroupProps extends Omit<ComponentProps<"div">, "role" | "aria-label" | "defaultValue" | "onChange"> {
+  /** The group's accessible name. */
+  label: string;
+  value?: string | null;
+  defaultValue?: string | null;
+  onValueChange?: (value: string) => void;
+  /** Submits the choice with a form. Generated when left out. */
+  name?: string;
+  disabled?: boolean;
+}
+export function RadioGroup(props: RadioGroupProps): ReactElement;
+export interface RadioProps extends Omit<ComponentProps<"input">, "type" | "value" | "name" | "checked" | "onChange" | "className" | "children"> {
+  value: string;
+  label: ReactNode;
+  description?: ReactNode;
+  /** On the label; `ref` and the other props reach the input. */
+  className?: string;
+}
+/** One radio with its label. Arrows move and choose, and the group has one tab stop. */
+export function Radio(props: RadioProps): ReactElement;
+export interface SegmentedControlProps extends RadioGroupProps {
+  /** Shrinks the bar to its content. */
+  inline?: boolean;
+  /** Lets the segments flow onto more rows in a narrow container. */
+  wrap?: boolean;
+  size?: "sm";
+}
+export function SegmentedControl(props: SegmentedControlProps): ReactElement;
+export interface SegmentProps extends Omit<ComponentProps<"input">, "type" | "value" | "name" | "checked" | "onChange" | "children"> {
+  value: string;
+  /** The segment's label. */
+  children: ReactNode;
+}
+export function Segment(props: SegmentProps): ReactElement;
 
 /* ---- Tooltip, tabs, toast ---------------------------------------------- */
 

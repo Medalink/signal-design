@@ -31,7 +31,8 @@ export {
   TableCell,
 } from "./display.js";
 export { Dialog, Sheet, DialogHeader, DialogBody, DialogFooter, DialogClose } from "./dialog.js";
-export { Popover, PopoverTrigger, PopoverContent, Menu, MenuTrigger, MenuContent, MenuItem, MenuLabel, MenuSeparator } from "./popover.js";
+export { Popover, PopoverTrigger, PopoverContent, Menu, MenuTrigger, MenuContent, MenuItem, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, MenuLabel, MenuSeparator } from "./popover.js";
+export { RadioGroup, Radio, SegmentedControl, Segment } from "./choice.js";
 export { Tooltip } from "./tooltip.js";
 export { Tabs, TabList, Tab, TabPanel } from "./tabs.js";
 export { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarButton, ToolbarMore } from "./toolbar.js";

@@ -1057,6 +1057,9 @@ The parts a document editor is built from, in CSS and as React components:
 
 - `Combobox` (`sd-combobox`) is a searchable select; `CommandPalette` (`sd-command`) is a search box over a list on a modal dialog. Both take `items` (`{ value, label, keywords?, group?, hint?, href?, disabled? }`) and neither fetches: they filter what you pass on label, keywords and value, and for results from a server you give `filter={false}`, follow `onInputValueChange` or `onQueryChange`, and pass back what arrived (`busy` marks the list `aria-busy`). Focus stays in the box and the highlighted option is named by `aria-activedescendant`; arrows move over enabled items and wrap, Enter chooses, Escape closes. The combobox owns `value`, `inputValue` and `open` as props and reverts unchosen text on blur; `name` adds a hidden input for a form. The palette owns `open` and `query`, clears the query when it closes, and calls `onSelect(item, event)`: a link item follows its `href` unless you call `event.preventDefault()`, as a router does.
 
+- `RadioGroup` with `Radio`, and `SegmentedControl` with `Segment`, are native radios, so the browser gives each a single tab stop, arrows that move and check (which wrap at the ends or not as the browser decides), and form submission with `name`. React owns `value`. `SegmentedControl` draws the same radios as `sd-seg`; `inline`, `wrap` and `size="sm"` are its modifiers.
+- `MenuItemCheckbox` (`menuitemcheckbox`) and `MenuItemRadio` inside `MenuRadioGroup` (`menuitemradio`) join `MenuItem` in a `Menu`. As with `init()`, choosing a checkbox item leaves the menu open so several can be set in a row, and choosing a radio item checks it and closes the menu; `onSelect` can prevent that on a radio item.
+
 `react-editor.html` in the showcase uses every part.
 
 ## Charts
