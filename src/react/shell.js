@@ -35,7 +35,6 @@ export function AppShell({
   className,
   children,
   ref,
-  onKeyDown,
   ...props
 }) {
   const [sidebarState, setSidebar] = useControllable(sidebar, defaultSidebar, onSidebarChange);
@@ -70,6 +69,18 @@ export function AppShell({
     [collapsed, setSection],
   );
 
+  // On the document, like init(): a click on a link does not focus it in Safari, so the key never reaches the shell.
+  const closable = peek || asideOpen || drawerOpen;
+  useEffect(() => {
+    if (!closable) return;
+    const onKeyDown = (event) => {
+      if (event.key !== "Escape" || event.defaultPrevented || event.target.closest?.("dialog[open], [popover]")) return;
+      if (closeOverlays()) event.preventDefault();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [closable, closeOverlays]);
+
   useEffect(() => {
     if (drawerOpen) root.current.querySelector('.sd-rail-item[aria-current]:not([aria-current="false"])')?.focus();
   }, [drawerOpen]);
@@ -92,11 +103,6 @@ export function AppShell({
         "data-aside": asideOpen ? "open" : undefined,
         "data-drawer": drawerOpen ? "" : undefined,
         "data-peek": peek ? "" : undefined,
-        onKeyDown: (event) => {
-          onKeyDown?.(event);
-          if (event.key !== "Escape" || event.defaultPrevented || event.target.closest("dialog[open], [popover]")) return;
-          if (closeOverlays()) event.preventDefault();
-        },
       },
       children,
       h("div", { className: "sd-shell-scrim", onClick: closeOverlays }),
@@ -178,14 +184,18 @@ export function SidebarGroup({ title, open, defaultOpen = true, onOpenChange, cl
   );
 }
 
-/** A link in the sidebar. Choosing one while the sidebar peeks or the drawer is open closes it. */
+/** A link in the sidebar. Choosing one while the sidebar peeks or the drawer is open closes it, even if `onClick` prevents the default. */
 export function SidebarLink({ current, onClick, className, ...props }) {
   const { peek, drawerOpen, closeOverlays } = useShell();
   return h("a", {
     className: cx("sd-sidebar-link", className),
     "aria-current": current ? "page" : undefined,
     ...props,
-    onClick: chain(onClick, () => (peek || drawerOpen) && closeOverlays()),
+    onClick: (event) => {
+      onClick?.(event);
+      // A router link prevents the default, and the sidebar still closes behind it.
+      if (peek || drawerOpen) closeOverlays();
+    },
   });
 }
 

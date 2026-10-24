@@ -372,6 +372,79 @@ export async function checkReact(page, base) {
   expect(await until(() => ![...document.querySelectorAll(".sd-toast")].some((t) => t.textContent.startsWith("Archived")), null) && await toasts("Restored").count() === 1, "a toast action runs and dismisses its toast");
   expect(await until(() => !document.querySelector(".sd-toast"), null, 6000), "every toast is removed in the end");
 
+  /* ---- App shell ---- */
+  await page.goto(base + "react-shell.html");
+  await page.waitForSelector("#shell");
+  expect(await page.evaluate(() => !document.documentElement.hasAttribute("data-sd-scrollbars")), "the shell page ran init()");
+  const shell = () => page.evaluate(() => ({
+    ...document.getElementById("shell").dataset,
+    inert: document.getElementById("main").inert,
+    section: document.querySelector("#shell-rail [aria-current='true']")?.textContent,
+    panels: [...document.querySelectorAll(".sd-sidebar-panel")].filter((p) => !p.hidden).map((p) => p.dataset.section).join(),
+  }));
+  const rail = (label) => page.locator("#shell-rail").getByText(label, { exact: true });
+  const isState = async (want, why) => {
+    const got = await shell();
+    expect(Object.entries(want).every(([k, v]) => got[k] === v), `${why}: wanted ${JSON.stringify(want)}, got ${JSON.stringify(got)}`);
+  };
+  await isState({ sidebar: undefined, aside: undefined, section: "Projects", panels: "projects" }, "the shell starts pinned on Projects");
+  await rail("History").click();
+  await isState({ section: "History", panels: "history", peek: undefined }, "a rail item shows its sidebar panel");
+  await rail("Projects").click();
+  const collapse = page.locator("#shell-sidebar [data-section=projects] button[aria-expanded]");
+  await collapse.click();
+  await isState({ sidebar: "collapsed" }, "the collapse button collapses the sidebar");
+  expect(await page.locator("#shell button.sd-shell-pin").getAttribute("aria-label") === "Pin sidebar open" && await page.locator("#shell button.sd-shell-pin").getAttribute("aria-expanded") === "false", "the pin button says the sidebar is collapsed");
+  await rail("Settings").click();
+  await isState({ sidebar: "collapsed", peek: "", panels: "settings" }, "a rail item peeks the collapsed sidebar over the page");
+  await page.keyboard.press("Escape");
+  await isState({ sidebar: "collapsed", peek: undefined }, "Escape closes the peek");
+  await rail("Settings").click();
+  await page.locator("#shell-sidebar [data-section=settings]").getByText("General", { exact: true }).click();
+  await isState({ peek: undefined, sidebar: "collapsed" }, "choosing a link closes the peek");
+  await page.locator("#shell button.sd-shell-pin").click();
+  await isState({ sidebar: undefined, peek: undefined }, "the pin button pins the sidebar again");
+  expect(await page.locator("#shell-sidebar [data-section=settings] a[aria-current=page]").textContent() === "General", "the chosen link is the current page");
+  const group = page.locator("#shell-sidebar [data-section=settings] details").first();
+  await group.locator("summary").click();
+  expect(await group.evaluate((d) => !d.open), "a sidebar group closes from its summary");
+  await group.locator("summary").click();
+  expect(await group.evaluate((d) => d.open), "a sidebar group opens again");
+
+  const details = page.locator("#shell").getByRole("button", { name: "Details", exact: true });
+  await details.click();
+  await isState({ aside: "open" }, "the Details button opens the right panel");
+  expect(await details.getAttribute("aria-expanded") === "true", "the Details button reports it open");
+  await page.keyboard.press("Escape");
+  await isState({ aside: "open" }, "Escape leaves a docked right panel open");
+  await page.locator("#detail-panel").getByRole("button", { name: "Close details" }).click();
+  await isState({ aside: undefined }, "the close button closes the right panel");
+
+  await page.setViewportSize({ width: 1024, height: 800 });
+  await details.click();
+  await isState({ aside: "open" }, "the right panel opens at 1024px");
+  await page.keyboard.press("Escape");
+  await isState({ aside: undefined }, "Escape closes a right panel that floats over the page");
+
+  await page.setViewportSize({ width: 375, height: 800 });
+  const burger = page.locator("#shell").getByRole("button", { name: "Open navigation" });
+  await burger.click();
+  await isState({ drawer: "", inert: true }, "the menu button opens the drawer and makes the page inert");
+  expect(await until(() => document.activeElement?.closest(".sd-rail-item") !== null, null), "focus moves to the current rail item in the drawer");
+  await page.keyboard.press("Escape");
+  await isState({ drawer: undefined, inert: false }, "Escape closes the drawer and the page is live again");
+  await burger.click();
+  await page.locator("#shell-sidebar [data-section=settings]").getByText("Members", { exact: true }).click();
+  await isState({ drawer: undefined, inert: false }, "choosing a link closes the drawer");
+  await burger.click();
+  await page.locator(".sd-shell-scrim").click({ position: { x: 360, y: 400 } });
+  await isState({ drawer: undefined }, "a click on the scrim closes the drawer");
+  await page.setViewportSize({ width: 1280, height: 900 });
+
+  await page.locator("#shell").getByRole("button", { name: "Account" }).click();
+  await page.getByRole("menuitem", { name: "Sign out" }).click();
+  expect(await page.locator(".sd-toaster .sd-toast", { hasText: "Signed out" }).count() === 1, "a menu item in the header runs its action");
+
   expect(browserErrors.length === 0, `console errors: ${browserErrors.join(" | ")}`);
   return { errors, passed };
 }
