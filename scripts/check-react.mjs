@@ -476,6 +476,11 @@ export async function checkReact(page, base) {
   expect(await group.evaluate((d) => !d.open), "a sidebar group closes from its summary");
   await group.locator("summary").click();
   expect(await group.evaluate((d) => d.open), "a sidebar group opens again");
+  await rail("History").click();
+  const locked = page.locator("#shell-sidebar details[data-pinned]");
+  await locked.locator("summary").click();
+  expect(await until(() => document.querySelector("details[data-pinned]").open, null) && await locked.evaluate((d) => d.open), "a controlled sidebar group whose parent refuses the toggle stays open");
+  await rail("Settings").click();
 
   const details = page.locator("#shell").getByRole("button", { name: "Details", exact: true });
   await details.click();

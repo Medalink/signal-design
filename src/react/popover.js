@@ -5,7 +5,7 @@
  * the panel with `popovertarget`, which makes a click on the trigger toggle
  * the panel instead of dismissing and reopening it.
  */
-import { cloneElement, createContext, createElement as h, useContext, useEffect, useId, useMemo, useReducer, useRef } from "react";
+import { cloneElement, createContext, createElement as h, useCallback, useContext, useEffect, useId, useMemo, useReducer, useRef } from "react";
 import { place } from "../js/position.js";
 import { cx, mergeRefs, useControllable } from "./util.js";
 
@@ -41,7 +41,7 @@ export function PopoverContent({ side = "bottom", align = "start", pad, initialF
   const node = useRef(null);
   const shown = useRef(false);
   const [, rerender] = useReducer((n) => n + 1, 0);
-  const position = () => place(node.current, trigger.current, { side, align });
+  const position = useCallback(() => place(node.current, trigger.current, { side, align }), [trigger, side, align]);
 
   // Run after every render: a parent that refuses a change gets the DOM put back.
   useEffect(() => {
@@ -57,7 +57,7 @@ export function PopoverContent({ side = "bottom", align = "start", pad, initialF
       removeEventListener("scroll", position, { capture: true });
       removeEventListener("resize", position);
     };
-  });
+  }, [isOpen, position]);
 
   return h(
     "div",
@@ -98,11 +98,8 @@ export function MenuTrigger({ children }) {
   return h(PopoverTrigger, { haspopup: "menu" }, children);
 }
 
-let typed = "";
-let typedAt = 0;
-
-/** Arrows, Home, End and type-to-jump move focus between the items, like init() does for markup. */
-function onMenuKeyDown(event) {
+/** Arrows, Home, End and type-to-jump move focus between the items, like init() does for markup. `typing` is the menu's own type-ahead buffer. */
+function onMenuKeyDown(event, typing) {
   const items = [...event.currentTarget.querySelectorAll(ITEM)];
   const at = items.indexOf(document.activeElement);
   let next;
@@ -111,9 +108,9 @@ function onMenuKeyDown(event) {
   else if (event.key === "Home") next = items[0];
   else if (event.key === "End") next = items[items.length - 1];
   else if (event.key.length === 1 && /\S/.test(event.key) && !event.ctrlKey && !event.metaKey) {
-    typed = event.timeStamp - typedAt < 600 ? typed + event.key.toLowerCase() : event.key.toLowerCase();
-    typedAt = event.timeStamp;
-    next = [...items.slice(at + 1), ...items.slice(0, at + 1)].find((el) => el.textContent.trim().toLowerCase().startsWith(typed));
+    typing.text = event.timeStamp - typing.at < 600 ? typing.text + event.key.toLowerCase() : event.key.toLowerCase();
+    typing.at = event.timeStamp;
+    next = [...items.slice(at + 1), ...items.slice(0, at + 1)].find((el) => el.textContent.trim().toLowerCase().startsWith(typing.text));
   }
   if (next) {
     event.preventDefault();
@@ -122,6 +119,7 @@ function onMenuKeyDown(event) {
 }
 
 export function MenuContent({ label, className, children, onKeyDown, ...props }) {
+  const typing = useRef({ text: "", at: 0 });
   return h(
     PopoverContent,
     { initialFocus: ITEM, className, ...props },
@@ -133,7 +131,7 @@ export function MenuContent({ label, className, children, onKeyDown, ...props })
         "aria-label": label,
         onKeyDown: (event) => {
           onKeyDown?.(event);
-          if (!event.defaultPrevented) onMenuKeyDown(event);
+          if (!event.defaultPrevented) onMenuKeyDown(event, typing.current);
         },
       },
       children,

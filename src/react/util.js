@@ -2,7 +2,10 @@
  * Internals shared by the React bindings. Nothing here touches `window` or
  * `document`, so every module is safe to import during server rendering.
  */
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+
+/** `useLayoutEffect` in the browser; `useEffect` on the server, where layout effects only warn. */
+export const useIsomorphicLayoutEffect = typeof document === "undefined" ? useEffect : useLayoutEffect;
 
 export const cx = (...parts) => parts.filter(Boolean).join(" ");
 
