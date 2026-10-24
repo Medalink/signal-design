@@ -10,6 +10,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createElement as h } from "react";
 import ts from "typescript";
+import { checkReactEditor } from "./check-react-editor.mjs";
 
 const rootPath = fileURLToPath(new URL("..", import.meta.url));
 
@@ -19,7 +20,7 @@ export function checkReactTypes() {
   writeFileSync(
     fixture,
     `import { useState } from "react";
-import { AppShell, Button, Dialog, DialogHeader, Field, IconButton, Input, MenuItem, RailItem, Tab, TabList, TabPanel, Tabs, TableHeader, useToast, buttonClass, type ButtonProps } from "signal-design/react";
+import { AppShell, Button, Dialog, DialogHeader, Field, IconButton, Input, MenuItem, Manuscript, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 
 export function Consumer() {
   const [open, setOpen] = useState(false);
@@ -42,10 +43,17 @@ export function Consumer() {
       <TableHeader sort="ascending" onSort={(event) => event.currentTarget.focus()}>Team</TableHeader>
       <MenuItem tone="danger" onSelect={(event) => event.preventDefault()}>Delete</MenuItem>
       <RailItem section="projects" href="#" unread>Projects</RailItem>
+      <Toolbar label="Formatting"><ToolbarButton label="Bold" pressed={open} onPressedChange={setOpen} /><ToolbarMore><MenuItem>Clear</MenuItem></ToolbarMore></Toolbar>
+      <Manuscript measure="30rem" face="mono" ref={(node: HTMLElement | null) => node?.focus()} />
+      <StatusSegment tone="success" pressed onClick={(event) => event.currentTarget.blur()}>Saved</StatusSegment>
       {/* @ts-expect-error variant must be one of the button variants */}
       <Button variant="huge" />
       {/* @ts-expect-error an icon button needs its accessible name */}
       <IconButton />
+      {/* @ts-expect-error a toolbar needs its accessible name */}
+      <Toolbar />
+      {/* @ts-expect-error a pressed toolbar button needs onPressedChange */}
+      <ToolbarButton label="Bold" pressed />
       {/* @ts-expect-error a controlled Tabs needs onValueChange */}
       <Tabs value="a"><TabList label="Tabs" /></Tabs>
       {/* @ts-expect-error a Tabs with neither value nor defaultValue has no selected tab */}
@@ -128,10 +136,16 @@ export async function checkReactSsr() {
           h(sd.Tooltip, { content: "tip" }, h(sd.Button, null, "t")),
           h(sd.Tabs, { defaultValue: "one" },
             h(sd.TabList, { label: "L" }, h(sd.Tab, { value: "one" }, "1"), h(sd.Tab, { value: "two" }, "2")),
-            h(sd.TabPanel, { value: "one" }, "p1"), h(sd.TabPanel, { value: "two" }, "p2")))),
+            h(sd.TabPanel, { value: "one" }, "p1"), h(sd.TabPanel, { value: "two" }, "p2")),
+          h(sd.Toolbar, { label: "Formatting" },
+            h(sd.ToolbarGroup, { label: "Text" }, h(sd.ToolbarButton, { label: "Bold", pressed: true, onPressedChange() {} }, "B")),
+            h(sd.ToolbarSeparator),
+            h(sd.ToolbarButton, null, "Heading"),
+            h(sd.ToolbarMore, null, h(sd.MenuItem, null, "Clear"))),
+          h(sd.Manuscript, { measure: "30rem", face: "mono" }, h("p", null, "Text")))),
       h(sd.ShellDock, null, "dock"),
       h(sd.ShellAside, null, "aside"),
-      h(sd.Statusbar, null, "s")));
+      h(sd.Statusbar, null, h(sd.StatusSegment, null, "1 word"), h(sd.StatusSegment, { pressed: false, onClick() {} }, "Focus"), h(sd.StatusSegment, { end: true, tone: "success" }, "Saved"))));
   const html = renderToString(tree);
   for (const [needle, what] of [
     ['class="sd-shell"', "the shell"],
@@ -456,5 +470,7 @@ export async function checkReact(page, base) {
   expect(await page.locator(".sd-toaster .sd-toast", { hasText: "Signed out" }).count() === 1, "a menu item in the header runs its action");
 
   expect(browserErrors.length === 0, `console errors: ${browserErrors.join(" | ")}`);
-  return { errors, passed };
+  const editor = await checkReactEditor(page, base);
+  errors.push(...editor.errors);
+  return { errors, passed: passed + editor.passed };
 }

@@ -22,6 +22,7 @@
 @import "./components/overlays.css";
 @import "./components/layout.css";
 @import "./components/shell.css";
+@import "./components/editor.css";
 @import "./components/blocks.css";
 @import "./components/conversation.css";
 @import "./components/inputs.css";

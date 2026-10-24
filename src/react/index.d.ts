@@ -365,3 +365,65 @@ export function ShellContent(props: ComponentProps<"div">): ReactElement;
 export function ShellDock(props: ComponentProps<"div">): ReactElement;
 export function ShellAside(props: ComponentProps<"aside">): ReactElement;
 export function Statusbar(props: ComponentProps<"footer">): ReactElement;
+
+/* ---- Toolbar, manuscript, status segments ------------------------------ */
+
+export interface ToolbarProps extends Omit<ComponentProps<"div">, "role" | "aria-label" | "aria-orientation" | "tabIndex"> {
+  /** The toolbar's accessible name. */
+  label: string;
+}
+/** One tab stop for the row; arrows, Home and End move between its buttons. */
+export function Toolbar(props: ToolbarProps): ReactElement;
+export interface ToolbarGroupProps extends Omit<ComponentProps<"div">, "role" | "aria-label"> {
+  /** The group's accessible name. */
+  label?: string;
+}
+export function ToolbarGroup(props: ToolbarGroupProps): ReactElement;
+export function ToolbarSeparator(props: ComponentProps<"span">): ReactElement;
+type ToolbarToggle =
+  | { pressed: boolean; onPressedChange: (pressed: boolean) => void }
+  | { pressed?: undefined; onPressedChange?: undefined };
+export type ToolbarButtonProps = Omit<ComponentProps<"button">, "aria-label" | "aria-pressed"> &
+  ToolbarToggle & {
+    /** Makes it a square icon button and names it. Leave out for a text button. */
+    label?: string;
+    variant?: ButtonVariant;
+  };
+/** A button in the row. `pressed` makes it a toggle; `onPressedChange` hears the next value. */
+export function ToolbarButton(props: ToolbarButtonProps): ReactElement;
+export interface ToolbarMoreProps {
+  /** The trigger's accessible name. Default "More". */
+  label?: string;
+  /** The trigger's content. Default "…". */
+  icon?: ReactNode;
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** `MenuItem`, `MenuItemCheckbox` and the rest of the menu parts. */
+  children: ReactNode;
+}
+/** The overflow menu: a trigger in the row and the actions you folded away. */
+export function ToolbarMore(props: ToolbarMoreProps): ReactElement;
+
+export interface ManuscriptProps extends ComponentProps<"article"> {
+  /** The page width, any CSS length. Default 40rem, about 66 characters. */
+  measure?: string;
+  /** "mono" sets the page in Source Code Pro. */
+  face?: "mono";
+  /** On the scroller around the page. `className` and `ref` reach the page. */
+  wrapClassName?: string;
+}
+/** The writing surface: a scroller on the canvas holding one page at a reading measure. */
+export function Manuscript(props: ManuscriptProps): ReactElement;
+export interface StatusSegmentProps extends Omit<ComponentProps<"button">, "type"> {
+  /** A colored dot before the text. */
+  tone?: Tone;
+  /** Pushes the segment to the far side. */
+  end?: boolean;
+  /** Makes it a toggle button. */
+  pressed?: boolean;
+  /** Renders a link. */
+  href?: string;
+}
+/** A fact in the status bar: text, or a button with `onClick` or `pressed`, or a link with `href`. */
+export function StatusSegment(props: StatusSegmentProps): ReactElement;

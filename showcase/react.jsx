@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { mountBar } from "./viewport.js";
+import { Demo } from "./react-demo.jsx";
 import { cycleTheme, hotkeys } from "../src/js/index.js";
 import {
   Avatar,
@@ -57,23 +58,6 @@ import {
 
 mountBar();
 hotkeys({ "shift+t": cycleTheme });
-
-function Demo({ id, title, code, children }) {
-  return (
-    <section className="demo-block" id={id}>
-      <div className="demo-head">
-        <h2 className="sd-label">{title}</h2>
-      </div>
-      <div className="grid gap-4">{children}</div>
-      <div className="sd-code">
-        <div className="sd-code-head">JSX</div>
-        <pre tabIndex={0}>
-          <code>{code}</code>
-        </pre>
-      </div>
-    </section>
-  );
-}
 
 const Gear = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">

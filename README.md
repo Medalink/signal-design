@@ -1028,7 +1028,29 @@ attributes a second time (tabs, `.sd-shell`, `[popovertarget]`,
 `<dialog open>`); the list under Framework-owned state says what it touches.
 The helpers that write only their own nodes stay safe beside React:
 `hotkeys()`, `setTheme()`, `data-sd-theme`, `data-sd-copy` and `data-sd-key`.
-`react.html` and `react-shell.html` in the showcase use every component above.
+`react.html` and `react-shell.html` in the showcase use every component above, and `react-editor.html` the editor parts below.
+
+### Editor parts
+
+The parts a document editor is built from, in CSS and as React components:
+
+```jsx
+<Toolbar label="Formatting">
+  <ToolbarGroup label="Text">
+    <ToolbarButton label="Bold" pressed={bold} onPressedChange={setBold}>B</ToolbarButton>
+  </ToolbarGroup>
+  <ToolbarSeparator />
+  <ToolbarMore><MenuItem>Clear formatting</MenuItem></ToolbarMore>
+</Toolbar>
+<Manuscript measure="38rem"><h1>Chapter one</h1><p>…</p></Manuscript>
+<Statusbar><StatusSegment>1,284 words</StatusSegment><StatusSegment end tone="success">Saved</StatusSegment></Statusbar>
+```
+
+- `Toolbar` (`sd-toolbar`) is one tab stop; arrows, Home and End move between its buttons, and a disabled button is skipped. `ToolbarButton` is a toggle when it has `pressed`. A row wider than its container scrolls inside itself; `ToolbarMore` is the menu for the actions you fold away yourself, since only you know which they are.
+- `Manuscript` (`sd-manuscript` around `sd-manuscript-page`) is the page: `measure` sets its width (default 40rem, about 66 characters) and it shrinks with its container. `face="mono"` sets it in Source Code Pro. Put your editor's content element inside it; headings, quotes and lists are styled.
+- `StatusSegment` (`sd-statusbar-seg`) is a fact in the status bar: text, a button with `onClick`, a toggle with `pressed`, or a link with `href`; `tone` adds a status dot.
+
+`react-editor.html` in the showcase uses every part.
 
 ## Charts
 
