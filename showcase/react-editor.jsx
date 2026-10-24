@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { mountBar } from "./viewport.js";
 import { cycleTheme, hotkeys } from "../src/js/index.js";
 import { Demo } from "./react-demo.jsx";
-import { Manuscript, MenuItem, Statusbar, StatusSegment, Toolbar, ToolbarButton, ToolbarGroup, ToolbarMore, ToolbarSeparator } from "../src/react/index.js";
+import { Manuscript, MenuItem, StatusSegment, Toolbar, ToolbarButton, ToolbarGroup, ToolbarMore, ToolbarSeparator } from "../src/react/index.js";
 
 mountBar();
 hotkeys({ "shift+t": cycleTheme });
@@ -27,11 +27,11 @@ function EditorChrome() {
   <ToolbarMore><MenuItem>Clear formatting</MenuItem></ToolbarMore>
 </Toolbar>
 <Manuscript measure="38rem"><h1>Chapter one</h1><p>…</p></Manuscript>
-<Statusbar>
+<footer className="sd-statusbar">
   <StatusSegment>1,284 words</StatusSegment>
   <StatusSegment pressed={focus} onClick={toggleFocus}>Focus</StatusSegment>
   <StatusSegment end tone="success">Saved</StatusSegment>
-</Statusbar>`}
+</footer>`}
     >
       <div className="grid h-[28rem] min-w-0 grid-rows-[auto_minmax(0,1fr)_auto] border border-line">
         <Toolbar label="Formatting">
@@ -81,7 +81,7 @@ function EditorChrome() {
           <h2>The long way round</h2>
           <p>By noon the fog had lifted from the water and left the far shore standing there as if it had been moved in the night.</p>
         </Manuscript>
-        <Statusbar>
+        <footer className="sd-statusbar">
           <StatusSegment>1,284 words</StatusSegment>
           <StatusSegment>Chapter 3 of 12</StatusSegment>
           <StatusSegment pressed={focus} onClick={() => setFocus(!focus)}>
@@ -90,7 +90,7 @@ function EditorChrome() {
           <StatusSegment end tone="success">
             Saved
           </StatusSegment>
-        </Statusbar>
+        </footer>
       </div>
     </Demo>
   );

@@ -1048,7 +1048,7 @@ The parts a document editor is built from, in CSS and as React components:
 
 - `Toolbar` (`sd-toolbar`) is one tab stop; arrows, Home and End move between its buttons, and a disabled button is skipped. `ToolbarButton` is a toggle when it has `pressed`. A row wider than its container scrolls inside itself; `ToolbarMore` is the menu for the actions you fold away yourself, since only you know which they are.
 - `Manuscript` (`sd-manuscript` around `sd-manuscript-page`) is the page: `measure` sets its width (default 40rem, about 66 characters) and it shrinks with its container. `face="mono"` sets it in Source Code Pro. Put your editor's content element inside it; headings, quotes and lists are styled.
-- `StatusSegment` (`sd-statusbar-seg`) is a fact in the status bar: text, a button with `onClick`, a toggle with `pressed`, or a link with `href`; `tone` adds a status dot.
+- `StatusSegment` (`sd-statusbar-seg`) is a fact in the status bar: text, a button with `onClick`, a toggle with `pressed`, or a link with `href`; `tone` adds a status dot. In an App Shell the bar is `Statusbar`, which keeps only `.sd-status` on phones; anywhere else use `<footer className="sd-statusbar">`.
 
 `react-editor.html` in the showcase uses every part.
 
