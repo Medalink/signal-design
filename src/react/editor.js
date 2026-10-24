@@ -25,8 +25,9 @@ export function Manuscript({ measure, face, wrapClassName, className, style, ...
  * a link with `href`, and plain text otherwise. `tone` adds a colored dot
  * before the text; `end` pushes the segment to the far side.
  */
-export function StatusSegment({ tone, end, pressed, href, className, children, onClick, ...props }) {
+export function StatusSegment({ tone, end, pressed, href, className, children, onClick, disabled, ...props }) {
   const element = href ? "a" : onClick || pressed !== undefined ? "button" : "span";
+  if (element === "button") props.disabled = disabled;
   return h(
     element,
     {

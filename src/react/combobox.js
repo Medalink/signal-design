@@ -88,9 +88,9 @@ export function Combobox({
           event.preventDefault();
           if (isOpen) move(event.key === "ArrowDown" ? 1 : -1);
           else setOpen(true);
-        } else if (event.key === "Enter" && isOpen && active) {
+        } else if (event.key === "Enter" && isOpen) {
           event.preventDefault();
-          pick(active);
+          if (active) pick(active);
         } else if (event.key === "Escape" && isOpen) {
           event.preventDefault();
           setOpen(false);

@@ -262,7 +262,7 @@ export interface RadioGroupProps extends Omit<ComponentProps<"div">, "role" | "a
   disabled?: boolean;
 }
 export function RadioGroup(props: RadioGroupProps): ReactElement;
-export interface RadioProps extends Omit<ComponentProps<"input">, "type" | "value" | "name" | "checked" | "onChange" | "className" | "children"> {
+export interface RadioProps extends Omit<ComponentProps<"input">, "type" | "value" | "name" | "checked" | "defaultChecked" | "autoFocus" | "onChange" | "className" | "children"> {
   value: string;
   label: ReactNode;
   description?: ReactNode;
@@ -279,7 +279,7 @@ export interface SegmentedControlProps extends RadioGroupProps {
   size?: "sm";
 }
 export function SegmentedControl(props: SegmentedControlProps): ReactElement;
-export interface SegmentProps extends Omit<ComponentProps<"input">, "type" | "value" | "name" | "checked" | "onChange" | "children"> {
+export interface SegmentProps extends Omit<ComponentProps<"input">, "type" | "value" | "name" | "checked" | "defaultChecked" | "autoFocus" | "onChange" | "children"> {
   value: string;
   /** The segment's label. */
   children: ReactNode;
@@ -471,7 +471,7 @@ export interface ManuscriptProps extends ComponentProps<"article"> {
 }
 /** The writing surface: a scroller on the canvas holding one page at a reading measure. */
 export function Manuscript(props: ManuscriptProps): ReactElement;
-export interface StatusSegmentProps extends Omit<ComponentProps<"button">, "type"> {
+interface StatusSegmentBase extends Omit<ComponentProps<"button">, "type" | "disabled"> {
   /** A colored dot before the text. */
   tone?: Tone;
   /** Pushes the segment to the far side. */
@@ -481,6 +481,9 @@ export interface StatusSegmentProps extends Omit<ComponentProps<"button">, "type
   /** Renders a link. */
   href?: string;
 }
+export type StatusSegmentProps =
+  | (StatusSegmentBase & { href?: undefined; disabled?: boolean } & ({ onClick: MouseEventHandler<HTMLButtonElement> } | { pressed: boolean }))
+  | (StatusSegmentBase & { disabled?: never });
 /** A fact in the status bar: text, or a button with `onClick` or `pressed`, or a link with `href`. */
 export function StatusSegment(props: StatusSegmentProps): ReactElement;
 

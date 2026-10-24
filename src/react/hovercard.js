@@ -36,7 +36,6 @@ export function HoverCard({ content, label = "Preview", side = "bottom", align =
     const onKey = (event) => {
       if (event.key !== "Escape") return;
       cancel();
-      if (card.current?.contains(document.activeElement)) anchor.current.focus();
       setOpen(false);
     };
     document.addEventListener("keydown", onKey);
@@ -66,7 +65,7 @@ export function HoverCard({ content, label = "Preview", side = "bottom", align =
     isOpen &&
       typeof document !== "undefined" &&
       createPortal(
-        h("div", { id, ref: card, role: "dialog", "aria-label": label, className: cx("sd-hovercard", className), onPointerEnter: cancel, onPointerLeave: () => later(false, closeDelay) }, content),
+        h("div", { id, ref: card, role: "tooltip", "aria-label": label, className: cx("sd-hovercard", className), onPointerEnter: cancel, onPointerLeave: () => later(false, closeDelay) }, content),
         document.body,
       ),
   );

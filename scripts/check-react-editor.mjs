@@ -282,6 +282,27 @@ export async function checkReactEditor(page, base) {
   expect((await optionsOf(people)).join() === "Wren Calloway", "typing filters on keywords too");
   await people.fill("zzz");
   expect((await optionsOf(people)).length === 0 && await choices.locator("[role=listbox]:not([hidden])", { hasText: "No matches" }).count() === 1, "a list with no match says so");
+  await people.evaluate((el) => {
+    window.__submits = 0;
+    const form = document.body.appendChild(document.createElement("form"));
+    form.id = "check-combobox-form";
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      window.__submits++;
+    });
+    el.setAttribute("form", form.id);
+    const submit = document.body.appendChild(document.createElement("button"));
+    submit.type = "submit";
+    submit.setAttribute("form", form.id);
+    submit.hidden = true;
+  });
+  await page.keyboard.press("Enter");
+  expect(await page.evaluate(() => window.__submits) === 0 && await expanded(people) === "true", "Enter on an open list with no match does not submit the form around it");
+  await people.evaluate((el) => {
+    el.removeAttribute("form");
+    document.getElementById("check-combobox-form").nextElementSibling.remove();
+    document.getElementById("check-combobox-form").remove();
+  });
   await people.fill("OKA");
   expect((await optionsOf(people)).join() === "Jane Okafor", `the filter is not case sensitive, got ${(await optionsOf(people)).join()}`);
   await page.keyboard.press("Enter");
