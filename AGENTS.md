@@ -121,7 +121,7 @@ by `title` or `classes`) rather than inventing markup.
 | ASCII art | `mountAscii(el, piece)` from `signal-design/ascii` draws an `ascii-magic-art` piece as greys in `sd-ascii`; still until `aria-busy="true"` (`pnpm add ascii-magic-art`); `data-tone` colors the brightest level |
 | Stream overlays (OBS) | `sd-scene` (1920×1080 units in `--sd-u`; `data-full`, `data-clear`) with `sd-scene-copy`, `sd-scene-bar`, `sd-scene-label`, `sd-cam`, `sd-scene-goal`, `sd-credits`, `sd-stream-alert`; `mountStream(scene).alert({ kind, name })` |
 | Empty | `sd-empty` (gets a center ornament automatically) |
-| React app | `signal-design/react`: `Button`, `Field` + `Input`, `Dialog`, `Menu`, `Tabs`, `ToastProvider`, `Table`, `AppShell` with `Rail`, `Sidebar` and `ShellMain`; props are the state (`open`/`onOpenChange`, `value`/`onValueChange`) |
+| React app | `signal-design/react`: `Button`, `Field` + `Input`, `Dialog`, `Menu`, `Tabs`, `ToastProvider`, `Table`, `AppShell` with `Rail`, `Sidebar` and `ShellMain`; editor parts `Toolbar`, `ToolbarButton`, `Manuscript`, `StatusSegment`, `Mark`, `HoverCard`, `Tree`, `Combobox`, `CommandPalette`, `RadioGroup`, `SegmentedControl`, `MenuItemCheckbox`; props are the state (`open`/`onOpenChange`, `value`/`onValueChange`, `pressed`/`onPressedChange`) |
 
 Tone anything with `data-tone`. Mark the current location with `aria-current`.
 Use `sd-desktop-only` / `sd-phone-only` (split at 768px) for chrome that changes on phones.

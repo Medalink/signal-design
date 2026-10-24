@@ -227,8 +227,64 @@ export interface MenuItemProps extends ComponentProps<"button"> {
   onSelect?: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 export function MenuItem(props: MenuItemProps): ReactElement;
+export interface MenuItemCheckboxProps extends Omit<MenuItemProps, "role" | "aria-checked"> {
+  checked: boolean;
+  onCheckedChange?: (checked: boolean) => void;
+}
+/** An item that is on or off. Choosing it leaves the menu open, so several can be set in a row. */
+export function MenuItemCheckbox(props: MenuItemCheckboxProps): ReactElement;
+export interface MenuRadioGroupProps extends Omit<ComponentProps<"div">, "role" | "aria-label" | "defaultValue"> {
+  /** The group's accessible name. */
+  label: string;
+  value?: string | null;
+  defaultValue?: string | null;
+  onValueChange?: (value: string) => void;
+}
+export function MenuRadioGroup(props: MenuRadioGroupProps): ReactElement;
+export interface MenuItemRadioProps extends Omit<MenuItemProps, "role" | "aria-checked"> {
+  value: string;
+}
+/** One choice of a `MenuRadioGroup`. Choosing it checks it and closes the menu. */
+export function MenuItemRadio(props: MenuItemRadioProps): ReactElement;
 export function MenuLabel(props: ComponentProps<"div">): ReactElement;
 export function MenuSeparator(props: ComponentProps<"hr">): ReactElement;
+
+/* ---- Radio group and segmented control ---------------------------------- */
+
+export interface RadioGroupProps extends Omit<ComponentProps<"div">, "role" | "aria-label" | "defaultValue" | "onChange"> {
+  /** The group's accessible name. */
+  label: string;
+  value?: string | null;
+  defaultValue?: string | null;
+  onValueChange?: (value: string) => void;
+  /** Submits the choice with a form. Generated when left out. */
+  name?: string;
+  disabled?: boolean;
+}
+export function RadioGroup(props: RadioGroupProps): ReactElement;
+export interface RadioProps extends Omit<ComponentProps<"input">, "type" | "value" | "name" | "checked" | "defaultChecked" | "autoFocus" | "onChange" | "className" | "children"> {
+  value: string;
+  label: ReactNode;
+  description?: ReactNode;
+  /** On the label; `ref` and the other props reach the input. */
+  className?: string;
+}
+/** One radio with its label. Arrows move and choose, and the group has one tab stop. */
+export function Radio(props: RadioProps): ReactElement;
+export interface SegmentedControlProps extends RadioGroupProps {
+  /** Shrinks the bar to its content. */
+  inline?: boolean;
+  /** Lets the segments flow onto more rows in a narrow container. */
+  wrap?: boolean;
+  size?: "sm";
+}
+export function SegmentedControl(props: SegmentedControlProps): ReactElement;
+export interface SegmentProps extends Omit<ComponentProps<"input">, "type" | "value" | "name" | "checked" | "defaultChecked" | "autoFocus" | "onChange" | "children"> {
+  value: string;
+  /** The segment's label. */
+  children: ReactNode;
+}
+export function Segment(props: SegmentProps): ReactElement;
 
 /* ---- Tooltip, tabs, toast ---------------------------------------------- */
 
@@ -365,3 +421,221 @@ export function ShellContent(props: ComponentProps<"div">): ReactElement;
 export function ShellDock(props: ComponentProps<"div">): ReactElement;
 export function ShellAside(props: ComponentProps<"aside">): ReactElement;
 export function Statusbar(props: ComponentProps<"footer">): ReactElement;
+
+/* ---- Toolbar, manuscript, status segments ------------------------------ */
+
+export interface ToolbarProps extends Omit<ComponentProps<"div">, "role" | "aria-label" | "aria-orientation" | "tabIndex"> {
+  /** The toolbar's accessible name. */
+  label: string;
+}
+/** One tab stop for the row; arrows, Home and End move between its buttons. */
+export function Toolbar(props: ToolbarProps): ReactElement;
+export interface ToolbarGroupProps extends Omit<ComponentProps<"div">, "role" | "aria-label"> {
+  /** The group's accessible name. */
+  label?: string;
+}
+export function ToolbarGroup(props: ToolbarGroupProps): ReactElement;
+export function ToolbarSeparator(props: ComponentProps<"span">): ReactElement;
+type ToolbarToggle =
+  | { pressed: boolean; onPressedChange: (pressed: boolean) => void }
+  | { pressed?: undefined; onPressedChange?: undefined };
+export type ToolbarButtonProps = Omit<ComponentProps<"button">, "aria-label" | "aria-pressed"> &
+  ToolbarToggle & {
+    /** Makes it a square icon button and names it. Leave out for a text button. */
+    label?: string;
+    variant?: ButtonVariant;
+  };
+/** A button in the row. `pressed` makes it a toggle; `onPressedChange` hears the next value. */
+export function ToolbarButton(props: ToolbarButtonProps): ReactElement;
+export interface ToolbarMoreProps {
+  /** The trigger's accessible name. Default "More". */
+  label?: string;
+  /** The trigger's content. Default "…". */
+  icon?: ReactNode;
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** `MenuItem`, `MenuItemCheckbox` and the rest of the menu parts. */
+  children: ReactNode;
+}
+/** The overflow menu: a trigger in the row and the actions you folded away. */
+export function ToolbarMore(props: ToolbarMoreProps): ReactElement;
+
+export interface ManuscriptProps extends ComponentProps<"article"> {
+  /** The page width, any CSS length. Default 40rem, about 66 characters. */
+  measure?: string;
+  /** "mono" sets the page in Source Code Pro. */
+  face?: "mono";
+  /** On the scroller around the page. `className` and `ref` reach the page. */
+  wrapClassName?: string;
+}
+/** The writing surface: a scroller on the canvas holding one page at a reading measure. */
+export function Manuscript(props: ManuscriptProps): ReactElement;
+interface StatusSegmentBase extends Omit<ComponentProps<"button">, "type" | "disabled"> {
+  /** A colored dot before the text. */
+  tone?: Tone;
+  /** Pushes the segment to the far side. */
+  end?: boolean;
+  /** Makes it a toggle button. */
+  pressed?: boolean;
+  /** Renders a link. */
+  href?: string;
+}
+export type StatusSegmentProps =
+  | (StatusSegmentBase & { href?: undefined; disabled?: boolean } & ({ onClick: MouseEventHandler<HTMLButtonElement> } | { pressed: boolean }))
+  | (StatusSegmentBase & { disabled?: never });
+/** A fact in the status bar: text, or a button with `onClick` or `pressed`, or a link with `href`. */
+export function StatusSegment(props: StatusSegmentProps): ReactElement;
+
+/* ---- Marks and hover card ---------------------------------------------- */
+
+export type MarkKind = "comment" | "insert" | "delete" | "mention" | "entity";
+export interface MarkProps extends ComponentProps<"span"> {
+  kind: MarkKind;
+  /** The open comment: sets `aria-current` and the accent. */
+  active?: boolean;
+  /** A settled comment: the fill goes and the underline dots. */
+  resolved?: boolean;
+  /** A mention's color, any CSS color or `var(--sd-success)`. Default is the `extra` role. */
+  who?: string;
+  /** Renders a link. */
+  href?: string;
+}
+/** A span of text something is attached to. `onClick` without `href` makes it a button. */
+export function Mark(props: MarkProps): ReactElement;
+
+export interface HoverCardProps {
+  /** What the card shows. */
+  content: ReactNode;
+  /** The card's accessible name. Default "Preview". */
+  label?: string;
+  side?: "top" | "bottom" | "left" | "right";
+  align?: "start" | "center" | "end";
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** Milliseconds the pointer rests on the trigger before it opens. Default 300. Focus opens it at once. */
+  openDelay?: number;
+  /** Milliseconds after the pointer leaves the trigger and the card before it closes. Default 150. */
+  closeDelay?: number;
+  /** On the card. */
+  className?: string;
+  /** The one focusable element the card describes, usually a `Mark`. */
+  children: ReactElement;
+}
+/** A preview beside its trigger on hover or focus; Escape closes it. */
+export function HoverCard(props: HoverCardProps): ReactElement;
+
+/* ---- Document tree ----------------------------------------------------- */
+
+export interface TreeMove {
+  /** The item that was dragged, or moved with Alt+ArrowUp / Alt+ArrowDown. */
+  id: string;
+  /** The item it was dropped on, or the sibling it stepped past. */
+  targetId: string;
+  /** Before or after `targetId` as a sibling, or inside it as its child. */
+  position: "before" | "after" | "inside";
+}
+export interface TreeProps extends Omit<ComponentProps<"ul">, "role" | "aria-label" | "tabIndex" | "children"> {
+  /** The tree's accessible name. */
+  label: string;
+  /** The selected item's `id`; null for none. */
+  selected?: string | null;
+  defaultSelected?: string | null;
+  onSelectedChange?: (id: string) => void;
+  /** The `id`s of the open branches. */
+  expanded?: string[];
+  defaultExpanded?: string[];
+  onExpandedChange?: (expanded: string[]) => void;
+  /**
+   * Reordering is reported, not done: reorder your own data in here. Giving it
+   * makes items draggable and turns on Alt+ArrowUp and Alt+ArrowDown.
+   */
+  onMove?: (move: TreeMove) => void;
+  children?: ReactNode;
+}
+/** One tab stop; arrows, Home and End move, Right and Left open and close, Enter selects. */
+export function Tree(props: TreeProps): ReactElement;
+export interface TreeItemProps extends Omit<ComponentProps<"li">, "id" | "role" | "children"> {
+  /** Names the item in the tree's state and in `onMove`. Unique in the tree. */
+  id: string;
+  label: ReactNode;
+  icon?: ReactNode;
+  /** Small text at the end of the row, such as a count. */
+  meta?: ReactNode;
+  disabled?: boolean;
+  /** More `TreeItem`s: makes this a branch. */
+  children?: ReactNode;
+}
+export function TreeItem(props: TreeItemProps): ReactElement;
+
+/* ---- Combobox and command palette -------------------------------------- */
+
+export interface ListItem {
+  /** The id of the item: what the combobox hands to `onValueChange`, what the palette hands to `onSelect`. Unique in the list. */
+  value: string;
+  label: string;
+  /** Extra text the default filter also matches. */
+  keywords?: string;
+  /** A label above the first item of each run with the same group. */
+  group?: string;
+  /** Text at the end of the row, such as a shortcut. */
+  hint?: string;
+  /** Renders the option as a link. */
+  href?: string;
+  disabled?: boolean;
+}
+/** `false` shows the items as given, for results you fetched yourself; a function replaces the default match on label, keywords and value. */
+export type ListFilter = false | ((item: ListItem, query: string) => boolean);
+
+export interface ComboboxProps extends Omit<ComponentProps<"input">, "value" | "defaultValue" | "role" | "type" | "onChange"> {
+  items: ListItem[];
+  /** The chosen item's `value`; null for none. */
+  value?: string | null;
+  defaultValue?: string | null;
+  onValueChange?: (value: string) => void;
+  /** The text in the box. Leave out and it follows the chosen item's label. */
+  inputValue?: string;
+  defaultInputValue?: string;
+  onInputValueChange?: (text: string) => void;
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  filter?: ListFilter;
+  /** Sets `aria-busy` on the list and shows "Loading" when there are no items. */
+  busy?: boolean;
+  /** Shown when nothing matches. Default "No matches". */
+  emptyText?: string;
+  /** The list's accessible name. Default "Suggestions". */
+  listLabel?: string;
+  /** Adds a hidden input carrying the chosen value to a form. */
+  name?: string;
+  onChange?: ComponentProps<"input">["onChange"];
+}
+/** A searchable select: type to filter, arrows and Enter to choose, Escape to close. Use it inside `Field`. */
+export function Combobox(props: ComboboxProps): ReactElement;
+
+export interface CommandPaletteProps extends Omit<DialogProps, "open" | "defaultOpen" | "onOpenChange" | "trigger" | "size" | "side" | "static" | "children" | "onSelect"> {
+  items: ListItem[];
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** What has been typed. It is cleared when the palette closes. */
+  query?: string;
+  defaultQuery?: string;
+  onQueryChange?: (query: string) => void;
+  /** Called when an item is chosen; the palette closes after. A link follows its `href` unless you call `event.preventDefault()`, as a router does. */
+  onSelect?: (item: ListItem, event: MouseEvent<HTMLElement>) => void;
+  filter?: ListFilter;
+  busy?: boolean;
+  emptyText?: string;
+  /** The palette's name and its search box's. Default "Search". */
+  label?: string;
+  placeholder?: string;
+  /** The list's accessible name. Default "Results". */
+  listLabel?: string;
+  /** A line under the list, such as the keys. */
+  foot?: ReactNode;
+}
+/** A command palette: a search box over a filtered list, on a modal dialog. */
+export function CommandPalette(props: CommandPaletteProps): ReactElement;

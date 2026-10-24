@@ -89,7 +89,7 @@ export function PopoverContent({ side = "bottom", align = "start", pad, initialF
   );
 }
 
-const ITEM = '[role="menuitem"]:not([aria-disabled="true"]):not(:disabled)';
+const ITEM = ':is([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]):not([aria-disabled="true"]):not(:disabled)';
 
 /** The popover wrapper for a menu: `<Menu><MenuTrigger>…</MenuTrigger><MenuContent>…</MenuContent></Menu>`. */
 export const Menu = Popover;
@@ -162,6 +162,46 @@ export function MenuItem({ tone, disabled, hint, onSelect, onClick, children, ..
     children,
     hint && h("span", { className: "sd-menu-hint" }, hint),
   );
+}
+
+/**
+ * An item that is on or off. Like init() does, choosing it leaves the menu
+ * open so several can be set in a row; `onCheckedChange` hears the next value.
+ */
+export function MenuItemCheckbox({ checked, onCheckedChange, onSelect, ...props }) {
+  return h(MenuItem, {
+    role: "menuitemcheckbox",
+    "aria-checked": Boolean(checked),
+    ...props,
+    onSelect: (event) => {
+      onSelect?.(event);
+      event.preventDefault();
+      onCheckedChange?.(!checked);
+    },
+  });
+}
+
+const RadioContext = createContext(null);
+
+/** A set of `MenuItemRadio`s, one of which is checked. `label` is its accessible name. */
+export function MenuRadioGroup({ label, value, defaultValue, onValueChange, ...props }) {
+  const [current, select] = useControllable(value, defaultValue ?? null, onValueChange);
+  const context = useMemo(() => ({ current, select }), [current, select]);
+  return h(RadioContext.Provider, { value: context }, h("div", { role: "group", "aria-label": label, ...props }));
+}
+
+/** One choice of a `MenuRadioGroup`. Choosing it checks it and closes the menu, unless `onSelect` prevents the default. */
+export function MenuItemRadio({ value, onSelect, ...props }) {
+  const group = useContext(RadioContext);
+  return h(MenuItem, {
+    role: "menuitemradio",
+    "aria-checked": group.current === value,
+    ...props,
+    onSelect: (event) => {
+      onSelect?.(event);
+      group.select(value);
+    },
+  });
 }
 
 export function MenuLabel({ className, ...props }) {

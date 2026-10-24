@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en" data-theme="ink" data-page="react-editor">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Signal editor parts in React</title>
+  <script>
+    try { const t = localStorage.getItem("sd-theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
+  </script>
+  <link rel="stylesheet" href="./app.css">
+  <script type="module" src="./react-editor.jsx"></script>
+</head>
+<body>
+<a class="sd-skip" href="#main">Skip to content</a>
+
+<header class="sd-topbar">
+  <a class="sd-wordmark" href="./index.html">Signal</a>
+  <nav class="sd-nav sd-desktop-only" aria-label="Examples">
+    <a href="./index.html">Library</a>
+    <a href="./shell.html">App shell</a>
+    <a href="./react.html">React</a>
+    <a href="./react-shell.html">React shell</a>
+    <a href="./react-editor.html" aria-current="page">React editor</a>
+  </nav>
+</header>
+
+<main class="sd-page sd-page-wide" id="main" tabindex="-1">
+  <header class="sd-header">
+    <span class="sd-wordmark">signal-design/react</span>
+    <h1 class="sd-display">A page to write on. <em>Parts to write with.</em></h1>
+    <p class="sd-lead max-w-[42rem]">The toolbar, manuscript, marks, document tree, combobox, command palette and choice controls a document editor is built from. Every part is a React component and the page never calls <code>init()</code>.</p>
+  </header>
+  <div id="root"></div>
+</main>
+</body>
+</html>

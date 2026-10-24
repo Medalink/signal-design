@@ -1,0 +1,47 @@
+@layer components {
+  /*
+   * Hover card: a small preview that opens beside what it describes, on hover
+   * or keyboard focus, and closes on Escape or when the pointer leaves it and
+   * the trigger. The JS (or the React HoverCard) positions it next to the
+   * trigger; the pointer can move onto it. It is a preview, so everything in
+   * it is also reachable somewhere else: it is not in the tab order.
+   *   <div class="sd-hovercard">
+   *     <p class="sd-hovercard-title">Lisbon</p>
+   *     <p class="sd-hovercard-meta">Place · 4 mentions</p>
+   *     <p>Capital of Portugal, first named in chapter 2.</p>
+   *     <div class="sd-hovercard-actions"><button class="sd-btn sd-btn-sm">Open note</button></div>
+   *   </div>
+   */
+  .sd-hovercard {
+    position: fixed;
+    z-index: 60;
+    width: max-content;
+    max-width: min(20rem, calc(100vw - 16px));
+    padding: 12px 14px;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-overlay);
+    color: var(--sd-fg-muted);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    animation: sd-fade-in 120ms var(--ease-out);
+  }
+  .sd-hovercard > * + * {
+    margin-block-start: 6px;
+  }
+  .sd-hovercard-title {
+    font-size: var(--text-base);
+    color: var(--sd-fg);
+  }
+  .sd-hovercard-meta {
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--sd-fg-subtle);
+  }
+  .sd-hovercard-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-block-start: 10px;
+  }
+}

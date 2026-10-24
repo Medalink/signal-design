@@ -10,6 +10,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createElement as h } from "react";
 import ts from "typescript";
+import { checkReactEditor } from "./check-react-editor.mjs";
 
 const rootPath = fileURLToPath(new URL("..", import.meta.url));
 
@@ -19,7 +20,7 @@ export function checkReactTypes() {
   writeFileSync(
     fixture,
     `import { useState } from "react";
-import { AppShell, Button, Dialog, DialogHeader, Field, IconButton, Input, MenuItem, RailItem, Tab, TabList, TabPanel, Tabs, TableHeader, useToast, buttonClass, type ButtonProps } from "signal-design/react";
+import { AppShell, Button, Dialog, DialogHeader, Field, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 
 export function Consumer() {
   const [open, setOpen] = useState(false);
@@ -42,10 +43,42 @@ export function Consumer() {
       <TableHeader sort="ascending" onSort={(event) => event.currentTarget.focus()}>Team</TableHeader>
       <MenuItem tone="danger" onSelect={(event) => event.preventDefault()}>Delete</MenuItem>
       <RailItem section="projects" href="#" unread>Projects</RailItem>
+      <Toolbar label="Formatting"><ToolbarButton label="Bold" pressed={open} onPressedChange={setOpen} /><ToolbarMore><MenuItem>Clear</MenuItem></ToolbarMore></Toolbar>
+      <Manuscript measure="30rem" face="mono" ref={(node: HTMLElement | null) => node?.focus()} />
+      <HoverCard content="Preview" openDelay={0}><Mark kind="entity" tabIndex={0} who="var(--sd-success)" /></HoverCard>
+      <Tree label="Outline" selected="a" onSelectedChange={(id) => id.length} defaultExpanded={["a"]} onMove={(move: TreeMove) => move.position.length}><TreeItem id="a" label="A" meta={1}><TreeItem id="b" label="B" disabled /></TreeItem></Tree>
+      <RadioGroup label="Cycle" value="m" onValueChange={(value) => value.length}><Radio value="m" label="Monthly" description="Billed monthly" /></RadioGroup>
+      <SegmentedControl label="View" defaultValue="a" inline wrap size="sm"><Segment value="a">A</Segment></SegmentedControl>
+      <MenuRadioGroup label="Spacing" defaultValue="a"><MenuItemRadio value="a" onSelect={(event) => event.preventDefault()}>A</MenuItemRadio></MenuRadioGroup>
+      <MenuItemCheckbox checked onCheckedChange={(checked) => console.log(checked)}>Words</MenuItemCheckbox>
+      <Combobox items={[{ value: "a", label: "A", group: "G", hint: "h" } satisfies ListItem]} value="a" onValueChange={(value) => value.length} filter={(item, query) => item.label.startsWith(query)} name="who" placeholder="Pick" />
+      <CommandPalette items={[{ value: "go", label: "Go", href: "/go" }]} open={open} onOpenChange={setOpen} onSelect={(item, event) => { event.preventDefault(); console.log(item.value); }} onQueryChange={(query) => query.length} />
+      <Mark kind="comment" active onClick={(event) => event.currentTarget.focus()}>Comment</Mark>
+      <StatusSegment tone="success" pressed onClick={(event) => event.currentTarget.blur()}>Saved</StatusSegment>
       {/* @ts-expect-error variant must be one of the button variants */}
       <Button variant="huge" />
       {/* @ts-expect-error an icon button needs its accessible name */}
       <IconButton />
+      {/* @ts-expect-error a radio group needs its accessible name */}
+      <RadioGroup />
+      {/* @ts-expect-error a checkbox item needs its state */}
+      <MenuItemCheckbox>Words</MenuItemCheckbox>
+      {/* @ts-expect-error a combobox needs items */}
+      <Combobox />
+      {/* @ts-expect-error a list item needs a label */}
+      <Combobox items={[{ value: "a" }]} />
+      {/* @ts-expect-error a tree needs its accessible name */}
+      <Tree />
+      {/* @ts-expect-error a tree item needs an id */}
+      <TreeItem label="A" />
+      {/* @ts-expect-error a mark needs a kind */}
+      <Mark />
+      {/* @ts-expect-error the kind must be one of the mark kinds */}
+      <Mark kind="highlight" />
+      {/* @ts-expect-error a toolbar needs its accessible name */}
+      <Toolbar />
+      {/* @ts-expect-error a pressed toolbar button needs onPressedChange */}
+      <ToolbarButton label="Bold" pressed />
       {/* @ts-expect-error a controlled Tabs needs onValueChange */}
       <Tabs value="a"><TabList label="Tabs" /></Tabs>
       {/* @ts-expect-error a Tabs with neither value nor defaultValue has no selected tab */}
@@ -128,13 +161,35 @@ export async function checkReactSsr() {
           h(sd.Tooltip, { content: "tip" }, h(sd.Button, null, "t")),
           h(sd.Tabs, { defaultValue: "one" },
             h(sd.TabList, { label: "L" }, h(sd.Tab, { value: "one" }, "1"), h(sd.Tab, { value: "two" }, "2")),
-            h(sd.TabPanel, { value: "one" }, "p1"), h(sd.TabPanel, { value: "two" }, "p2")))),
+            h(sd.TabPanel, { value: "one" }, "p1"), h(sd.TabPanel, { value: "two" }, "p2")),
+          h(sd.Toolbar, { label: "Formatting" },
+            h(sd.ToolbarGroup, { label: "Text" }, h(sd.ToolbarButton, { label: "Bold", pressed: true, onPressedChange() {} }, "B")),
+            h(sd.ToolbarSeparator),
+            h(sd.ToolbarButton, null, "Heading"),
+            h(sd.ToolbarMore, null, h(sd.MenuItem, null, "Clear"))),
+          h(sd.Manuscript, { measure: "30rem", face: "mono" }, h("p", null, "Text", h(sd.Mark, { kind: "comment", active: true, onClick() {} }, "c"), h(sd.Mark, { kind: "insert" }, "i"), h(sd.HoverCard, { content: "card", defaultOpen: true }, h(sd.Mark, { kind: "entity", tabIndex: 0 }, "e")))),
+          h(sd.RadioGroup, { label: "Cycle", defaultValue: "m", name: "cycle" }, h(sd.Radio, { value: "m", label: "Monthly", description: "d" }), h(sd.Radio, { value: "y", label: "Yearly", disabled: true })),
+          h(sd.SegmentedControl, { label: "View", defaultValue: "a", inline: true }, h(sd.Segment, { value: "a" }, "A"), h(sd.Segment, { value: "b" }, "B")),
+          h(sd.Menu, null, h(sd.MenuTrigger, null, h(sd.Button, null, "v")),
+            h(sd.MenuContent, { label: "View" }, h(sd.MenuItemCheckbox, { checked: true }, "Words"),
+              h(sd.MenuRadioGroup, { label: "Spacing", defaultValue: "a" }, h(sd.MenuItemRadio, { value: "a" }, "A"), h(sd.MenuItemRadio, { value: "b" }, "B")))),
+          h(sd.Field, { label: "Who" }, h(sd.Combobox, { items: [{ value: "a", label: "Ada", group: "G" }, { value: "b", label: "Bo", disabled: true }], defaultValue: "a", name: "who", placeholder: "Pick" })),
+          h(sd.CommandPalette, { items: [{ value: "go", label: "Go", hint: "g" }], foot: "Esc" }),
+          h(sd.Tree, { label: "Outline", defaultSelected: "b", defaultExpanded: ["a"], onMove() {} },
+            h(sd.TreeItem, { id: "a", label: "A", meta: 2 }, h(sd.TreeItem, { id: "b", label: "B" }), h(sd.TreeItem, { id: "c", label: "C", disabled: true }))))),
       h(sd.ShellDock, null, "dock"),
       h(sd.ShellAside, null, "aside"),
-      h(sd.Statusbar, null, "s")));
+      h(sd.Statusbar, null, h(sd.StatusSegment, null, "1 word"), h(sd.StatusSegment, { pressed: false, onClick() {} }, "Focus"), h(sd.StatusSegment, { end: true, tone: "success" }, "Saved"))));
   const html = renderToString(tree);
   for (const [needle, what] of [
     ['class="sd-shell"', "the shell"],
+    ['role="tree"', "the tree"],
+    ['role="combobox"', "the combobox"],
+    ['role="radiogroup"', "the radio group"],
+    ['role="menuitemcheckbox" aria-checked="true"', "the checked menu checkbox"],
+    ['role="menuitemradio" aria-checked="true"', "the checked menu radio"],
+    ['name="who" value="a"', "the combobox's hidden value"],
+    ['aria-level="2"', "a nested tree item"],
     ['aria-current="true"', "the current rail section"],
     ['aria-selected="true"', "the selected tab or row"],
     ['aria-invalid="true"', "the invalid control"],
@@ -142,6 +197,7 @@ export async function checkReactSsr() {
     ["99+", "the capped count"],
   ]) assert.ok(html.includes(needle), `server output is missing ${what}`);
   assert.ok(!html.includes("sd-tooltip"), "a closed tooltip rendered on the server");
+  assert.ok(!html.includes("sd-hovercard"), "an open hover card rendered on the server");
   const names = Object.keys(all).filter((name) => /^[A-Z]/.test(name));
   const missed = names.filter((name) => !used.has(name));
   assert.deepEqual(missed, [], `exports the server render never touched: ${missed.join(", ")}`);
@@ -461,5 +517,7 @@ export async function checkReact(page, base) {
   expect(await page.locator(".sd-toaster .sd-toast", { hasText: "Signed out" }).count() === 1, "a menu item in the header runs its action");
 
   expect(browserErrors.length === 0, `console errors: ${browserErrors.join(" | ")}`);
-  return { errors, passed };
+  const editor = await checkReactEditor(page, base);
+  errors.push(...editor.errors);
+  return { errors, passed: passed + editor.passed };
 }

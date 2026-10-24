@@ -1028,7 +1028,39 @@ attributes a second time (tabs, `.sd-shell`, `[popovertarget]`,
 `<dialog open>`); the list under Framework-owned state says what it touches.
 The helpers that write only their own nodes stay safe beside React:
 `hotkeys()`, `setTheme()`, `data-sd-theme`, `data-sd-copy` and `data-sd-key`.
-`react.html` and `react-shell.html` in the showcase use every component above.
+`react.html` and `react-shell.html` in the showcase use every component above, and `react-editor.html` the editor parts below.
+
+### Editor parts
+
+The parts a document editor is built from, in CSS and as React components:
+
+```jsx
+<Toolbar label="Formatting">
+  <ToolbarGroup label="Text">
+    <ToolbarButton label="Bold" pressed={bold} onPressedChange={setBold}>B</ToolbarButton>
+  </ToolbarGroup>
+  <ToolbarSeparator />
+  <ToolbarMore><MenuItem>Clear formatting</MenuItem></ToolbarMore>
+</Toolbar>
+<Manuscript measure="38rem"><h1>Chapter one</h1><p>…</p></Manuscript>
+<Statusbar><StatusSegment>1,284 words</StatusSegment><StatusSegment end tone="success">Saved</StatusSegment></Statusbar>
+```
+
+- `Toolbar` (`sd-toolbar`) is one tab stop; arrows, Home and End move between its buttons, and a disabled button is skipped. `ToolbarButton` is a toggle when it has `pressed`. A row wider than its container scrolls inside itself; `ToolbarMore` is the menu for the actions you fold away yourself, since only you know which they are.
+- `Manuscript` (`sd-manuscript` around `sd-manuscript-page`) is the page: `measure` sets its width (default 40rem, about 66 characters) and it shrinks with its container. `face="mono"` sets it in Source Code Pro. Put your editor's content element inside it; headings, quotes and lists are styled.
+- `StatusSegment` (`sd-statusbar-seg`) is a fact in the status bar: text, a button with `onClick`, a toggle with `pressed`, or a link with `href`; `tone` adds a status dot. In an App Shell the bar is `Statusbar`, which keeps only `.sd-status` on phones; anywhere else use `<footer className="sd-statusbar">`.
+
+- `Mark` (`sd-mark` with `data-mark`) is a span of text something is attached to: `comment`, `insert`, `delete`, `mention` or `entity`. It is a `mark`, `ins` or `del` element by kind, a link with `href`, and a button with `onClick`; `active` is the open comment (`aria-current`) and `resolved` a settled one. Color means something: an insertion is green and a deletion pink, as in `sd-diff`, the open comment is the accent, a mention takes `--who`; comments and entities are grey. Fills and underlines wrap across lines.
+- `HoverCard` (`sd-hovercard`) is a preview beside its trigger, on hover after `openDelay` (300ms) or at once on keyboard focus; Escape, leaving the trigger and the card, or moving focus away closes it, and the pointer can move onto it. The trigger is its one child and must be focusable, so a `Mark` that is not a link or button needs `tabIndex={0}`. The card is not in the tab order: put what it shows, and any action, somewhere else too.
+
+- `Tree` and `TreeItem` (`sd-tree`) are a document tree. React owns `selected` and `expanded` (the ids of the open branches); a closed branch renders none of its children. One tab stop that lands on the selected item; Up, Down, Home and End move without wrapping, Right opens a branch or steps into it, Left closes it or steps to the parent, Enter and Space select. Reordering is reported, never done: `onMove({ id, targetId, position })` runs on a drop or on Alt+ArrowUp and Alt+ArrowDown, with `position` `before`, `after` or `inside`, and you reorder your own data. Giving `onMove` is what makes the rows draggable; the drag is the browser's own, so there is no drag library, and a branch cannot be dropped into itself.
+
+- `Combobox` (`sd-combobox`) is a searchable select; `CommandPalette` (`sd-command`) is a search box over a list on a modal dialog. Both take `items` (`{ value, label, keywords?, group?, hint?, href?, disabled? }`) and neither fetches: they filter what you pass on label, keywords and value, and for results from a server you give `filter={false}`, follow `onInputValueChange` or `onQueryChange`, and pass back what arrived (`busy` marks the list `aria-busy`). Focus stays in the box and the highlighted option is named by `aria-activedescendant`; arrows move over enabled items and wrap, Enter chooses, Escape closes. The combobox owns `value`, `inputValue` and `open` as props and reverts unchosen text on blur; `name` adds a hidden input for a form. The palette owns `open` and `query`, clears the query when it closes, and calls `onSelect(item, event)`: a link item follows its `href` unless you call `event.preventDefault()`, as a router does.
+
+- `RadioGroup` with `Radio`, and `SegmentedControl` with `Segment`, are native radios, so the browser gives each a single tab stop, arrows that move and check (which wrap at the ends or not as the browser decides), and form submission with `name`. React owns `value`. `SegmentedControl` draws the same radios as `sd-seg`; `inline`, `wrap` and `size="sm"` are its modifiers.
+- `MenuItemCheckbox` (`menuitemcheckbox`) and `MenuItemRadio` inside `MenuRadioGroup` (`menuitemradio`) join `MenuItem` in a `Menu`. As with `init()`, choosing a checkbox item leaves the menu open so several can be set in a row, and choosing a radio item checks it and closes the menu; `onSelect` can prevent that on a radio item.
+
+`react-editor.html` in the showcase uses every part.
 
 ## Charts
 

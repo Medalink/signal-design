@@ -35,6 +35,7 @@ export const EXAMPLES = [
   { file: "charts.html", title: "Charts", summary: "Live bandwidth and latency charts with scale modes and the full chart gallery." },
   { file: "react.html", title: "React", summary: "Every React binding on one page with no init(): buttons, fields, overlays, menus, tabs, tables and toasts." },
   { file: "react-shell.html", title: "React app shell", summary: "The Signal App Shell as React components: rail sections, sidebar panels, drawer and details panel owned by React state." },
+  { file: "react-editor.html", title: "React editor", summary: "The parts a document editor is built from, as React components: toolbar, manuscript, marks, document tree, combobox, command palette and choice controls." },
   { file: "stream.html", title: "Stream", summary: "A Twitch overlay package: starting soon, in game, BRB and ending scenes with live alerts, ready for OBS." },
 ];
 

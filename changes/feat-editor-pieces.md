@@ -1,0 +1,13 @@
+### Added
+- `sd-toolbar`: a row of toggle and action buttons with groups and separators, one tab stop, and `aria-pressed` styling (`sd-toolbar-btn`). A row wider than its container scrolls inside itself.
+- `sd-manuscript` and `sd-manuscript-page`: a writing surface, one page at a reading measure (`--measure`, 40rem by default) on the canvas, with prose styles for headings, quotes and lists; `data-face="mono"` sets it in Source Code Pro.
+- `sd-statusbar-seg`: status bar segments between hairlines, as text, a button, a toggle or a link, with an optional status dot.
+- `signal-design/react`: `Toolbar`, `ToolbarGroup`, `ToolbarSeparator`, `ToolbarButton` (a toggle with `pressed` and `onPressedChange`), `ToolbarMore` (the overflow menu), `Manuscript` and `StatusSegment`. The toolbar keeps one tab stop and moves focus with the arrow keys, Home and End.
+- Showcase example `react-editor.html`, and checks for the toolbar, status segments and manuscript in Chromium and WebKit.
+- `sd-mark`: inline marks for a span of text something is attached to, keyed on `data-mark` (`comment`, `insert`, `delete`, `mention`, `entity`). Suggestions are green and pink like `sd-diff`, the open comment (`aria-current`) is the accent, a mention takes `--who`; comments and entities are grey, a resolved comment dots.
+- `sd-hovercard`: a small preview panel that sits beside its trigger.
+- `signal-design/react`: `Mark` and `HoverCard`. The card opens on hover after a delay or at once on focus, and closes on Escape, leave or blur; the pointer can move onto it.
+- `sd-tree`: a nested document tree on `role="tree"`, rows indented by `--level`, a chevron that turns on `aria-expanded`, the selected item on `aria-selected`, and `data-drop` marks while an item is dragged.
+- `signal-design/react`: `Tree` and `TreeItem`. One tab stop, the arrow-key pattern of an ARIA tree, `selected` and `expanded` as props. Reordering is a callback: `onMove` hears a drop or Alt+ArrowUp and Alt+ArrowDown and the app reorders its own data; no drag library.
+- `signal-design/react`: `Combobox` and `CommandPalette` on the existing `sd-combobox` and `sd-command`. Items are passed in and filtered by label, keywords and value, or not at all with `filter={false}` for results you fetched; arrows, Enter and Escape, focus kept in the box with `aria-activedescendant`. `.sd-command-list` gets the scrolling list rule that `[data-sd-palette]` already had.
+- `signal-design/react`: `RadioGroup` with `Radio` and `SegmentedControl` with `Segment` on native radios (one tab stop, arrow keys, `name` for forms), and `MenuItemCheckbox`, `MenuRadioGroup` and `MenuItemRadio` for `Menu`. A checkbox item leaves the menu open and a radio item closes it, as `init()` does.
