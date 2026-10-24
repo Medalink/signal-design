@@ -12,9 +12,11 @@ export const ITEM = "[data-roving]:not(:disabled):not([aria-disabled='true'])";
 
 /**
  * Props for the group element and the context its items read. `keys` maps a
- * key to a step (+1, -1) or to "first" / "last".
+ * key to a step (+1, -1) or to "first" / "last". Steps wrap around the ends
+ * unless `wrap` is false. The group hands its tab stop to the item matching
+ * `initial` (a selector) when there is one, else the first.
  */
-export function useRoving(keys) {
+export function useRoving(keys, { wrap = true, initial } = {}) {
   const [active, setActive] = useState(null);
   const group = useRef(null);
   const items = () => [...group.current.querySelectorAll(ITEM)];
@@ -29,7 +31,8 @@ export function useRoving(keys) {
     tabIndex: active === null ? 0 : -1,
     onFocus: (event) => {
       if (event.target === event.currentTarget) {
-        items()[0]?.focus();
+        const list = items();
+        (initial && list.find((item) => item.matches(initial)) || list[0])?.focus();
         return;
       }
       const id = event.target.closest("[data-roving]")?.dataset.roving;
@@ -41,7 +44,7 @@ export function useRoving(keys) {
       const at = list.indexOf(event.target);
       if (step === undefined || at < 0 || event.altKey || event.ctrlKey || event.metaKey) return;
       event.preventDefault();
-      const to = step === "first" ? 0 : step === "last" ? list.length - 1 : (at + step + list.length) % list.length;
+      const to = step === "first" ? 0 : step === "last" ? list.length - 1 : wrap ? (at + step + list.length) % list.length : Math.min(Math.max(at + step, 0), list.length - 1);
       list[to].focus();
     },
   };

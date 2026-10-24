@@ -20,7 +20,7 @@ export function checkReactTypes() {
   writeFileSync(
     fixture,
     `import { useState } from "react";
-import { AppShell, Button, Dialog, DialogHeader, Field, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, useToast, buttonClass, type ButtonProps } from "signal-design/react";
+import { AppShell, Button, Dialog, DialogHeader, Field, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Tree, TreeItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 
 export function Consumer() {
   const [open, setOpen] = useState(false);
@@ -46,12 +46,17 @@ export function Consumer() {
       <Toolbar label="Formatting"><ToolbarButton label="Bold" pressed={open} onPressedChange={setOpen} /><ToolbarMore><MenuItem>Clear</MenuItem></ToolbarMore></Toolbar>
       <Manuscript measure="30rem" face="mono" ref={(node: HTMLElement | null) => node?.focus()} />
       <HoverCard content="Preview" openDelay={0}><Mark kind="entity" tabIndex={0} who="var(--sd-success)" /></HoverCard>
+      <Tree label="Outline" selected="a" onSelectedChange={(id) => id.length} defaultExpanded={["a"]} onMove={(move: TreeMove) => move.position.length}><TreeItem id="a" label="A" meta={1}><TreeItem id="b" label="B" disabled /></TreeItem></Tree>
       <Mark kind="comment" active onClick={(event) => event.currentTarget.focus()}>Comment</Mark>
       <StatusSegment tone="success" pressed onClick={(event) => event.currentTarget.blur()}>Saved</StatusSegment>
       {/* @ts-expect-error variant must be one of the button variants */}
       <Button variant="huge" />
       {/* @ts-expect-error an icon button needs its accessible name */}
       <IconButton />
+      {/* @ts-expect-error a tree needs its accessible name */}
+      <Tree />
+      {/* @ts-expect-error a tree item needs an id */}
+      <TreeItem label="A" />
       {/* @ts-expect-error a mark needs a kind */}
       <Mark />
       {/* @ts-expect-error the kind must be one of the mark kinds */}
@@ -148,13 +153,17 @@ export async function checkReactSsr() {
             h(sd.ToolbarSeparator),
             h(sd.ToolbarButton, null, "Heading"),
             h(sd.ToolbarMore, null, h(sd.MenuItem, null, "Clear"))),
-          h(sd.Manuscript, { measure: "30rem", face: "mono" }, h("p", null, "Text", h(sd.Mark, { kind: "comment", active: true, onClick() {} }, "c"), h(sd.Mark, { kind: "insert" }, "i"), h(sd.HoverCard, { content: "card", defaultOpen: true }, h(sd.Mark, { kind: "entity", tabIndex: 0 }, "e")))))),
+          h(sd.Manuscript, { measure: "30rem", face: "mono" }, h("p", null, "Text", h(sd.Mark, { kind: "comment", active: true, onClick() {} }, "c"), h(sd.Mark, { kind: "insert" }, "i"), h(sd.HoverCard, { content: "card", defaultOpen: true }, h(sd.Mark, { kind: "entity", tabIndex: 0 }, "e")))),
+          h(sd.Tree, { label: "Outline", defaultSelected: "b", defaultExpanded: ["a"], onMove() {} },
+            h(sd.TreeItem, { id: "a", label: "A", meta: 2 }, h(sd.TreeItem, { id: "b", label: "B" }), h(sd.TreeItem, { id: "c", label: "C", disabled: true }))))),
       h(sd.ShellDock, null, "dock"),
       h(sd.ShellAside, null, "aside"),
       h(sd.Statusbar, null, h(sd.StatusSegment, null, "1 word"), h(sd.StatusSegment, { pressed: false, onClick() {} }, "Focus"), h(sd.StatusSegment, { end: true, tone: "success" }, "Saved"))));
   const html = renderToString(tree);
   for (const [needle, what] of [
     ['class="sd-shell"', "the shell"],
+    ['role="tree"', "the tree"],
+    ['aria-level="2"', "a nested tree item"],
     ['aria-current="true"', "the current rail section"],
     ['aria-selected="true"', "the selected tab or row"],
     ['aria-invalid="true"', "the invalid control"],

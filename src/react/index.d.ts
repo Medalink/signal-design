@@ -464,3 +464,46 @@ export interface HoverCardProps {
 }
 /** A preview beside its trigger on hover or focus; Escape closes it. */
 export function HoverCard(props: HoverCardProps): ReactElement;
+
+/* ---- Document tree ----------------------------------------------------- */
+
+export interface TreeMove {
+  /** The item that was dragged, or moved with Alt+ArrowUp / Alt+ArrowDown. */
+  id: string;
+  /** The item it was dropped on, or the sibling it stepped past. */
+  targetId: string;
+  /** Before or after `targetId` as a sibling, or inside it as its child. */
+  position: "before" | "after" | "inside";
+}
+export interface TreeProps extends Omit<ComponentProps<"ul">, "role" | "aria-label" | "tabIndex" | "children"> {
+  /** The tree's accessible name. */
+  label: string;
+  /** The selected item's `id`; null for none. */
+  selected?: string | null;
+  defaultSelected?: string | null;
+  onSelectedChange?: (id: string) => void;
+  /** The `id`s of the open branches. */
+  expanded?: string[];
+  defaultExpanded?: string[];
+  onExpandedChange?: (expanded: string[]) => void;
+  /**
+   * Reordering is reported, not done: reorder your own data in here. Giving it
+   * makes items draggable and turns on Alt+ArrowUp and Alt+ArrowDown.
+   */
+  onMove?: (move: TreeMove) => void;
+  children?: ReactNode;
+}
+/** One tab stop; arrows, Home and End move, Right and Left open and close, Enter selects. */
+export function Tree(props: TreeProps): ReactElement;
+export interface TreeItemProps extends Omit<ComponentProps<"li">, "id" | "role" | "children"> {
+  /** Names the item in the tree's state and in `onMove`. Unique in the tree. */
+  id: string;
+  label: ReactNode;
+  icon?: ReactNode;
+  /** Small text at the end of the row, such as a count. */
+  meta?: ReactNode;
+  disabled?: boolean;
+  /** More `TreeItem`s: makes this a branch. */
+  children?: ReactNode;
+}
+export function TreeItem(props: TreeItemProps): ReactElement;

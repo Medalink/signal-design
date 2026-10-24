@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { mountBar } from "./viewport.js";
 import { cycleTheme, hotkeys } from "../src/js/index.js";
 import { Demo } from "./react-demo.jsx";
-import { HoverCard, Manuscript, Mark, MenuItem, StatusSegment, Toolbar, ToolbarButton, ToolbarGroup, ToolbarMore, ToolbarSeparator } from "../src/react/index.js";
+import { HoverCard, Manuscript, Mark, MenuItem, StatusSegment, Tree, TreeItem, Toolbar, ToolbarButton, ToolbarGroup, ToolbarMore, ToolbarSeparator } from "../src/react/index.js";
 
 mountBar();
 hotkeys({ "shift+t": cycleTheme });
@@ -152,11 +152,88 @@ function Marks() {
   );
 }
 
+const OUTLINE = [
+  { id: "part-1", label: "Part one", children: [{ id: "ch-1", label: "The harbour" }, { id: "ch-2", label: "The long way round" }, { id: "ch-3", label: "Forty drafts" }] },
+  { id: "part-2", label: "Part two", children: [{ id: "ch-4", label: "Lisbon" }, { id: "ch-5", label: "The ferry" }] },
+  { id: "notes", label: "Notes" },
+];
+
+/** Removes `id` from the outline and puts it before, after or inside `targetId`. */
+function move(outline, { id, targetId, position }) {
+  let moved;
+  const without = (items) =>
+    items.flatMap((item) => {
+      if (item.id === id) {
+        moved = item;
+        return [];
+      }
+      return [item.children ? { ...item, children: without(item.children) } : item];
+    });
+  const rest = without(outline);
+  const put = (items) =>
+    items.flatMap((item) => {
+      const next = item.children ? { ...item, children: put(item.children) } : item;
+      if (item.id !== targetId) return [next];
+      if (position === "before") return [moved, next];
+      if (position === "after") return [next, moved];
+      return [{ ...next, children: [...(next.children ?? []), moved] }];
+    });
+  return put(rest);
+}
+
+function Items({ items }) {
+  return items.map((item) => (
+    <TreeItem key={item.id} id={item.id} label={item.label} meta={item.children?.length}>
+      {item.children && <Items items={item.children} />}
+    </TreeItem>
+  ));
+}
+
+function DocumentTree() {
+  const [outline, setOutline] = useState(OUTLINE);
+  const [selected, setSelected] = useState("ch-1");
+  const [expanded, setExpanded] = useState(["part-1"]);
+  const [last, setLast] = useState("none");
+  return (
+    <Demo
+      id="react-editor-tree"
+      title="Document tree"
+      code={`<Tree label="Manuscript" selected={id} onSelectedChange={setId}
+      expanded={open} onExpandedChange={setOpen} onMove={(move) => setOutline(reorder(outline, move))}>
+  <TreeItem id="part-1" label="Part one" meta={3}>
+    <TreeItem id="ch-1" label="The harbour" />
+  </TreeItem>
+  <TreeItem id="notes" label="Notes" />
+</Tree>`}
+    >
+      <div className="grid max-w-[24rem] border border-line bg-surface py-2">
+        <Tree
+          label="Manuscript"
+          selected={selected}
+          onSelectedChange={setSelected}
+          expanded={expanded}
+          onExpandedChange={setExpanded}
+          onMove={(change) => {
+            setOutline((current) => move(current, change));
+            setLast(`${change.id} ${change.position} ${change.targetId}`);
+          }}
+        >
+          <Items items={outline} />
+        </Tree>
+      </div>
+      <p className="sd-subtle text-sm" data-tree-state>
+        selected: {selected} · moved: {last}
+      </p>
+    </Demo>
+  );
+}
+
 function App() {
   return (
     <>
       <EditorChrome />
       <Marks />
+      <DocumentTree />
     </>
   );
 }

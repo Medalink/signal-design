@@ -7,3 +7,5 @@
 - `sd-mark`: inline marks for a span of text something is attached to, keyed on `data-mark` (`comment`, `insert`, `delete`, `mention`, `entity`). Suggestions are green and pink like `sd-diff`, the open comment (`aria-current`) is the accent, a mention takes `--who`; comments and entities are grey, a resolved comment dots.
 - `sd-hovercard`: a small preview panel that sits beside its trigger.
 - `signal-design/react`: `Mark` and `HoverCard`. The card opens on hover after a delay or at once on focus, and closes on Escape, leave or blur; the pointer can move onto it.
+- `sd-tree`: a nested document tree on `role="tree"`, rows indented by `--level`, a chevron that turns on `aria-expanded`, the selected item on `aria-selected`, and `data-drop` marks while an item is dragged.
+- `signal-design/react`: `Tree` and `TreeItem`. One tab stop, the arrow-key pattern of an ARIA tree, `selected` and `expanded` as props. Reordering is a callback: `onMove` hears a drop or Alt+ArrowUp and Alt+ArrowDown and the app reorders its own data; no drag library.

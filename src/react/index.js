@@ -38,6 +38,7 @@ export { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarButton, ToolbarMore } f
 export { Manuscript, StatusSegment } from "./editor.js";
 export { Mark } from "./marks.js";
 export { HoverCard } from "./hovercard.js";
+export { Tree, TreeItem } from "./tree.js";
 export { ToastProvider, useToast } from "./toast.js";
 export {
   AppShell,

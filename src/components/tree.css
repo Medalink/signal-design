@@ -1,0 +1,115 @@
+@layer components {
+  /*
+   * Tree: nested items with one tab stop. The rows indent by --level, a branch
+   * carries aria-expanded, the selected item aria-selected. Focus is on the
+   * treeitem; its row draws the ring. While dragging, the row under the
+   * pointer carries data-drop="before|after|inside".
+   *   <ul class="sd-tree" role="tree" aria-label="Manuscript">
+   *     <li role="treeitem" aria-level="1" aria-expanded="true" aria-selected="false" tabindex="0">
+   *       <div class="sd-tree-row" style="--level: 0">
+   *         <span class="sd-tree-toggle" aria-hidden="true"></span>
+   *         <span class="sd-tree-label">Part one</span>
+   *         <span class="sd-tree-meta">3</span>
+   *       </div>
+   *       <ul class="sd-tree-group" role="group">…</ul>
+   *     </li>
+   *   </ul>
+   */
+  .sd-tree,
+  .sd-tree-group {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .sd-tree [role="treeitem"]:focus {
+    outline: none;
+  }
+  .sd-tree:focus-visible {
+    outline-offset: -1px;
+  }
+  .sd-tree-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 32px;
+    padding-inline: calc(8px + var(--level, 0) * 18px) 10px;
+    color: var(--sd-fg-muted);
+    font-size: var(--text-base);
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 120ms var(--ease-out), color 120ms var(--ease-out);
+  }
+  .sd-tree-row:hover {
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+  [role="treeitem"]:focus-visible > .sd-tree-row {
+    outline: 1px solid var(--sd-fg);
+    outline-offset: -1px;
+  }
+  [role="treeitem"][aria-selected="true"] > .sd-tree-row {
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+    box-shadow: inset 1px 0 0 var(--sd-fg);
+  }
+  [role="treeitem"][aria-disabled="true"] > .sd-tree-row {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
+  }
+  .sd-tree-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sd-tree-meta {
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-sm);
+  }
+  .sd-tree-row svg {
+    width: 1.5cap;
+    height: 1.5cap;
+    flex-shrink: 0;
+  }
+
+  /* The chevron: a square corner turned to point right, or down when open. */
+  .sd-tree-toggle {
+    flex-shrink: 0;
+    display: inline-grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+  }
+  .sd-tree-toggle::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-inline-end: 1px solid currentColor;
+    border-block-end: 1px solid currentColor;
+    transform: translateX(-1px) rotate(-45deg);
+    transition: transform 120ms var(--ease-out);
+  }
+  [aria-expanded="true"] > .sd-tree-row > .sd-tree-toggle::before {
+    transform: translateY(-1px) rotate(45deg);
+  }
+  .sd-tree-toggle[data-leaf]::before {
+    display: none;
+  }
+
+  .sd-tree-row[data-dragging] {
+    opacity: 0.5;
+  }
+  .sd-tree-row[data-drop="before"] {
+    box-shadow: inset 0 2px 0 var(--sd-fg);
+  }
+  .sd-tree-row[data-drop="after"] {
+    box-shadow: inset 0 -2px 0 var(--sd-fg);
+  }
+  .sd-tree-row[data-drop="inside"] {
+    background: var(--sd-raised);
+    outline: 1px solid var(--sd-fg);
+    outline-offset: -1px;
+  }
+}
