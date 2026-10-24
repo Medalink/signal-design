@@ -45,6 +45,10 @@ init(); // once, after the DOM exists; every listener is delegated, so later mar
 
 **Charts** (optional): `pnpm add chart.js@^4.5`, then `import { createChart } from "signal-design/charts"`.
 
+**React 19** (optional): `import { Button, Dialog, Tabs } from "signal-design/react"` gives
+typed components that render the `sd-` classes with React as the only writer.
+They need no `init()`; do not call it on those pages.
+
 ## Hard rules (do not break these)
 
 1. **Square corners.** No `rounded-*`, no `border-radius`. Avatars and checkboxes too.
@@ -117,6 +121,7 @@ by `title` or `classes`) rather than inventing markup.
 | ASCII art | `mountAscii(el, piece)` from `signal-design/ascii` draws an `ascii-magic-art` piece as greys in `sd-ascii`; still until `aria-busy="true"` (`pnpm add ascii-magic-art`); `data-tone` colors the brightest level |
 | Stream overlays (OBS) | `sd-scene` (1920×1080 units in `--sd-u`; `data-full`, `data-clear`) with `sd-scene-copy`, `sd-scene-bar`, `sd-scene-label`, `sd-cam`, `sd-scene-goal`, `sd-credits`, `sd-stream-alert`; `mountStream(scene).alert({ kind, name })` |
 | Empty | `sd-empty` (gets a center ornament automatically) |
+| React app | `signal-design/react`: `Button`, `Field` + `Input`, `Dialog`, `Menu`, `Tabs`, `ToastProvider`, `Table`, `AppShell` with `Rail`, `Sidebar` and `ShellMain`; props are the state (`open`/`onOpenChange`, `value`/`onValueChange`) |
 
 Tone anything with `data-tone`. Mark the current location with `aria-current`.
 Use `sd-desktop-only` / `sd-phone-only` (split at 768px) for chrome that changes on phones.
@@ -153,7 +158,7 @@ violations. Needs `playwright` (and `axe-core` for `--a11y`) installed, and
 | `ai/tokens.json` | Every token resolved per theme (W3C design-token form), with contrast ratios |
 | `llms-full.txt` | This guide plus every component's HTML, as one text file |
 | `vscode/html-data.json`, `vscode/css-data.json` | Editor completions for `data-sd-*` and `--sd-*` |
-| `src/js/index.d.ts`, `src/js/charts/index.d.ts` | Types for the JS API |
+| `src/js/index.d.ts`, `src/js/charts/index.d.ts`, `src/react/index.d.ts` | Types for the JS API, the charts API and the React components |
 | `README.md` | Human documentation |
 
 ## Common mistakes
