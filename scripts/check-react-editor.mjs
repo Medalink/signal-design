@@ -87,6 +87,67 @@ export async function checkReactEditor(page, base) {
   expect(phone.scrolls && phone.page <= phone.view && phone.doc <= phone.view, `on a phone the toolbar scrolls inside itself and the page shrinks to fit, got ${JSON.stringify(phone)}`);
   await page.setViewportSize({ width: 1280, height: 900 });
 
+  /* ---- Marks ---- */
+  const marks = page.locator("#react-editor-marks");
+  const mark = (text) => marks.locator(".sd-mark", { hasText: text });
+  const openComment = () => marks.locator("[data-open-comment]").textContent();
+  const style = (locator, property) => locator.evaluate((el, name) => getComputedStyle(el)[name], property);
+  expect(await mark("harbour").getAttribute("aria-current") === "true" && await mark("Boats").getAttribute("aria-current") === null, "the open comment is the only mark with aria-current");
+  expect(await mark("harbour").evaluate((el) => el.tagName) === "MARK" && await mark("forty").evaluate((el) => el.tagName) === "DEL" && await mark("once more").evaluate((el) => el.tagName) === "INS", "the element follows the kind");
+  expect(await style(mark("forty"), "textDecorationLine") === "line-through" && await style(mark("once more"), "textDecorationLine") === "underline", "a deletion is struck through and an insertion underlined");
+  expect(await style(mark("Lisbon"), "textDecorationStyle") === "dotted" && await style(mark("gull"), "textDecorationStyle") === "dotted", "an entity and a resolved comment are dotted");
+  const hues = await page.evaluate(() => {
+    const color = (text) => getComputedStyle([...document.querySelectorAll("#react-editor-marks .sd-mark")].find((m) => m.textContent.includes(text))).textDecorationColor;
+    return { insert: color("once more"), remove: color("forty"), comment: color("Boats"), open: color("harbour") };
+  });
+  expect(new Set(Object.values(hues)).size === 4, `insert, delete, comment and open comment each have their own underline color, got ${JSON.stringify(hues)}`);
+  await mark("Boats").click();
+  expect(await openComment() === "open comment: c2" && await mark("Boats").getAttribute("aria-current") === "true" && await mark("harbour").getAttribute("aria-current") === null, "a click on a comment mark opens it and closes the other");
+  await mark("harbour").focus();
+  await page.keyboard.press("Enter");
+  expect(await openComment() === "open comment: c1", "Enter on a focused comment mark opens it");
+  await mark("Boats").focus();
+  await page.keyboard.press("Space");
+  expect(await openComment() === "open comment: c2", "Space on a focused comment mark opens it");
+  expect(await mark("@Jane").getAttribute("href") === "#marks" && await mark("@Jane").evaluate((el) => getComputedStyle(el).color !== getComputedStyle(el.closest("p")).color), "a mention is a link in the person's color");
+
+  /* ---- Hover card ---- */
+  const card = page.locator("body > .sd-hovercard");
+  const entity = mark("Lisbon");
+  const cardOpen = () => until(() => document.querySelector("body > .sd-hovercard")?.textContent.includes("Capital of Portugal"), null, 3000);
+  const cardGone = () => until(() => !document.querySelector("body > .sd-hovercard"), null, 3000);
+  const settle = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  expect(await card.count() === 0, "no hover card is in the document until one opens");
+  await entity.hover();
+  expect(await cardOpen(), "hovering the mark opens its card");
+  const where = await page.evaluate(() => {
+    const c = document.querySelector("body > .sd-hovercard").getBoundingClientRect();
+    const t = [...document.querySelectorAll("#react-editor-marks .sd-mark")].find((m) => m.textContent === "Lisbon");
+    const r = t.getBoundingClientRect();
+    return { below: Math.round(c.top - r.bottom), above: Math.round(r.top - c.bottom), described: t.getAttribute("aria-describedby") === document.querySelector("body > .sd-hovercard").id, inView: c.left >= 0 && c.right <= innerWidth };
+  });
+  expect(where.described && where.inView && (where.below >= 0 && where.below <= 12 || where.above >= 0 && where.above <= 12), `the card sits next to its mark and describes it, got ${JSON.stringify(where)}`);
+  const box = await card.boundingBox();
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 4 });
+  await settle(500);
+  expect(await card.count() === 1, "the card stays open while the pointer is on it");
+  await page.mouse.move(2, 2);
+  expect(await cardGone(), "leaving the mark and the card closes it");
+  await entity.hover();
+  await cardOpen();
+  await page.keyboard.press("Escape");
+  expect(await cardGone(), "Escape closes a card opened by hover");
+  await page.mouse.move(2, 2);
+  await mark("Boats").focus();
+  await entity.focus();
+  expect(await cardOpen(), "keyboard focus opens the card at once");
+  await page.keyboard.press("Escape");
+  expect(await cardGone() && await entity.evaluate((el) => document.activeElement === el), "Escape closes a card opened by focus and keeps focus on the mark");
+  await entity.focus();
+  await cardOpen();
+  await mark("harbour").focus();
+  expect(await cardGone(), "moving focus away closes the card");
+
   expect(browserErrors.length === 0, `console errors on the editor page: ${browserErrors.join(" | ")}`);
   return { errors, passed };
 }

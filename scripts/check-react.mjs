@@ -20,7 +20,7 @@ export function checkReactTypes() {
   writeFileSync(
     fixture,
     `import { useState } from "react";
-import { AppShell, Button, Dialog, DialogHeader, Field, IconButton, Input, MenuItem, Manuscript, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, useToast, buttonClass, type ButtonProps } from "signal-design/react";
+import { AppShell, Button, Dialog, DialogHeader, Field, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 
 export function Consumer() {
   const [open, setOpen] = useState(false);
@@ -45,11 +45,17 @@ export function Consumer() {
       <RailItem section="projects" href="#" unread>Projects</RailItem>
       <Toolbar label="Formatting"><ToolbarButton label="Bold" pressed={open} onPressedChange={setOpen} /><ToolbarMore><MenuItem>Clear</MenuItem></ToolbarMore></Toolbar>
       <Manuscript measure="30rem" face="mono" ref={(node: HTMLElement | null) => node?.focus()} />
+      <HoverCard content="Preview" openDelay={0}><Mark kind="entity" tabIndex={0} who="var(--sd-success)" /></HoverCard>
+      <Mark kind="comment" active onClick={(event) => event.currentTarget.focus()}>Comment</Mark>
       <StatusSegment tone="success" pressed onClick={(event) => event.currentTarget.blur()}>Saved</StatusSegment>
       {/* @ts-expect-error variant must be one of the button variants */}
       <Button variant="huge" />
       {/* @ts-expect-error an icon button needs its accessible name */}
       <IconButton />
+      {/* @ts-expect-error a mark needs a kind */}
+      <Mark />
+      {/* @ts-expect-error the kind must be one of the mark kinds */}
+      <Mark kind="highlight" />
       {/* @ts-expect-error a toolbar needs its accessible name */}
       <Toolbar />
       {/* @ts-expect-error a pressed toolbar button needs onPressedChange */}
@@ -142,7 +148,7 @@ export async function checkReactSsr() {
             h(sd.ToolbarSeparator),
             h(sd.ToolbarButton, null, "Heading"),
             h(sd.ToolbarMore, null, h(sd.MenuItem, null, "Clear"))),
-          h(sd.Manuscript, { measure: "30rem", face: "mono" }, h("p", null, "Text")))),
+          h(sd.Manuscript, { measure: "30rem", face: "mono" }, h("p", null, "Text", h(sd.Mark, { kind: "comment", active: true, onClick() {} }, "c"), h(sd.Mark, { kind: "insert" }, "i"), h(sd.HoverCard, { content: "card", defaultOpen: true }, h(sd.Mark, { kind: "entity", tabIndex: 0 }, "e")))))),
       h(sd.ShellDock, null, "dock"),
       h(sd.ShellAside, null, "aside"),
       h(sd.Statusbar, null, h(sd.StatusSegment, null, "1 word"), h(sd.StatusSegment, { pressed: false, onClick() {} }, "Focus"), h(sd.StatusSegment, { end: true, tone: "success" }, "Saved"))));
@@ -156,6 +162,7 @@ export async function checkReactSsr() {
     ["99+", "the capped count"],
   ]) assert.ok(html.includes(needle), `server output is missing ${what}`);
   assert.ok(!html.includes("sd-tooltip"), "a closed tooltip rendered on the server");
+  assert.ok(!html.includes("sd-hovercard"), "an open hover card rendered on the server");
   const names = Object.keys(all).filter((name) => /^[A-Z]/.test(name));
   const missed = names.filter((name) => !used.has(name));
   assert.deepEqual(missed, [], `exports the server render never touched: ${missed.join(", ")}`);

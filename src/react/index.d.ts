@@ -394,7 +394,7 @@ export function ToolbarButton(props: ToolbarButtonProps): ReactElement;
 export interface ToolbarMoreProps {
   /** The trigger's accessible name. Default "More". */
   label?: string;
-  /** The trigger's content. Default "…". */
+  /** The trigger's content. Default "â€¦". */
   icon?: ReactNode;
   open?: boolean;
   defaultOpen?: boolean;
@@ -427,3 +427,40 @@ export interface StatusSegmentProps extends Omit<ComponentProps<"button">, "type
 }
 /** A fact in the status bar: text, or a button with `onClick` or `pressed`, or a link with `href`. */
 export function StatusSegment(props: StatusSegmentProps): ReactElement;
+
+/* ---- Marks and hover card ---------------------------------------------- */
+
+export type MarkKind = "comment" | "insert" | "delete" | "mention" | "entity";
+export interface MarkProps extends ComponentProps<"span"> {
+  kind: MarkKind;
+  /** The open comment: sets `aria-current` and the accent. */
+  active?: boolean;
+  /** A settled comment: the fill goes and the underline dots. */
+  resolved?: boolean;
+  /** A mention's color, any CSS color or `var(--sd-success)`. Default is the `extra` role. */
+  who?: string;
+  /** Renders a link. */
+  href?: string;
+}
+/** A span of text something is attached to. `onClick` without `href` makes it a button. */
+export function Mark(props: MarkProps): ReactElement;
+
+export interface HoverCardProps {
+  /** What the card shows. */
+  content: ReactNode;
+  side?: "top" | "bottom" | "left" | "right";
+  align?: "start" | "center" | "end";
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** Milliseconds the pointer rests on the trigger before it opens. Default 300. Focus opens it at once. */
+  openDelay?: number;
+  /** Milliseconds after the pointer leaves the trigger and the card before it closes. Default 150. */
+  closeDelay?: number;
+  /** On the card. */
+  className?: string;
+  /** The one focusable element the card describes, usually a `Mark`. */
+  children: ReactElement;
+}
+/** A preview beside its trigger on hover or focus; Escape closes it. */
+export function HoverCard(props: HoverCardProps): ReactElement;

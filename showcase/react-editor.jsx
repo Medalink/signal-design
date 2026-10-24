@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { mountBar } from "./viewport.js";
 import { cycleTheme, hotkeys } from "../src/js/index.js";
 import { Demo } from "./react-demo.jsx";
-import { Manuscript, MenuItem, StatusSegment, Toolbar, ToolbarButton, ToolbarGroup, ToolbarMore, ToolbarSeparator } from "../src/react/index.js";
+import { HoverCard, Manuscript, Mark, MenuItem, StatusSegment, Toolbar, ToolbarButton, ToolbarGroup, ToolbarMore, ToolbarSeparator } from "../src/react/index.js";
 
 mountBar();
 hotkeys({ "shift+t": cycleTheme });
@@ -96,8 +96,69 @@ function EditorChrome() {
   );
 }
 
+function Marks() {
+  const [open, setOpen] = useState("c1");
+  return (
+    <Demo
+      id="react-editor-marks"
+      title="Marks and hover card"
+      code={`<Mark kind="comment" active={open === "c1"} onClick={() => setOpen("c1")}>the harbour</Mark>
+<Mark kind="comment" resolved>settled</Mark>
+<Mark kind="insert">added words</Mark>
+<Mark kind="delete">removed words</Mark>
+<Mark kind="mention" who="var(--sd-success)" href="/people/jane">@Jane</Mark>
+<HoverCard content={<><p className="sd-hovercard-title">Lisbon</p>…</>}>
+  <Mark kind="entity" tabIndex={0}>Lisbon</Mark>
+</HoverCard>`}
+    >
+      <Manuscript measure="44rem" aria-label="Marks">
+        <p>
+          The{" "}
+          <Mark kind="comment" active={open === "c1"} onClick={() => setOpen("c1")}>
+            harbour woke before the town did
+          </Mark>
+          . <Mark kind="comment" active={open === "c2"} onClick={() => setOpen("c2")}>Boats knocked against the quay</Mark> in the half dark, and the{" "}
+          <Mark kind="comment" resolved>
+            gull
+          </Mark>{" "}
+          tried the same two notes again.
+        </p>
+        <p>
+          She wrote it <Mark kind="delete">forty times</Mark> <Mark kind="insert">once more</Mark> and sent it to{" "}
+          <Mark kind="mention" who="var(--sd-success)" href="#marks">
+            @Jane
+          </Mark>{" "}
+          in{" "}
+          <HoverCard
+            content={
+              <>
+                <p className="sd-hovercard-title">Lisbon</p>
+                <p className="sd-hovercard-meta">Place · 4 mentions</p>
+                <p>Capital of Portugal. First named in chapter 2, where the ferry leaves for the south shore.</p>
+              </>
+            }
+          >
+            <Mark kind="entity" tabIndex={0}>
+              Lisbon
+            </Mark>
+          </HoverCard>
+          .
+        </p>
+      </Manuscript>
+      <p className="sd-subtle text-sm" data-open-comment>
+        open comment: {open}
+      </p>
+    </Demo>
+  );
+}
+
 function App() {
-  return <EditorChrome />;
+  return (
+    <>
+      <EditorChrome />
+      <Marks />
+    </>
+  );
 }
 
 createRoot(document.getElementById("root")).render(<App />);
