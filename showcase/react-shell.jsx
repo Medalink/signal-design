@@ -207,7 +207,7 @@ function Shell() {
                 <MenuItem onSelect={() => toast("Signed out", { tone: "success" })}>Sign out</MenuItem>
               </MenuContent>
             </Menu>
-            <ShellToggle target="aside" className="sd-btn sd-btn-sm" aria-controls="detail-panel">
+            <ShellToggle target="aside" className="sd-btn sd-btn-sm" aria-controls="detail-panel" aria-label="Details">
               <Icon name="panel" />
               <span className="sd-desktop-only">Details</span>
             </ShellToggle>
