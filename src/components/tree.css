@@ -14,6 +14,15 @@
    *       <ul class="sd-tree-group" role="group">…</ul>
    *     </li>
    *   </ul>
+   *
+   * Row actions (rename, delete): a treeitem cannot hold buttons, so each
+   * action is a key on the item (aria-keyshortcuts says which), and the
+   * buttons in sd-tree-actions are only a pointer convenience. They are
+   * aria-hidden, tabindex="-1", and appear over the end of the row on hover,
+   * keyboard focus and selection.
+   *       <span class="sd-tree-actions" aria-hidden="true">
+   *         <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" tabindex="-1" title="Rename (F2)">…</button>
+   *       </span>
    */
   .sd-tree,
   .sd-tree-group {
@@ -28,6 +37,7 @@
     outline-offset: -1px;
   }
   .sd-tree-row {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -72,6 +82,22 @@
     width: 1.5cap;
     height: 1.5cap;
     flex-shrink: 0;
+  }
+
+  .sd-tree-actions {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    display: none;
+    align-items: center;
+    gap: 2px;
+    padding-inline: 4px 6px;
+    background: var(--sd-raised);
+  }
+  .sd-tree-row:hover > .sd-tree-actions,
+  [role="treeitem"][aria-selected="true"] > .sd-tree-row > .sd-tree-actions,
+  [role="treeitem"]:focus-visible > .sd-tree-row > .sd-tree-actions {
+    display: flex;
   }
 
   /* The chevron: a square corner turned to point right, or down when open. */

@@ -103,6 +103,44 @@ export async function checkReactGaps(page, base) {
   expect(await iconBar.getByRole("button", { name: "Italic", exact: true }).getAttribute("aria-pressed") === "false", "an icon button still toggles");
   expect(await icons.locator(".sd-icon-text").first().evaluate((el) => el.textContent.trim() === "Not saved" && el.querySelector("svg").getAttribute("aria-hidden") === "true"), "an icon beside text is decorative");
 
+  /* ---- Tree row actions ---- */
+  const chapterDemo = page.locator("#react-editor-tree-actions");
+  const chapterTree = chapterDemo.getByRole("tree", { name: "Chapters", exact: true });
+  const chapterItems = chapterTree.getByRole("treeitem");
+  const chapterState = () => chapterDemo.locator("[data-tree-actions-state]").textContent();
+  const chapterFocus = () => page.evaluate(() => document.activeElement?.dataset.treeId ?? document.activeElement?.tagName);
+  const restore = () => chapterDemo.getByRole("button", { name: "Restore chapters", exact: true }).click();
+  expect(await chapterItems.count() === 4 && await chapterItems.evaluateAll((all) => all.slice(0, 3).every((item) => item.getAttribute("aria-keyshortcuts") === "F2 Delete") && !all[3].hasAttribute("aria-keyshortcuts")), "an item with actions lists their keys in aria-keyshortcuts, a disabled one lists none");
+  expect(await chapterTree.getByRole("button").count() === 0 && await chapterTree.locator(".sd-tree-actions").evaluateAll((all) => all.length === 3 && all.every((el) => el.getAttribute("aria-hidden") === "true" && [...el.querySelectorAll("button")].every((b) => b.tabIndex === -1))), "the row buttons are hidden from assistive technology and out of the tab order, so a treeitem holds none");
+  await chapterItems.first().focus();
+  const actionsDisplay = (index) => chapterItems.nth(index).locator(":scope > .sd-tree-row > .sd-tree-actions").evaluate((el) => getComputedStyle(el).display);
+  expect(await actionsDisplay(1) === "none" && await actionsDisplay(0) !== "none", "actions show on the selected row and stay hidden on the others");
+  await page.keyboard.press("F2");
+  expect(await chapterState() === "selected: ch-1 · last action: rename ch-1", `F2 runs Rename on the focused item, got ${await chapterState()}`);
+  await page.keyboard.press("Shift+Delete");
+  await page.keyboard.press("Control+Delete");
+  expect(await chapterState() === "selected: ch-1 · last action: rename ch-1" && await chapterItems.count() === 4, "a key with a modifier runs nothing");
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("Delete");
+  expect(await chapterItems.count() === 3 && await chapterState() === "selected: ch-1 · last action: delete ch-2", `Delete removes the focused item, got ${await chapterState()}`);
+  expect(await until(() => document.activeElement?.dataset.treeId === "ch-3", null), `focus goes to the next item when the focused one is removed, got ${await chapterFocus()}`);
+  await page.keyboard.press("Delete");
+  expect(await until(() => document.activeElement?.dataset.treeId === "ch-1", null), `focus goes to the previous item when the last one that can be removed is, got ${await chapterFocus()}`);
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Shift+Tab");
+  expect(await chapterFocus() === "ch-1", `the tree is still one tab stop that returns to the item, got ${await chapterFocus()}`);
+  await restore();
+  expect(await chapterItems.count() === 4, "restoring brings the chapters back");
+  const secondRow = chapterItems.nth(1).locator(":scope > .sd-tree-row");
+  await secondRow.hover();
+  expect(await secondRow.locator(".sd-tree-actions").evaluate((el) => getComputedStyle(el).display) === "flex", "hover shows the row's buttons");
+  await secondRow.locator("button[title^='Rename']").click();
+  expect(await chapterState() === "selected: ch-1 · last action: rename ch-2", `a click on a row button runs the action without selecting the row, got ${await chapterState()}`);
+  expect(await secondRow.locator("button[title^='Delete']").getAttribute("data-tone") === "danger", "a destructive action is toned danger");
+  await secondRow.locator("button[title^='Delete']").click();
+  expect(await chapterItems.count() === 3 && await chapterState() === "selected: ch-1 · last action: delete ch-2", "a click on Delete removes the item");
+  await restore();
+
   /* ---- Gutter markers ---- */
   const gutter = page.locator("#react-editor-gutter");
   const markers = gutter.locator(".sd-gutter-marker");

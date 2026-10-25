@@ -621,6 +621,17 @@ export interface TreeProps extends Omit<ComponentProps<"ul">, "role" | "aria-lab
 }
 /** One tab stop; arrows, Home and End move, Right and Left open and close, Enter selects. */
 export function Tree(props: TreeProps): ReactElement;
+export interface TreeAction {
+  /** Names the action in the button's tooltip. */
+  label: string;
+  /** The key that runs it while the item has focus, a `KeyboardEvent.key` without modifiers, such as "F2" or "Delete". Unique in the item. */
+  key: string;
+  /** The glyph on the row's pointer button. */
+  icon?: ReactNode | undefined;
+  /** "danger" for an action that destroys something. */
+  tone?: "danger" | undefined;
+  onSelect: () => void;
+}
 export interface TreeItemProps extends Omit<ComponentProps<"li">, "id" | "role" | "children"> {
   /** Names the item in the tree's state and in `onMove`. Unique in the tree. */
   id: string;
@@ -629,6 +640,12 @@ export interface TreeItemProps extends Omit<ComponentProps<"li">, "id" | "role" 
   /** Small text at the end of the row, such as a count. */
   meta?: ReactNode | undefined;
   disabled?: boolean | undefined;
+  /**
+   * What can be done to the item. A treeitem cannot hold buttons, so each runs from its `key` while the item has focus
+   * (listed in `aria-keyshortcuts`); the row's buttons are for the pointer and are hidden from assistive technology.
+   * If an action removes the focused item, focus moves to the item nearest it.
+   */
+  actions?: readonly TreeAction[] | undefined;
   /** More `TreeItem`s: makes this a branch. */
   children?: ReactNode | undefined;
 }

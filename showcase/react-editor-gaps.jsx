@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Demo } from "./react-demo.jsx";
 import { ICON_NAMES } from "../src/js/icons.js";
-import { GutterBlock, Icon, IconButton, Manuscript, Toolbar, ToolbarButton, ToolbarGroup, ToolbarMore, ToolbarSeparator, WeightedBar } from "../src/react/index.js";
+import { GutterBlock, Icon, IconButton, Manuscript, Toolbar, ToolbarButton, ToolbarGroup, ToolbarMore, ToolbarSeparator, Tree, TreeItem, WeightedBar } from "../src/react/index.js";
 
 const WORDS = [
   { weight: 12000, state: "drafted", label: "Part one · 12,000 words" },
@@ -84,6 +84,64 @@ function Icons() {
   );
 }
 
+const CHAPTERS = [
+  { id: "ch-1", label: "The harbour" },
+  { id: "ch-2", label: "The long way round" },
+  { id: "ch-3", label: "Forty drafts" },
+  { id: "ch-4", label: "Lisbon", disabled: true },
+];
+
+function TreeActions() {
+  const [chapters, setChapters] = useState(CHAPTERS);
+  const [selected, setSelected] = useState("ch-1");
+  const [last, setLast] = useState("none");
+  const actionsOf = (id) => [
+    { label: "Rename", key: "F2", icon: <Icon name="edit" />, onSelect: () => setLast(`rename ${id}`) },
+    {
+      label: "Delete",
+      key: "Delete",
+      icon: <Icon name="delete" />,
+      tone: "danger",
+      onSelect: () => {
+        setChapters((current) => current.filter((chapter) => chapter.id !== id));
+        setLast(`delete ${id}`);
+      },
+    },
+  ];
+  return (
+    <Demo
+      id="react-editor-tree-actions"
+      title="Tree row actions"
+      code={`<Tree label="Chapters" selected={id} onSelectedChange={setId}>
+  <TreeItem
+    id="ch-1"
+    label="The harbour"
+    actions={[
+      { label: "Rename", key: "F2", icon: <Icon name="edit" />, onSelect: () => rename("ch-1") },
+      { label: "Delete", key: "Delete", icon: <Icon name="delete" />, tone: "danger", onSelect: () => remove("ch-1") },
+    ]}
+  />
+</Tree>`}
+    >
+      <div className="grid max-w-[24rem] border border-line bg-surface py-2">
+        <Tree label="Chapters" selected={selected} onSelectedChange={setSelected}>
+          {chapters.map((chapter) => (
+            <TreeItem key={chapter.id} id={chapter.id} label={chapter.label} disabled={chapter.disabled} actions={actionsOf(chapter.id)} />
+          ))}
+        </Tree>
+      </div>
+      <div className="flex items-center gap-4">
+        <p className="sd-subtle text-sm" data-tree-actions-state>
+          selected: {selected} · last action: {last}
+        </p>
+        <button className="sd-btn sd-btn-sm" type="button" onClick={() => setChapters(CHAPTERS)}>
+          Restore chapters
+        </button>
+      </div>
+    </Demo>
+  );
+}
+
 function Weighted() {
   const [goal, setGoal] = useState(80000);
   return (
@@ -156,6 +214,7 @@ export function EditorGaps() {
   return (
     <>
       <Icons />
+      <TreeActions />
       <Weighted />
       <Gutter />
     </>
