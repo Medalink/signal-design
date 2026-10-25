@@ -13,6 +13,9 @@
    *   <del class="sd-mark" data-mark="delete">removed</del>
    *   <a class="sd-mark" data-mark="mention" style="--who: var(--sd-success)" href="/u/jane">@Jane</a>
    *   <span class="sd-mark" data-mark="entity" tabindex="0">Lisbon</span>
+   *   <mark class="sd-mark" data-mark="find">quay</mark>
+   *   <mark class="sd-mark" data-mark="find" aria-current="true">quay</mark>
+   *   <span class="sd-mark" data-mark="check">teh</span>
    */
   .sd-mark {
     --mark: var(--sd-fg-subtle);
@@ -80,5 +83,39 @@
   .sd-mark[data-mark="entity"]:is(a, [role="button"], [tabindex]):is(:hover, [aria-describedby]) {
     --mark: var(--sd-fg);
     text-decoration-style: solid;
+  }
+
+  /*
+   * A match of the search the person typed (find) or of a writing check, such
+   * as spelling or style (check). A find match is a grey fill; a check match
+   * is a dashed underline. The current one, aria-current, adds an outline and
+   * a heavier line, so it shows in greys and without telling colors apart; the
+   * accent only tints it.
+   */
+  .sd-mark[data-mark="find"] {
+    background: color-mix(in srgb, var(--sd-fg) 14%, transparent);
+    text-decoration-line: none;
+  }
+  .sd-mark[data-mark="check"] {
+    --mark: var(--sd-fg-muted);
+    text-decoration-style: dashed;
+  }
+  .sd-mark:is([data-mark="find"], [data-mark="check"])[aria-current]:not([aria-current="false"]) {
+    --mark: var(--sd-fg);
+    outline: 1px solid var(--sd-fg);
+    outline-offset: 1px;
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-decoration-thickness: 2px;
+  }
+  .sd-mark[data-mark="find"][aria-current]:not([aria-current="false"]) {
+    background: color-mix(in srgb, var(--sd-accent) 22%, transparent);
+  }
+  .sd-mark[data-mark="check"][aria-current]:not([aria-current="false"]) {
+    background: color-mix(in srgb, var(--sd-fg) 12%, transparent);
+  }
+  .sd-mark:is([data-mark="find"], [data-mark="check"]):is(a, [role="button"], [tabindex]):hover {
+    --mark: var(--sd-fg);
+    text-decoration-line: underline;
   }
 }

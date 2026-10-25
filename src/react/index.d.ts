@@ -13,45 +13,45 @@ export type ButtonVariant = "default" | "primary" | "ghost" | "link";
 export type ButtonSize = "sm" | "md" | "lg";
 
 export interface ButtonClassOptions {
-  variant?: ButtonVariant;
-  size?: ButtonSize;
-  block?: boolean;
-  className?: string;
+  variant?: ButtonVariant | undefined;
+  size?: ButtonSize | undefined;
+  block?: boolean | undefined;
+  className?: string | undefined;
 }
 /** The `sd-btn` classes, for a link or any other element that should look like a button. */
 export function buttonClass(options?: ButtonClassOptions): string;
 
 export interface ButtonProps extends ComponentProps<"button"> {
-  variant?: ButtonVariant;
-  size?: ButtonSize;
+  variant?: ButtonVariant | undefined;
+  size?: ButtonSize | undefined;
   /** Full width. */
-  block?: boolean;
-  tone?: Tone;
+  block?: boolean | undefined;
+  tone?: Tone | undefined;
   /** Sets `aria-busy`. */
-  busy?: boolean;
+  busy?: boolean | undefined;
 }
 export function Button(props: ButtonProps): ReactElement;
 
 export interface IconButtonProps extends Omit<ComponentProps<"button">, "aria-label"> {
   /** The accessible name. */
   label: string;
-  variant?: ButtonVariant;
-  size?: ButtonSize;
-  tone?: Tone;
+  variant?: ButtonVariant | undefined;
+  size?: ButtonSize | undefined;
+  tone?: Tone | undefined;
 }
 export function IconButton(props: IconButtonProps): ReactElement;
 
 /* ---- Fields and controls ----------------------------------------------- */
 
 export interface FieldProps extends Omit<ComponentProps<"div">, "children"> {
-  label?: ReactNode;
-  hint?: ReactNode;
+  label?: ReactNode | undefined;
+  hint?: ReactNode | undefined;
   /** Shown instead of the hint, marks the control `aria-invalid` and points `aria-describedby` at it. */
-  error?: ReactNode;
+  error?: ReactNode | undefined;
   /** Small text beside the label, such as "optional". */
-  aside?: ReactNode;
+  aside?: ReactNode | undefined;
   /** Passed to the control as `required`. */
-  required?: boolean;
+  required?: boolean | undefined;
   children: ReactNode;
 }
 /** Owns the label, hint and error. The `Input`, `Textarea` or `Select` inside takes its id and ARIA from it. */
@@ -63,9 +63,9 @@ export function Select(props: ComponentProps<"select">): ReactElement;
 
 export interface CheckboxProps extends Omit<ComponentProps<"input">, "type" | "className" | "children"> {
   label: ReactNode;
-  description?: ReactNode;
+  description?: ReactNode | undefined;
   /** On the label; `ref` and the other props reach the input. */
-  className?: string;
+  className?: string | undefined;
 }
 export function Checkbox(props: CheckboxProps): ReactElement;
 export function Switch(props: Omit<CheckboxProps, "role">): ReactElement;
@@ -73,21 +73,21 @@ export function Switch(props: Omit<CheckboxProps, "role">): ReactElement;
 /* ---- Static parts ------------------------------------------------------ */
 
 export interface BadgeProps extends ComponentProps<"span"> {
-  tone?: Tone;
-  solid?: boolean;
+  tone?: Tone | undefined;
+  solid?: boolean | undefined;
 }
 export function Badge(props: BadgeProps): ReactElement;
 
 export interface CountBadgeProps extends Omit<ComponentProps<"span">, "children"> {
   value: number;
   /** Shows `max+` above it. Default 99. */
-  max?: number;
+  max?: number | undefined;
   /** Makes the count read as "label: value". */
-  label?: string;
-  tone?: Tone;
+  label?: string | undefined;
+  tone?: Tone | undefined;
   /** Pin to the corner of a positioned parent. */
-  corner?: boolean;
-  hideZero?: boolean;
+  corner?: boolean | undefined;
+  hideZero?: boolean | undefined;
 }
 export function CountBadge(props: CountBadgeProps): ReactElement | null;
 
@@ -95,19 +95,19 @@ export type AvatarStatus = "online" | "away" | "afk" | "busy" | "offline";
 export interface AvatarProps extends Omit<ComponentProps<"span">, "children"> {
   /** The accessible name, and the initials when there is no `src`. */
   name: string;
-  src?: string;
-  size?: "sm" | "md" | "lg" | "xl";
-  tone?: Tone;
-  status?: AvatarStatus;
+  src?: string | undefined;
+  size?: "sm" | "md" | "lg" | "xl" | undefined;
+  tone?: Tone | undefined;
+  status?: AvatarStatus | undefined;
 }
 export function Avatar(props: AvatarProps): ReactElement;
 export function AvatarStack(props: ComponentProps<"span">): ReactElement;
 
 export interface CardProps extends Omit<ComponentProps<"article">, "ref"> {
-  tone?: Tone;
+  tone?: Tone | undefined;
   /** Makes the whole card a link. */
-  href?: string;
-  ref?: Ref<HTMLElement>;
+  href?: string | undefined;
+  ref?: Ref<HTMLElement> | undefined;
 }
 export function Card(props: CardProps): ReactElement;
 export function CardHeader(props: ComponentProps<"header">): ReactElement;
@@ -116,23 +116,23 @@ export function CardFooter(props: ComponentProps<"footer">): ReactElement;
 
 export interface PanelProps extends ComponentProps<"section"> {
   /** "wide" caps at 1024px, "fluid" does not cap. Default 560px. */
-  width?: "wide" | "fluid";
+  width?: "wide" | "fluid" | undefined;
 }
 export function Panel(props: PanelProps): ReactElement;
 export function PanelTitle(props: ComponentProps<"h3">): ReactElement;
 export function PanelDescription(props: ComponentProps<"p">): ReactElement;
 
 export interface EmptyStateProps extends Omit<ComponentProps<"div">, "title"> {
-  title?: ReactNode;
-  action?: ReactNode;
+  title?: ReactNode | undefined;
+  action?: ReactNode | undefined;
 }
 export function EmptyState(props: EmptyStateProps): ReactElement;
 
 export interface TableProps extends ComponentProps<"table"> {
-  compact?: boolean;
-  hover?: boolean;
+  compact?: boolean | undefined;
+  hover?: boolean | undefined;
   /** On the scroll wrapper. `className` and `ref` reach the table. */
-  wrapClassName?: string;
+  wrapClassName?: string | undefined;
 }
 export function Table(props: TableProps): ReactElement;
 export function TableCaption(props: ComponentProps<"caption">): ReactElement;
@@ -141,20 +141,20 @@ export function TableBody(props: ComponentProps<"tbody">): ReactElement;
 export function TableFoot(props: ComponentProps<"tfoot">): ReactElement;
 export interface TableRowProps extends ComponentProps<"tr"> {
   /** Sets `aria-selected`. */
-  selected?: boolean;
+  selected?: boolean | undefined;
 }
 export function TableRow(props: TableRowProps): ReactElement;
 export interface TableHeaderProps extends Omit<ComponentProps<"th">, "scope"> {
-  numeric?: boolean;
+  numeric?: boolean | undefined;
   /** The arrow to draw. Giving it, or `onSort`, makes the header sortable. */
-  sort?: "ascending" | "descending" | "none";
-  sortable?: boolean;
+  sort?: "ascending" | "descending" | "none" | undefined;
+  sortable?: boolean | undefined;
   /** Called on click, Enter or Space. Makes the header focusable. */
-  onSort?: (event: SyntheticEvent<HTMLTableCellElement>) => void;
+  onSort?: ((event: SyntheticEvent<HTMLTableCellElement>) => void) | undefined;
 }
 export function TableHeader(props: TableHeaderProps): ReactElement;
 export interface TableCellProps extends ComponentProps<"td"> {
-  numeric?: boolean;
+  numeric?: boolean | undefined;
 }
 export function TableCell(props: TableCellProps): ReactElement;
 
@@ -162,52 +162,54 @@ export function TableCell(props: TableCellProps): ReactElement;
 
 export interface DialogProps extends Omit<ComponentProps<"dialog">, "open"> {
   /** Controlled. Leave out to let the dialog keep its own state. */
-  open?: boolean;
-  defaultOpen?: boolean;
+  open?: boolean | undefined;
+  defaultOpen?: boolean | undefined;
   /** Called when the dialog closes (Escape, backdrop, a close button) or a trigger opens it. */
-  onOpenChange?: (open: boolean) => void;
+  onOpenChange?: ((open: boolean) => void) | undefined;
   /** A button that opens the dialog; rendered before it. */
-  trigger?: ReactElement<{ onClick?: MouseEventHandler<HTMLElement> }>;
-  size?: "sm" | "md" | "lg";
-  /** Pins the dialog to an edge as a sheet. */
-  side?: "left" | "right";
+  trigger?: ReactElement<{ onClick?: MouseEventHandler<HTMLElement> | undefined }> | undefined;
+  size?: "sm" | "md" | "lg" | undefined;
+  /** Pins the dialog to an edge as a sheet: the right, the left or the bottom. */
+  side?: "left" | "right" | "bottom" | undefined;
   /** Escape and the backdrop do not close it. */
-  static?: boolean;
+  static?: boolean | undefined;
 }
 export function Dialog(props: DialogProps): ReactElement;
 export interface SheetProps extends Omit<DialogProps, "side" | "size"> {
-  side?: "left" | "right";
+  side?: "left" | "right" | "bottom" | undefined;
 }
 export function Sheet(props: SheetProps): ReactElement;
 export interface DialogHeaderProps extends ComponentProps<"header"> {
   /** The × button. Default true. */
-  closeButton?: boolean;
+  closeButton?: boolean | undefined;
+  /** The × button's accessible name, such as "Close inspector". Default "Close". */
+  closeLabel?: string | undefined;
 }
 /** The title row; its text names the dialog. */
 export function DialogHeader(props: DialogHeaderProps): ReactElement;
 export function DialogBody(props: ComponentProps<"div">): ReactElement;
 export function DialogFooter(props: ComponentProps<"footer">): ReactElement;
 /** Makes the one child button close the dialog around it. */
-export function DialogClose(props: { children: ReactElement<{ onClick?: MouseEventHandler<HTMLElement> }> }): ReactElement;
+export function DialogClose(props: { children: ReactElement<{ onClick?: MouseEventHandler<HTMLElement> | undefined }> }): ReactElement;
 
 /* ---- Popover and menu -------------------------------------------------- */
 
 export interface PopoverProps {
-  open?: boolean;
-  defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
+  open?: boolean | undefined;
+  defaultOpen?: boolean | undefined;
+  onOpenChange?: ((open: boolean) => void) | undefined;
   children: ReactNode;
 }
 export function Popover(props: PopoverProps): ReactElement;
 /** The one child (a button) opens and closes the panel and gets `aria-expanded`. */
-export function PopoverTrigger(props: { children: ReactElement; haspopup?: "menu" | "dialog" | "listbox" | "tree" | "grid" }): ReactElement;
+export function PopoverTrigger(props: { children: ReactElement; haspopup?: "menu" | "dialog" | "listbox" | "tree" | "grid" | undefined }): ReactElement;
 export interface PopoverContentProps extends ComponentProps<"div"> {
-  side?: "top" | "bottom" | "left" | "right";
-  align?: "start" | "center" | "end";
+  side?: "top" | "bottom" | "left" | "right" | undefined;
+  align?: "start" | "center" | "end" | undefined;
   /** Adds padding for prose. */
-  pad?: boolean;
+  pad?: boolean | undefined;
   /** Selector of the element to focus when it opens. */
-  initialFocus?: string;
+  initialFocus?: string | undefined;
 }
 export function PopoverContent(props: PopoverContentProps): ReactElement;
 
@@ -215,30 +217,30 @@ export const Menu: typeof Popover;
 export function MenuTrigger(props: { children: ReactElement }): ReactElement;
 export interface MenuContentProps extends Omit<PopoverContentProps, "initialFocus"> {
   /** The menu's accessible name. */
-  label?: string;
+  label?: string | undefined;
 }
 export function MenuContent(props: MenuContentProps): ReactElement;
 export interface MenuItemProps extends ComponentProps<"button"> {
-  tone?: Tone;
-  disabled?: boolean;
+  tone?: Tone | undefined;
+  disabled?: boolean | undefined;
   /** Shortcut text at the end of the row. */
-  hint?: ReactNode;
+  hint?: ReactNode | undefined;
   /** Called when chosen. `preventDefault()` keeps the menu open. */
-  onSelect?: (event: MouseEvent<HTMLButtonElement>) => void;
+  onSelect?: ((event: MouseEvent<HTMLButtonElement>) => void) | undefined;
 }
 export function MenuItem(props: MenuItemProps): ReactElement;
 export interface MenuItemCheckboxProps extends Omit<MenuItemProps, "role" | "aria-checked"> {
   checked: boolean;
-  onCheckedChange?: (checked: boolean) => void;
+  onCheckedChange?: ((checked: boolean) => void) | undefined;
 }
 /** An item that is on or off. Choosing it leaves the menu open, so several can be set in a row. */
 export function MenuItemCheckbox(props: MenuItemCheckboxProps): ReactElement;
 export interface MenuRadioGroupProps extends Omit<ComponentProps<"div">, "role" | "aria-label" | "defaultValue"> {
   /** The group's accessible name. */
   label: string;
-  value?: string | null;
-  defaultValue?: string | null;
-  onValueChange?: (value: string) => void;
+  value?: string | null | undefined;
+  defaultValue?: string | null | undefined;
+  onValueChange?: ((value: string) => void) | undefined;
 }
 export function MenuRadioGroup(props: MenuRadioGroupProps): ReactElement;
 export interface MenuItemRadioProps extends Omit<MenuItemProps, "role" | "aria-checked"> {
@@ -254,29 +256,29 @@ export function MenuSeparator(props: ComponentProps<"hr">): ReactElement;
 export interface RadioGroupProps extends Omit<ComponentProps<"div">, "role" | "aria-label" | "defaultValue" | "onChange"> {
   /** The group's accessible name. */
   label: string;
-  value?: string | null;
-  defaultValue?: string | null;
-  onValueChange?: (value: string) => void;
+  value?: string | null | undefined;
+  defaultValue?: string | null | undefined;
+  onValueChange?: ((value: string) => void) | undefined;
   /** Submits the choice with a form. Generated when left out. */
-  name?: string;
-  disabled?: boolean;
+  name?: string | undefined;
+  disabled?: boolean | undefined;
 }
 export function RadioGroup(props: RadioGroupProps): ReactElement;
 export interface RadioProps extends Omit<ComponentProps<"input">, "type" | "value" | "name" | "checked" | "defaultChecked" | "autoFocus" | "onChange" | "className" | "children"> {
   value: string;
   label: ReactNode;
-  description?: ReactNode;
+  description?: ReactNode | undefined;
   /** On the label; `ref` and the other props reach the input. */
-  className?: string;
+  className?: string | undefined;
 }
 /** One radio with its label. Arrows move and choose, and the group has one tab stop. */
 export function Radio(props: RadioProps): ReactElement;
 export interface SegmentedControlProps extends RadioGroupProps {
   /** Shrinks the bar to its content. */
-  inline?: boolean;
+  inline?: boolean | undefined;
   /** Lets the segments flow onto more rows in a narrow container. */
-  wrap?: boolean;
-  size?: "sm";
+  wrap?: boolean | undefined;
+  size?: "sm" | undefined;
 }
 export function SegmentedControl(props: SegmentedControlProps): ReactElement;
 export interface SegmentProps extends Omit<ComponentProps<"input">, "type" | "value" | "name" | "checked" | "defaultChecked" | "autoFocus" | "onChange" | "children"> {
@@ -290,7 +292,7 @@ export function Segment(props: SegmentProps): ReactElement;
 
 export interface TooltipProps {
   content: ReactNode;
-  side?: "top" | "bottom" | "left" | "right";
+  side?: "top" | "bottom" | "left" | "right" | undefined;
   /** The one element the tooltip describes. */
   children: ReactElement;
 }
@@ -300,7 +302,7 @@ type TabsBase = Omit<ComponentProps<"div">, "defaultValue" | "onChange">;
 export type TabsProps = TabsBase &
   (
     | { value: string; defaultValue?: undefined; onValueChange: (value: string) => void }
-    | { value?: undefined; defaultValue: string; onValueChange?: (value: string) => void }
+    | { value?: undefined; defaultValue: string; onValueChange?: ((value: string) => void) | undefined }
   );
 export function Tabs(props: TabsProps): ReactElement;
 export interface TabListProps extends Omit<ComponentProps<"div">, "aria-label"> {
@@ -318,34 +320,34 @@ export interface TabPanelProps extends Omit<ComponentProps<"div">, "value"> {
 export function TabPanel(props: TabPanelProps): ReactElement;
 
 export interface ToastOptions {
-  tone?: Tone;
+  tone?: Tone | undefined;
   /** Milliseconds on screen, 0 to stay until dismissed. Default is the provider's `timeout`. */
-  timeout?: number;
-  action?: { label: string; onClick?: () => void };
+  timeout?: number | undefined;
+  action?: { label: string; onClick?: (() => void) | undefined } | undefined;
 }
 /** Shows a toast and returns a function that dismisses it. */
 export type ToastFunction = (message: ReactNode, options?: ToastOptions) => () => void;
-export function ToastProvider(props: { /** Default milliseconds on screen. Default 2400. */ timeout?: number; children?: ReactNode }): ReactElement;
+export function ToastProvider(props: { /** Default milliseconds on screen. Default 2400. */ timeout?: number | undefined; children?: ReactNode | undefined }): ReactElement;
 export function useToast(): ToastFunction;
 
 /* ---- App shell --------------------------------------------------------- */
 
 export interface AppShellProps extends ComponentProps<"div"> {
-  sidebar?: "pinned" | "collapsed";
-  defaultSidebar?: "pinned" | "collapsed";
-  onSidebarChange?: (sidebar: "pinned" | "collapsed") => void;
+  sidebar?: "pinned" | "collapsed" | undefined;
+  defaultSidebar?: "pinned" | "collapsed" | undefined;
+  onSidebarChange?: ((sidebar: "pinned" | "collapsed") => void) | undefined;
   /** The right panel. */
-  aside?: boolean;
-  defaultAside?: boolean;
-  onAsideChange?: (open: boolean) => void;
+  aside?: boolean | undefined;
+  defaultAside?: boolean | undefined;
+  onAsideChange?: ((open: boolean) => void) | undefined;
   /** The phone drawer. */
-  drawer?: boolean;
-  defaultDrawer?: boolean;
-  onDrawerChange?: (open: boolean) => void;
+  drawer?: boolean | undefined;
+  defaultDrawer?: boolean | undefined;
+  onDrawerChange?: ((open: boolean) => void) | undefined;
   /** The current rail section, matched by `RailItem` and `SidebarPanel` `section`. */
-  section?: string;
-  defaultSection?: string;
-  onSectionChange?: (section: string) => void;
+  section?: string | undefined;
+  defaultSection?: string | undefined;
+  onSectionChange?: ((section: string) => void) | undefined;
 }
 /** Renders the shell and owns its state. Must wrap every other shell part. */
 export function AppShell(props: AppShellProps): ReactElement;
@@ -381,22 +383,22 @@ export function RailTools(props: ComponentProps<"div">): ReactElement;
 export function RailSeparator(props: ComponentProps<"div">): ReactElement;
 export interface RailEntryProps extends Omit<HTMLAttributes<HTMLElement>, "onClick"> {
   /** Picking it shows the `SidebarPanel` with the same `section`. */
-  section?: string;
+  section?: string | undefined;
   /** Marks it as the current page instead of the current section. */
-  current?: boolean;
-  unread?: boolean;
-  pending?: boolean;
+  current?: boolean | undefined;
+  unread?: boolean | undefined;
+  pending?: boolean | undefined;
   /** A link when given, a button otherwise. */
-  href?: string;
-  onClick?: MouseEventHandler<HTMLElement>;
-  ref?: Ref<HTMLElement>;
+  href?: string | undefined;
+  onClick?: MouseEventHandler<HTMLElement> | undefined;
+  ref?: Ref<HTMLElement> | undefined;
 }
 export function RailItem(props: RailEntryProps): ReactElement;
 export function RailTile(props: RailEntryProps): ReactElement;
 export function Sidebar(props: ComponentProps<"aside">): ReactElement;
 export interface SidebarPanelProps extends ComponentProps<"div"> {
   /** Shown only while this rail section is current. */
-  section?: string;
+  section?: string | undefined;
 }
 export function SidebarPanel(props: SidebarPanelProps): ReactElement;
 export function SidebarHead(props: ComponentProps<"div">): ReactElement;
@@ -404,14 +406,14 @@ export function SidebarTitle(props: ComponentProps<"span">): ReactElement;
 export function SidebarBody(props: ComponentProps<"nav">): ReactElement;
 export interface SidebarGroupProps extends Omit<ComponentProps<"details">, "open" | "title"> {
   title: ReactNode;
-  open?: boolean;
+  open?: boolean | undefined;
   /** Default true. */
-  defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
+  defaultOpen?: boolean | undefined;
+  onOpenChange?: ((open: boolean) => void) | undefined;
 }
 export function SidebarGroup(props: SidebarGroupProps): ReactElement;
 export interface SidebarLinkProps extends ComponentProps<"a"> {
-  current?: boolean;
+  current?: boolean | undefined;
 }
 export function SidebarLink(props: SidebarLinkProps): ReactElement;
 export function ShellMain(props: ComponentProps<"main">): ReactElement;
@@ -432,7 +434,7 @@ export interface ToolbarProps extends Omit<ComponentProps<"div">, "role" | "aria
 export function Toolbar(props: ToolbarProps): ReactElement;
 export interface ToolbarGroupProps extends Omit<ComponentProps<"div">, "role" | "aria-label"> {
   /** The group's accessible name. */
-  label?: string;
+  label?: string | undefined;
 }
 export function ToolbarGroup(props: ToolbarGroupProps): ReactElement;
 export function ToolbarSeparator(props: ComponentProps<"span">): ReactElement;
@@ -442,19 +444,19 @@ type ToolbarToggle =
 export type ToolbarButtonProps = Omit<ComponentProps<"button">, "aria-label" | "aria-pressed"> &
   ToolbarToggle & {
     /** Makes it a square icon button and names it. Leave out for a text button. */
-    label?: string;
-    variant?: ButtonVariant;
+    label?: string | undefined;
+    variant?: ButtonVariant | undefined;
   };
 /** A button in the row. `pressed` makes it a toggle; `onPressedChange` hears the next value. */
 export function ToolbarButton(props: ToolbarButtonProps): ReactElement;
 export interface ToolbarMoreProps {
   /** The trigger's accessible name. Default "More". */
-  label?: string;
+  label?: string | undefined;
   /** The trigger's content. Default "…". */
-  icon?: ReactNode;
-  open?: boolean;
-  defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
+  icon?: ReactNode | undefined;
+  open?: boolean | undefined;
+  defaultOpen?: boolean | undefined;
+  onOpenChange?: ((open: boolean) => void) | undefined;
   /** `MenuItem`, `MenuItemCheckbox` and the rest of the menu parts. */
   children: ReactNode;
 }
@@ -463,43 +465,45 @@ export function ToolbarMore(props: ToolbarMoreProps): ReactElement;
 
 export interface ManuscriptProps extends ComponentProps<"article"> {
   /** The page width, any CSS length. Default 40rem, about 66 characters. */
-  measure?: string;
+  measure?: string | undefined;
   /** "reading" sets the page in the reading serif (Literata); "mono" in Source Code Pro. */
-  face?: "reading" | "mono";
+  face?: "reading" | "mono" | undefined;
   /** On the scroller around the page. `className` and `ref` reach the page. */
-  wrapClassName?: string;
+  wrapClassName?: string | undefined;
+  /** The scroller element (`overflow: auto`), for scroll position and typewriter scrolling. `ref` reaches the page. */
+  wrapRef?: Ref<HTMLDivElement> | undefined;
 }
 /** The writing surface: a scroller on the canvas holding one page at a reading measure. */
 export function Manuscript(props: ManuscriptProps): ReactElement;
 interface StatusSegmentBase extends Omit<ComponentProps<"button">, "type" | "disabled"> {
   /** A colored dot before the text. */
-  tone?: Tone;
+  tone?: Tone | undefined;
   /** Pushes the segment to the far side. */
-  end?: boolean;
+  end?: boolean | undefined;
   /** Makes it a toggle button. */
-  pressed?: boolean;
+  pressed?: boolean | undefined;
   /** Renders a link. */
-  href?: string;
+  href?: string | undefined;
 }
 export type StatusSegmentProps =
-  | (StatusSegmentBase & { href?: undefined; disabled?: boolean } & ({ onClick: MouseEventHandler<HTMLButtonElement> } | { pressed: boolean }))
-  | (StatusSegmentBase & { disabled?: never });
+  | (StatusSegmentBase & { href?: undefined; disabled?: boolean | undefined } & ({ onClick: MouseEventHandler<HTMLButtonElement> } | { pressed: boolean }))
+  | (StatusSegmentBase & { disabled?: never | undefined });
 /** A fact in the status bar: text, or a button with `onClick` or `pressed`, or a link with `href`. */
 export function StatusSegment(props: StatusSegmentProps): ReactElement;
 
 /* ---- Marks and hover card ---------------------------------------------- */
 
-export type MarkKind = "comment" | "insert" | "delete" | "mention" | "entity";
+export type MarkKind = "comment" | "insert" | "delete" | "mention" | "entity" | "find" | "check";
 export interface MarkProps extends ComponentProps<"span"> {
   kind: MarkKind;
-  /** The open comment: sets `aria-current` and the accent. */
-  active?: boolean;
+  /** The open comment, or the current find or check match: sets `aria-current`. A comment takes the accent; a find or check match adds an outline and a heavier line. */
+  active?: boolean | undefined;
   /** A settled comment: the fill goes and the underline dots. */
-  resolved?: boolean;
+  resolved?: boolean | undefined;
   /** A mention's color, any CSS color or `var(--sd-success)`. Default is the `extra` role. */
-  who?: string;
+  who?: string | undefined;
   /** Renders a link. */
-  href?: string;
+  href?: string | undefined;
 }
 /** A span of text something is attached to. `onClick` without `href` makes it a button. */
 export function Mark(props: MarkProps): ReactElement;
@@ -508,18 +512,18 @@ export interface HoverCardProps {
   /** What the card shows. */
   content: ReactNode;
   /** The card's accessible name. Default "Preview". */
-  label?: string;
-  side?: "top" | "bottom" | "left" | "right";
-  align?: "start" | "center" | "end";
-  open?: boolean;
-  defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
+  label?: string | undefined;
+  side?: "top" | "bottom" | "left" | "right" | undefined;
+  align?: "start" | "center" | "end" | undefined;
+  open?: boolean | undefined;
+  defaultOpen?: boolean | undefined;
+  onOpenChange?: ((open: boolean) => void) | undefined;
   /** Milliseconds the pointer rests on the trigger before it opens. Default 300. Focus opens it at once. */
-  openDelay?: number;
+  openDelay?: number | undefined;
   /** Milliseconds after the pointer leaves the trigger and the card before it closes. Default 150. */
-  closeDelay?: number;
+  closeDelay?: number | undefined;
   /** On the card. */
-  className?: string;
+  className?: string | undefined;
   /** The one focusable element the card describes, usually a `Mark`. */
   children: ReactElement;
 }
@@ -540,19 +544,19 @@ export interface TreeProps extends Omit<ComponentProps<"ul">, "role" | "aria-lab
   /** The tree's accessible name. */
   label: string;
   /** The selected item's `id`; null for none. */
-  selected?: string | null;
-  defaultSelected?: string | null;
-  onSelectedChange?: (id: string) => void;
+  selected?: string | null | undefined;
+  defaultSelected?: string | null | undefined;
+  onSelectedChange?: ((id: string) => void) | undefined;
   /** The `id`s of the open branches. */
-  expanded?: string[];
-  defaultExpanded?: string[];
-  onExpandedChange?: (expanded: string[]) => void;
+  expanded?: string[] | undefined;
+  defaultExpanded?: string[] | undefined;
+  onExpandedChange?: ((expanded: string[]) => void) | undefined;
   /**
    * Reordering is reported, not done: reorder your own data in here. Giving it
    * makes items draggable and turns on Alt+ArrowUp and Alt+ArrowDown.
    */
-  onMove?: (move: TreeMove) => void;
-  children?: ReactNode;
+  onMove?: ((move: TreeMove) => void) | undefined;
+  children?: ReactNode | undefined;
 }
 /** One tab stop; arrows, Home and End move, Right and Left open and close, Enter selects. */
 export function Tree(props: TreeProps): ReactElement;
@@ -560,12 +564,12 @@ export interface TreeItemProps extends Omit<ComponentProps<"li">, "id" | "role" 
   /** Names the item in the tree's state and in `onMove`. Unique in the tree. */
   id: string;
   label: ReactNode;
-  icon?: ReactNode;
+  icon?: ReactNode | undefined;
   /** Small text at the end of the row, such as a count. */
-  meta?: ReactNode;
-  disabled?: boolean;
+  meta?: ReactNode | undefined;
+  disabled?: boolean | undefined;
   /** More `TreeItem`s: makes this a branch. */
-  children?: ReactNode;
+  children?: ReactNode | undefined;
 }
 export function TreeItem(props: TreeItemProps): ReactElement;
 
@@ -576,14 +580,14 @@ export interface ListItem {
   value: string;
   label: string;
   /** Extra text the default filter also matches. */
-  keywords?: string;
+  keywords?: string | undefined;
   /** A label above the first item of each run with the same group. */
-  group?: string;
+  group?: string | undefined;
   /** Text at the end of the row, such as a shortcut. */
-  hint?: string;
+  hint?: string | undefined;
   /** Renders the option as a link. */
-  href?: string;
-  disabled?: boolean;
+  href?: string | undefined;
+  disabled?: boolean | undefined;
 }
 /** `false` shows the items as given, for results you fetched yourself; a function replaces the default match on label, keywords and value. */
 export type ListFilter = false | ((item: ListItem, query: string) => boolean);
@@ -591,51 +595,51 @@ export type ListFilter = false | ((item: ListItem, query: string) => boolean);
 export interface ComboboxProps extends Omit<ComponentProps<"input">, "value" | "defaultValue" | "role" | "type" | "onChange"> {
   items: ListItem[];
   /** The chosen item's `value`; null for none. */
-  value?: string | null;
-  defaultValue?: string | null;
-  onValueChange?: (value: string) => void;
+  value?: string | null | undefined;
+  defaultValue?: string | null | undefined;
+  onValueChange?: ((value: string) => void) | undefined;
   /** The text in the box. Leave out and it follows the chosen item's label. */
-  inputValue?: string;
-  defaultInputValue?: string;
-  onInputValueChange?: (text: string) => void;
-  open?: boolean;
-  defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  filter?: ListFilter;
+  inputValue?: string | undefined;
+  defaultInputValue?: string | undefined;
+  onInputValueChange?: ((text: string) => void) | undefined;
+  open?: boolean | undefined;
+  defaultOpen?: boolean | undefined;
+  onOpenChange?: ((open: boolean) => void) | undefined;
+  filter?: ListFilter | undefined;
   /** Sets `aria-busy` on the list and shows "Loading" when there are no items. */
-  busy?: boolean;
+  busy?: boolean | undefined;
   /** Shown when nothing matches. Default "No matches". */
-  emptyText?: string;
+  emptyText?: string | undefined;
   /** The list's accessible name. Default "Suggestions". */
-  listLabel?: string;
+  listLabel?: string | undefined;
   /** Adds a hidden input carrying the chosen value to a form. */
-  name?: string;
-  onChange?: ComponentProps<"input">["onChange"];
+  name?: string | undefined;
+  onChange?: ComponentProps<"input">["onChange"] | undefined;
 }
 /** A searchable select: type to filter, arrows and Enter to choose, Escape to close. Use it inside `Field`. */
 export function Combobox(props: ComboboxProps): ReactElement;
 
 export interface CommandPaletteProps extends Omit<DialogProps, "open" | "defaultOpen" | "onOpenChange" | "trigger" | "size" | "side" | "static" | "children" | "onSelect"> {
   items: ListItem[];
-  open?: boolean;
-  defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
+  open?: boolean | undefined;
+  defaultOpen?: boolean | undefined;
+  onOpenChange?: ((open: boolean) => void) | undefined;
   /** What has been typed. It is cleared when the palette closes. */
-  query?: string;
-  defaultQuery?: string;
-  onQueryChange?: (query: string) => void;
+  query?: string | undefined;
+  defaultQuery?: string | undefined;
+  onQueryChange?: ((query: string) => void) | undefined;
   /** Called when an item is chosen; the palette closes after. A link follows its `href` unless you call `event.preventDefault()`, as a router does. */
-  onSelect?: (item: ListItem, event: MouseEvent<HTMLElement>) => void;
-  filter?: ListFilter;
-  busy?: boolean;
-  emptyText?: string;
+  onSelect?: ((item: ListItem, event: MouseEvent<HTMLElement>) => void) | undefined;
+  filter?: ListFilter | undefined;
+  busy?: boolean | undefined;
+  emptyText?: string | undefined;
   /** The palette's name and its search box's. Default "Search". */
-  label?: string;
-  placeholder?: string;
+  label?: string | undefined;
+  placeholder?: string | undefined;
   /** The list's accessible name. Default "Results". */
-  listLabel?: string;
+  listLabel?: string | undefined;
   /** A line under the list, such as the keys. */
-  foot?: ReactNode;
+  foot?: ReactNode | undefined;
 }
 /** A command palette: a search box over a filtered list, on a modal dialog. */
 export function CommandPalette(props: CommandPaletteProps): ReactElement;

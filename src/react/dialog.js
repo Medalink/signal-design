@@ -34,7 +34,7 @@ export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size,
         "aria-labelledby": titleId,
         ...props,
         ref: mergeRefs(node, ref),
-        className: cx("sd-dialog", size && `sd-dialog-${size}`, side && "sd-sheet", side === "left" && "sd-sheet-left", className),
+        className: cx("sd-dialog", size && `sd-dialog-${size}`, side && "sd-sheet", side === "left" && "sd-sheet-left", side === "bottom" && "sd-sheet-bottom", className),
         "data-sd-static": isStatic ? "" : undefined,
         onClose: (event) => {
           onClose?.(event);
@@ -62,19 +62,19 @@ export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size,
   return h(Fragment, null, cloneElement(trigger, { "aria-haspopup": "dialog", onClick: chain(trigger.props.onClick, () => setOpen(true)) }), element);
 }
 
-/** A dialog pinned to the right edge, or the left with `side="left"`. */
+/** A dialog pinned to the right edge, or to the left with `side="left"` or the bottom with `side="bottom"`. */
 export function Sheet({ side = "right", ...props }) {
   return h(Dialog, { side, ...props });
 }
 
-/** The title row. Its text names the dialog; `closeButton={false}` leaves out the × button. */
-export function DialogHeader({ closeButton = true, className, children, ...props }) {
+/** The title row. Its text names the dialog; `closeButton={false}` leaves out the × button and `closeLabel` renames it. */
+export function DialogHeader({ closeButton = true, closeLabel = "Close", className, children, ...props }) {
   const { titleId, close } = useContext(DialogContext);
   return h(
     "header",
     { className: cx("sd-dialog-head", className), ...props },
     h("span", { id: titleId }, children),
-    closeButton && h(IconButton, { label: "Close", variant: "ghost", size: "sm", onClick: close }, "×"),
+    closeButton && h(IconButton, { label: closeLabel, variant: "ghost", size: "sm", onClick: close }, "×"),
   );
 }
 

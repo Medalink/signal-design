@@ -1038,7 +1038,11 @@ What they take over from `init()`:
 - **Dialog and Sheet** run on the native `<dialog>`. `showModal()` follows
   `open`, the browser keeps focus inside and handles Escape, and its `close`
   event reaches `onOpenChange`. Focus returns to the opener and a backdrop
-  click closes it. `static` turns off both Escape and the backdrop.
+  click closes it. `static` turns off both Escape and the backdrop. A `Sheet`
+  is pinned to the right, or to the left with `side="left"` or the bottom with
+  `side="bottom"` (the full width, as tall as its content up to 85% of the
+  screen, `--sheet-max`). `DialogHeader` names its × button `Close`; give
+  `closeLabel="Close inspector"` when the screen needs more.
 - **Popover and Menu** run on the native popover API. The trigger links to the
   panel with `popovertarget`, so a click on it toggles instead of dismissing
   and reopening. The panel is placed next to the trigger and flips at the
@@ -1087,10 +1091,10 @@ The parts a document editor is built from, in CSS and as React components:
 ```
 
 - `Toolbar` (`sd-toolbar`) is one tab stop; arrows, Home and End move between its buttons, and a disabled button is skipped. `ToolbarButton` is a toggle when it has `pressed`. A row wider than its container scrolls inside itself; `ToolbarMore` is the menu for the actions you fold away yourself, since only you know which they are.
-- `Manuscript` (`sd-manuscript` around `sd-manuscript-page`) is the page: `measure` sets its width (default 40rem, about 66 characters) and it shrinks with its container. `face="reading"` sets it in Literata (see Fonts) and `face="mono"` in Source Code Pro. Put your editor's content element inside it; headings, quotes and lists are styled.
+- `Manuscript` (`sd-manuscript` around `sd-manuscript-page`) is the page: `measure` sets its width (default 40rem, about 66 characters) and it shrinks with its container. `face="reading"` sets it in Literata (see Fonts) and `face="mono"` in Source Code Pro. `ref` reaches the page and `wrapRef` the scroller around it (`wrapClassName` styles it), for scroll position and typewriter scrolling. Put your editor's content element inside it; headings, quotes and lists are styled.
 - `StatusSegment` (`sd-statusbar-seg`) is a fact in the status bar: text, a button with `onClick`, a toggle with `pressed`, or a link with `href`; `tone` adds a status dot. In an App Shell the bar is `Statusbar`, which keeps only `.sd-status` on phones; anywhere else use `<footer className="sd-statusbar">`.
 
-- `Mark` (`sd-mark` with `data-mark`) is a span of text something is attached to: `comment`, `insert`, `delete`, `mention` or `entity`. It is a `mark`, `ins` or `del` element by kind, a link with `href`, and a button with `onClick`; `active` is the open comment (`aria-current`) and `resolved` a settled one. Color means something: an insertion is green and a deletion pink, as in `sd-diff`, the open comment is the accent, a mention takes `--who`; comments and entities are grey. Fills and underlines wrap across lines.
+- `Mark` (`sd-mark` with `data-mark`) is a span of text something is attached to: `comment`, `insert`, `delete`, `mention`, `entity`, `find` (a match of the search) or `check` (a match of a spelling, grammar or style check). It is a `mark`, `ins` or `del` element by kind, a link with `href`, and a button with `onClick`; `active` is the open comment or the current find or check match (`aria-current`) and `resolved` a settled comment. A find match is a grey fill and a check match a dashed underline; the current one adds an outline and a heavier line, so it shows without telling colors apart. Color means something: an insertion is green and a deletion pink, as in `sd-diff`, the open comment is the accent, a mention takes `--who`; comments and entities are grey. Fills and underlines wrap across lines.
 - `HoverCard` (`sd-hovercard`) is a preview beside its trigger, on hover after `openDelay` (300ms) or at once on keyboard focus; Escape, leaving the trigger and the card, or moving focus away closes it, and the pointer can move onto it. The trigger is its one child and must be focusable, so a `Mark` that is not a link or button needs `tabIndex={0}`. The card is not in the tab order: put what it shows, and any action, somewhere else too.
 
 - `Tree` and `TreeItem` (`sd-tree`) are a document tree. React owns `selected` and `expanded` (the ids of the open branches); a closed branch renders none of its children. One tab stop that lands on the selected item; Up, Down, Home and End move without wrapping, Right opens a branch or steps into it, Left closes it or steps to the parent, Enter and Space select. Reordering is reported, never done: `onMove({ id, targetId, position })` runs on a drop or on Alt+ArrowUp and Alt+ArrowDown, with `position` `before`, `after` or `inside`, and you reorder your own data. Giving `onMove` is what makes the rows draggable; the drag is the browser's own, so there is no drag library, and a branch cannot be dropped into itself.

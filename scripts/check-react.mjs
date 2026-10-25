@@ -5,12 +5,13 @@
  *   checkReact()       dialog, menu, tabs, toast, tooltip, fields and table in a real browser
  */
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createElement as h } from "react";
 import ts from "typescript";
 import { checkReactEditor } from "./check-react-editor.mjs";
+import { checkReactGaps } from "./check-react-gaps.mjs";
 
 const rootPath = fileURLToPath(new URL("..", import.meta.url));
 
@@ -32,6 +33,9 @@ export function Consumer() {
   return (
     <AppShell defaultSection="projects" onSidebarChange={(sidebar) => console.log(sidebar === "collapsed")}>
       <Button {...props} ref={(node: HTMLButtonElement | null) => node?.focus()}>Go</Button>
+      <Button tone={undefined} size={undefined} busy={undefined} onClick={undefined}>Undefined props</Button>
+      <Manuscript measure={undefined} face={undefined} wrapClassName={undefined} />
+      <Tree label="Undefined props" selected={undefined} defaultExpanded={undefined} onMove={undefined} />
       <a className={buttonClass({ variant: "ghost", size: "sm" })} href="/">Link</a>
       <IconButton label="Settings" size="sm" />
       <Field label="Name" error="Required"><Input value="" onChange={(event) => console.log(event.target.value)} /></Field>
@@ -93,6 +97,7 @@ useToast()("Saved", { tone: "loud" });
   try {
     const program = ts.createProgram([fixture], {
       strict: true,
+      exactOptionalPropertyTypes: true,
       noEmit: true,
       target: ts.ScriptTarget.ES2022,
       module: ts.ModuleKind.NodeNext,
@@ -106,10 +111,25 @@ useToast()("Saved", { tone: "loud" });
       getCurrentDirectory: () => directory,
       getNewLine: () => "\n",
     }));
+    assertOptionalsAcceptUndefined();
     return 1;
   } finally {
     rmSync(directory, { recursive: true, force: true });
   }
+}
+
+/** Under exactOptionalPropertyTypes a `prop?: T` rejects `undefined`, so every optional property in the types says `| undefined`. */
+function assertOptionalsAcceptUndefined() {
+  const file = join(rootPath, "src/react/index.d.ts");
+  const source = ts.createSourceFile(file, readFileSync(file, "utf8"), ts.ScriptTarget.ES2022, true, ts.ScriptKind.TS);
+  const accepts = (node) => node.kind === ts.SyntaxKind.UndefinedKeyword || (ts.isUnionTypeNode(node) && node.types.some(accepts)) || (ts.isParenthesizedTypeNode(node) && accepts(node.type));
+  const strict = [];
+  const visit = (node) => {
+    if (ts.isPropertySignature(node) && node.questionToken && node.type && !accepts(node.type)) strict.push(`${source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1}: ${node.name.getText(source)}`);
+    ts.forEachChild(node, visit);
+  };
+  visit(source);
+  assert.deepEqual(strict, [], `optional props in src/react/index.d.ts need \`| undefined\` (line: name)`);
 }
 
 export async function checkReactSsr() {
@@ -519,5 +539,7 @@ export async function checkReact(page, base) {
   expect(browserErrors.length === 0, `console errors: ${browserErrors.join(" | ")}`);
   const editor = await checkReactEditor(page, base);
   errors.push(...editor.errors);
-  return { errors, passed: passed + editor.passed };
+  const gaps = await checkReactGaps(page, base);
+  errors.push(...gaps.errors);
+  return { errors, passed: passed + editor.passed + gaps.passed };
 }

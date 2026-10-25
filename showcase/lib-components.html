@@ -677,6 +677,7 @@ for (const button of preview.querySelectorAll("[data-living-width]")) {
         <button class="sd-btn" data-sd-open="demo-dialog-sm">Small dialog</button>
         <button class="sd-btn" data-sd-open="demo-dialog-lg">Large dialog</button>
         <button class="sd-btn" data-sd-open="demo-sheet-left">Sheet from the left</button>
+        <button class="sd-btn" data-sd-open="demo-sheet-bottom">Sheet from the bottom</button>
         <button class="sd-btn" data-sd-tip="Tooltips show on hover and focus">Hover for tooltip</button>
         <button class="sd-btn" data-sd-tip="Below" data-sd-tip-side="bottom">Tooltip below</button>
       </div>
@@ -720,6 +721,10 @@ for (const button of preview.querySelectorAll("[data-living-width]")) {
         <header class="sd-dialog-head"><span id="demo-sheet-left-h">Filters</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">«</button></header>
         <div class="sd-dialog-body sd-muted">A sheet can come from either side.</div>
       </dialog>
+      <dialog class="sd-dialog sd-sheet sd-sheet-bottom" id="demo-sheet-bottom" aria-labelledby="demo-sheet-bottom-h">
+        <header class="sd-dialog-head"><span id="demo-sheet-bottom-h">Details</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close details">×</button></header>
+        <div class="sd-dialog-body sd-muted">Or from the bottom, as tall as its content up to 85% of the screen (<code>--sheet-max</code>).</div>
+      </dialog>
 
       <dialog class="sd-command" id="demo-command" aria-label="Remind me">
         <p class="sd-command-head">Remind me about <b>Fix the crash when a customer has no address</b></p>
@@ -731,7 +736,7 @@ for (const button of preview.querySelectorAll("[data-living-width]")) {
         </div>
         <p class="sd-command-foot">Esc to cancel</p>
       </dialog>
-      <p class="demo-usage"><code>sd-dialog</code> + <code>-head|-body|-foot</code> · <code>sd-dialog-sm|lg</code> · <code>sd-sheet</code> + <code>-left</code> · <code>sd-command</code> · <code>data-sd-open</code> / <code>data-sd-close</code> · <code>data-sd-tip</code></p>
+      <p class="demo-usage"><code>sd-dialog</code> + <code>-head|-body|-foot</code> · <code>sd-dialog-sm|lg</code> · <code>sd-sheet</code> + <code>-left|-bottom</code> · <code>sd-command</code> · <code>data-sd-open</code> / <code>data-sd-close</code> · <code>data-sd-tip</code></p>
     </div>
 
     <div class="demo-block">

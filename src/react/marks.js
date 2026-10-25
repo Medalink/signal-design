@@ -2,13 +2,13 @@
 import { createElement as h } from "react";
 import { cx } from "./util.js";
 
-const ELEMENT = { comment: "mark", insert: "ins", delete: "del" };
+const ELEMENT = { comment: "mark", find: "mark", insert: "ins", delete: "del" };
 
 /**
  * A mark. The element follows the kind (`mark`, `ins`, `del`), a link with
  * `href`, else a `span`. With `onClick` and no `href` it becomes a button
  * (`role="button"`, one tab stop, Enter and Space). `active` is the open
- * comment and sets `aria-current`.
+ * comment or the current find or check match, and sets `aria-current`.
  */
 export function Mark({ kind, active, resolved, who, href, onClick, onKeyDown, className, style, ...props }) {
   const button = onClick !== undefined && href === undefined;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { mountBar } from "./viewport.js";
 import { cycleTheme, hotkeys } from "../src/js/index.js";
@@ -12,6 +12,7 @@ function EditorChrome() {
   const [marks, setMarks] = useState({ bold: false, italic: true, underline: false });
   const [block, setBlock] = useState("paragraph");
   const [focus, setFocus] = useState(false);
+  const scroller = useRef(null);
   const toggle = (name) => (pressed) => setMarks((current) => ({ ...current, [name]: pressed }));
   return (
     <Demo
@@ -26,9 +27,10 @@ function EditorChrome() {
   <ToolbarButton pressed={block === "h1"} onPressedChange={() => setBlock("h1")}>Heading</ToolbarButton>
   <ToolbarMore><MenuItem>Clear formatting</MenuItem></ToolbarMore>
 </Toolbar>
-<Manuscript measure="38rem" face="reading"><h1>Chapter one</h1><p>…</p></Manuscript>
+<Manuscript measure="38rem" face="reading" wrapRef={scroller}><h1>Chapter one</h1><p>…</p></Manuscript>
 <footer className="sd-statusbar">
   <StatusSegment>1,284 words</StatusSegment>
+  <StatusSegment onClick={() => scroller.current.scrollTo({ top: scroller.current.scrollHeight })}>Jump to end</StatusSegment>
   <StatusSegment pressed={focus} onClick={toggleFocus}>Focus</StatusSegment>
   <StatusSegment end tone="success">Saved</StatusSegment>
 </footer>`}
@@ -73,7 +75,7 @@ function EditorChrome() {
             <MenuItem>Insert footnote</MenuItem>
           </ToolbarMore>
         </Toolbar>
-        <Manuscript measure="38rem" face="reading" tabIndex={0} aria-label="Chapter one">
+        <Manuscript measure="38rem" face="reading" wrapRef={scroller} tabIndex={0} aria-label="Chapter one">
           <h1>Chapter one</h1>
           <p>The harbour woke before the town did. Boats knocked against the quay in the half dark, and somewhere above the roofs a gull tried the same two notes again.</p>
           <p>She had written the first line forty times and kept none of them. This one stayed because it was <em>plain</em>: nothing in it asked to be <strong>admired</strong>.</p>
@@ -84,6 +86,7 @@ function EditorChrome() {
         <footer className="sd-statusbar">
           <StatusSegment>1,284 words</StatusSegment>
           <StatusSegment>Chapter 3 of 12</StatusSegment>
+          <StatusSegment onClick={() => scroller.current.scrollTo({ top: scroller.current.scrollHeight })}>Jump to end</StatusSegment>
           <StatusSegment pressed={focus} onClick={() => setFocus(!focus)}>
             Focus mode
           </StatusSegment>
@@ -98,6 +101,8 @@ function EditorChrome() {
 
 function Marks() {
   const [open, setOpen] = useState("c1");
+  const [match, setMatch] = useState(0);
+  const [flag, setFlag] = useState(0);
   return (
     <Demo
       id="react-editor-marks"
@@ -106,6 +111,8 @@ function Marks() {
 <Mark kind="comment" resolved>settled</Mark>
 <Mark kind="insert">added words</Mark>
 <Mark kind="delete">removed words</Mark>
+<Mark kind="find" active={match === 0} onClick={() => setMatch(0)}>quay</Mark>
+<Mark kind="check" active={flag === 0} onClick={() => setFlag(0)}>teh</Mark>
 <Mark kind="mention" who="var(--sd-success)" href="/people/jane">@Jane</Mark>
 <HoverCard content={<><p className="sd-hovercard-title">Lisbon</p>…</>}>
   <Mark kind="entity" tabIndex={0}>Lisbon</Mark>
@@ -143,6 +150,11 @@ function Marks() {
             </Mark>
           </HoverCard>
           .
+        </p>
+        <p>
+          A search for “quay” finds it twice: <Mark kind="find" active={match === 0} onClick={() => setMatch(0)}>quay</Mark> at the harbour and again at the{" "}
+          <Mark kind="find" active={match === 1} onClick={() => setMatch(1)}>quay</Mark> wall. The checker flags <Mark kind="check" active={flag === 0} onClick={() => setFlag(0)}>teh</Mark> and{" "}
+          <Mark kind="check" active={flag === 1} onClick={() => setFlag(1)}>alot</Mark>.
         </p>
       </Manuscript>
       <p className="sd-subtle text-sm" data-open-comment>
