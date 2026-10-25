@@ -21,7 +21,7 @@ export function checkReactTypes() {
   writeFileSync(
     fixture,
     `import { useState } from "react";
-import { AppShell, Button, Dialog, DialogHeader, Field, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
+import { AppShell, Button, Dialog, DialogHeader, Field, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 
 export function Consumer() {
   const [open, setOpen] = useState(false);
@@ -76,6 +76,9 @@ export function Consumer() {
       <Tree />
       {/* @ts-expect-error a tree item needs an id */}
       <TreeItem label="A" />
+      <GutterBlock as="p" side="start" marker={{ label: "3 comments", count: 3, kind: "suggestion", resolved: undefined }}>Gutter</GutterBlock>
+      {/* @ts-expect-error a gutter marker needs its accessible name */}
+      <GutterMarker count={1} />
       {/* @ts-expect-error a mark needs a kind */}
       <Mark />
       {/* @ts-expect-error the kind must be one of the mark kinds */}
@@ -162,6 +165,8 @@ export async function checkReactSsr() {
           h(sd.Switch, { label: "s" }),
           h(sd.Badge, { tone: "success" }, "ok"),
           h(sd.Avatar, { name: "Ada Lovelace" }),
+          h(sd.GutterBlock, { as: "p", marker: { label: "2 comments", count: 2, active: true } }, "b"),
+          h(sd.GutterMarker, { label: "1 suggestion", kind: "suggestion", resolved: true }, "s"),
           h(sd.WeightedBar, { label: "3 of 6 words", goal: 6, segments: [{ weight: 2, state: "drafted", label: "One" }, { weight: 1, state: "current" }] }),
           h(sd.AvatarStack, null, h(sd.Avatar, { name: "B C", src: "/a.png" })),
           h(sd.Card, { tone: "danger" }, h(sd.CardHeader, null, "h"), h(sd.CardBody, null, "b"), h(sd.CardFooter, null, "f")),
@@ -189,7 +194,7 @@ export async function checkReactSsr() {
             h(sd.ToolbarSeparator),
             h(sd.ToolbarButton, null, "Heading"),
             h(sd.ToolbarMore, null, h(sd.MenuItem, null, "Clear"))),
-          h(sd.Manuscript, { measure: "30rem", face: "mono" }, h("p", null, "Text", h(sd.Mark, { kind: "comment", active: true, onClick() {} }, "c"), h(sd.Mark, { kind: "insert" }, "i"), h(sd.HoverCard, { content: "card", defaultOpen: true }, h(sd.Mark, { kind: "entity", tabIndex: 0 }, "e")))),
+          h(sd.Manuscript, { measure: "30rem", face: "mono" }, h("p", null, "Text", h(sd.Mark, { kind: "comment", active: true, onClick() {} }, "c"), h(sd.Mark, { kind: "insert" }, "i"), h(sd.Mark, { kind: "find", active: true }, "f"), h(sd.HoverCard, { content: "card", defaultOpen: true }, h(sd.Mark, { kind: "entity", tabIndex: 0 }, "e")))),
           h(sd.RadioGroup, { label: "Cycle", defaultValue: "m", name: "cycle" }, h(sd.Radio, { value: "m", label: "Monthly", description: "d" }), h(sd.Radio, { value: "y", label: "Yearly", disabled: true })),
           h(sd.SegmentedControl, { label: "View", defaultValue: "a", inline: true }, h(sd.Segment, { value: "a" }, "A"), h(sd.Segment, { value: "b" }, "B")),
           h(sd.Menu, null, h(sd.MenuTrigger, null, h(sd.Button, null, "v")),

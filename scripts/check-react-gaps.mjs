@@ -82,6 +82,42 @@ export async function checkReactGaps(page, base) {
   await page.keyboard.press("Enter");
   expect(await checks.nth(1).getAttribute("aria-current") === "true", "a match is a button: Enter makes it current");
 
+  /* ---- Gutter markers ---- */
+  const gutter = page.locator("#react-editor-gutter");
+  const markers = gutter.locator(".sd-gutter-marker");
+  const where = (index) => markers.nth(index).evaluate((marker) => {
+    const box = marker.getBoundingClientRect();
+    const block = marker.parentElement.getBoundingClientRect();
+    const page = marker.closest(".sd-manuscript-page").getBoundingClientRect();
+    const s = getComputedStyle(marker);
+    return { left: box.left, right: box.right, top: box.top, bottom: box.bottom, width: box.width, blockLeft: block.left, blockRight: block.right, blockTop: block.top, pageLeft: page.left, pageRight: page.right, line: parseFloat(getComputedStyle(marker.parentElement).lineHeight), border: s.borderTopWidth, style: s.borderTopStyle, color: s.color };
+  });
+  expect(await markers.count() === 4, `four markers, got ${await markers.count()}`);
+  const end = await where(0);
+  expect(end.left >= end.blockRight - 0.5 && end.right <= end.pageRight + 0.5, `a marker sits in the trailing margin, inside the page: ${JSON.stringify(end)}`);
+  expect(end.top >= end.blockTop - 1 && end.bottom <= end.blockTop + end.line + 1, "a marker is level with the first line of its block");
+  expect(end.width >= 24, `a marker is at least 24px wide, got ${end.width}`);
+  const start = await where(3);
+  expect(start.right <= start.blockLeft + 0.5 && start.left >= start.pageLeft - 0.5, `data-side=start puts the marker in the leading margin, inside the page: ${JSON.stringify(start)}`);
+  expect(await gutter.getByRole("button", { name: "2 comments", exact: true }).count() === 1 && await gutter.getByRole("button", { name: "1 suggestion", exact: true }).count() === 1, "a marker is a button named by its label");
+  const [open0, suggestion, resolved] = [await where(0), await where(1), await where(2)];
+  expect(open0.border === "2px" && suggestion.border === "1px" && suggestion.style === "dashed" && open0.style === "solid", `the open marker has a heavier solid edge and a suggestion a dashed one: ${JSON.stringify([open0, suggestion])}`);
+  expect(resolved.color !== suggestion.color, "a resolved marker is drawn faint");
+  const openThread = () => page.locator("[data-open-thread]").textContent();
+  expect(await markers.nth(0).getAttribute("aria-current") === "true" && await openThread() === "open thread: a", "the open marker carries aria-current");
+  await markers.nth(1).click();
+  expect(await markers.nth(1).getAttribute("aria-current") === "true" && await markers.nth(0).getAttribute("aria-current") === null && await openThread() === "open thread: b", "a click opens another thread and moves aria-current");
+  await markers.nth(2).focus();
+  await page.keyboard.press("Enter");
+  expect(await openThread() === "open thread: c", "Enter on a focused marker opens its thread");
+  await markers.nth(3).focus();
+  await page.keyboard.press("Space");
+  expect(await openThread() === "open thread: d", "Space on a focused marker opens its thread");
+  await page.setViewportSize({ width: 375, height: 900 });
+  const narrow = await where(0);
+  expect(narrow.right <= narrow.pageRight + 1 && narrow.left >= narrow.blockRight - 0.5, `at 375px the marker still sits inside the page margin: ${JSON.stringify(narrow)}`);
+  await page.setViewportSize({ width: 1280, height: 900 });
+
   /* ---- Weighted bar ---- */
   const bar = page.locator("#react-editor-weighted .sd-weighted");
   const shares = () => bar.evaluate((el) => {

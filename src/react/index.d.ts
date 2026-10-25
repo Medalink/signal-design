@@ -3,7 +3,7 @@
  * renders, so every native attribute and `ref` (a plain prop in React 19) is
  * accepted and passed through.
  */
-import type { ComponentProps, HTMLAttributes, MouseEvent, MouseEventHandler, ReactElement, ReactNode, Ref, SyntheticEvent } from "react";
+import type { ComponentProps, ElementType, HTMLAttributes, MouseEvent, MouseEventHandler, ReactElement, ReactNode, Ref, SyntheticEvent } from "react";
 
 export type Tone = "accent" | "success" | "danger" | "warning" | "pending" | "extra" | "neutral";
 
@@ -526,6 +526,34 @@ export interface MarkProps extends ComponentProps<"span"> {
 }
 /** A span of text something is attached to. `onClick` without `href` makes it a button. */
 export function Mark(props: MarkProps): ReactElement;
+
+export interface GutterMarkerProps extends Omit<ComponentProps<"button">, "aria-label"> {
+  /** A suggestion draws a dashed edge. Default "comment". */
+  kind?: "comment" | "suggestion" | undefined;
+  /** Shown when there are no children, such as the number of comments. */
+  count?: number | undefined;
+  /** The open one: sets `aria-current`. */
+  active?: boolean | undefined;
+  /** A settled one: drawn faint. */
+  resolved?: boolean | undefined;
+  /** The accessible name, such as "2 comments". */
+  label: string;
+}
+/** A square in the margin beside a block for what is attached to the block as a whole. */
+export function GutterMarker(props: GutterMarkerProps): ReactElement;
+
+export interface GutterBlockProps extends Omit<HTMLAttributes<HTMLElement>, "children"> {
+  /** The element to render. Default `div`. */
+  as?: ElementType | undefined;
+  /** "start" puts the marker in the leading margin. Default is the trailing one. */
+  side?: "start" | "end" | undefined;
+  /** Props for the block's `GutterMarker`; none, no marker. */
+  marker?: GutterMarkerProps | undefined;
+  children?: ReactNode | undefined;
+  ref?: Ref<HTMLElement> | undefined;
+}
+/** A block of a manuscript page that can carry a `GutterMarker`. */
+export function GutterBlock(props: GutterBlockProps): ReactElement;
 
 export interface HoverCardProps {
   /** What the card shows. */

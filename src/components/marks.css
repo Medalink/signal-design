@@ -1,3 +1,11 @@
+/* The line height of a gutter block in pixels, so its marker can sit level
+   with the first line: 1lh means the line height of the element it is used on. */
+@property --sd-lh {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
 @layer components {
   /*
    * Marks: a span of text in a document that something is attached to. The
@@ -117,5 +125,77 @@
   .sd-mark:is([data-mark="find"], [data-mark="check"]):is(a, [role="button"], [tabindex]):hover {
     --mark: var(--sd-fg);
     text-decoration-line: underline;
+  }
+
+  /*
+   * Gutter marker: a square in the margin beside a block, for what is attached
+   * to the block as a whole: comments and suggestions. The block is
+   * sd-gutter-block (position: relative) inside a manuscript page, and the
+   * marker sits in the page's side padding, level with the first line. It is a
+   * button: its count or glyph is the content and aria-label says what it is.
+   * data-kind is comment or suggestion (a suggestion has a dashed edge);
+   * aria-current is the open one (heavier edge and a fill, with the accent);
+   * data-resolved is a settled one (faint). data-side="start" on the block
+   * moves it to the other margin.
+   *   <p class="sd-gutter-block">The harbour woke…
+   *     <button class="sd-gutter-marker" data-kind="comment" aria-label="2 comments">2</button>
+   *   </p>
+   */
+  .sd-gutter-block {
+    --gutter: clamp(16px, 6vw, 72px);
+    --marker: min(24px, var(--gutter));
+    --sd-lh: 1lh;
+    position: relative;
+  }
+  .sd-gutter-marker {
+    position: absolute;
+    inset-block-start: calc((var(--sd-lh) - var(--marker)) / 2);
+    inset-inline-end: calc(-1 * (var(--gutter) + var(--marker)) / 2);
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+    inline-size: var(--marker);
+    block-size: var(--marker);
+    padding: 0;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-surface);
+    color: var(--sd-fg-muted);
+    font: inherit;
+    font-size: var(--text-2xs);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    text-indent: 0;
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 120ms var(--ease-out), color 120ms var(--ease-out), background-color 120ms var(--ease-out);
+  }
+  .sd-gutter-block[data-side="start"] > .sd-gutter-marker {
+    inset-inline-end: auto;
+    inset-inline-start: calc(-1 * (var(--gutter) + var(--marker)) / 2);
+  }
+  .sd-gutter-marker > svg {
+    inline-size: 1.5cap;
+    block-size: 1.5cap;
+  }
+  .sd-gutter-marker[data-kind="suggestion"] {
+    border-style: dashed;
+  }
+  .sd-gutter-marker:hover {
+    border-color: var(--sd-fg);
+    color: var(--sd-fg);
+  }
+  .sd-gutter-marker:focus-visible {
+    outline-offset: 2px;
+  }
+  .sd-gutter-marker[aria-current]:not([aria-current="false"]) {
+    border-color: var(--sd-accent);
+    border-style: solid;
+    border-width: 2px;
+    background: color-mix(in srgb, var(--sd-accent) 14%, var(--sd-surface));
+    color: var(--sd-fg);
+  }
+  .sd-gutter-marker[data-resolved] {
+    border-color: var(--sd-line);
+    color: var(--sd-fg-faint);
   }
 }
