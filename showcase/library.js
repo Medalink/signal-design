@@ -25,7 +25,7 @@ function jsNote(html) {
   if (/data-sd-countdown/.test(html)) return 'JS: Call <code>mountCountdown(root)</code> from <code>signal-design/js</code>, then <code>set({ remainingMs, running })</code>; <code>init()</code> does not mount it.';
 
   if (/data-sd-feed/.test(html)) return 'JS: Call <code>mountFeed(root, options)</code> and <code>hotkeys(map, options)</code> from <code>signal-design/js</code>; <code>init()</code> wires detail toggles.';
-  const passive = /^data-sd-(ornaments-size|ornaments-still|rain-style|rain-skip|tip-side|align|side|static|chart-scale)$/;
+  const passive = /^data-sd-(ornaments-size|ornaments-seed|ornaments-still|rain-style|rain-skip|tip-side|align|side|static|chart-scale)$/;
   const attrs = [...new Set(html.match(/data-sd-[a-z-]+/g) || [])].filter((a) => !passive.test(a));
   const extras = [];
   if (/popovertarget/.test(html)) extras.push("popovertarget (placement, menu keys)");

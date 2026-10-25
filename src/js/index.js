@@ -43,6 +43,7 @@ export { setSidebar, setSidebarWidth, setAside, setDrawer, selectSection } from 
 export { rain, mountRain } from "./rain.js";
 export { fps } from "./fps.js";
 export { paintOrnaments, ornamentShapes, ORNAMENT_STYLES } from "./ornaments.js";
+export { ornamentArt, ORNAMENT_ART } from "./ornament-art.js";
 export { setScrollbars } from "./scrollbars.js";
 export { setOptions, filterList } from "./listbox.js";
 export { drawSpark } from "./inputs.js";
