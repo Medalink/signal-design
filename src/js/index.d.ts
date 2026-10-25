@@ -210,6 +210,20 @@ export function ornamentShapes(options?: {
   strength?: number;
   style?: "blocks" | "dust";
 }): string;
+export type OrnamentArtStyle = "contours" | "lattice" | "waveform" | "dashed" | "book" | "stack";
+export const ORNAMENT_ART: Record<OrnamentArtStyle, { crisp: boolean; figure: boolean; gain: number }>;
+export function ornamentArt(options?: {
+  style?: OrnamentArtStyle;
+  size?: number;
+  width?: number;
+  edge?: boolean;
+  center?: boolean;
+  right?: boolean;
+  bottom?: boolean;
+  color?: string;
+  seed?: number;
+  strength?: number;
+}): string;
 export function paintOrnaments(element: HTMLElement): void;
 
 /* Scrollbars */

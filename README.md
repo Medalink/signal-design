@@ -701,6 +701,56 @@ Empty states (`.sd-empty`) get a center ornament on their own: a small dust
 field behind the message, sparkling the same way. `data-sd-ornaments="none"`
 turns it off, and `data-sd-ornaments="center"` puts one on any box.
 
+### Art ornaments
+
+```html
+<article data-sd-ornaments="contours">…</article>
+<aside data-sd-ornaments="tl lattice" data-sd-ornaments-size="260">…</aside>
+<div class="sd-empty" data-sd-ornaments="dashed">…</div>
+<article data-sd-ornaments="contours" data-sd-ornaments-seed="elderwood">…</article>
+```
+
+Name a style next to the placement and that drawing replaces the dust. With no
+placement it goes bottom right, or the center of an `.sd-empty`. The styles are
+ported from Publighter's generated covers and its landing book:
+
+| Style | Draws | For |
+|---|---|---|
+| `contours` | nested hand-drawn rings, like map hills | fiction |
+| `lattice` | a grid of small squares that thins out | research |
+| `waveform` | a signal over its noise | blogs and notes |
+| `dashed` | nested dashed frames | empty and planned things |
+| `book` | the hero's open book: hinged pages, a wire lattice, pixel text rows with the first 60% written | the editor, a hero |
+| `stack` | a manuscript: a page, two behind it, ruled text and a caret | manuscripts |
+
+Placements are the dust's: `tl`, `tr`, `bl`, `br`, `top`, `bottom` (an edge,
+across the box) and `center`. `data-sd-ornaments-size` is the picture's side in
+px (default 340); keep it at or under the box so the book and the stack are not
+cut. `data-sd-ornaments-seed` takes a number or any text and gives each item
+its own `contours`, `lattice` or `waveform`, so every project can have its own
+cover; `dashed`, `book` and `stack` are the same every time.
+
+They are still pictures, drawn as 1px lines and small squares in the theme's
+text color. Nothing animates, so there is no reduced-motion variant and
+`data-sd-ornaments-still` has no effect. Nothing is added to the DOM, so a box
+and its content do not move, and the background takes no clicks. A caption is
+yours to add (the library's figures use `sd-label`).
+
+**Contrast budget.** The art never draws brighter than the dust does at its
+corner. On its single brightest pixel, over `--sd-canvas` and `--sd-surface`,
+in every style and placement, text keeps at least this much contrast. The
+check measures it in Chromium and WebKit and fails below the budget column.
+
+| Theme | `--sd-fg` | `--sd-fg-muted` | `--sd-fg-subtle` | Dust, for reference |
+|---|---|---|---|---|
+| ink | 11.9:1 | 4.9:1 | 4.1:1 | 11.8, 4.9, 4.0 |
+| graphite | 9.5:1 | 4.6:1 | 3.6:1 | 9.4, 4.6, 3.6 |
+| paper | 9.7:1 | 6.4:1 | 3.1:1 | 9.8, 6.5, 3.2 |
+| Budget | 7:1 | 4.5:1 | 3:1 | |
+
+That is the worst case, at the strongest pixel. Keep small labels
+(`--sd-fg-subtle`) off the corner the art grows from.
+
 ## Scrollbars
 
 `init()` hides scrollbars until something scrolls and hides them again 2s

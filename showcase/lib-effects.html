@@ -23,6 +23,7 @@
             <ul>
               <li>A shell or hero backdrop that shows work in progress.</li>
               <li>Dust ornaments to give an empty state or a corner some texture.</li>
+              <li>Art ornaments, a drawn picture behind a card, a cover, a hero or an empty state.</li>
               <li>Title bars, a compact rail and a resizable sidebar for desktop apps.</li>
             </ul>
           </div>
@@ -68,6 +69,38 @@
       <div class="h-72 grid place-items-center text-center bg-surface" data-sd-ornaments data-sd-edges data-sd-ornaments-size="260" style="border: 1px solid var(--sd-line)">
         <p class="sd-muted"><code>data-sd-ornaments</code> + <code>data-sd-edges</code></p>
       </div>
+    </div>
+
+    <div class="demo-block">
+      <h3 class="sd-label">Art ornaments</h3>
+      <p class="demo-usage">Drawn imagery for a background, in the same quiet squares and hairlines as the dust. Name a style next to the placement. Each is a still picture in the theme's text color, faint enough to read over, and the same on every load. Contours are for fiction, a lattice for research, a waveform for blogs and notes, dashed frames for empty and planned things, the open book is the editor's hero, and the stack is a manuscript.</p>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <figure class="m-0 grid content-start gap-2">
+          <div id="art-contours" class="h-56 p-4 bg-surface border border-line" data-sd-ornaments="contours" data-sd-ornaments-size="224"><p class="sd-muted max-w-[22ch]">The road bends north, past Lowwater.</p></div>
+          <figcaption class="sd-label">Contours · fiction</figcaption>
+        </figure>
+        <figure class="m-0 grid content-start gap-2">
+          <div id="art-lattice" class="h-56 p-4 bg-surface border border-line" data-sd-ornaments="lattice" data-sd-ornaments-size="224"><p class="sd-muted max-w-[22ch]">Sources, and the claims each one holds up.</p></div>
+          <figcaption class="sd-label">Lattice · research</figcaption>
+        </figure>
+        <figure class="m-0 grid content-start gap-2">
+          <div id="art-waveform" class="h-56 p-4 bg-surface border border-line" data-sd-ornaments="bottom waveform" data-sd-ornaments-size="200"><p class="sd-muted max-w-[22ch]">A short note, written once and sent.</p></div>
+          <figcaption class="sd-label">Waveform · blogs, notes</figcaption>
+        </figure>
+        <figure class="m-0 grid content-start gap-2">
+          <div id="art-dashed" class="sd-empty h-56 content-center" data-sd-ornaments="dashed"><p class="sd-empty-title">Nothing planned yet.</p><p>Chapters you plan will wait here.</p></div>
+          <figcaption class="sd-label">Dashed · empty, planned</figcaption>
+        </figure>
+        <figure class="m-0 grid content-start gap-2">
+          <div id="art-book" class="h-56 p-4 bg-surface border border-line" data-sd-ornaments="br book" data-sd-ornaments-size="224"><p class="sd-muted max-w-[22ch]">The editor opens like a book.</p></div>
+          <figcaption class="sd-label">Book · the hero</figcaption>
+        </figure>
+        <figure class="m-0 grid content-start gap-2">
+          <div id="art-stack" class="h-56 p-4 bg-surface border border-line" data-sd-ornaments="br stack" data-sd-ornaments-size="224"><p class="sd-muted max-w-[22ch]">Three drafts, one manuscript.</p></div>
+          <figcaption class="sd-label">Stack · manuscripts</figcaption>
+        </figure>
+      </div>
+      <p class="demo-usage"><code>data-sd-ornaments="contours"</code> · <code>"tl lattice"</code> · <code>"bottom waveform"</code> · <code>"center dashed"</code> · <code>data-sd-ornaments-size</code> · <code>data-sd-ornaments-seed="elderwood"</code> varies contours, lattice and waveform per item</p>
     </div>
 
     <div class="demo-block">
