@@ -89,6 +89,15 @@
     color: var(--tone);
   }
 
+  /* Prose read at length: the reading serif, with a semibold for strong text. */
+  .sd-reading {
+    font-family: var(--sd-font-reading);
+    line-height: 1.7;
+  }
+  .sd-reading :is(strong, b) {
+    font-weight: 600;
+  }
+
   .sd-muted { color: var(--sd-fg-muted); }
   .sd-subtle { color: var(--sd-fg-subtle); }
   .sd-num { font-variant-numeric: tabular-nums; }

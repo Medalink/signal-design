@@ -6,7 +6,7 @@ description: Build or change UI with the Signal design library (signal-design) -
 # Building UI with Signal
 
 Signal has a strict look: square corners, flat surfaces, color only for status,
-tokens instead of values, two faces (one text face, chosen by the font picker, and one code face). Generic UI habits (rounded cards, shadows,
+tokens instead of values, two faces (one text face, chosen by the font picker, and one code face), plus a reading serif for long-form prose only. Generic UI habits (rounded cards, shadows,
 gradients, colored nav, custom dropdowns) break it. Work from the library's own
 parts and check the result.
 

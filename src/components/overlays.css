@@ -39,7 +39,8 @@
     border-block-start: 1px solid var(--sd-line);
   }
 
-  /* Sheet: a dialog pinned to the right edge (item settings, details). */
+  /* Sheet: a dialog pinned to the right edge (item settings, details), or to
+     the left with sd-sheet-left or the bottom with sd-sheet-bottom. */
   .sd-sheet {
     width: min(22rem, 100vw);
     max-width: 100vw;
@@ -64,6 +65,27 @@
     margin: 0 auto 0 0;
     border-inline-start: 0;
     border-inline-end: 1px solid var(--sd-line-strong);
+  }
+  /* Bottom sheet (phone inspectors, pickers): the full width, as tall as its
+     content up to --sheet-max (default 85% of the screen), then it scrolls. */
+  .sd-sheet-bottom {
+    width: 100vw;
+    max-width: 100vw;
+    height: fit-content;
+    max-height: var(--sheet-max, 85dvh);
+    margin: auto 0 0;
+    padding-block-end: env(safe-area-inset-bottom);
+    border-inline: 0;
+    border-block-start: 1px solid var(--sd-line-strong);
+  }
+  .sd-sheet-bottom:not([open]) {
+    transform: translateY(24px);
+  }
+  @starting-style {
+    .sd-sheet-bottom[open] {
+      opacity: 0;
+      transform: translateY(24px);
+    }
   }
 
   /*

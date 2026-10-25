@@ -11,71 +11,8 @@
  *
  * Hard rules this file enforces: square corners (every radius is 0),
  * flat surfaces (no shadow scale), text in 400 and 500, Source Code Pro for code.
+ * The @font-face rules live in font-<family>.css, so an app can leave a face out.
  */
-
-@font-face {
-  font-family: "Source Code Pro";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("./fonts/source-code-pro-400.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Source Code Pro";
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url("./fonts/source-code-pro-600.woff2") format("woff2");
-}
-/* Real italics (Latin), so <em> and <i> aren't slanted by the browser. */
-@font-face {
-  font-family: "Source Code Pro";
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url("./fonts/source-code-pro-400-italic.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Source Code Pro";
-  font-style: italic;
-  font-weight: 600;
-  font-display: swap;
-  src: url("./fonts/source-code-pro-600-italic.woff2") format("woff2");
-}
-
-/* Medium (500) Source Code Pro for the source-code-pro text font only. A
-   separate family, so code set in var(--font-mono) renders as it always has. */
-@font-face {
-  font-family: "Source Code Pro Text";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("./fonts/source-code-pro-400.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Source Code Pro Text";
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url("./fonts/source-code-pro-500-latin.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: "Source Code Pro Text";
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url("./fonts/source-code-pro-500-latin-ext.woff2") format("woff2");
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* Leon Sans, cut to the 400-500 range Signal uses (the full 100-900 file is 3x the size). */
-@font-face {
-  font-family: "Leon Sans";
-  font-style: normal;
-  font-weight: 400 500;
-  font-display: swap;
-  src: url("./fonts/leon-sans.woff2") format("woff2");
-}
 
 /* static: emit every variable even when no utility uses it, so apps can
    read var(--color-ink-850) from CSS or JS without it being tree-shaken. */
@@ -218,6 +155,7 @@
 @theme inline {
   --font-sans: var(--sd-font-sans); /* text; follows [data-font] */
   --font-mono: var(--sd-font-mono); /* code, charts, numbers */
+  --font-reading: var(--sd-font-reading); /* long-form prose */
   --color-canvas: var(--sd-canvas); /* page background */
   --color-surface: var(--sd-surface); /* wells, inputs, media frames */
   --color-raised: var(--sd-raised); /* hover rows, selected segments */
@@ -397,10 +335,13 @@
  * or on any element: system (default) | leon-sans | source-code-pro. Code
  * stays in --sd-font-mono whatever the text face is. Every stack ends in
  * the system one, so a face that has not loaded yet falls back cleanly.
+ * Prose to be read at length (a manuscript, an article) uses --sd-font-reading,
+ * a serif that does not follow data-font.
  */
 :root {
   --sd-font-system: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", system-ui, sans-serif;
   --sd-font-mono: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sd-font-reading: "Literata", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
   --sd-font-sans: var(--sd-font-system);
 }
 [data-font="system"] {

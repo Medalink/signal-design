@@ -75,6 +75,37 @@
     scroll-margin-top: 16px;
   }
   /* Preview / code flip, in place. */
+  /* The icon set: one cell per icon with its name. */
+  .demo-icons {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-block-start: 1px solid var(--sd-line);
+    border-inline-start: 1px solid var(--sd-line);
+  }
+  .demo-icons li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-block-end: 1px solid var(--sd-line);
+    border-inline-end: 1px solid var(--sd-line);
+    color: var(--sd-fg);
+  }
+  .demo-icons li::marker {
+    content: none;
+  }
+  .demo-icons svg {
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+  }
+  .demo-icons code {
+    color: var(--sd-fg-muted);
+    font-size: var(--text-2xs);
+    white-space: nowrap;
+  }
   .demo-head {
     display: flex;
     align-items: center;

@@ -1,37 +1,14 @@
 /*
- * Signal design library, Tailwind v4 entry.
+ * Signal design library, Tailwind v4 entry: core plus every bundled face.
  *
  *   @import "tailwindcss";
  *   @import "signal-design";
  *
  * Import after tailwindcss so the tokens override Tailwind's defaults.
- * Apps without Tailwind link dist/signal.css instead.
+ * Apps without Tailwind link dist/signal.css instead. To ship fewer font
+ * files, import signal-design/css/core and only the faces you use.
  */
-@import "./tokens.css";
-@import "./base.css";
-@import "./components/tone.css";
-@import "./components/typography.css";
-@import "./components/icons.css";
-@import "./components/buttons.css";
-@import "./components/indicators.css";
-@import "./components/forms.css";
-@import "./components/navigation.css";
-@import "./components/feedback.css";
-@import "./components/data.css";
-@import "./components/living-table.css";
-@import "./components/overlays.css";
-@import "./components/layout.css";
-@import "./components/shell.css";
-@import "./components/editor.css";
-@import "./components/marks.css";
-@import "./components/hovercard.css";
-@import "./components/tree.css";
-@import "./components/blocks.css";
-@import "./components/conversation.css";
-@import "./components/inputs.css";
-@import "./components/charts.css";
-@import "./components/timeline.css";
-@import "./components/schedule.css";
-@import "./components/ascii.css";
-@import "./components/broadcast.css";
-@import "./components/motion.css";
+@import "./font-source-code-pro.css";
+@import "./font-leon-sans.css";
+@import "./font-literata.css";
+@import "./core.css";

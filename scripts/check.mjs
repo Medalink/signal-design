@@ -19,6 +19,7 @@ import { chromium, webkit } from "playwright";
 import { sweep as rulesSweep } from "../bin/rules.mjs";
 import { checkLivingTable, checkLivingTableTypes } from "./check-living-table.mjs";
 import { checkReact, checkReactSsr, checkReactTypes } from "./check-react.mjs";
+import { checkFonts } from "./check-fonts.mjs";
 import { checkSidebarResize } from "./check-sidebar-resize.mjs";
 import { checkHashRedirects, checkShowcasePages, checkShowcaseRegistry } from "./check-showcase-pages.mjs";
 import { checkShowcaseBar } from "./check-showcase-bar.mjs";
@@ -1002,6 +1003,11 @@ for (const [name, engine] of Object.entries(engines)) {
       const resize = await checkSidebarResize(page, base, apiUrl);
       for (const error of resize.errors) fail(`${name} sidebar resize`, error);
       if (!resize.errors.length) console.log(`ok   ${name} sidebar resize ${resize.passed} behavior checks`);
+    },
+    "font faces": async (page) => {
+      const faces = await checkFonts(page);
+      for (const error of faces.errors) fail(`${name} font faces`, error);
+      if (!faces.errors.length) console.log(`ok   ${name} font faces ${faces.passed} behavior checks`);
     },
     "react bindings": async (page) => {
       const react = await checkReact(page, base);

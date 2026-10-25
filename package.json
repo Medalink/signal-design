@@ -25,7 +25,11 @@
       "default": "./src/js/index.js"
     },
     "./css": "./src/signal.css",
+    "./css/core": "./src/core.css",
+    "./css/fonts/*": "./src/font-*.css",
     "./dist/signal.css": "./dist/signal.css",
+    "./dist/signal-core.css": "./dist/signal-core.css",
+    "./dist/font-*.css": "./dist/font-*.css",
     "./dist/signal.js": "./dist/signal.js",
     "./js": {
       "types": "./src/js/index.d.ts",

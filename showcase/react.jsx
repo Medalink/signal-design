@@ -303,6 +303,7 @@ function Empty() {
 function Overlays() {
   const [open, setOpen] = useState(false);
   const [sheet, setSheet] = useState(false);
+  const [bottom, setBottom] = useState(false);
   const [note, setNote] = useState("Also handle an expired card.");
   const [result, setResult] = useState("none");
   const [guard, setGuard] = useState(false);
@@ -322,12 +323,17 @@ function Overlays() {
   </DialogFooter>
 </Dialog>
 <Sheet open={sheet} onOpenChange={setSheet}>…</Sheet>
+<Sheet side="bottom" open={bottom} onOpenChange={setBottom}>
+  <DialogHeader closeLabel="Close inspector">Inspector</DialogHeader>
+  …
+</Sheet>
 <Dialog open={guard} onOpenChange={(next) => (next ? setGuard(true) : refuse())}>…</Dialog>
 <Dialog trigger={<Button>Uncontrolled</Button>} size="sm">…</Dialog>`}
     >
       <div className="sd-actions">
         <Button onClick={() => setOpen(true)}>Dialog</Button>
         <Button onClick={() => setSheet(true)}>Sheet</Button>
+        <Button onClick={() => setBottom(true)}>Bottom sheet</Button>
         <Dialog
           size="sm"
           trigger={<Button>Uncontrolled dialog</Button>}
@@ -408,6 +414,13 @@ function Overlays() {
         <DialogHeader>Item details</DialogHeader>
         <DialogBody>
           <p className="text-sm">These settings apply to this item only.</p>
+        </DialogBody>
+      </Sheet>
+
+      <Sheet side="bottom" open={bottom} onOpenChange={setBottom}>
+        <DialogHeader closeLabel="Close inspector">Inspector</DialogHeader>
+        <DialogBody>
+          <p className="text-sm">A bottom sheet is as tall as its content, up to 85% of the screen.</p>
         </DialogBody>
       </Sheet>
     </Demo>

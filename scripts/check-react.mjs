@@ -5,12 +5,14 @@
  *   checkReact()       dialog, menu, tabs, toast, tooltip, fields and table in a real browser
  */
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createElement as h } from "react";
 import ts from "typescript";
+import { ICON_NAMES } from "../src/js/icons.js";
 import { checkReactEditor } from "./check-react-editor.mjs";
+import { checkReactGaps } from "./check-react-gaps.mjs";
 
 const rootPath = fileURLToPath(new URL("..", import.meta.url));
 
@@ -19,12 +21,16 @@ export function checkReactTypes() {
   const fixture = join(directory, "consumer.tsx");
   writeFileSync(
     fixture,
-    `import { useState } from "react";
-import { AppShell, Button, Dialog, DialogHeader, Field, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
+    `import { useRef, useState } from "react";
+import { AppShell, Button, Dialog, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 
 export function Consumer() {
   const [open, setOpen] = useState(false);
   const toast = useToast();
+  const hostRef = useRef<HoverCardHandle>(null);
+  hostRef.current?.show({ left: 1, top: 2, right: 3, bottom: 4 }, "Card", { side: "top", label: undefined });
+  hostRef.current?.show(() => document.body.getBoundingClientRect(), <p>Card</p>);
+  hostRef.current?.hide({ immediate: true });
   const props: ButtonProps = { variant: "primary", tone: "danger", busy: true, onClick: (event) => event.currentTarget.blur() };
   toast("Saved", { tone: "success", action: { label: "Undo", onClick: () => {} } });
   const dismiss: () => void = toast("Quick", { timeout: 300 });
@@ -32,8 +38,18 @@ export function Consumer() {
   return (
     <AppShell defaultSection="projects" onSidebarChange={(sidebar) => console.log(sidebar === "collapsed")}>
       <Button {...props} ref={(node: HTMLButtonElement | null) => node?.focus()}>Go</Button>
+      <Button tone={undefined} size={undefined} busy={undefined} onClick={undefined}>Undefined props</Button>
+      <Manuscript measure={undefined} face={undefined} wrapClassName={undefined} wrapRef={undefined} />
+      <WeightedBar label="3 of 6" goal={6} segments={[{ weight: 2, state: "drafted", label: undefined }]} />
+      <Tree label="Undefined props" selected={undefined} defaultExpanded={undefined} onMove={undefined} />
       <a className={buttonClass({ variant: "ghost", size: "sm" })} href="/">Link</a>
-      <IconButton label="Settings" size="sm" />
+      <IconButton label="Settings" size="sm"><Icon name="edit" label={undefined} /></IconButton>
+      {/* @ts-expect-error an icon is one of the set */}
+      <Icon name="nope" />
+      <HoverCardHost ref={hostRef} closeDelay={undefined} onOpenChange={(open: boolean) => console.log(open)} />
+      <ResizablePanel edge="top" size={undefined} minSize={undefined} bodyProps={{ tabIndex: 0 }} onSizeChange={(size: number) => console.log(size)}>Dock</ResizablePanel>
+      {/* @ts-expect-error an edge is start, end, top or bottom */}
+      <ResizablePanel edge="left" />
       <Field label="Name" error="Required"><Input value="" onChange={(event) => console.log(event.target.value)} /></Field>
       <Dialog open={open} onOpenChange={setOpen} size="sm" ref={(node: HTMLDialogElement | null) => node?.close()}>
         <DialogHeader closeButton={false}>Title</DialogHeader>
@@ -71,6 +87,9 @@ export function Consumer() {
       <Tree />
       {/* @ts-expect-error a tree item needs an id */}
       <TreeItem label="A" />
+      <GutterBlock as="p" side="start" marker={{ label: "3 comments", count: 3, kind: "suggestion", resolved: undefined }}>Gutter</GutterBlock>
+      {/* @ts-expect-error a gutter marker needs its accessible name */}
+      <GutterMarker count={1} />
       {/* @ts-expect-error a mark needs a kind */}
       <Mark />
       {/* @ts-expect-error the kind must be one of the mark kinds */}
@@ -93,6 +112,7 @@ useToast()("Saved", { tone: "loud" });
   try {
     const program = ts.createProgram([fixture], {
       strict: true,
+      exactOptionalPropertyTypes: true,
       noEmit: true,
       target: ts.ScriptTarget.ES2022,
       module: ts.ModuleKind.NodeNext,
@@ -106,10 +126,35 @@ useToast()("Saved", { tone: "loud" });
       getCurrentDirectory: () => directory,
       getNewLine: () => "\n",
     }));
+    assertOptionalsAcceptUndefined();
+    assertIconNamesMatch();
     return 1;
   } finally {
     rmSync(directory, { recursive: true, force: true });
   }
+}
+
+/** Under exactOptionalPropertyTypes a `prop?: T` rejects `undefined`, so every optional property in the types says `| undefined`. */
+function assertOptionalsAcceptUndefined() {
+  const file = join(rootPath, "src/react/index.d.ts");
+  const source = ts.createSourceFile(file, readFileSync(file, "utf8"), ts.ScriptTarget.ES2022, true, ts.ScriptKind.TS);
+  const accepts = (node) => node.kind === ts.SyntaxKind.UndefinedKeyword || (ts.isUnionTypeNode(node) && node.types.some(accepts)) || (ts.isParenthesizedTypeNode(node) && accepts(node.type));
+  const strict = [];
+  const visit = (node) => {
+    if (ts.isPropertySignature(node) && node.questionToken && node.type && !accepts(node.type)) strict.push(`${source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1}: ${node.name.getText(source)}`);
+    ts.forEachChild(node, visit);
+  };
+  visit(source);
+  assert.deepEqual(strict, [], `optional props in src/react/index.d.ts need \`| undefined\` (line: name)`);
+}
+
+/** `IconName` in src/js/icons.d.ts lists exactly the icons in src/js/icons.js. */
+function assertIconNamesMatch() {
+  const file = join(rootPath, "src/js/icons.d.ts");
+  const source = ts.createSourceFile(file, readFileSync(file, "utf8"), ts.ScriptTarget.ES2022, true, ts.ScriptKind.TS);
+  const alias = source.statements.find((node) => ts.isTypeAliasDeclaration(node) && node.name.text === "IconName");
+  const listed = alias.type.types.map((node) => node.literal.text);
+  assert.deepEqual(listed, ICON_NAMES, "IconName in src/js/icons.d.ts lists the keys of ICONS in src/js/icons.js, in order");
 }
 
 export async function checkReactSsr() {
@@ -141,6 +186,13 @@ export async function checkReactSsr() {
           h(sd.Switch, { label: "s" }),
           h(sd.Badge, { tone: "success" }, "ok"),
           h(sd.Avatar, { name: "Ada Lovelace" }),
+          h(sd.Icon, { name: "undo" }),
+          h(sd.HoverCardHost, { closeDelay: 100 }),
+          h(sd.ResizablePanel, { edge: "start", size: 300, minSize: 200, label: "Resize inspector" }, "panel"),
+          h(sd.Icon, { name: "warning", label: "Not saved", className: "extra" }),
+          h(sd.GutterBlock, { as: "p", marker: { label: "2 comments", count: 2, active: true } }, "b"),
+          h(sd.GutterMarker, { label: "1 suggestion", kind: "suggestion", resolved: true }, "s"),
+          h(sd.WeightedBar, { label: "3 of 6 words", goal: 6, segments: [{ weight: 2, state: "drafted", label: "One" }, { weight: 1, state: "current" }] }),
           h(sd.AvatarStack, null, h(sd.Avatar, { name: "B C", src: "/a.png" })),
           h(sd.Card, { tone: "danger" }, h(sd.CardHeader, null, "h"), h(sd.CardBody, null, "b"), h(sd.CardFooter, null, "f")),
           h(sd.Panel, { width: "wide" }, h(sd.PanelTitle, null, "t"), h(sd.PanelDescription, null, "d")),
@@ -167,7 +219,7 @@ export async function checkReactSsr() {
             h(sd.ToolbarSeparator),
             h(sd.ToolbarButton, null, "Heading"),
             h(sd.ToolbarMore, null, h(sd.MenuItem, null, "Clear"))),
-          h(sd.Manuscript, { measure: "30rem", face: "mono" }, h("p", null, "Text", h(sd.Mark, { kind: "comment", active: true, onClick() {} }, "c"), h(sd.Mark, { kind: "insert" }, "i"), h(sd.HoverCard, { content: "card", defaultOpen: true }, h(sd.Mark, { kind: "entity", tabIndex: 0 }, "e")))),
+          h(sd.Manuscript, { measure: "30rem", face: "mono" }, h("p", null, "Text", h(sd.Mark, { kind: "comment", active: true, onClick() {} }, "c"), h(sd.Mark, { kind: "insert" }, "i"), h(sd.Mark, { kind: "find", active: true }, "f"), h(sd.HoverCard, { content: "card", defaultOpen: true }, h(sd.Mark, { kind: "entity", tabIndex: 0 }, "e")))),
           h(sd.RadioGroup, { label: "Cycle", defaultValue: "m", name: "cycle" }, h(sd.Radio, { value: "m", label: "Monthly", description: "d" }), h(sd.Radio, { value: "y", label: "Yearly", disabled: true })),
           h(sd.SegmentedControl, { label: "View", defaultValue: "a", inline: true }, h(sd.Segment, { value: "a" }, "A"), h(sd.Segment, { value: "b" }, "B")),
           h(sd.Menu, null, h(sd.MenuTrigger, null, h(sd.Button, null, "v")),
@@ -195,6 +247,11 @@ export async function checkReactSsr() {
     ['aria-invalid="true"', "the invalid control"],
     ['role="switch"', "the switch"],
     ["99+", "the capped count"],
+    ['data-icon="undo"', "an icon"],
+    ['style="--size:300px"', "a resizable panel"],
+    ['role="separator"', "its handle"],
+    ['aria-valuenow="300"', "the handle's value"],
+    ['role="img" aria-label="Not saved"', "a labeled icon"],
   ]) assert.ok(html.includes(needle), `server output is missing ${what}`);
   assert.ok(!html.includes("sd-tooltip"), "a closed tooltip rendered on the server");
   assert.ok(!html.includes("sd-hovercard"), "an open hover card rendered on the server");
@@ -519,5 +576,7 @@ export async function checkReact(page, base) {
   expect(browserErrors.length === 0, `console errors: ${browserErrors.join(" | ")}`);
   const editor = await checkReactEditor(page, base);
   errors.push(...editor.errors);
-  return { errors, passed: passed + editor.passed };
+  const gaps = await checkReactGaps(page, base);
+  errors.push(...gaps.errors);
+  return { errors, passed: passed + editor.passed + gaps.passed };
 }

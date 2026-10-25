@@ -7,6 +7,7 @@
  *   import { Button, Dialog, DialogHeader, DialogBody } from "signal-design/react";
  */
 export { Button, IconButton, buttonClass } from "./button.js";
+export { Icon } from "./icons.js";
 export { Field, Input, Textarea, Select, Checkbox, Switch } from "./form.js";
 export {
   Badge,
@@ -29,16 +30,18 @@ export {
   TableRow,
   TableHeader,
   TableCell,
+  WeightedBar,
 } from "./display.js";
 export { Dialog, Sheet, DialogHeader, DialogBody, DialogFooter, DialogClose } from "./dialog.js";
 export { Popover, PopoverTrigger, PopoverContent, Menu, MenuTrigger, MenuContent, MenuItem, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, MenuLabel, MenuSeparator } from "./popover.js";
 export { RadioGroup, Radio, SegmentedControl, Segment } from "./choice.js";
+export { ResizablePanel } from "./resizable.js";
 export { Tooltip } from "./tooltip.js";
 export { Tabs, TabList, Tab, TabPanel } from "./tabs.js";
 export { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarButton, ToolbarMore } from "./toolbar.js";
 export { Manuscript, StatusSegment } from "./editor.js";
-export { Mark } from "./marks.js";
-export { HoverCard } from "./hovercard.js";
+export { Mark, GutterMarker, GutterBlock } from "./marks.js";
+export { HoverCard, HoverCardHost } from "./hovercard.js";
 export { Tree, TreeItem } from "./tree.js";
 export { Combobox } from "./combobox.js";
 export { CommandPalette } from "./command.js";

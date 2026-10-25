@@ -1,0 +1,6 @@
+/*
+ * Prebuilt bundle with no font files, built to dist/signal-core.css. Link the
+ * faces you use from dist/fonts/<family>.css next to it.
+ */
+@import "tailwindcss" source(none);
+@import "./core.css";

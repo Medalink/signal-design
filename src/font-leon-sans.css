@@ -1,0 +1,8 @@
+/* Leon Sans, cut to the 400-500 range Signal uses (the full 100-900 file is 3x the size). */
+@font-face {
+  font-family: "Leon Sans";
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url("./fonts/leon-sans.woff2") format("woff2");
+}

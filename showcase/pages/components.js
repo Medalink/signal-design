@@ -1,9 +1,12 @@
 import { toast } from "../../src/js/index.js";
+import { ICON_NAMES, icon } from "../../src/js/icons.js";
 import { mountLibrary } from "../library.js";
 import { mountLivingTableDemo } from "../living-table.js";
 
 mountLibrary();
 mountLivingTableDemo();
+
+document.getElementById("icon-set").innerHTML = ICON_NAMES.map((name) => `<li>${icon(name)}<code>${name}</code></li>`).join("");
 
 for (const el of document.querySelectorAll("[data-cells]")) {
   const on = Number(el.dataset.on);

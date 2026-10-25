@@ -4,13 +4,14 @@ import { cx } from "./util.js";
 
 /**
  * The writing surface: a scroller on the canvas holding one page at a reading
- * measure. `className` and `ref` reach the page, `wrapClassName` the scroller.
- * `face="mono"` sets the page in Source Code Pro.
+ * measure. `className` and `ref` reach the page, `wrapClassName` and `wrapRef`
+ * the scroller. `face="reading"` sets the page in the reading serif and
+ * `face="mono"` in Source Code Pro.
  */
-export function Manuscript({ measure, face, wrapClassName, className, style, ...props }) {
+export function Manuscript({ measure, face, wrapClassName, wrapRef, className, style, ...props }) {
   return h(
     "div",
-    { className: cx("sd-manuscript", wrapClassName) },
+    { className: cx("sd-manuscript", wrapClassName), ref: wrapRef },
     h("article", {
       className: cx("sd-manuscript-page", className),
       "data-face": face,

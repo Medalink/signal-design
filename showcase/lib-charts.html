@@ -104,11 +104,17 @@ createChart(canvas, {
           <div class="sd-uptime" id="demo-uptime"></div>
         </div>
         <div class="grid gap-2">
+          <div class="flex justify-between text-sm"><span>Manuscript</span><span class="sd-subtle">41,200 of 80,000 words</span></div>
+          <div class="sd-weighted" id="demo-weighted" role="img" aria-label="Manuscript: 41,200 of 80,000 words drafted, chapter 4 in progress, 18,800 planned">
+            <i data-state="drafted" style="--weight: 12000" title="Part one · 12,000 words"></i><i data-state="drafted" style="--weight: 18000" title="Part two · 18,000 words"></i><i data-state="current" style="--weight: 11200" title="Chapter 4 · 11,200 words so far"></i><i data-state="planned" style="--weight: 18800" title="Part four · 18,800 words planned"></i><i data-state="open" style="--weight: 20000" title="20,000 words to the goal"></i>
+          </div>
+        </div>
+        <div class="grid gap-2">
           <div class="flex justify-between text-sm"><span>Memory</span><span class="sd-subtle">84% · target 75%</span></div>
           <div class="sd-meter" style="--value: 84; --target: 75; --warn: 80; --crit: 95"><i data-at="warn"></i><i data-at="crit"></i></div>
         </div>
       </div>
-      <p class="demo-usage"><code>sd-heatmap</code> + <code>--v</code> · <code>sd-waffle</code> + <code>data-s</code> · <code>sd-key</code> · <code>sd-uptime</code> + <code>data-state</code> · <code>sd-meter</code> + <code>--value|--target|--warn|--crit</code>. CSS only.</p>
+      <p class="demo-usage"><code>sd-heatmap</code> + <code>--v</code> · <code>sd-waffle</code> + <code>data-s</code> · <code>sd-key</code> · <code>sd-uptime</code> + <code>data-state</code> · <code>sd-meter</code> + <code>--value|--target|--warn|--crit</code> · <code>sd-weighted</code> + <code>--weight</code> and <code>data-state</code>. CSS only.</p>
     </div>
 
     <div class="demo-block" id="charts-timeline">

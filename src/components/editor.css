@@ -66,7 +66,9 @@
    *   <div class="sd-manuscript"><article class="sd-manuscript-page">
    *     <h1>…</h1><p>…</p>
    *   </article></div>
-   * data-face="mono" sets the page in Source Code Pro.
+   * data-face="reading" sets the page in the reading serif (--sd-font-reading,
+   * Literata when its face is loaded) with real italics and a semibold for
+   * strong text; data-face="mono" sets it in Source Code Pro.
    */
   .sd-manuscript {
     min-width: 0;
@@ -93,6 +95,14 @@
     font-family: var(--sd-font-mono);
     font-size: var(--text-base);
     line-height: 1.8;
+  }
+  .sd-manuscript-page[data-face="reading"] {
+    font-family: var(--sd-font-reading);
+    font-size: var(--text-md);
+    line-height: 1.7;
+  }
+  .sd-manuscript-page[data-face="reading"] :is(strong, b) {
+    font-weight: 600;
   }
   .sd-manuscript-page:focus-visible {
     outline-offset: -2px;

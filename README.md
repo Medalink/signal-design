@@ -3,7 +3,7 @@
 A flat, square, mono design library for Tailwind CSS v4. It works in web apps,
 Tauri apps and plain HTML.
 
-- **Two faces, two weights.** SF Pro (system UI font, Segoe UI on Windows) in regular and medium for text; Source Code Pro (bundled, OFL) for code, charts and numbers. A font picker swaps the text face for Leon Sans or Source Code Pro.
+- **Two faces, two weights, and one to read.** SF Pro (system UI font, Segoe UI on Windows) in regular and medium for text; Source Code Pro (bundled, OFL) for code, charts and numbers. A font picker swaps the text face for Leon Sans or Source Code Pro. Literata (bundled, OFL) is for prose read at length, such as a manuscript, and never for interface text.
 - **Square corners everywhere**, avatars and checkboxes included.
 - **Flat surfaces.** No glass, glow, shadow or gradient.
 - **Color is for important things:** risk, status, success and focus. Everything else, navigation included, is black, white and grey.
@@ -171,11 +171,51 @@ Never name a family in your own CSS. Use the tokens, which follow the picker:
 |---|---|---|
 | `--sd-font-sans` | `font-sans` | The current text face |
 | `--sd-font-mono` | `font-mono` | Source Code Pro, for code, charts and numbers |
+| `--sd-font-reading` | `font-reading` | Literata, for prose read at length; `data-font` does not change it |
 | `--sd-font-system` | | The system UI stack every text face falls back to |
 
 To change a face for the whole app, override the `--sd-font-*` token, not
 Tailwind's `--font-sans` or `--font-mono`. Charts, the rain and the picker read
 the tokens, so they follow it.
+
+### Reading face
+
+Literata is a serif made for reading long text on screen (it was drawn for
+Google Play Books), with true italics for emphasis and titles. It is SIL OFL 1.1,
+and it ships as variable files cut to weights 400 to 600 at the default text
+optical size, 130 KB in four files (regular and italic, Latin and Latin
+Extended; the Latin Extended file is fetched only for a page that uses one of
+its characters). `<Manuscript face="reading">` sets the page
+in it; `class="sd-reading"` or `font-reading` does the same for any prose, with
+a semibold `strong`. It is for text a person reads for minutes, not for labels,
+buttons or tables.
+
+### Ship only the faces you use
+
+`@import "signal-design"` and `dist/signal.css` declare every bundled face: Source
+Code Pro (six files, 202 KB), Leon Sans (115 KB) and Literata (four files, 130 KB).
+A browser fetches a file only when text uses it, but a bundler copies every file
+the CSS names. An app that wants fewer takes the core, which has the tokens, base
+and every `sd-` component but no `@font-face`, and then one file per face:
+
+```css
+@import "tailwindcss";
+@import "signal-design/css/core";
+@import "signal-design/css/fonts/literata";
+@import "signal-design/css/fonts/source-code-pro";
+```
+
+| Face file | Declares |
+|---|---|
+| `css/fonts/source-code-pro` | Source Code Pro (code) and its text-face cut for `data-font="source-code-pro"` |
+| `css/fonts/leon-sans` | Leon Sans, for `data-font="leon-sans"` |
+| `css/fonts/literata` | Literata, for `face="reading"`, `sd-reading` and `font-reading` |
+
+Without Tailwind, link `dist/signal-core.css` and the `dist/font-<family>.css` of
+each face, and keep `dist/fonts/` next to them. A face you leave out falls back
+to the next family in its token: code to the system monospace, the reading face
+to Iowan Old Style, Palatino or Georgia. `setFont("leon-sans")` with its face left
+out switches the attribute and changes nothing visible.
 
 ## Color roles
 
@@ -228,6 +268,34 @@ same rule.
 keeps an `em` fallback. Tailwind has no `cap` utility, but arbitrary values
 take any CSS unit: `size-[1.5cap]` on the icon and `items-baseline` on the
 label do the same. Icon-only controls still need an `aria-label`.
+
+### The icon set
+
+Signal draws a set of line icons for what an editor and its app need: history
+(`undo`, `redo`), text (`bold`, `italic`, `underline`, `strike`, `list-bullet`,
+`list-number`, `align-left`, `align-center`, `align-right`, `align-justify`),
+margin and review (`comment`, `sparkle`, `history`, `bookmark`, `view`, `link`,
+`unlink`), things (`person`, `account`, `object`, `place`, `write`, `edit`,
+`delete`, `copy`, `external`, `publish`, `sync`, `warning`, `check`) and
+interface (`close`, `plus`, `minus`, `search`, `menu`, `more`, the four
+`chevron-*`, `chevrons-left`, `chevrons-right`, `expand`, `contract`). They
+follow the rest of the kit: straight lines and right angles, a 1.5 stroke with
+square caps and mitered corners, `currentColor`, drawn inside the 4-unit inset
+of the 24 grid so they size like any `sd-icon`. The component page lists them
+all with their names.
+
+```html
+<button class="sd-btn sd-btn-icon sd-btn-ghost" aria-label="Undo">
+  <svg class="sd-icon" data-icon="undo" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+       stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M9 5L4.5 9.5 9 14M4.5 9.5H15v8H9"/></svg>
+</button>
+```
+
+`signal-design/js/icons` exports `ICONS` (each icon's path `d`), `ICON_NAMES` and
+`icon(name, label?)`, which returns that markup for `innerHTML`; a `label`
+makes it an image with that name, and an unknown name throws. In React,
+`<Icon name="undo" />` renders the same SVG, decorative unless it has a
+`label`, and `name` is typed as `IconName`.
 
 ## Signal App Shell
 
@@ -1049,7 +1117,11 @@ What they take over from `init()`:
 - **Dialog and Sheet** run on the native `<dialog>`. `showModal()` follows
   `open`, the browser keeps focus inside and handles Escape, and its `close`
   event reaches `onOpenChange`. Focus returns to the opener and a backdrop
-  click closes it. `static` turns off both Escape and the backdrop.
+  click closes it. `static` turns off both Escape and the backdrop. A `Sheet`
+  is pinned to the right, or to the left with `side="left"` or the bottom with
+  `side="bottom"` (the full width, as tall as its content up to 85% of the
+  screen, `--sheet-max`). `DialogHeader` names its × button `Close`; give
+  `closeLabel="Close inspector"` when the screen needs more.
 - **Popover and Menu** run on the native popover API. The trigger links to the
   panel with `popovertarget`, so a click on it toggles instead of dismissing
   and reopening. The panel is placed next to the trigger and flips at the
@@ -1098,13 +1170,17 @@ The parts a document editor is built from, in CSS and as React components:
 ```
 
 - `Toolbar` (`sd-toolbar`) is one tab stop; arrows, Home and End move between its buttons, and a disabled button is skipped. `ToolbarButton` is a toggle when it has `pressed`. A row wider than its container scrolls inside itself; `ToolbarMore` is the menu for the actions you fold away yourself, since only you know which they are.
-- `Manuscript` (`sd-manuscript` around `sd-manuscript-page`) is the page: `measure` sets its width (default 40rem, about 66 characters) and it shrinks with its container. `face="mono"` sets it in Source Code Pro. Put your editor's content element inside it; headings, quotes and lists are styled.
+- `Manuscript` (`sd-manuscript` around `sd-manuscript-page`) is the page: `measure` sets its width (default 40rem, about 66 characters) and it shrinks with its container. `face="reading"` sets it in Literata (see Fonts) and `face="mono"` in Source Code Pro. `ref` reaches the page and `wrapRef` the scroller around it (`wrapClassName` styles it), for scroll position and typewriter scrolling. Put your editor's content element inside it; headings, quotes and lists are styled.
 - `StatusSegment` (`sd-statusbar-seg`) is a fact in the status bar: text, a button with `onClick`, a toggle with `pressed`, or a link with `href`; `tone` adds a status dot. In an App Shell the bar is `Statusbar`, which keeps only `.sd-status` on phones; anywhere else use `<footer className="sd-statusbar">`.
 
-- `Mark` (`sd-mark` with `data-mark`) is a span of text something is attached to: `comment`, `insert`, `delete`, `mention` or `entity`. It is a `mark`, `ins` or `del` element by kind, a link with `href`, and a button with `onClick`; `active` is the open comment (`aria-current`) and `resolved` a settled one. Color means something: an insertion is green and a deletion pink, as in `sd-diff`, the open comment is the accent, a mention takes `--who`; comments and entities are grey. Fills and underlines wrap across lines.
+- `Mark` (`sd-mark` with `data-mark`) is a span of text something is attached to: `comment`, `insert`, `delete`, `mention`, `entity`, `find` (a match of the search) or `check` (a match of a spelling, grammar or style check). It is a `mark`, `ins` or `del` element by kind, a link with `href`, and a button with `onClick`; `active` is the open comment or the current find or check match (`aria-current`) and `resolved` a settled comment. A find match is a grey fill and a check match a dashed underline; the current one adds an outline and a heavier line, so it shows without telling colors apart. Color means something: an insertion is green and a deletion pink, as in `sd-diff`, the open comment is the accent, a mention takes `--who`; comments and entities are grey. Fills and underlines wrap across lines.
+- `GutterBlock` (`sd-gutter-block`) is a block of the page (`as` is its element, default `div`) that carries a `GutterMarker` (`sd-gutter-marker`), a square button in the margin level with the block's first line, for what is attached to the block as a whole. The marker's props are `marker`: `label` (its accessible name, required), `count` or children as its content, `kind="suggestion"` for a dashed edge, `active` for the open one (`aria-current`: a heavier edge and a tint of the accent) and `resolved` for a settled one (faint). `side="start"` puts it in the leading margin. It sits in the page's side padding, centered in it, so the text keeps its width; the padding is 6vw between 16px and 72px, and the marker (24px) shrinks to fit when the padding is narrower.
 - `HoverCard` (`sd-hovercard`) is a preview beside its trigger, on hover after `openDelay` (300ms) or at once on keyboard focus; Escape, leaving the trigger and the card, or moving focus away closes it, and the pointer can move onto it. The trigger is its one child and must be focusable, so a `Mark` that is not a link or button needs `tabIndex={0}`. The card is not in the tab order: put what it shows, and any action, somewhere else too.
+- `HoverCardHost` is the same card for a trigger React does not render, such as a ProseMirror decoration. Render it once with a `ref`; the code that owns the trigger calls `ref.current.show(anchor, content, { side, align, label })` to open it at once (a second call replaces what it shows) and `ref.current.hide()` to close it after `closeDelay` unless the pointer has moved onto the card (`hide({ immediate: true })` closes it now). `anchor` is an element, anything with `getBoundingClientRect`, a rect `{ left, top, right, bottom }` such as ProseMirror's `coordsAtPos`, or a function that returns one, which is measured again when the page scrolls or resizes. The owner decides when to open, so it keeps its own open delay, sets `aria-describedby` to `ref.current.id` on the trigger and clears it in `onOpenChange`, which hears every real open and close, including Escape and the pointer leaving the card.
 
-- `Tree` and `TreeItem` (`sd-tree`) are a document tree. React owns `selected` and `expanded` (the ids of the open branches); a closed branch renders none of its children. One tab stop that lands on the selected item; Up, Down, Home and End move without wrapping, Right opens a branch or steps into it, Left closes it or steps to the parent, Enter and Space select. Reordering is reported, never done: `onMove({ id, targetId, position })` runs on a drop or on Alt+ArrowUp and Alt+ArrowDown, with `position` `before`, `after` or `inside`, and you reorder your own data. Giving `onMove` is what makes the rows draggable; the drag is the browser's own, so there is no drag library, and a branch cannot be dropped into itself.
+- `Tree` and `TreeItem` (`sd-tree`) are a document tree. React owns `selected` and `expanded` (the ids of the open branches); a closed branch renders none of its children. One tab stop that lands on the selected item; Up, Down, Home and End move without wrapping, Right opens a branch or steps into it, Left closes it or steps to the parent, Enter and Space select. Reordering is reported, never done: `onMove({ id, targetId, position })` runs on a drop or on Alt+ArrowUp and Alt+ArrowDown, with `position` `before`, `after` or `inside`, and you reorder your own data. Giving `onMove` is what makes the rows draggable; the drag is the browser's own, so there is no drag library, and a branch cannot be dropped into itself. `actions` on a `TreeItem` (`{ label, key, icon?, tone?, onSelect }`) are what can be done to it, such as rename and delete. A treeitem cannot hold buttons, so each action runs from its `key` (`F2`, `Delete`, a plain key without modifiers) while the item has focus, and `aria-keyshortcuts` lists them. The buttons in the row are for the pointer: hidden from assistive technology, out of the tab order, and shown on hover, keyboard focus and selection. An action that removes the focused item moves focus to the nearest enabled item.
+
+- `ResizablePanel` (`sd-resizable`) is a panel of one size that the layout around it gives way to, with a drag handle (`sd-resize-handle`) on the edge facing its neighbor: `edge="end"` is a panel on the left in left-to-right text, `"start"` one on the right, `"top"` or `"bottom"` a dock. React owns `size` (pixels; `defaultSize` 288) and hears every change in `onSizeChange`, clamped to `minSize` (160) and `maxSize` (640). The handle is the window splitter of the ARIA practices: a focusable `separator` named by `label` with `aria-valuemin`, `aria-valuemax` and `aria-valuenow` in pixels, that a pointer drags and Arrow keys (`step` 16px, Shift four times that), Home and End move. Arrows follow the screen, so in right-to-left text an end handle's ArrowRight shrinks its panel. The panel's children sit in `sd-resizable-body`, which scrolls when they are taller than the panel, so the handle stays on the edge; `bodyProps` reaches it, and a body with nothing focusable in it needs `bodyProps={{ tabIndex: 0 }}` so the keyboard can scroll it. `sd-sidebar-resize` is the same handle for the App Shell's sidebar; without React, set `--size` and `aria-valuenow` yourself and `data-resizing` on the panel while a drag runs.
 
 - `Combobox` (`sd-combobox`) is a searchable select; `CommandPalette` (`sd-command`) is a search box over a list on a modal dialog. Both take `items` (`{ value, label, keywords?, group?, hint?, href?, disabled? }`) and neither fetches: they filter what you pass on label, keywords and value, and for results from a server you give `filter={false}`, follow `onInputValueChange` or `onQueryChange`, and pass back what arrived (`busy` marks the list `aria-busy`). Focus stays in the box and the highlighted option is named by `aria-activedescendant`; arrows move over enabled items and wrap, Enter chooses, Escape closes. The combobox owns `value`, `inputValue` and `open` as props and reverts unchosen text on blur; `name` adds a hidden input for a form. The palette owns `open` and `query`, clears the query when it closes, and calls `onSelect(item, event)`: a link item follows its `href` unless you call `event.preventDefault()`, as a router does.
 
@@ -1177,7 +1253,7 @@ Series take colors 1 to 6 (`--sd-chart-1` … `--sd-chart-6`) in order, or a
 `tone` (`critical`, `warning`, …) for the one that matters. In mono, lines also
 take a dash each, so five greys stay apart.
 
-Four more charts are plain HTML and CSS, built from squares:
+Five more charts are plain HTML and CSS, built from squares:
 
 | Class | Markup |
 |---|---|
@@ -1185,6 +1261,7 @@ Four more charts are plain HTML and CSS, built from squares:
 | `sd-waffle` | 100 `<i data-s="1–6">` cells, part of a whole; `sd-key` for the legend |
 | `sd-uptime` | `<i data-state="ok\|degraded\|down\|none">` per period |
 | `sd-meter` | `--value`, `--target`, `--warn`, `--crit` (0–100); `data-over` turns it critical |
+| `sd-weighted` | `<i data-state="drafted\|current\|planned\|open" style="--weight: n">` per segment, sized by its share of the weights; a trailing `open` segment is what is left to a goal. React: `WeightedBar` |
 
 ### Timelines: `sd-timeline`
 
@@ -1449,4 +1526,4 @@ request.
 
 ## License
 
-MIT. Source Code Pro and Leon Sans are under the SIL Open Font License 1.1 (`src/fonts/OFL.txt`, `src/fonts/OFL-LeonSans.txt`).
+MIT. Source Code Pro, Leon Sans and Literata are under the SIL Open Font License 1.1 (`src/fonts/OFL.txt`, `src/fonts/OFL-LeonSans.txt`, `src/fonts/OFL-Literata.txt`).

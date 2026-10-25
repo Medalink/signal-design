@@ -116,6 +116,17 @@
       <p class="demo-usage"><code>sd-icon-text</code> + <code>sd-icon</code> · icons size to <code>1.5cap</code> (the 24 grid's 4-unit inset makes the drawn shape span the caps), so they follow the text at any size. Buttons, rows, navigation and the shell use the same rule. In Tailwind: <code>size-[1.5cap]</code> with <code>items-baseline</code>.</p>
     </div>
 
+    <div class="demo-block" id="icon-set-block">
+      <h3 class="sd-label">Icon set</h3>
+      <div class="sd-actions">
+        <button class="sd-btn sd-btn-icon sd-btn-ghost" aria-label="Undo"><svg class="sd-icon" data-icon="undo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M9 5L4.5 9.5 9 14M4.5 9.5H15v8H9"/></svg></button>
+        <button class="sd-btn sd-btn-icon sd-btn-ghost" aria-label="Delete"><svg class="sd-icon" data-icon="delete" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M5 7h14M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg></button>
+        <span class="sd-icon-text"><svg class="sd-icon" data-icon="warning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M12 4l8.5 16h-17zM12 10v4.5M12 17.5v.01"/></svg>Not saved</span>
+      </div>
+      <ul class="demo-icons" id="icon-set" aria-label="Icon set"></ul>
+      <p class="demo-usage"><code>sd-icon</code> with <code>data-icon</code> · line icons, 1.5 stroke, square caps, on the 24 grid with the 4-unit inset · <code>icon(name)</code> from <code>signal-design/js/icons</code> returns the markup, <code>ICONS</code> the paths · React: <code>&lt;Icon name="undo" /&gt;</code></p>
+    </div>
+
     <div class="demo-block">
       <h3 class="sd-label">Markers, badges, chips, pill</h3>
       <div class="sd-cluster" style="--gap: 18px">
@@ -677,6 +688,7 @@ for (const button of preview.querySelectorAll("[data-living-width]")) {
         <button class="sd-btn" data-sd-open="demo-dialog-sm">Small dialog</button>
         <button class="sd-btn" data-sd-open="demo-dialog-lg">Large dialog</button>
         <button class="sd-btn" data-sd-open="demo-sheet-left">Sheet from the left</button>
+        <button class="sd-btn" data-sd-open="demo-sheet-bottom">Sheet from the bottom</button>
         <button class="sd-btn" data-sd-tip="Tooltips show on hover and focus">Hover for tooltip</button>
         <button class="sd-btn" data-sd-tip="Below" data-sd-tip-side="bottom">Tooltip below</button>
       </div>
@@ -720,6 +732,10 @@ for (const button of preview.querySelectorAll("[data-living-width]")) {
         <header class="sd-dialog-head"><span id="demo-sheet-left-h">Filters</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">«</button></header>
         <div class="sd-dialog-body sd-muted">A sheet can come from either side.</div>
       </dialog>
+      <dialog class="sd-dialog sd-sheet sd-sheet-bottom" id="demo-sheet-bottom" aria-labelledby="demo-sheet-bottom-h">
+        <header class="sd-dialog-head"><span id="demo-sheet-bottom-h">Details</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close details">×</button></header>
+        <div class="sd-dialog-body sd-muted">Or from the bottom, as tall as its content up to 85% of the screen (<code>--sheet-max</code>).</div>
+      </dialog>
 
       <dialog class="sd-command" id="demo-command" aria-label="Remind me">
         <p class="sd-command-head">Remind me about <b>Fix the crash when a customer has no address</b></p>
@@ -731,7 +747,7 @@ for (const button of preview.querySelectorAll("[data-living-width]")) {
         </div>
         <p class="sd-command-foot">Esc to cancel</p>
       </dialog>
-      <p class="demo-usage"><code>sd-dialog</code> + <code>-head|-body|-foot</code> · <code>sd-dialog-sm|lg</code> · <code>sd-sheet</code> + <code>-left</code> · <code>sd-command</code> · <code>data-sd-open</code> / <code>data-sd-close</code> · <code>data-sd-tip</code></p>
+      <p class="demo-usage"><code>sd-dialog</code> + <code>-head|-body|-foot</code> · <code>sd-dialog-sm|lg</code> · <code>sd-sheet</code> + <code>-left|-bottom</code> · <code>sd-command</code> · <code>data-sd-open</code> / <code>data-sd-close</code> · <code>data-sd-tip</code></p>
     </div>
 
     <div class="demo-block">
