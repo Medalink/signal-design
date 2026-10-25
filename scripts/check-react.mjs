@@ -10,6 +10,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createElement as h } from "react";
 import ts from "typescript";
+import { ICON_NAMES } from "../src/js/icons.js";
 import { checkReactEditor } from "./check-react-editor.mjs";
 import { checkReactGaps } from "./check-react-gaps.mjs";
 
@@ -21,7 +22,7 @@ export function checkReactTypes() {
   writeFileSync(
     fixture,
     `import { useState } from "react";
-import { AppShell, Button, Dialog, DialogHeader, Field, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
+import { AppShell, Button, Dialog, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 
 export function Consumer() {
   const [open, setOpen] = useState(false);
@@ -38,7 +39,9 @@ export function Consumer() {
       <WeightedBar label="3 of 6" goal={6} segments={[{ weight: 2, state: "drafted", label: undefined }]} />
       <Tree label="Undefined props" selected={undefined} defaultExpanded={undefined} onMove={undefined} />
       <a className={buttonClass({ variant: "ghost", size: "sm" })} href="/">Link</a>
-      <IconButton label="Settings" size="sm" />
+      <IconButton label="Settings" size="sm"><Icon name="edit" label={undefined} /></IconButton>
+      {/* @ts-expect-error an icon is one of the set */}
+      <Icon name="nope" />
       <Field label="Name" error="Required"><Input value="" onChange={(event) => console.log(event.target.value)} /></Field>
       <Dialog open={open} onOpenChange={setOpen} size="sm" ref={(node: HTMLDialogElement | null) => node?.close()}>
         <DialogHeader closeButton={false}>Title</DialogHeader>
@@ -116,6 +119,7 @@ useToast()("Saved", { tone: "loud" });
       getNewLine: () => "\n",
     }));
     assertOptionalsAcceptUndefined();
+    assertIconNamesMatch();
     return 1;
   } finally {
     rmSync(directory, { recursive: true, force: true });
@@ -134,6 +138,15 @@ function assertOptionalsAcceptUndefined() {
   };
   visit(source);
   assert.deepEqual(strict, [], `optional props in src/react/index.d.ts need \`| undefined\` (line: name)`);
+}
+
+/** `IconName` in src/js/icons.d.ts lists exactly the icons in src/js/icons.js. */
+function assertIconNamesMatch() {
+  const file = join(rootPath, "src/js/icons.d.ts");
+  const source = ts.createSourceFile(file, readFileSync(file, "utf8"), ts.ScriptTarget.ES2022, true, ts.ScriptKind.TS);
+  const alias = source.statements.find((node) => ts.isTypeAliasDeclaration(node) && node.name.text === "IconName");
+  const listed = alias.type.types.map((node) => node.literal.text);
+  assert.deepEqual(listed, ICON_NAMES, "IconName in src/js/icons.d.ts lists the keys of ICONS in src/js/icons.js, in order");
 }
 
 export async function checkReactSsr() {
@@ -165,6 +178,8 @@ export async function checkReactSsr() {
           h(sd.Switch, { label: "s" }),
           h(sd.Badge, { tone: "success" }, "ok"),
           h(sd.Avatar, { name: "Ada Lovelace" }),
+          h(sd.Icon, { name: "undo" }),
+          h(sd.Icon, { name: "warning", label: "Not saved", className: "extra" }),
           h(sd.GutterBlock, { as: "p", marker: { label: "2 comments", count: 2, active: true } }, "b"),
           h(sd.GutterMarker, { label: "1 suggestion", kind: "suggestion", resolved: true }, "s"),
           h(sd.WeightedBar, { label: "3 of 6 words", goal: 6, segments: [{ weight: 2, state: "drafted", label: "One" }, { weight: 1, state: "current" }] }),
@@ -222,6 +237,8 @@ export async function checkReactSsr() {
     ['aria-invalid="true"', "the invalid control"],
     ['role="switch"', "the switch"],
     ["99+", "the capped count"],
+    ['data-icon="undo"', "an icon"],
+    ['role="img" aria-label="Not saved"', "a labeled icon"],
   ]) assert.ok(html.includes(needle), `server output is missing ${what}`);
   assert.ok(!html.includes("sd-tooltip"), "a closed tooltip rendered on the server");
   assert.ok(!html.includes("sd-hovercard"), "an open hover card rendered on the server");

@@ -4,6 +4,8 @@
  * as they land. Called from checkReact in check-react.mjs:
  *   checkReactGaps(page, base) -> { errors, passed }
  */
+import { ICON_NAMES } from "../src/js/icons.js";
+
 export async function checkReactGaps(page, base) {
   const errors = [];
   let passed = 0;
@@ -81,6 +83,25 @@ export async function checkReactGaps(page, base) {
   await checks.nth(1).focus();
   await page.keyboard.press("Enter");
   expect(await checks.nth(1).getAttribute("aria-current") === "true", "a match is a button: Enter makes it current");
+
+  /* ---- Icons ---- */
+  const icons = page.locator("#react-editor-icons");
+  const set = icons.locator(".demo-icons li");
+  expect(await set.count() === ICON_NAMES.length && await set.locator("svg.sd-icon[aria-hidden='true']").count() === ICON_NAMES.length, `the icon grid draws every icon, decorative, got ${await set.count()} of ${ICON_NAMES.length}`);
+  const iconBar = icons.getByRole("toolbar", { name: "Icon toolbar", exact: true });
+  const named = await iconBar.getByRole("button").evaluateAll((buttons) => buttons.map((b) => b.getAttribute("aria-label")));
+  expect(named.join() === "Undo,Redo,Bold,Italic,Underline,Strikethrough,Comment,Assist,More formatting", `icon-only toolbar buttons are named by their label, got ${named.join()}`);
+  expect(await iconBar.locator("svg.sd-icon").count() === named.length && await iconBar.locator("svg.sd-icon:not([aria-hidden='true'])").count() === 0, "an icon in a named button is decorative");
+  const glyph = await iconBar.getByRole("button", { name: "Bold", exact: true }).locator("svg").evaluate((svg) => {
+    const box = svg.getBoundingClientRect();
+    const s = getComputedStyle(svg.querySelector("path"));
+    return { width: box.width, height: box.height, cap: s.strokeLinecap, join: s.strokeLinejoin, fill: s.fill, stroke: s.stroke !== "none" };
+  });
+  expect(glyph.width > 12 && glyph.width === glyph.height && glyph.cap === "square" && glyph.join === "miter" && glyph.fill === "none" && glyph.stroke, `an icon is a square, outlined with square caps, got ${JSON.stringify(glyph)}`);
+  await iconBar.getByRole("button", { name: "Italic", exact: true }).focus();
+  await page.keyboard.press("Space");
+  expect(await iconBar.getByRole("button", { name: "Italic", exact: true }).getAttribute("aria-pressed") === "false", "an icon button still toggles");
+  expect(await icons.locator(".sd-icon-text").first().evaluate((el) => el.textContent.trim() === "Not saved" && el.querySelector("svg").getAttribute("aria-hidden") === "true"), "an icon beside text is decorative");
 
   /* ---- Gutter markers ---- */
   const gutter = page.locator("#react-editor-gutter");

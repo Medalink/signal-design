@@ -3,6 +3,7 @@
  * renders, so every native attribute and `ref` (a plain prop in React 19) is
  * accepted and passed through.
  */
+import type { IconName } from "../js/icons.js";
 import type { ComponentProps, ElementType, HTMLAttributes, MouseEvent, MouseEventHandler, ReactElement, ReactNode, Ref, SyntheticEvent } from "react";
 
 export type Tone = "accent" | "success" | "danger" | "warning" | "pending" | "extra" | "neutral";
@@ -40,6 +41,19 @@ export interface IconButtonProps extends Omit<ComponentProps<"button">, "aria-la
   tone?: Tone | undefined;
 }
 export function IconButton(props: IconButtonProps): ReactElement;
+
+/* ---- Icons ------------------------------------------------------------- */
+
+export type { IconName };
+
+export interface IconProps extends Omit<ComponentProps<"svg">, "children"> {
+  /** Which icon of the set. */
+  name: IconName;
+  /** Makes the icon an image with this name. Without it the icon is decorative (`aria-hidden`). */
+  label?: string | undefined;
+}
+/** An icon of the set as an inline SVG sized to the text beside it. Pass `label` only when no text or control names it. */
+export function Icon(props: IconProps): ReactElement;
 
 /* ---- Fields and controls ----------------------------------------------- */
 

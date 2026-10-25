@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Demo } from "./react-demo.jsx";
-import { GutterBlock, Manuscript, WeightedBar } from "../src/react/index.js";
+import { ICON_NAMES } from "../src/js/icons.js";
+import { GutterBlock, Icon, IconButton, Manuscript, Toolbar, ToolbarButton, ToolbarGroup, ToolbarMore, ToolbarSeparator, WeightedBar } from "../src/react/index.js";
 
 const WORDS = [
   { weight: 12000, state: "drafted", label: "Part one · 12,000 words" },
@@ -8,6 +9,80 @@ const WORDS = [
   { weight: 11200, state: "current", label: "Chapter 4 · 11,200 words so far" },
   { weight: 18800, state: "planned", label: "Part four · 18,800 words planned" },
 ];
+
+function Icons() {
+  const [marks, setMarks] = useState({ bold: false, italic: true, underline: false });
+  const toggle = (name) => (pressed) => setMarks((current) => ({ ...current, [name]: pressed }));
+  return (
+    <Demo
+      id="react-editor-icons"
+      title="Icons"
+      code={`<Toolbar label="Formatting">
+  <ToolbarButton label="Undo"><Icon name="undo" /></ToolbarButton>
+  <ToolbarButton label="Bold" pressed={bold} onPressedChange={setBold}><Icon name="bold" /></ToolbarButton>
+  <ToolbarMore icon={<Icon name="more" />}>…</ToolbarMore>
+</Toolbar>
+<IconButton label="Delete" size="sm"><Icon name="delete" /></IconButton>
+<span className="sd-icon-text"><Icon name="warning" /> Not saved</span>`}
+    >
+      <Toolbar label="Icon toolbar">
+        <ToolbarGroup label="History">
+          <ToolbarButton label="Undo">
+            <Icon name="undo" />
+          </ToolbarButton>
+          <ToolbarButton label="Redo">
+            <Icon name="redo" />
+          </ToolbarButton>
+        </ToolbarGroup>
+        <ToolbarSeparator />
+        <ToolbarGroup label="Text">
+          <ToolbarButton label="Bold" pressed={marks.bold} onPressedChange={toggle("bold")}>
+            <Icon name="bold" />
+          </ToolbarButton>
+          <ToolbarButton label="Italic" pressed={marks.italic} onPressedChange={toggle("italic")}>
+            <Icon name="italic" />
+          </ToolbarButton>
+          <ToolbarButton label="Underline" pressed={marks.underline} onPressedChange={toggle("underline")}>
+            <Icon name="underline" />
+          </ToolbarButton>
+          <ToolbarButton label="Strikethrough">
+            <Icon name="strike" />
+          </ToolbarButton>
+        </ToolbarGroup>
+        <ToolbarSeparator />
+        <ToolbarButton label="Comment">
+          <Icon name="comment" />
+        </ToolbarButton>
+        <ToolbarButton label="Assist">
+          <Icon name="sparkle" />
+        </ToolbarButton>
+        <ToolbarMore icon={<Icon name="more" />} label="More formatting" />
+      </Toolbar>
+      <div className="flex flex-wrap items-center gap-4">
+        <IconButton label="Rename" size="sm" variant="ghost">
+          <Icon name="edit" />
+        </IconButton>
+        <IconButton label="Delete" size="sm" variant="ghost">
+          <Icon name="delete" />
+        </IconButton>
+        <span className="sd-icon-text text-sm">
+          <Icon name="warning" /> Not saved
+        </span>
+        <span className="sd-icon-text">
+          <Icon name="sync" /> Syncing
+        </span>
+      </div>
+      <ul className="demo-icons" aria-label="Icon set">
+        {ICON_NAMES.map((name) => (
+          <li key={name}>
+            <Icon name={name} />
+            <code>{name}</code>
+          </li>
+        ))}
+      </ul>
+    </Demo>
+  );
+}
 
 function Weighted() {
   const [goal, setGoal] = useState(80000);
@@ -80,6 +155,7 @@ function Gutter() {
 export function EditorGaps() {
   return (
     <>
+      <Icons />
       <Weighted />
       <Gutter />
     </>

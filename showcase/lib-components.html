@@ -116,6 +116,17 @@
       <p class="demo-usage"><code>sd-icon-text</code> + <code>sd-icon</code> · icons size to <code>1.5cap</code> (the 24 grid's 4-unit inset makes the drawn shape span the caps), so they follow the text at any size. Buttons, rows, navigation and the shell use the same rule. In Tailwind: <code>size-[1.5cap]</code> with <code>items-baseline</code>.</p>
     </div>
 
+    <div class="demo-block" id="icon-set-block">
+      <h3 class="sd-label">Icon set</h3>
+      <div class="sd-actions">
+        <button class="sd-btn sd-btn-icon sd-btn-ghost" aria-label="Undo"><svg class="sd-icon" data-icon="undo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M9 5L4.5 9.5 9 14M4.5 9.5H15v8H9"/></svg></button>
+        <button class="sd-btn sd-btn-icon sd-btn-ghost" aria-label="Delete"><svg class="sd-icon" data-icon="delete" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M5 7h14M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg></button>
+        <span class="sd-icon-text"><svg class="sd-icon" data-icon="warning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M12 4l8.5 16h-17zM12 10v4.5M12 17.5v.01"/></svg>Not saved</span>
+      </div>
+      <ul class="demo-icons" id="icon-set" aria-label="Icon set"></ul>
+      <p class="demo-usage"><code>sd-icon</code> with <code>data-icon</code> · line icons, 1.5 stroke, square caps, on the 24 grid with the 4-unit inset · <code>icon(name)</code> from <code>signal-design/js/icons</code> returns the markup, <code>ICONS</code> the paths · React: <code>&lt;Icon name="undo" /&gt;</code></p>
+    </div>
+
     <div class="demo-block">
       <h3 class="sd-label">Markers, badges, chips, pill</h3>
       <div class="sd-cluster" style="--gap: 18px">

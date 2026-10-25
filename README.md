@@ -269,6 +269,34 @@ keeps an `em` fallback. Tailwind has no `cap` utility, but arbitrary values
 take any CSS unit: `size-[1.5cap]` on the icon and `items-baseline` on the
 label do the same. Icon-only controls still need an `aria-label`.
 
+### The icon set
+
+Signal draws a set of line icons for what an editor and its app need: history
+(`undo`, `redo`), text (`bold`, `italic`, `underline`, `strike`, `list-bullet`,
+`list-number`, `align-left`, `align-center`, `align-right`, `align-justify`),
+margin and review (`comment`, `sparkle`, `history`, `bookmark`, `view`, `link`,
+`unlink`), things (`person`, `account`, `object`, `place`, `write`, `edit`,
+`delete`, `copy`, `external`, `publish`, `sync`, `warning`, `check`) and
+interface (`close`, `plus`, `minus`, `search`, `menu`, `more`, the four
+`chevron-*`, `chevrons-left`, `chevrons-right`, `expand`, `contract`). They
+follow the rest of the kit: straight lines and right angles, a 1.5 stroke with
+square caps and mitered corners, `currentColor`, drawn inside the 4-unit inset
+of the 24 grid so they size like any `sd-icon`. The component page lists them
+all with their names.
+
+```html
+<button class="sd-btn sd-btn-icon sd-btn-ghost" aria-label="Undo">
+  <svg class="sd-icon" data-icon="undo" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+       stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M9 5L4.5 9.5 9 14M4.5 9.5H15v8H9"/></svg>
+</button>
+```
+
+`signal-design/js/icons` exports `ICONS` (each icon's path `d`), `ICON_NAMES` and
+`icon(name, label?)`, which returns that markup for `innerHTML`; a `label`
+makes it an image with that name, and an unknown name throws. In React,
+`<Icon name="undo" />` renders the same SVG, decorative unless it has a
+`label`, and `name` is typed as `IconName`.
+
 ## Signal App Shell
 
 A full app frame: an optional title bar, a 96px icon rail, a 288px sidebar

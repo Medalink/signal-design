@@ -7,6 +7,7 @@
  *   import { Button, Dialog, DialogHeader, DialogBody } from "signal-design/react";
  */
 export { Button, IconButton, buttonClass } from "./button.js";
+export { Icon } from "./icons.js";
 export { Field, Input, Textarea, Select, Checkbox, Switch } from "./form.js";
 export {
   Badge,
