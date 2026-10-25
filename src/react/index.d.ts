@@ -591,6 +591,49 @@ export interface HoverCardProps {
 /** A preview beside its trigger on hover or focus; Escape closes it. */
 export function HoverCard(props: HoverCardProps): ReactElement;
 
+/** A rectangle in viewport coordinates, such as a `DOMRect` or what ProseMirror's `coordsAtPos` returns. */
+export interface HoverCardRect {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+}
+/** What a card sits beside: an element, anything with `getBoundingClientRect`, a rect, or a function that returns a rect (measured again when the page scrolls or resizes). */
+export type HoverCardAnchor = HoverCardRect | { getBoundingClientRect(): HoverCardRect } | (() => HoverCardRect);
+export interface HoverCardShowOptions {
+  /** The card's accessible name. Default "Preview". */
+  label?: string | undefined;
+  /** Default "bottom". The card flips to the other side at the viewport edge. */
+  side?: "top" | "bottom" | "left" | "right" | undefined;
+  /** Default "start". */
+  align?: "start" | "center" | "end" | undefined;
+}
+export interface HoverCardHandle {
+  /** Opens the card at once beside `anchor`, or moves an open one: a second call replaces what it shows. */
+  show(anchor: HoverCardAnchor, content: ReactNode, options?: HoverCardShowOptions): void;
+  /** Closes the card after `closeDelay`, unless the pointer moves onto it first; `immediate` closes it now. */
+  hide(options?: { immediate?: boolean | undefined }): void;
+  /** The card's id, for the trigger's `aria-describedby` while it is open. */
+  readonly id: string;
+  readonly open: boolean;
+}
+export interface HoverCardHostProps {
+  /** Milliseconds after `hide()` or after the pointer leaves the card before it closes. Default 150. */
+  closeDelay?: number | undefined;
+  /** On the card. */
+  className?: string | undefined;
+  /** Called when the card opens and when it closes, whoever closed it: `hide`, Escape, or the pointer leaving the card. */
+  onOpenChange?: ((open: boolean) => void) | undefined;
+  /** The handle: `show(anchor, content)` and `hide()`. */
+  ref?: Ref<HoverCardHandle> | undefined;
+}
+/**
+ * The hover card for a trigger React does not render, such as a ProseMirror decoration. Render it once and keep
+ * a ref; the code that owns the trigger decides when to call `show` and `hide`. Like `HoverCard` it exists only
+ * while open, closes on Escape, and lets the pointer move onto it.
+ */
+export function HoverCardHost(props: HoverCardHostProps): ReactElement | null;
+
 /* ---- Document tree ----------------------------------------------------- */
 
 export interface TreeMove {

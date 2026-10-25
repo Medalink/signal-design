@@ -21,12 +21,16 @@ export function checkReactTypes() {
   const fixture = join(directory, "consumer.tsx");
   writeFileSync(
     fixture,
-    `import { useState } from "react";
-import { AppShell, Button, Dialog, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
+    `import { useRef, useState } from "react";
+import { AppShell, Button, Dialog, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 
 export function Consumer() {
   const [open, setOpen] = useState(false);
   const toast = useToast();
+  const hostRef = useRef<HoverCardHandle>(null);
+  hostRef.current?.show({ left: 1, top: 2, right: 3, bottom: 4 }, "Card", { side: "top", label: undefined });
+  hostRef.current?.show(() => document.body.getBoundingClientRect(), <p>Card</p>);
+  hostRef.current?.hide({ immediate: true });
   const props: ButtonProps = { variant: "primary", tone: "danger", busy: true, onClick: (event) => event.currentTarget.blur() };
   toast("Saved", { tone: "success", action: { label: "Undo", onClick: () => {} } });
   const dismiss: () => void = toast("Quick", { timeout: 300 });
@@ -42,6 +46,7 @@ export function Consumer() {
       <IconButton label="Settings" size="sm"><Icon name="edit" label={undefined} /></IconButton>
       {/* @ts-expect-error an icon is one of the set */}
       <Icon name="nope" />
+      <HoverCardHost ref={hostRef} closeDelay={undefined} onOpenChange={(open: boolean) => console.log(open)} />
       <ResizablePanel edge="top" size={undefined} minSize={undefined} onSizeChange={(size: number) => console.log(size)}>Dock</ResizablePanel>
       {/* @ts-expect-error an edge is start, end, top or bottom */}
       <ResizablePanel edge="left" />
@@ -182,6 +187,7 @@ export async function checkReactSsr() {
           h(sd.Badge, { tone: "success" }, "ok"),
           h(sd.Avatar, { name: "Ada Lovelace" }),
           h(sd.Icon, { name: "undo" }),
+          h(sd.HoverCardHost, { closeDelay: 100 }),
           h(sd.ResizablePanel, { edge: "start", size: 300, minSize: 200, label: "Resize inspector" }, "panel"),
           h(sd.Icon, { name: "warning", label: "Not saved", className: "extra" }),
           h(sd.GutterBlock, { as: "p", marker: { label: "2 comments", count: 2, active: true } }, "b"),

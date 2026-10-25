@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Demo } from "./react-demo.jsx";
 import { ICON_NAMES } from "../src/js/icons.js";
-import { GutterBlock, Icon, IconButton, Manuscript, ResizablePanel, Toolbar, ToolbarButton, ToolbarGroup, ToolbarMore, ToolbarSeparator, Tree, TreeItem, WeightedBar } from "../src/react/index.js";
+import { GutterBlock, HoverCardHost, Icon, IconButton, Manuscript, ResizablePanel, Toolbar, ToolbarButton, ToolbarGroup, ToolbarMore, ToolbarSeparator, Tree, TreeItem, WeightedBar } from "../src/react/index.js";
 
 const WORDS = [
   { weight: 12000, state: "drafted", label: "Part one · 12,000 words" },
@@ -185,6 +185,107 @@ function Resizable() {
   );
 }
 
+const ENTITIES = {
+  lisbon: { kind: "Place", name: "Lisbon", text: "Capital of Portugal, first named in chapter 2." },
+  ines: { kind: "Person", name: "Ines Duarte", text: "Translator. Appears in chapters 3 and 5." },
+};
+
+function Imperative() {
+  const host = useRef(null);
+  const prose = useRef(null);
+  const opened = useRef(null);
+  const [state, setState] = useState("closed");
+
+  // The prose is plain DOM that React did not render, as a ProseMirror view's is.
+  useEffect(() => {
+    const root = prose.current;
+    root.innerHTML = '<p>Rain over <span class="sd-mark" data-mark="entity" data-entity="lisbon" tabindex="0">Lisbon</span>, and <span class="sd-mark" data-mark="entity" data-entity="ines" tabindex="0">Ines</span> reading by the window. <span data-range>A passage the editor points at by its position.</span></p>';
+    let timer = 0;
+    const close = () => {
+      clearTimeout(timer);
+      host.current.hide();
+    };
+    const open = (target, delay) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        const entity = ENTITIES[target.dataset.entity];
+        opened.current?.removeAttribute("aria-describedby");
+        opened.current = target;
+        target.setAttribute("aria-describedby", host.current.id);
+        host.current.show(
+          target,
+          <>
+            <p className="sd-hovercard-title">{entity.name}</p>
+            <p className="sd-hovercard-meta">{entity.kind}</p>
+            <p>{entity.text}</p>
+          </>,
+          { label: entity.kind },
+        );
+        setState(`open: ${target.dataset.entity}`);
+      }, delay);
+    };
+    const listeners = [
+      ["pointerover", (event) => event.target.closest("[data-entity]") && open(event.target.closest("[data-entity]"), 300)],
+      ["pointerout", (event) => event.target.closest("[data-entity]") && close()],
+      ["focusin", (event) => event.target.closest("[data-entity]") && open(event.target.closest("[data-entity]"), 0)],
+      ["focusout", (event) => event.target.closest("[data-entity]") && close()],
+    ];
+    for (const [type, listener] of listeners) root.addEventListener(type, listener);
+    return () => {
+      clearTimeout(timer);
+      for (const [type, listener] of listeners) root.removeEventListener(type, listener);
+    };
+  }, []);
+
+  const preview = () => {
+    const text = prose.current.querySelector("[data-range]").firstChild;
+    const range = document.createRange();
+    range.setStart(text, 2);
+    range.setEnd(text, 9);
+    host.current.show(() => range.getBoundingClientRect(), <p>Placed at a text range, which is how a document position becomes a rect.</p>, { label: "Range preview", side: "top", align: "center" });
+    setState("open: range");
+  };
+
+  return (
+    <Demo
+      id="react-editor-hostcard"
+      title="Hover card for a trigger React does not render"
+      code={`const host = useRef(null);
+<HoverCardHost ref={host} onOpenChange={(open) => !open && clearHover()} />
+
+// Anywhere: a ProseMirror plugin, a DOM listener.
+host.current.show(span, <EntityCard entity={entity} />, { label: "Place" });
+span.setAttribute("aria-describedby", host.current.id);
+host.current.show(() => view.coordsAtPos(pos), <Suggestion />, { side: "top" });
+host.current.hide();`}
+    >
+      <div className="grid max-w-[40rem] gap-3">
+        <div ref={prose} className="sd-manuscript-page" data-face="reading" style={{ minHeight: 0, padding: "16px 20px" }} />
+        <div className="flex flex-wrap items-center gap-3">
+          <button className="sd-btn sd-btn-sm" type="button" onClick={preview}>
+            Preview at a range
+          </button>
+          <button className="sd-btn sd-btn-sm" type="button" onClick={() => host.current.hide()}>
+            Hide
+          </button>
+          <p className="sd-subtle text-sm" data-host-state>
+            {state}
+          </p>
+        </div>
+        <HoverCardHost
+          ref={host}
+          onOpenChange={(open) => {
+            if (open) return;
+            opened.current?.removeAttribute("aria-describedby");
+            opened.current = null;
+            setState("closed");
+          }}
+        />
+      </div>
+    </Demo>
+  );
+}
+
 function Weighted() {
   const [goal, setGoal] = useState(80000);
   return (
@@ -259,6 +360,7 @@ export function EditorGaps() {
       <Icons />
       <TreeActions />
       <Resizable />
+      <Imperative />
       <Weighted />
       <Gutter />
     </>

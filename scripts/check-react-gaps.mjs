@@ -170,7 +170,7 @@ export async function checkReactGaps(page, base) {
   expect(await rzDemo.locator("#resizable-binder").evaluate((el) => "resizing" in el.dataset) && await rzHandle("binder").evaluate((el) => document.activeElement === el), "a drag marks the panel and focuses the handle");
   await page.mouse.up();
   expect(await rzIs("binder", 260) && await rzState() === "binder 260 · inspector 240 · dock 96", `dragging an end handle by 60px grows the panel by 60, got ${await rzSize("binder")}, ${await rzState()}`);
-  expect(await rzDemo.locator("#resizable-binder").evaluate((el) => !("resizing" in el.dataset)), "releasing the pointer ends the drag");
+  expect(await until(() => !("resizing" in document.getElementById("resizable-binder").dataset), null), "releasing the pointer ends the drag");
   await rzDrag("binder", 500);
   expect(await rzIs("binder", 360), "a drag stops at maxSize");
   await rzDrag("binder", -500);
@@ -223,6 +223,61 @@ export async function checkReactGaps(page, base) {
   await page.keyboard.press("Shift+ArrowRight");
   await page.keyboard.press("Shift+ArrowRight");
   expect(await rzIs("binder", 288), "the panel can be put back");
+
+  /* ---- Hover card host ---- */
+  const hostDemo = page.locator("#react-editor-hostcard");
+  const hostCards = page.locator(".sd-hovercard");
+  const hostTrigger = (key) => hostDemo.locator(`[data-entity="${key}"]`);
+  const hostIs = (text) => until((text) => document.querySelector("#react-editor-hostcard [data-host-state]").textContent === text, text);
+  const hostCount = (count) => until((count) => document.querySelectorAll(".sd-hovercard").length === count, count, 3000);
+  await hostDemo.scrollIntoViewIfNeeded();
+  expect(await hostCards.count() === 0, "a host that was not asked to show renders no card");
+  await hostTrigger("lisbon").hover();
+  expect(await hostCount(1), "hovering a trigger React did not render shows the card after the owner's delay");
+  const placed = await page.evaluate(() => {
+    const card = document.querySelector(".sd-hovercard");
+    const trigger = document.querySelector('#react-editor-hostcard [data-entity="lisbon"]');
+    const anchor = trigger.getBoundingClientRect();
+    const box = card.getBoundingClientRect();
+    return { gap: box.top - anchor.bottom, shift: box.left - anchor.left, role: card.getAttribute("role"), label: card.getAttribute("aria-label"), described: card.id !== "" && trigger.getAttribute("aria-describedby") === card.id, text: card.textContent };
+  });
+  expect(placed.gap >= 0 && placed.gap < 16 && Math.abs(placed.shift) <= 2, `the card sits just below its anchor, aligned to its start: ${JSON.stringify(placed)}`);
+  expect(placed.role === "tooltip" && placed.label === "Place" && placed.described && /Capital of Portugal/.test(placed.text), `the card has its label and content, and describes the trigger: ${JSON.stringify(placed)}`);
+  const onCard = await hostCards.boundingBox();
+  await page.mouse.move(onCard.x + onCard.width / 2, onCard.y + onCard.height / 2, { steps: 5 });
+  await page.waitForTimeout(450);
+  expect(await hostCards.count() === 1, "moving the pointer onto the card keeps it open");
+  await page.mouse.move(4, 4, { steps: 3 });
+  expect(await hostCount(0) && await hostIs("closed") && await hostTrigger("lisbon").getAttribute("aria-describedby") === null, "leaving the card closes it, and onOpenChange cleans up the trigger");
+  await hostTrigger("ines").focus();
+  expect(await until(() => document.querySelectorAll(".sd-hovercard").length === 1 && /Translator/.test(document.querySelector(".sd-hovercard").textContent), null), "focus on a trigger opens its card at once");
+  await hostTrigger("lisbon").focus();
+  expect(await until(() => document.querySelectorAll(".sd-hovercard").length === 1 && /Capital of Portugal/.test(document.querySelector(".sd-hovercard").textContent), null) && await hostIs("open: lisbon"), "showing again replaces the card instead of stacking another");
+  await page.keyboard.press("Escape");
+  expect(await hostCount(0) && await hostIs("closed"), "Escape closes it at once");
+  await hostDemo.getByRole("button", { name: "Preview at a range", exact: true }).click();
+  expect(await hostCount(1) && await hostDemo.getByRole("button", { name: "Hide", exact: true }).isVisible(), "show() takes a function that returns a rect");
+  await page.evaluate(() => {
+    window.rangeAnchor = () => {
+      const text = document.querySelector("#react-editor-hostcard [data-range]").firstChild;
+      const range = document.createRange();
+      range.setStart(text, 2);
+      range.setEnd(text, 9);
+      const anchor = range.getBoundingClientRect();
+      const card = document.querySelector(".sd-hovercard").getBoundingClientRect();
+      return { gap: Math.round(anchor.top - card.bottom), center: Math.round(card.left + card.width / 2 - (anchor.left + anchor.width / 2)), top: Math.round(anchor.top) };
+    };
+  });
+  const above = await page.evaluate(() => ({ ...window.rangeAnchor(), label: document.querySelector(".sd-hovercard").getAttribute("aria-label") }));
+  expect(above.gap >= 0 && above.gap < 16 && Math.abs(above.center) <= 2 && above.label === "Range preview", `side and align place the card above the middle of the range: ${JSON.stringify(above)}`);
+  await page.evaluate(() => {
+    let scroller = document.querySelector("#react-editor-hostcard");
+    while (scroller && !(scroller.scrollHeight > scroller.clientHeight && /auto|scroll/.test(getComputedStyle(scroller).overflowY))) scroller = scroller.parentElement;
+    (scroller ?? document.scrollingElement).scrollBy(0, 40);
+  });
+  expect(await until((was) => { const now = window.rangeAnchor(); return now.top !== was.top && now.gap === was.gap && now.center === was.center; }, above), `the card follows its anchor when the page scrolls, was ${JSON.stringify(above)}, is ${JSON.stringify(await page.evaluate(() => window.rangeAnchor()))}`);
+  await hostDemo.getByRole("button", { name: "Hide", exact: true }).click();
+  expect(await hostCount(0), "hide() closes the card after its delay");
 
   /* ---- Gutter markers ---- */
   const gutter = page.locator("#react-editor-gutter");
