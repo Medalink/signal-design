@@ -464,8 +464,8 @@ export function ToolbarMore(props: ToolbarMoreProps): ReactElement;
 export interface ManuscriptProps extends ComponentProps<"article"> {
   /** The page width, any CSS length. Default 40rem, about 66 characters. */
   measure?: string;
-  /** "mono" sets the page in Source Code Pro. */
-  face?: "mono";
+  /** "reading" sets the page in the reading serif (Literata); "mono" in Source Code Pro. */
+  face?: "reading" | "mono";
   /** On the scroller around the page. `className` and `ref` reach the page. */
   wrapClassName?: string;
 }

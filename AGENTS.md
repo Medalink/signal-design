@@ -62,10 +62,13 @@ They need no `init()`; do not call it on those pages.
 4. **Tokens, not values.** Colors come from `--sd-*` variables or the Tailwind
    utilities built on them (`bg-canvas`, `bg-surface`, `text-fg-muted`, `border-line`).
    Never hard-code a hex value; themes would break.
-5. **Two faces.** One text face in regular and medium, Source Code Pro (bundled) for code.
+5. **Two faces, plus one to read.** One text face in regular and medium, Source Code Pro (bundled) for code.
    The text face is SF Pro (the system UI font; Segoe UI on Windows) unless the
    font picker swaps it (see Fonts). Set families through `font-sans` / `font-mono`
    or `var(--sd-font-sans)` / `var(--sd-font-mono)`, never by name. No other weights.
+   The one exception is prose to be read at length (a manuscript, an article):
+   `font-reading` / `var(--sd-font-reading)`, Literata, with real italics and a
+   semibold for strong text. Interface text never uses it.
 6. **Motion on state change only.** 120–200ms transitions. Nothing loops for decoration.
    Live activity may loop while it lasts (the `sd-typing` squares while someone types).
 7. **Style state, not classes.** The JS writes ARIA and `data-*` (`aria-pressed`,
@@ -94,6 +97,22 @@ loads the face, then switches and remembers it; `<button data-sd-font="leon-sans
 does the same on click. Any element can carry `data-font`. Only the text face
 changes: code, charts and the rain stay in `--sd-font-mono`. A framework that
 renders the choice sets `data-font` itself.
+
+`<Manuscript face="reading">` (or `class="sd-reading"`, or `font-reading`) sets
+long-form prose in Literata, which `data-font` does not change.
+
+**Ship only the faces you use.** The default stylesheet declares all of them
+(Source Code Pro 6 files, Leon Sans, Literata 4). To ship fewer, import the core
+and one file per face:
+
+```css
+@import "tailwindcss";
+@import "signal-design/css/core";            /* no @font-face */
+@import "signal-design/css/fonts/literata";  /* also: source-code-pro, leon-sans */
+```
+
+Without Tailwind, link `dist/signal-core.css` and `dist/font-<family>.css`.
+A face you leave out falls back to the system stack.
 
 ## Building pages
 

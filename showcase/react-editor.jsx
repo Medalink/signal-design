@@ -26,7 +26,7 @@ function EditorChrome() {
   <ToolbarButton pressed={block === "h1"} onPressedChange={() => setBlock("h1")}>Heading</ToolbarButton>
   <ToolbarMore><MenuItem>Clear formatting</MenuItem></ToolbarMore>
 </Toolbar>
-<Manuscript measure="38rem"><h1>Chapter one</h1><p>…</p></Manuscript>
+<Manuscript measure="38rem" face="reading"><h1>Chapter one</h1><p>…</p></Manuscript>
 <footer className="sd-statusbar">
   <StatusSegment>1,284 words</StatusSegment>
   <StatusSegment pressed={focus} onClick={toggleFocus}>Focus</StatusSegment>
@@ -73,10 +73,10 @@ function EditorChrome() {
             <MenuItem>Insert footnote</MenuItem>
           </ToolbarMore>
         </Toolbar>
-        <Manuscript measure="38rem" tabIndex={0} aria-label="Chapter one">
+        <Manuscript measure="38rem" face="reading" tabIndex={0} aria-label="Chapter one">
           <h1>Chapter one</h1>
           <p>The harbour woke before the town did. Boats knocked against the quay in the half dark, and somewhere above the roofs a gull tried the same two notes again.</p>
-          <p>She had written the first line forty times and kept none of them. This one stayed because it was plain: nothing in it asked to be admired.</p>
+          <p>She had written the first line forty times and kept none of them. This one stayed because it was <em>plain</em>: nothing in it asked to be <strong>admired</strong>.</p>
           <blockquote>Every draft is a letter to someone who has not arrived yet.</blockquote>
           <h2>The long way round</h2>
           <p>By noon the fog had lifted from the water and left the far shore standing there as if it had been moved in the night.</p>

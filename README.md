@@ -3,7 +3,7 @@
 A flat, square, mono design library for Tailwind CSS v4. It works in web apps,
 Tauri apps and plain HTML.
 
-- **Two faces, two weights.** SF Pro (system UI font, Segoe UI on Windows) in regular and medium for text; Source Code Pro (bundled, OFL) for code, charts and numbers. A font picker swaps the text face for Leon Sans or Source Code Pro.
+- **Two faces, two weights, and one to read.** SF Pro (system UI font, Segoe UI on Windows) in regular and medium for text; Source Code Pro (bundled, OFL) for code, charts and numbers. A font picker swaps the text face for Leon Sans or Source Code Pro. Literata (bundled, OFL) is for prose read at length, such as a manuscript, and never for interface text.
 - **Square corners everywhere**, avatars and checkboxes included.
 - **Flat surfaces.** No glass, glow, shadow or gradient.
 - **Color is for important things:** risk, status, success and focus. Everything else, navigation included, is black, white and grey.
@@ -171,11 +171,51 @@ Never name a family in your own CSS. Use the tokens, which follow the picker:
 |---|---|---|
 | `--sd-font-sans` | `font-sans` | The current text face |
 | `--sd-font-mono` | `font-mono` | Source Code Pro, for code, charts and numbers |
+| `--sd-font-reading` | `font-reading` | Literata, for prose read at length; `data-font` does not change it |
 | `--sd-font-system` | | The system UI stack every text face falls back to |
 
 To change a face for the whole app, override the `--sd-font-*` token, not
 Tailwind's `--font-sans` or `--font-mono`. Charts, the rain and the picker read
 the tokens, so they follow it.
+
+### Reading face
+
+Literata is a serif made for reading long text on screen (it was drawn for
+Google Play Books), with true italics for emphasis and titles. It is SIL OFL 1.1,
+and it ships as variable files cut to weights 400 to 600 at the default text
+optical size, 130 KB in four files (regular and italic, Latin and Latin
+Extended; the Latin Extended file is fetched only for a page that uses one of
+its characters). `<Manuscript face="reading">` sets the page
+in it; `class="sd-reading"` or `font-reading` does the same for any prose, with
+a semibold `strong`. It is for text a person reads for minutes, not for labels,
+buttons or tables.
+
+### Ship only the faces you use
+
+`@import "signal-design"` and `dist/signal.css` declare every bundled face: Source
+Code Pro (six files, 202 KB), Leon Sans (115 KB) and Literata (four files, 130 KB).
+A browser fetches a file only when text uses it, but a bundler copies every file
+the CSS names. An app that wants fewer takes the core, which has the tokens, base
+and every `sd-` component but no `@font-face`, and then one file per face:
+
+```css
+@import "tailwindcss";
+@import "signal-design/css/core";
+@import "signal-design/css/fonts/literata";
+@import "signal-design/css/fonts/source-code-pro";
+```
+
+| Face file | Declares |
+|---|---|
+| `css/fonts/source-code-pro` | Source Code Pro (code) and its text-face cut for `data-font="source-code-pro"` |
+| `css/fonts/leon-sans` | Leon Sans, for `data-font="leon-sans"` |
+| `css/fonts/literata` | Literata, for `face="reading"`, `sd-reading` and `font-reading` |
+
+Without Tailwind, link `dist/signal-core.css` and the `dist/font-<family>.css` of
+each face, and keep `dist/fonts/` next to them. A face you leave out falls back
+to the next family in its token: code to the system monospace, the reading face
+to Iowan Old Style, Palatino or Georgia. `setFont("leon-sans")` with its face left
+out switches the attribute and changes nothing visible.
 
 ## Color roles
 
@@ -1047,7 +1087,7 @@ The parts a document editor is built from, in CSS and as React components:
 ```
 
 - `Toolbar` (`sd-toolbar`) is one tab stop; arrows, Home and End move between its buttons, and a disabled button is skipped. `ToolbarButton` is a toggle when it has `pressed`. A row wider than its container scrolls inside itself; `ToolbarMore` is the menu for the actions you fold away yourself, since only you know which they are.
-- `Manuscript` (`sd-manuscript` around `sd-manuscript-page`) is the page: `measure` sets its width (default 40rem, about 66 characters) and it shrinks with its container. `face="mono"` sets it in Source Code Pro. Put your editor's content element inside it; headings, quotes and lists are styled.
+- `Manuscript` (`sd-manuscript` around `sd-manuscript-page`) is the page: `measure` sets its width (default 40rem, about 66 characters) and it shrinks with its container. `face="reading"` sets it in Literata (see Fonts) and `face="mono"` in Source Code Pro. Put your editor's content element inside it; headings, quotes and lists are styled.
 - `StatusSegment` (`sd-statusbar-seg`) is a fact in the status bar: text, a button with `onClick`, a toggle with `pressed`, or a link with `href`; `tone` adds a status dot. In an App Shell the bar is `Statusbar`, which keeps only `.sd-status` on phones; anywhere else use `<footer className="sd-statusbar">`.
 
 - `Mark` (`sd-mark` with `data-mark`) is a span of text something is attached to: `comment`, `insert`, `delete`, `mention` or `entity`. It is a `mark`, `ins` or `del` element by kind, a link with `href`, and a button with `onClick`; `active` is the open comment (`aria-current`) and `resolved` a settled one. Color means something: an insertion is green and a deletion pink, as in `sd-diff`, the open comment is the accent, a mention takes `--who`; comments and entities are grey. Fills and underlines wrap across lines.
@@ -1398,4 +1438,4 @@ request.
 
 ## License
 
-MIT. Source Code Pro and Leon Sans are under the SIL Open Font License 1.1 (`src/fonts/OFL.txt`, `src/fonts/OFL-LeonSans.txt`).
+MIT. Source Code Pro, Leon Sans and Literata are under the SIL Open Font License 1.1 (`src/fonts/OFL.txt`, `src/fonts/OFL-LeonSans.txt`, `src/fonts/OFL-Literata.txt`).
