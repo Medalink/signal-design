@@ -29,6 +29,7 @@ export {
   TableRow,
   TableHeader,
   TableCell,
+  WeightedBar,
 } from "./display.js";
 export { Dialog, Sheet, DialogHeader, DialogBody, DialogFooter, DialogClose } from "./dialog.js";
 export { Popover, PopoverTrigger, PopoverContent, Menu, MenuTrigger, MenuContent, MenuItem, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, MenuLabel, MenuSeparator } from "./popover.js";

@@ -82,6 +82,23 @@ export async function checkReactGaps(page, base) {
   await page.keyboard.press("Enter");
   expect(await checks.nth(1).getAttribute("aria-current") === "true", "a match is a button: Enter makes it current");
 
+  /* ---- Weighted bar ---- */
+  const bar = page.locator("#react-editor-weighted .sd-weighted");
+  const shares = () => bar.evaluate((el) => {
+    const kids = [...el.children];
+    const weights = kids.map((k) => Number(getComputedStyle(k).getPropertyValue("--weight")));
+    const total = weights.reduce((a, b) => a + b, 0);
+    const room = el.getBoundingClientRect().width - (kids.length - 1) * parseFloat(getComputedStyle(el).columnGap);
+    return { states: kids.map((k) => k.dataset.state).join(), off: Math.max(...kids.map((k, i) => Math.abs(k.getBoundingClientRect().width - (room * weights[i]) / total))) };
+  });
+  const before = await shares();
+  expect(before.states === "drafted,drafted,current,planned,open" && before.off <= 1, `with a goal the bar ends in an open segment and sizes by weight, got ${JSON.stringify(before)}`);
+  expect(await bar.getAttribute("role") === "img" && /of 80,000 words/.test(await bar.getAttribute("aria-label")), "the bar is an image named with its numbers");
+  await page.locator("#react-editor-weighted").getByRole("button", { name: /^Goal/ }).click();
+  expect(await until(() => document.querySelector("#react-editor-weighted .sd-weighted").children.length === 4, null), "a goal the segments already reach leaves no open segment");
+  const after = await shares();
+  expect(after.off <= 1, `the segments still size by weight, got ${JSON.stringify(after)}`);
+
   expect(browserErrors.length === 0, `console errors: ${browserErrors.join(" | ")}`);
   return { errors, passed };
 }

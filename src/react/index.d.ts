@@ -158,6 +158,25 @@ export interface TableCellProps extends ComponentProps<"td"> {
 }
 export function TableCell(props: TableCellProps): ReactElement;
 
+export type WeightedBarState = "drafted" | "current" | "planned";
+export interface WeightedBarSegment {
+  /** Its share of the bar. Any positive number, in the same unit as every other weight and the goal. */
+  weight: number;
+  state: WeightedBarState;
+  /** Shown as a tooltip on the segment. */
+  label?: string | undefined;
+  key?: string | undefined;
+}
+export interface WeightedBarProps extends Omit<ComponentProps<"div">, "children" | "role" | "aria-label"> {
+  /** The bar's accessible name. Say the numbers: the segments are not read. */
+  label: string;
+  segments: WeightedBarSegment[];
+  /** In the weights' unit. What the segments leave of it is a trailing open segment; past it there is none. */
+  goal?: number | undefined;
+}
+/** A bar of segments sized by weight toward a goal, such as drafted, current and planned words. */
+export function WeightedBar(props: WeightedBarProps): ReactElement;
+
 /* ---- Dialog and sheet -------------------------------------------------- */
 
 export interface DialogProps extends Omit<ComponentProps<"dialog">, "open"> {

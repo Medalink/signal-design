@@ -127,3 +127,20 @@ export function TableHeader({ sortable, sort, onSort, numeric, className, onClic
 export function TableCell({ numeric, className, ...props }) {
   return h("td", { className: cx(numeric && "sd-num", className), ...props });
 }
+
+/**
+ * A bar of segments sized by weight, toward a goal (drafted, current and
+ * planned work, say). A segment's size is its share of the weights, so the
+ * unit does not matter. With `goal`, whatever is left to reach it is a
+ * trailing open segment; past the goal there is none. `label` is the bar's
+ * accessible name and should say the numbers, since the segments are not read.
+ */
+export function WeightedBar({ label, segments, goal, className, ...props }) {
+  const rest = goal === undefined ? 0 : goal - segments.reduce((sum, segment) => sum + segment.weight, 0);
+  return h(
+    "div",
+    { role: "img", "aria-label": label, className: cx("sd-weighted", className), ...props },
+    segments.map((segment, i) => h("i", { key: segment.key ?? i, "data-state": segment.state, title: segment.label, style: { "--weight": segment.weight } })),
+    rest > 0 && h("i", { "data-state": "open", style: { "--weight": rest } }),
+  );
+}

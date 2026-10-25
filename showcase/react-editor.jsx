@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { mountBar } from "./viewport.js";
 import { cycleTheme, hotkeys } from "../src/js/index.js";
 import { Demo } from "./react-demo.jsx";
+import { EditorGaps } from "./react-editor-gaps.jsx";
 import { Button, Combobox, CommandPalette, Field, HoverCard, Manuscript, Mark, Menu, MenuContent, MenuItem, MenuItemCheckbox, MenuItemRadio, MenuLabel, MenuRadioGroup, MenuTrigger, Radio, RadioGroup, Segment, SegmentedControl, StatusSegment, Tree, TreeItem, Toolbar, ToolbarButton, ToolbarGroup, ToolbarMore, ToolbarSeparator } from "../src/react/index.js";
 
 mountBar();
@@ -414,6 +415,7 @@ function App() {
       <DocumentTree />
       <Choices />
       <Pickers />
+      <EditorGaps />
     </>
   );
 }

@@ -1170,7 +1170,7 @@ Series take colors 1 to 6 (`--sd-chart-1` … `--sd-chart-6`) in order, or a
 `tone` (`critical`, `warning`, …) for the one that matters. In mono, lines also
 take a dash each, so five greys stay apart.
 
-Four more charts are plain HTML and CSS, built from squares:
+Five more charts are plain HTML and CSS, built from squares:
 
 | Class | Markup |
 |---|---|
@@ -1178,6 +1178,7 @@ Four more charts are plain HTML and CSS, built from squares:
 | `sd-waffle` | 100 `<i data-s="1–6">` cells, part of a whole; `sd-key` for the legend |
 | `sd-uptime` | `<i data-state="ok\|degraded\|down\|none">` per period |
 | `sd-meter` | `--value`, `--target`, `--warn`, `--crit` (0–100); `data-over` turns it critical |
+| `sd-weighted` | `<i data-state="drafted\|current\|planned\|open" style="--weight: n">` per segment, sized by its share of the weights; a trailing `open` segment is what is left to a goal. React: `WeightedBar` |
 
 ### Timelines: `sd-timeline`
 

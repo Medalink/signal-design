@@ -21,7 +21,7 @@ export function checkReactTypes() {
   writeFileSync(
     fixture,
     `import { useState } from "react";
-import { AppShell, Button, Dialog, DialogHeader, Field, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
+import { AppShell, Button, Dialog, DialogHeader, Field, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 
 export function Consumer() {
   const [open, setOpen] = useState(false);
@@ -34,7 +34,8 @@ export function Consumer() {
     <AppShell defaultSection="projects" onSidebarChange={(sidebar) => console.log(sidebar === "collapsed")}>
       <Button {...props} ref={(node: HTMLButtonElement | null) => node?.focus()}>Go</Button>
       <Button tone={undefined} size={undefined} busy={undefined} onClick={undefined}>Undefined props</Button>
-      <Manuscript measure={undefined} face={undefined} wrapClassName={undefined} />
+      <Manuscript measure={undefined} face={undefined} wrapClassName={undefined} wrapRef={undefined} />
+      <WeightedBar label="3 of 6" goal={6} segments={[{ weight: 2, state: "drafted", label: undefined }]} />
       <Tree label="Undefined props" selected={undefined} defaultExpanded={undefined} onMove={undefined} />
       <a className={buttonClass({ variant: "ghost", size: "sm" })} href="/">Link</a>
       <IconButton label="Settings" size="sm" />
@@ -161,6 +162,7 @@ export async function checkReactSsr() {
           h(sd.Switch, { label: "s" }),
           h(sd.Badge, { tone: "success" }, "ok"),
           h(sd.Avatar, { name: "Ada Lovelace" }),
+          h(sd.WeightedBar, { label: "3 of 6 words", goal: 6, segments: [{ weight: 2, state: "drafted", label: "One" }, { weight: 1, state: "current" }] }),
           h(sd.AvatarStack, null, h(sd.Avatar, { name: "B C", src: "/a.png" })),
           h(sd.Card, { tone: "danger" }, h(sd.CardHeader, null, "h"), h(sd.CardBody, null, "b"), h(sd.CardFooter, null, "f")),
           h(sd.Panel, { width: "wide" }, h(sd.PanelTitle, null, "t"), h(sd.PanelDescription, null, "d")),
