@@ -121,6 +121,7 @@ by `title` or `classes`) rather than inventing markup.
 | ASCII art | `mountAscii(el, piece)` from `signal-design/ascii` draws an `ascii-magic-art` piece as greys in `sd-ascii`; still until `aria-busy="true"` (`pnpm add ascii-magic-art`); `data-tone` colors the brightest level |
 | Stream overlays (OBS) | `sd-scene` (1920×1080 units in `--sd-u`; `data-full`, `data-clear`) with `sd-scene-copy`, `sd-scene-bar`, `sd-scene-label`, `sd-cam`, `sd-scene-goal`, `sd-credits`, `sd-stream-alert`; `mountStream(scene).alert({ kind, name })` |
 | Empty | `sd-empty` (gets a center ornament automatically) |
+| Ornaments | `data-sd-ornaments="<placement> <style>"`: dust by default; a style word draws art instead: `contours` (fiction), `lattice` (research), `waveform` (blogs, notes), `dashed` (empty, planned), `book` (the hero), `stack` (manuscripts). Placements `tl tr bl br top bottom center`, `data-sd-ornaments-size`, `data-sd-ornaments-seed`. Still, faint, behind content |
 | React app | `signal-design/react`: `Button`, `Field` + `Input`, `Dialog`, `Menu`, `Tabs`, `ToastProvider`, `Table`, `AppShell` with `Rail`, `Sidebar` and `ShellMain`; editor parts `Toolbar`, `ToolbarButton`, `Manuscript`, `StatusSegment`, `Mark`, `HoverCard`, `Tree`, `Combobox`, `CommandPalette`, `RadioGroup`, `SegmentedControl`, `MenuItemCheckbox`; props are the state (`open`/`onOpenChange`, `value`/`onValueChange`, `pressed`/`onPressedChange`) |
 
 Tone anything with `data-tone`. Mark the current location with `aria-current`.
@@ -2457,6 +2458,43 @@ JS: init() from signal-design/js wires data-sd-ornaments · data-sd-edges.
 ```html
 <div class="h-72 grid place-items-center text-center bg-surface" data-sd-ornaments="" data-sd-edges="" data-sd-ornaments-size="260" style="border: 1px solid var(--sd-line)">
   <p class="sd-muted"><code>data-sd-ornaments</code> + <code>data-sd-edges</code></p>
+</div>
+```
+
+## Effects / Art ornaments
+
+Drawn imagery for a background, in the same quiet squares and hairlines as the dust. Name a style next to the placement. Each is a still picture in the theme's text color, faint enough to read over, and the same on every load. Contours are for fiction, a lattice for research, a waveform for blogs and notes, dashed frames for empty and planned things, the open book is the editor's hero, and the stack is a manuscript. data-sd-ornaments="contours" · "tl lattice" · "bottom waveform" · "center dashed" · data-sd-ornaments-size · data-sd-ornaments-seed="elderwood" varies contours, lattice and waveform per item
+
+Classes: sd-empty, sd-empty-title, sd-label, sd-muted
+
+JS: init() from signal-design/js wires data-sd-ornaments.
+
+```html
+<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  <figure class="m-0 grid content-start gap-2">
+    <div id="art-contours" class="h-56 p-4 bg-surface border border-line" data-sd-ornaments="contours" data-sd-ornaments-size="224"><p class="sd-muted max-w-[22ch]">The road bends north, past Lowwater.</p></div>
+    <figcaption class="sd-label">Contours · fiction</figcaption>
+  </figure>
+  <figure class="m-0 grid content-start gap-2">
+    <div id="art-lattice" class="h-56 p-4 bg-surface border border-line" data-sd-ornaments="lattice" data-sd-ornaments-size="224"><p class="sd-muted max-w-[22ch]">Sources, and the claims each one holds up.</p></div>
+    <figcaption class="sd-label">Lattice · research</figcaption>
+  </figure>
+  <figure class="m-0 grid content-start gap-2">
+    <div id="art-waveform" class="h-56 p-4 bg-surface border border-line" data-sd-ornaments="bottom waveform" data-sd-ornaments-size="200"><p class="sd-muted max-w-[22ch]">A short note, written once and sent.</p></div>
+    <figcaption class="sd-label">Waveform · blogs, notes</figcaption>
+  </figure>
+  <figure class="m-0 grid content-start gap-2">
+    <div id="art-dashed" class="sd-empty h-56 content-center" data-sd-ornaments="dashed"><p class="sd-empty-title">Nothing planned yet.</p><p>Chapters you plan will wait here.</p></div>
+    <figcaption class="sd-label">Dashed · empty, planned</figcaption>
+  </figure>
+  <figure class="m-0 grid content-start gap-2">
+    <div id="art-book" class="h-56 p-4 bg-surface border border-line" data-sd-ornaments="br book" data-sd-ornaments-size="224"><p class="sd-muted max-w-[22ch]">The editor opens like a book.</p></div>
+    <figcaption class="sd-label">Book · the hero</figcaption>
+  </figure>
+  <figure class="m-0 grid content-start gap-2">
+    <div id="art-stack" class="h-56 p-4 bg-surface border border-line" data-sd-ornaments="br stack" data-sd-ornaments-size="224"><p class="sd-muted max-w-[22ch]">Three drafts, one manuscript.</p></div>
+    <figcaption class="sd-label">Stack · manuscripts</figcaption>
+  </figure>
 </div>
 ```
 
