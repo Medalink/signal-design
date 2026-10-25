@@ -62,10 +62,13 @@ They need no `init()`; do not call it on those pages.
 4. **Tokens, not values.** Colors come from `--sd-*` variables or the Tailwind
    utilities built on them (`bg-canvas`, `bg-surface`, `text-fg-muted`, `border-line`).
    Never hard-code a hex value; themes would break.
-5. **Two faces.** One text face in regular and medium, Source Code Pro (bundled) for code.
+5. **Two faces, plus one to read.** One text face in regular and medium, Source Code Pro (bundled) for code.
    The text face is SF Pro (the system UI font; Segoe UI on Windows) unless the
    font picker swaps it (see Fonts). Set families through `font-sans` / `font-mono`
    or `var(--sd-font-sans)` / `var(--sd-font-mono)`, never by name. No other weights.
+   The one exception is prose to be read at length (a manuscript, an article):
+   `font-reading` / `var(--sd-font-reading)`, Literata, with real italics and a
+   semibold for strong text. Interface text never uses it.
 6. **Motion on state change only.** 120–200ms transitions. Nothing loops for decoration.
    Live activity may loop while it lasts (the `sd-typing` squares while someone types).
 7. **Style state, not classes.** The JS writes ARIA and `data-*` (`aria-pressed`,
@@ -95,6 +98,22 @@ does the same on click. Any element can carry `data-font`. Only the text face
 changes: code, charts and the rain stay in `--sd-font-mono`. A framework that
 renders the choice sets `data-font` itself.
 
+`<Manuscript face="reading">` (or `class="sd-reading"`, or `font-reading`) sets
+long-form prose in Literata, which `data-font` does not change.
+
+**Ship only the faces you use.** The default stylesheet declares all of them
+(Source Code Pro 6 files, Leon Sans, Literata 4). To ship fewer, import the core
+and one file per face:
+
+```css
+@import "tailwindcss";
+@import "signal-design/css/core";            /* no @font-face */
+@import "signal-design/css/fonts/literata";  /* also: source-code-pro, leon-sans */
+```
+
+Without Tailwind, link `dist/signal-core.css` and `dist/font-<family>.css`.
+A face you leave out falls back to the system stack.
+
 ## Building pages
 
 Start from the closest pattern; copy its HTML from `ai/components.json` (search
@@ -108,7 +127,7 @@ by `title` or `classes`) rather than inventing markup.
 | Resizable sidebar | `sd-sidebar-resize` (`role="separator"`, `aria-valuemin`/`max`/`now`) last in `sd-sidebar`; `data-sd-shell="resize"` for the JS, or drive `--shell-sidebar` and `aria-valuenow` from your framework |
 | Desktop window chrome | `sd-titlebar` with `sd-window-controls` (`data-sd-window`) |
 | Buttons | `sd-btn` + `sd-btn-primary` (one per view) / `sd-btn-ghost` / `sd-btn-link`, sizes `-sm` `-lg` `-icon` `-block` |
-| Icons | `sd-icon-text` > `sd-icon` + text; icons are sized to the text's cap height (`1.5cap`) and scale with it |
+| Icons | `sd-icon-text` > `sd-icon` + text; icons are sized to the text's cap height (`1.5cap`) and scale with it; the set of line icons is `icon(name)` from `signal-design/js/icons` (React `<Icon name>`), never a hand-copied path or another icon library |
 | Forms | `sd-field` > `sd-field-label` + control + `sd-field-hint`; inputs are styled unclassed |
 | Choices | `sd-seg` (segmented; `sd-seg-wrap` in a narrow container), `sd-options` > `sd-option` (cards with a description or preview), `role="switch"` checkbox, `sd-combobox`, `sd-tags`, `sd-number` |
 | Overlays | `<dialog class="sd-dialog">` + `data-sd-open`; `popover` + `.sd-popover`; `data-sd-tip`; `toast()` |
@@ -117,12 +136,12 @@ by `title` or `classes`) rather than inventing markup.
 | Status | `sd-badge`, `sd-status`, `sd-dot`, `sd-count`, `sd-progress` (`data-state="indeterminate"` when the amount is unknown; never a looping bar), `sd-checks`, `sd-level` (live level from `--level`, 0–1) |
 | People | `sd-avatar` (`-sm` `-md` `-lg` `-xl`, or `--sd-avatar-size`) with `data-status`; on your own panel set `--sd-ring` to its background so the presence ring matches |
 | Chat and feeds | `sd-message` (time column, inline `sd-message-author`; `--who` name color, `--edge` role color, `data-grouped`, `data-own`, `data-reply` + `sd-message-ref`, `data-editing`, `data-selected`), `sd-message-actions`, `sd-message-menu`, `sd-emoji-picker`, `sd-feed-day`, `sd-event`, `sd-feed-jump`, `sd-composer` (`-add`, `-reply`, `-status`; `sd-add-menu`) in an `sd-shell-dock` (`data-flush`), `sd-reactions`, `sd-roster`, `sd-banner`, `sd-file`, `sd-link-card` (`-hero`, `-compact`, `-type`, `data-blocked`, `aria-busy`) |
-| Data | `sd-stat`, `sd-stat-box`, `createChart(canvas, { type })`, `sd-plot`, `sd-heatmap`, `sd-uptime`, `sd-meter`, `sd-timeline` (`--from`/`--to` ranges over one axis), `sd-schedule` (hour roster, `data-status` blocks, mono/spectrum) |
+| Data | `sd-stat`, `sd-stat-box`, `createChart(canvas, { type })`, `sd-plot`, `sd-heatmap`, `sd-uptime`, `sd-meter`, `sd-timeline` (`--from`/`--to` ranges over one axis), `sd-schedule` (hour roster, `data-status` blocks, mono/spectrum), `sd-weighted` (segments sized by `--weight` toward a goal) |
 | ASCII art | `mountAscii(el, piece)` from `signal-design/ascii` draws an `ascii-magic-art` piece as greys in `sd-ascii`; still until `aria-busy="true"` (`pnpm add ascii-magic-art`); `data-tone` colors the brightest level |
 | Stream overlays (OBS) | `sd-scene` (1920×1080 units in `--sd-u`; `data-full`, `data-clear`) with `sd-scene-copy`, `sd-scene-bar`, `sd-scene-label`, `sd-cam`, `sd-scene-goal`, `sd-credits`, `sd-stream-alert`; `mountStream(scene).alert({ kind, name })` |
 | Empty | `sd-empty` (gets a center ornament automatically) |
 | Ornaments | `data-sd-ornaments="<placement> <style>"`: dust by default; a style word draws art instead: `contours` (fiction), `lattice` (research), `waveform` (blogs, notes), `dashed` (empty, planned), `book` (the hero), `stack` (manuscripts). Placements `tl tr bl br top bottom center`, `data-sd-ornaments-size`, `data-sd-ornaments-seed`. Still, faint, behind content |
-| React app | `signal-design/react`: `Button`, `Field` + `Input`, `Dialog`, `Menu`, `Tabs`, `ToastProvider`, `Table`, `AppShell` with `Rail`, `Sidebar` and `ShellMain`; editor parts `Toolbar`, `ToolbarButton`, `Manuscript`, `StatusSegment`, `Mark`, `HoverCard`, `Tree`, `Combobox`, `CommandPalette`, `RadioGroup`, `SegmentedControl`, `MenuItemCheckbox`; props are the state (`open`/`onOpenChange`, `value`/`onValueChange`, `pressed`/`onPressedChange`) |
+| React app | `signal-design/react`: `Button`, `Field` + `Input`, `Dialog`, `Menu`, `Tabs`, `ToastProvider`, `Table`, `AppShell` with `Rail`, `Sidebar` and `ShellMain`; editor parts `Toolbar`, `ToolbarButton`, `Manuscript`, `StatusSegment`, `Mark`, `HoverCard`, `Tree`, `Combobox`, `CommandPalette`, `RadioGroup`, `SegmentedControl`, `MenuItemCheckbox`; props are the state (`open`/`onOpenChange`, `value`/`onValueChange`, `pressed`/`onPressedChange`); also `Icon`, `GutterBlock` (a margin marker for a block), `HoverCardHost` (a hover card for a trigger React does not render), `ResizablePanel`, `WeightedBar`, `Tree` row `actions` (keys, not buttons inside the treeitem), `Sheet side="bottom"` |
 
 Tone anything with `data-tone`. Mark the current location with `aria-current`.
 Use `sd-desktop-only` / `sd-phone-only` (split at 768px) for chrome that changes on phones.
@@ -342,9 +361,9 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Tokens / Fonts
 
-data-font sets the text face of a subtree, or of the page on <html>. Code stays in Source Code Pro. Pick the page font under Settings in the bar above.
+data-font sets the text face of a subtree, or of the page on <html>. Code stays in Source Code Pro. Pick the page font under Settings in the bar above. sd-reading (or font-reading, or face="reading" on the React Manuscript) sets prose to be read at length in Literata, with real italics and a semibold for strong text. data-font does not change it.
 
-Classes: sd-card, sd-label
+Classes: sd-card, sd-label, sd-reading
 
 No JS needed: the HTML works with the CSS alone.
 
@@ -354,6 +373,8 @@ No JS needed: the HTML works with the CSS alone.
   <div class="sd-card" data-font="leon-sans"><p class="sd-label">leon-sans</p><p class="text-lg mt-2"><span class="font-normal">Regular</span> · <span class="font-semibold">Medium</span></p><p class="text-sm text-fg-muted mt-1">Approved 21 of 24 <code>sd-btn</code></p></div>
   <div class="sd-card" data-font="source-code-pro"><p class="sd-label">source-code-pro</p><p class="text-lg mt-2"><span class="font-normal">Regular</span> · <span class="font-semibold">Medium</span></p><p class="text-sm text-fg-muted mt-1">Approved 21 of 24 <code>sd-btn</code></p></div>
 </div>
+
+<div class="sd-card" id="tokens-reading"><p class="sd-label">reading</p><div class="sd-reading text-md mt-2 max-w-[38rem]"><p>The harbour was <em>quiet</em> at that hour, and she walked the length of the quay before she let herself think about the letter. <strong>Nothing</strong> in it was unkind. That was the difficulty.</p><p class="mt-3">“Lisbon,” he said, “is a city that forgives you slowly.” Naïve, façade, Żółć, 1,284 words, 0123456789.</p></div></div>
 ```
 
 ## Tokens / Spacing, layout, motion
@@ -743,6 +764,24 @@ No JS needed: the HTML works with the CSS alone.
   <button class="sd-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="4" width="11" height="11"></rect><path d="M15 15l5.5 5.5"></path></svg>Default</button>
   <button class="sd-btn sd-btn-lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="4" width="11" height="11"></rect><path d="M15 15l5.5 5.5"></path></svg>Large</button>
 </div>
+```
+
+## Components / Icon set
+
+sd-icon with data-icon · line icons, 1.5 stroke, square caps, on the 24 grid with the 4-unit inset · icon(name) from signal-design/js/icons returns the markup, ICONS the paths · React: <Icon name="undo" />
+
+Classes: sd-actions, sd-btn, sd-btn-ghost, sd-btn-icon, sd-icon, sd-icon-text
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="sd-actions">
+  <button class="sd-btn sd-btn-icon sd-btn-ghost" aria-label="Undo"><svg class="sd-icon" data-icon="undo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M9 5L4.5 9.5 9 14M4.5 9.5H15v8H9"></path></svg></button>
+  <button class="sd-btn sd-btn-icon sd-btn-ghost" aria-label="Delete"><svg class="sd-icon" data-icon="delete" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M5 7h14M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"></path></svg></button>
+  <span class="sd-icon-text"><svg class="sd-icon" data-icon="warning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M12 4l8.5 16h-17zM12 10v4.5M12 17.5v.01"></path></svg>Not saved</span>
+</div>
+
+<ul class="demo-icons" id="icon-set" aria-label="Icon set"></ul>
 ```
 
 ## Components / Markers, badges, chips, pill
@@ -1399,9 +1438,9 @@ for (const button of preview.querySelectorAll("[data-living-width]")) {
 
 ## Components / Overlays
 
-sd-dialog + -head|-body|-foot · sd-dialog-sm|lg · sd-sheet + -left · sd-command · data-sd-open / data-sd-close · data-sd-tip
+sd-dialog + -head|-body|-foot · sd-dialog-sm|lg · sd-sheet + -left|-bottom · sd-command · data-sd-open / data-sd-close · data-sd-tip
 
-Classes: sd-actions, sd-btn, sd-btn-ghost, sd-btn-icon, sd-btn-link, sd-btn-sm, sd-command, sd-command-foot, sd-command-head, sd-dialog, sd-dialog-body, sd-dialog-foot, sd-dialog-head, sd-dialog-lg, sd-dialog-sm, sd-diff, sd-field, sd-field-aside, sd-field-label, sd-menu, sd-muted, sd-seg, sd-seg-sm, sd-sheet, sd-sheet-left, sd-subtle
+Classes: sd-actions, sd-btn, sd-btn-ghost, sd-btn-icon, sd-btn-link, sd-btn-sm, sd-command, sd-command-foot, sd-command-head, sd-dialog, sd-dialog-body, sd-dialog-foot, sd-dialog-head, sd-dialog-lg, sd-dialog-sm, sd-diff, sd-field, sd-field-aside, sd-field-label, sd-menu, sd-muted, sd-seg, sd-seg-sm, sd-sheet, sd-sheet-bottom, sd-sheet-left, sd-subtle
 
 JS: init() from signal-design/js wires data-sd-open · data-sd-tip · data-sd-close · data-sd-seg.
 
@@ -1413,6 +1452,7 @@ JS: init() from signal-design/js wires data-sd-open · data-sd-tip · data-sd-cl
   <button class="sd-btn" data-sd-open="demo-dialog-sm">Small dialog</button>
   <button class="sd-btn" data-sd-open="demo-dialog-lg">Large dialog</button>
   <button class="sd-btn" data-sd-open="demo-sheet-left">Sheet from the left</button>
+  <button class="sd-btn" data-sd-open="demo-sheet-bottom">Sheet from the bottom</button>
   <button class="sd-btn" data-sd-tip="Tooltips show on hover and focus">Hover for tooltip</button>
   <button class="sd-btn" data-sd-tip="Below" data-sd-tip-side="bottom">Tooltip below</button>
 </div>
@@ -1457,6 +1497,11 @@ JS: init() from signal-design/js wires data-sd-open · data-sd-tip · data-sd-cl
 <dialog class="sd-dialog sd-sheet sd-sheet-left" id="demo-sheet-left" aria-labelledby="demo-sheet-left-h">
   <header class="sd-dialog-head"><span id="demo-sheet-left-h">Filters</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close="" aria-label="Close">«</button></header>
   <div class="sd-dialog-body sd-muted">A sheet can come from either side.</div>
+</dialog>
+
+<dialog class="sd-dialog sd-sheet sd-sheet-bottom" id="demo-sheet-bottom" aria-labelledby="demo-sheet-bottom-h">
+  <header class="sd-dialog-head"><span id="demo-sheet-bottom-h">Details</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close="" aria-label="Close details">×</button></header>
+  <div class="sd-dialog-body sd-muted">Or from the bottom, as tall as its content up to 85% of the screen (<code>--sheet-max</code>).</div>
 </dialog>
 
 <dialog class="sd-command" id="demo-command" aria-label="Remind me">
@@ -2119,9 +2164,9 @@ createChart(canvas, {
 
 ## Charts / Square charts
 
-sd-heatmap + --v · sd-waffle + data-s · sd-key · sd-uptime + data-state · sd-meter + --value|--target|--warn|--crit. CSS only.
+sd-heatmap + --v · sd-waffle + data-s · sd-key · sd-uptime + data-state · sd-meter + --value|--target|--warn|--crit · sd-weighted + --weight and data-state. CSS only.
 
-Classes: sd-heatmap, sd-heatmap-key, sd-key, sd-label, sd-meter, sd-subtle, sd-uptime, sd-waffle
+Classes: sd-heatmap, sd-heatmap-key, sd-key, sd-label, sd-meter, sd-subtle, sd-uptime, sd-waffle, sd-weighted
 
 No JS needed: the HTML works with the CSS alone.
 
@@ -2139,6 +2184,12 @@ No JS needed: the HTML works with the CSS alone.
   <div class="grid gap-2">
     <div class="flex justify-between text-sm"><span>api</span><span class="sd-subtle">99.58%</span></div>
     <div class="sd-uptime" id="demo-uptime"></div>
+  </div>
+  <div class="grid gap-2">
+    <div class="flex justify-between text-sm"><span>Manuscript</span><span class="sd-subtle">41,200 of 80,000 words</span></div>
+    <div class="sd-weighted" id="demo-weighted" role="img" aria-label="Manuscript: 41,200 of 80,000 words drafted, chapter 4 in progress, 18,800 planned">
+      <i data-state="drafted" style="--weight: 12000" title="Part one · 12,000 words"></i><i data-state="drafted" style="--weight: 18000" title="Part two · 18,000 words"></i><i data-state="current" style="--weight: 11200" title="Chapter 4 · 11,200 words so far"></i><i data-state="planned" style="--weight: 18800" title="Part four · 18,800 words planned"></i><i data-state="open" style="--weight: 20000" title="20,000 words to the goal"></i>
+    </div>
   </div>
   <div class="grid gap-2">
     <div class="flex justify-between text-sm"><span>Memory</span><span class="sd-subtle">84% · target 75%</span></div>
