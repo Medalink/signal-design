@@ -736,8 +736,9 @@ text color. Nothing animates, so there is no reduced-motion variant and
 and its content do not move, and the background takes no clicks. A caption is
 yours to add (the library's figures use `sd-label`).
 
-**Contrast budget.** The art never draws brighter than the dust does at its
-corner. On its single brightest pixel, over `--sd-canvas` and `--sd-surface`,
+**Contrast budget.** The art is drawn no louder than the dust at its corner:
+within about 0.2 of the dust's worst case below, a little better on ink and
+graphite and a little worse on paper. On its single brightest pixel, over `--sd-canvas` and `--sd-surface`,
 in every style and placement, text keeps at least this much contrast. The
 check measures it in Chromium and WebKit and fails below the budget column.
 
