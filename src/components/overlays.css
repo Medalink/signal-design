@@ -71,7 +71,7 @@
   .sd-sheet-bottom {
     width: 100vw;
     max-width: 100vw;
-    height: auto;
+    height: fit-content;
     max-height: var(--sheet-max, 85dvh);
     margin: auto 0 0;
     padding-block-end: env(safe-area-inset-bottom);

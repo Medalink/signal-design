@@ -31,7 +31,15 @@ export async function checkReactGaps(page, base) {
   });
   expect(await until(() => { const r = document.querySelector("dialog.sd-sheet-bottom").getBoundingClientRect(); return Math.abs(r.bottom - innerHeight) <= 1 && Math.abs(r.width - innerWidth) <= 1; }, null), `the bottom sheet is pinned to the bottom edge and spans the width, got ${JSON.stringify(await pinned())}`);
   const box = await pinned();
-  expect(box.top > 0 && box.height <= box.viewportHeight * 0.85 + 1, `the bottom sheet is as tall as its content, under 85% of the screen, got ${JSON.stringify(box)}`);
+  const natural = await page.evaluate(() => [...document.querySelector("dialog.sd-sheet-bottom").children].reduce((sum, child) => sum + child.getBoundingClientRect().height, 0));
+  expect(box.top > 0 && Math.abs(box.height - natural) <= 2 && box.height < box.viewportHeight * 0.4, `the bottom sheet is as tall as its content, got ${box.height} for ${natural} of content in ${box.viewportHeight}`);
+  await page.evaluate(() => {
+    const filler = document.createElement("div");
+    filler.style.height = "3000px";
+    document.querySelector("dialog.sd-sheet-bottom .sd-dialog-body").append(filler);
+  });
+  const capped = await pinned();
+  expect(Math.abs(capped.height - capped.viewportHeight * 0.85) <= 2 && await page.evaluate(() => { const d = document.querySelector("dialog.sd-sheet-bottom"); return d.scrollHeight > d.clientHeight; }), `content taller than the screen stops at 85% and scrolls, got ${JSON.stringify(capped)}`);
   expect(await page.evaluate(() => document.querySelector("dialog.sd-sheet-bottom").contains(document.activeElement)), "focus moves into the bottom sheet");
   expect(await bottom.getByRole("button", { name: "Close inspector", exact: true }).count() === 1 && await bottom.getByRole("button", { name: "Close", exact: true }).count() === 0, "the sheet's close button takes the name from closeLabel");
   await page.keyboard.press("Escape");
