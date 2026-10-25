@@ -651,6 +651,30 @@ export interface TreeItemProps extends Omit<ComponentProps<"li">, "id" | "role" 
 }
 export function TreeItem(props: TreeItemProps): ReactElement;
 
+/* ---- Resizable panel --------------------------------------------------- */
+
+export interface ResizablePanelProps extends Omit<ComponentProps<"div">, "children"> {
+  /** The edge that faces the neighbor and carries the handle: "end" for a panel on the left in left-to-right text, "start" for one on the right, "top" for a dock at the bottom. Default "end". */
+  edge?: "start" | "end" | "top" | "bottom" | undefined;
+  /** The size in pixels: the width for "start" and "end", the height for "top" and "bottom". Controlled. */
+  size?: number | undefined;
+  /** The size before anyone resizes it, when `size` is not given. Default 288. */
+  defaultSize?: number | undefined;
+  /** Called with each new size while the pointer drags or a key steps it, clamped to `minSize` and `maxSize`. */
+  onSizeChange?: ((size: number) => void) | undefined;
+  /** Default 160. */
+  minSize?: number | undefined;
+  /** Default 640. */
+  maxSize?: number | undefined;
+  /** The handle's accessible name. Default "Resize". */
+  label?: string | undefined;
+  /** Pixels per arrow key; Shift multiplies it by 4. Default 16. */
+  step?: number | undefined;
+  children?: ReactNode | undefined;
+}
+/** A panel with a drag handle on one edge: a focusable separator that arrows, Home and End also move. */
+export function ResizablePanel(props: ResizablePanelProps): ReactElement;
+
 /* ---- Combobox and command palette -------------------------------------- */
 
 export interface ListItem {

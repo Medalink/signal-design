@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Demo } from "./react-demo.jsx";
 import { ICON_NAMES } from "../src/js/icons.js";
-import { GutterBlock, Icon, IconButton, Manuscript, Toolbar, ToolbarButton, ToolbarGroup, ToolbarMore, ToolbarSeparator, Tree, TreeItem, WeightedBar } from "../src/react/index.js";
+import { GutterBlock, Icon, IconButton, Manuscript, ResizablePanel, Toolbar, ToolbarButton, ToolbarGroup, ToolbarMore, ToolbarSeparator, Tree, TreeItem, WeightedBar } from "../src/react/index.js";
 
 const WORDS = [
   { weight: 12000, state: "drafted", label: "Part one · 12,000 words" },
@@ -142,6 +142,49 @@ function TreeActions() {
   );
 }
 
+function Resizable() {
+  const [binder, setBinder] = useState(200);
+  const [inspector, setInspector] = useState(240);
+  const [dock, setDock] = useState(96);
+  return (
+    <Demo
+      id="react-editor-resizable"
+      title="Resizable panels"
+      code={`<div className="flex">
+  <ResizablePanel edge="end" size={binder} onSizeChange={setBinder} minSize={160} maxSize={360} label="Resize binder">
+    <nav aria-label="Binder">…</nav>
+  </ResizablePanel>
+  <main className="min-w-0 flex-1">…</main>
+  <ResizablePanel edge="start" size={inspector} onSizeChange={setInspector} label="Resize inspector">…</ResizablePanel>
+</div>
+<ResizablePanel edge="top" size={dock} onSizeChange={setDock} minSize={64} maxSize={200} label="Resize dock">…</ResizablePanel>`}
+    >
+      <div className="flex h-64 overflow-hidden border border-line bg-surface" id="resizable-row">
+        <ResizablePanel edge="end" size={binder} onSizeChange={setBinder} minSize={160} maxSize={360} label="Resize binder" className="border-e border-line p-3" id="resizable-binder">
+          <p className="sd-label">Binder</p>
+        </ResizablePanel>
+        <div className="min-w-0 flex-1 p-3">
+          <p className="sd-label">Manuscript</p>
+        </div>
+        <ResizablePanel edge="start" size={inspector} onSizeChange={setInspector} minSize={160} maxSize={360} label="Resize inspector" className="border-s border-line p-3 max-sm:hidden" id="resizable-inspector">
+          <p className="sd-label">Inspector</p>
+        </ResizablePanel>
+      </div>
+      <div className="flex h-56 flex-col overflow-hidden border border-line bg-surface" id="resizable-column">
+        <div className="min-h-0 flex-1 p-3">
+          <p className="sd-label">Manuscript</p>
+        </div>
+        <ResizablePanel edge="top" size={dock} onSizeChange={setDock} minSize={64} maxSize={160} label="Resize dock" className="border-t border-line p-3" id="resizable-dock">
+          <p className="sd-label">Dock</p>
+        </ResizablePanel>
+      </div>
+      <p className="sd-subtle text-sm" data-resize-state>
+        binder {binder} · inspector {inspector} · dock {dock}
+      </p>
+    </Demo>
+  );
+}
+
 function Weighted() {
   const [goal, setGoal] = useState(80000);
   return (
@@ -215,6 +258,7 @@ export function EditorGaps() {
     <>
       <Icons />
       <TreeActions />
+      <Resizable />
       <Weighted />
       <Gutter />
     </>

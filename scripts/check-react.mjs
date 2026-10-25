@@ -22,7 +22,7 @@ export function checkReactTypes() {
   writeFileSync(
     fixture,
     `import { useState } from "react";
-import { AppShell, Button, Dialog, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
+import { AppShell, Button, Dialog, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 
 export function Consumer() {
   const [open, setOpen] = useState(false);
@@ -42,6 +42,9 @@ export function Consumer() {
       <IconButton label="Settings" size="sm"><Icon name="edit" label={undefined} /></IconButton>
       {/* @ts-expect-error an icon is one of the set */}
       <Icon name="nope" />
+      <ResizablePanel edge="top" size={undefined} minSize={undefined} onSizeChange={(size: number) => console.log(size)}>Dock</ResizablePanel>
+      {/* @ts-expect-error an edge is start, end, top or bottom */}
+      <ResizablePanel edge="left" />
       <Field label="Name" error="Required"><Input value="" onChange={(event) => console.log(event.target.value)} /></Field>
       <Dialog open={open} onOpenChange={setOpen} size="sm" ref={(node: HTMLDialogElement | null) => node?.close()}>
         <DialogHeader closeButton={false}>Title</DialogHeader>
@@ -179,6 +182,7 @@ export async function checkReactSsr() {
           h(sd.Badge, { tone: "success" }, "ok"),
           h(sd.Avatar, { name: "Ada Lovelace" }),
           h(sd.Icon, { name: "undo" }),
+          h(sd.ResizablePanel, { edge: "start", size: 300, minSize: 200, label: "Resize inspector" }, "panel"),
           h(sd.Icon, { name: "warning", label: "Not saved", className: "extra" }),
           h(sd.GutterBlock, { as: "p", marker: { label: "2 comments", count: 2, active: true } }, "b"),
           h(sd.GutterMarker, { label: "1 suggestion", kind: "suggestion", resolved: true }, "s"),
@@ -238,6 +242,9 @@ export async function checkReactSsr() {
     ['role="switch"', "the switch"],
     ["99+", "the capped count"],
     ['data-icon="undo"', "an icon"],
+    ['style="--size:300px"', "a resizable panel"],
+    ['role="separator"', "its handle"],
+    ['aria-valuenow="300"', "the handle's value"],
     ['role="img" aria-label="Not saved"', "a labeled icon"],
   ]) assert.ok(html.includes(needle), `server output is missing ${what}`);
   assert.ok(!html.includes("sd-tooltip"), "a closed tooltip rendered on the server");

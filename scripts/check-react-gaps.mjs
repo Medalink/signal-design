@@ -141,6 +141,89 @@ export async function checkReactGaps(page, base) {
   expect(await chapterItems.count() === 3 && await chapterState() === "selected: ch-1 · last action: delete ch-2", "a click on Delete removes the item");
   await restore();
 
+  /* ---- Resizable panels ---- */
+  const rzDemo = page.locator("#react-editor-resizable");
+  const rzHandle = (name) => rzDemo.getByRole("separator", { name: `Resize ${name}`, exact: true });
+  const rzState = () => rzDemo.locator("[data-resize-state]").textContent();
+  const rzSize = (name) => rzDemo.locator(`#resizable-${name}`).evaluate((el, vertical) => Math.round(vertical ? el.getBoundingClientRect().height : el.getBoundingClientRect().width), name === "dock");
+  // The panel and its handle agree on `size`: React commits a pointer move after the mouse call returns, so poll.
+  const rzIs = (name, size) => until(({ id, size, vertical }) => {
+    const box = document.getElementById(id).getBoundingClientRect();
+    const handle = document.querySelector(`#${id} > [role=separator]`);
+    return Math.round(vertical ? box.height : box.width) === size && Number(handle.getAttribute("aria-valuenow")) === size;
+  }, { id: `resizable-${name}`, size, vertical: name === "dock" });
+  const rzDrag = async (name, delta, release = true) => {
+    const box = await rzHandle(name).boundingBox();
+    const [x, y] = [box.x + box.width / 2, box.y + box.height / 2];
+    const vertical = name === "dock";
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await page.mouse.move(vertical ? x : x + delta / 2, vertical ? y + delta / 2 : y, { steps: 4 });
+    await page.mouse.move(vertical ? x : x + delta, vertical ? y + delta : y, { steps: 4 });
+    if (release) await page.mouse.up();
+  };
+  await rzDemo.scrollIntoViewIfNeeded();
+  expect(await rzHandle("binder").evaluate((el) => [el.getAttribute("aria-orientation"), el.getAttribute("aria-valuemin"), el.getAttribute("aria-valuemax"), el.getAttribute("aria-valuenow"), el.tabIndex, el.getAttribute("aria-controls")].join()) === "vertical,160,360,200,0,resizable-binder", "the handle is a focusable vertical separator that names its panel and its range");
+  expect(await rzHandle("dock").getAttribute("aria-orientation") === "horizontal", "a handle on a top edge is a horizontal separator");
+  expect(await rzIs("binder", 200) && await rzIs("inspector", 240) && await rzIs("dock", 96), "each panel starts at its size");
+  await rzDrag("binder", 60, false);
+  expect(await rzDemo.locator("#resizable-binder").evaluate((el) => "resizing" in el.dataset) && await rzHandle("binder").evaluate((el) => document.activeElement === el), "a drag marks the panel and focuses the handle");
+  await page.mouse.up();
+  expect(await rzIs("binder", 260) && await rzState() === "binder 260 · inspector 240 · dock 96", `dragging an end handle by 60px grows the panel by 60, got ${await rzSize("binder")}, ${await rzState()}`);
+  expect(await rzDemo.locator("#resizable-binder").evaluate((el) => !("resizing" in el.dataset)), "releasing the pointer ends the drag");
+  await rzDrag("binder", 500);
+  expect(await rzIs("binder", 360), "a drag stops at maxSize");
+  await rzDrag("binder", -500);
+  expect(await rzIs("binder", 160), "a drag stops at minSize");
+  await rzDrag("inspector", -50);
+  expect(await rzIs("inspector", 290), `dragging a start handle toward its neighbor grows the panel, got ${await rzSize("inspector")}`);
+  await rzDrag("inspector", 90);
+  expect(await rzIs("inspector", 200), "and dragging it away shrinks it");
+  await rzDrag("dock", -30);
+  expect(await rzIs("dock", 126), `dragging a top handle up grows the dock, got ${await rzSize("dock")}`);
+  await rzDrag("dock", 300);
+  expect(await rzIs("dock", 64), "and dragging it down stops at minSize");
+
+  await rzHandle("binder").focus();
+  await page.keyboard.press("End");
+  expect(await rzIs("binder", 360), "End goes to maxSize");
+  await page.keyboard.press("Home");
+  expect(await rzIs("binder", 160), "Home goes to minSize");
+  await page.keyboard.press("ArrowRight");
+  expect(await rzIs("binder", 176), "ArrowRight grows an end panel by one step");
+  await page.keyboard.press("Shift+ArrowRight");
+  expect(await rzIs("binder", 240), "Shift multiplies the step by four");
+  await page.keyboard.press("ArrowLeft");
+  expect(await rzIs("binder", 224), "ArrowLeft shrinks it, and the panel follows the value");
+  await page.keyboard.press("ArrowDown");
+  expect(await rzIs("binder", 224), "keys of the other axis do nothing");
+  await rzHandle("inspector").focus();
+  await page.keyboard.press("ArrowLeft");
+  expect(await rzIs("inspector", 216), "ArrowLeft grows a start panel, whose neighbor is on its left");
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
+  expect(await rzIs("inspector", 184), "ArrowRight shrinks it");
+  await rzHandle("dock").focus();
+  await page.keyboard.press("ArrowUp");
+  expect(await rzIs("dock", 80), "ArrowUp grows a top-edge panel");
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("ArrowLeft");
+  expect(await rzIs("dock", 64), "ArrowDown shrinks it and ArrowLeft does nothing");
+
+  await rzHandle("binder").focus();
+  await page.keyboard.press("End");
+  await rzDemo.locator("#resizable-row").evaluate((el) => el.setAttribute("dir", "rtl"));
+  await rzDrag("binder", 40);
+  expect(await rzIs("binder", 320), `in right-to-left text an end handle is on the left, so dragging right shrinks it, got ${await rzSize("binder")}`);
+  await page.keyboard.press("ArrowRight");
+  expect(await rzIs("binder", 304), "and so does ArrowRight");
+  await rzDemo.locator("#resizable-row").evaluate((el) => el.removeAttribute("dir"));
+  await rzHandle("binder").focus();
+  await page.keyboard.press("Home");
+  await page.keyboard.press("Shift+ArrowRight");
+  await page.keyboard.press("Shift+ArrowRight");
+  expect(await rzIs("binder", 288), "the panel can be put back");
+
   /* ---- Gutter markers ---- */
   const gutter = page.locator("#react-editor-gutter");
   const markers = gutter.locator(".sd-gutter-marker");

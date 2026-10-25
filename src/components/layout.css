@@ -148,6 +148,98 @@
     visibility: visible;
   }
 
+  /*
+   * Resizable panel: a panel of one fixed size that its neighbor flexes
+   * around, with a handle on the edge that faces the neighbor. --size is its
+   * width (data-edge start or end) or height (top or bottom). The handle is a
+   * separator with aria-valuemin, aria-valuemax and aria-valuenow in pixels.
+   * React's ResizablePanel drags and steps it; without React, set --size and
+   * aria-valuenow yourself and data-resizing on the panel while a drag runs.
+   *   <aside class="sd-resizable" id="inspector" data-edge="start" style="--size: 320px">
+   *     …
+   *     <div class="sd-resize-handle" role="separator" aria-orientation="vertical" aria-label="Resize inspector"
+   *          aria-controls="inspector" aria-valuemin="240" aria-valuemax="560" aria-valuenow="320" tabindex="0"></div>
+   *   </aside>
+   */
+  .sd-resizable {
+    position: relative;
+    flex: none;
+    box-sizing: border-box;
+    inline-size: var(--size, 18rem);
+  }
+  .sd-resizable:is([data-edge="top"], [data-edge="bottom"]) {
+    inline-size: auto;
+    block-size: var(--size, 18rem);
+  }
+  .sd-resizable[data-resizing] {
+    user-select: none;
+  }
+  /* The handle sits inside the panel, over its edge, so a panel that scrolls or clips keeps it. */
+  .sd-resize-handle {
+    position: absolute;
+    z-index: 1;
+    inset-block: 0;
+    inset-inline: auto 0;
+    inline-size: 9px;
+    cursor: col-resize;
+    touch-action: none;
+  }
+  .sd-resizable[data-edge="start"] > .sd-resize-handle {
+    inset-inline: 0 auto;
+  }
+  .sd-resizable:is([data-edge="top"], [data-edge="bottom"]) > .sd-resize-handle {
+    inset-block: auto;
+    inset-inline: 0;
+    inline-size: auto;
+    block-size: 9px;
+    cursor: row-resize;
+  }
+  .sd-resizable[data-edge="top"] > .sd-resize-handle {
+    inset-block: 0 auto;
+  }
+  .sd-resizable[data-edge="bottom"] > .sd-resize-handle {
+    inset-block: auto 0;
+  }
+  .sd-resize-handle::after {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline: auto 0;
+    inline-size: 1px;
+    transition: background-color 120ms var(--ease-out), inline-size 120ms var(--ease-out), block-size 120ms var(--ease-out);
+  }
+  .sd-resizable[data-edge="start"] > .sd-resize-handle::after {
+    inset-inline: 0 auto;
+  }
+  .sd-resizable:is([data-edge="top"], [data-edge="bottom"]) > .sd-resize-handle::after {
+    inset-block: auto;
+    inset-inline: 0;
+    inline-size: auto;
+    block-size: 1px;
+  }
+  .sd-resizable[data-edge="top"] > .sd-resize-handle::after {
+    inset-block: 0 auto;
+  }
+  .sd-resizable[data-edge="bottom"] > .sd-resize-handle::after {
+    inset-block: auto 0;
+  }
+  .sd-resize-handle:hover::after {
+    background: var(--sd-fg-subtle);
+  }
+  .sd-resize-handle:focus-visible {
+    outline: none;
+  }
+  .sd-resize-handle:focus-visible::after,
+  .sd-resizable[data-resizing] > .sd-resize-handle::after {
+    inline-size: 3px;
+    background: var(--sd-accent);
+  }
+  .sd-resizable:is([data-edge="top"], [data-edge="bottom"]) > .sd-resize-handle:focus-visible::after,
+  .sd-resizable:is([data-edge="top"], [data-edge="bottom"])[data-resizing] > .sd-resize-handle::after {
+    inline-size: auto;
+    block-size: 3px;
+  }
+
   /* Layout helpers for apps that use the prebuilt CSS without Tailwind. */
   .sd-stack {
     display: flex;
