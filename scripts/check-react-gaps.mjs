@@ -192,6 +192,16 @@ export async function checkReactGaps(page, base) {
   await rzDrag("dock", 300);
   expect(await rzIs("dock", 64), "and dragging it down stops at minSize");
 
+  const rzScrolled = await page.evaluate(() => {
+    const panel = document.getElementById("resizable-binder");
+    const body = panel.querySelector(".sd-resizable-body");
+    body.scrollTop = body.scrollHeight;
+    const handle = panel.querySelector("[role=separator]").getBoundingClientRect();
+    const box = panel.getBoundingClientRect();
+    return { scrolled: body.scrollTop > 0, top: handle.top - box.top, height: handle.height - box.height };
+  });
+  expect(rzScrolled.scrolled && rzScrolled.top === 0 && rzScrolled.height === 0, `a panel whose content scrolls keeps its handle on the edge, got ${JSON.stringify(rzScrolled)}`);
+
   await rzHandle("binder").focus();
   await page.keyboard.press("End");
   expect(await rzIs("binder", 360), "End goes to maxSize");
@@ -235,7 +245,8 @@ export async function checkReactGaps(page, base) {
   /* ---- Hover card host ---- */
   const hostDemo = page.locator("#react-editor-hostcard");
   const hostCards = page.locator(".sd-hovercard");
-  const hostTrigger = (key) => hostDemo.locator(`[data-entity="${key}"]`);
+  const hostTrigger = (key) => hostDemo.locator(`[data-entity="${key}"]`).first();
+  const hostSecond = hostDemo.locator("[data-second]");
   const hostIs = (text) => until((text) => document.querySelector("#react-editor-hostcard [data-host-state]").textContent === text, text);
   const hostCount = (count) => until((count) => document.querySelectorAll(".sd-hovercard").length === count, count, 3000);
   await hostDemo.scrollIntoViewIfNeeded();
@@ -261,6 +272,12 @@ export async function checkReactGaps(page, base) {
   expect(await until(() => document.querySelectorAll(".sd-hovercard").length === 1 && /Translator/.test(document.querySelector(".sd-hovercard").textContent), null), "focus on a trigger opens its card at once");
   await hostTrigger("lisbon").focus();
   expect(await until(() => document.querySelectorAll(".sd-hovercard").length === 1 && /Capital of Portugal/.test(document.querySelector(".sd-hovercard").textContent), null) && await hostIs("open: lisbon"), "showing again replaces the card instead of stacking another");
+  await hostSecond.focus();
+  expect(await until(() => {
+    const card = document.querySelector(".sd-hovercard");
+    const second = document.querySelector("#react-editor-hostcard [data-second]");
+    return document.querySelectorAll(".sd-hovercard").length === 1 && Math.abs(card.getBoundingClientRect().left - second.getBoundingClientRect().left) <= 2 && card.id === second.getAttribute("aria-describedby");
+  }, null), "showing the same content beside another anchor moves the card there");
   await page.keyboard.press("Escape");
   expect(await hostCount(0) && await hostIs("closed"), "Escape closes it at once");
   await hostDemo.getByRole("button", { name: "Preview at a range", exact: true }).click();

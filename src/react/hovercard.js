@@ -24,8 +24,8 @@ function anchorOf(anchor) {
   return { getBoundingClientRect: () => rectOf(anchor) };
 }
 
-/** The card: a portal placed beside `anchor.current`, kept there while the page scrolls or resizes, closed by Escape through `onEscape`. */
-function Card({ id, anchor, side, align, label, className, content, onEscape, onPointerEnter, onPointerLeave, ref }) {
+/** The card: a portal placed beside `anchor.current`, placed again when `at` (a new aim) or the content changes and while the page scrolls or resizes, closed by Escape through `onEscape`. */
+function Card({ id, anchor, at, side, align, label, className, content, onEscape, onPointerEnter, onPointerLeave, ref }) {
   const node = useRef(null);
 
   useIsomorphicLayoutEffect(() => {
@@ -37,7 +37,7 @@ function Card({ id, anchor, side, align, label, className, content, onEscape, on
       removeEventListener("scroll", position, { capture: true });
       removeEventListener("resize", position);
     };
-  }, [anchor, side, align, content]);
+  }, [anchor, at, side, align, content]);
 
   // A layout effect, so the listener exists in the same commit that shows the card.
   useIsomorphicLayoutEffect(() => {
@@ -176,6 +176,7 @@ export function HoverCardHost({ closeDelay = 150, className, onOpenChange, ref }
   return h(Card, {
     id,
     anchor,
+    at: shown,
     side: shown.side,
     align: shown.align,
     label: shown.label,

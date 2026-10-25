@@ -162,6 +162,11 @@ function Resizable() {
       <div className="flex h-64 overflow-hidden border border-line bg-surface" id="resizable-row">
         <ResizablePanel edge="end" size={binder} onSizeChange={setBinder} minSize={160} maxSize={360} label="Resize binder" className="border-e border-line p-3" id="resizable-binder">
           <p className="sd-label">Binder</p>
+          <ul className="mt-2 grid gap-1 text-sm sd-muted" data-binder-list>
+            {Array.from({ length: 24 }, (_, index) => (
+              <li key={index}>Chapter {index + 1}</li>
+            ))}
+          </ul>
         </ResizablePanel>
         <div className="min-w-0 flex-1 p-3">
           <p className="sd-label">Manuscript</p>
@@ -185,9 +190,10 @@ function Resizable() {
   );
 }
 
+// One element per entity: showing it beside a second place gives the card the same content to a new anchor.
 const ENTITIES = {
-  lisbon: { kind: "Place", name: "Lisbon", text: "Capital of Portugal, first named in chapter 2." },
-  ines: { kind: "Person", name: "Ines Duarte", text: "Translator. Appears in chapters 3 and 5." },
+  lisbon: { kind: "Place", card: <><p className="sd-hovercard-title">Lisbon</p><p className="sd-hovercard-meta">Place</p><p>Capital of Portugal, first named in chapter 2.</p></> },
+  ines: { kind: "Person", card: <><p className="sd-hovercard-title">Ines Duarte</p><p className="sd-hovercard-meta">Person</p><p>Translator. Appears in chapters 3 and 5.</p></> },
 };
 
 function Imperative() {
@@ -199,7 +205,7 @@ function Imperative() {
   // The prose is plain DOM that React did not render, as a ProseMirror view's is.
   useEffect(() => {
     const root = prose.current;
-    root.innerHTML = '<p>Rain over <span class="sd-mark" data-mark="entity" data-entity="lisbon" tabindex="0">Lisbon</span>, and <span class="sd-mark" data-mark="entity" data-entity="ines" tabindex="0">Ines</span> reading by the window. <span data-range>A passage the editor points at by its position.</span></p>';
+    root.innerHTML = '<p>Rain over <span class="sd-mark" data-mark="entity" data-entity="lisbon" tabindex="0">Lisbon</span>, and <span class="sd-mark" data-mark="entity" data-entity="ines" tabindex="0">Ines</span> reading by the window. By evening the rain had reached <span class="sd-mark" data-mark="entity" data-entity="lisbon" data-second tabindex="0">Lisbon</span> too. <span data-range>A passage the editor points at by its position.</span></p>';
     let timer = 0;
     const close = () => {
       clearTimeout(timer);
@@ -214,11 +220,7 @@ function Imperative() {
         target.setAttribute("aria-describedby", host.current.id);
         host.current.show(
           target,
-          <>
-            <p className="sd-hovercard-title">{entity.name}</p>
-            <p className="sd-hovercard-meta">{entity.kind}</p>
-            <p>{entity.text}</p>
-          </>,
+          entity.card,
           { label: entity.kind },
         );
         setState(`open: ${target.dataset.entity}`);

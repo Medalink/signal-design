@@ -153,19 +153,29 @@
    * around, with a handle on the edge that faces the neighbor. --size is its
    * width (data-edge start or end) or height (top or bottom). The handle is a
    * separator with aria-valuemin, aria-valuemax and aria-valuenow in pixels.
+   * The panel's content goes in sd-resizable-body, which scrolls, so the handle
+   * stays on the edge (an absolutely placed child of a scrolling box scrolls away).
    * React's ResizablePanel drags and steps it; without React, set --size and
    * aria-valuenow yourself and data-resizing on the panel while a drag runs.
    *   <aside class="sd-resizable" id="inspector" data-edge="start" style="--size: 320px">
-   *     …
+   *     <div class="sd-resizable-body">…</div>
    *     <div class="sd-resize-handle" role="separator" aria-orientation="vertical" aria-label="Resize inspector"
    *          aria-controls="inspector" aria-valuemin="240" aria-valuemax="560" aria-valuenow="320" tabindex="0"></div>
    *   </aside>
    */
   .sd-resizable {
     position: relative;
+    display: flex;
     flex: none;
+    flex-direction: column;
     box-sizing: border-box;
     inline-size: var(--size, 18rem);
+  }
+  .sd-resizable-body {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    min-inline-size: 0;
+    overflow: auto;
   }
   .sd-resizable:is([data-edge="top"], [data-edge="bottom"]) {
     inline-size: auto;
@@ -174,7 +184,7 @@
   .sd-resizable[data-resizing] {
     user-select: none;
   }
-  /* The handle sits inside the panel, over its edge, so a panel that scrolls or clips keeps it. */
+  /* The handle sits over the panel's edge, outside the body that scrolls. */
   .sd-resize-handle {
     position: absolute;
     z-index: 1;
