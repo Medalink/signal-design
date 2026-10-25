@@ -95,11 +95,15 @@
   },
   {
    "name": "data-sd-ornaments",
-   "description": "Square-dust ornaments painted as the background: br (default), tl, tr, bl, top, bottom, center or none; space-separated."
+   "description": "Ornaments painted as the background. Placements br (default), tl, tr, bl, top, bottom, center or none; add one style word (contours, lattice, waveform, dashed, book or stack) to draw art instead of the dust; space-separated."
   },
   {
    "name": "data-sd-ornaments-size",
    "description": "Ornament size in px (default 340)."
+  },
+  {
+   "name": "data-sd-ornaments-seed",
+   "description": "Seed for the art styles contours, lattice and waveform: a number or any text, so each item gets its own picture."
   },
   {
    "name": "data-sd-ornaments-still",
