@@ -4,13 +4,15 @@
  * a focusable `separator` whose `aria-valuenow` is the size in pixels. React
  * owns the size; the pointer drags it and the arrow keys step it, and both
  * only ever call `onSizeChange`. The children sit in a body that scrolls, so
- * the handle stays on the edge when they are taller than the panel.
+ * the handle stays on the edge when they are taller than the panel. A body
+ * with nothing focusable in it needs `bodyProps={{ tabIndex: 0 }}` for the
+ * keyboard to scroll it.
  * `sd-sidebar-resize` is the same handle for the sidebar of the App Shell.
  */
 import { createElement as h, useId, useRef, useState } from "react";
 import { cx, useControllable } from "./util.js";
 
-export function ResizablePanel({ edge = "end", size, defaultSize = 288, onSizeChange, minSize = 160, maxSize = 640, label = "Resize", step = 16, id, className, style, children, ...props }) {
+export function ResizablePanel({ edge = "end", size, defaultSize = 288, onSizeChange, minSize = 160, maxSize = 640, label = "Resize", step = 16, bodyProps, id, className, style, children, ...props }) {
   const [value, setSize] = useControllable(size, defaultSize, onSizeChange);
   const generated = useId();
   const panelId = id ?? generated;
@@ -45,7 +47,7 @@ export function ResizablePanel({ edge = "end", size, defaultSize = 288, onSizeCh
       "data-resizing": dragging ? "" : undefined,
       style: { "--size": `${now}px`, ...style },
     },
-    h("div", { className: "sd-resizable-body" }, children),
+    h("div", { ...bodyProps, className: cx("sd-resizable-body", bodyProps?.className) }, children),
     h("div", {
       role: "separator",
       tabIndex: 0,

@@ -162,9 +162,13 @@ function Resizable() {
       <div className="flex h-64 overflow-hidden border border-line bg-surface" id="resizable-row">
         <ResizablePanel edge="end" size={binder} onSizeChange={setBinder} minSize={160} maxSize={360} label="Resize binder" className="border-e border-line p-3" id="resizable-binder">
           <p className="sd-label">Binder</p>
-          <ul className="mt-2 grid gap-1 text-sm sd-muted" data-binder-list>
+          <ul className="mt-2 grid gap-1" data-binder-list>
             {Array.from({ length: 24 }, (_, index) => (
-              <li key={index}>Chapter {index + 1}</li>
+              <li key={index}>
+                <button className="sd-btn sd-btn-ghost sd-btn-sm w-full justify-start" type="button">
+                  Chapter {index + 1}
+                </button>
+              </li>
             ))}
           </ul>
         </ResizablePanel>

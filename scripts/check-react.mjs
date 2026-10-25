@@ -47,7 +47,7 @@ export function Consumer() {
       {/* @ts-expect-error an icon is one of the set */}
       <Icon name="nope" />
       <HoverCardHost ref={hostRef} closeDelay={undefined} onOpenChange={(open: boolean) => console.log(open)} />
-      <ResizablePanel edge="top" size={undefined} minSize={undefined} onSizeChange={(size: number) => console.log(size)}>Dock</ResizablePanel>
+      <ResizablePanel edge="top" size={undefined} minSize={undefined} bodyProps={{ tabIndex: 0 }} onSizeChange={(size: number) => console.log(size)}>Dock</ResizablePanel>
       {/* @ts-expect-error an edge is start, end, top or bottom */}
       <ResizablePanel edge="left" />
       <Field label="Name" error="Required"><Input value="" onChange={(event) => console.log(event.target.value)} /></Field>

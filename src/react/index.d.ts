@@ -713,6 +713,8 @@ export interface ResizablePanelProps extends Omit<ComponentProps<"div">, "childr
   label?: string | undefined;
   /** Pixels per arrow key; Shift multiplies it by 4. Default 16. */
   step?: number | undefined;
+  /** Props for the scrolling body the children sit in. Give it `tabIndex={0}` and a name when the content has nothing focusable, so the keyboard can scroll it. */
+  bodyProps?: ComponentProps<"div"> | undefined;
   children?: ReactNode | undefined;
 }
 /** A panel with a drag handle on one edge: a focusable separator that arrows, Home and End also move. */

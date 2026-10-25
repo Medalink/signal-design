@@ -34,7 +34,7 @@ for (const theme of ["ink", "paper"]) {
       await p.locator("#react-editor-resizable").getByRole("separator", { name: "Resize inspector" }).focus();
     });
     await shoot(page, "#react-editor-hostcard", "editor-gaps-hovercard-host-1280-ink", async (p) => {
-      await p.locator('#react-editor-hostcard [data-entity="lisbon"]').hover();
+      await p.locator('#react-editor-hostcard [data-entity="lisbon"]').first().hover();
       await p.waitForSelector(".sd-hovercard");
     });
     await shoot(page, "#react-editor-gutter", "editor-gaps-gutter-1280-ink");
