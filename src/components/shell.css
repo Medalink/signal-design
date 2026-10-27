@@ -358,12 +358,14 @@
    * remembers the width. Without it, it is only the look: an app that owns the
    * width sets --shell-sidebar on .sd-shell and aria-valuenow itself, and may
    * set data-resizing on .sd-shell while a drag runs. */
+  /* A 24px target (WCAG 2.5.8) around a 1px line on the sidebar's edge: 8px
+     over the sidebar, 16px over the gap beside it. */
   .sd-sidebar-resize {
     position: absolute;
     inset-block: 0;
-    inset-inline-end: -5px;
+    inset-inline-end: -16px;
     z-index: 1;
-    width: 9px;
+    width: 24px;
     cursor: col-resize;
     touch-action: none;
   }
@@ -371,7 +373,7 @@
     content: "";
     position: absolute;
     inset-block: 0;
-    inset-inline-start: 4px;
+    inset-inline-start: 8px;
     width: 1px;
     transition: background-color 120ms var(--ease-out), width 120ms var(--ease-out);
   }
@@ -384,7 +386,7 @@
   .sd-sidebar-resize:focus-visible::after,
   [data-resizing] > .sd-sidebar > .sd-sidebar-resize::after,
   .sd-sidebar[data-resizing] > .sd-sidebar-resize::after {
-    inset-inline-start: 3px;
+    inset-inline-start: 7px;
     width: 3px;
     background: var(--sd-accent);
   }
