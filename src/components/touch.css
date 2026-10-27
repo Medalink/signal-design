@@ -4,7 +4,8 @@
  * min-height does nothing to an inline link, so links in a sentence keep the
  * line. Left out: checkboxes, radios and switches (their label is the
  * target), and parts whose size is the data (a schedule block, a mark,
- * a gutter marker) or a hairline (a resize handle).
+ * a gutter marker), a hairline (a resize handle), and window controls, which
+ * fill a title bar of fixed height.
  */
 :root {
   --sd-touch: 40px;
@@ -24,8 +25,12 @@
       [role="menuitem"],
       [role="option"],
       [role="treeitem"]
-    ):not(:where(.sd-mark, .sd-gutter-marker, .sd-schedule-block, .sd-sidebar-resize, .sd-resize-handle, .sd-skip, [role="switch"])) {
+    ):not(:where(.sd-mark, .sd-gutter-marker, .sd-schedule-block, .sd-sidebar-resize, .sd-resize-handle, .sd-skip, .sd-window-controls > button, [role="switch"])) {
       min-height: var(--sd-touch);
+    }
+    /* A square button stays square. */
+    .sd-message-actions > button {
+      min-width: var(--sd-touch);
     }
     input[type="color"] {
       min-width: var(--sd-touch);

@@ -136,6 +136,7 @@
   /* On a coarse pointer the name reaches a finger past the line it sits in;
      negative margins keep the line's height. */
   @media (pointer: coarse) {
+    .sd-message-author > :is(button, a),
     .sd-message-head > b > :is(button, a),
     .sd-reply > b > :is(button, a),
     .sd-message-ref > b > :is(button, a) {
