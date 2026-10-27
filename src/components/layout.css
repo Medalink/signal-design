@@ -194,19 +194,19 @@
     user-select: none;
   }
   /* The handle sits over the panel's edge, outside the body that scrolls: a
-     24px target (WCAG 2.5.8), 8px inside the panel and 16px beyond it, with
+     24px target (WCAG 2.5.8), 12px each side of the edge, with
      the 1px line on the edge. */
   .sd-resize-handle {
     position: absolute;
     z-index: 1;
     inset-block: 0;
-    inset-inline: auto -16px;
+    inset-inline: auto -12px;
     inline-size: 24px;
     cursor: col-resize;
     touch-action: none;
   }
   .sd-resizable[data-edge="start"] > .sd-resize-handle {
-    inset-inline: -16px auto;
+    inset-inline: -12px auto;
   }
   .sd-resizable:is([data-edge="top"], [data-edge="bottom"]) > .sd-resize-handle {
     inset-block: auto;
@@ -216,21 +216,21 @@
     cursor: row-resize;
   }
   .sd-resizable[data-edge="top"] > .sd-resize-handle {
-    inset-block: -16px auto;
+    inset-block: -12px auto;
   }
   .sd-resizable[data-edge="bottom"] > .sd-resize-handle {
-    inset-block: auto -16px;
+    inset-block: auto -12px;
   }
   .sd-resize-handle::after {
     content: "";
     position: absolute;
     inset-block: 0;
-    inset-inline: auto 16px;
+    inset-inline: auto 12px;
     inline-size: 1px;
     transition: background-color 120ms var(--ease-out), inline-size 120ms var(--ease-out), block-size 120ms var(--ease-out);
   }
   .sd-resizable[data-edge="start"] > .sd-resize-handle::after {
-    inset-inline: 16px auto;
+    inset-inline: 12px auto;
   }
   .sd-resizable:is([data-edge="top"], [data-edge="bottom"]) > .sd-resize-handle::after {
     inset-block: auto;
@@ -239,10 +239,10 @@
     block-size: 1px;
   }
   .sd-resizable[data-edge="top"] > .sd-resize-handle::after {
-    inset-block: 16px auto;
+    inset-block: 12px auto;
   }
   .sd-resizable[data-edge="bottom"] > .sd-resize-handle::after {
-    inset-block: auto 16px;
+    inset-block: auto 12px;
   }
   .sd-resize-handle:hover::after {
     background: var(--sd-fg-subtle);

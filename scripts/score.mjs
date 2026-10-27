@@ -173,27 +173,47 @@ function probe({ scope, exclude, width }) {
       if (crowded) add("target", "major", el, `${Math.round(r.width)}x${Math.round(r.height)} with a neighbour inside 24px`);
     }
     // Touch skips what a finger never aims at by height: text in a line, a
-    // box that takes focus only to scroll, and parts whose size is the data.
+    // box that takes focus only to scroll, parts whose size is the data, and
+    // window controls, which fill a title bar of fixed height.
     const inline = getComputedStyle(el).display === "inline";
     const scrollOnly = el.matches("[tabindex]:not(a, button, input, select, textarea, summary, [role])") && (el.scrollWidth > el.clientWidth || el.scrollHeight > el.clientHeight);
-    const data = el.matches(".sd-schedule-block, .sd-mark, .sd-gutter-marker, .sd-resize-handle, .sd-sidebar-resize");
+    const data = el.matches(".sd-schedule-block, .sd-mark, .sd-gutter-marker, .sd-resize-handle, .sd-sidebar-resize, .sd-window-controls > button");
     if (width <= 400 && r.height < 40 && !inline && !scrollOnly && !data && !el.matches("input[type=checkbox], input[type=radio], [role=switch]")) add("touch", "minor", el, `${Math.round(r.height)}px tall on a phone`);
   });
 
   // Field boundaries (WCAG 1.4.11).
+  // An edged box (data-sd-edges) paints its own border under a glow and sets
+  // the real one transparent, so read the border it had.
   const edgeOf = (el) => {
+    const inline = el.matches("[data-sd-edges]") ? el.style.borderColor : null;
+    const transition = el.style.getPropertyValue("transition");
+    if (inline !== null) {
+      el.style.setProperty("transition", "none", "important");
+      el.style.borderColor = "";
+    }
     const s = getComputedStyle(el);
     const behind = backdrop(el.parentElement);
     const fill = over(rgba(s.backgroundColor), behind);
     const edges = ["Top", "Right", "Bottom", "Left"].filter((side) => parseFloat(s[`border${side}Width`]) > 0).map((side) => over(rgba(s[`border${side}Color`]), behind));
-    return { drawn: edges.length > 0 || fill.some((v, i) => Math.abs(v - behind[i]) > 2), ratio: Math.max(contrast(fill, behind), ...edges.map((e) => contrast(e, behind))) };
+    if (inline !== null) {
+      el.style.borderColor = inline;
+      void s.borderTopColor;
+      el.style.setProperty("transition", transition);
+    }
+    const shows = (c) => c.some((v, i) => Math.abs(v - behind[i]) > 2);
+    return { drawn: edges.length > 0 || shows(fill), edged: edges.some(shows), ratio: Math.max(contrast(fill, behind), ...edges.map((e) => contrast(e, behind))) };
   };
   for (const el of controls) {
     if (!el.matches('input:not([type=range], [type=color], [type=file], [type=submit], [type=reset], [type=button], [type=image]), select, textarea, [role=checkbox], [role=switch]')) continue;
     // A field with no edge of its own (the textarea in a composer, the input
-    // in a tag list) is bounded by the nearest wrapper that draws one.
+    // in a tag list) is bounded by the nearest wrapper, within three levels,
+    // that draws a border; a wrapper that is only a fill is looked past.
     let box = edgeOf(el);
-    for (let n = el.parentElement, i = 0; !box.drawn && n && i < 3; n = n.parentElement, i++) box = edgeOf(n);
+    for (let n = el.parentElement, i = 0; !box.drawn && n && i < 3; n = n.parentElement, i++) {
+      const up = edgeOf(n);
+      if (up.edged || up.ratio >= 3) { box = up; break; }
+      if (up.ratio > box.ratio) box = { drawn: false, ratio: up.ratio };
+    }
     if (box.ratio < 3) add("boundary", "major", el, `edge ${box.ratio.toFixed(2)}:1`);
   }
 
@@ -487,8 +507,10 @@ if (!skip.has("snippets")) {
         .filter((el) => !el.closest("svg") || el.matches("svg"))
         .map((el) => {
           const r = el.getBoundingClientRect(), s = getComputedStyle(el);
+          // An edged box hides its border once the ornament script paints the glow.
+          const edge = el.matches("[data-sd-edges]") ? "edged" : s.borderTopColor;
           const cls = [...el.classList].filter((c) => c.startsWith("sd-")).join(".");
-          return { tag: el.tagName.toLowerCase() + (cls ? `.${cls}` : ""), box: [r.left - o.left, r.top - o.top, r.width, r.height].map(Math.round), style: [s.display, s.color, s.backgroundColor, s.borderTopColor, s.borderTopWidth, s.fontSize, s.fontWeight].join(" ") };
+          return { tag: el.tagName.toLowerCase() + (cls ? `.${cls}` : ""), box: [r.left - o.left, r.top - o.top, r.width, r.height].map(Math.round), style: [s.display, s.color, s.backgroundColor, edge, s.borderTopWidth, s.fontSize, s.fontWeight].join(" ") };
         });
     });
   for (const p of libPages) {

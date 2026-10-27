@@ -159,6 +159,11 @@
     line-height: 1.3;
     overflow-wrap: anywhere;
   }
+  /* A selected or conflicting row is tinted, so its small text moves toward
+     --sd-fg to keep 4.5:1. */
+  .sd-schedule-row:is([aria-selected="true"], [data-selected], [data-state="conflict"]) .sd-schedule-resource > span {
+    color: color-mix(in srgb, var(--tone, var(--sd-fg-faint)) 70%, var(--sd-fg));
+  }
   .sd-schedule-track {
     position: relative;
     min-width: 0;
@@ -253,12 +258,13 @@
   .sd-schedule-block[data-status="proposed"] > .sd-schedule-label {
     border-style: dashed;
   }
+  /* A colored label sits on its own tint, so it leans toward --sd-fg for 4.5:1. */
   .sd-schedule-block[data-status="conflict"] {
-    color: var(--block);
+    color: color-mix(in srgb, var(--block) 70%, var(--sd-fg));
   }
   .sd-schedule:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *)
     .sd-schedule-block {
-    color: var(--block);
+    color: color-mix(in srgb, var(--block) 70%, var(--sd-fg));
   }
 
   /* The now line, over the rows. data-label pins a small readout at the top. */
