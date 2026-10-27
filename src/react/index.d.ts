@@ -82,12 +82,23 @@ export interface CheckboxProps extends Omit<ComponentProps<"input">, "type" | "c
   /** On the label; `ref` and the other props reach the input. */
   className?: string | undefined;
 }
-/** A checkbox or switch with no text beside it, named by `aria-label` or `aria-labelledby`, such as one in a table cell or a toolbar. */
+/**
+ * A checkbox with no text beside it, named by `aria-label` or `aria-labelledby`, such as one in a table cell or a toolbar.
+ * It is a union of the two names, so `Omit` of it loses the requirement; wrap it with an intersection and a rest
+ * destructure (`props: BareCheckboxProps & { dense?: boolean }`), which keeps it.
+ */
 export type BareCheckboxProps = Omit<CheckboxProps, "label" | "description"> & { label?: undefined; description?: undefined } & ({ "aria-label": string } | { "aria-labelledby": string });
-/** `Omit` that keeps each member of a union, so the bare one still requires its name. */
+/** `Omit` that keeps each member of a union, so the bare type still requires its name. */
 type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
-export type SwitchProps = DistributiveOmit<CheckboxProps | BareCheckboxProps, "role">;
-export function Checkbox(props: CheckboxProps | BareCheckboxProps): ReactElement;
+/** The props of a `Switch` with a label: those of a `Checkbox` without `role`. One object type, so `Omit` of it spreads back into `Switch`. */
+export type SwitchProps = Omit<CheckboxProps, "role">;
+/** A `Switch` with no text beside it, named by `aria-label` or `aria-labelledby`. */
+export type BareSwitchProps = DistributiveOmit<BareCheckboxProps, "role">;
+/** With a `label` (`CheckboxProps`), or with only `aria-label` or `aria-labelledby` (`BareCheckboxProps`). */
+export function Checkbox(props: BareCheckboxProps): ReactElement;
+export function Checkbox(props: CheckboxProps): ReactElement;
+/** With a `label` (`SwitchProps`), or with only `aria-label` or `aria-labelledby` (`BareSwitchProps`). */
+export function Switch(props: BareSwitchProps): ReactElement;
 export function Switch(props: SwitchProps): ReactElement;
 
 /* ---- Static parts ------------------------------------------------------ */
