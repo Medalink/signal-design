@@ -1,0 +1,4 @@
+/* A bare consumer page for scripts/score.mjs: Tailwind plus Signal, no showcase CSS. */
+@import "tailwindcss";
+@import "../src/signal.css";
+@source "../showcase";
