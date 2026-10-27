@@ -182,6 +182,10 @@
   .sd-resizable-body :is(.sd-btn, a):focus-visible {
     outline-offset: -2px;
   }
+  /* Inside a filled button the ring takes the button's text color. */
+  .sd-resizable-body .sd-btn-primary:focus-visible {
+    outline-color: var(--btn-fg);
+  }
   .sd-resizable:is([data-edge="top"], [data-edge="bottom"]) {
     inline-size: auto;
     block-size: var(--size, 18rem);
