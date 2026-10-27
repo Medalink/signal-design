@@ -291,20 +291,25 @@ async function interact(page, helper, { scope, exclude }) {
       before.focus();
     });
     await page.keyboard.press("Tab");
+    // Focus can land on a descendant (a toolbar hands it to its first button);
+    // the ring is then judged by the size of what holds focus.
     const focused = await h.evaluate((el) => {
       document.querySelector("[data-score-probe]")?.remove();
-      return document.activeElement === el || el.contains(document.activeElement);
+      const a = document.activeElement;
+      if (a !== el && !el.contains(a)) return null;
+      const r = a.getBoundingClientRect();
+      return r.width + r.height;
     });
     if (focused) {
       const shot = await pixels(page, clip);
       const d = await diff(helper, rest, shot);
       // A visible ring changes at least half of a 1px outline around the box.
-      if (process.env.SCORE_DEBUG && d.changed < box.width + box.height) {
+      if (process.env.SCORE_DEBUG && d.changed < focused) {
         const name = info.sig.replace(/[^a-z0-9]+/gi, "-").slice(0, 60);
         writeFileSync(`.audit/shots/focus-${name}-rest.png`, Buffer.from(rest, "base64"));
         writeFileSync(`.audit/shots/focus-${name}-focus.png`, Buffer.from(shot, "base64"));
       }
-      if (d.changed < (box.width + box.height)) findings.push({ check: "focus", severity: info.text ? "major" : "critical", el: info.sig, detail: `${d.changed} px change on focus` });
+      if (d.changed < focused) findings.push({ check: "focus", severity: info.text ? "major" : "critical", el: info.sig, detail: `${d.changed} px change on focus` });
     }
     await page.evaluate(() => document.activeElement?.blur());
     if (info.hoverable) {
