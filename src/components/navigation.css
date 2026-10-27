@@ -7,8 +7,10 @@
     display: flex;
     align-items: center;
     gap: 20px;
-    margin: 0;
-    padding: 0;
+    /* The strip scrolls, and a scroller clips: 4px of padding taken back by
+       the margin leaves room for a link's focus ring without moving a thing. */
+    margin: -4px;
+    padding: 4px;
     list-style: none;
     overflow-x: auto;
     scrollbar-width: none;
