@@ -1193,8 +1193,9 @@ What they take over from `init()`:
 - **Tooltip** is a manual popover too, so it shows above a modal dialog. Its
   look and the `role="tooltip"` and `aria-describedby` link are unchanged.
   `delay` (milliseconds, default 0) holds the tip back until the pointer has
-  rested on the trigger that long; leaving first shows nothing, and keyboard
-  focus always shows it at once. `className` is added to the tip beside
+  rested on the trigger that long; leaving first shows nothing. Keyboard focus
+  (`:focus-visible`) shows it at once, but a mouse press that focuses the
+  trigger does not: it is part of the hover and waits out the delay. `className` is added to the tip beside
   `sd-tooltip`. `onOpenChange(open)` reports each show and hide, including
   Escape and blur.
 - **AppShell** renders `data-sidebar`, `data-aside`, `data-drawer` and

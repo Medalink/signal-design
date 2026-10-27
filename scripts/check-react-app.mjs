@@ -401,8 +401,24 @@ export async function checkReactApp(page, base) {
   await page.mouse.move(2, 2);
   expect(await until(() => !document.querySelector("body > [role=tooltip]"), null), "leaving hides the delayed tooltip at once");
   expect(await until(() => document.querySelector("#react-tooltip [data-tip-open]").textContent === "delayed tip: hidden", null), "onOpenChange reports the tip closing");
-  await delayed.focus();
-  expect(await until(() => document.querySelector("body > [role=tooltip]"), null, 450), "keyboard focus shows the tooltip without the delay");
+  // A mouse press focuses the button, but that is not keyboard focus: the delay the hover started keeps running.
+  // WebKit does not focus a button on a press, so there this passes without the press ever focusing it.
+  await page.evaluate(() => (window.__tipsSeen = 0));
+  await delayed.hover();
+  await page.mouse.down();
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  const shownByPress = await page.evaluate(() => window.__tipsSeen);
+  await page.mouse.up();
+  expect(shownByPress === 0, `pressing the trigger inside the delay does not show the tooltip early, ${shownByPress} shown 300ms in`);
+  expect(await until(() => document.querySelector("body > [role=tooltip]"), null, 4000), "a pressed trigger shows the tooltip once the delay is up");
+  await page.mouse.move(2, 2);
+  expect(await until(() => !document.querySelector("body > [role=tooltip]"), null), "leaving hides the tooltip of a pressed trigger");
+  await delayed.blur();
+  // Tab, not focus(): after a press a scripted focus is not keyboard focus either.
+  await page.locator("#react-tooltip").getByRole("button", { name: "Settings" }).focus();
+  await page.keyboard.press("Tab");
+  expect(await until(() => document.activeElement?.textContent === "Delayed tip", null), "Tab reaches the delayed trigger");
+  expect(await until(() => document.querySelector("body > [role=tooltip]")?.textContent === "Resolved in 12 ms", null, 450), "keyboard focus shows the tooltip without the delay");
   await page.keyboard.press("Escape");
   expect(await until(() => !document.querySelector("body > [role=tooltip]") && document.querySelector("#react-tooltip [data-tip-open]").textContent === "delayed tip: hidden", null), "Escape hides the tooltip and reports it");
   await delayed.blur();

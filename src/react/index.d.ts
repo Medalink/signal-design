@@ -344,7 +344,7 @@ export function Segment(props: SegmentProps): ReactElement;
 export interface TooltipProps {
   content: ReactNode;
   side?: "top" | "bottom" | "left" | "right" | undefined;
-  /** Milliseconds the pointer must rest on the trigger before the tip shows. Keyboard focus shows it at once. Default 0. */
+  /** Milliseconds the pointer must rest on the trigger before the tip shows. Keyboard focus shows it at once; a mouse press that focuses the trigger does not. Default 0. */
   delay?: number | undefined;
   /** Added to the tip's `sd-tooltip` class. */
   className?: string | undefined;

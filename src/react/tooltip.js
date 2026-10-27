@@ -3,7 +3,9 @@
  * leave, blur or Escape. It is a portal on <body>, so no clipping ancestor
  * can cut it off, and it exists only while visible, so server output has none.
  * It is a manual popover, so it paints above a modal dialog. `delay` holds
- * back the pointer only; focus shows it at once.
+ * back the pointer only; keyboard focus (`:focus-visible`) shows it at once.
+ * A mouse press that focuses the trigger is still the pointer's hover, so it
+ * keeps waiting for the delay.
  */
 import { Fragment, cloneElement, createElement as h, useEffect, useId, useLayoutEffect, useRef } from "react";
 import { createPortal } from "react-dom";
@@ -36,7 +38,13 @@ export function Tooltip({ content, side = "top", delay = 0, className, onOpenCha
     "aria-describedby": visible ? id : props["aria-describedby"],
     onPointerEnter: on("onPointerEnter", true, delay),
     onPointerLeave: on("onPointerLeave", false),
-    onFocus: on("onFocus", true),
+    onFocus: (event) => {
+      props.onFocus?.(event);
+      // The target, not the trigger: a wrapper around the focusable element is never itself focus-visible.
+      if (!event.target.matches(":focus-visible")) return;
+      clearTimeout(wait.current);
+      setVisible(true);
+    },
     onBlur: on("onBlur", false),
     onKeyDown: (event) => {
       props.onKeyDown?.(event);
