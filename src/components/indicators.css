@@ -75,6 +75,7 @@
     border: 0;
     background: none;
     color: var(--sd-fg-subtle);
+    line-height: 1;
     cursor: pointer;
   }
   .sd-chip > button:hover {

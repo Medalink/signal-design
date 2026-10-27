@@ -89,11 +89,14 @@
     display: grid;
     place-items: center;
     width: 34px;
+    padding: 0;
     border: 1px solid var(--sd-line-control);
     background: transparent;
     color: var(--sd-fg-muted);
     font: inherit;
     font-size: var(--text-lg);
+    /* The input sets the height; the sign must not stretch it. */
+    line-height: 1;
     cursor: pointer;
   }
   .sd-number > button:hover:not(:disabled) {
