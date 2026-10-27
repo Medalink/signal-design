@@ -14,6 +14,15 @@ import { liftManual, showManual, useIsomorphicLayoutEffect } from "./util.js";
 const ToastContext = createContext(null);
 const LEAVE_MS = 160;
 
+/** Whether a modal dialog is open. Where `:modal` is not a selector (WKWebView before Safari 16.4) querySelector throws, and any open dialog stands in. */
+function modalOpen() {
+  try {
+    return document.querySelector("dialog:modal") !== null;
+  } catch {
+    return document.querySelector("dialog[open]") !== null;
+  }
+}
+
 export function useToast() {
   const toast = useContext(ToastContext);
   if (!toast) throw new Error("useToast() needs a <ToastProvider> above the component that calls it.");
@@ -82,7 +91,7 @@ export function ToastProvider({ timeout: defaultTimeout = 2400, children }) {
   const toast = useCallback(
     (message, { tone, timeout = defaultTimeout, action } = {}) => {
       const id = ++next.current;
-      if (document.querySelector("dialog:modal")) liftManual(region.current);
+      if (modalOpen()) liftManual(region.current);
       setToasts((all) => [...all, { id, message, tone, timeout, action }]);
       return () => dismiss(id);
     },

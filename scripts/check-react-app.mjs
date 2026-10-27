@@ -376,6 +376,35 @@ export async function checkReactApp(page, base) {
   expect(await until((sel) => !document.querySelector(sel + " .sd-toast"), toaster), "the toasts can be cleared once the dialog is closed");
   expect(await page.locator(toaster).evaluate((el) => el.matches(":popover-open")), "the toaster stays open with no toast in it");
 
+  // Before Safari 16.4 `dialog:modal` is not a selector and querySelector throws on it, so a toast has to find an open dialog another way.
+  await page.evaluate(() => {
+    const native = document.querySelector;
+    document.querySelector = function (selector) {
+      if (String(selector).includes(":modal")) throw new SyntaxError(`'${selector}' is not a valid selector`);
+      return native.call(this, selector);
+    };
+  });
+  try {
+    await over.getByRole("button", { name: "Open dialog" }).click();
+    expect(await until(() => document.querySelector("#react-above-dialog dialog[open]") !== null, null), "the dialog opens with :modal unknown to the engine");
+    const errorsBefore = browserErrors.length;
+    await archive.click();
+    const shownWithout = await until((sel) => document.querySelector(sel + " .sd-toast")?.getAnimations().length === 0, toaster);
+    expect(shownWithout, "a toast shows over an open dialog when the engine has no :modal selector");
+    expect(browserErrors.length === errorsBefore, `a toast raised no error without :modal, got ${browserErrors.slice(errorsBefore).join("; ")}`);
+    if (shownWithout) {
+      const unknownWant = await toastColor();
+      const unknownGot = await toastPixel();
+      expect(unknownGot.every((c, i) => Math.abs(c - unknownWant[i]) <= 2), `the toaster is lifted above the dialog without :modal, wanted ${unknownWant} at the toast's corner, got ${unknownGot}`);
+    }
+    await page.keyboard.press("Escape");
+    await until(() => document.querySelector("#react-above-dialog dialog[open]") === null, null);
+  } finally {
+    await page.evaluate(() => delete document.querySelector);
+  }
+  await over.getByRole("button", { name: "Clear toasts" }).click();
+  expect(await until((sel) => !document.querySelector(sel + " .sd-toast"), toaster), "the toasts can be cleared after the engine without :modal");
+
   // A sheet ignores the click, and a toast's action works once the sheet is closed.
   const sheetOpen = () => page.evaluate(() => document.querySelector("dialog.sd-sheet:not(.sd-sheet-bottom)").open);
   await page.locator("#react-dialog").getByRole("button", { name: "Sheet", exact: true }).click();
