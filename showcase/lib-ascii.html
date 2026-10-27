@@ -36,6 +36,7 @@ art = mountAscii(stage.querySelector(".sd-ascii"), piece, { at: 1.4, look: "dots
 
 // Still until the stage says it is busy.
 stage.setAttribute("aria-busy", "true");</script>
+      <p class="demo-usage"><code>sd-ascii</code> + <code>role="img"</code> + <code>aria-label</code> · <code>mountAscii(el, piece, { at, look })</code> from <code>signal-design/ascii</code> · <code>look</code>: <code>original|dots|ascii|dense|numbers|binary|letters|blocks|squares|lines|dither</code> · <code>--sd-ascii-size</code> sets the character size · still until <code>aria-busy="true"</code> · <code>art.destroy()</code> before remounting with another look</p>
     </div>
 
     <div class="demo-block">
@@ -60,6 +61,7 @@ mountAscii(panel.querySelector(".sd-ascii"), piece, { at: 4 });
 // The art follows aria-busy on its closest ancestor that has it.
 panel.setAttribute("aria-busy", "true");   // plays
 panel.removeAttribute("aria-busy");        // holds the frame it is on</script>
+      <p class="demo-usage"><code>mountAscii(el, piece, { at })</code> · the art plays while <code>aria-busy="true"</code> is on it or its closest ancestor that has the attribute, and holds the frame it is on when removed · set it on the panel that is working · <code>art.busy(true|false)</code> overrides · plays only on screen, in a visible tab and without <code>prefers-reduced-motion</code></p>
     </div>
 
     <div class="demo-block">
@@ -115,6 +117,7 @@ mountAscii(card.querySelector(".sd-ascii"), piece, { at: 3 });
 // Hover or focus plays the card, leaving holds it.
 card.addEventListener("pointerenter", () => card.setAttribute("aria-busy", "true"));
 card.addEventListener("pointerleave", () => card.removeAttribute("aria-busy"));</script>
+      <p class="demo-usage">One <code>sd-ascii</code> per piece, each with <code>data-piece</code>, <code>data-at</code> (seconds into the piece for the still frame), <code>role="img"</code> and <code>aria-label</code> · put the art in <code>sd-card</code> and set <code>aria-busy</code> on the card from hover or a play button · <code>--cols</code> and <code>--rows</code> size the box before the art loads</p>
     </div>
 
     <div class="demo-block">
@@ -129,6 +132,7 @@ card.addEventListener("pointerleave", () => card.removeAttribute("aria-busy"));<
 import * as piece from "ascii-magic-art/pieces/sleeping-cat.js";
 
 mountAscii(document.querySelector(".sd-empty .sd-ascii"), piece, { at: 3 });</script>
+      <p class="demo-usage"><code>sd-empty</code> > <code>sd-ascii</code> + <code>sd-empty-title</code> + text + a <code>sd-btn</code> · <code>--sd-ascii-size</code>, <code>--cols</code>, <code>--rows</code> fit the art to the space · leave it still: an empty state needs no motion</p>
     </div>
 
     <div class="demo-block">
@@ -149,6 +153,7 @@ import * as piece from "ascii-magic-art/pieces/empty-payment-failed.js";
 // data-tone paints the brightest grey of the piece with the tone.
 const art = document.querySelector('.sd-ascii[data-tone="danger"]');
 mountAscii(art, piece, { at: 4 });</script>
+      <p class="demo-usage"><code>data-tone="danger|success|warning|pending|accent|extra"</code> on <code>sd-ascii</code> paints the brightest level only; the rest stays grey · use it when the picture is the status, such as a failed or paid payment</p>
     </div>
   </section>
 </body>
