@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+    <div class="demo-block" id="components-buttons">
+      <h2 class="sd-label">Buttons</h2>
+      <div class="sd-actions">
+        <button class="sd-btn sd-btn-primary">Approve <kbd>a</kbd></button>
+        <button class="sd-btn">Save for later <kbd>t</kbd></button>
+        <button class="sd-btn">Request changes <kbd>s</kbd></button>
+        <button class="sd-btn" data-tone="danger">Reject <kbd>x</kbd></button>
+        <button class="sd-btn sd-btn-ghost">Cancel</button>
+        <button class="sd-btn sd-btn-link">Reset to defaults</button>
+      </div>
+      <div class="sd-actions">
+        <button class="sd-btn" data-tone="success">Approve</button>
+        <button class="sd-btn" data-tone="accent">Focus</button>
+        <button class="sd-btn" data-tone="warning">Costly</button>
+        <button class="sd-btn" data-tone="pending">Pending</button>
+        <button class="sd-btn sd-btn-primary" data-tone="success">Solid success</button>
+        <button class="sd-btn sd-btn-primary" data-tone="danger">Solid danger</button>
+      </div>
+      <div class="sd-actions">
+        <button class="sd-btn sd-btn-sm">Small</button>
+        <button class="sd-btn">Default</button>
+        <button class="sd-btn sd-btn-lg">Large</button>
+        <button class="sd-btn sd-btn-icon" aria-label="Settings" data-sd-tip="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg></button>
+        <button class="sd-btn" disabled>Disabled</button>
+        <button class="sd-btn" aria-busy="true">Merging</button>
+        <div class="sd-btn-group" role="group" aria-label="View">
+          <button class="sd-btn sd-btn-sm">Day</button><button class="sd-btn sd-btn-sm">Week</button><button class="sd-btn sd-btn-sm">Month</button>
+        </div>
+      </div>
+      <div class="grid gap-3 max-w-[22rem]">
+        <button class="sd-btn sd-btn-primary sd-btn-block">Continue</button>
+        <p class="text-sm sd-subtle">Press <span class="sd-kbd">Ctrl</span> <span class="sd-kbd">Enter</span> to send · <span class="sd-chip"><span class="sd-chip-key">a</span> approve</span></p>
+      </div>
+      <p class="demo-usage"><code>sd-btn</code> · <code>sd-btn-primary</code> · <code>sd-btn-ghost</code> · <code>sd-btn-link</code> · <code>sd-btn-sm|lg|icon|block</code> · <code>data-tone</code> · <code>aria-busy</code> · <code>sd-kbd</code> (a <code>kbd</code> look for any element) · <code>sd-chip-key</code></p>
+    </div>
+</body>
+</html>

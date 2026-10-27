@@ -1,20 +1,28 @@
 /**
  * Structure checks for the showcase pages: every library page carries the
- * shared chrome and says where it is, its sidebar lists only its own blocks,
- * Ctrl K belongs to exactly one palette, Chart.js loads only where charts
- * are, and old single-page links land on the page that holds them now.
+ * shared chrome and says where it is in the rail, the sidebar and the
+ * crumbs, Ctrl K belongs to exactly one palette, Chart.js loads only where
+ * charts are, and old links land on the page that holds them now.
  * Called from scripts/check.mjs.
  */
 import { existsSync, readFileSync } from "node:fs";
-import { ICONS } from "../showcase/layout-plugin.js";
-import { ALL, EXAMPLES, LIBRARY, keyOf, pageOfHash, scriptOf } from "../showcase/pages.js";
+import { ICONS, scriptOf } from "../showcase/layout-plugin.js";
+import { MOVED } from "../showcase/moved.js";
+import { ALL, EXAMPLES, LIBRARY, SECTIONS, keyOf } from "../showcase/pages.js";
 
 const showcase = new URL("../showcase/", import.meta.url);
 
-/** Every registry entry has the files, rail icon and sections it names. Static; returns the problems. */
+/** Every registry entry has its file and script, every section its rail icon, and every old anchor a page. Static; returns the problems. */
 export function checkShowcaseRegistry() {
   const problems = [];
   const has = (path) => existsSync(new URL(path, showcase));
+  for (const section of SECTIONS) {
+    if (!ICONS.includes(`id="i-${section.icon}"`)) problems.push(`section ${section.id}: rail icon "${section.icon}" has no symbol in ICONS in showcase/layout-plugin.js`);
+    for (const group of section.groups) if (!group.pages.length) problems.push(`section ${section.id}: group "${group.title}" has no pages`);
+  }
+  const ids = LIBRARY.map((p) => p.id);
+  for (const id of ids.filter((id, i) => ids.indexOf(id) !== i)) problems.push(`page id "${id}" is in showcase/pages.js twice`);
+  for (const [from, to] of Object.entries(MOVED)) if (!ids.includes(to)) problems.push(`showcase/moved.js sends #${from} to "${to}", which is not a page`);
   for (const page of ALL) {
     if (!has(page.file)) {
       problems.push(`${page.file} is in showcase/pages.js but the file does not exist`);
@@ -28,10 +36,8 @@ export function checkShowcaseRegistry() {
       if (!html.includes(`<html lang="en" data-theme="ink" data-page="${keyOf(page)}">`)) problems.push(`${page.file} must carry data-page="${keyOf(page)}" on <html>`);
       continue;
     }
-    const script = scriptOf(page);
-    if (script && !has(script)) problems.push(`${page.file}: showcase/${script} does not exist (add it, or set \`script: false\` in the registry)`);
-    if (page.icon && !ICONS.includes(`id="i-${page.icon}"`)) problems.push(`${page.file}: rail icon "${page.icon}" has no symbol in ICONS in showcase/layout-plugin.js`);
-    for (const section of page.sections ?? []) if (!html.includes(`id="${section}"`)) problems.push(`${page.file}: no element with id="${section}", the section the registry lists`);
+    if (!has(scriptOf(page))) problems.push(`${page.file}: showcase/${scriptOf(page)} does not exist`);
+    if (LIBRARY.includes(page) && html.includes('class="demo-section"')) problems.push(`${page.file} holds a .demo-section; the layout adds it, so the file holds only its intro and blocks`);
   }
   return problems;
 }
@@ -39,24 +45,30 @@ export function checkShowcaseRegistry() {
 /** Runs on a library page already loaded at 1280px in ink. */
 export async function checkShowcasePages(page, where, fail, library) {
   const chrome = await page.evaluate(() => ({
-    current: [...document.querySelectorAll('.sd-rail-item[aria-current="page"]')].map((a) => a.getAttribute("href")),
-    blocks: document.querySelectorAll(".demo-block").length,
-    links: document.querySelectorAll(".sd-sidebar-link[data-block]").length,
-    h1: document.querySelectorAll(".demo-intro > h1").length,
-    sectionH1: document.querySelectorAll(".demo-section > h1, .demo-wrap > h1").length,
+    rail: [...document.querySelectorAll(".sd-rail-item[aria-current]")].map((a) => a.dataset.sdSection),
+    panels: [...document.querySelectorAll("#library-sidebar .sd-sidebar-panel:not([hidden])")].map((p) => p.dataset.section),
+    sidebar: [...document.querySelectorAll('#library-sidebar .sd-sidebar-link[aria-current="page"]')].map((a) => a.getAttribute("href")),
+    crumbs: [...document.querySelectorAll(".sd-shell-header .sd-breadcrumb > li")].map((li) => li.textContent.trim()).filter(Boolean),
+    h1: document.querySelectorAll(".demo-intro > .demo-title > h1").length,
+    // Blocks may show an h1 as a demo; only one outside them is a second page title.
+    strayH1: [...document.querySelectorAll("h1")].filter((h) => !h.closest(".demo-block, .demo-title")).length,
     skip: document.querySelector("body > .sd-skip")?.getAttribute("href"),
     main: document.getElementById("main")?.getAttribute("tabindex"),
     chart: performance.getEntriesByType("resource").some((e) => /\/charts\/|chart[._]+js/.test(e.name)),
   }));
-  if (chrome.current.join() !== `./${library.file}`) fail(where, `rail marks ${JSON.stringify(chrome.current)} as current, want ./${library.file}`);
-  if (!chrome.blocks || chrome.links !== chrome.blocks) fail(where, `sidebar lists ${chrome.links} links for ${chrome.blocks} blocks`);
-  if (chrome.h1 !== 1 || chrome.sectionH1 !== 0) fail(where, `page has ${chrome.h1} intro h1 and ${chrome.sectionH1} stray h1, want 1 and 0`);
+  const { section, group } = library;
+  if (chrome.rail.join() !== section.id) fail(where, `rail marks ${JSON.stringify(chrome.rail)} as current, want ${section.id}`);
+  if (chrome.panels.join() !== section.id) fail(where, `sidebar shows ${JSON.stringify(chrome.panels)}, want the ${section.id} panel`);
+  if (chrome.sidebar.join() !== `./${library.file}`) fail(where, `sidebar marks ${JSON.stringify(chrome.sidebar)} as current, want ./${library.file}`);
+  const crumbs = `${section.title} / ${group.title} / ${library.title}`;
+  if (chrome.crumbs.join(" / ") !== crumbs) fail(where, `crumbs read ${chrome.crumbs.join(" / ")}, want ${crumbs}`);
+  if (chrome.h1 !== 1 || chrome.strayH1 !== 0) fail(where, `page has ${chrome.h1} title h1 and ${chrome.strayH1} stray h1, want 1 and 0`);
   if (chrome.skip !== "#main" || chrome.main !== "-1") fail(where, `skip link ${chrome.skip}, main tabindex ${chrome.main}`);
   if (chrome.chart !== (library.id === "charts")) fail(where, chrome.chart ? "Chart.js loaded on a page without charts" : "Chart.js did not load on the charts page");
 
   // Ctrl K opens this page's own palette if it has one, else the chrome's page palette.
   const own = await page.evaluate(() => !!document.querySelector("dialog[data-sd-palette]:not(#nav-palette)"));
-  await page.locator(".demo-section h2").first().click();
+  await page.locator(".demo-intro h1").click();
   await page.keyboard.press("Control+k");
   const open = await page.evaluate(() => [...document.querySelectorAll("dialog[data-sd-palette]")].filter((d) => d.open).map((d) => d.id));
   const want = own ? "demo-palette" : "nav-palette";
@@ -70,32 +82,75 @@ export async function checkShowcasePages(page, where, fail, library) {
   await page.waitForFunction(() => ![...document.querySelectorAll("dialog[data-sd-palette]")].some((d) => d.open), null, { timeout: 1000 }).catch(() => {});
 }
 
-/** Old links to the single components page, followed from the overview. */
+/** Rail sections on a library page at 1280px: pinned, a section opens its first page; collapsed, it peeks its pages in place. */
+export async function checkRailSections(page, base) {
+  const errors = [];
+  await page.goto(`${base}${LIBRARY[0].file}`, { waitUntil: "networkidle" });
+  const target = SECTIONS[2];
+  await page.click(`.sd-rail-item[data-sd-section="${target.id}"]`);
+  const first = target.groups[0].pages[0].file;
+  if (!(await page.waitForURL((url) => url.pathname.endsWith(first), { timeout: 3000 }).then(() => true, () => false)))
+    errors.push(`pinned: ${target.id} went to ${new URL(page.url()).pathname}, want ${first}`);
+  await page.waitForLoadState("networkidle");
+  await page.keyboard.press("[");
+  await page.waitForFunction(() => document.querySelector(".sd-shell").dataset.sidebar === "collapsed", null, { timeout: 2000 }).catch(() => {});
+  const other = SECTIONS[0];
+  await page.click(`.sd-rail-item[data-sd-section="${other.id}"]`);
+  const state = await page
+    .waitForFunction(
+      (id) => {
+        const shell = document.querySelector(".sd-shell");
+        return "peek" in shell.dataset && document.querySelector(`.sd-sidebar-panel[data-section="${id}"]:not([hidden])`);
+      },
+      other.id,
+      { timeout: 2000 },
+    )
+    .then(() => true, () => false);
+  if (!state) errors.push(`collapsed: ${other.id} did not peek its pages`);
+  if (!new URL(page.url()).pathname.endsWith(first)) errors.push(`collapsed: ${other.id} navigated to ${new URL(page.url()).pathname}`);
+  // Leave the sidebar pinned for the pages checked after this.
+  await page.keyboard.press("Escape");
+  await page.keyboard.press("[");
+  await page.evaluate(() => localStorage.removeItem("sd-shell-sidebar"));
+  return errors;
+}
+
+/** Old links to the single components page and the section pages, followed from the overview. */
 export async function checkHashRedirects(page, base) {
   const errors = [];
   let passed = 0;
-  for (const hash of ["#tokens", "#elements-headings", "#components-buttons", "#conversation-messages", "#inputs-more", "#charts", "#effects-digital-rain", "#js-countdown"]) {
+  // An old section with no anchor of its own now lands on the top of its page.
+  const cases = [
+    ["#tokens", "lib-color.html"],
+    ["#elements-headings", "lib-elements.html#elements-headings"],
+    ["#components-buttons", "lib-buttons.html#components-buttons"],
+    ["#conversation-messages", "lib-messages.html#conversation-messages"],
+    ["#inputs-more", "lib-pickers.html"],
+    ["#charts", "lib-charts.html#charts"],
+    ["#effects-digital-rain", "lib-rain.html#effects-digital-rain"],
+    ["#js-countdown", "lib-countdown.html#js-countdown"],
+  ];
+  for (const [hash, want] of cases) {
     await page.goto(`${base}${ALL[0].file}${hash}`);
     await page.waitForURL((url) => url.pathname.endsWith(".html") && !url.pathname.endsWith(ALL[0].file));
-    const want = `${pageOfHash(hash).file}${hash}`;
-    const got = new URL(page.url()).pathname.split("/").pop() + new URL(page.url()).hash;
-    // Block ids are assigned by the page script after load, so check the scroll landed too.
     await page.waitForLoadState("networkidle");
+    const url = new URL(page.url());
+    const got = url.pathname.split("/").pop() + url.hash;
     const inView = await page.evaluate((id) => {
-      const el = document.getElementById(id);
-      const box = document.querySelector(".sd-shell-content").getBoundingClientRect();
-      const r = el?.getBoundingClientRect();
-      return !!r && r.top < box.bottom && r.bottom > box.top;
-    }, hash.slice(1));
+      const box = document.querySelector(".sd-shell-content");
+      if (!id) return box.scrollTop === 0;
+      const r = document.getElementById(id)?.getBoundingClientRect();
+      const b = box.getBoundingClientRect();
+      return !!r && r.top < b.bottom && r.bottom > b.top;
+    }, want.split("#")[1] ?? "");
     if (got === want && inView) passed++;
     else errors.push(`${hash} went to ${got}, want ${want}; target in view: ${inView}`);
   }
   // An old link followed on an overview that is already open changes only the hash.
   await page.goto(`${base}${ALL[0].file}`, { waitUntil: "networkidle" });
   await page.evaluate(() => (location.hash = "#components-buttons"));
-  const open = pageOfHash("#components-buttons").file;
-  if (await page.waitForURL((url) => url.pathname.endsWith(open), { timeout: 3000 }).then(() => true, () => false)) passed++;
-  else errors.push(`#components-buttons set on the open overview stayed on ${new URL(page.url()).pathname}, want ${open}`);
+  if (await page.waitForURL((url) => url.pathname.endsWith("lib-buttons.html"), { timeout: 3000 }).then(() => true, () => false)) passed++;
+  else errors.push(`#components-buttons set on the open overview stayed on ${new URL(page.url()).pathname}, want lib-buttons.html`);
   await page.goto(`${base}${ALL[0].file}#top`);
   await page.waitForLoadState("networkidle");
   if (new URL(page.url()).pathname.endsWith(ALL[0].file)) passed++;

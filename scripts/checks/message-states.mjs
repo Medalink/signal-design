@@ -1,4 +1,4 @@
-export const page = "conversation";
+export const page = "messages";
 
 /** Message edges: --edge for the author, state edges over it in a fixed order, the grey own edge (no fill) and the selected fill. */
 export default async function checkMessageStates(page, where, fail) {

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+    <div class="demo-block" id="components-overlays">
+      <h2 class="sd-label">Overlays</h2>
+      <div class="sd-actions">
+        <button class="sd-btn" data-sd-open="demo-dialog">Dialog</button>
+        <button class="sd-btn" data-sd-open="demo-sheet">Sheet</button>
+        <button class="sd-btn" data-sd-open="demo-command">Command panel</button>
+        <button class="sd-btn" data-sd-open="demo-dialog-sm">Small dialog</button>
+        <button class="sd-btn" data-sd-open="demo-dialog-lg">Large dialog</button>
+        <button class="sd-btn" data-sd-open="demo-sheet-left">Sheet from the left</button>
+        <button class="sd-btn" data-sd-open="demo-sheet-bottom">Sheet from the bottom</button>
+        <button class="sd-btn" data-sd-tip="Tooltips show on hover and focus">Hover for tooltip</button>
+        <button class="sd-btn" data-sd-tip="Below" data-sd-tip-side="bottom">Tooltip below</button>
+      </div>
+
+      <dialog class="sd-dialog" id="demo-dialog" aria-labelledby="demo-dialog-h">
+        <header class="sd-dialog-head"><span id="demo-dialog-h">Request changes on ACME-421?</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">×</button></header>
+        <div class="sd-dialog-body">
+          <div class="sd-field">
+            <label class="sd-field-label" for="sb-note">Note for Platform</label>
+            <textarea id="sb-note">Also handle an expired card; the empty state should say "Update card".</textarea>
+          </div>
+        </div>
+        <footer class="sd-dialog-foot">
+          <button class="sd-btn sd-btn-ghost" data-sd-close>Cancel</button>
+          <button class="sd-btn" data-tone="danger" data-sd-close="send">Request changes</button>
+        </footer>
+      </dialog>
+
+      <dialog class="sd-dialog sd-sheet" id="demo-sheet" aria-labelledby="demo-sheet-h">
+        <header class="sd-dialog-head"><span id="demo-sheet-h">Item details</span><span class="sd-subtle text-sm">ACME-421</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">»</button></header>
+        <div class="sd-dialog-body grid gap-5">
+          <p class="text-sm">These settings apply to this item only. Workspace defaults cover everything else.</p>
+          <div class="sd-field"><span class="sd-field-label">Priority <span class="sd-field-aside">changed</span></span>
+            <div class="sd-seg sd-seg-sm" data-sd-seg><button type="button" aria-pressed="false">low</button><button type="button" aria-pressed="true">normal</button><button type="button" aria-pressed="false">high</button></div></div>
+          <div class="sd-field"><span class="sd-field-label">Due</span>
+            <div class="sd-seg sd-seg-sm" data-sd-seg><button type="button" aria-pressed="false">3d</button><button type="button" aria-pressed="true">7d</button><button type="button" aria-pressed="false">14d</button></div></div>
+          <button class="sd-btn sd-btn-link justify-self-start">Reset to workspace defaults</button>
+        </div>
+      </dialog>
+
+      <dialog class="sd-dialog sd-dialog-sm" id="demo-dialog-sm" aria-labelledby="demo-dialog-sm-h">
+        <header class="sd-dialog-head"><span id="demo-dialog-sm-h">Discard draft?</span></header>
+        <div class="sd-dialog-body sd-muted">Your note will be lost.</div>
+        <footer class="sd-dialog-foot"><button class="sd-btn sd-btn-ghost" data-sd-close>Keep</button><button class="sd-btn" data-tone="danger" data-sd-close>Discard</button></footer>
+      </dialog>
+      <dialog class="sd-dialog sd-dialog-lg" id="demo-dialog-lg" aria-labelledby="demo-dialog-lg-h">
+        <header class="sd-dialog-head"><span id="demo-dialog-lg-h">Compare versions</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">×</button></header>
+        <div class="sd-dialog-body"><pre class="sd-diff"><span data-line="@">@@ -1,3 +1,3 @@</span><span data-line="-">price: 12</span><span data-line="+">price: 14</span><span>currency: USD</span></pre></div>
+      </dialog>
+      <dialog class="sd-dialog sd-sheet sd-sheet-left" id="demo-sheet-left" aria-labelledby="demo-sheet-left-h">
+        <header class="sd-dialog-head"><span id="demo-sheet-left-h">Filters</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">«</button></header>
+        <div class="sd-dialog-body sd-muted">A sheet can come from either side.</div>
+      </dialog>
+      <dialog class="sd-dialog sd-sheet sd-sheet-bottom" id="demo-sheet-bottom" aria-labelledby="demo-sheet-bottom-h">
+        <header class="sd-dialog-head"><span id="demo-sheet-bottom-h">Details</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close details">×</button></header>
+        <div class="sd-dialog-body sd-muted">Or from the bottom, as tall as its content up to 85% of the screen (<code>--sheet-max</code>).</div>
+      </dialog>
+
+      <dialog class="sd-command" id="demo-command" aria-label="Remind me">
+        <p class="sd-command-head">Remind me about <b>Fix the crash when a customer has no address</b></p>
+        <div class="sd-menu" role="menu">
+          <button role="menuitem" data-sd-close><kbd>1</kbd> later today</button>
+          <button role="menuitem" data-sd-close><kbd>2</kbd> tomorrow 09:00</button>
+          <button role="menuitem" data-sd-close><kbd>3</kbd> Monday</button>
+          <button role="menuitem" data-sd-close><kbd>4</kbd> custom…</button>
+        </div>
+        <p class="sd-command-foot">Esc to cancel</p>
+      </dialog>
+      <p class="demo-usage"><code>sd-dialog</code> + <code>-head|-body|-foot</code> · <code>sd-dialog-sm|lg</code> · <code>sd-sheet</code> + <code>-left|-bottom</code> · <code>sd-command</code> · <code>data-sd-open</code> / <code>data-sd-close</code> · <code>data-sd-tip</code></p>
+    </div>
+</body>
+</html>

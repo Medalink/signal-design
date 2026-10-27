@@ -2,47 +2,43 @@
 <html lang="en" data-theme="ink">
 <head></head>
 <body>
-  <section class="demo-section" id="charts" aria-labelledby="charts-h">
-    <header class="demo-intro">
-      <h1 class="sd-display">Charts. <em>One set of colors.</em></h1>
-      <p class="sd-lead max-w-[42rem]">Two ways to chart, both on the <code>--sd-chart-*</code> tokens. <code>sd-plot</code> and the square charts are CSS only. <code>createChart</code> adds time axes, units, bands and live data on Chart.js.</p>
-      <div class="demo-intro-cols">
+  <header class="demo-intro">
+    <p class="sd-lead max-w-[42rem]">Two ways to chart, both on the <code>--sd-chart-*</code> tokens. <code>sd-plot</code> and the square charts are CSS only. <code>createChart</code> adds time axes, units, bands and live data on Chart.js.</p>
+    <p class="sd-muted max-w-[42rem]">Time series, generic chart types and square charts, all on the <code>--sd-chart-*</code> tokens. Switch <b>mono</b> and <b>spectrum</b> from the settings button in the bar above. Live charts need Chart.js; square charts and <code>sd-plot</code> are CSS only.</p>
+    <div class="demo-intro-cols">
+      <div>
+        <p class="sd-label">Principles</p>
+        <ul>
+          <li><b class="text-fg font-semibold">Mono by default.</b> Series are greys until <code>data-chart-theme</code> is <code>spectrum</code>. Switch it from the settings button in the bar above.</li>
+          <li><b class="text-fg font-semibold">Square marks.</b> Heatmaps, waffles and uptime strips are squares. Nothing glows or fades into a gradient.</li>
+          <li><b class="text-fg font-semibold">One palette everywhere.</b> A sparkline in a table matches the full chart above it, because both follow <code>data-chart-theme</code> on the element or any element above it.</li>
+          <li><b class="text-fg font-semibold">Scales stay honest.</b> A scale mode (clamp, p95, p90, linear or log) keeps one spike from flattening the rest, and the choice is remembered.</li>
+          <li><b class="text-fg font-semibold">Load Chart.js only where you chart.</b> It is an optional peer dependency. This is the only library page that loads it.</li>
+        </ul>
+      </div>
+      <div class="grid content-start gap-8">
         <div>
-          <p class="sd-label">Principles</p>
+          <p class="sd-label">Use it for</p>
           <ul>
-            <li><b class="text-fg font-semibold">Mono by default.</b> Series are greys until <code>data-chart-theme</code> is <code>spectrum</code>. Switch it from the settings button in the bar above.</li>
-            <li><b class="text-fg font-semibold">Square marks.</b> Heatmaps, waffles and uptime strips are squares. Nothing glows or fades into a gradient.</li>
-            <li><b class="text-fg font-semibold">One palette everywhere.</b> A sparkline in a table matches the full chart above it, because both follow <code>data-chart-theme</code> on the element or any element above it.</li>
-            <li><b class="text-fg font-semibold">Scales stay honest.</b> A scale mode (clamp, p95, p90, linear or log) keeps one spike from flattening the rest, and the choice is remembered.</li>
-            <li><b class="text-fg font-semibold">Load Chart.js only where you chart.</b> It is an optional peer dependency. This is the only library page that loads it.</li>
+            <li>A handful of points with no axes: <code>sd-plot</code>.</li>
+            <li>Bandwidth, latency and other series over time: <code>createChart</code>, with live appends.</li>
+            <li>Counts of states over a grid: heatmaps, waffles and uptime strips.</li>
           </ul>
         </div>
-        <div class="grid content-start gap-8">
-          <div>
-            <p class="sd-label">Use it for</p>
-            <ul>
-              <li>A handful of points with no axes: <code>sd-plot</code>.</li>
-              <li>Bandwidth, latency and other series over time: <code>createChart</code>, with live appends.</li>
-              <li>Counts of states over a grid: heatmaps, waffles and uptime strips.</li>
-            </ul>
-          </div>
-          <div>
-            <p class="sd-label">Leave it out when</p>
-            <ul>
-              <li>Spectrum colors for anything but data. Navigation, headings and icons stay grey.</li>
-              <li>Loading Chart.js for a sparkline. <code>sd-spark</code> and <code>sd-plot</code> need no library.</li>
-              <li>Reading a value from color alone. Tooltips and legends carry the numbers.</li>
-            </ul>
-          </div>
+        <div>
+          <p class="sd-label">Leave it out when</p>
+          <ul>
+            <li>Spectrum colors for anything but data. Navigation, headings and icons stay grey.</li>
+            <li>Loading Chart.js for a sparkline. <code>sd-spark</code> and <code>sd-plot</code> need no library.</li>
+            <li>Reading a value from color alone. Tooltips and legends carry the numbers.</li>
+          </ul>
         </div>
       </div>
-    </header>
-    <p class="sd-label">06</p>
-    <h2 id="charts-h" class="sd-title mt-2">Charts</h2>
-    <p class="sd-muted mt-2 max-w-[42rem]">Time series, generic chart types and square charts, all on the <code>--sd-chart-*</code> tokens. Switch <b>mono</b> and <b>spectrum</b> from the settings button in the bar above. Live charts need Chart.js; square charts and <code>sd-plot</code> are CSS only.</p>
+    </div>
+  </header>
 
-    <div class="demo-block">
-      <h3 class="sd-label">Live time series</h3>
+    <div class="demo-block" id="charts-live-time-series">
+      <h2 class="sd-label">Live time series</h2>
       <figure class="sd-chart" style="--h: 340px" id="demo-core">
         <div class="sd-chart-bar">
           <div><span class="sd-label sd-label-strong">Core</span><span class="sd-status" data-tone="success">live</span></div>
@@ -67,8 +63,8 @@ core.append({ "Core ↓": [{ x: Date.now(), y: 4200 }] });</script>
       <p class="demo-usage"><code>sd-chart</code> + <code>-bar|-plot</code> · <code>data-sd-chart-scale</code> · <code>createChart({ preset })</code> · <code>data-chart-theme="mono|spectrum"</code></p>
     </div>
 
-    <div class="demo-block">
-      <h3 class="sd-label">Chart types</h3>
+    <div class="demo-block" id="charts-chart-types">
+      <h2 class="sd-label">Chart types</h2>
       <div class="grid gap-8 lg:grid-cols-2">
         <figure class="sd-chart" style="--h: 220px" id="demo-line"><div class="sd-chart-bar"><span class="sd-label">type "line"</span></div><div class="sd-chart-plot"><canvas role="img" aria-label="Line chart"></canvas></div></figure>
         <figure class="sd-chart" style="--h: 220px" id="demo-bar"><div class="sd-chart-bar"><span class="sd-label">type "bar" · stacked</span></div><div class="sd-chart-plot"><canvas role="img" aria-label="Stacked bar chart"></canvas></div></figure>
@@ -87,8 +83,8 @@ createChart(canvas, {
       <p class="demo-usage"><code>createChart(canvas, { type })</code> · <code>stacked</code> · <code>markers</code> · series colors <code>--sd-chart-1…6</code> or a <code>tone</code>. More in <a href="./charts.html">the chart gallery</a>.</p>
     </div>
 
-    <div class="demo-block">
-      <h3 class="sd-label">Square charts</h3>
+    <div class="demo-block" id="charts-square-charts">
+      <h2 class="sd-label">Square charts</h2>
       <div class="grid gap-8 lg:grid-cols-2">
         <div class="grid gap-3">
           <p class="sd-label">sd-heatmap</p>
@@ -122,244 +118,8 @@ document.getElementById("demo-uptime").innerHTML = '<i data-state="ok"></i>'.rep
       <p class="demo-usage"><code>sd-heatmap</code> + <code>--v</code> · <code>sd-waffle</code> + <code>data-s</code> · <code>sd-key</code> · <code>sd-uptime</code> + <code>data-state</code> · <code>sd-meter</code> + <code>--value|--target|--warn|--crit</code> · <code>sd-weighted</code> + <code>--weight</code> and <code>data-state</code>. CSS only.</p>
     </div>
 
-    <div class="demo-block" id="charts-timeline">
-      <h3 class="sd-label">Timeline</h3>
-      <div class="grid gap-10 xl:grid-cols-2">
-        <figure class="sd-timeline" aria-labelledby="timeline-eras-h">
-          <div class="sd-timeline-head">
-            <span class="sd-label sd-label-strong" id="timeline-eras-h">Platform eras</span>
-            <span class="sd-status" data-tone="accent">now</span>
-          </div>
-          <div class="sd-timeline-body">
-            <div class="sd-timeline-labels">
-              <span class="sd-timeline-label">Web · 1</span>
-              <span class="sd-timeline-label">Web · 2</span>
-              <span class="sd-timeline-label">Mobile</span>
-              <span class="sd-timeline-label">Cloud / API</span>
-              <span class="sd-timeline-label" data-tone="accent">AI augmented</span>
-            </div>
-            <div class="sd-timeline-plot">
-              <div class="sd-timeline-grid" aria-hidden="true">
-                <i style="--at: 0"></i><i style="--at: 28"></i><i style="--at: 52"></i><i style="--at: 76"></i><i style="--at: 100"></i>
-              </div>
-              <span class="sd-timeline-now" style="--at: 100" aria-hidden="true"></span>
-              <div class="sd-timeline-row"><span class="sd-timeline-track"><span class="sd-timeline-bar" style="--from: 0; --to: 24"><b>2001</b><b>2007</b></span></span></div>
-              <div class="sd-timeline-row"><span class="sd-timeline-track"><span class="sd-timeline-bar" style="--from: 16; --to: 48"><b>2005</b><b>2013</b></span></span></div>
-              <div class="sd-timeline-row"><span class="sd-timeline-track"><span class="sd-timeline-bar" style="--from: 32; --to: 68"><b>2009</b><b>2018</b></span></span></div>
-              <div class="sd-timeline-row"><span class="sd-timeline-track"><span class="sd-timeline-bar" style="--from: 44; --to: 92"><b>2012</b><b>2024</b></span></span></div>
-              <div class="sd-timeline-row"><span class="sd-timeline-track"><span class="sd-timeline-bar" data-tone="accent" style="--from: 88; --to: 100"><b>2023</b><b>2026</b></span></span></div>
-            </div>
-          </div>
-          <div class="sd-timeline-axis" aria-hidden="true">
-            <span style="--at: 0">2001</span><span style="--at: 28">2008</span><span style="--at: 52">2014</span><span style="--at: 76">2020</span><span style="--at: 100">2026</span>
-          </div>
-          <figcaption class="sd-meta"><span>Twenty-five years of platform eras</span></figcaption>
-        </figure>
-
-        <figure class="sd-timeline" aria-labelledby="timeline-build-h">
-          <div class="sd-timeline-head">
-            <span class="sd-label sd-label-strong" id="timeline-build-h">Eight-week build</span>
-            <span class="sd-status">in motion</span>
-          </div>
-          <div class="sd-timeline-body">
-            <div class="sd-timeline-labels">
-              <span class="sd-timeline-label">Listen</span>
-              <span class="sd-timeline-label">Frame</span>
-              <span class="sd-timeline-label">Build</span>
-              <span class="sd-timeline-label">Hand off</span>
-            </div>
-            <div class="sd-timeline-plot">
-              <div class="sd-timeline-grid" aria-hidden="true">
-                <i style="--at: 0"></i><i style="--at: 25"></i><i style="--at: 50"></i><i style="--at: 75"></i><i style="--at: 100"></i>
-              </div>
-              <div class="sd-timeline-row"><span class="sd-timeline-track"><span class="sd-timeline-bar" style="--from: 0; --to: 12.5"></span></span></div>
-              <div class="sd-timeline-row"><span class="sd-timeline-track"><span class="sd-timeline-bar" style="--from: 7.5; --to: 25"></span></span></div>
-              <div class="sd-timeline-row"><span class="sd-timeline-track"><span class="sd-timeline-bar" data-tone="accent" style="--from: 20; --to: 87.5"></span></span></div>
-              <div class="sd-timeline-row"><span class="sd-timeline-track"><span class="sd-timeline-bar" style="--from: 82.5; --to: 100"></span></span></div>
-              <span class="sd-timeline-mark" style="--from: 25; --to: 50">
-                <i style="--at: 25"></i><i style="--at: 50"></i><b>2-WEEK LOOP</b>
-              </span>
-            </div>
-          </div>
-          <div class="sd-timeline-axis" aria-hidden="true">
-            <span style="--at: 0">W0</span><span style="--at: 25">W2</span><span style="--at: 50">W4</span><span style="--at: 75">W6</span><span style="--at: 100">W8</span>
-          </div>
-          <figcaption class="sd-meta"><span>An eight-week build, drawn the way it runs</span></figcaption>
-        </figure>
-      </div>
-      <p class="demo-usage"><code>sd-timeline</code> + <code>-head|-body|-labels|-label|-plot|-grid|-row|-track|-bar|-now|-axis|-mark</code> · <code>--from|--to|--at</code> · <code>data-tone</code> · CSS only</p>
-    </div>
-
-    <div class="demo-block" id="charts-schedule">
-      <h3 class="sd-label">Schedule</h3>
-      <div class="grid gap-10 xl:grid-cols-2">
-        <figure class="sd-schedule" style="--start: 6; --end: 22; --label-w: 8rem" aria-labelledby="schedule-roster-h">
-          <div class="sd-schedule-head">
-            <span class="sd-label sd-label-strong" id="schedule-roster-h">Driver roster · Fri 9 Oct</span>
-            <div class="sd-schedule-legend">
-              <span data-status="driving"><i></i>Driving</span>
-              <span data-status="planned"><i></i>Planned</span>
-              <span data-status="proposed"><i></i>Proposed</span>
-              <span data-status="completed"><i></i>Completed</span>
-              <span data-status="conflict"><i></i>Conflict</span>
-              <span><i></i>Off duty</span>
-            </div>
-          </div>
-          <div class="sd-schedule-board">
-            <div class="sd-schedule-canvas">
-              <div class="sd-schedule-grid" aria-hidden="true">
-                <i style="--at: 6"></i><i style="--at: 8"></i><i style="--at: 10"></i><i style="--at: 12"></i><i style="--at: 14"></i><i style="--at: 16"></i><i style="--at: 18"></i><i style="--at: 20"></i><i style="--at: 22"></i>
-              </div>
-              <div class="sd-schedule-axis" aria-hidden="true">
-                <span>Driver</span>
-                <div><span style="--at: 6">06:00</span><span style="--at: 10">10:00</span><span style="--at: 14">14:00</span><span style="--at: 18">18:00</span><span style="--at: 22">22:00</span></div>
-              </div>
-              <div class="sd-schedule-row">
-                <div class="sd-schedule-resource" id="schedule-mono-resource-1"><b>Budi Santoso</b><span>VH-028 · 2h 40m of 8h</span></div>
-                <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-1" data-status="planned" style="--from: 6; --to: 12" tabindex="0"><span class="sd-schedule-label">SHP-10481 · 06:00–12:00 · Planned</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-1" style="--from: 12; --to: 12.75" tabindex="0"><span class="sd-schedule-label">Hold · Kudus · 12:00–12:45 · Off duty</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-1" data-status="driving" style="--from: 12.75; --to: 21" tabindex="0"><span class="sd-schedule-label">SHP-10482 → Semarang, ETA 20:10 · 12:45–21:00 · Driving</span></span>
-                </div>
-              </div>
-              <div class="sd-schedule-row" data-state="conflict">
-                <div class="sd-schedule-resource" id="schedule-mono-resource-2"><b>Slamet Riyadi</b><span data-tone="danger">VH-022 · limit at 14:55</span></div>
-                <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-2" data-status="driving" style="--from: 8; --to: 14.5" tabindex="0"><span class="sd-schedule-label">SHP-10476 → Surabaya · 08:00–14:30 · Driving</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-2" style="--from: 15.25; --to: 16.5" tabindex="0"><span class="sd-schedule-label">Rest · 15:15–16:30 · Off duty</span></span>
-                </div>
-              </div>
-              <div class="sd-schedule-row" data-selected>
-                <div class="sd-schedule-resource" id="schedule-mono-resource-3"><b>Rizky Ramadhan</b><span>VH-031 · 5h 45m of 8h</span></div>
-                <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-3" data-status="driving" style="--from: 9; --to: 13" tabindex="0"><span class="sd-schedule-label">SHP-10485 · 09:00–13:00 · Driving</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-3" style="--from: 13; --to: 13.5" tabindex="0"><span class="sd-schedule-label">Relief · 13:00–13:30 · Off duty</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-3" data-status="driving" style="--from: 13.5; --to: 19.5" tabindex="0"><span class="sd-schedule-label">SHP-10485 → Semarang · 13:30–19:30 · Driving</span></span>
-                </div>
-              </div>
-              <div class="sd-schedule-row">
-                <div class="sd-schedule-resource" id="schedule-mono-resource-4"><b>Agus Setiawan</b><span>VH-014 · 1h 30m of 8h</span></div>
-                <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-4" data-status="driving" style="--from: 12.5; --to: 16" tabindex="0"><span class="sd-schedule-label">SHP-10479 → Bandung · 12:30–16:00 · Driving</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-4" style="--from: 17; --to: 19.5" tabindex="0"><span class="sd-schedule-label">Return to Cakung · 17:00–19:30 · Off duty</span></span>
-                </div>
-              </div>
-              <div class="sd-schedule-row">
-                <div class="sd-schedule-resource" id="schedule-mono-resource-5"><b>Teguh Wibowo</b><span>VH-044 · 1h 55m of 8h</span></div>
-                <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-5" data-status="completed" style="--from: 8.5; --to: 11" tabindex="0"><span class="sd-schedule-label">SHP-10483 · 08:30–11:00 · Completed</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-5" data-status="planned" style="--from: 11.75; --to: 16" tabindex="0"><span class="sd-schedule-label">SHP-10490 and return · 11:45–16:00 · Planned</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-5" data-status="proposed" style="--from: 17; --to: 20.5" tabindex="0"><span class="sd-schedule-label">SHP-10495 → Cirebon · 17:00–20:30 · Proposed</span></span>
-                </div>
-              </div>
-              <div class="sd-schedule-row">
-                <div class="sd-schedule-resource" id="schedule-mono-resource-6"><b>Eko Prasetyo</b><span>VH-026 · 0h 00m of 8h</span></div>
-                <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-6" style="--from: 12.5; --to: 13.5" tabindex="0"><span class="sd-schedule-label">Loading · 12:30–13:30 · Off duty</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-6" data-status="planned" style="--from: 13.5; --to: 15" tabindex="0"><span class="sd-schedule-label">SHP-10496 · 13:30–15:00 · Planned</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-6" style="--from: 16; --to: 17.5" tabindex="0"><span class="sd-schedule-label">Return · 16:00–17:30 · Off duty</span></span>
-                </div>
-              </div>
-              <div class="sd-schedule-row">
-                <div class="sd-schedule-resource" id="schedule-mono-resource-7"><b>Rudi Hartono</b><span data-tone="warning">No vehicle · 6h 10m of 8h</span></div>
-                <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-7" data-status="completed" style="--from: 7.5; --to: 10.5" tabindex="0"><span class="sd-schedule-label">SHP-10478 · 07:30–10:30 · Completed</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-7" data-status="planned" style="--from: 11; --to: 14.5" tabindex="0"><span class="sd-schedule-label">SHP-10484 · 11:00–14:30 · Planned</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-mono-resource-7" style="--from: 14.75; --to: 16" tabindex="0"><span class="sd-schedule-label">Rest · 14:45–16:00 · Off duty</span></span>
-                </div>
-              </div>
-              <span class="sd-schedule-now" style="--at: 14.33" data-label="14:20"></span>
-            </div>
-          </div>
-          <figcaption class="sd-meta"><span>Black and white by default; color only where it means something</span></figcaption>
-        </figure>
-
-        <figure class="sd-schedule" data-chart-theme="spectrum" style="--start: 6; --end: 22; --label-w: 8rem" aria-labelledby="schedule-spectrum-h">
-          <div class="sd-schedule-head">
-            <span class="sd-label sd-label-strong" id="schedule-spectrum-h">Driver roster · spectrum</span>
-            <div class="sd-schedule-legend">
-              <span data-status="driving"><i></i>Driving</span>
-              <span data-status="planned"><i></i>Planned</span>
-              <span data-status="proposed"><i></i>Proposed</span>
-              <span data-status="completed"><i></i>Completed</span>
-              <span data-status="conflict"><i></i>Conflict</span>
-              <span><i></i>Off duty</span>
-            </div>
-          </div>
-          <div class="sd-schedule-board">
-            <div class="sd-schedule-canvas">
-              <div class="sd-schedule-grid" aria-hidden="true">
-                <i style="--at: 6"></i><i style="--at: 8"></i><i style="--at: 10"></i><i style="--at: 12"></i><i style="--at: 14"></i><i style="--at: 16"></i><i style="--at: 18"></i><i style="--at: 20"></i><i style="--at: 22"></i>
-              </div>
-              <div class="sd-schedule-axis" aria-hidden="true">
-                <span>Driver</span>
-                <div><span style="--at: 6">06:00</span><span style="--at: 10">10:00</span><span style="--at: 14">14:00</span><span style="--at: 18">18:00</span><span style="--at: 22">22:00</span></div>
-              </div>
-              <div class="sd-schedule-row">
-                <div class="sd-schedule-resource" id="schedule-spectrum-resource-1"><b>Budi Santoso</b><span>VH-028 · 2h 40m of 8h</span></div>
-                <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-1" data-status="planned" style="--from: 6; --to: 12" tabindex="0"><span class="sd-schedule-label">SHP-10481 · 06:00–12:00 · Planned</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-1" style="--from: 12; --to: 12.75" tabindex="0"><span class="sd-schedule-label">Hold · Kudus · 12:00–12:45 · Off duty</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-1" data-status="driving" style="--from: 12.75; --to: 21" tabindex="0"><span class="sd-schedule-label">SHP-10482 → Semarang, ETA 20:10 · 12:45–21:00 · Driving</span></span>
-                </div>
-              </div>
-              <div class="sd-schedule-row" data-state="conflict">
-                <div class="sd-schedule-resource" id="schedule-spectrum-resource-2"><b>Slamet Riyadi</b><span data-tone="danger">VH-022 · limit at 14:55</span></div>
-                <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-2" data-status="driving" style="--from: 8; --to: 14.5" tabindex="0"><span class="sd-schedule-label">SHP-10476 → Surabaya · 08:00–14:30 · Driving</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-2" style="--from: 15.25; --to: 16.5" tabindex="0"><span class="sd-schedule-label">Rest · 15:15–16:30 · Off duty</span></span>
-                </div>
-              </div>
-              <div class="sd-schedule-row" data-selected>
-                <div class="sd-schedule-resource" id="schedule-spectrum-resource-3"><b>Rizky Ramadhan</b><span>VH-031 · 5h 45m of 8h</span></div>
-                <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-3" data-status="driving" style="--from: 9; --to: 13" tabindex="0"><span class="sd-schedule-label">SHP-10485 · 09:00–13:00 · Driving</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-3" style="--from: 13; --to: 13.5" tabindex="0"><span class="sd-schedule-label">Relief · 13:00–13:30 · Off duty</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-3" data-status="driving" style="--from: 13.5; --to: 19.5" tabindex="0"><span class="sd-schedule-label">SHP-10485 → Semarang · 13:30–19:30 · Driving</span></span>
-                </div>
-              </div>
-              <div class="sd-schedule-row">
-                <div class="sd-schedule-resource" id="schedule-spectrum-resource-4"><b>Agus Setiawan</b><span>VH-014 · 1h 30m of 8h</span></div>
-                <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-4" data-status="driving" style="--from: 12.5; --to: 16" tabindex="0"><span class="sd-schedule-label">SHP-10479 → Bandung · 12:30–16:00 · Driving</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-4" style="--from: 17; --to: 19.5" tabindex="0"><span class="sd-schedule-label">Return to Cakung · 17:00–19:30 · Off duty</span></span>
-                </div>
-              </div>
-              <div class="sd-schedule-row">
-                <div class="sd-schedule-resource" id="schedule-spectrum-resource-5"><b>Teguh Wibowo</b><span>VH-044 · 1h 55m of 8h</span></div>
-                <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-5" data-status="completed" style="--from: 8.5; --to: 11" tabindex="0"><span class="sd-schedule-label">SHP-10483 · 08:30–11:00 · Completed</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-5" data-status="planned" style="--from: 11.75; --to: 16" tabindex="0"><span class="sd-schedule-label">SHP-10490 and return · 11:45–16:00 · Planned</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-5" data-status="proposed" style="--from: 17; --to: 20.5" tabindex="0"><span class="sd-schedule-label">SHP-10495 → Cirebon · 17:00–20:30 · Proposed</span></span>
-                </div>
-              </div>
-              <div class="sd-schedule-row">
-                <div class="sd-schedule-resource" id="schedule-spectrum-resource-6"><b>Eko Prasetyo</b><span>VH-026 · 0h 00m of 8h</span></div>
-                <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-6" style="--from: 12.5; --to: 13.5" tabindex="0"><span class="sd-schedule-label">Loading · 12:30–13:30 · Off duty</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-6" data-status="planned" style="--from: 13.5; --to: 15" tabindex="0"><span class="sd-schedule-label">SHP-10496 · 13:30–15:00 · Planned</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-6" style="--from: 16; --to: 17.5" tabindex="0"><span class="sd-schedule-label">Return · 16:00–17:30 · Off duty</span></span>
-                </div>
-              </div>
-              <div class="sd-schedule-row">
-                <div class="sd-schedule-resource" id="schedule-spectrum-resource-7"><b>Rudi Hartono</b><span data-tone="warning">No vehicle · 6h 10m of 8h</span></div>
-                <div class="sd-schedule-track">
-                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-7" data-status="completed" style="--from: 7.5; --to: 10.5" tabindex="0"><span class="sd-schedule-label">SHP-10478 · 07:30–10:30 · Completed</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-7" data-status="planned" style="--from: 11; --to: 14.5" tabindex="0"><span class="sd-schedule-label">SHP-10484 · 11:00–14:30 · Planned</span></span>
-                  <span class="sd-schedule-block" aria-describedby="schedule-spectrum-resource-7" style="--from: 14.75; --to: 16" tabindex="0"><span class="sd-schedule-label">Rest · 14:45–16:00 · Off duty</span></span>
-                </div>
-              </div>
-              <span class="sd-schedule-now" style="--at: 14.33" data-label="14:20"></span>
-            </div>
-          </div>
-          <figcaption class="sd-meta"><span>data-chart-theme="spectrum" recolors the whole board</span></figcaption>
-        </figure>
-      </div>
-      <p class="demo-usage"><code>sd-schedule</code> + <code>-head|-legend|-board|-canvas|-grid|-axis|-row|-resource|-track|-block|-label|-now</code> · <code>--start|--end</code> hours and <code>--from|--to|--at</code> on the same scale · <code>data-status="driving|planned|proposed|completed|conflict"</code> · <code>data-state="conflict"</code> rows · hover or focus a block to reveal its full label · <code>data-chart-theme="mono|spectrum"</code> · CSS only</p>
-    </div>
-
-    <div class="demo-block">
-      <h3 class="sd-label">Small plots</h3>
+    <div class="demo-block" id="charts-small-plots">
+      <h2 class="sd-label">Small plots</h2>
       <div class="grid gap-6 lg:grid-cols-2">
         <div class="sd-plot" data-series="down" style="--h: 120px">
           <svg viewBox="0 0 600 100" preserveAspectRatio="none" aria-hidden="true">
@@ -376,6 +136,22 @@ document.getElementById("demo-uptime").innerHTML = '<i data-state="ok"></i>'.rep
       </div>
       <p class="demo-usage"><code>sd-plot</code> + <code>data-series</code> · <code>.grid|.area|.line|.dot|.cross</code> · <code>sd-plot-readout</code> · <code>sd-plot-note</code> · <code>sd-plot-inline</code></p>
     </div>
-  </section>
+
+    <div class="demo-block" id="inputs-more-charts-and-diffs">
+      <h2 class="sd-label">Charts and diffs</h2>
+      <div class="grid gap-6 sm:grid-cols-3 items-end">
+        <div class="sd-stat"><span class="sd-stat-value">260<small>ms</small></span><span class="sd-stat-label">Checkout p95</span><span class="sd-spark" data-values="410 380 395 340 320 300 290 270 260"></span></div>
+        <div class="sd-stat"><span class="sd-stat-value">1.2k</span><span class="sd-stat-label">Messages today</span><span class="sd-spark" data-tone="success" data-values="3 5 4 8 6 9 12 10 14"></span></div>
+        <div class="sd-bars" style="--h: 110px"><span style="--v:40" data-label="M"></span><span style="--v:65" data-label="T"></span><span style="--v:30" data-label="W"></span><span style="--v:80" data-label="T"></span><span style="--v:55" data-label="F" data-current></span></div>
+      </div>
+      <div class="sd-code">
+        <div class="sd-code-head">src/billing.js</div>
+        <pre class="sd-diff"><span data-line="@">@@ -12,6 +12,7 @@</span><span>function charge(customer) {</span><span data-line="-">  return pay(customer.card);</span><span data-line="+">  if (!customer.address) return missingAddress(customer);</span><span data-line="+">  return pay(customer.card);</span><span>}</span></pre>
+      </div>
+      <script type="text/plain" data-demo-js>import { init } from "signal-design/js";
+
+init(); // draws every .sd-spark[data-values] that is on the page when it runs</script>
+      <p class="demo-usage"><code>sd-spark</code> + <code>data-values</code> · <code>sd-bars</code> + <code>--v</code> · <code>sd-diff</code> + <code>data-line="+|-|@"</code></p>
+    </div>
 </body>
 </html>

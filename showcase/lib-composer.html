@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+    <div class="demo-block" id="conversation-composer">
+      <h2 class="sd-label">Composer</h2>
+      <div class="max-w-column sd-shell-dock">
+        <div class="sd-composer-status"><span class="sd-typing"><i><b></b></i><span><b style="--who: var(--sd-extra)">Alex</b> is typing</span></span></div>
+        <form class="sd-composer" onsubmit="event.preventDefault(); this.querySelector('textarea').value=''">
+          <div class="sd-composer-reply"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M6 3 2.5 6.5 6 10"/><path d="M3.5 6.5h5.5a4.5 4.5 0 0 1 4.5 4.5v2"/></svg><span>Replying to <b style="--who: var(--sd-extra)">Alex</b> · A message opens with its author in their name color.</span><button type="button" class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="Cancel reply">×</button></div>
+          <div class="sd-composer-row">
+            <button type="button" class="sd-btn sd-btn-ghost sd-btn-icon sd-composer-add" aria-label="Add" aria-haspopup="menu" popovertarget="demo-add-menu" data-sd-side="top"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 3v10M3 8h10"/></svg></button>
+            <textarea rows="1" data-sd-autogrow data-sd-enter-submit data-sd-suggest="demo-mentions" placeholder="Type @ to mention someone" aria-label="Message"></textarea>
+            <button class="sd-btn sd-btn-primary sd-btn-icon sd-composer-send" aria-label="Send"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2.5l12 5.5-12 5.5 2-5.5z"/></svg></button>
+          </div>
+          <div class="sd-suggest" id="demo-mentions" hidden>
+            <div class="sd-menu" role="listbox" aria-label="Mention">
+              <button type="button" role="option" data-value="Alex"><span class="sd-avatar sd-avatar-sm" data-tone="extra">AL</span> Alex</button>
+              <button type="button" role="option" data-value="Sam"><span class="sd-avatar sd-avatar-sm" data-tone="warning">SK</span> Sam</button>
+              <button type="button" role="option" data-value="Taylor"><span class="sd-avatar sd-avatar-sm" data-tone="accent">TP</span> Taylor</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div popover id="demo-add-menu" class="sd-popover sd-message-menu sd-add-menu"><div class="sd-menu" role="menu" aria-label="Add"><button role="menuitem"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M2.5 2.5h11v11h-11z"/><path d="M2.5 11l3.5-3.5 3 3 2-2 2.5 2.5"/></svg>Photo or video</button><button role="menuitem"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M3.5 1.5h6l3 3v10h-9z"/><path d="M9.5 1.5v3h3"/></svg>File</button><button role="menuitem"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M3.5 13.5v-4M8 13.5v-10M12.5 13.5v-6"/></svg>Poll</button></div></div>
+      <p class="sd-composer-hint"><span><kbd>Enter</kbd> send</span><span><kbd>Shift</kbd>+<kbd>Enter</kbd> new line</span><span><kbd>@</kbd> mention</span></p>
+      <p class="demo-usage"><code>sd-composer</code> + <code>-row|-add|-send|-reply|-status|-chips|-hint</code> · send stays quiet until there is text · <code>sd-add-menu</code> (the + opens every content type) · in an <code>sd-shell-dock</code> (<code>data-flush</code> to rest on the window bottom) the status line and composer share one box · <code>data-sd-autogrow</code> · <code>data-sd-enter-submit</code> · <code>data-sd-suggest</code> + <code>data-sd-trigger</code> · <code>sd-suggest</code></p>
+    </div>
+
+    <div class="demo-block" id="conversation-emoji-picker">
+      <h2 class="sd-label">Emoji picker</h2>
+      <div class="sd-actions"><button class="sd-btn" popovertarget="demo-emoji-picker">Emoji picker</button></div>
+      <div popover id="demo-emoji-picker" class="sd-popover sd-emoji-picker" role="dialog" aria-label="Emoji">
+        <div class="sd-emoji-search"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><rect x="2.5" y="2.5" width="8" height="8"/><path d="M10.5 10.5l3.5 3.5"/></svg><input type="search" placeholder="Search emoji" aria-label="Search emoji"></div>
+        <div class="sd-emoji-cats"><button aria-pressed="true" aria-label="Smileys">😀</button><button aria-pressed="false" aria-label="People">👍</button><button aria-pressed="false" aria-label="Symbols">🔥</button></div>
+        <div class="sd-emoji-scroll">
+          <h3>Smileys</h3><div class="sd-emoji-grid"><button>😀</button><button>😂</button><button>🥲</button><button>😊</button><button>😍</button><button>🤔</button><button>😮</button><button>😴</button><button>😎</button><button>🥳</button><button>😅</button><button>🙃</button></div>
+          <h3>People</h3><div class="sd-emoji-grid"><button aria-pressed="true">👍</button><button>👎</button><button>👏</button><button>🙏</button><button>👀</button><button>💪</button><button>🤝</button><button>👋</button></div>
+          <h3>Symbols</h3><div class="sd-emoji-grid"><button>🔥</button><button>❤️</button><button>✅</button><button>❌</button><button>💯</button><button>⭐</button><button>⚡</button><button>🎉</button></div>
+        </div>
+        <div class="sd-emoji-foot"><span>👍</span><span>thumbs up</span><code>:+1:</code></div>
+      </div>
+      <p class="demo-usage"><code>sd-emoji-picker</code> in a <code>popover</code> + <code>-search|-cats|-scroll|-grid|-foot|-empty</code> · <code>aria-pressed</code> on the current category and on emoji the viewer already reacted with</p>
+    </div>
+</body>
+</html>

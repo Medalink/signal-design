@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+    <div class="demo-block" id="components-option-cards">
+      <h2 class="sd-label">Option cards</h2>
+      <div class="sd-field">
+        <span class="sd-field-label" id="demo-option-theme-label">Theme</span>
+        <div class="sd-options" role="radiogroup" aria-labelledby="demo-option-theme-label">
+          <label class="sd-option">
+            <input type="radio" name="demo-option-theme" value="ink" checked>
+            <span class="sd-option-preview grid content-start gap-2 p-3" data-theme="ink" aria-hidden="true" style="background: var(--sd-canvas)"><span class="sd-skeleton w-3/4"></span><span class="sd-skeleton w-1/2"></span><span class="sd-skeleton w-1/4" style="background: var(--sd-fg)"></span></span>
+            <span class="sd-option-title">Ink</span>
+            <span class="sd-option-desc">Near-black. The default.</span>
+          </label>
+          <label class="sd-option">
+            <input type="radio" name="demo-option-theme" value="graphite">
+            <span class="sd-option-preview grid content-start gap-2 p-3" data-theme="graphite" aria-hidden="true" style="background: var(--sd-canvas)"><span class="sd-skeleton w-3/4"></span><span class="sd-skeleton w-1/2"></span><span class="sd-skeleton w-1/4" style="background: var(--sd-fg)"></span></span>
+            <span class="sd-option-title">Graphite</span>
+            <span class="sd-option-desc">A lighter dark grey.</span>
+          </label>
+          <label class="sd-option">
+            <input type="radio" name="demo-option-theme" value="paper">
+            <span class="sd-option-preview grid content-start gap-2 p-3" data-theme="paper" aria-hidden="true" style="background: var(--sd-canvas)"><span class="sd-skeleton w-3/4"></span><span class="sd-skeleton w-1/2"></span><span class="sd-skeleton w-1/4" style="background: var(--sd-fg)"></span></span>
+            <span class="sd-option-title">Paper</span>
+            <span class="sd-option-desc">White, for bright rooms.</span>
+          </label>
+        </div>
+        <p class="sd-field-hint">Radios inside labels: arrow keys move the choice, no JS.</p>
+      </div>
+      <div class="sd-field">
+        <span class="sd-field-label" id="demo-option-noise-label">Noise suppression</span>
+        <div class="sd-options" style="--min: 10rem" data-sd-seg role="group" aria-labelledby="demo-option-noise-label">
+          <button type="button" class="sd-option" aria-pressed="false"><span class="sd-option-title">Off</span><span class="sd-option-desc">Send the microphone as it is.</span></button>
+          <button type="button" class="sd-option" aria-pressed="true"><span class="sd-option-title">Standard</span><span class="sd-option-desc">Removes fans and keyboards.</span></button>
+          <button type="button" class="sd-option" aria-pressed="false"><span class="sd-option-title">Strong</span><span class="sd-option-desc">Also removes voices nearby.</span></button>
+          <button type="button" class="sd-option" aria-pressed="false" disabled><span class="sd-option-title">Studio</span><span class="sd-option-desc">Needs a newer device.</span></button>
+        </div>
+        <p class="sd-field-hint">Buttons with <code>aria-pressed</code>; <code>data-sd-seg</code> keeps one pressed and fires <code>change</code>.</p>
+      </div>
+      <p class="demo-usage"><code>sd-options</code> + <code>--min</code> · <code>sd-option</code> + <code>-preview|-title|-desc</code> · selected by <code>:checked</code>, <code>aria-pressed</code> or <code>aria-checked</code> · disabled by <code>:disabled</code> or <code>aria-disabled</code></p>
+    </div>
+
+    <div class="demo-block" id="components-segmented-control-in-a-narrow-container">
+      <h2 class="sd-label">Segmented control in a narrow container</h2>
+      <div class="grid gap-6 sm:grid-cols-2 items-start">
+        <div class="grid gap-2">
+          <p class="sd-field-hint">One row, as wide as the container allows.</p>
+          <div class="sd-seg sd-seg-wrap" data-sd-seg aria-label="Range">
+            <button type="button" aria-pressed="false">hour</button><button type="button" aria-pressed="true">day</button><button type="button" aria-pressed="false">week</button>
+          </div>
+        </div>
+        <div class="grid gap-2" style="width: 13rem; max-width: 100%">
+          <p class="sd-field-hint">Wraps in a 13rem container.</p>
+          <div class="sd-seg sd-seg-wrap" data-sd-seg aria-label="Range, narrow">
+            <button type="button" aria-pressed="false">last hour</button><button type="button" aria-pressed="true">last day</button><button type="button" aria-pressed="false">last week</button><button type="button" aria-pressed="false">last month</button><button type="button" aria-pressed="false">custom</button>
+          </div>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-seg</code> + <code>sd-seg-wrap</code> · without it, items stay on one line and a narrow container overflows</p>
+    </div>
+</body>
+</html>

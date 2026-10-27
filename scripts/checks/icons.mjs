@@ -1,6 +1,6 @@
 import { ICON_NAMES, icon } from "../../src/js/icons.js";
 
-export const page = "components";
+export const page = "icons";
 
 /** Every icon of the set is drawn inside the 24 grid's 4-unit inset with square caps, the same size, decorative until labeled. */
 export default async function checkIcons(page, where, fail) {

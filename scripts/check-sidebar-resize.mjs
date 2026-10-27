@@ -129,7 +129,7 @@ export async function checkSidebarResize(page, base, apiUrl) {
   await page.setViewportSize({ width: 1280, height: 900 });
 
   // The standalone demo resizes its own sidebar and leaves the page shell alone.
-  await page.goto(new URL(byId("effects").file, base).href);
+  await page.goto(new URL(byId("sidebar").file, base).href);
   const demo = '#demo-resize-sidebar > [data-sd-shell="resize"]';
   await page.locator(demo).scrollIntoViewIfNeeded();
   const pageShell = await page.evaluate(() => document.getElementById("library-sidebar").getBoundingClientRect().width);

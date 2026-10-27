@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+    <div class="demo-block" id="tokens-spacing-layout-motion">
+      <h2 class="sd-label">Spacing, layout, motion</h2>
+      <div class="grid gap-6 sm:grid-cols-3">
+        <dl class="sd-kv">
+          <dt>Base unit</dt><dd>4px (Tailwind <code>--spacing</code>)</dd>
+          <dt>Column</dt><dd>720px <code>max-w-column</code></dd>
+          <dt>Narrow</dt><dd>560px <code>max-w-narrow</code></dd>
+          <dt>Wide</dt><dd>1024px <code>max-w-wide</code></dd>
+        </dl>
+        <dl class="sd-kv">
+          <dt>Fast</dt><dd>120ms hover, color</dd>
+          <dt>Base</dt><dd>160ms collapse, toast</dd>
+          <dt>Slow</dt><dd>200ms expand, scroll</dd>
+          <dt>Ease</dt><dd><code>ease-out</code></dd>
+        </dl>
+        <div class="grid gap-3 content-start">
+          <button type="button" class="sd-btn" data-demo="motion">Replay slide-in</button>
+          <div class="sd-row" data-demo-row style="min-height: 0; padding-block: 10px">
+            <span class="sd-dot" data-tone="success"></span>
+            <div class="sd-row-body"><p class="sd-row-title text-md">New item arrives in 180ms</p></div>
+          </div>
+        </div>
+      </div>
+      <p class="demo-usage">4px base unit (<code>--spacing</code>) · <code>max-w-column</code> (720px), <code>max-w-narrow</code> (560px), <code>max-w-wide</code> (1024px) · transitions 120ms (hover, color), 160ms (collapse, toast), 200ms (expand, scroll) on <code>ease-out</code> · <code>animate-slide-in</code>, <code>animate-fade-in</code>, <code>animate-rise-in</code> for entrances</p>
+    </div>
+
+    <div class="demo-block" id="components-layout">
+      <h2 class="sd-label">Layout</h2>
+      <div class="grid gap-4 sm:grid-cols-3">
+        <article class="sd-card">
+          <header class="sd-card-head">Card <span class="sd-badge">3</span></header>
+          <div class="sd-card-body sd-muted">Header, body and footer split by hairlines.</div>
+          <footer class="sd-card-foot"><button class="sd-btn sd-btn-sm">Open</button></footer>
+        </article>
+        <article class="sd-card" data-tone="danger">
+          <header class="sd-card-head">Toned card</header>
+          <div class="sd-card-body sd-muted"><code>data-tone</code> colors the top edge.</div>
+        </article>
+        <a class="sd-card" href="#components">
+          <div class="sd-card-body"><p class="sd-label">Link card</p><p class="mt-2">The whole card is a link.</p></div>
+        </a>
+      </div>
+      <div class="sd-card" data-sd-ornaments data-sd-ornaments-size="220" style="background-color: var(--sd-container)">
+        <div class="sd-card-body grid place-items-center text-center" style="min-height: 260px">
+          <div><p class="sd-label">Ornaments</p><p class="mt-2 sd-muted max-w-[28rem]">Dust in the bottom-right corner: filled squares, outlines and dots, fading as they spread. <code>data-sd-ornaments</code></p></div>
+        </div>
+      </div>
+      <section class="sd-panel">
+        <h3 class="sd-panel-title">Billing cycle</h3>
+        <p class="sd-panel-desc">You are billed at the start of each cycle.</p>
+        <div class="sd-seg" data-sd-seg><button type="button" aria-pressed="false">monthly</button><button type="button" aria-pressed="true">yearly</button><button type="button" aria-pressed="false">custom</button></div>
+      </section>
+      <div class="grid gap-2">
+        <div class="border border-dashed border-line"><div class="sd-page border-x border-line" style="padding-block: 14px"><span class="sd-subtle text-sm">sd-page: the 720px reading column, centered</span></div></div>
+        <div class="border border-dashed border-line"><div class="sd-page sd-page-wide border-x border-line" style="padding-block: 14px"><span class="sd-subtle text-sm">sd-page sd-page-wide: 1024px for dashboards</span></div></div>
+      </div>
+      <div class="sd-divider">or</div>
+      <div class="grid gap-6 md:grid-cols-2">
+        <div class="grid gap-2 content-start">
+          <p class="sd-label">sd-stack</p>
+          <div class="sd-stack" style="--gap: 8px; align-items: flex-start"><span class="sd-chip">first</span><span class="sd-chip">second</span><span class="sd-chip">third</span></div>
+        </div>
+        <div class="grid gap-2 content-start">
+          <p class="sd-label">sd-cluster</p>
+          <div class="sd-cluster" style="--gap: 8px"><span class="sd-chip">billing</span><span class="sd-chip">risk</span><span class="sd-chip">platform</span><span class="sd-chip">design</span><span class="sd-chip">support</span></div>
+        </div>
+        <div class="grid gap-2 md:col-span-2">
+          <p class="sd-label">sd-split</p>
+          <div class="sd-split border border-line p-3"><span>12 items selected</span><span class="sd-cluster" style="--gap: 8px"><button class="sd-btn sd-btn-sm sd-btn-ghost">Clear</button><button class="sd-btn sd-btn-sm sd-btn-primary">Approve all</button></span></div>
+        </div>
+        <div class="grid gap-2 md:col-span-2">
+          <p class="sd-label">sd-grid <span class="sd-faint">--min: 10rem</span></p>
+          <div class="sd-grid" style="--min: 10rem; --gap: 8px"><div class="border border-line p-3 sd-muted">one</div><div class="border border-line p-3 sd-muted">two</div><div class="border border-line p-3 sd-muted">three</div><div class="border border-line p-3 sd-muted">four</div><div class="border border-line p-3 sd-muted">five</div></div>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-page</code> (720px column) · <code>sd-header</code> · <code>sd-panel</code> · <code>sd-card</code> · <code>sd-divider</code> (with a word; empty, it is a plain rule) · <code>sd-stack</code> / <code>sd-cluster</code> / <code>sd-split</code> / <code>sd-grid</code> (with <code>--gap</code> and <code>--min</code>) for apps without Tailwind</p>
+    </div>
+
+    <div class="demo-block" id="components-panel-widths">
+      <h2 class="sd-label">Panel widths</h2>
+      <section class="sd-panel">
+        <h3 class="sd-panel-title">Default</h3>
+        <p class="sd-panel-desc">Capped at 560px, for a short form.</p>
+      </section>
+      <section class="sd-panel sd-panel-wide">
+        <h3 class="sd-panel-title">Wide</h3>
+        <p class="sd-panel-desc">Capped at 1024px, for a settings page with two columns of fields.</p>
+      </section>
+      <section class="sd-panel sd-panel-fluid">
+        <h3 class="sd-panel-title">Fluid</h3>
+        <p class="sd-panel-desc">No cap: it fills its parent, so a page in an app shell needs no <code>max-w-none</code>.</p>
+      </section>
+      <p class="demo-usage"><code>sd-panel</code> (560px) · <code>sd-panel-wide</code> (1024px) · <code>sd-panel-fluid</code> (no cap)</p>
+    </div>
+
+    <div class="demo-block" id="components-visibility-helpers">
+      <h2 class="sd-label">Visibility helpers</h2>
+      <div class="sd-cluster">
+        <span class="sd-badge sd-desktop-only">shown above 48rem</span>
+        <span class="sd-badge sd-phone-only">shown on phones</span>
+        <button class="sd-btn sd-btn-icon" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="11" height="11"/><path d="M15 15l5.5 5.5"/></svg><span class="sd-sr-only">Search the library</span></button>
+      </div>
+      <p class="demo-usage"><code>sd-desktop-only</code> · <code>sd-phone-only</code> · <code>sd-sr-only</code> (read by screen readers, not shown). Resize the window to see the first two swap.</p>
+    </div>
+</body>
+</html>

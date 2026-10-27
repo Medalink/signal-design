@@ -63,7 +63,7 @@ export async function checkLivingTable(page, base, engine) {
     catch (error) { errors.push(`${engine} ${name}: ${error.message}`); }
   };
   await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto(new URL(byId("components").file, base).href);
+  await page.goto(new URL(byId("living-tables").file, base).href);
   await page.waitForSelector("#living-table-demo[data-mounted]");
   await page.evaluate(() => {
     window.livingWindowErrors = [];

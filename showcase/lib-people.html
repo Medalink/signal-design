@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+    <div class="demo-block" id="conversation-items-presence-counts">
+      <h2 class="sd-label">Items, presence, counts</h2>
+      <div class="grid gap-6 sm:grid-cols-2 items-start">
+        <div class="border border-line py-2" style="background: var(--sd-surface)">
+          <div class="sd-item-group">Online <span>2</span></div>
+          <a class="sd-item" href="#conversation" aria-current="true"><span class="sd-avatar" data-tone="extra" data-status="online">AL</span><span class="sd-item-body"><span class="sd-item-title">Alex</span><span class="sd-item-sub">Reviewing the spec</span></span><span class="sd-item-end">2m</span></a>
+          <a class="sd-item" href="#conversation" data-unread><span class="sd-avatar" data-tone="warning" data-status="away">SK</span><span class="sd-item-body"><span class="sd-item-title">Sam</span><span class="sd-item-sub">Can you look at this?</span></span><span class="sd-item-end"><span class="sd-badge-count" data-tone="danger">2</span></span></a>
+          <div class="sd-item-group">Offline <span>1</span></div>
+          <a class="sd-item" href="#conversation" data-muted><span class="sd-avatar" data-tone="accent" data-status="offline">TP</span><span class="sd-item-body"><span class="sd-item-title">Taylor</span><span class="sd-item-sub">Muted</span></span></a>
+          <a class="sd-item sd-item-nested" href="#conversation"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M6 2.5 5 13.5M11 2.5l-1 11M2.5 6h11M2 10h11"/></svg><span class="sd-item-body"><span class="sd-item-title">nested row</span></span></a>
+        </div>
+        <div class="grid gap-4 content-start">
+          <div class="sd-cluster" style="--gap: 18px">
+            <span class="sd-avatar sd-avatar-lg" data-tone="extra" data-status="online">AL</span>
+            <span class="sd-avatar sd-avatar-lg" data-tone="warning" data-status="away">SK</span>
+            <span class="sd-avatar sd-avatar-lg" data-tone="accent" data-status="busy">TP</span>
+            <span class="sd-avatar sd-avatar-lg" data-tone="success" data-status="offline">JD</span>
+            <span class="relative inline-grid"><button class="sd-btn sd-btn-icon" aria-label="Inbox, 3 unread">✉</button><span class="sd-badge-count" data-corner>3</span></span>
+            <span class="sd-badge-count" data-tone="danger">12</span>
+          </div>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-item</code> + <code>-body|-title|-sub|-end|-group|-nested</code>: rows in <code>sd-item-group</code> sections · <code>data-status</code> on <code>sd-avatar</code> is the presence square (<code>--sd-ring</code> matches it to the panel) · <code>data-unread</code> bolds a row, <code>data-muted</code> quiets it, <code>aria-current</code> marks the open one · <code>sd-badge-count</code> for a number, <code>data-corner</code> pins it to an icon button · <code>data-tone</code> colors the count only when it is a status</p>
+    </div>
+
+    <div class="demo-block" id="conversation-roster">
+      <h2 class="sd-label">Roster</h2>
+      <div class="border border-line" style="width: 18rem; max-width: 100%; max-height: 22rem; overflow-y: auto; --sd-ring: var(--sd-surface); background: var(--sd-surface)">
+        <div class="sd-roster">
+          <section class="sd-roster-group">
+            <h3 class="sd-roster-head"><button aria-expanded="true"><span class="sd-roster-label">Admins</span><span class="sd-roster-count"><b>1</b> / 2</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M4 6l4 4 4-4"/></svg></button></h3>
+            <ul>
+              <li><button class="sd-roster-row" data-presence="online" style="--who: var(--sd-extra)"><span class="sd-roster-avatar"><span class="sd-avatar sd-avatar-sm" data-tone="extra">AL</span></span><span class="sd-roster-name">Alex</span></button></li>
+              <li><button class="sd-roster-row" data-presence="offline"><span class="sd-roster-avatar"><span class="sd-avatar sd-avatar-sm" data-tone="accent">TP</span></span><span class="sd-roster-name">Taylor</span></button></li>
+            </ul>
+          </section>
+          <section class="sd-roster-group">
+            <h3 class="sd-roster-head"><button aria-expanded="true"><span class="sd-roster-label">Members</span><span class="sd-roster-count"><b>212</b> / 788</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M4 6l4 4 4-4"/></svg></button></h3>
+            <ul>
+              <li><button class="sd-roster-row" data-presence="online" style="--who: var(--sd-success)"><span class="sd-roster-avatar"><span class="sd-avatar sd-avatar-sm" data-tone="success">JD</span></span><span class="sd-roster-name">Jane</span></button></li>
+              <li><button class="sd-roster-row" data-presence="online" style="--who: var(--sd-warning)"><span class="sd-roster-avatar"><span class="sd-avatar sd-avatar-sm" data-tone="warning">SK</span></span><span class="sd-roster-name">Sam</span></button></li>
+              <li><button class="sd-roster-row" data-presence="unresolved"><span class="sd-roster-avatar" data-unresolved>7f</span><span class="sd-roster-name">7f3a…c21e</span></button></li>
+            </ul>
+            <button class="sd-roster-more">Show 25 more<span>785 hidden</span></button>
+          </section>
+          <section class="sd-roster-group">
+            <h3 class="sd-roster-head"><button aria-expanded="false"><span class="sd-roster-label">Guests</span><span class="sd-roster-count"><b>3</b> / 40</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M4 6l4 4 4-4"/></svg></button></h3>
+          </section>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-roster</code> &gt; <code>sd-roster-group</code> (one per role) · <code>sd-roster-head</code> (sticky, <code>aria-expanded</code>) + <code>-label|-count</code> · <code>sd-roster-row</code> + <code>data-presence="online|offline|unresolved"</code> + <code>--who</code> · <code>sd-roster-avatar</code> (<code>data-unresolved</code>) · <code>sd-roster-more</code> pages in the next 25 · set <code>--sd-ring</code> to the panel color</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+    <div class="demo-block" id="effects-sidebar-head-sizes">
+      <h2 class="sd-label">Sidebar head sizes</h2>
+      <div class="flex flex-wrap gap-6">
+        <div class="sd-sidebar border border-line" id="demo-head-default" style="--shell-sidebar: 15rem">
+          <div class="sd-sidebar-head"><svg class="sd-icon" data-icon="comment" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4 5h16v11h-8l-4 4v-4H4z"/></svg><span class="sd-sidebar-title">Direct Messages</span>
+            <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="New message">+</button></div>
+        </div>
+        <div class="sd-sidebar border border-line" id="demo-head-sm" style="--shell-sidebar: 15rem">
+          <div class="sd-sidebar-head sd-sidebar-head-sm"><svg class="sd-icon" data-icon="comment" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4 5h16v11h-8l-4 4v-4H4z"/></svg><span class="sd-sidebar-title">Direct Messages</span>
+            <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="New message">+</button></div>
+        </div>
+        <div class="sd-sidebar border border-line" id="demo-head-h2" style="--shell-sidebar: 15rem">
+          <div class="sd-sidebar-head"><h2 class="sd-sidebar-title">Direct Messages</h2>
+            <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="New message">+</button></div>
+        </div>
+        <div class="sd-sidebar border border-line" id="demo-head-h2-sm" style="--shell-sidebar: 15rem">
+          <div class="sd-sidebar-head sd-sidebar-head-sm"><h2 class="sd-sidebar-title">Direct Messages</h2>
+            <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="New message">+</button></div>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-sidebar-head</code> (18px title, cut off with an ellipsis when it does not fit) · <code>sd-sidebar-head-sm</code> (16px title) · the title follows the head's size on a <code>span</code> or an <code>h2</code></p>
+    </div>
+
+    <div class="demo-block" id="effects-resizable-sidebar">
+      <h2 class="sd-label">Resizable sidebar</h2>
+      <p class="demo-usage">A <code>role="separator"</code> handle over the sidebar's trailing border. With <code>data-sd-shell="resize"</code>, <code>init()</code> drags it, steps it with the arrow keys (16px, Shift for 64px), Home and End jump to <code>aria-valuemin</code> and <code>aria-valuemax</code>, Escape cancels a drag, and the width is remembered per sidebar <code>id</code>. Inside the shell it sets <code>--shell-sidebar</code> on <code>.sd-shell</code>; this page's own sidebar has one too. When a framework owns the width, leave out <code>data-sd-shell</code>: set <code>--shell-sidebar</code> and <code>aria-valuenow</code> yourself, and <code>data-resizing</code> on the shell while a drag runs.</p>
+      <div class="flex border border-line" style="height: 14rem">
+        <div class="sd-sidebar" id="demo-resize-sidebar" style="--shell-sidebar: 15rem">
+          <div class="sd-sidebar-head"><span class="sd-sidebar-title">Channels</span></div>
+          <nav class="sd-sidebar-body" aria-label="Demo channels">
+            <a class="sd-sidebar-link" href="#effects" aria-current="page">general</a>
+            <a class="sd-sidebar-link" href="#effects">design-reviews-and-critique</a>
+            <a class="sd-sidebar-link" href="#effects">release</a>
+          </nav>
+          <div class="sd-sidebar-resize" role="separator" aria-orientation="vertical" aria-label="Resize demo sidebar" aria-controls="demo-resize-sidebar" aria-valuemin="160" aria-valuemax="360" aria-valuenow="240" tabindex="0" data-sd-shell="resize"></div>
+        </div>
+        <div class="flex-1 p-6 sd-subtle text-sm" style="background: var(--sd-shell-bg)">Drag the sidebar's edge, or focus it and press the arrow keys.</div>
+      </div>
+      <p class="demo-usage"><code>sd-sidebar-resize</code> + <code>role="separator"</code> <code>aria-orientation="vertical"</code> <code>aria-valuemin|max|now</code> <code>tabindex="0"</code> · <code>data-sd-shell="resize"</code> · <code>setSidebarWidth(shell, px | null)</code> · <code>--shell-sidebar</code> · <code>data-resizing</code></p>
+    </div>
+</body>
+</html>

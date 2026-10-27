@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+  <header class="demo-intro">
+    <p class="sd-lead max-w-[42rem]">Controls for choosing, filtering and finding: combobox, tags, number steppers, steps, a command palette and a shortcut sheet. Small sparklines, bars and diffs need no library.</p>
+    <p class="sd-muted max-w-[42rem]">The <a href="./form.html">form example</a> uses these together.</p>
+    <div class="demo-intro-cols">
+      <div>
+        <p class="sd-label">Principles</p>
+        <ul>
+          <li><b class="text-fg font-semibold">Real inputs underneath.</b> The combobox keeps a text input and a hidden input for the value. Tags keep a hidden input per tag. Forms submit as they always did.</li>
+          <li><b class="text-fg font-semibold">Every action has a key.</b> Arrows move, Enter chooses, Esc closes, Backspace removes the last tag, and <kbd>?</kbd> opens the shortcut sheet.</li>
+          <li><b class="text-fg font-semibold">Shortcuts stay out of text fields.</b> <code>data-sd-key</code> does not fire while you type, except combinations with Ctrl or Cmd such as <kbd>Ctrl K</kbd>.</li>
+          <li><b class="text-fg font-semibold">One key, one owner.</b> <code>data-sd-key</code> clicks the first visible match. Give <kbd>Ctrl K</kbd> to one palette per page.</li>
+          <li><b class="text-fg font-semibold">Small data needs no library.</b> <code>sd-spark</code> reads <code>data-values</code> and <code>sd-bars</code> reads <code>--v</code>. Both are static.</li>
+        </ul>
+      </div>
+      <div class="grid content-start gap-8">
+        <div>
+          <p class="sd-label">Use it for</p>
+          <ul>
+            <li>Forms with search, tags or numeric steps.</li>
+            <li>A command palette for jumping to pages and running actions.</li>
+            <li>A shortcut sheet, so keyboard users can find what exists.</li>
+          </ul>
+        </div>
+        <div>
+          <p class="sd-label">Leave it out when</p>
+          <ul>
+            <li>Time axes, units or live data. Use the Charts page: <code>createChart</code> with Chart.js.</li>
+            <li>A second palette on a page that already has one on <kbd>Ctrl K</kbd>.</li>
+            <li>A short list of options. A native <code>&lt;select&gt;</code> or radio group is simpler.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+    <div class="demo-block" id="inputs-more-combobox-tags-number-and-steps">
+      <h2 class="sd-label">Combobox, tags, number and steps</h2>
+      <div class="grid gap-6 sm:grid-cols-2 items-start">
+        <div class="sd-field">
+          <label class="sd-field-label" for="demo-combo">Combobox</label>
+          <div class="sd-combobox" data-sd-combobox>
+            <input id="demo-combo" role="combobox" aria-controls="demo-combo-list" aria-expanded="false" placeholder="Search a city" autocomplete="off">
+            <input type="hidden" name="city">
+            <div class="sd-menu sd-combobox-list" role="listbox" id="demo-combo-list" hidden>
+              <button type="button" role="option">Berlin</button><button type="button" role="option">Lisbon</button><button type="button" role="option">London</button><button type="button" role="option">New York</button><button type="button" role="option">Tokyo</button>
+            </div>
+          </div>
+        </div>
+        <div class="sd-field">
+          <label class="sd-field-label" for="demo-tags">Tags</label>
+          <div class="sd-tags" data-sd-tags><span class="sd-chip" data-value="design">design <button type="button" aria-label="Remove design">×</button></span><input id="demo-tags" placeholder="Add a tag"></div>
+        </div>
+        <div class="sd-field">
+          <label class="sd-field-label" for="demo-number">Number</label>
+          <div class="sd-number" data-sd-number><button type="button" data-step="-1" aria-label="Less">−</button><input id="demo-number" type="number" value="3" min="1" max="9"><button type="button" data-step="1" aria-label="More">+</button></div>
+        </div>
+        <div class="sd-field">
+          <span class="sd-field-label">Steps</span>
+          <ol class="sd-steps"><li data-state="done">Account</li><li aria-current="step">Workspace</li><li>Invite</li></ol>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-combobox</code> + <code>data-sd-combobox</code> · <code>sd-tags</code> + <code>data-sd-tags</code> · <code>sd-number</code> + <code>data-sd-number</code> · <code>sd-steps</code></p>
+    </div>
+</body>
+</html>

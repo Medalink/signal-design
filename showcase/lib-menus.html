@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+    <div class="demo-block" id="components-menu-and-popover">
+      <h2 class="sd-label">Menu and popover</h2>
+      <div class="sd-actions">
+        <button class="sd-btn" popovertarget="snooze-menu" aria-haspopup="menu" aria-expanded="false">Save for later <kbd>t</kbd></button>
+        <button class="sd-btn sd-btn-icon" popovertarget="row-menu" aria-haspopup="menu" aria-label="More" aria-expanded="false">⋯</button>
+        <button class="sd-btn" popovertarget="info-pop" aria-expanded="false">Popover panel</button>
+        <button class="sd-btn" popovertarget="above-pop" aria-expanded="false">Opens above</button>
+      </div>
+      <div popover id="above-pop" class="sd-popover sd-popover-pad" data-sd-side="top"><p class="sd-muted"><code>data-sd-side="top"</code> places it above; it still flips at the edge.</p></div>
+      <div popover id="snooze-menu" class="sd-popover">
+        <div class="sd-menu" role="menu" aria-label="Remind me">
+          <div class="sd-menu-label" role="presentation">Remind me</div>
+          <button role="menuitem" data-demo-toast="Reminder set for later today"><kbd>1</kbd> later today</button>
+          <button role="menuitem" data-demo-toast="Reminder set for tomorrow 09:00"><kbd>2</kbd> tomorrow 09:00</button>
+          <button role="menuitem" data-demo-toast="Reminder set for Monday"><kbd>3</kbd> Monday</button>
+          <button role="menuitem"><kbd>4</kbd> custom…</button>
+        </div>
+      </div>
+      <div popover id="row-menu" class="sd-popover" data-sd-align="end">
+        <div class="sd-menu" role="menu" aria-label="Item actions">
+          <button role="menuitem">Open <span class="sd-menu-hint">o</span></button>
+          <button role="menuitem">Copy link <span class="sd-menu-hint">c</span></button>
+          <button role="menuitemradio" aria-checked="true">Due this week</button>
+          <button role="menuitemradio" aria-checked="false">Due next week</button>
+          <hr class="sd-menu-sep">
+          <button role="menuitem" data-tone="danger">Delete <span class="sd-menu-hint">x</span></button>
+          <button role="menuitem" aria-disabled="true">Restore (not deleted)</button>
+          <a class="sd-menu-item" href="#components">A link styled as an item</a>
+        </div>
+      </div>
+      <div popover id="info-pop" class="sd-popover sd-popover-pad">
+        <p class="sd-label">Why this is flagged</p>
+        <p class="mt-2 sd-muted">It sends money to a customer, which can't be undone.</p>
+      </div>
+      <p class="demo-usage">Native <code>popover</code> + <code>popovertarget</code>, positioned by the JS. In a <code>role="menu"</code>: arrows, Home/End, type to jump, Esc closes.</p>
+    </div>
+</body>
+</html>

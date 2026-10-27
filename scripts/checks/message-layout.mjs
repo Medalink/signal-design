@@ -1,4 +1,4 @@
-export const page = "conversation";
+export const page = "messages";
 /** Message layout: the time centers on the author's line, a grouped row has no time, every row keeps one rhythm, names take --who (extra without it), mixed 30% toward --sd-fg, and the action bar stays in the tab order while hidden. */
 export default async function checkMessageLayout(page, where, fail) {
   const got = await page.evaluate(() => {

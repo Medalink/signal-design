@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+  <header class="demo-intro">
+    <p class="sd-lead max-w-[42rem]">Parts for what plain elements cannot do: buttons, fields, rows, navigation, feedback and overlays. Tone and state come from attributes, so your CSS, your code and a screen reader agree on what is true.</p>
+    <p class="sd-muted max-w-[42rem]">Classes start with <code>sd-</code>. Color comes from <code>data-tone</code>: accent, success, danger, warning, pending, extra, neutral. State comes from ARIA and <code>data-*</code>, so the JS never needs your Tailwind build to contain a class.</p>
+    <div class="demo-intro-cols">
+      <div>
+        <p class="sd-label">Principles</p>
+        <ul>
+          <li><b class="text-fg font-semibold">Tone is data.</b> <code>data-tone</code> takes accent, success, danger, warning, pending, extra or neutral. A part never takes a color class.</li>
+          <li><b class="text-fg font-semibold">State is ARIA.</b> <code>aria-pressed</code>, <code>aria-expanded</code>, <code>aria-current</code> and <code>aria-selected</code> drive the styling. Set them from your own code and the part follows.</li>
+          <li><b class="text-fg font-semibold">One writer per state.</b> Where React, Vue or Svelte renders a piece's state, leave out its <code>data-sd-*</code> behavior attribute and render the attributes yourself. The <a href="./lib-owned.html">Framework state</a> page has an example.</li>
+          <li><b class="text-fg font-semibold">Minimal by default.</b> A row shows its outcome and expands for detail. A view has one primary button.</li>
+          <li><b class="text-fg font-semibold">Square, flat, grey.</b> Parts use hairline borders and no shadows. Navigation stays grey, and color marks status.</li>
+        </ul>
+      </div>
+      <div class="grid content-start gap-8">
+        <div>
+          <p class="sd-label">Use it for</p>
+          <ul>
+            <li>Status with <code>sd-badge</code>, <code>sd-status</code>, <code>sd-dot</code> and <code>sd-count</code>, each of which takes a tone.</li>
+            <li>Lists of work: rows, tables, key-value lists and living tables.</li>
+            <li>Overlays: dialogs, sheets, popovers, menus and tooltips, wired by <code>init()</code>.</li>
+          </ul>
+        </div>
+        <div>
+          <p class="sd-label">Leave it out when</p>
+          <ul>
+            <li>Coloring navigation, headings or icons. Color is for status.</li>
+            <li>A looping progress bar. When the amount is unknown, set <code>data-state="indeterminate"</code> on <code>sd-progress</code>. It stays still.</li>
+            <li>Your own sidebar layout around an app. Use the App Shell, <code>sd-shell</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+    <div class="demo-block" id="tokens-hard-rules">
+      <h2 class="sd-label">Hard rules</h2>
+      <ol class="grid gap-y-2 gap-x-16 sm:grid-cols-2 text-fg-muted" style="list-style: decimal-leading-zero; padding-inline-start: 2.2em">
+        <li>Square corners everywhere, avatars and checkboxes included.</li>
+        <li>Flat surfaces. No glass, grain, glow or shadow. Fades are for borders and edges only.</li>
+        <li>Color is for important things: risk, status, success, focus. Everything else is black, white and grey, navigation included.</li>
+        <li>Motion on state change only: 120–200ms transitions and a one-pass hover shimmer. The rain moves only while work runs or when the reader turns it on.</li>
+        <li>Minimal by default, detail on expand.</li>
+        <li>SF Pro for text in regular and medium; Source Code Pro for code. The font picker swaps the text face.</li>
+      </ol>
+      <p class="demo-usage">Square corners · flat, hairlines only · color only for status and focus · motion on state change, 120–200ms · tokens, never hex values · one text face in regular and medium, <code>font-mono</code> for code · see AGENTS.md for the full list and <code>npx signal-design check</code> to test a page against it</p>
+    </div>
+</body>
+</html>

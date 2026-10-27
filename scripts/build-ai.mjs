@@ -117,27 +117,26 @@ try {
   await page.addInitScript(() => localStorage.setItem("sd-theme", "ink"));
   /* ---- components: every block of every library page, in registry order --- */
   const blocks = [];
-  for (const { file } of LIBRARY) {
+  for (const { file, group } of LIBRARY) {
     await page.goto(`http://localhost:${port}/${file}`);
     await page.waitForSelector(".demo-code pre", { state: "attached" });
     blocks.push(
-      ...(await page.evaluate(() =>
+      ...(await page.evaluate((section) =>
         [...document.querySelectorAll(".demo-block")].map((b) => {
-          const section = b.closest(".demo-section");
           const pres = [...b.querySelectorAll(":scope > .demo-code pre")];
           const html = pres[0]?.textContent ?? "";
           const usage = [...b.querySelectorAll(":scope > .demo-usage")].map((u) => u.textContent.trim().replace(/\s+/g, " ")).join(" ");
           return {
             id: b.id,
-            section: section?.querySelector("h2")?.textContent.trim(),
-            title: b.querySelector("h3")?.textContent.trim(),
+            section,
+            title: b.querySelector(":scope > .demo-head > h2")?.textContent.trim(),
             usage,
             needsJs: b.querySelector(".demo-code .demo-usage")?.textContent.trim().replace(/\s+/g, " ").replace(/ CSS: .*$/, "") ?? "",
             html,
             js: pres[1]?.textContent ?? null,
           };
         }),
-      )),
+      group.title)),
     );
   }
   const unknown = new Set();

@@ -1,4 +1,4 @@
-export const page = "components";
+export const page = "feedback";
 
 /** Unknown progress is a static, pending-toned full bar that becomes a value bar. */
 export default async function checkProgressUnknown(page, where, fail) {

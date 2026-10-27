@@ -2,7 +2,7 @@
  * Performance pass over the showcase pages, in a real (headed) Chromium with
  * the GPU on and the CPU slowed down to stand in for a modest laptop.
  *
- *   node scripts/perf.mjs [baseUrl] [--throttle 4] [--pages index,lib-tokens,chat]
+ *   node scripts/perf.mjs [baseUrl] [--throttle 4] [--pages index,lib-color,chat]
  *
  * Per page it reports:
  *   load     main-thread time until the page settles, and the longest task

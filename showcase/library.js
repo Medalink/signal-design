@@ -1,6 +1,7 @@
 /**
- * What every library page shares: the Preview / Code flip on each block, the
- * sidebar list of this page's blocks and scroll-aware crumbs. Theme, chart
+ * What every library page shares: the Preview / Code flip on each block, rail
+ * sections that open their sidebar, remembered group folds and the current
+ * page's link scrolled into view in the sidebar. Theme, chart
  * colors, scrollbars and rain live in the showcase bar (viewport.js). A page
  * module calls mountLibrary() first, before any demo code, so the snapshots
  * below capture each block's markup as authored.
@@ -41,22 +42,22 @@ function jsNote(html) {
 function decorateBlocks(blocks) {
   const snapshots = new Map();
   for (const block of blocks) {
-    const parts = [...block.children].filter((el) => !el.matches("h3.sd-label, .demo-usage, script[data-demo-js]"));
+    const parts = [...block.children].filter((el) => !el.matches("h2.sd-label, .demo-usage, script[data-demo-js]"));
     // outerHTML starts each part at column 0; strip its source indent too.
     snapshots.set(block, parts.map((el) => dedent(el.outerHTML)).join("\n\n"));
   }
   blocks.forEach((block, n) => {
-    const h3 = block.querySelector(":scope > h3.sd-label");
-    if (!h3) return;
+    const title = block.querySelector(":scope > h2.sd-label");
+    if (!title) return;
     const section = block.closest(".demo-section");
-    block.id ||= `${section?.id ?? "block"}-${slug(h3.textContent)}`;
+    block.id ||= `${section?.id ?? "block"}-${slug(title.textContent)}`;
     const head = document.createElement("div");
     head.className = "demo-head";
-    h3.replaceWith(head);
-    head.append(h3);
+    title.replaceWith(head);
+    head.append(title);
     const toggle = document.createElement("div");
     toggle.className = "sd-seg sd-seg-sm sd-seg-inline";
-    toggle.setAttribute("aria-label", `${h3.textContent}: view`);
+    toggle.setAttribute("aria-label", `${title.textContent}: view`);
     toggle.innerHTML = `<button type="button" data-view="preview" aria-pressed="true">Preview</button><button type="button" data-view="code" aria-pressed="false">Code</button>`;
     head.append(toggle);
 
@@ -83,61 +84,46 @@ function decorateBlocks(blocks) {
   });
 }
 
-/* ---- Sidebar: one link per block, grouped by section ------------------- */
+/* ---- Rail and sidebar ---------------------------------------------------- */
 
-function buildSidebar() {
-  const panel = document.querySelector(".sd-sidebar-panel[data-sections]");
-  if (!panel) return;
-  const groups = panel.dataset.sections.split(" ").map((id) => document.getElementById(id)).filter(Boolean);
-  const count = groups.reduce((n, g) => n + g.querySelectorAll(".demo-block").length, 0);
-  panel.innerHTML =
-    `<div class="sd-sidebar-head"><svg><use href="#i-${panel.dataset.icon}"/></svg><span class="sd-sidebar-title">${panel.dataset.title}</span>` +
-    `<button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="sidebar" data-sd-key="[" aria-label="Collapse sidebar"><svg><use href="#i-collapse"/></svg></button></div>` +
-    `<nav class="sd-sidebar-body" data-sd-ornaments="bottom" data-sd-ornaments-size="200" aria-label="${panel.dataset.title} blocks">` +
-    groups
-      .map((g) => {
-        const links = [...g.querySelectorAll(".demo-block")].map((b) => `<a class="sd-sidebar-link" href="#${b.id}" data-block="${b.id}">${b.querySelector("h3").textContent}</a>`);
-        return `<details class="sd-sidebar-group" open><summary>${g.querySelector("h2").textContent} <span class="sd-count">${links.length}</span></summary>${links.join("")}</details>`;
-      })
-      .join("") +
-    `</nav><div class="sd-sidebar-foot">${count} blocks</div>`;
+// A section opens its first page while the sidebar is pinned beside the page.
+// Collapsed, on a tablet or in the phone drawer, the click stays on the rail
+// and the shell shows that section's pages instead.
+function wireRail() {
+  document.getElementById("shell-rail")?.addEventListener("click", (event) => {
+    const item = event.target.closest(".sd-rail-item[data-sd-section]");
+    if (item && (item.closest(".sd-shell").dataset.sidebar === "collapsed" || !matchMedia("(min-width: 64rem)").matches)) event.preventDefault();
+  });
 }
 
-/* ---- Where you are: crumbs and sidebar follow the scroll ----------------- */
-
-function followScroll(blocks) {
-  const content = document.querySelector("#shell .sd-shell-content");
-  const crumb = document.querySelector("[data-crumb-page]");
-  let current = null;
-  let lastLink = null;
-  const seen = new Map();
-
-  // Updating crumbs and the sidebar restyles and re-lays out parts of the
-  // frame, so do it once the scroll settles, never on every frame of it.
-  function showWhereYouAre() {
-    const top = [...seen].filter(([, y]) => y !== null).sort((a, b) => a[1] - b[1])[0]?.[0];
-    if (!top || top === current) return;
-    current = top;
-    const title = top.querySelector("h3")?.textContent ?? "";
-    if (crumb.textContent !== title) crumb.textContent = title;
-    lastLink?.removeAttribute("aria-current");
-    lastLink = document.querySelector(`.sd-sidebar-link[data-block="${top.id}"]`);
-    lastLink?.setAttribute("aria-current", "page");
+// Folded groups stay folded from page to page; the group holding the current page always opens.
+const FOLDED = "sd-showcase-folded";
+function rememberFolds() {
+  let folded = [];
+  try {
+    folded = JSON.parse(localStorage.getItem(FOLDED)) || [];
+  } catch {
+    /* storage blocked */
   }
-  let settle = 0;
-  const later = () => {
-    clearTimeout(settle);
-    settle = setTimeout(showWhereYouAre, 140);
-  };
-  const spy = new IntersectionObserver(
-    (entries) => {
-      for (const e of entries) seen.set(e.target, e.isIntersecting ? e.boundingClientRect.top : null);
-      later();
-    },
-    { root: content, rootMargin: "0px 0px -60% 0px" },
-  );
-  for (const block of blocks) spy.observe(block);
-  content.addEventListener("scroll", () => settle && later(), { passive: true });
+  for (const group of document.querySelectorAll("#library-sidebar .sd-sidebar-group")) {
+    if (folded.includes(group.dataset.group) && !group.querySelector('[aria-current="page"]')) group.open = false;
+    group.addEventListener("toggle", () => {
+      folded = folded.filter((key) => key !== group.dataset.group).concat(group.open ? [] : [group.dataset.group]);
+      try {
+        localStorage.setItem(FOLDED, JSON.stringify(folded));
+      } catch {
+        /* storage blocked */
+      }
+    });
+  }
+}
+
+function revealCurrent() {
+  const link = document.querySelector('#library-sidebar .sd-sidebar-link[aria-current="page"]');
+  const body = link?.closest(".sd-sidebar-body");
+  if (!body) return;
+  const top = link.getBoundingClientRect().top - body.getBoundingClientRect().top;
+  if (top + link.offsetHeight > body.clientHeight) body.scrollTop = top - body.clientHeight / 3;
 }
 
 /** Wire the page shell. Call first: it snapshots the blocks, then runs init(). */
@@ -145,7 +131,10 @@ export function mountLibrary() {
   mountBar();
   const blocks = [...document.querySelectorAll(".demo-block")];
   decorateBlocks(blocks);
-  buildSidebar();
+  // An old section link (#tokens) lands on a page with no such anchor: show the page from its top.
+  if (location.hash && !document.getElementById(decodeURIComponent(location.hash.slice(1)))) history.replaceState(null, "", location.pathname + location.search);
   init({ scrollbars: savedScrollbars() });
-  if (blocks.length) followScroll(blocks);
+  wireRail();
+  rememberFolds();
+  revealCurrent();
 }

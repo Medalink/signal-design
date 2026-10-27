@@ -1,4 +1,4 @@
-export const page = "conversation";
+export const page = "attachments";
 
 /** Link card variants: hero bleed, compact, document type, blocked tone and a static loading state. */
 export default async function checkLinkCards(page, where, fail) {

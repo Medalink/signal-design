@@ -2,15 +2,12 @@
 <html lang="en" data-theme="ink">
 <head></head>
 <body>
-  <section class="demo-section" id="ascii" aria-labelledby="ascii-h">
-    <header class="demo-intro">
-      <h1 class="sd-display">ASCII.</h1>
-      <p class="sd-muted">Art from <a href="https://github.com/kailashsr38/ascii-magic-art">ascii-magic-art</a> by ASCII Magic, MIT.</p>
-    </header>
-    <h2 id="ascii-h" class="sd-title">ASCII</h2>
+  <header class="demo-intro">
+    <p class="sd-muted">Art from <a href="https://github.com/kailashsr38/ascii-magic-art">ascii-magic-art</a> by ASCII Magic, MIT.</p>
+  </header>
 
-    <div class="demo-block">
-      <h3 class="sd-label">Looks</h3>
+    <div class="demo-block" id="ascii-looks">
+      <h2 class="sd-label">Looks</h2>
       <div class="grid justify-items-center gap-6 border border-line bg-surface p-6" id="ascii-stage">
         <div class="sd-ascii" style="--sd-ascii-size: 20px; --cols: 48; --rows: 24" data-piece="spinning-torus" data-at="1.4" role="img" aria-label="Spinning torus"></div>
         <div class="sd-actions w-full justify-center">
@@ -39,11 +36,11 @@ stage.setAttribute("aria-busy", "true");</script>
       <p class="demo-usage"><code>sd-ascii</code> + <code>role="img"</code> + <code>aria-label</code> · <code>mountAscii(el, piece, { at, look })</code> from <code>signal-design/ascii</code> · <code>look</code>: <code>original|dots|ascii|dense|numbers|binary|letters|blocks|squares|lines|dither</code> · <code>--sd-ascii-size</code> sets the character size · still until <code>aria-busy="true"</code> · <code>art.destroy()</code> before remounting with another look</p>
     </div>
 
-    <div class="demo-block">
-      <h3 class="sd-label">While work runs</h3>
+    <div class="demo-block" id="ascii-while-work-runs">
+      <h2 class="sd-label">While work runs</h2>
       <section class="sd-panel sd-panel-wide grid gap-4" id="ascii-job">
         <div class="sd-actions justify-between">
-          <h4 class="sd-panel-title m-0">Pipeline</h4>
+          <h3 class="sd-panel-title m-0">Pipeline</h3>
           <button class="sd-btn sd-btn-primary" type="button" data-ascii-job>Run job</button>
         </div>
         <div class="sd-ascii" style="--cols: 96; --rows: 19" data-piece="ci-pipeline" data-at="4" role="img" aria-label="A pipeline running its stages"></div>
@@ -64,8 +61,8 @@ panel.removeAttribute("aria-busy");        // holds the frame it is on</script>
       <p class="demo-usage"><code>mountAscii(el, piece, { at })</code> · the art plays while <code>aria-busy="true"</code> is on it or its closest ancestor that has the attribute, and holds the frame it is on when removed · set it on the panel that is working · <code>art.busy(true|false)</code> overrides · plays only on screen, in a visible tab and without <code>prefers-reduced-motion</code></p>
     </div>
 
-    <div class="demo-block">
-      <h3 class="sd-label">Gallery</h3>
+    <div class="demo-block" id="ascii-gallery">
+      <h2 class="sd-label">Gallery</h2>
       <div class="grid gap-4 md:grid-cols-2">
         <article class="sd-card" data-ascii-card>
           <div class="sd-card-head">Torus knot<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
@@ -120,8 +117,8 @@ card.addEventListener("pointerleave", () => card.removeAttribute("aria-busy"));<
       <p class="demo-usage">One <code>sd-ascii</code> per piece, each with <code>data-piece</code>, <code>data-at</code> (seconds into the piece for the still frame), <code>role="img"</code> and <code>aria-label</code> · put the art in <code>sd-card</code> and set <code>aria-busy</code> on the card from hover or a play button · <code>--cols</code> and <code>--rows</code> size the box before the art loads</p>
     </div>
 
-    <div class="demo-block">
-      <h3 class="sd-label">Empty state</h3>
+    <div class="demo-block" id="ascii-empty-state">
+      <h2 class="sd-label">Empty state</h2>
       <div class="sd-empty">
         <div class="sd-ascii" style="--sd-ascii-size: 8px; --cols: 80; --rows: 30" data-piece="sleeping-cat" data-at="3" role="img" aria-label="A cat asleep"></div>
         <p class="sd-empty-title">No matches</p>
@@ -135,8 +132,8 @@ mountAscii(document.querySelector(".sd-empty .sd-ascii"), piece, { at: 3 });</sc
       <p class="demo-usage"><code>sd-empty</code> > <code>sd-ascii</code> + <code>sd-empty-title</code> + text + a <code>sd-btn</code> · <code>--sd-ascii-size</code>, <code>--cols</code>, <code>--rows</code> fit the art to the space · leave it still: an empty state needs no motion</p>
     </div>
 
-    <div class="demo-block">
-      <h3 class="sd-label">Tone</h3>
+    <div class="demo-block" id="ascii-tone">
+      <h2 class="sd-label">Tone</h2>
       <div class="grid gap-4 md:grid-cols-2">
         <article class="sd-card" data-ascii-card>
           <div class="sd-card-head">Failed<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
@@ -155,6 +152,5 @@ const art = document.querySelector('.sd-ascii[data-tone="danger"]');
 mountAscii(art, piece, { at: 4 });</script>
       <p class="demo-usage"><code>data-tone="danger|success|warning|pending|accent|extra"</code> on <code>sd-ascii</code> paints the brightest level only; the rest stays grey · use it when the picture is the status, such as a failed or paid payment</p>
     </div>
-  </section>
 </body>
 </html>

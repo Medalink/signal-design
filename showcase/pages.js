@@ -3,70 +3,161 @@
  * config and the Node scripts all read the same list. Every page list in the
  * repo derives from this file.
  *
- * Library pages hold the demo sections (one section per page). Example pages
- * are mock apps built only from library parts.
+ * Library pages hold the demo blocks, one component type per page. Example
+ * pages are mock apps built only from library parts. Both are filed the way
+ * the rail and sidebar show them: section, then group, then page.
  */
+
+import { MOVED } from "./moved.js";
 
 /** The overview: the hero and a card for every other page. */
 export const HOME = { file: "index.html", title: "Library", summary: "Every page of the library and every example app." };
 
+const group = (title, pages) => ({ title, pages });
+
 /**
- * `sections` are the ids of the `.demo-section`s a page holds, in order. `icon`
- * names the `#i-<icon>` rail symbol in layout-plugin.js. A page loads
- * `pages/<id>.js`; `script: false` says it has none.
+ * The library's rail sections, in order. Each section's sidebar files its
+ * pages under text groups. `label` is the short rail name and `icon` the
+ * `#i-<icon>` symbol in layout-plugin.js. A page's file is `lib-<id>.html`;
+ * it loads `pages/<id>.js` when that file exists.
  */
-export const LIBRARY = [
-  { id: "tokens", file: "lib-tokens.html", title: "Tokens", label: "Tokens", sections: ["tokens"], icon: "tokens", summary: "Roles, signals, greys, type and motion, read live from the current theme." },
-  { id: "elements", file: "lib-elements.html", title: "Elements", label: "Elements", sections: ["elements"], icon: "elements", summary: "Plain HTML with no classes: headings, text, lists, tables and form controls." },
-  { id: "components", file: "lib-components.html", title: "Components", label: "Parts", sections: ["components"], icon: "components", summary: "Buttons, fields, rows, status, navigation and overlays, each with copyable HTML." },
-  { id: "conversation", file: "lib-conversation.html", title: "Conversation", label: "Chat", sections: ["conversation"], icon: "conversation", summary: "Messages, composer, reactions, banners, files and link cards for anything with people." },
-  { id: "inputs-more", file: "lib-inputs-more.html", title: "Inputs, search and data", label: "Inputs", sections: ["inputs-more"], icon: "inputs", summary: "Combobox, tags, number, steps, command palette, shortcuts, sparklines and diffs." },
-  { id: "charts", file: "lib-charts.html", title: "Charts", label: "Charts", sections: ["charts"], icon: "charts", summary: "Live time series, generic chart types and square CSS charts on the chart tokens." },
-  { id: "effects", file: "lib-effects.html", title: "Effects", label: "Effects", sections: ["effects"], icon: "effects", summary: "Backdrops, ornaments and motion, each switched on with an attribute." },
-  { id: "ascii", file: "lib-ascii.html", title: "ASCII", label: "ASCII", sections: ["ascii"], icon: "ascii", summary: "Animated ASCII art in greys, still until the work behind it is running." },
-  { id: "js", file: "lib-js.html", title: "JS", label: "JS", sections: ["js"], icon: "code", summary: "The optional script: init, attributes, hotkeys, live feeds and framework-owned state." },
+const library = [
+  {
+    id: "foundations", title: "Foundations", label: "Basics", icon: "tokens",
+    groups: [
+      group("Design", [
+        { id: "rules", title: "Rules", summary: "The hard rules and the principles every part follows." },
+        { id: "color", title: "Color", summary: "Semantic roles, signals, greys and themes, read live from the current theme." },
+        { id: "type", title: "Type", summary: "The type scale, tracking, weights, fonts and text styles." },
+        { id: "layout", title: "Layout", summary: "Spacing, motion, panel widths, page layout and visibility helpers." },
+        { id: "icons", title: "Icons", summary: "Square-stroke icons sized to the text beside them, and the icon set." },
+      ]),
+      group("Plain HTML", [
+        { id: "elements", title: "Elements", summary: "Plain HTML with no classes: headings, text, lists, tables and form controls." },
+      ]),
+    ],
+  },
+  {
+    id: "components", title: "Components", label: "Parts", icon: "inputs",
+    groups: [
+      group("Forms", [
+        { id: "buttons", title: "Buttons", summary: "Primary, ghost and link buttons in every size, with icons and states." },
+        { id: "fields", title: "Fields", summary: "Labels, hints, inputs, selects, switches and a dropzone." },
+        { id: "choices", title: "Choices", summary: "Option cards and segmented controls, wrapped in narrow containers." },
+        { id: "pickers", title: "Combobox and tags", summary: "Combobox, tags, number input and steps." },
+      ]),
+      group("Navigation", [
+        { id: "nav-bars", title: "Bars and tabs", summary: "Top bar, side navigation, tabs, pagination and status bar." },
+        { id: "menus", title: "Menus", summary: "Menus and popovers anchored to their trigger, with keyboard focus." },
+        { id: "overlays", title: "Overlays", summary: "Dialogs, sheets and drawers opened with an attribute." },
+        { id: "command", title: "Command palette", summary: "A command palette and keyboard shortcuts." },
+      ]),
+      group("Status", [
+        { id: "badges", title: "Badges", summary: "Markers, badges, chips and pills, each taking a tone." },
+        { id: "avatars", title: "Avatars", summary: "Avatars in every size with presence, status and counts." },
+        { id: "feedback", title: "Feedback", summary: "Callouts, notes, progress, skeletons, checks, empty states and toasts." },
+        { id: "level", title: "Level meter", summary: "A live level from one custom property." },
+      ]),
+      group("Data", [
+        { id: "stats", title: "Stats and tables", summary: "Stats, numbers, tables and key-value lists." },
+        { id: "rows", title: "Rows", summary: "Rows that show an outcome and expand for detail." },
+        { id: "living-tables", title: "Living tables", summary: "Tables whose rows arrive, change and leave while you read them." },
+        { id: "charts", title: "Charts", summary: "Live time series, chart types, square CSS charts, sparklines and diffs." },
+        { id: "timeline", title: "Timeline", summary: "Ranges over one time axis." },
+        { id: "schedule", title: "Schedule", summary: "An hour roster of status blocks in mono or spectrum." },
+      ]),
+    ],
+  },
+  {
+    id: "patterns", title: "Patterns", label: "Patterns", icon: "shell",
+    groups: [
+      group("Conversation", [
+        { id: "messages", title: "Messages", summary: "Messages with names, edges, replies, selection and narrow columns." },
+        { id: "feed", title: "Feed", summary: "A message feed with day breaks and a jump back to the present." },
+        { id: "composer", title: "Composer", summary: "The composer, its add menu and the emoji picker." },
+        { id: "people", title: "People", summary: "Conversation items, presence, counts and the roster." },
+        { id: "attachments", title: "Blocks and links", summary: "Banners, files, polls, tiles and link cards inside a conversation." },
+      ]),
+      group("App shell", [
+        { id: "window", title: "Window and bars", summary: "The full shell, the desktop title bar and the header bar." },
+        { id: "rail", title: "Rail", summary: "A compact rail of places with tiles, unread marks and counts." },
+        { id: "sidebar", title: "Sidebar", summary: "Sidebar heads and a sidebar you can resize." },
+      ]),
+      group("Effects", [
+        { id: "rain", title: "Rain", summary: "The digital rain backdrop, and a job that speeds it up." },
+        { id: "ornaments", title: "Ornaments", summary: "Corner ornaments, border glow, art ornaments and edge dust." },
+        { id: "surfaces", title: "Shimmer and scrollbars", summary: "The hover shimmer and the scrollbar styles." },
+        { id: "ascii", title: "ASCII", summary: "Animated ASCII art in greys, still until the work behind it is running." },
+      ]),
+    ],
+  },
+  {
+    id: "scripting", title: "Scripting", label: "JS", icon: "code",
+    groups: [
+      group("Setup", [
+        { id: "setup", title: "Setup", summary: "init(), the data-sd attributes it wires, and copy feedback." },
+        { id: "owned", title: "Framework state", summary: "Leaving state to React, Vue or Svelte: one writer per state." },
+      ]),
+      group("Mounts", [
+        { id: "countdown", title: "Countdown", summary: "A countdown you can pause and resume." },
+        { id: "live-feed", title: "Live feed", summary: "Keyboard navigation through a live feed." },
+      ]),
+    ],
+  },
 ];
 
-export const EXAMPLES = [
-  { file: "shell.html", title: "App shell", summary: "A console in the Signal App Shell: rail, sidebar, live feed, palette and details panel." },
-  { file: "chat.html", title: "Chat", summary: "A team chat with mentions, reactions, polls, a context menu and an emoji picker." },
-  { file: "form.html", title: "Form", summary: "A three step workspace form with validation, a live price and a dropzone." },
-  { file: "landing.html", title: "Landing", summary: "A marketing page with a hero, rain backdrop, pricing and an FAQ." },
-  { file: "charts.html", title: "Charts", summary: "Live bandwidth and latency charts with scale modes and the full chart gallery." },
-  { file: "react.html", title: "React", summary: "Every React binding on one page with no init(): buttons, fields, overlays, menus, tabs, tables and toasts." },
-  { file: "react-shell.html", title: "React app shell", summary: "The Signal App Shell as React components: rail sections, sidebar panels, drawer and details panel owned by React state." },
-  { file: "react-editor.html", title: "React editor", summary: "The parts a document editor is built from, as React components: toolbar, manuscript, marks, document tree, combobox, command palette and choice controls." },
-  { file: "stream.html", title: "Stream", summary: "A Twitch overlay package: starting soon, in game, BRB and ending scenes with live alerts, ready for OBS." },
-];
+/** Every library page in sidebar order. Each also learns its section, group and file, so a group lists the same objects. */
+export const LIBRARY = library.flatMap((section) =>
+  section.groups.flatMap((g) => g.pages.map((page) => Object.assign(page, { section, group: g, file: `lib-${page.id}.html` }))),
+);
+
+/** The example apps: whole pages built only from library parts, with no library chrome. */
+const examples = {
+  id: "examples", title: "Examples", label: "Examples", icon: "pages",
+  groups: [
+    group("HTML apps", [
+      { file: "shell.html", title: "App shell", summary: "A console in the Signal App Shell: rail, sidebar, live feed, palette and details panel." },
+      { file: "chat.html", title: "Chat", summary: "A team chat with mentions, reactions, polls, a context menu and an emoji picker." },
+      { file: "form.html", title: "Form", summary: "A three step workspace form with validation, a live price and a dropzone." },
+      { file: "landing.html", title: "Landing", summary: "A marketing page with a hero, rain backdrop, pricing and an FAQ." },
+      { file: "charts.html", title: "Charts", summary: "Live bandwidth and latency charts with scale modes and the full chart gallery." },
+      { file: "stream.html", title: "Stream", summary: "A Twitch overlay package: starting soon, in game, BRB and ending scenes with live alerts, ready for OBS." },
+    ]),
+    group("React apps", [
+      { file: "react.html", title: "React", summary: "Every React binding on one page with no init(): buttons, fields, overlays, menus, tabs, tables and toasts." },
+      { file: "react-shell.html", title: "React app shell", summary: "The Signal App Shell as React components: rail sections, sidebar panels, drawer and details panel owned by React state." },
+      { file: "react-editor.html", title: "React editor", summary: "The parts a document editor is built from, as React components: toolbar, manuscript, marks, document tree, combobox, command palette and choice controls." },
+    ]),
+  ],
+};
+export const EXAMPLES = examples.groups.flatMap((g) => g.pages);
+
+/** The rail: the library's sections, then the examples. */
+export const SECTIONS = [...library, examples];
 
 /** Every page, overview first. */
 export const ALL = [HOME, ...LIBRARY, ...EXAMPLES];
 
-/** A short name for a page that is unique across all three lists: "index", "lib-tokens", "charts". */
+/** A short name for a page that is unique across all three lists: "index", "lib-buttons", "charts". */
 export const keyOf = (page) => page.file.replace(/\.html$/, "");
-
-/** The module the overview or a library page loads, or null for a page with `script: false`. */
-export const scriptOf = (page) => (page.script === false ? null : page === HOME ? "pages/home.js" : `pages/${page.id}.js`);
 
 export const byId = (id) => LIBRARY.find((p) => p.id === id);
 export const byFile = (file) => LIBRARY.find((p) => p.file === file);
 /** The page that stamped itself `<html data-page="key">`. GitHub Pages also serves a page without its .html, so the URL cannot name it. */
 export const byKey = (key) => ALL.find((p) => keyOf(p) === key);
 
-/** Where a section lives. */
-export const pageOfSection = (sectionId) => LIBRARY.find((p) => p.sections.includes(sectionId));
+/** The pages before and after this one, across groups and sections. */
+export function neighbors(page) {
+  const at = LIBRARY.indexOf(page);
+  return { prev: LIBRARY[at - 1] ?? null, next: LIBRARY[at + 1] ?? null };
+}
 
 /**
- * The page an old single-page link points to: `#tokens`, `#components-buttons`.
- * Block ids start with their section id plus a dash; the longest section id wins.
+ * The page an old link points to: a section or block of the old single page
+ * (`index.html#components-buttons`) or of the old section pages
+ * (`lib-components.html#components-overlays`), or a page id (`#buttons`).
  */
 export function pageOfHash(hash) {
   const id = hash.replace(/^#/, "");
-  let best = null;
-  for (const page of LIBRARY) {
-    for (const section of page.sections) {
-      if ((id === section || id.startsWith(`${section}-`)) && (!best || section.length > best.section.length)) best = { page, section };
-    }
-  }
-  return best?.page ?? null;
+  return byId(MOVED[id] ?? id) ?? null;
 }

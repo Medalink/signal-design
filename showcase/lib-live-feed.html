@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+    <div class="demo-block" id="js-live-feed">
+      <h2 class="sd-label">Live feed navigation</h2>
+      <p class="demo-usage">Focus the feed for <kbd>j</kbd>/<kbd>k</kbd>, <kbd>g</kbd> then <kbd>t</kbd> for newest, and <kbd>n</kbd> for oldest. Insert a row while reading to keep your place. Rows need stable <code>data-id</code> and numeric <code>data-order</code>. Call <code>beforeUpdate()</code> before replacing rows and <code>afterUpdate()</code> afterward. <code>select(id)</code> handles application targets. <code>refresh()</code> reconciles selection; <code>suspend(true)</code> cancels idle return and motion; <code>dispose()</code> removes listeners and timers. DOM order controls next/previous, numeric order controls oldest/newest.</p>
+      <div class="sd-stack">
+        <div class="sd-actions"><button class="sd-btn sd-btn-sm" id="feed-insert">Insert row</button><button class="sd-btn sd-btn-sm" id="feed-oldest">Oldest</button><button class="sd-btn sd-btn-sm" id="feed-newest">Newest</button><span class="sd-pill" id="feed-above" role="status">0 above</span></div>
+        <div class="sd-stack" id="demo-feed" data-sd-feed data-sd-scroll-tab tabindex="0" role="region" aria-label="Activity feed" style="max-height: 14rem; overflow-y: auto">
+          <article class="sd-row" data-id="activity-3" data-order="3"><div class="sd-row-body"><p class="sd-row-title">Build completed</p></div></article>
+          <article class="sd-row" data-id="activity-2" data-order="2" aria-current="true"><div class="sd-row-body"><p class="sd-row-title">Export finished</p></div><button class="sd-btn sd-btn-sm" data-sd-toggle="feed-detail" aria-controls="feed-detail" aria-expanded="false">Details</button></article>
+          <div class="sd-expand" id="feed-detail"><div><p class="sd-note">The export is ready to download.</p></div></div>
+          <article class="sd-row" data-id="activity-1" data-order="1"><div class="sd-row-body"><p class="sd-row-title">Sync started</p></div></article>
+        </div>
+      </div>
+      <script type="text/plain" data-demo-js>
+import { mountFeed, hotkeys } from "signal-design/js";
+const root = document.getElementById("demo-feed");
+root.addEventListener("sd:feed", ({ detail }) => {
+  document.getElementById("feed-above").textContent = `${detail.aboveCount} above`;
+});
+const feed = mountFeed(root);
+const off = hotkeys({ j: () => feed.move(1), k: () => feed.move(-1),
+  "g t": () => feed.newest(), n: () => feed.oldest() },
+  { target: root, sequenceTimeout: 900, enabled: () => !root.hidden });
+document.getElementById("feed-oldest").onclick = () => feed.oldest();
+document.getElementById("feed-newest").onclick = () => feed.newest();
+let order = 3;
+document.getElementById("feed-insert").onclick = () => {
+  feed.beforeUpdate();
+  const row = document.createElement("article");
+  row.className = "sd-row";
+  row.dataset.id = `activity-${++order}`;
+  row.dataset.order = String(order);
+  row.textContent = `Activity ${order} received`;
+  root.prepend(row);
+  feed.afterUpdate();
+};
+      </script>
+    </div>
+</body>
+</html>

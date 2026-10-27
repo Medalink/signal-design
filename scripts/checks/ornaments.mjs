@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
 
-export const page = "effects";
+export const page = "ornaments";
 
 /**
  * Hashes (the first 8 bytes of SHA-256) of the dust and blocks output from
