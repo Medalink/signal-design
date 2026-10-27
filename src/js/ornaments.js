@@ -152,7 +152,7 @@ function ornamentURL(corner, options) {
  * falling fast to a dark-grey hairline. The top edge also eases up into a
  * short white segment at its center. Sizes are the element's border box.
  */
-export function edgesSVG({ width, height, color = "#fff", dim = 0.12, center = 32, corner = 14, fall = 48, ramp = 60, base = null, baseSides = "trbl" }) {
+export function edgesSVG({ width, height, color = "#fff", dim = 0.12, center = 32, corner = 14, fall = 48, ramp = 60, base = {} }) {
   // Distances are in px along each side, so short and long sides look alike.
   const side = (id, x1, y1, x2, y2, length, withCenter) => {
     const at = (px) => Math.max(0, Math.min(1, px / length));
@@ -184,18 +184,17 @@ export function edgesSVG({ width, height, color = "#fff", dim = 0.12, center = 3
     `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" shape-rendering="crispEdges">` +
     `<defs>${defs}</defs>` +
     // The element's own border under the glow, so a side never reads fainter
-    // than the edge the CSS gave it (a field's edge stays 3:1).
-    (base
-      ? [
-          ["t", 0, 0, width, 1],
-          ["r", width - 1, 0, 1, height],
-          ["b", 0, height - 1, width, 1],
-          ["l", 0, 0, 1, height],
-        ]
-          .filter(([k]) => baseSides.includes(k))
-          .map(([, x, y, w, h]) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${base}"/>`)
-          .join("")
-      : "") +
+    // than the edge the CSS gave it (a field's edge stays 3:1). base maps a
+    // side (t, r, b, l) to its color; a side left out has no border.
+    [
+      ["t", 0, 0, width, 1],
+      ["r", width - 1, 0, 1, height],
+      ["b", 0, height - 1, width, 1],
+      ["l", 0, 0, 1, height],
+    ]
+      .filter(([k]) => base[k])
+      .map(([k, x, y, w, h]) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${base[k]}"/>`)
+      .join("") +
     `<rect x="0" y="0" width="${width}" height="1" fill="url(#t)"/>` +
     `<rect x="0" y="${height - 1}" width="${width}" height="1" fill="url(#b)"/>` +
     `<rect x="0" y="0" width="1" height="${height}" fill="url(#l)"/>` +
@@ -247,8 +246,8 @@ export function paintOrnaments(el) {
     el.style.setProperty("transition", "none", "important");
     el.style.borderColor = "";
     const own = getComputedStyle(el);
-    const baseSides = ["Top", "Right", "Bottom", "Left"].filter((side) => parseFloat(own[`border${side}Width`]) > 0).map((side) => side[0].toLowerCase()).join("");
-    images.push(`url("data:image/svg+xml,${encodeURIComponent(edgesSVG({ width: w, height: h, color, dim, base: own.borderTopColor, baseSides }))}")`);
+    const border = Object.fromEntries(["Top", "Right", "Bottom", "Left"].filter((side) => parseFloat(own[`border${side}Width`]) > 0).map((side) => [side[0].toLowerCase(), own[`border${side}Color`]]));
+    images.push(`url("data:image/svg+xml,${encodeURIComponent(edgesSVG({ width: w, height: h, color, dim, base: border }))}")`);
     positions.push("left top");
     sizes.push(`${w}px ${h}px`);
     el.style.borderColor = "transparent";
