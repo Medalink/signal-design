@@ -100,7 +100,7 @@ function buildSidebar() {
         return `<details class="sd-sidebar-group" open><summary>${g.querySelector("h2").textContent} <span class="sd-count">${links.length}</span></summary>${links.join("")}</details>`;
       })
       .join("") +
-    `</nav><div class="sd-sidebar-foot">${count} blocks · Preview or Code on each</div>`;
+    `</nav><div class="sd-sidebar-foot">${count} blocks</div>`;
 }
 
 /* ---- Where you are: crumbs and sidebar follow the scroll ----------------- */
