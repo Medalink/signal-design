@@ -77,6 +77,7 @@
   .sd-tree-meta {
     color: var(--sd-fg-subtle);
     font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
   }
   .sd-tree-row svg {
     width: 1.5cap;

@@ -73,6 +73,7 @@
     gap: 8px;
     color: var(--sd-fg-subtle);
     font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
   }
   .sd-item[data-unread] .sd-item-title {
     color: var(--sd-fg);
@@ -111,6 +112,7 @@
     font-size: var(--text-2xs);
     letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
   }
   .sd-item-group > :last-child:not(:first-child) {
     margin-inline-start: auto;
@@ -288,6 +290,7 @@
   .sd-file-meta {
     color: var(--sd-fg-subtle);
     font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
   }
   /* An upload's progress runs full width under the name. */
   .sd-file > .sd-progress {
@@ -473,6 +476,7 @@
     font-size: var(--text-2xs);
     letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
   }
 
   /*

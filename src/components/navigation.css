@@ -389,6 +389,7 @@
     color: var(--sd-fg-subtle);
     font-size: var(--text-sm);
     white-space: nowrap;
+    font-variant-numeric: tabular-nums;
     overflow-x: auto;
     scrollbar-width: none;
     contain: inline-size;
