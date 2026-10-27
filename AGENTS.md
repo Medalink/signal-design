@@ -47,7 +47,8 @@ init(); // once, after the DOM exists; every listener is delegated, so later mar
 
 **React 19** (optional): `import { Button, Dialog, Tabs } from "signal-design/react"` gives
 typed components that render the `sd-` classes with React as the only writer.
-They need no `init()`; do not call it on those pages.
+They need no `init()`; do not call it on those pages. For auto-hiding
+scrollbars there, call `initScrollbars()` from `signal-design/js` instead.
 
 ## Hard rules (do not break these)
 

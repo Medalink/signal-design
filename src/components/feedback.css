@@ -35,11 +35,21 @@
     color: var(--tone, var(--sd-fg));
   }
 
-  /* Toasts. The JS toast() helper creates .sd-toaster on first use. */
+  /* Toasts. The JS toast() helper creates .sd-toaster on first use. React's
+     ToastProvider makes it a manual popover so it paints above a modal
+     dialog; the resets undo the browser's popover box. */
   .sd-toaster {
     position: fixed;
     inset: auto 24px 24px auto;
     z-index: 60;
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    overflow: visible;
+    background: none;
+    color: inherit;
     display: flex;
     flex-direction: column;
     align-items: flex-end;

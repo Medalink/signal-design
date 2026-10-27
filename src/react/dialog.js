@@ -2,20 +2,24 @@
  * Dialog and sheet on the native <dialog>. React owns `open`; the browser owns
  * the top layer, the focus trap and Escape, and tells React through `close`.
  * Nothing is called while the dialog stays closed, so a closed mount is safe
- * on the server and wherever `showModal` is missing.
+ * on the server and wherever `showModal` is missing. A `DialogHeader` names
+ * the dialog; without one, `aria-label` or `aria-labelledby` does.
+ * `unmountOnClose` drops the children once the dialog has faded out.
  */
-import { Fragment, cloneElement, createContext, createElement as h, useContext, useId, useMemo, useReducer, useRef } from "react";
+import { Fragment, cloneElement, createContext, createElement as h, useContext, useId, useMemo, useReducer, useRef, useState } from "react";
 import { closeDialog, openDialog } from "../js/dialog.js";
 import { IconButton } from "./button.js";
 import { chain, cx, mergeRefs, useControllable, useIsomorphicLayoutEffect } from "./util.js";
 
 const DialogContext = createContext(null);
 
-export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size, side, static: isStatic, className, children, ref, onClose, onCancel, onClick, ...props }) {
+export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size, side, static: isStatic, unmountOnClose, className, children, ref, onClose, onCancel, onClick, ...props }) {
   const [isOpen, setOpen] = useControllable(open, defaultOpen, onOpenChange);
   const titleId = useId();
   const node = useRef(null);
   const [, rerender] = useReducer((n) => n + 1, 0);
+  const [titled, setTitled] = useState(false);
+  const [present, setPresent] = useState(isOpen);
 
   // Run after every render: a parent that refuses a close gets the dialog put back.
   useIsomorphicLayoutEffect(() => {
@@ -24,14 +28,29 @@ export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size,
     else if (!isOpen && dialog.open) closeDialog(dialog);
   });
 
-  const context = useMemo(() => ({ titleId, close: () => setOpen(false) }), [titleId, setOpen]);
+  // Closing keeps the children until the fade has run, so the box does not empty while it fades.
+  useIsomorphicLayoutEffect(() => {
+    if (!unmountOnClose) return;
+    if (isOpen) {
+      setPresent(true);
+      return;
+    }
+    let live = true;
+    const fades = node.current.getAnimations?.() ?? [];
+    Promise.allSettled(fades.map((fade) => fade.finished)).then(() => live && setPresent(false));
+    return () => {
+      live = false;
+    };
+  }, [isOpen, unmountOnClose]);
+
+  const context = useMemo(() => ({ titleId, close: () => setOpen(false), setTitled }), [titleId, setOpen]);
   const element = h(
     DialogContext.Provider,
     { value: context },
     h(
       "dialog",
       {
-        "aria-labelledby": titleId,
+        "aria-labelledby": titled && props["aria-label"] === undefined ? titleId : undefined,
         ...props,
         ref: mergeRefs(node, ref),
         className: cx("sd-dialog", size && `sd-dialog-${size}`, side && "sd-sheet", side === "left" && "sd-sheet-left", side === "bottom" && "sd-sheet-bottom", className),
@@ -55,7 +74,7 @@ export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size,
           if (!inside) setOpen(false);
         },
       },
-      children,
+      !unmountOnClose || isOpen || present ? children : null,
     ),
   );
   if (!trigger) return element;
@@ -69,7 +88,11 @@ export function Sheet({ side = "right", ...props }) {
 
 /** The title row. Its text names the dialog; `closeButton={false}` leaves out the × button and `closeLabel` renames it. */
 export function DialogHeader({ closeButton = true, closeLabel = "Close", className, children, ...props }) {
-  const { titleId, close } = useContext(DialogContext);
+  const { titleId, close, setTitled } = useContext(DialogContext);
+  useIsomorphicLayoutEffect(() => {
+    setTitled(true);
+    return () => setTitled(false);
+  }, [setTitled]);
   return h(
     "header",
     { className: cx("sd-dialog-head", className), ...props },

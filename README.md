@@ -830,6 +830,11 @@ That is the worst case, at the strongest pixel. Keep small labels
 after the position stops changing. Only the thumb color changes, so nothing
 shifts. `init({ scrollbars: "always" })` keeps them visible.
 
+A page that must not call `init()`, such as a React app, gets the same
+scrollbars from `initScrollbars()` in `signal-design/js`. It sets
+`data-sd-scrollbars` on `<html>` and starts the scroll listener once, and
+nothing else. Call it again to change the mode, as in `initScrollbars("always")`.
+
 ## FPS counter
 
 ```html
@@ -1129,7 +1134,7 @@ import { Tab, TabList, TabPanel, Tabs } from "signal-design/react";
 | Part | Components | State |
 |---|---|---|
 | Buttons | `Button`, `IconButton`, `buttonClass()` for links | `busy` sets `aria-busy` |
-| Fields | `Field`, `Input`, `Textarea`, `Select`, `Checkbox`, `Switch` | `Field` gives its control the id, `aria-describedby`, `aria-invalid` and `required`; the controls are native, so `value` or `defaultValue` and `checked` or `defaultChecked` both work |
+| Fields | `Field`, `Input`, `Textarea`, `Select`, `Checkbox`, `Switch` | `Field` gives its control the id, `aria-describedby`, `aria-invalid` and `required`; the controls are native, so `value` or `defaultValue` and `checked` or `defaultChecked` both work; `Checkbox` and `Switch` take `label` and `description`, or just `aria-label` or `aria-labelledby` for a bare control in a table cell or toolbar, which renders no text and is only as wide as the control |
 | Status | `Badge`, `CountBadge`, `Avatar`, `AvatarStack` | `tone` is `data-tone`, `status` is `data-status` |
 | Surfaces | `Card`, `Panel`, `EmptyState`, `Table` with its rows, headers and cells | `TableHeader sort` is `aria-sort`, `TableRow selected` is `aria-selected` |
 | Overlays | `Dialog`, `Sheet`, `Popover`, `Menu`, `Tooltip`, `ToastProvider` with `useToast()` | `open` or `defaultOpen` with `onOpenChange` |
@@ -1146,15 +1151,42 @@ What they take over from `init()`:
   `side="bottom"` (the full width, as tall as its content up to 85% of the
   screen, `--sheet-max`). `DialogHeader` names its × button `Close`; give
   `closeLabel="Close inspector"` when the screen needs more.
+  A `DialogHeader` also names the dialog. Leave the header out and name it with
+  `aria-label` or `aria-labelledby` on the `Dialog`; an `aria-label` wins
+  over a header, and no `aria-labelledby` is written when there is no header.
+  Children stay mounted while the dialog is closed. `unmountOnClose` mounts
+  them only while it is open and drops them after the fade-out, so state inside
+  starts fresh each time.
 - **Popover and Menu** run on the native popover API. The trigger links to the
   panel with `popovertarget`, so a click on it toggles instead of dismissing
   and reopening. The panel is placed next to the trigger and flips at the
   viewport edge. In a menu the arrows, Home and End move focus, a letter jumps
   to the next item that starts with it, disabled items are skipped, and
-  choosing an item closes the menu and returns focus to the trigger.
+  choosing an item closes the menu and returns focus to the trigger. A panel
+  with no trigger opens at an `anchor` on `PopoverContent` or `MenuContent`
+  instead: a `{ x, y }` point, a rect, or an element or object with
+  `getBoundingClientRect`. For a context menu keep the pointer in state, set it
+  in `onContextMenu` (after `preventDefault()`) together with `open`, and pass
+  `anchor={point}`. The menu's corner sits on the point, it opens above the
+  point or shifts at the viewport edge, light dismiss, Escape and the arrow
+  keys work as for a trigger, and focus goes back to whatever had it when the
+  menu opened. A second right-click moves the open menu; focus stays where
+  that click put it.
 - **Tabs** are roving: arrows, Home and End move focus and select.
 - **Toasts** are rendered by React inside one live region. A toast fades with
-  `data-leaving` for 160ms before it is removed, and hovering one holds it.
+  `data-leaving` for 160ms before it is removed, and hovering one holds it. The
+  region is a manual popover in the top layer, so a toast shows above a modal
+  `Dialog`; calling `toast()` while one is open lifts the region above it. A
+  dialog that opens over a toast already on screen covers it until the next
+  toast. The page behind a modal is inert, so a toast's action and its hover
+  hold do nothing until the dialog closes.
+- **Tooltip** is a manual popover too, so it shows above a modal dialog. Its
+  look and the `role="tooltip"` and `aria-describedby` link are unchanged.
+  `delay` (milliseconds, default 0) holds the tip back until the pointer has
+  rested on the trigger that long; leaving first shows nothing, and keyboard
+  focus always shows it at once. `className` is added to the tip beside
+  `sd-tooltip`. `onOpenChange(open)` reports each show and hide, including
+  Escape and blur.
 - **AppShell** renders `data-sidebar`, `data-aside`, `data-drawer` and
   `data-peek`, makes the page `inert` behind the drawer, closes the peek, the
   drawer and a floating right panel on Escape, and moves focus into the drawer.
@@ -1175,6 +1207,10 @@ attributes a second time (tabs, `.sd-shell`, `[popovertarget]`,
 `<dialog open>`); the list under Framework-owned state says what it touches.
 The helpers that write only their own nodes stay safe beside React:
 `hotkeys()`, `setTheme()`, `data-sd-theme`, `data-sd-copy` and `data-sd-key`.
+For the auto-hiding scrollbars, call `initScrollbars()` from `signal-design/js`
+once at startup (`initScrollbars("always")` keeps them visible): it sets
+`data-sd-scrollbars` on `<html>`, marks whatever scrolls with
+`data-sd-scrolling`, and touches nothing else.
 `react.html` and `react-shell.html` in the showcase use every component above, and `react-editor.html` the editor parts below.
 
 ### Editor parts

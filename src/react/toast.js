@@ -2,10 +2,13 @@
  * Toasts owned by React. `ToastProvider` renders the live region and the
  * toasts; `useToast()` returns the same call as `toast()` from
  * `signal-design/js`. A toast leaves in two steps (`data-leaving` for the
- * 160ms fade, then it is removed), and hovering one holds it on screen.
+ * 160ms fade, then it is removed), and hovering one holds it on screen. The
+ * region is a manual popover, so it paints above a modal dialog; a toast
+ * called while one is open lifts it above that dialog.
  */
 import { createContext, createElement as h, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Button } from "./button.js";
+import { liftManual, showManual, useIsomorphicLayoutEffect } from "./util.js";
 
 const ToastContext = createContext(null);
 const LEAVE_MS = 160;
@@ -52,6 +55,8 @@ function Toast({ toast, dismiss }) {
 export function ToastProvider({ timeout: defaultTimeout = 2400, children }) {
   const [toasts, setToasts] = useState([]);
   const next = useRef(0);
+  const region = useRef(null);
+  useIsomorphicLayoutEffect(() => showManual(region.current), []);
 
   const removals = useRef(new Map());
   const remove = useCallback((id) => {
@@ -76,6 +81,7 @@ export function ToastProvider({ timeout: defaultTimeout = 2400, children }) {
   const toast = useCallback(
     (message, { tone, timeout = defaultTimeout, action } = {}) => {
       const id = ++next.current;
+      if (document.querySelector("dialog[open]")) liftManual(region.current);
       setToasts((all) => [...all, { id, message, tone, timeout, action }]);
       return () => dismiss(id);
     },
@@ -86,6 +92,6 @@ export function ToastProvider({ timeout: defaultTimeout = 2400, children }) {
     ToastContext.Provider,
     { value: toast },
     children,
-    h("div", { className: "sd-toaster", role: "status", "aria-live": "polite" }, toasts.map((t) => h(Toast, { key: t.id, toast: t, dismiss }))),
+    h("div", { ref: region, className: "sd-toaster", popover: "manual", role: "status", "aria-live": "polite" }, toasts.map((t) => h(Toast, { key: t.id, toast: t, dismiss }))),
   );
 }

@@ -1,0 +1,14 @@
+### Added
+- `initScrollbars(mode)` in `signal-design/js`: turns on the auto-hiding scrollbars without `init()`. It sets `data-sd-scrollbars` on `<html>`, starts the scroll listener once however often it is called, and is safe beside React.
+- `anchor` on `PopoverContent` and `MenuContent`: open a panel at a `{ x, y }` point, a rect, or an element or object with `getBoundingClientRect`, with no trigger. A context menu keeps the pointer in state and passes it as `anchor`. The corner sits on the point, flips or shifts at the viewport edge, and light dismiss, Escape, the arrow keys and focus return all work. `place()` takes the same anchors.
+- `Tooltip` props `delay` (milliseconds the pointer must rest before the tip shows; focus shows it at once), `className` (added to the tip) and `onOpenChange`.
+- `Switch` and `Checkbox` can go without a `label` when `aria-label` or `aria-labelledby` names them. They render no text span and are only as wide as the control. `SwitchProps` is exported.
+- `Dialog` prop `unmountOnClose`: mounts the children only while the dialog is open and drops them after the fade-out. The default still keeps them mounted.
+
+### Changed
+- `ToastProvider`'s `.sd-toaster` and `Tooltip`'s tip are manual popovers, so they paint above an open modal `<dialog>`. Their look is unchanged. A toast called while a dialog is open lifts the region above it. The page behind a modal is inert, so a toast's action and hover hold do nothing until the dialog closes.
+- `CheckboxProps` is a union type instead of an interface, because `label` is now optional when an accessible name is given.
+
+### Fixed
+- `place()` no longer throws when the element or the anchor is null.
+- A `Dialog` with no `DialogHeader` no longer writes an `aria-labelledby` that points at nothing, and a passed `aria-label` now names a dialog that has a header.

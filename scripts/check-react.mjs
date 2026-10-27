@@ -12,6 +12,7 @@ import { createElement as h } from "react";
 import ts from "typescript";
 import { ICON_NAMES } from "../src/js/icons.js";
 import { checkReactEditor } from "./check-react-editor.mjs";
+import { checkReactApp } from "./check-react-app.mjs";
 import { checkReactGaps } from "./check-react-gaps.mjs";
 
 const rootPath = fileURLToPath(new URL("..", import.meta.url));
@@ -22,7 +23,14 @@ export function checkReactTypes() {
   writeFileSync(
     fixture,
     `import { useRef, useState } from "react";
-import { AppShell, Button, Dialog, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
+import { AppShell, Button, Dialog, DialogBody, Menu, MenuContent, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
+import { initScrollbars } from "signal-design/js";
+import { Checkbox, Switch, Tooltip } from "signal-design/react";
+
+initScrollbars();
+initScrollbars("always");
+// @ts-expect-error the mode is auto or always
+initScrollbars("never");
 
 export function Consumer() {
   const [open, setOpen] = useState(false);
@@ -51,6 +59,32 @@ export function Consumer() {
       {/* @ts-expect-error an edge is start, end, top or bottom */}
       <ResizablePanel edge="left" />
       <Field label="Name" error="Required"><Input value="" onChange={(event) => console.log(event.target.value)} /></Field>
+      <Menu open={open} onOpenChange={setOpen}>
+        <MenuContent anchor={{ x: 10, y: 20 }} label="At a point"><MenuItem>Reply</MenuItem></MenuContent>
+        <MenuContent anchor={document.body} side="right" align="end"><MenuItem>Rect</MenuItem></MenuContent>
+        <MenuContent anchor={{ left: 1, top: 2, right: 3, bottom: 4 }} />
+        <MenuContent anchor={undefined} />
+        {/* @ts-expect-error a pointer event is not an anchor: it has clientX, not x */}
+        <MenuContent anchor={{ clientX: 1, clientY: 2 }} />
+      </Menu>
+      <Switch aria-label="Mute" />
+      <Checkbox aria-labelledby="name" defaultChecked />
+      <Checkbox label="Label" aria-label="Override" description="d" />
+      <Switch label={undefined} aria-label="Mute" description={undefined} />
+      {/* @ts-expect-error a bare checkbox needs an accessible name */}
+      <Checkbox />
+      {/* @ts-expect-error a bare switch needs an accessible name */}
+      <Switch checked onChange={() => {}} />
+      {/* @ts-expect-error a description needs a label beside it */}
+      <Checkbox description="d" aria-label="Name" />
+      <Tooltip content="Tip" side="bottom" delay={300} className="wide" onOpenChange={(shown: boolean) => console.log(shown)}><Button>Tip</Button></Tooltip>
+      <Tooltip content="Tip" delay={undefined} className={undefined} onOpenChange={undefined}><Button>Tip</Button></Tooltip>
+      {/* @ts-expect-error the delay is a number of milliseconds */}
+      <Tooltip content="Tip" delay="300"><Button>Tip</Button></Tooltip>
+      <Dialog open={open} onOpenChange={setOpen} aria-label="Quick note" unmountOnClose><DialogBody>Body</DialogBody></Dialog>
+      <Dialog aria-labelledby="name" unmountOnClose={undefined} />
+      {/* @ts-expect-error unmountOnClose is a boolean */}
+      <Dialog unmountOnClose="yes" />
       <Dialog open={open} onOpenChange={setOpen} size="sm" ref={(node: HTMLDialogElement | null) => node?.close()}>
         <DialogHeader closeButton={false}>Title</DialogHeader>
       </Dialog>
@@ -184,6 +218,7 @@ export async function checkReactSsr() {
           h(sd.Field, { label: "Pick" }, h(sd.Select, null, h("option", null, "a"))),
           h(sd.Checkbox, { label: "c", description: "d" }),
           h(sd.Switch, { label: "s" }),
+          h(sd.Switch, { "aria-label": "Mute" }),
           h(sd.Badge, { tone: "success" }, "ok"),
           h(sd.Avatar, { name: "Ada Lovelace" }),
           h(sd.Icon, { name: "undo" }),
@@ -206,11 +241,13 @@ export async function checkReactSsr() {
             h(sd.DialogHeader, null, "T"), h(sd.DialogBody, null, "b"),
             h(sd.DialogFooter, null, h(sd.DialogClose, null, h(sd.Button, null, "x")))),
           h(sd.Sheet, { defaultOpen: false }, h(sd.DialogHeader, null, "S")),
+          h(sd.Dialog, { defaultOpen: true, "aria-label": "Quick note", unmountOnClose: true }, h(sd.DialogBody, null, "bare")),
+          h(sd.Dialog, { "aria-label": "Quick note", unmountOnClose: true }, h(sd.DialogBody, null, "unmounted while closed")),
           h(sd.Popover, null, h(sd.PopoverTrigger, null, h(sd.Button, null, "p")), h(sd.PopoverContent, { pad: true }, "pop")),
           h(sd.Menu, null,
             h(sd.MenuTrigger, null, h(sd.Button, null, "m")),
             h(sd.MenuContent, { label: "M" }, h(sd.MenuLabel, null, "L"), h(sd.MenuItem, { hint: "o" }, "Open"), h(sd.MenuSeparator), h(sd.MenuItem, { tone: "danger", disabled: true }, "Del"))),
-          h(sd.Tooltip, { content: "tip" }, h(sd.Button, null, "t")),
+          h(sd.Tooltip, { content: "tip", delay: 300, className: "wide", onOpenChange() {} }, h(sd.Button, null, "t")),
           h(sd.Tabs, { defaultValue: "one" },
             h(sd.TabList, { label: "L" }, h(sd.Tab, { value: "one" }, "1"), h(sd.Tab, { value: "two" }, "2")),
             h(sd.TabPanel, { value: "one" }, "p1"), h(sd.TabPanel, { value: "two" }, "p2")),
@@ -235,6 +272,7 @@ export async function checkReactSsr() {
   const html = renderToString(tree);
   for (const [needle, what] of [
     ['class="sd-shell"', "the shell"],
+    ['class="sd-toaster" popover="manual" role="status" aria-live="polite"', "the toaster as a manual popover and polite live region"],
     ['role="tree"', "the tree"],
     ['role="combobox"', "the combobox"],
     ['role="radiogroup"', "the radio group"],
@@ -246,6 +284,9 @@ export async function checkReactSsr() {
     ['aria-selected="true"', "the selected tab or row"],
     ['aria-invalid="true"', "the invalid control"],
     ['role="switch"', "the switch"],
+    ['<dialog aria-label="Quick note" class="sd-dialog"><div class="sd-dialog-body">bare</div></dialog>', "a dialog named by aria-label, with no aria-labelledby"],
+    ['<dialog aria-label="Quick note" class="sd-dialog"></dialog>', "a closed dialog that unmounts on close, empty"],
+    ['<label class="sd-check"><input type="checkbox" role="switch" aria-label="Mute"/></label>', "a switch with no text"],
     ["99+", "the capped count"],
     ['data-icon="undo"', "an icon"],
     ['style="--size:300px"', "a resizable panel"],
@@ -578,5 +619,7 @@ export async function checkReact(page, base) {
   errors.push(...editor.errors);
   const gaps = await checkReactGaps(page, base);
   errors.push(...gaps.errors);
-  return { errors, passed: passed + editor.passed + gaps.passed };
+  const app = await checkReactApp(page, base);
+  errors.push(...app.errors);
+  return { errors, passed: passed + editor.passed + gaps.passed + app.passed };
 }

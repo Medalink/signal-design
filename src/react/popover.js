@@ -3,7 +3,8 @@
  * owns the top layer, light dismiss and Escape, and reports them through
  * `beforetoggle`, so the state follows whoever closed it. The trigger links to
  * the panel with `popovertarget`, which makes a click on the trigger toggle
- * the panel instead of dismissing and reopening it.
+ * the panel instead of dismissing and reopening it. Without a trigger the panel
+ * can open at an `anchor` instead, such as the pointer for a context menu.
  */
 import { cloneElement, createContext, createElement as h, useCallback, useContext, useEffect, useId, useMemo, useReducer, useRef } from "react";
 import { place } from "../js/position.js";
@@ -16,7 +17,9 @@ export function Popover({ open, defaultOpen = false, onOpenChange, children }) {
   const [isOpen, setOpen] = useControllable(open, defaultOpen, onOpenChange);
   const id = useId();
   const trigger = useRef(null);
-  const context = useMemo(() => ({ id, isOpen, setOpen, trigger }), [id, isOpen, setOpen]);
+  // What had focus when a panel with no trigger opened, to give focus back to.
+  const opener = useRef(null);
+  const context = useMemo(() => ({ id, isOpen, setOpen, trigger, opener }), [id, isOpen, setOpen]);
   return h(PopoverContext.Provider, { value: context }, children);
 }
 
@@ -34,20 +37,34 @@ export function PopoverTrigger({ children, haspopup }) {
 
 /**
  * The panel, placed next to its trigger on `side` and `align` and flipped at
- * the viewport edge. `initialFocus` is a selector for the element to focus on open.
+ * the viewport edge. `anchor` places it beside something else instead, and
+ * wins over the trigger: a `{ x, y }` point (the panel's corner sits on it),
+ * a rect, or an element or object with `getBoundingClientRect`. `initialFocus`
+ * is a selector for the element to focus on open.
  */
-export function PopoverContent({ side = "bottom", align = "start", pad, initialFocus, className, children, ref, onBeforeToggle, onToggle, ...props }) {
-  const { id, isOpen, setOpen, trigger } = usePopover();
+export function PopoverContent({ side = "bottom", align = "start", pad, initialFocus, anchor, className, children, ref, onBeforeToggle, onToggle, ...props }) {
+  const { id, isOpen, setOpen, trigger, opener } = usePopover();
   const node = useRef(null);
   const shown = useRef(false);
+  const target = useRef(anchor);
+  target.current = anchor;
   const [, rerender] = useReducer((n) => n + 1, 0);
-  const position = useCallback(() => place(node.current, trigger.current, { side, align }), [trigger, side, align]);
+  const position = useCallback(() => place(node.current, target.current ?? trigger.current, { side, align }), [trigger, side, align]);
 
   // Run after every render: a parent that refuses a change gets the DOM put back.
   useEffect(() => {
-    if (isOpen && !shown.current) node.current.showPopover();
-    else if (!isOpen && shown.current) node.current.hidePopover();
+    if (isOpen && !shown.current) {
+      node.current.showPopover();
+      // Placed and shown now, not when the toggle event arrives: a pointer released in between would miss it and light dismiss it.
+      position();
+      node.current.style.visibility = "";
+    } else if (!isOpen && shown.current) node.current.hidePopover();
   });
+
+  // A new anchor while open moves the panel, as a second right-click does.
+  useEffect(() => {
+    if (shown.current) position();
+  }, [anchor, position]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -72,6 +89,7 @@ export function PopoverContent({ side = "bottom", align = "start", pad, initialF
         shown.current = event.newState === "open";
         // Hidden until placed, so it never flashes in the wrong spot.
         if (shown.current) event.currentTarget.style.visibility = "hidden";
+        if (shown.current && !trigger.current) opener.current = document.activeElement;
       },
       onToggle: (event) => {
         onToggle?.(event);
@@ -141,7 +159,7 @@ export function MenuContent({ label, className, children, onKeyDown, ...props })
 
 /** An item. Choosing it calls `onSelect` and closes the menu unless `onSelect` prevents the default. */
 export function MenuItem({ tone, disabled, hint, onSelect, onClick, children, ...props }) {
-  const { setOpen, trigger } = usePopover();
+  const { setOpen, trigger, opener } = usePopover();
   return h(
     "button",
     {
@@ -156,7 +174,7 @@ export function MenuItem({ tone, disabled, hint, onSelect, onClick, children, ..
         onSelect?.(event);
         if (event.defaultPrevented) return;
         setOpen(false);
-        trigger.current?.focus();
+        (trigger.current ?? opener.current)?.focus?.();
       },
     },
     children,

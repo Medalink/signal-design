@@ -4,6 +4,7 @@
  * accepted and passed through.
  */
 import type { IconName } from "../js/icons.js";
+import type { PlaceAnchor } from "../js/index.js";
 import type { ComponentProps, ElementType, HTMLAttributes, MouseEvent, MouseEventHandler, ReactElement, ReactNode, Ref, SyntheticEvent } from "react";
 
 export type Tone = "accent" | "success" | "danger" | "warning" | "pending" | "extra" | "neutral";
@@ -75,14 +76,18 @@ export function Input(props: ComponentProps<"input">): ReactElement;
 export function Textarea(props: ComponentProps<"textarea">): ReactElement;
 export function Select(props: ComponentProps<"select">): ReactElement;
 
-export interface CheckboxProps extends Omit<ComponentProps<"input">, "type" | "className" | "children"> {
-  label: ReactNode;
-  description?: ReactNode | undefined;
+type CheckInput = Omit<ComponentProps<"input">, "type" | "className" | "children"> & {
   /** On the label; `ref` and the other props reach the input. */
   className?: string | undefined;
-}
+};
+/** The text beside the box, or an accessible name and no text at all. */
+type CheckText =
+  | { label: ReactNode; description?: ReactNode | undefined }
+  | ({ label?: undefined; description?: undefined } & ({ "aria-label": string } | { "aria-labelledby": string }));
+export type CheckboxProps = CheckInput & CheckText;
+export type SwitchProps = Omit<CheckInput, "role"> & CheckText;
 export function Checkbox(props: CheckboxProps): ReactElement;
-export function Switch(props: Omit<CheckboxProps, "role">): ReactElement;
+export function Switch(props: SwitchProps): ReactElement;
 
 /* ---- Static parts ------------------------------------------------------ */
 
@@ -206,6 +211,12 @@ export interface DialogProps extends Omit<ComponentProps<"dialog">, "open"> {
   side?: "left" | "right" | "bottom" | undefined;
   /** Escape and the backdrop do not close it. */
   static?: boolean | undefined;
+  /**
+   * Render the children only while the dialog is open, and drop them once it
+   * has faded out, so state inside is reset and nothing is mounted while it is
+   * closed. Default false: the children stay mounted.
+   */
+  unmountOnClose?: boolean | undefined;
 }
 export function Dialog(props: DialogProps): ReactElement;
 export interface SheetProps extends Omit<DialogProps, "side" | "size"> {
@@ -218,7 +229,7 @@ export interface DialogHeaderProps extends ComponentProps<"header"> {
   /** The × button's accessible name, such as "Close inspector". Default "Close". */
   closeLabel?: string | undefined;
 }
-/** The title row; its text names the dialog. */
+/** The title row; its text names the dialog. With no header, name the dialog with `aria-label` or `aria-labelledby` on it. */
 export function DialogHeader(props: DialogHeaderProps): ReactElement;
 export function DialogBody(props: ComponentProps<"div">): ReactElement;
 export function DialogFooter(props: ComponentProps<"footer">): ReactElement;
@@ -239,6 +250,12 @@ export function PopoverTrigger(props: { children: ReactElement; haspopup?: "menu
 export interface PopoverContentProps extends ComponentProps<"div"> {
   side?: "top" | "bottom" | "left" | "right" | undefined;
   align?: "start" | "center" | "end" | undefined;
+  /**
+   * Opens the panel beside this instead of the trigger, which it wins over: a `{ x, y }` point (the
+   * panel's corner sits on it, as for a context menu at the pointer), a rect, or an element or object
+   * with `getBoundingClientRect`. A panel with no trigger and no anchor is left where the browser puts a popover.
+   */
+  anchor?: PlaceAnchor | undefined;
   /** Adds padding for prose. */
   pad?: boolean | undefined;
   /** Selector of the element to focus when it opens. */
@@ -326,6 +343,12 @@ export function Segment(props: SegmentProps): ReactElement;
 export interface TooltipProps {
   content: ReactNode;
   side?: "top" | "bottom" | "left" | "right" | undefined;
+  /** Milliseconds the pointer must rest on the trigger before the tip shows. Keyboard focus shows it at once. Default 0. */
+  delay?: number | undefined;
+  /** Added to the tip's `sd-tooltip` class. */
+  className?: string | undefined;
+  /** Called when the tip shows or hides, with the new state. */
+  onOpenChange?: ((open: boolean) => void) | undefined;
   /** The one element the tooltip describes. */
   children: ReactElement;
 }

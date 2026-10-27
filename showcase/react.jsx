@@ -124,7 +124,9 @@ function Forms() {
 <Field label="Bio"><Textarea /></Field>
 <Field label="Plan"><Select><option>Free</option></Select></Field>
 <Checkbox label="Weekly summary" description="Sent every Monday." />
-<Switch label="Push notifications" checked={notify} onChange={...} />`}
+<Switch label="Push notifications" checked={notify} onChange={...} />
+<Switch aria-label="Mute channel" />
+<Checkbox aria-labelledby="pinned" />`}
     >
       <form className="sd-form max-w-narrow" onSubmit={(event) => event.preventDefault()} noValidate>
         <Field label="Name" hint="Shown on your profile." error={error} required>
@@ -143,6 +145,14 @@ function Forms() {
           <Checkbox label="Email me a weekly summary" description="Sent every Monday morning." defaultChecked />
           <Switch label="Push notifications" description={notify ? "On" : "Off"} checked={notify} onChange={(event) => setNotify(event.target.checked)} />
           <Switch label="Auto-approve" description="Not available on your plan." disabled />
+        </div>
+        <div className="sd-actions" data-bare>
+          <Switch aria-label="Mute channel" />
+          <Checkbox aria-label="Select row" defaultChecked />
+          <span id="react-bare-name" className="sd-subtle text-sm">
+            Pinned
+          </span>
+          <Checkbox aria-labelledby="react-bare-name" />
         </div>
       </form>
     </Demo>
@@ -488,13 +498,69 @@ function Menus() {
   );
 }
 
+function ContextMenus() {
+  const [open, setOpen] = useState(false);
+  const [point, setPoint] = useState(null);
+  const [picked, setPicked] = useState("none");
+  return (
+    <Demo
+      id="react-context-menu"
+      title="Menu at a point"
+      code={`<Card tabIndex={0} onContextMenu={(event) => {
+  event.preventDefault();
+  setPoint({ x: event.clientX, y: event.clientY });
+  setOpen(true);
+}}>…</Card>
+<Menu open={open} onOpenChange={setOpen}>
+  <MenuContent anchor={point} label="Message actions">
+    <MenuItem onSelect={reply}>Reply</MenuItem>
+    <MenuItem tone="danger">Delete</MenuItem>
+  </MenuContent>
+</Menu>`}
+    >
+      <div className="sd-actions">
+        <Card
+          tabIndex={0}
+          aria-label="Message"
+          onContextMenu={(event) => {
+            event.preventDefault();
+            setPoint({ x: event.clientX, y: event.clientY });
+            setOpen(true);
+          }}
+        >
+          <CardBody>Right-click anywhere on this message.</CardBody>
+        </Card>
+        <Menu open={open} onOpenChange={setOpen}>
+          <MenuContent anchor={point ?? undefined} label="Message actions">
+            <MenuItem hint="R" onSelect={() => setPicked("reply")}>
+              Reply
+            </MenuItem>
+            <MenuItem onSelect={() => setPicked("copy")}>Copy text</MenuItem>
+            <MenuSeparator />
+            <MenuItem tone="danger" onSelect={() => setPicked("delete")}>
+              Delete
+            </MenuItem>
+          </MenuContent>
+        </Menu>
+        <span className="sd-subtle text-sm" data-context-picked>
+          chose: {picked}
+        </span>
+      </div>
+    </Demo>
+  );
+}
+
 function Tooltips() {
+  const [delayedOpen, setDelayedOpen] = useState(false);
   return (
     <Demo
       id="react-tooltip"
       title="Tooltip"
       code={`<Tooltip content="Approve (a)"><Button>Approve</Button></Tooltip>
-<Tooltip content="Below" side="bottom"><IconButton label="Settings">…</IconButton></Tooltip>`}
+<Tooltip content="Below" side="bottom"><IconButton label="Settings">…</IconButton></Tooltip>
+<Tooltip content="Resolved in 12 ms" delay={600} className="sd-num" onOpenChange={setOpen}>
+  <Button>Delayed tip</Button>
+</Tooltip>`}
     >
       <div className="sd-actions">
         <Tooltip content="Approve (a)">
@@ -505,6 +571,12 @@ function Tooltips() {
             <Gear />
           </IconButton>
         </Tooltip>
+        <Tooltip content="Resolved in 12 ms" delay={600} className="sd-num" onOpenChange={setDelayedOpen}>
+          <Button>Delayed tip</Button>
+        </Tooltip>
+        <span className="sd-subtle text-sm" data-tip-open>
+          delayed tip: {delayedOpen ? "shown" : "hidden"}
+        </span>
       </div>
     </Demo>
   );
@@ -572,6 +644,85 @@ toast("Archived", { action: { label: "Undo", onClick: undo }, timeout: 0 });`}
   );
 }
 
+function AboveDialog() {
+  const toast = useToast();
+  const [open, setOpen] = useState(false);
+  return (
+    <Demo
+      id="react-above-dialog"
+      title="Toast and tooltip above a dialog"
+      code={`<Dialog open={open} onOpenChange={setOpen}>
+  <DialogHeader>Archive ACME-421?</DialogHeader>
+  <DialogBody>
+    <Tooltip content="Moves it out of the inbox"><Button>Archive</Button></Tooltip>
+  </DialogBody>
+  <DialogFooter><Button onClick={() => toast("Archived", { action: { label: "Undo" }, timeout: 0 })}>Archive</Button></DialogFooter>
+</Dialog>`}
+    >
+      <div className="sd-actions">
+        <Button onClick={() => setOpen(true)}>Open dialog</Button>
+        <Dialog open={open} onOpenChange={setOpen} size="sm">
+          <DialogHeader>Archive ACME-421?</DialogHeader>
+          <DialogBody>
+            <Tooltip content="Moves it out of the inbox">
+              <Button>What does archive do?</Button>
+            </Tooltip>
+          </DialogBody>
+          <DialogFooter>
+            <DialogClose>
+              <Button variant="ghost">Keep</Button>
+            </DialogClose>
+            <Button tone="danger" onClick={() => toast("Archived ACME-421", { tone: "success", action: { label: "Undo" }, timeout: 0 })}>
+              Archive
+            </Button>
+          </DialogFooter>
+        </Dialog>
+      </div>
+    </Demo>
+  );
+}
+
+function Counter() {
+  const [count, setCount] = useState(0);
+  return <Button onClick={() => setCount(count + 1)}>Clicked {count}</Button>;
+}
+
+function BareDialog() {
+  const [open, setOpen] = useState(false);
+  return (
+    <Demo
+      id="react-bare-dialog"
+      title="Dialog without a header"
+      code={`<Dialog open={open} onOpenChange={setOpen} size="sm" aria-label="Quick note" unmountOnClose>
+  <DialogBody><Counter /></DialogBody>
+  <DialogFooter><DialogClose><Button>Done</Button></DialogClose></DialogFooter>
+</Dialog>
+<Dialog aria-label="Named by label" trigger={<Button>…</Button>}>
+  <DialogHeader>Visible title</DialogHeader>
+  …
+</Dialog>`}
+    >
+      <div className="sd-actions">
+        <Button onClick={() => setOpen(true)}>Open bare dialog</Button>
+        <Dialog open={open} onOpenChange={setOpen} size="sm" aria-label="Quick note" unmountOnClose>
+          <DialogBody>
+            <Counter />
+          </DialogBody>
+          <DialogFooter>
+            <DialogClose>
+              <Button>Done</Button>
+            </DialogClose>
+          </DialogFooter>
+        </Dialog>
+        <Dialog size="sm" aria-label="Named by label" trigger={<Button>Open labeled dialog</Button>}>
+          <DialogHeader>Visible title</DialogHeader>
+          <DialogBody>The label on the dialog is its name.</DialogBody>
+        </Dialog>
+      </div>
+    </Demo>
+  );
+}
+
 function App() {
   return (
     <ToastProvider>
@@ -583,9 +734,12 @@ function App() {
       <Empty />
       <Overlays />
       <Menus />
+      <ContextMenus />
       <Tooltips />
       <TabsDemo />
       <Toasts />
+      <AboveDialog />
+      <BareDialog />
     </ToastProvider>
   );
 }

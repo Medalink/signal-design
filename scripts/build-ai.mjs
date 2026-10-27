@@ -76,7 +76,7 @@ const ATTRIBUTES = {
   "data-sd-chart": "On a <figure>: init a chart from its JSON <script> (initCharts from signal-design/charts).",
   "data-sd-chart-scale": "Container of buttons (data-value clamp|p95|p90|linear|log) that switch a chart's scale mode.",
   "data-sd-scroll-tab": "Give this scroll box a tab stop while it scrolls (tables and code get one automatically).",
-  "data-sd-scrollbars": "Set by init() on <html>: auto hides scrollbars when idle, always keeps them.",
+  "data-sd-scrollbars": "Set by init() or initScrollbars() on <html>: auto hides scrollbars when idle, always keeps them.",
   "data-sd-scrolling": "Set by the JS on a scroller while it moves (scrollbar shows).",
   "data-sd-scrolling-page": "Set by the JS on <html> while anything scrolls (idle motion pauses).",
 };

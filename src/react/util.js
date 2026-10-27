@@ -53,3 +53,12 @@ export const chain = (own, ours) => (event) => {
 
 /** True on phones, where the sidebar lives in a drawer. Read at event time, never during render. */
 export const onPhone = () => matchMedia("(max-width: 47.99rem)").matches;
+
+/** Show a manual popover. Showing one that is open already does nothing, and neither does a missing Popover API. */
+export const showManual = (node) => node?.showPopover?.();
+
+/** Hide and show a manual popover in one task: it moves above whatever entered the top layer since, and paints nothing between. */
+export function liftManual(node) {
+  node?.hidePopover?.();
+  node?.showPopover?.();
+}

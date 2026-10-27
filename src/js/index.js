@@ -19,7 +19,7 @@ import { onShellClick, onShellKeydown, onShellPointerdown, initShell } from "./s
 import { onRainClick, initRain } from "./rain.js";
 import { initFps } from "./fps.js";
 import { initOrnaments } from "./ornaments.js";
-import { onScrollActivity, setScrollbars } from "./scrollbars.js";
+import { initScrollbars } from "./scrollbars.js";
 import { initScrollTabs } from "./scrolltabs.js";
 import { onWindowClick, onWindowDblClick, initWindow } from "./window.js";
 import { onListboxInput, onListboxKeydown, onListboxClick, initPalettes } from "./listbox.js";
@@ -44,7 +44,7 @@ export { rain, mountRain } from "./rain.js";
 export { fps } from "./fps.js";
 export { paintOrnaments, ornamentShapes, ORNAMENT_STYLES } from "./ornaments.js";
 export { ornamentArt, ORNAMENT_ART } from "./ornament-art.js";
-export { setScrollbars } from "./scrollbars.js";
+export { setScrollbars, initScrollbars } from "./scrollbars.js";
 export { setOptions, filterList } from "./listbox.js";
 export { drawSpark } from "./inputs.js";
 export { windowAction } from "./window.js";
@@ -60,7 +60,7 @@ let started = false;
 export function init({ theme = true, font = true, scrollbars = "auto", themeKey = "shift+t" } = {}) {
   if (theme) restoreTheme(document.documentElement.dataset.theme || "ink");
   if (font) restoreFont(document.documentElement.dataset.font);
-  setScrollbars(scrollbars);
+  initScrollbars(scrollbars);
   initTabs();
   initShell();
   initRain();
@@ -118,7 +118,6 @@ export function init({ theme = true, font = true, scrollbars = "auto", themeKey 
   for (const type of ["dragover", "dragleave", "drop"]) document.addEventListener(type, onDrag);
   addEventListener("scroll", () => (repositionOpen(), hideTooltip()), { passive: true, capture: true });
   addEventListener("resize", repositionOpen, { passive: true });
-  document.addEventListener("scroll", onScrollActivity, { passive: true, capture: true });
   document.addEventListener("input", (event) => {
     onConversationInput(event);
     onListboxInput(event);
