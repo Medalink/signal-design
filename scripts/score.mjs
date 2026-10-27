@@ -298,12 +298,14 @@ async function interact(page, helper, { scope, exclude }) {
       const a = document.activeElement;
       if (a !== el && !el.contains(a)) return null;
       const r = a.getBoundingClientRect();
-      return r.width + r.height;
+      // A ring around a 16px square (a range thumb) is plainly visible, so
+      // no control needs more than 64 changed pixels.
+      return Math.min(r.width + r.height, 64);
     });
     if (focused) {
       const shot = await pixels(page, clip);
       const d = await diff(helper, rest, shot);
-      // A visible ring changes at least half of a 1px outline around the box.
+      // A visible ring changes at least half of a 1px outline around the focused box.
       if (process.env.SCORE_DEBUG && d.changed < focused) {
         const name = info.sig.replace(/[^a-z0-9]+/gi, "-").slice(0, 60);
         writeFileSync(`.audit/shots/focus-${name}-rest.png`, Buffer.from(rest, "base64"));
