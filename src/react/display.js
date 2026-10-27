@@ -93,8 +93,9 @@ export const TableHead = (props) => h("thead", props);
 export const TableBody = (props) => h("tbody", props);
 export const TableFoot = (props) => h("tfoot", props);
 
+/** `selected={false}` renders `aria-selected="false"`, so a table of selectable rows keeps room for the edge before any is picked. */
 export function TableRow({ selected, ...props }) {
-  return h("tr", { "aria-selected": selected || undefined, ...props });
+  return h("tr", { "aria-selected": selected, ...props });
 }
 
 /**

@@ -166,6 +166,10 @@
   }
   .sd-table tbody tr[aria-selected="true"] > :first-child {
     box-shadow: inset 1px 0 0 var(--sd-fg);
+  }
+  /* Rows that can be selected all keep room for the edge, so selecting one
+     moves nothing and the first column stays aligned with its header. */
+  .sd-table:has(tbody tr[aria-selected]) tr > :first-child {
     padding-inline-start: 12px;
   }
 
