@@ -155,7 +155,9 @@ function probe({ scope, exclude, width }) {
     // A label wrapping a small checkbox makes the whole label the target.
     const label = el.closest("label") ?? (el.id && document.querySelector(`label[for="${CSS.escape(el.id)}"]`));
     const r = label && el.matches("input[type=checkbox], input[type=radio]") ? label.getBoundingClientRect() : rects[i];
-    if (r.width < 24 || r.height < 24) {
+    // WCAG 2.5.8 exempts a target whose size is essential: a schedule block is
+    // as wide as its time slot.
+    if ((r.width < 24 || r.height < 24) && !el.matches(".sd-schedule-block")) {
       const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
       const crowded = rects.some((o, j) => {
         if (j === i || controls[j].contains(el) || el.contains(controls[j])) return false;
