@@ -441,7 +441,7 @@
     width: 100%;
     min-height: 34px;
     padding: 6px 10px;
-    border: 1px solid var(--sd-line-strong);
+    border: 1px solid var(--sd-line-control);
     background-color: var(--sd-surface);
     color: var(--sd-fg);
     font: inherit;
@@ -574,7 +574,7 @@
     width: 16px;
     height: 16px;
     margin: 0;
-    border: 1px solid var(--sd-line-strong);
+    border: 1px solid var(--sd-line-control);
     background: transparent center / 16px 16px no-repeat;
     vertical-align: -3px;
     cursor: pointer;

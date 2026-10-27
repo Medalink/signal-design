@@ -168,14 +168,20 @@ function probe({ scope, exclude, width }) {
   });
 
   // Field boundaries (WCAG 1.4.11).
-  for (const el of controls) {
-    if (!el.matches('input:not([type=range]):not([type=color]):not([type=file]), select, textarea, [role=checkbox], [role=switch]')) continue;
+  const edgeOf = (el) => {
     const s = getComputedStyle(el);
     const behind = backdrop(el.parentElement);
     const fill = over(rgba(s.backgroundColor), behind);
     const edges = ["Top", "Right", "Bottom", "Left"].filter((side) => parseFloat(s[`border${side}Width`]) > 0).map((side) => over(rgba(s[`border${side}Color`]), behind));
-    const best = Math.max(contrast(fill, behind), ...edges.map((e) => contrast(e, behind)), ...(s.outlineStyle !== "none" && parseFloat(s.outlineWidth) > 0 ? [contrast(over(rgba(s.outlineColor), behind), behind)] : []));
-    if (best < 3) add("boundary", "major", el, `edge ${best.toFixed(2)}:1`);
+    return { drawn: edges.length > 0 || fill.some((v, i) => Math.abs(v - behind[i]) > 2), ratio: Math.max(contrast(fill, behind), ...edges.map((e) => contrast(e, behind))) };
+  };
+  for (const el of controls) {
+    if (!el.matches('input:not([type=range], [type=color], [type=file], [type=submit], [type=reset], [type=button], [type=image]), select, textarea, [role=checkbox], [role=switch]')) continue;
+    // A field with no edge of its own (the textarea in a composer, the input
+    // in a tag list) is bounded by the nearest wrapper that draws one.
+    let box = edgeOf(el);
+    for (let n = el.parentElement, i = 0; !box.drawn && n && i < 3; n = n.parentElement, i++) box = edgeOf(n);
+    if (box.ratio < 3) add("boundary", "major", el, `edge ${box.ratio.toFixed(2)}:1`);
   }
 
   // Text size and clipping.
