@@ -323,11 +323,11 @@ export async function checkReactApp(page, base) {
   }, hinted);
   expect(tip.gap >= 0 && tip.gap <= 10 && Math.abs(tip.off) <= 1, `the tooltip sits above its trigger, centered, got ${JSON.stringify(tip)}`);
   expect(tip.margin === "0px" && tip.overflow === "visible" && tip.padding === "4px 8px" && tip.border === "1px" && tip.position === "fixed", `the tooltip keeps its own box, got ${JSON.stringify(tip)}`);
+  // The tooltip was opened by hover, so focus is on another button and its own Escape handler does not run:
+  // the one Escape cancels the dialog, and the tooltip goes because its trigger does. Escape on a focused trigger is checked below.
   await page.keyboard.press("Escape");
-  expect(await until(() => !document.querySelector("body > [role=tooltip]"), null), "Escape hides the tooltip");
-
-  await page.keyboard.press("Escape");
-  expect(await until(() => document.querySelector("#react-above-dialog dialog:modal") === null, null), "Escape closes the dialog");
+  expect(await until(() => document.querySelector("#react-above-dialog dialog:modal") === null, null), "one Escape closes the dialog even with a tooltip open over it");
+  expect(await until(() => !document.querySelector("body > [role=tooltip]"), null), "the tooltip goes with the dialog it described");
   expect(await toastCount() === 2, "the toasts outlive the dialog");
 
   // A click on a toast above a centered dialog lands on the dialog outside its box, which is its backdrop.
