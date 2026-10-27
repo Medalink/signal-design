@@ -12,6 +12,7 @@ import { createElement as h } from "react";
 import ts from "typescript";
 import { ICON_NAMES } from "../src/js/icons.js";
 import { checkReactEditor } from "./check-react-editor.mjs";
+import { checkReactApp } from "./check-react-app.mjs";
 import { checkReactGaps } from "./check-react-gaps.mjs";
 
 const rootPath = fileURLToPath(new URL("..", import.meta.url));
@@ -23,6 +24,12 @@ export function checkReactTypes() {
     fixture,
     `import { useRef, useState } from "react";
 import { AppShell, Button, Dialog, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
+import { initScrollbars } from "signal-design/js";
+
+initScrollbars();
+initScrollbars("always");
+// @ts-expect-error the mode is auto or always
+initScrollbars("never");
 
 export function Consumer() {
   const [open, setOpen] = useState(false);
@@ -578,5 +585,7 @@ export async function checkReact(page, base) {
   errors.push(...editor.errors);
   const gaps = await checkReactGaps(page, base);
   errors.push(...gaps.errors);
-  return { errors, passed: passed + editor.passed + gaps.passed };
+  const app = await checkReactApp(page, base);
+  errors.push(...app.errors);
+  return { errors, passed: passed + editor.passed + gaps.passed + app.passed };
 }

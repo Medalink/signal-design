@@ -228,6 +228,13 @@ export function paintOrnaments(element: HTMLElement): void;
 
 /* Scrollbars */
 export function setScrollbars(mode?: "auto" | "always"): void;
+/**
+ * The auto-hiding scrollbars without `init()`: sets `data-sd-scrollbars` on
+ * `<html>` and starts the scroll listener once. Safe to call again to change
+ * the mode, and beside React, since it writes only that attribute and
+ * `data-sd-scrolling` on whatever scrolls. Default "auto".
+ */
+export function initScrollbars(mode?: "auto" | "always"): void;
 
 /* Listboxes: palette and combobox */
 export interface PaletteOption {

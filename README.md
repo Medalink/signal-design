@@ -830,6 +830,11 @@ That is the worst case, at the strongest pixel. Keep small labels
 after the position stops changing. Only the thumb color changes, so nothing
 shifts. `init({ scrollbars: "always" })` keeps them visible.
 
+A page that must not call `init()`, such as a React app, gets the same
+scrollbars from `initScrollbars()` in `signal-design/js`. It sets
+`data-sd-scrollbars` on `<html>` and starts the scroll listener once, and
+nothing else. Call it again to change the mode, as in `initScrollbars("always")`.
+
 ## FPS counter
 
 ```html
@@ -1175,6 +1180,10 @@ attributes a second time (tabs, `.sd-shell`, `[popovertarget]`,
 `<dialog open>`); the list under Framework-owned state says what it touches.
 The helpers that write only their own nodes stay safe beside React:
 `hotkeys()`, `setTheme()`, `data-sd-theme`, `data-sd-copy` and `data-sd-key`.
+For the auto-hiding scrollbars, call `initScrollbars()` from `signal-design/js`
+once at startup (`initScrollbars("always")` keeps them visible): it sets
+`data-sd-scrollbars` on `<html>`, marks whatever scrolls with
+`data-sd-scrolling`, and touches nothing else.
 `react.html` and `react-shell.html` in the showcase use every component above, and `react-editor.html` the editor parts below.
 
 ### Editor parts
