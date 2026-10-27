@@ -10,7 +10,8 @@
  * it (rounded down, so the point is inside the element). Where the element
  * flips above or left of the point, or shifts off an edge, it overlaps the
  * point instead of ending at it, so the element always contains the point:
- * by 1px, and by SLIDE more above it. An explicit positive offset keeps its gap.
+ * by 1px, and by SLIDE more above it, so at the very bottom of the viewport the
+ * last SLIDE px of the element can lie below it. An explicit positive offset keeps its gap.
  * Nothing is placed without a floating element and an anchor.
  *
  * @param {HTMLElement | null} floating  element with position: fixed
@@ -52,7 +53,7 @@ export function place(floating, anchor, { side = "bottom", align = "start", offs
     // released over it next, and a hit test is half-open: the far edge is outside, and so is the edge
     // while the slide-in holds the element higher. Light dismiss then closes it.
     left = Math.min(Math.max(left, a.left - f.width + 1), a.left);
-    top = Math.min(Math.max(top, Math.min(a.top - f.height + 1 + SLIDE, vh - f.height)), a.top);
+    top = Math.min(Math.max(top, a.top - f.height + 1 + SLIDE), a.top);
   }
   // Rounded down at a point, so snapping never moves the far edge back to the point.
   const snap = a.point ? Math.floor : Math.round;

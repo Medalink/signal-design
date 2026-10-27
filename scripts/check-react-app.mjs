@@ -116,13 +116,15 @@ export async function checkReactApp(page, base) {
     box.style.cssText = "position:fixed;width:192px;height:132px";
     document.body.append(box);
     const outside = [];
-    const points = [[400, 300], [400, innerHeight - 100], [400, innerHeight - 5], [innerWidth - 4, 300], [innerWidth - 4, innerHeight - 5], [3, 300], [3, 3]];
+    const points = [[400, 300], [400, innerHeight - 100], [400, innerHeight - 5], [400, innerHeight - 4], [400, innerHeight - 1], [innerWidth - 4, 300], [innerWidth - 4, innerHeight - 5], [innerWidth - 1, innerHeight - 1], [3, 300], [3, 3]];
     for (const [x, y] of points) {
       for (const side of ["bottom", "top", "left", "right"]) {
         for (const align of ["start", "center", "end"]) {
           place(box, { x, y }, { side, align });
           const r = box.getBoundingClientRect();
           if (!(r.left <= x && x < r.right && r.top <= y && y < r.bottom)) outside.push(`${x},${y} ${side}/${align} got ${r.left},${r.top}`);
+          // Over its first 120ms a popover is held 4px higher (overlays.css), and the point must stay inside it then too.
+          if (!(r.top - 4 <= y && y < r.bottom - 4)) outside.push(`${x},${y} ${side}/${align} while sliding in, got ${r.left},${r.top}`);
         }
       }
     }
@@ -203,10 +205,15 @@ export async function checkReactApp(page, base) {
     document.body.append(cover);
   });
   try {
-    for (const [label, x, y] of [["below the point", 400, 300], ["flipped above the point", 400, 800], ["flipped at the bottom edge", 400, 895], ["shifted at the right edge", 1276, 300], ["shifted and flipped at the bottom right corner", 1276, 895]]) {
+    for (const [label, x, y] of [["below the point", 400, 300], ["flipped above the point", 400, 800], ["flipped at the bottom edge", 400, 895], ["in the last four rows of the viewport", 400, 896], ["on the last row of the viewport", 400, 899], ["shifted at the right edge", 1276, 300], ["shifted and flipped at the bottom right corner", 1276, 895], ["on the last pixel of the bottom right corner", 1279, 899]]) {
       await page.mouse.move(x, y);
       await page.mouse.down();
       const pressed = await menuOpenAt(true);
+      // Hold the slide-in at its first frame, where the panel is 4px higher, so the release does not depend on how fast this run is.
+      await page.evaluate(() => document.querySelector('[role=menu][aria-label="Message actions"]').parentElement.getAnimations().forEach((animation) => {
+        animation.pause();
+        animation.currentTime = 0;
+      }));
       const shown = await menuBox();
       await page.mouse.up();
       // A negative assertion: light dismiss runs on the release, and a menu that stays open has nothing to wait for.
