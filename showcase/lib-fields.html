@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+    <div class="demo-block" id="components-fields">
+      <h2 class="sd-label">Fields</h2>
+      <form class="sd-form max-w-narrow" onsubmit="return false" novalidate>
+        <div class="sd-form-row">
+          <div class="sd-field">
+            <label class="sd-field-label" for="f-name">Name</label>
+            <input id="f-name" required placeholder="Jane Doe">
+            <p class="sd-field-hint">Shown on your profile.</p>
+            <p class="sd-field-error">Name is required.</p>
+          </div>
+          <div class="sd-field" data-invalid>
+            <label class="sd-field-label" for="f-mail">Email <span class="sd-field-aside">optional</span></label>
+            <input id="f-mail" type="email" value="jane@acme" aria-invalid="true">
+            <p class="sd-field-error">Enter an address like jane@acme.example.</p>
+          </div>
+        </div>
+        <div class="sd-field">
+          <label class="sd-field-label" for="f-url">Website</label>
+          <div class="sd-input-group">
+            <span class="sd-addon">https://</span>
+            <input id="f-url" placeholder="acme.example">
+            <button class="sd-btn" type="button">Test</button>
+          </div>
+        </div>
+        <div class="sd-field">
+          <span class="sd-field-label">Billing cycle</span>
+          <div class="sd-seg" role="radiogroup" aria-label="Billing cycle">
+            <label><input type="radio" name="cycle" value="monthly"> monthly</label>
+            <label><input type="radio" name="cycle" value="yearly" checked> yearly</label>
+            <label><input type="radio" name="cycle" value="custom"> custom</label>
+          </div>
+          <p class="sd-field-hint">Radios inside labels: no JS.</p>
+        </div>
+        <div class="sd-field">
+          <span class="sd-field-label">Notify me</span>
+          <div class="sd-seg" data-sd-seg aria-label="Notify me">
+            <button type="button" aria-pressed="true">important</button>
+            <button type="button" aria-pressed="false">all</button>
+            <button type="button" aria-pressed="false">off</button>
+          </div>
+          <p class="sd-field-hint">Buttons with <code>data-sd-seg</code>: fires <code>change</code>.</p>
+        </div>
+        <div class="sd-choices">
+          <label class="sd-check"><input type="checkbox" checked><span class="sd-check-text">Email me a weekly summary<span class="sd-check-desc">Sent every Monday morning.</span></span></label>
+          <label class="sd-check"><input type="checkbox" role="switch"><span class="sd-check-text">Push notifications<span class="sd-check-desc">Only for items marked high risk.</span></span></label>
+          <label class="sd-check"><input type="checkbox" disabled><span class="sd-check-text">Auto-approve routine items<span class="sd-check-desc">Not available on your plan.</span></span></label>
+        </div>
+        <div class="sd-field">
+          <span class="sd-field-label">Attachments</span>
+          <label class="sd-dropzone"><input type="file" multiple><span>Drop files here or <u>browse</u></span><span class="sd-subtle text-2xs uppercase tracking-caps" data-file-names>png · mp4 · up to 20 MB</span></label>
+        </div>
+        <div class="sd-form-row">
+          <input class="sd-control-sm" placeholder="sd-control-sm">
+          <input class="sd-control-lg" placeholder="sd-control-lg">
+        </div>
+        <div class="sd-actions sd-actions-end">
+          <button class="sd-btn sd-btn-ghost" type="reset">Cancel</button>
+          <button class="sd-btn sd-btn-primary" type="submit">Save</button>
+        </div>
+      </form>
+      <p class="demo-usage"><code>sd-form</code> > <code>sd-form-row</code> (side by side) > <code>sd-field</code> > <code>sd-field-label</code> + control + <code>sd-field-hint</code> + <code>sd-field-error</code> · <code>sd-field-aside</code> for "optional" · <code>data-invalid</code> or <code>aria-invalid="true"</code> shows the error and reddens the label · <code>sd-input-group</code> + <code>sd-addon</code> joins a prefix or button to an input · <code>sd-seg</code> with radios in labels is a segmented choice with no JS</p>
+    </div>
+</body>
+</html>

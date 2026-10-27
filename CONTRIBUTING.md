@@ -26,23 +26,26 @@ exempt so it can fold the fragments into `CHANGELOG.md`.
   WebKit) at 1280px in ink, and fails when `page` is missing or unknown. Do not
   add a function or a call to `check.mjs`. A check that needs its own page
   (like `check-sidebar-resize.mjs`) is its own module too.
-- **Showcase:** the showcase is one page per section, listed in
-  `showcase/pages.js` (the only list of pages; the rail, the nav palette, the
-  overview cards, the vite inputs and the check scripts all read it). A new
-  component gets its own `<div class="demo-block">` in the section on its
-  page, placed next to the closest related block, not at the end of the
-  section. The end of a section is where every other pull request adds its
-  block too. Do not add page chrome to a page file: the rail, sidebar and
-  palette come from `showcase/layout.html` and the registry.
-- **Adding a library page:** an entry in `LIBRARY` in `showcase/pages.js`
-  (`id`, `file`, `title`, `label`, `sections`, `icon`, `summary`); the content
-  in `showcase/lib-<id>.html` (only the `<body>`, with a `.demo-section` whose
-  id is listed in `sections`); the script in `showcase/pages/<id>.js`, which
-  calls `mountLibrary()` first; and the rail symbol `#i-<icon>` in `ICONS` in
-  `showcase/layout-plugin.js`. Nothing else lists pages. `scripts/check.mjs`
-  fails when the file, the script, the icon or a section is missing. A new
-  example app is an entry in `EXAMPLES` and a page of its own that carries
-  `data-page="<key>"` on `<html>` and calls `mountBar()` from its script.
+- **Showcase:** the showcase is one page per component type, filed as rail
+  section, then sidebar group, then page in `showcase/pages.js` (the only list
+  of pages; the rail, the sidebar, the nav palette, the overview cards, the
+  vite inputs and the check scripts all read it). A new component that fits an
+  existing page gets its own `<div class="demo-block">` there, placed next to
+  the closest related block, not at the end of the page. The end is where
+  every other pull request adds its block too. Do not add page chrome to a
+  page file: the rail, sidebar, page title, pager and palette come from
+  `showcase/layout.html`, `showcase/layout-plugin.js` and the registry.
+- **Adding a library page:** an entry (`id`, `title`, `summary`) in its group
+  in `showcase/pages.js`; the content in `showcase/lib-<id>.html` (only the
+  `<body>`: an optional `<header class="demo-intro">`, then the blocks, each
+  with an explicit `id`); and, only if the page runs demo code, a script in
+  `showcase/pages/<id>.js` that calls `mountLibrary()` first. Without one
+  the page loads `showcase/mount.js`. A new rail section also needs its
+  symbol `#i-<icon>` in `ICONS` in `showcase/layout-plugin.js`. Nothing else
+  lists pages. `scripts/check.mjs` fails when the file, the script or the
+  icon is missing. A new example app is an entry in a group of `examples` and
+  a page of its own that carries `data-page="<key>"` on `<html>` and calls
+  `mountBar()` from its script.
 - **`AGENTS.md` and `README.md` tables:** a new component family gets its own
   row next to related rows. When it belongs in a shared row (Status, Chat and
   feeds), add it at the end of that row, and expect a one-line conflict if

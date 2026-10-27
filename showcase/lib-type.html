@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+    <div class="demo-block" id="tokens-type-scale">
+      <h2 class="sd-label">Type scale</h2>
+      <div class="sd-table-wrap"><table class="sd-table" data-type-scale></table></div>
+      <p class="demo-usage"><code>text-3xs</code> … <code>text-5xl</code>, each with its line height built in (<code>--text-*</code>) · <code>text-base</code> (16px) for body, <code>text-sm</code> for meta, <code>text-2xs</code> uppercase for labels, <code>text-3xl</code> for display · nothing below <code>text-3xs</code> (12px)</p>
+    </div>
+
+    <div class="demo-block" id="tokens-tracking-and-weight">
+      <h2 class="sd-label">Tracking and weight</h2>
+      <div class="grid gap-3">
+        <p class="text-3xl tracking-display">display −0.03em</p>
+        <p class="text-lg tracking-tight">tight −0.025em for row titles</p>
+        <p class="text-2xs uppercase tracking-caps text-fg-subtle">caps 0.14em · status line</p>
+        <p class="text-2xs uppercase tracking-widest text-fg-subtle">widest 0.16em · labels</p>
+        <p class="text-xs uppercase tracking-wordmark font-semibold">wordmark 0.28em</p>
+        <p class="text-lg"><span class="font-normal">400 regular</span> · <span class="font-semibold">500 medium</span></p>
+      </div>
+      <p class="demo-usage"><code>tracking-display</code> and <code>tracking-tight</code> for large text and row titles · <code>tracking-caps</code> on uppercase labels and status lines · <code>tracking-widest</code> for labels · <code>tracking-wordmark</code> for the wordmark only · weights are <code>font-normal</code> (400) and <code>font-semibold</code> (500); <code>font-bold</code> also maps to 500</p>
+    </div>
+
+    <div class="demo-block" id="tokens-fonts">
+      <h2 class="sd-label">Fonts</h2>
+      <p class="demo-usage"><code>data-font</code> sets the text face of a subtree, or of the page on <code>&lt;html&gt;</code>. Code stays in Source Code Pro. Pick the page font under Settings in the bar above.</p>
+      <div class="grid gap-4 sm:grid-cols-3">
+        <div class="sd-card" data-font="system"><p class="sd-label">system</p><p class="text-lg mt-2"><span class="font-normal">Regular</span> · <span class="font-semibold">Medium</span></p><p class="text-sm text-fg-muted mt-1">Approved 21 of 24 <code>sd-btn</code></p></div>
+        <div class="sd-card" data-font="leon-sans"><p class="sd-label">leon-sans</p><p class="text-lg mt-2"><span class="font-normal">Regular</span> · <span class="font-semibold">Medium</span></p><p class="text-sm text-fg-muted mt-1">Approved 21 of 24 <code>sd-btn</code></p></div>
+        <div class="sd-card" data-font="source-code-pro"><p class="sd-label">source-code-pro</p><p class="text-lg mt-2"><span class="font-normal">Regular</span> · <span class="font-semibold">Medium</span></p><p class="text-sm text-fg-muted mt-1">Approved 21 of 24 <code>sd-btn</code></p></div>
+      </div>
+      <p class="demo-usage mt-4"><code>sd-reading</code> (or <code>font-reading</code>, or <code>face="reading"</code> on the React <code>Manuscript</code>) sets prose to be read at length in Literata, with real italics and a semibold for strong text. <code>data-font</code> does not change it.</p>
+      <div class="sd-card" id="tokens-reading"><p class="sd-label">reading</p><div class="sd-reading text-md mt-2 max-w-[38rem]"><p>The harbour was <em>quiet</em> at that hour, and she walked the length of the quay before she let herself think about the letter. <strong>Nothing</strong> in it was unkind. That was the difficulty.</p><p class="mt-3">“Lisbon,” he said, “is a city that forgives you slowly.” Naïve, façade, Żółć, 1,284 words, 0123456789.</p></div></div>
+    </div>
+
+    <div class="demo-block" id="components-text-styles">
+      <h2 class="sd-label">Text styles</h2>
+      <div class="grid gap-5">
+        <p class="sd-display sd-display-xl">32 open. <em>8 done.</em></p>
+        <p class="sd-display">Display line <span class="sd-quiet">with a quiet half.</span></p>
+        <p class="sd-title">Title: a section or panel heading</p>
+        <p class="sd-lead max-w-[42rem]">Lead: the paragraph under a page title, a step softer than body text.</p>
+        <div class="sd-cluster" style="--gap: 20px"><span class="sd-label">Label</span><span class="sd-label sd-label-strong">Strong label</span><span class="sd-muted">muted</span><span class="sd-subtle">subtle</span><span class="sd-faint">faint</span></div>
+        <p class="sd-meta"><span>Owner Jane</span><span>07:55</span><span data-tone="danger">risk</span></p>
+      </div>
+      <p class="demo-usage"><code>sd-display</code> + <code>-xl</code> (<code>em</code> or <code>sd-quiet</code> for the quiet half) · <code>sd-title</code> · <code>sd-lead</code> · <code>sd-label</code> + <code>-strong</code> · <code>sd-muted|subtle|faint</code> · <code>sd-meta</code></p>
+    </div>
+</body>
+</html>

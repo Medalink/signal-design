@@ -1,4 +1,4 @@
-export const page = "tokens";
+export const page = "type";
 
 /** The font picker swaps the text face only, loads it first, and the last pick wins. */
 export default async function checkFontPicker(page, where, fail) {

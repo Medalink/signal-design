@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+    <div class="demo-block" id="conversation-feed-and-jump-to-present">
+      <h2 class="sd-label">Feed and jump to present</h2>
+      <div class="border border-line flex flex-col" style="height: 18rem; --sd-feed-bg: var(--sd-surface); background: var(--sd-surface)">
+        <div class="flex-1 overflow-y-auto pb-2" id="demo-feed" tabindex="0" role="log" aria-label="Messages" style="min-height: 0">
+          <div class="sd-divider sd-feed-day">Yesterday</div>
+          <article class="sd-message" style="--who: var(--sd-warning)"><time class="sd-message-time">16:02</time><div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Sam</b>The day line sticks to the top of the scroller over the rows.</div></div></article>
+          <article class="sd-message" data-grouped style="--who: var(--sd-warning)"><div class="sd-message-body"><div class="sd-message-text">Scroll this feed up: a bar offers the way back.</div></div></article>
+          <div class="sd-event"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M14 8H6M9 5 6 8l3 3M5.5 2.5h-3v11h3"/></svg><span><b>Kai</b> left<time>16:40</time></span></div>
+          <div class="sd-divider sd-feed-day">Today</div>
+          <article class="sd-message" style="--who: var(--sd-extra)"><time class="sd-message-time">09:10</time><div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Alex</b>Morning. Events put their icon in the time column.</div></div></article>
+          <article class="sd-message" data-grouped style="--who: var(--sd-extra)"><div class="sd-message-body"><div class="sd-message-text">Set <code>--sd-feed-bg</code> to the pane color so the day line covers what scrolls under it.</div></div></article>
+          <article class="sd-message" data-own style="--who: var(--sd-success)"><time class="sd-message-time">09:12</time><div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Jane</b>And the newest message is at the bottom.</div></div></article>
+        </div>
+        <div class="sd-feed-jump" id="demo-jump" hidden><span>Viewing older messages</span><button class="sd-btn sd-btn-sm sd-btn-ghost">Jump to present <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M8 2.5v10M4 9l4 4 4-4"/></svg></button></div>
+      </div>
+      <p class="demo-usage"><code>sd-feed-day</code> (sticky, on <code>--sd-feed-bg</code>) · <code>sd-event</code> (icon in the time column) · <code>sd-feed-jump</code> after the scroller, <code>hidden</code> while at the bottom, <code>data-new</code> when it appears</p>
+      <script type="text/plain" data-demo-js>
+const feed = document.getElementById("demo-feed");
+const jump = document.getElementById("demo-jump");
+feed.scrollTop = feed.scrollHeight;
+feed.addEventListener("scroll", () => {
+  const away = feed.scrollHeight - feed.scrollTop - feed.clientHeight > 80;
+  if (away === jump.hidden) jump.hidden = !away;
+});
+jump.querySelector("button").addEventListener("click", () => feed.scrollTo({ top: feed.scrollHeight, behavior: "smooth" }));
+      </script>
+    </div>
+</body>
+</html>

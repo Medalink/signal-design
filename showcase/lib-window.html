@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+    <div class="demo-block" id="effects-the-full-shell">
+      <h2 class="sd-label">The full shell</h2>
+      <p class="demo-usage">You are in it: this page runs in the Signal App Shell (rail, sidebar panels, fading crumb and action bars with ladder bridges, the inset content box with ornaments and border glow, square rain, the Code views panel, status bar with FPS). <code>shell.html</code> shows it as a work queue.</p>
+      <div><a class="sd-btn sd-btn-primary" href="./shell.html">Open the Signal App Shell</a></div>
+    </div>
+
+    <div class="demo-block" id="effects-title-bar-and-header-bar">
+      <h2 class="sd-label">Title bar and header bar</h2>
+      <p class="demo-usage">For frameless desktop apps: a draggable title bar with window buttons (Tauri's window API when present, an <code>sd:window</code> event otherwise; macOS keeps its native buttons). Below it, the solid header bar, the alternative to the floating crumb bars.</p>
+      <div class="border border-line">
+        <div class="sd-titlebar" data-tauri-drag-region style="position:relative" role="region" aria-label="Window">
+          <div class="sd-titlebar-start"><span class="sd-subtle text-sm">File</span><span class="sd-subtle text-sm">View</span></div>
+          <span class="sd-titlebar-brand"><b>ACME</b></span>
+          <div class="sd-titlebar-end">
+            <span class="sd-titlebar-metric">CPU <b>3%</b></span>
+            <span class="sd-titlebar-metric">MEM <b>182 MB</b></span>
+            <div class="sd-window-controls">
+              <button data-sd-window="minimize" aria-label="Minimize"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor"><path d="M1 6.5h10"/></svg></button>
+              <button data-sd-window="maximize" aria-label="Maximize"><svg class="sd-icon-maximize" viewBox="0 0 12 12" fill="none" stroke="currentColor"><rect x="1.5" y="1.5" width="9" height="9"/></svg><svg class="sd-icon-restore" viewBox="0 0 12 12" fill="none" stroke="currentColor"><rect x="1.5" y="3.5" width="7" height="7"/><path d="M3.5 3.5v-2h7v7h-2"/></svg></button>
+              <button data-sd-window="close" aria-label="Close"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9"/></svg></button>
+            </div>
+          </div>
+        </div>
+        <div class="p-4" style="background: var(--sd-shell-bg)">
+          <header class="sd-shell-bar" data-sd-edges>
+            <div class="sd-shell-bar-title"><b># general</b><span>Team chat for Design</span></div>
+            <div class="sd-shell-bar-center"><span class="sd-status" data-tone="success">3 here</span></div>
+            <div class="sd-shell-bar-end">
+              <button class="sd-icon-btn" popovertarget="demo-attention" aria-label="Attention, 2 new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 16V10a6 6 0 0 1 12 0v6l1.5 2h-15zM10 20.5h4"/></svg><span class="sd-badge-count" data-tone="danger">2</span></button>
+              <button class="sd-icon-btn" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="11" height="11"/><path d="M15 15l5.5 5.5"/></svg></button>
+            </div>
+          </header>
+          <div class="sd-shell-dock mt-3" data-sd-edges>
+            <div class="sd-composer"><div class="sd-composer-row"><textarea rows="1" data-sd-autogrow placeholder="Message #general" aria-label="Message"></textarea><button class="sd-btn sd-btn-primary sd-btn-icon" aria-label="Send">➤</button></div></div>
+          </div>
+        </div>
+      </div>
+      <div popover id="demo-attention" class="sd-popover sd-popover-panel" data-sd-align="end">
+        <div class="sd-popover-head">Attention <button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" popovertarget="demo-attention" popovertargetaction="hide" aria-label="Close">×</button></div>
+        <div class="sd-popover-body"><a class="sd-item" href="#effects" data-unread><span class="sd-avatar" data-tone="accent">TP</span><span class="sd-item-body"><span class="sd-item-title">Taylor mentioned you</span><span class="sd-item-sub">can you take the copy?</span></span><span class="sd-item-end">10:05</span></a></div>
+      </div>
+      <p class="demo-usage"><code>sd-titlebar</code> + <code>-start|-brand|-end|-metric</code> · <code>sd-window-controls</code> + <code>data-sd-window="minimize|maximize|close"</code> · <code>sd-shell-bar</code> + <code>-title|-center|-end</code> · <code>sd-shell-dock</code> (a box under the content, e.g. a composer) · <code>sd-icon-btn</code> · <code>sd-popover-panel</code> + <code>sd-popover-head|-body</code></p>
+    </div>
+</body>
+</html>

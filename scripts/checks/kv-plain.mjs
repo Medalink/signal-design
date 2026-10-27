@@ -1,4 +1,4 @@
-export const page = "components";
+export const page = "stats";
 /** sd-kv keeps its small-caps keys; sd-kv-plain shows sentence case and truncates a long key inside the list. */
 export default async function checkKvPlain(page, where, fail) {
   const got = await page.evaluate(() => {

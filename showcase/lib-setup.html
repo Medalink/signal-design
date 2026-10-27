@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+  <header class="demo-intro">
+    <p class="sd-lead max-w-[42rem]">Optional and dependency-free. It reads <code>data-sd-*</code> attributes and writes ARIA and <code>data-*</code> state. The CSS styles that state.</p>
+    <p class="sd-muted max-w-[42rem]">Optional, under 5 KB gzipped, no dependencies. Every listener is delegated, so markup added later just works. It sets ARIA and <code>data-*</code> state; the CSS styles that state.</p>
+    <div class="demo-intro-cols">
+      <div>
+        <p class="sd-label">Principles</p>
+        <ul>
+          <li><b class="text-fg font-semibold">Delegated listeners.</b> Every listener is delegated, so markup added later works without calling <code>init()</code> again.</li>
+          <li><b class="text-fg font-semibold">State is attributes, never classes.</b> Your Tailwind build never needs to contain a class the JS adds, and tests or app code can set the same attributes.</li>
+          <li><b class="text-fg font-semibold">One writer per state.</b> If a framework renders a piece's state, leave out its <code>data-sd-*</code> behavior attribute. The Framework-owned state block shows how.</li>
+          <li><b class="text-fg font-semibold">Heavy parts mount explicitly.</b> Living tables, countdowns and feeds use <code>mountLivingTable</code>, <code>mountCountdown</code> and <code>mountFeed</code>. <code>init()</code> does not mount them.</li>
+          <li><b class="text-fg font-semibold">Typing is never hijacked.</b> <code>data-sd-key</code> and <code>hotkeys</code> ignore keys typed into a field, except Ctrl or Cmd combinations.</li>
+        </ul>
+      </div>
+      <div class="grid content-start gap-8">
+        <div>
+          <p class="sd-label">Use it for</p>
+          <ul>
+            <li>Dialogs, popovers, tabs, toggles, tooltips and copy buttons from attributes alone.</li>
+            <li>Live lists that must keep the reader's place: <code>mountFeed</code>.</li>
+            <li>Theme switching: <code>setTheme</code>, <code>data-sd-theme</code> and <kbd>Shift T</kbd>.</li>
+          </ul>
+        </div>
+        <div>
+          <p class="sd-label">Leave it out when</p>
+          <ul>
+            <li>Loading it where the HTML works with CSS alone. Each block says whether it needs JS.</li>
+            <li>Driving a piece's state from both <code>init()</code> and a framework.</li>
+            <li>Reading classes the JS never adds. Read ARIA and <code>data-*</code> instead.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+    <div class="demo-block" id="js-setup-and-attributes">
+      <h2 class="sd-label">Setup and attributes</h2>
+      <div class="sd-code">
+        <div class="sd-code-head">main.js <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#snippet-js">Copy</button></div>
+        <pre id="snippet-js" tabindex="0"><code>import { init, toast, hotkeys, setTheme } from "signal-design/js";
+
+init();                                   // dialogs, popovers, menus, tabs, tooltips, toggles
+toast("Saved", { tone: "success" });
+const off = hotkeys({ j: next, k: prev, "shift+n": newest, "mod+k": search });
+setTheme("paper");                        // ink | graphite | paper | auto</code></pre>
+      </div>
+      <div class="sd-table-wrap">
+        <table class="sd-table">
+          <thead><tr><th>Attribute</th><th>Does</th></tr></thead>
+          <tbody>
+            <tr><td><code>data-sd-open="id"</code> · <code>data-sd-close</code></td><td>Opens a dialog as modal; closes the nearest dialog. Backdrop click closes unless <code>data-sd-static</code>.</td></tr>
+            <tr><td><code>popovertarget</code> + <code>.sd-popover</code></td><td>Places the popover next to its trigger, flips at edges, keyboard for menus.</td></tr>
+            <tr><td><code>role="tab"</code></td><td>Selects tabs and panels, arrow keys, roving focus.</td></tr>
+            <tr><td><code>data-sd-toggle="id"</code></td><td>Opens and closes an <code>.sd-expand</code>, keeps <code>aria-expanded</code> in sync.</td></tr>
+            <tr><td><code>data-sd-seg</code></td><td>Single-select button group; fires <code>change</code>.</td></tr>
+            <tr><td><code>data-sd-key="a"</code></td><td>Clicks the element when the key is pressed (ignored while typing).</td></tr>
+            <tr><td><code>data-sd-tip="text"</code></td><td>Tooltip on hover and focus.</td></tr>
+            <tr><td><code>data-sd-copy="#id"</code></td><td>Copies text, or explains that copying is unavailable.</td></tr>
+            <tr><td><code>data-sd-toast="text"</code></td><td>Shows a toast on click.</td></tr>
+            <tr><td><code>data-sd-theme="paper"</code></td><td>Switches theme and remembers it.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sd-actions">
+        <span class="sd-subtle text-sm">Try:</span>
+        <button class="sd-btn sd-btn-sm" data-sd-key="d" data-sd-open="demo-sheet">Sheet <kbd>D</kbd></button>
+        <button class="sd-btn sd-btn-sm" data-sd-key="shift+t" data-sd-theme-cycle>Next theme <kbd>Shift+T</kbd></button>
+      </div>
+      <p class="demo-usage"><code>init()</code> once after the DOM exists; listeners are delegated, so later markup works · <code>toast(text, { tone })</code> · <code>hotkeys({ key: fn })</code> returns the off function · <code>setTheme("ink|graphite|paper|auto")</code> · every <code>data-sd-*</code> attribute does nothing without <code>init()</code> · a framework that renders the state leaves the attribute out and sets ARIA and <code>data-*</code> itself</p>
+    </div>
+
+    <div class="demo-block" id="js-copy-feedback">
+      <h2 class="sd-label">Copy feedback</h2>
+      <p class="demo-usage">Copy needs browser clipboard access. On an insecure LAN connection, or when permission is denied, the danger toast says "Copy unavailable. Select the line instead." The command stays selectable. Successful copies still say "Copied". No insecure clipboard bypass is used.</p>
+      <div class="sd-code">
+        <div class="sd-code-head">Command <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#copy-command">Copy</button></div>
+        <pre id="copy-command" tabindex="0"><code>npm test</code></pre>
+      </div>
+    </div>
+
+  <!-- The "Try" button in the shortcuts block opens this sheet; the Overlays page holds the full one. -->
+  <dialog class="sd-dialog sd-sheet" id="demo-sheet" aria-labelledby="demo-sheet-h">
+    <header class="sd-dialog-head"><span id="demo-sheet-h">Item details</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">×</button></header>
+    <div class="sd-dialog-body"><p class="sd-muted">A sheet slides in from the side and closes with Esc.</p></div>
+  </dialog>
+</body>
+</html>

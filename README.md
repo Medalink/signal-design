@@ -1485,10 +1485,13 @@ Server-rendered pages can skip the JS call: put the options as JSON in a
 
 The showcase is built only from library parts. `index.html` is the overview,
 with a card for every other page. The library reference is one page per
-section (`lib-tokens.html` through `lib-js.html`), each an app in the Signal
-App Shell that opens with what the section is for and then shows every block
-with a Preview / Code flip (copyable HTML, the JS it needs, and a JS snippet
-where one applies). Example apps use those parts together: an app console
+component type (`lib-buttons.html`, `lib-fields.html`, `lib-charts.html`),
+filed the way an app files its pages: the rail holds the sections
+(Foundations, Components, Patterns, Scripting, Examples), and each section's
+sidebar lists its pages under folding groups (Forms, Navigation, Status, Data
+and so on). Each page is an app in
+the Signal App Shell and shows its blocks with a Preview / Code flip
+(copyable HTML, the JS it needs, and a JS snippet where one applies). Example apps use those parts together: an app console
 (`shell.html`), a chat app (`chat.html`), a multi-step form (`form.html`), a
 landing page (`landing.html`), live charts (`charts.html`), and two built from
 the React components (`react.html`, `react-shell.html`). A bar at the top

@@ -1,4 +1,4 @@
-export const page = "charts";
+export const page = "schedule";
 
 export default async function checkSchedule(page, where, fail) {
   const originalViewport = page.viewportSize();

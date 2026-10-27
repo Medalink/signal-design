@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+    <div class="demo-block" id="components-navigation">
+      <h2 class="sd-label">Navigation</h2>
+      <nav class="sd-nav" aria-label="Filters">
+        <a href="#components" aria-current="page">All</a>
+        <a href="#components">High risk</a>
+        <a href="#components">Changes requested</a>
+        <a href="#components">History</a>
+        <a href="#components">Saved <span class="sd-count">3</span></a>
+        <a href="#components">Settings</a>
+      </nav>
+      <div>
+        <div class="sd-tabs" role="tablist" aria-label="Item detail">
+          <button role="tab" aria-selected="true" aria-controls="tab-proof" id="t-proof">Overview</button>
+          <button role="tab" aria-controls="tab-checks" id="t-checks">Checks <span class="sd-count" data-tone="success">4</span></button>
+          <button role="tab" aria-controls="tab-diff" id="t-diff">Activity</button>
+        </div>
+        <div class="sd-tabpanel" role="tabpanel" id="tab-proof" aria-labelledby="t-proof"><p class="sd-muted">Summary, owner and due date go here. Arrow keys move between tabs.</p></div>
+        <div class="sd-tabpanel" role="tabpanel" id="tab-checks" aria-labelledby="t-checks" hidden>
+          <ul class="sd-checks"><li data-tone="success">checks passed · 214 tests</li><li data-tone="success">reviewed by Alex</li><li data-tone="pending">monitoring for 7 days</li><li data-tone="danger">lint · 2 warnings</li></ul>
+        </div>
+        <div class="sd-tabpanel" role="tabpanel" id="tab-diff" aria-labelledby="t-diff" hidden><p class="sd-muted">ACME-421 · updated 2 min ago</p></div>
+      </div>
+      <div class="grid gap-6 sm:grid-cols-2 items-start">
+        <ol class="sd-breadcrumb">
+          <li><a href="#components">Projects</a></li>
+          <li><a href="#components">Website</a></li>
+          <li><span aria-current="page">#21</span></li>
+        </ol>
+        <ul class="sd-pagination" aria-label="Pages">
+          <li><a href="#components" aria-label="Previous">‹</a></li>
+          <li><a href="#components">1</a></li>
+          <li><a href="#components" aria-current="page">2</a></li>
+          <li><a href="#components">3</a></li>
+          <li><span>…</span></li>
+          <li><a href="#components">12</a></li>
+          <li><a href="#components" aria-label="Next">›</a></li>
+        </ul>
+      </div>
+      <div class="grid gap-6 sm:grid-cols-[15rem_1fr] items-start">
+        <nav aria-label="App" class="border border-line py-2">
+          <div class="sd-sidenav-group">Projects</div>
+          <ul class="sd-sidenav">
+            <li><a href="#components" aria-current="page">All items <span class="sd-count">108</span></a></li>
+            <li><a href="#components">High risk <span class="sd-count" data-tone="danger">6</span></a></li>
+            <li><a href="#components">Saved <span class="sd-count">3</span></a></li>
+          </ul>
+          <div class="sd-sidenav-group">Online now</div>
+          <ul class="sd-sidenav">
+            <li><a href="#components"><span class="sd-avatar sd-avatar-sm" data-tone="success">JD</span> You <span class="sd-count">#21</span></a></li>
+            <li><a href="#components"><span class="sd-avatar sd-avatar-sm" data-tone="extra">AL</span> Alex <span class="sd-count">#23</span></a></li>
+          </ul>
+        </nav>
+        <div class="grid gap-4">
+          <div class="sd-topbar border border-line">
+            <span class="sd-wordmark">ACME</span>
+            <nav class="sd-nav" aria-label="Demo top"><a href="#components" aria-current="page">Projects</a><a href="#components">History</a></nav>
+            <div class="sd-topbar-end"><button class="sd-btn sd-btn-sm">Search <kbd>Ctrl K</kbd></button><span class="sd-avatar" data-tone="success">JD</span></div>
+          </div>
+          <div class="sd-statusbar border border-line">
+            <span><kbd>N</kbd> next</span><span><kbd>j</kbd><kbd>k</kbd> move</span><span><kbd>a</kbd> approve</span><span><kbd>↵</kbd> details</span>
+            <span class="sd-statusbar-end">v1.0 · 3 online</span>
+          </div>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-nav</code> · <code>sd-tabs</code> + <code>sd-tabpanel</code> · <code>sd-breadcrumb</code> · <code>sd-pagination</code> · <code>sd-sidenav</code> · <code>sd-topbar</code> · <code>sd-statusbar</code></p>
+    </div>
+</body>
+</html>

@@ -13,26 +13,35 @@
     padding-block: 8px 40px;
   }
   .demo-section {
-    /* Off-screen sections skip style, layout and paint until they come near:
-       the components page is long, and theme switches and scrolling pay for
-       what is on screen only. */
-    content-visibility: auto;
-    contain-intrinsic-size: auto 1800px;
     scroll-margin-top: 16px;
-    padding-block: 56px;
-    border-block-start: 1px solid var(--sd-line);
+    padding-block: 40px 56px;
   }
-  /* A rule divides sections; the first one has nothing above it to divide. */
-  .demo-section:first-of-type {
-    border-block-start: 0;
-  }
-  /* The featured intro at the top of a library page: prose only, never a demo block. */
+  /* The top of a library page: its group over its title, then any intro prose. Never a demo block. */
   .demo-intro {
     display: grid;
-    gap: 28px;
-    margin-block-end: 48px;
-    padding-block-end: 48px;
+    gap: 24px;
+    margin-block-end: 40px;
+    padding-block-end: 32px;
     border-block-end: 1px solid var(--sd-line);
+  }
+  .demo-title {
+    display: grid;
+    gap: 8px;
+  }
+  .demo-intro > .demo-title > .sd-label {
+    margin: 0;
+  }
+  /* The pages either side of this one, across groups. */
+  .demo-pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding-block: 32px 56px;
+    border-block-start: 1px solid var(--sd-line);
+  }
+  .demo-pager > [rel="next"] {
+    grid-column: 2;
+    text-align: end;
   }
   .demo-intro-cols {
     display: grid;

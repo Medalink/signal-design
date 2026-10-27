@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+    <div class="demo-block" id="components-rows-marker-expand">
+      <h2 class="sd-label">Rows, marker, expand</h2>
+      <div class="max-w-column">
+        <div class="flex justify-center pb-2"><button class="sd-pill">↑ <b>21</b> new above <kbd>Shift+N</kbd></button></div>
+        <article class="sd-row">
+          <span class="sd-dot" data-shape="hollow"></span>
+          <div class="sd-row-body"><p class="sd-row-title">Triage 9 new tickets, close 2 duplicates</p><p class="sd-meta"><span>Support</span><span>07:57</span></p></div>
+        </article>
+        <article class="sd-row" data-tone="danger" data-edge>
+          <span class="sd-dot"></span>
+          <div class="sd-row-body"><p class="sd-row-title">Stop double charges when a payment retries</p><p class="sd-meta"><span>Billing</span><span>07:56</span><span data-tone="danger">risk</span></p></div>
+          <div class="sd-row-end"><button class="sd-btn sd-btn-sm" data-tone="danger">Review</button></div>
+        </article>
+        <article class="sd-row" aria-current="true">
+          <span class="sd-dot" data-tone="warning"></span>
+          <div class="sd-row-body">
+            <p class="sd-row-title">Fix the crash when a customer has no address</p>
+            <p class="sd-meta"><span>Platform</span><span>07:55</span></p>
+          </div>
+          <div class="sd-row-end"><button class="sd-btn sd-btn-sm" data-sd-toggle="detail-21" aria-expanded="false" aria-controls="detail-21">Details <kbd>↵</kbd></button></div>
+        </article>
+        <div class="sd-expand" id="detail-21">
+          <div>
+            <div class="grid gap-5 py-4 pl-[18px] sm:grid-cols-[1fr_1fr]">
+              <div class="grid gap-2">
+                <span class="sd-label">Preview</span>
+                <div class="sd-shot"><span class="sd-shot-caption">0:07 / 0:12</span></div>
+              </div>
+              <div class="grid gap-2 content-start">
+                <span class="sd-label">Checks</span>
+                <ul class="sd-checks"><li data-tone="success">checks passed · 214 tests</li><li data-tone="success">reviewed by Alex</li><li data-tone="pending">monitoring for 7 days</li></ul>
+                <p class="sd-meta"><span>ACME-421</span><span>3 files changed</span></p>
+              </div>
+            </div>
+            <div class="sd-actions pl-[18px] pb-5">
+              <button class="sd-btn sd-btn-primary">Approve <kbd>a</kbd></button>
+              <button class="sd-btn">Request changes <kbd>s</kbd></button>
+              <button class="sd-btn" data-tone="danger">Decline <kbd>x</kbd></button>
+            </div>
+          </div>
+        </div>
+        <div class="sd-marker">
+          <span>You are here</span>
+          <span class="sd-marker-plain">reviewed through #20</span>
+          <span class="sd-marker-end"><kbd>N</kbd> next is #21</span>
+        </div>
+        <article class="sd-row" data-done>
+          <span class="sd-dot" data-tone="warning"></span>
+          <div class="sd-row-body"><p class="sd-row-title">Upgrade the web framework to 11.31.4</p><p class="sd-meta"><span>Platform</span><span>07:50</span></p></div>
+        </article>
+        <article class="sd-row" data-done>
+          <span class="sd-dot" data-shape="hollow"></span>
+          <div class="sd-row-body"><p class="sd-row-title">Fix 6 broken links in the help center</p><p class="sd-meta"><span>Design</span><span>07:40</span></p></div>
+        </article>
+      </div>
+      <p class="demo-usage"><code>sd-row</code> + <code>aria-current</code> (focus edge) · <code>data-edge</code> + tone (risk edge) · <code>data-done</code> · <code>sd-marker</code> · <code>sd-expand</code> + <code>data-sd-toggle</code></p>
+    </div>
+</body>
+</html>

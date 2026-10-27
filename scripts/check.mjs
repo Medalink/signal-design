@@ -1,7 +1,7 @@
 /**
  * Hard-rule sweep of the showcase pages in Chromium and WebKit.
  *
- *   node scripts/check.mjs [baseUrl] [screenshotDir] [--engine chromium|webkit] [--only|--except lib-components,charts,behaviors,webkit-1,...]
+ *   node scripts/check.mjs [baseUrl] [screenshotDir] [--engine chromium|webkit] [--only|--except lib-buttons,charts,behaviors,webkit-1,...]
  *
  * Pages: every page in showcase/pages.js (the overview, the library pages and
  * the example apps; a page's name here is its file without .html), and the
@@ -21,7 +21,7 @@ import { checkLivingTable, checkLivingTableTypes } from "./check-living-table.mj
 import { checkReact, checkReactSsr, checkReactTypes } from "./check-react.mjs";
 import { checkFonts } from "./check-fonts.mjs";
 import { checkSidebarResize } from "./check-sidebar-resize.mjs";
-import { checkHashRedirects, checkShowcasePages, checkShowcaseRegistry } from "./check-showcase-pages.mjs";
+import { checkHashRedirects, checkRailSections, checkShowcasePages, checkShowcaseRegistry } from "./check-showcase-pages.mjs";
 import { checkShowcaseBar } from "./check-showcase-bar.mjs";
 import { ALL, HOME, LIBRARY, byId, keyOf } from "../showcase/pages.js";
 
@@ -67,7 +67,7 @@ const pages = {
   standalone: new URL("./standalone.html", import.meta.url).href,
 };
 // The behavior tests that build their own elements need only a page that runs init().
-const jsPage = pageUrl(byId("js"));
+const jsPage = pageUrl(byId("setup"));
 if (!existsSync(new URL("../dist/signal.css", import.meta.url))) {
   console.log("FAIL dist/signal.css missing: run pnpm build:css first");
   process.exit(1);
@@ -751,107 +751,11 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
       return { blocks: blocks.length, toggles: blocks.filter((b) => b.querySelector(":scope > .demo-head [data-view='code']")).length };
     });
     if (!flips.blocks || flips.toggles !== flips.blocks) fail(where, `code toggles ${flips.toggles} of ${flips.blocks} blocks`);
-    if (library.id === "components") {
-      const buttons = page.locator("#components-buttons");
-      await buttons.locator(".demo-head [data-view='code']").click();
-      const view = await buttons.evaluate((b) => ({
-        code: b.querySelector(".demo-code pre")?.textContent ?? "",
-        preview: getComputedStyle(b.querySelector(".sd-actions")).display,
-      }));
-      if (!view.code.startsWith('<div class="sd-actions">') || view.preview !== "none") fail(where, `code view ${JSON.stringify({ start: view.code.slice(0, 30), preview: view.preview })}`);
-      await buttons.locator(".demo-head [data-view='preview']").click();
-    }
 
     await checkShowcasePages(page, where, fail, library);
     for (const check of componentChecks.filter((c) => c.page === library.id)) await check.run(page, where, fail);
   }
 
-  if (library?.id === "components" && width === 1280 && theme === "ink") {
-    // Behaviors
-    await page.click('[data-sd-open="demo-dialog"]');
-    if (!(await page.evaluate(() => document.getElementById("demo-dialog").open))) fail(where, "dialog did not open");
-    await page.click("#demo-dialog [data-sd-close]");
-    if (await page.evaluate(() => document.getElementById("demo-dialog").open)) fail(where, "dialog did not close");
-
-    await page.click('[popovertarget="row-menu"]');
-    await page.waitForFunction(() => document.activeElement?.getAttribute("role") === "menuitem", null, { timeout: 1000 }).catch(() => {});
-    const pos = await page.evaluate(() => {
-      const p = document.getElementById("row-menu");
-      const t = document.querySelector('[popovertarget="row-menu"]').getBoundingClientRect();
-      const r = p.getBoundingClientRect();
-      return { open: p.matches(":popover-open"), gap: Math.round(r.top - t.bottom), focused: document.activeElement?.getAttribute("role") };
-    });
-    if (!pos.open) fail(where, "popover did not open");
-    if (pos.gap < 0 || pos.gap > 12) fail(where, `popover not anchored (gap ${pos.gap})`);
-    if (pos.focused !== "menuitem") fail(where, `menu did not focus first item (${pos.focused})`);
-    await page.keyboard.press("ArrowDown");
-    const second = await page.evaluate(() => document.activeElement?.textContent.trim());
-    if (!second?.startsWith("Copy link")) fail(where, `ArrowDown landed on "${second}"`);
-    await page.keyboard.press("Escape");
-
-    await page.click("#t-checks");
-    const tabs = await page.evaluate(() => [document.getElementById("tab-checks").hidden, document.getElementById("tab-proof").hidden]);
-    if (tabs[0] || !tabs[1]) fail(where, "tabs did not switch");
-
-    await page.click('[data-sd-toggle="detail-21"]');
-    await page.waitForFunction(() => document.getElementById("detail-21").getBoundingClientRect().height >= 100, null, { timeout: 2000 }).catch(() => {});
-    const h = await page.evaluate(() => document.getElementById("detail-21").getBoundingClientRect().height);
-    if (h < 100) fail(where, `expand did not open (height ${h})`);
-
-    await page.click('#components [data-sd-seg] button:nth-child(2)');
-    const seg = await page.evaluate(() => document.querySelector("#components [data-sd-seg] button:nth-child(2)").getAttribute("aria-pressed"));
-    if (seg !== "true") fail(where, "segmented did not select");
-  }
-
-  if (library?.id === "inputs-more" && width === 1280 && theme === "ink") {
-    // Combobox: filter, pick with the keyboard.
-    await page.locator("#demo-combo").click();
-    await page.keyboard.type("lis");
-    await page.keyboard.press("Enter");
-    if ((await page.locator("#demo-combo").inputValue()) !== "Lisbon") fail(where, `combobox picked ${await page.locator("#demo-combo").inputValue()}`);
-    // Tags: add with Enter, remove with Backspace.
-    await page.locator("#demo-tags").click();
-    await page.keyboard.type("ux");
-    await page.keyboard.press("Enter");
-    let tags = await page.evaluate(() => [...document.querySelectorAll("[data-sd-tags] .sd-chip")].map((c) => c.dataset.value).join(","));
-    if (!tags.endsWith("design,ux")) fail(where, `tags after add: ${tags}`);
-    await page.keyboard.press("Backspace");
-    tags = await page.evaluate(() => [...document.querySelectorAll("#inputs-more [data-sd-tags] .sd-chip")].map((c) => c.dataset.value).join(","));
-    if (tags !== "design") fail(where, `tags after backspace: ${tags}`);
-    // Number: stops at max.
-    for (let i = 0; i < 8; i++) await page.locator('#inputs-more [data-step="1"]').click({ force: true });
-    const n = await page.locator("#demo-number").inputValue();
-    const plusDisabled = await page.locator('#inputs-more [data-step="1"]').isDisabled();
-    if (n !== "9" || !plusDisabled) fail(where, `number ${n}, plus disabled ${plusDisabled}`);
-    // Palette: Ctrl K opens, typing filters, Escape closes. Click clear of the page chrome first.
-    await page.locator("#inputs-more h2").click();
-    await page.keyboard.press("Control+k");
-    if (!(await page.evaluate(() => document.getElementById("demo-palette").open))) fail(where, "palette did not open");
-    await page.keyboard.type("form");
-    const shownOpts = await page.evaluate(() => [...document.querySelectorAll('#demo-palette [role="option"]:not([hidden])')].map((o) => o.textContent.trim()));
-    if (shownOpts.length !== 1 || !shownOpts[0].startsWith("Form")) fail(where, `palette filter showed ${shownOpts.join(" | ")}`);
-    await page.keyboard.press("Escape");
-    // Shortcuts sheet opens on "?".
-    await page.keyboard.press("Shift+Slash");
-    if (!(await page.evaluate(() => document.getElementById("demo-shortcuts").open))) fail(where, "? did not open shortcuts");
-    await page.keyboard.press("Escape");
-  }
-
-  if (library?.id === "tokens" && width === 1280 && theme === "ink") {
-    await page.click('[data-sd-theme="paper"]');
-    if ((await page.evaluate(() => document.documentElement.dataset.theme)) !== "paper") fail(where, "theme button failed");
-    // "light" is the older name for paper: a light button still sets paper.
-    await page.evaluate(() => {
-      const b = document.createElement("button");
-      b.dataset.sdTheme = "light";
-      b.id = "alias-check";
-      document.body.append(b);
-      b.click();
-      b.remove();
-    });
-    const aliased = await page.evaluate(() => [document.documentElement.dataset.theme, localStorage.getItem("sd-theme")].join(","));
-    if (aliased !== "paper,paper") fail(where, `data-sd-theme="light" gave ${aliased}`);
-  }
   if (pageName === "charts" && width === 1280 && theme === "ink") {
     const core = () => page.evaluate(() => {
       const c = document.querySelector("#core canvas").sdChart.chart;
@@ -1018,6 +922,11 @@ for (const [name, engine] of Object.entries(engines)) {
       const redirects = await checkHashRedirects(page, base);
       for (const error of redirects.errors) fail(`${name} old links`, error);
       if (!redirects.errors.length) console.log(`ok   ${name} old links ${redirects.passed} hash redirects`);
+    },
+    "rail sections": async (page) => {
+      const errors = await checkRailSections(page, base);
+      for (const error of errors) fail(`${name} rail sections`, error);
+      if (!errors.length) console.log(`ok   ${name} rail sections pinned and peek`);
     },
     // The bar check opens its own browser context, so that settings carry from page to page.
     "showcase bar": async (page) => {

@@ -1,4 +1,4 @@
-export const page = "conversation";
+export const page = "level";
 
 /** A level meter lights the bars at or under --level and holds still between values. */
 export default async function checkLevelMeter(page, where, fail) {

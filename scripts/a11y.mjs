@@ -2,7 +2,7 @@
  * Accessibility audit of the showcase pages with axe-core (WCAG 2.2 A and
  * AA rules), in every theme, at desktop and phone width.
  *
- *   node scripts/a11y.mjs [baseUrl] [--pages index,lib-tokens,chat] [--json]
+ *   node scripts/a11y.mjs [baseUrl] [--pages index,lib-color,chat] [--json]
  *
  * Exits non-zero when any violation is found.
  */

@@ -10,7 +10,7 @@
  * mountBar() and savedScrollbars() run in the frame too, so a framed page
  * shows the same chart colors and scrollbars as the page that opened it.
  */
-import { EXAMPLES, HOME, LIBRARY, byKey } from "./pages.js";
+import { EXAMPLES, HOME, LIBRARY, SECTIONS, byKey } from "./pages.js";
 import { getTheme, setScrollbars, setTheme } from "../src/js/index.js";
 
 const SIZES = [
@@ -63,11 +63,10 @@ const themeSeg = (label) =>
 
 function menu() {
   const link = (p) => `<a role="menuitem" href="./${p.file}"${p === page ? ' aria-current="page"' : ""}>${p.title}</a>`;
+  const label = (text) => `<div class="sd-menu-label" role="presentation">${text}</div>`;
   return (
-    `<div class="sd-menu-label" role="presentation">Library</div>` +
-    [HOME, ...LIBRARY].map(link).join("") +
-    `<div class="sd-menu-label" role="presentation">Example apps</div>` +
-    EXAMPLES.map(link).join("")
+    link(HOME) +
+    SECTIONS.flatMap((s) => s.groups.map((g) => label(g.title) + g.pages.map(link).join(""))).join("")
   );
 }
 

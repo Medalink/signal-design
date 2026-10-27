@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+    <div class="demo-block" id="inputs-more-command-palette-and-shortcuts">
+      <h2 class="sd-label">Command palette and shortcuts</h2>
+      <div class="sd-actions">
+        <button class="sd-btn" data-sd-open="demo-palette" data-sd-key="mod+k">Open palette <kbd>Ctrl K</kbd></button>
+        <button class="sd-btn" data-sd-open="demo-shortcuts">Shortcuts <kbd>?</kbd></button>
+      </div>
+      <dialog class="sd-command" id="demo-palette" aria-label="Search" data-sd-palette>
+        <input type="search" placeholder="Search pages and actions" aria-label="Search">
+        <div class="sd-menu" role="listbox" aria-label="Results">
+          <div class="sd-menu-label" role="presentation">Pages</div>
+          <a role="option" href="./shell.html">App shell <span class="sd-menu-hint">page</span></a>
+          <a role="option" href="./chat.html">Chat <span class="sd-menu-hint">page</span></a>
+          <a role="option" href="./form.html">Form <span class="sd-menu-hint">page</span></a>
+          <div class="sd-menu-label" role="presentation">Actions</div>
+          <button type="button" role="option" data-sd-theme-cycle data-keywords="dark light paper">Next theme <span class="sd-menu-hint">Shift T</span></button>
+          <button type="button" role="option" data-sd-toast="Copied link">Copy link</button>
+        </div>
+        <p class="sd-command-foot">↑↓ move · ↵ open · Esc close</p>
+      </dialog>
+      <dialog class="sd-dialog" id="demo-shortcuts" data-sd-shortcuts aria-labelledby="demo-shortcuts-h">
+        <header class="sd-dialog-head"><span id="demo-shortcuts-h">Keyboard shortcuts</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">×</button></header>
+        <div class="sd-dialog-body">
+          <p class="sd-shortcuts-group">Navigation</p>
+          <dl class="sd-shortcuts">
+            <dt><kbd>Ctrl</kbd><kbd>K</kbd></dt><dd>Search</dd>
+            <dt><kbd>j</kbd> <kbd>k</kbd></dt><dd>Next, previous item</dd>
+            <dt><kbd>[</kbd></dt><dd>Toggle sidebar</dd>
+          </dl>
+          <p class="sd-shortcuts-group">Actions</p>
+          <dl class="sd-shortcuts">
+            <dt><kbd>a</kbd></dt><dd>Approve</dd>
+            <dt><kbd>?</kbd></dt><dd>This list</dd>
+          </dl>
+        </div>
+      </dialog>
+      <p class="demo-usage"><code>dialog.sd-command[data-sd-palette]</code> + <code>setOptions()</code> · <code>dialog[data-sd-shortcuts]</code> opens on <kbd>?</kbd> · <code>sd-shortcuts</code></p>
+    </div>
+</body>
+</html>

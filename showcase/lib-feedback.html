@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+    <div class="demo-block" id="components-feedback">
+      <h2 class="sd-label">Feedback</h2>
+      <div class="grid gap-3">
+        <div class="sd-note" data-tone="pending">◷ This item changed after you opened it. <button class="sd-btn sd-btn-sm" data-tone="pending">Reload</button></div>
+        <div class="sd-note" data-tone="danger">Irreversible: sends a $4,200 quote to a customer.</div>
+        <div class="sd-note">New items use your workspace defaults.</div>
+      </div>
+      <div class="grid gap-3 sm:grid-cols-2">
+        <div class="sd-callout" data-tone="danger"><p class="sd-callout-title"><span class="sd-dot"></span>High risk</p><p>Expires in 45 min. Review before approving.</p></div>
+        <div class="sd-callout" data-tone="success"><p class="sd-callout-title">All checks passed</p><p>214 tests ran in 41 seconds.</p></div>
+        <div class="sd-callout"><p class="sd-callout-title">Note</p><p>A neutral callout uses an fg edge.</p></div>
+        <div class="sd-callout" data-tone="accent"><p class="sd-callout-title">Tip</p><p>Press <kbd>N</kbd> to jump to the next item.</p></div>
+      </div>
+      <div class="sd-actions">
+        <button class="sd-btn" data-demo-toast="Approved ACME-421" data-demo-tone="success">Toast: success</button>
+        <button class="sd-btn" data-demo-toast="Changes requested from Platform" data-demo-undo>Toast with undo</button>
+        <button class="sd-btn" data-sd-toast="Saved">Declarative toast</button>
+      </div>
+      <div class="grid gap-6 sm:grid-cols-2 items-center">
+        <div class="grid gap-2">
+          <span class="sd-label">5 of 12 done</span>
+          <div class="sd-cells"><i data-on></i><i data-on></i><i data-on></i><i data-on></i><i data-on></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="grid gap-5">
+          <div>
+            <p class="sd-progress-label"><span>Uploading</span><span>64%</span></p>
+            <div class="sd-progress" style="--value: 64" role="progressbar" aria-label="Upload progress" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <div>
+            <p class="sd-progress-label"><span>Checking for updates</span><span>waiting</span></p>
+            <div class="sd-progress" data-state="indeterminate" role="progressbar" aria-label="Checking for updates"></div>
+          </div>
+        </div>
+        <div class="sd-skeleton-text" aria-hidden="true"><span class="sd-skeleton"></span><span class="sd-skeleton"></span><span class="sd-skeleton"></span></div>
+        <ul class="sd-checks"><li data-tone="success">checks passed · 214 tests</li><li data-tone="pending">monitoring for 7 days</li><li data-tone="danger">budget over by 31%</li><li>no reviewer yet</li></ul>
+      </div>
+      <div class="sd-empty">
+        <span class="sd-dot" data-shape="hollow"></span>
+        <p class="sd-empty-title">Nothing here yet.</p>
+        <p>Items your team creates will show up here.</p>
+        <button class="sd-btn sd-btn-sm">Create an item</button>
+      </div>
+      <p class="demo-usage"><code>sd-note</code> · <code>sd-callout</code> · <code>toast()</code> · <code>sd-cells</code> · <code>sd-progress</code> + <code>--value</code> or <code>data-state="indeterminate"</code> · <code>sd-progress-label</code> · <code>sd-skeleton</code> · <code>sd-checks</code> · <code>sd-empty</code></p>
+    </div>
+</body>
+</html>

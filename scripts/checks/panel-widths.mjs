@@ -1,4 +1,4 @@
-export const page = "components";
+export const page = "layout";
 /** Panels: the default stays at 560px; -wide caps at 1024px; -fluid has no cap and fills its parent. */
 export default async function checkPanelWidths(page, where, fail) {
   const got = await page.evaluate(() => {

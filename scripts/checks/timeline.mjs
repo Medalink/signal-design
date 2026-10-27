@@ -1,4 +1,4 @@
-export const page = "charts";
+export const page = "timeline";
 /** sd-timeline bars, grid, now line, axis and mark all share one percentage scale. */
 export default async function checkTimeline(page, where, fail) {
   const got = await page.evaluate(() => {

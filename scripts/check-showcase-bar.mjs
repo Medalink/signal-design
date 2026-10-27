@@ -22,7 +22,7 @@ export async function checkShowcaseBar(browser, base, name) {
     return page;
   };
 
-  let page = await open("lib-components.html", 1280);
+  let page = await open("lib-buttons.html", 1280);
   const bar = await page.evaluate(() => ({
     home: document.querySelector(".vp-home")?.getAttribute("href"),
     here: document.querySelector(".vp-here")?.textContent.trim(),
@@ -32,7 +32,7 @@ export async function checkShowcaseBar(browser, base, name) {
     railTools: !!document.querySelector(".sd-rail-tools"),
     asideGlobal: !!document.querySelector("#settings-panel [data-sd-theme], #settings-panel #chart-theme, #settings-panel #scrollbar-mode"),
   }));
-  expect(bar.home === "./index.html" && bar.here === "/Components" && !bar.mock && bar.kind === "library", `library bar ${JSON.stringify(bar)}`);
+  expect(bar.home === "./index.html" && bar.here === "/Buttons" && !bar.mock && bar.kind === "library", `library bar ${JSON.stringify(bar)}`);
   expect(!bar.headerTheme && !bar.railTools && !bar.asideGlobal, `global settings are only in the bar ${JSON.stringify(bar)}`);
   const covered = await page.evaluate(() =>
     [...document.querySelectorAll(".vp-bar a, .vp-bar button")]
@@ -52,7 +52,7 @@ export async function checkShowcaseBar(browser, base, name) {
     items: [...document.querySelectorAll('#vp-pages [role="menuitem"]')].map((a) => a.getAttribute("href")),
     current: document.querySelector('#vp-pages [aria-current="page"]')?.getAttribute("href"),
   }));
-  expect(menu.open && menu.items.join() === ALL.map((p) => `./${p.file}`).join() && menu.current === "./lib-components.html", `pages menu ${JSON.stringify(menu)}`);
+  expect(menu.open && menu.items.join() === ALL.map((p) => `./${p.file}`).join() && menu.current === "./lib-buttons.html", `pages menu ${JSON.stringify(menu)}`);
   await page.keyboard.press("Escape");
 
   await page.click('.vp-bar [data-sd-theme="paper"]');
@@ -220,7 +220,7 @@ export async function checkShowcaseBar(browser, base, name) {
   await page.close();
 
   // The shell fills exactly the window under the bar, and nothing overflows, at every breakpoint.
-  for (const [file, width, height] of [["lib-tokens.html", 1280, 800], ["lib-tokens.html", 1024, 768], ["lib-tokens.html", 768, 900], ["lib-tokens.html", 375, 780], ["shell.html", 375, 780], ["chat.html", 768, 900], ["index.html", 375, 780]]) {
+  for (const [file, width, height] of [["lib-color.html", 1280, 800], ["lib-color.html", 1024, 768], ["lib-color.html", 768, 900], ["lib-color.html", 375, 780], ["shell.html", 375, 780], ["chat.html", 768, 900], ["index.html", 375, 780]]) {
     page = await open(file, width, height);
     const m = await page.evaluate(() => {
       const b = document.querySelector(".vp-bar").getBoundingClientRect();

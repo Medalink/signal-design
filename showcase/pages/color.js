@@ -77,29 +77,6 @@ function renderValues() {
   for (const el of document.querySelectorAll(".swatch [data-value]")) el.textContent = css(el.dataset.value);
 }
 
-/* ---- Type scale ---------------------------------------------------------- */
-
-const SCALE = [
-  ["2xs", "labels, status lines"],
-  ["xs", "nav, wordmark, kbd"],
-  ["sm", "meta, hints"],
-  ["base", "body"],
-  ["md", "dense lead"],
-  ["lg", "row outcome, lead"],
-  ["xl", "page title"],
-  ["2xl", "display on phones"],
-  ["3xl", "display"],
-  ["4xl", "landing"],
-  ["5xl", "hero"],
-];
-document.querySelector("[data-type-scale]").innerHTML =
-  `<thead><tr><th>Token</th><th class="sd-num">Size</th><th>Use</th><th>Sample</th></tr></thead><tbody>` +
-  SCALE.map(([t, use]) => {
-    const px = parseFloat(css(`--text-${t}`)) * 16;
-    return `<tr><td><code>text-${t}</code></td><td class="sd-num">${px}px</td><td class="text-fg-subtle">${use}</td><td class="whitespace-nowrap" style="font-size:var(--text-${t});line-height:1.2">Signal</td></tr>`;
-  }).join("") +
-  `</tbody>`;
-
 /* ---- Theme-dependent bits ------------------------------------------------ */
 
 function refresh() {
@@ -109,14 +86,3 @@ function refresh() {
 document.addEventListener("sd:theme", () => requestAnimationFrame(refresh));
 matchMedia("(prefers-color-scheme: light)").addEventListener("change", refresh);
 refresh();
-
-/* ---- Motion replay ------------------------------------------------------- */
-
-document.addEventListener("click", (event) => {
-  if (event.target.closest('[data-demo="motion"]')) {
-    const row = document.querySelector("[data-demo-row]");
-    row.classList.remove("animate-slide-in");
-    void row.offsetWidth;
-    row.classList.add("animate-slide-in");
-  }
-});

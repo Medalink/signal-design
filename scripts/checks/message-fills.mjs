@@ -1,4 +1,4 @@
-export const page = "conversation";
+export const page = "messages";
 /** Message fills: mention and current rows read against both panes in every theme, differ from each other, and keep 4.5:1 for their secondary text. */
 export default async function checkMessageFills(page, where, fail) {
   const got = await page.evaluate(() => {

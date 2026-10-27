@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+  <header class="demo-intro">
+    <p class="sd-lead max-w-[42rem]">Backdrops, ornaments and motion, all black, white and grey. Each one is optional and switched on with an attribute.</p>
+    <p class="sd-muted max-w-[42rem]">Backdrops, ornaments and motion. All black, white and grey, all optional, all switched on with an attribute.</p>
+    <div class="demo-intro-cols">
+      <div>
+        <p class="sd-label">Principles</p>
+        <ul>
+          <li><b class="text-fg font-semibold">Motion marks a state change.</b> Rain is a still frame and moves only while work runs, through <code>rain.busy(true)</code>, or when the reader turns it on. It respects the reader's choice and <code>prefers-reduced-motion</code>.</li>
+          <li><b class="text-fg font-semibold">Theme text color only.</b> Rain and ornaments draw in the theme's text color, white on dark and black on light. No glow.</li>
+          <li><b class="text-fg font-semibold">Idle motion is rare and pauses.</b> The ornament sparkle rests most of a slow cycle, pauses while the page scrolls, and stops under reduced motion. <code>data-sd-ornaments-still</code> turns it off for one element.</li>
+          <li><b class="text-fg font-semibold">The browser remembers.</b> The rain switch is remembered, and a resized sidebar keeps its width per sidebar.</li>
+          <li><b class="text-fg font-semibold">Effects stay behind content.</b> Inside a shell, rain skips the content, bars and dock. Elsewhere, list what covers it with <code>data-sd-rain-skip</code>.</li>
+        </ul>
+      </div>
+      <div class="grid content-start gap-8">
+        <div>
+          <p class="sd-label">Use it for</p>
+          <ul>
+            <li>A shell or hero backdrop that shows work in progress.</li>
+            <li>Dust ornaments to give an empty state or a corner some texture.</li>
+            <li>Art ornaments, a drawn picture behind a card, a cover, a hero or an empty state.</li>
+            <li>Title bars, a compact rail and a resizable sidebar for desktop apps.</li>
+          </ul>
+        </div>
+        <div>
+          <p class="sd-label">Leave it out when</p>
+          <ul>
+            <li>Decorative animation. If nothing changed, nothing should move.</li>
+            <li>Rain behind body text. Mark the covering elements with <code>data-sd-rain-skip</code>.</li>
+            <li>Color in effects. They stay black, white and grey.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+    <div class="demo-block" id="effects-digital-rain">
+      <h2 class="sd-label">Digital rain</h2>
+      <p class="demo-usage">A still frame by default; it moves while work runs (<code>rain.busy(true)</code>) or when the user turns it on. Glyphs or squares, theme text color only.</p>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <figure class="relative h-56 border border-line overflow-hidden">
+          <canvas class="sd-rain absolute inset-0 w-full h-full" data-sd-rain aria-hidden="true"></canvas>
+          <figcaption class="absolute left-3 bottom-3 m-0 sd-badge" style="background: var(--sd-canvas)">glyphs</figcaption>
+        </figure>
+        <figure class="relative h-56 border border-line overflow-hidden">
+          <canvas class="sd-rain absolute inset-0 w-full h-full" data-sd-rain data-sd-rain-style="squares" data-sd-rain-skip=".rain-skip-demo" aria-hidden="true"></canvas>
+          <div class="rain-skip-demo absolute inset-x-8 top-8 p-3 border border-line text-sm sd-muted" style="background: var(--sd-canvas)">The rain skips this box: <code>data-sd-rain-skip</code></div>
+          <figcaption class="absolute left-3 bottom-3 m-0 sd-badge" style="background: var(--sd-canvas)">squares</figcaption>
+        </figure>
+      </div>
+      <div class="sd-actions">
+        <button class="sd-btn" data-sd-rain-toggle>Animate rain</button>
+        <button class="sd-btn" data-demo-busy>Run a 6s job</button>
+      </div>
+      <p class="demo-usage"><code>&lt;canvas class="sd-rain" data-sd-rain data-sd-rain-style="squares"&gt;</code> · <code>data-sd-rain-skip=".selector"</code> · <code>data-sd-rain-toggle</code> · <code>rain.busy()</code></p>
+    </div>
+</body>
+</html>

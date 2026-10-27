@@ -1,4 +1,4 @@
-export const page = "conversation";
+export const page = "messages";
 /** A message in a narrow column: long unbroken author names must not widen the row; in the head and the quote they truncate and leave the badge on the name's line and the quoted text visible, and an inline author wraps. */
 export default async function checkMessageNarrow(page, where, fail) {
   const got = await page.evaluate(() => {

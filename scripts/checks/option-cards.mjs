@@ -1,4 +1,4 @@
-export const page = "components";
+export const page = "choices";
 
 /** Option cards select by click and arrow keys, show focus, and keep one button pressed. */
 export default async function checkOptionCards(page, where, fail) {
@@ -9,7 +9,7 @@ export default async function checkOptionCards(page, where, fail) {
   await page.click(card("paper"));
   await lit("paper");
   const clicked = (await ring(card("paper"))) === "1" && (await ring(card("ink"))) === "0";
-  await page.focus('#components-fields button[type="submit"]');
+  await page.focus('#components-option-cards .demo-head [data-view="code"]');
   for (let i = 0; i < 12 && !(await page.evaluate(() => document.activeElement?.name === "demo-option-theme")); i++) await page.keyboard.press("Tab");
   const focus = await page.evaluate(() => getComputedStyle(document.activeElement.parentElement).outlineStyle === "solid");
   await page.keyboard.press("ArrowLeft");
