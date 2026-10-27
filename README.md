@@ -16,7 +16,7 @@ reproducible builds:
 
 ```bash
 pnpm add github:Medalink/signal-design            # or npm install github:Medalink/signal-design
-pnpm add github:Medalink/signal-design#v0.1.0
+pnpm add github:Medalink/signal-design#v1.2.0     # a tag, or a commit SHA
 ```
 
 Tailwind projects import the source and need no build. `dist/` (plain CSS and
@@ -89,7 +89,21 @@ The tokens replace Tailwind's defaults, so utilities stay on-system:
 `text-2xs`, `tracking-caps`, `max-w-column`. Semantic utilities read live CSS
 variables, so they follow the theme at runtime without a rebuild.
 
-With Vite (`@tailwindcss/vite`, tested) the font URLs resolve on their own. The
+With Vite, add the Tailwind plugin (tested):
+
+```bash
+pnpm add -D tailwindcss @tailwindcss/vite
+```
+
+```js
+// vite.config.js
+import { defineConfig } from "vite";
+import tailwindcss from "@tailwindcss/vite";
+
+export default defineConfig({ plugins: [tailwindcss()] });
+```
+
+There the font URLs resolve on their own. The
 Tailwind CLI does not rewrite `url()` inside imported packages; with the CLI,
 copy `node_modules/signal-design/src/fonts` next to your output CSS as `fonts/`.
 The PostCSS plugin has not been tested yet.
@@ -112,16 +126,6 @@ importing from `src/`. It exports the same API as `signal-design/js`:
 
 ```html
 <link rel="stylesheet" href="node_modules/signal-design/dist/signal.css">
-<script type="module">
-  import { init } from "./node_modules/signal-design/dist/signal.js";
-  init();
-</script>
-```
-
-Without a bundler of your own, point the import at the prebuilt bundle
-instead — same exports, one file:
-
-```html
 <script type="module">
   import { init } from "./node_modules/signal-design/dist/signal.js";
   init();
@@ -1076,7 +1080,12 @@ the State contract, so React is the only writer and none of them needs
 `init()`. It is part of this package: `react` and `react-dom` are optional peer
 dependencies, and nothing changes for a project without React.
 
+The components bring no CSS. Load Signal once, as in the sections above:
+`@import "signal-design";` with Tailwind, or `import "signal-design/dist/signal.css";`
+without it.
+
 ```jsx
+import { useState } from "react";
 import { Button, Dialog, DialogBody, DialogClose, DialogFooter, DialogHeader, Field, Input } from "signal-design/react";
 
 function Rename({ name, save }) {
@@ -1100,6 +1109,21 @@ function Rename({ name, save }) {
     </>
   );
 }
+```
+
+Tabs take their state the same way; `TabList` needs a `label`:
+
+```jsx
+import { Tab, TabList, TabPanel, Tabs } from "signal-design/react";
+
+<Tabs defaultValue="overview">
+  <TabList label="Project">
+    <Tab value="overview">Overview</Tab>
+    <Tab value="activity">Activity</Tab>
+  </TabList>
+  <TabPanel value="overview">…</TabPanel>
+  <TabPanel value="activity">…</TabPanel>
+</Tabs>
 ```
 
 | Part | Components | State |
@@ -1374,6 +1398,10 @@ optional peer dependency: install it only if you use charts, and nothing in
 ```bash
 npm install chart.js
 ```
+
+Install it before the first dev run. Vite caches its dependency scan, so if
+you add Chart.js to a running project, restart the dev server with
+`vite --force`.
 
 ```html
 <figure class="sd-chart" data-chart-theme="mono" style="--h: 480px">
