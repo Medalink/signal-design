@@ -1176,6 +1176,11 @@ What they take over from `init()`:
   hold do nothing until the dialog closes.
 - **Tooltip** is a manual popover too, so it shows above a modal dialog. Its
   look and the `role="tooltip"` and `aria-describedby` link are unchanged.
+  `delay` (milliseconds, default 0) holds the tip back until the pointer has
+  rested on the trigger that long; leaving first shows nothing, and keyboard
+  focus always shows it at once. `className` is added to the tip beside
+  `sd-tooltip`. `onOpenChange(open)` reports each show and hide, including
+  Escape and blur.
 - **AppShell** renders `data-sidebar`, `data-aside`, `data-drawer` and
   `data-peek`, makes the page `inert` behind the drawer, closes the peek, the
   drawer and a floating right panel on Escape, and moves focus into the drawer.

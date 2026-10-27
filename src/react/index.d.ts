@@ -333,6 +333,12 @@ export function Segment(props: SegmentProps): ReactElement;
 export interface TooltipProps {
   content: ReactNode;
   side?: "top" | "bottom" | "left" | "right" | undefined;
+  /** Milliseconds the pointer must rest on the trigger before the tip shows. Keyboard focus shows it at once. Default 0. */
+  delay?: number | undefined;
+  /** Added to the tip's `sd-tooltip` class. */
+  className?: string | undefined;
+  /** Called when the tip shows or hides, with the new state. */
+  onOpenChange?: ((open: boolean) => void) | undefined;
   /** The one element the tooltip describes. */
   children: ReactElement;
 }

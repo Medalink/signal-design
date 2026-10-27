@@ -25,6 +25,7 @@ export function checkReactTypes() {
     `import { useRef, useState } from "react";
 import { AppShell, Button, Dialog, Menu, MenuContent, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 import { initScrollbars } from "signal-design/js";
+import { Tooltip } from "signal-design/react";
 
 initScrollbars();
 initScrollbars("always");
@@ -66,6 +67,10 @@ export function Consumer() {
         {/* @ts-expect-error a pointer event is not an anchor: it has clientX, not x */}
         <MenuContent anchor={{ clientX: 1, clientY: 2 }} />
       </Menu>
+      <Tooltip content="Tip" side="bottom" delay={300} className="wide" onOpenChange={(shown: boolean) => console.log(shown)}><Button>Tip</Button></Tooltip>
+      <Tooltip content="Tip" delay={undefined} className={undefined} onOpenChange={undefined}><Button>Tip</Button></Tooltip>
+      {/* @ts-expect-error the delay is a number of milliseconds */}
+      <Tooltip content="Tip" delay="300"><Button>Tip</Button></Tooltip>
       <Dialog open={open} onOpenChange={setOpen} size="sm" ref={(node: HTMLDialogElement | null) => node?.close()}>
         <DialogHeader closeButton={false}>Title</DialogHeader>
       </Dialog>
@@ -225,7 +230,7 @@ export async function checkReactSsr() {
           h(sd.Menu, null,
             h(sd.MenuTrigger, null, h(sd.Button, null, "m")),
             h(sd.MenuContent, { label: "M" }, h(sd.MenuLabel, null, "L"), h(sd.MenuItem, { hint: "o" }, "Open"), h(sd.MenuSeparator), h(sd.MenuItem, { tone: "danger", disabled: true }, "Del"))),
-          h(sd.Tooltip, { content: "tip" }, h(sd.Button, null, "t")),
+          h(sd.Tooltip, { content: "tip", delay: 300, className: "wide", onOpenChange() {} }, h(sd.Button, null, "t")),
           h(sd.Tabs, { defaultValue: "one" },
             h(sd.TabList, { label: "L" }, h(sd.Tab, { value: "one" }, "1"), h(sd.Tab, { value: "two" }, "2")),
             h(sd.TabPanel, { value: "one" }, "p1"), h(sd.TabPanel, { value: "two" }, "p2")),

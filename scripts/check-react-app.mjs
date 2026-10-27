@@ -252,6 +252,34 @@ export async function checkReactApp(page, base) {
   expect(await until((sel) => !document.querySelector(sel + " .sd-toast"), toaster), "an action on a toast works once the dialog is closed");
   expect(await page.locator(toaster).evaluate((el) => el.matches(":popover-open")), "the toaster stays open with no toast in it");
 
+  /* ---- Tooltip delay, className and onOpenChange ---- */
+  const delayed = page.locator("#react-tooltip").getByRole("button", { name: "Delayed tip" });
+  const delayedTip = page.locator("body > [role=tooltip]");
+  const tipState = () => page.locator("#react-tooltip [data-tip-open]").textContent();
+  await page.evaluate(() => {
+    window.__tipsSeen = 0;
+    new MutationObserver((records) => records.forEach((r) => r.addedNodes.forEach((n) => n.getAttribute?.("role") === "tooltip" && window.__tipsSeen++))).observe(document.body, { childList: true });
+  });
+  await delayed.scrollIntoViewIfNeeded();
+  await delayed.hover();
+  await page.mouse.move(2, 2);
+  await new Promise((resolve) => setTimeout(resolve, 900));
+  expect(await page.evaluate(() => window.__tipsSeen) === 0 && await tipState() === "delayed tip: hidden", "leaving before the delay is up shows no tooltip and reports nothing");
+  const started = Date.now();
+  await delayed.hover();
+  expect(await until(() => document.querySelector("body > [role=tooltip]"), null, 4000), "resting on the trigger shows the tooltip after the delay");
+  expect(Date.now() - started >= 600, `the tooltip waited for its 600ms delay, showed after ${Date.now() - started}ms`);
+  expect(await delayedTip.textContent() === "Resolved in 12 ms" && await delayedTip.evaluate((el) => el.classList.contains("sd-tooltip") && el.classList.contains("sd-num")), "className is added to the tip beside sd-tooltip");
+  expect(await tipState() === "delayed tip: shown", "onOpenChange reports the tip opening");
+  await page.mouse.move(2, 2);
+  expect(await until(() => !document.querySelector("body > [role=tooltip]"), null), "leaving hides the delayed tooltip at once");
+  expect(await until(() => document.querySelector("#react-tooltip [data-tip-open]").textContent === "delayed tip: hidden", null), "onOpenChange reports the tip closing");
+  await delayed.focus();
+  expect(await until(() => document.querySelector("body > [role=tooltip]"), null, 450), "keyboard focus shows the tooltip without the delay");
+  await page.keyboard.press("Escape");
+  expect(await until(() => !document.querySelector("body > [role=tooltip]") && document.querySelector("#react-tooltip [data-tip-open]").textContent === "delayed tip: hidden", null), "Escape hides the tooltip and reports it");
+  await delayed.blur();
+
   expect(browserErrors.length === 0, `console errors: ${browserErrors.join(" | ")}`);
   return { errors, passed };
 }

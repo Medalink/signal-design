@@ -541,12 +541,16 @@ function ContextMenus() {
 }
 
 function Tooltips() {
+  const [delayedOpen, setDelayedOpen] = useState(false);
   return (
     <Demo
       id="react-tooltip"
       title="Tooltip"
       code={`<Tooltip content="Approve (a)"><Button>Approve</Button></Tooltip>
-<Tooltip content="Below" side="bottom"><IconButton label="Settings">…</IconButton></Tooltip>`}
+<Tooltip content="Below" side="bottom"><IconButton label="Settings">…</IconButton></Tooltip>
+<Tooltip content="Resolved in 12 ms" delay={600} className="sd-num" onOpenChange={setOpen}>
+  <Button>Delayed tip</Button>
+</Tooltip>`}
     >
       <div className="sd-actions">
         <Tooltip content="Approve (a)">
@@ -557,6 +561,12 @@ function Tooltips() {
             <Gear />
           </IconButton>
         </Tooltip>
+        <Tooltip content="Resolved in 12 ms" delay={600} className="sd-num" onOpenChange={setDelayedOpen}>
+          <Button>Delayed tip</Button>
+        </Tooltip>
+        <span className="sd-subtle text-sm" data-tip-open>
+          delayed tip: {delayedOpen ? "shown" : "hidden"}
+        </span>
       </div>
     </Demo>
   );
