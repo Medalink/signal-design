@@ -149,6 +149,112 @@ export async function checkReactOverlays(page, base) {
     await shut();
   }
 
+  /* ---- Tooltips share the page ---- */
+  // Real mouse moves: a tooltip answers pointer events, and delays are what is under test.
+  const group = page.locator("#react-tooltip-group");
+  const trigger = (name) => group.getByRole("button", { name, exact: true });
+  const tipsNow = () => page.evaluate(() => [...document.querySelectorAll("body > [role=tooltip]")].map((tip) => tip.textContent));
+  const hoverOn = async (target) => {
+    await target.scrollIntoViewIfNeeded();
+    const box = await target.boundingBox();
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  };
+  const away = () => page.mouse.move(2, 2);
+  const shows = (text, timeout) => until((t) => [...document.querySelectorAll("body > [role=tooltip]")].some((tip) => tip.textContent === t), text, timeout);
+  const gone = (timeout = 3000) => until(() => !document.querySelector("body > [role=tooltip]"), null, timeout);
+  // Leave, let any tip go, and wait out the warm window, so the next hover starts cold.
+  const cold = async () => {
+    await away();
+    await gone();
+    await pause(450);
+  };
+  await trigger("First").scrollIntoViewIfNeeded();
+  await cold();
+
+  await hoverOn(trigger("First"));
+  await pause(250);
+  expect((await tipsNow()).length === 0, "a hover from cold waits for the delay");
+  expect(await shows("First tip", 2500), "a hover from cold shows its tip once the delay is up");
+
+  await hoverOn(trigger("Second"));
+  expect(await shows("Second tip", 300), "moving from an open tip to another trigger shows that trigger's tip at once, past its 600ms delay");
+  expect((await tipsNow()).join() === "Second tip", `only one tip is open, got ${JSON.stringify(await tipsNow())}`);
+
+  await away();
+  await hoverOn(trigger("First"));
+  expect(await shows("First tip", 300), "a different trigger reached right after a tip closes shows at once");
+  await away();
+  await pause(50);
+  await hoverOn(trigger("First"));
+  await pause(250);
+  expect((await tipsNow()).length === 0, "the trigger a tip just closed on waits its delay again");
+
+  await cold();
+  await hoverOn(trigger("Second"));
+  await pause(250);
+  expect((await tipsNow()).length === 0, "after the warm window a hover waits for the delay again");
+
+  // Escape forgets the warm window: the next trigger is cold. (Passes without it too; it guards the reset.)
+  await cold();
+  await trigger("First").focus();
+  expect(await shows("First tip", 450), "keyboard focus shows the tip without the delay");
+  await page.keyboard.press("Escape");
+  expect(await gone(), "Escape hides the tip");
+  await hoverOn(trigger("Second"));
+  await pause(250);
+  expect((await tipsNow()).length === 0, "after Escape the next trigger waits its delay");
+  await trigger("First").blur();
+
+  // At delay 0 too: a tip opened by focus gives way to the one the pointer opens, even in another demo.
+  await cold();
+  await trigger("Instant").focus();
+  expect(await shows("No delay", 450), "focus shows a tip with no delay");
+  await hoverOn(page.locator("#react-tooltip").getByRole("button", { name: "Hover or focus me" }));
+  expect(await until(() => {
+    const now = [...document.querySelectorAll("body > [role=tooltip]")].map((tip) => tip.textContent);
+    return now.length === 1 && now[0] === "Approve (a)";
+  }, null, 1000), `a tip opened by hover replaces the one opened by focus, got ${JSON.stringify(await tipsNow())}`);
+  await cold();
+  await trigger("Instant").blur();
+
+  // closeDelay: the tip lingers, can be reached, and is kept by coming back.
+  const linger = trigger("Linger");
+  await hoverOn(linger);
+  expect(await shows("Stays a moment", 2500), "a tip with a closeDelay shows after its delay");
+  await away();
+  const left = Date.now();
+  await pause(150);
+  expect((await tipsNow()).length === 1, "a tip with a closeDelay stays when the pointer leaves");
+  expect(await gone(2000) && Date.now() - left >= 350, `the tip goes once its closeDelay is up, after ${Date.now() - left}ms`);
+  await hoverOn(linger);
+  expect(await shows("Stays a moment", 2500), "the tip shows again");
+  await away();
+  await pause(150);
+  await hoverOn(linger);
+  await pause(600);
+  expect((await tipsNow()).length === 1, "coming back to the trigger inside the closeDelay keeps the tip");
+  const tipBox = await page.locator("body > [role=tooltip]").first().boundingBox({ timeout: 500 }).catch(() => null);
+  if (tipBox) await page.mouse.move(tipBox.x + tipBox.width / 2, tipBox.y + tipBox.height / 2);
+  await pause(700);
+  expect((await tipsNow()).length === 1, "the pointer can rest on a lingering tip without closing it");
+  expect(await page.evaluate(() => {
+    const el = document.querySelector("body > [role=tooltip]");
+    return el !== null && el.hasAttribute("data-hoverable") && getComputedStyle(el).pointerEvents === "auto";
+  }), "a lingering tip takes the pointer");
+  await away();
+  expect(await gone(2000), "leaving the tip closes it after the closeDelay");
+
+  // Without a closeDelay a tip goes at once and cannot be hovered, as before.
+  await cold();
+  await hoverOn(trigger("Instant"));
+  expect(await shows("No delay", 450), "a tip with no delay shows at once");
+  expect(await page.evaluate(() => {
+    const el = document.querySelector("body > [role=tooltip]");
+    return el !== null && !el.hasAttribute("data-hoverable") && getComputedStyle(el).pointerEvents === "none";
+  }), "a tip with no closeDelay does not take the pointer");
+  await away();
+  expect(await gone(300), "a tip with no closeDelay goes as soon as the pointer leaves");
+
   expect(browserErrors.length === 0, `console errors: ${browserErrors.join(" | ")}`);
   return { errors, passed };
 }

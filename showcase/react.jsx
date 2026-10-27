@@ -602,6 +602,34 @@ function Tooltips() {
   );
 }
 
+function TooltipGroup() {
+  return (
+    <Demo
+      id="react-tooltip-group"
+      title="Tooltips side by side"
+      code={`<Tooltip content="First tip" delay={600}><Button>First</Button></Tooltip>
+<Tooltip content="Second tip" delay={600}><Button>Second</Button></Tooltip>
+<Tooltip content="Stays a moment" delay={600} closeDelay={400}><Button>Linger</Button></Tooltip>
+<Tooltip content="No delay"><Button>Instant</Button></Tooltip>`}
+    >
+      <div className="sd-actions">
+        <Tooltip content="First tip" delay={600}>
+          <Button>First</Button>
+        </Tooltip>
+        <Tooltip content="Second tip" delay={600}>
+          <Button>Second</Button>
+        </Tooltip>
+        <Tooltip content="Stays a moment" delay={600} closeDelay={400}>
+          <Button>Linger</Button>
+        </Tooltip>
+        <Tooltip content="No delay">
+          <Button>Instant</Button>
+        </Tooltip>
+      </div>
+    </Demo>
+  );
+}
+
 function TabsDemo() {
   const [value, setValue] = useState("overview");
   return (
@@ -865,6 +893,7 @@ function App() {
       <Menus />
       <ContextMenus />
       <Tooltips />
+      <TooltipGroup />
       <TabsDemo />
       <Toasts />
       <AboveDialog />

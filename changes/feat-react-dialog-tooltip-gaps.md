@@ -1,8 +1,12 @@
 ### Added
 - React `Dialog` props `closeOnEscape` and `closeOnBackdrop` (default true) switch Escape and a backdrop click on their own. `static` is still the shorthand for both off, and either prop set to `true` turns its own way back on. `CommandPaletteProps` omits both, as it does `static`.
 
+- React `Tooltip` prop `closeDelay` (milliseconds, default 0): the tip stays after the pointer leaves the trigger, takes the pointer so it can be reached and read (`.sd-tooltip[data-hoverable]` has `pointer-events: auto`), and closes `closeDelay` after the pointer leaves the tip. Coming back to the trigger or the tip keeps it. Without it nothing changes.
+- React `Tooltip` warm window: a different trigger the pointer reaches while a tip is open, or within 300 ms of one closing, shows its tip at once and skips its `delay`. With no `delay` nothing changes. The trigger a tip just closed on, and any trigger after Escape, blur or a press elsewhere closed the tip, still waits.
+
 ### Changed
 - React `DialogHeader` renders its title as an `h2` instead of a `span`, so the dialog has a heading for a screen reader, and `aria-labelledby` still points at it. `as` picks another level (`as="h3"`) or the old plain element (`as="span"`). The new `.sd-dialog-title` class resets the heading's type, margin and case, so the title looks exactly as it did.
+- React `Tooltip`: one tip is open at a time on the page. Showing a tip closes the one that was open, where two could be open before (one opened by focus and one by hover, say).
 - React `Dialog` always writes an `id` on its `<dialog>`: the one you pass, or a generated one.
 
 ### Fixed

@@ -1213,6 +1213,16 @@ What they take over from `init()`:
   focuses the trigger, or the input a click focuses, is part of the hover and
   waits out the delay. A touch tap shows it as the finger lifts, whatever the
   delay, and it stays until the trigger blurs or a press lands elsewhere.
+  One tip is open at a time on the page. A different trigger the pointer
+  reaches while a tip is open, or within 300 ms of one closing, shows its tip
+  at once and skips its `delay`, so a row of icon buttons waits once. The
+  trigger a tip just closed on waits its delay again, and so does any trigger
+  after Escape, blur or a press elsewhere closed the tip.
+  `closeDelay` (milliseconds, default 0) keeps the tip up after the pointer
+  leaves. The tip then takes the pointer, so it can be reached and read; it
+  closes `closeDelay` after the pointer leaves the tip, and coming back to the
+  trigger or the tip keeps it. Without `closeDelay` the tip goes as the pointer
+  leaves and takes no pointer.
   `className` is added to the tip beside `sd-tooltip`. `onOpenChange(open)`
   reports each show and hide, including Escape and blur.
 - **AppShell** renders `data-sidebar`, `data-aside`, `data-drawer` and

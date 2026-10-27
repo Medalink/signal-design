@@ -373,9 +373,16 @@ export interface TooltipProps {
    * Milliseconds the pointer must rest on the trigger before the tip shows. Focus shows it at once unless that wait is
    * still running on the trigger, so Tab does and a mouse press that focuses the trigger (or the input a click focuses)
    * does not. A touch tap shows it as the finger lifts, whatever the delay, and it stays until the trigger blurs or a
-   * press lands elsewhere. Default 0.
+   * press lands elsewhere. Default 0. A different trigger the pointer reaches while a tip is open, or within 300 ms of
+   * one closing, shows its tip at once, whatever its delay.
    */
   delay?: number | undefined;
+  /**
+   * Milliseconds the tip stays after the pointer leaves the trigger. The tip also takes the pointer, so it can be
+   * reached and read, and it closes that long after the pointer leaves the tip. Coming back to the trigger keeps it.
+   * Escape, blur and a press elsewhere close it at once. Default 0: the tip goes as the pointer leaves and takes no pointer.
+   */
+  closeDelay?: number | undefined;
   /** Added to the tip's `sd-tooltip` class. */
   className?: string | undefined;
   /** Called when the tip shows or hides, with the new state. */
@@ -383,6 +390,7 @@ export interface TooltipProps {
   /** The one element the tooltip describes. */
   children: ReactElement;
 }
+/** One tip is open at a time on the page: showing a tip closes the one that was open. */
 export function Tooltip(props: TooltipProps): ReactElement;
 
 type TabsBase = Omit<ComponentProps<"div">, "defaultValue" | "onChange">;

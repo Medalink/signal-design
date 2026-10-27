@@ -129,8 +129,12 @@ export function Consumer() {
       <Checkbox description="d" aria-label="Name" />
       <Tooltip content="Tip" side="bottom" delay={300} className="wide" onOpenChange={(shown: boolean) => console.log(shown)}><Button>Tip</Button></Tooltip>
       <Tooltip content="Tip" delay={undefined} className={undefined} onOpenChange={undefined}><Button>Tip</Button></Tooltip>
+      <Tooltip content="Tip" delay={600} closeDelay={400}><Button>Tip</Button></Tooltip>
+      <Tooltip content="Tip" closeDelay={undefined}><Button>Tip</Button></Tooltip>
       {/* @ts-expect-error the delay is a number of milliseconds */}
       <Tooltip content="Tip" delay="300"><Button>Tip</Button></Tooltip>
+      {/* @ts-expect-error the closeDelay is a number of milliseconds */}
+      <Tooltip content="Tip" closeDelay="400"><Button>Tip</Button></Tooltip>
       <Dialog open={open} onOpenChange={setOpen} aria-label="Quick note" unmountOnClose><DialogBody>Body</DialogBody></Dialog>
       <Dialog aria-labelledby="name" unmountOnClose={undefined} />
       <Dialog aria-label="Keep" static closeOnEscape closeOnBackdrop={undefined} />

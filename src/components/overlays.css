@@ -154,6 +154,10 @@
     pointer-events: none;
     animation: sd-fade-in 120ms var(--ease-out);
   }
+  /* A tip that lingers (closeDelay) takes the pointer, so it can be read and selected. */
+  .sd-tooltip[data-hoverable] {
+    pointer-events: auto;
+  }
 
   /* Command panel: a centered dialog for search and quick choices. */
   .sd-command {
