@@ -857,8 +857,11 @@
     border: 1px solid var(--sd-line-strong);
     background: var(--sd-surface);
   }
+  /* An outline on the border line, so a composer drawn without its own edge
+     (in a dock, or with border: 0) shows focus too. */
   .sd-composer:focus-within {
-    border-color: var(--sd-fg-subtle);
+    outline: 1px solid var(--sd-fg);
+    outline-offset: -1px;
   }
   .sd-composer-row {
     display: flex;
