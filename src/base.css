@@ -837,6 +837,10 @@
     font-size: var(--text-xs);
     line-height: 1;
   }
+  :is(summary):hover::before {
+    border-color: var(--sd-fg-faint);
+    color: var(--sd-fg);
+  }
   :is(details[open] > summary)::before {
     content: "\2212";
   }
