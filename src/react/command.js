@@ -53,7 +53,7 @@ export function CommandPalette({
 
   return h(
     Dialog,
-    { ...props, open: isOpen, onOpenChange: changeOpen, className: cx("sd-command", className), "aria-label": label, "aria-labelledby": undefined },
+    { ...props, open: isOpen, onOpenChange: changeOpen, className: cx("sd-command", className), "aria-label": label },
     h("input", {
       type: "text",
       enterKeyHint: "go",

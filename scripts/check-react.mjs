@@ -23,7 +23,7 @@ export function checkReactTypes() {
   writeFileSync(
     fixture,
     `import { useRef, useState } from "react";
-import { AppShell, Button, Dialog, Menu, MenuContent, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
+import { AppShell, Button, Dialog, DialogBody, Menu, MenuContent, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 import { initScrollbars } from "signal-design/js";
 import { Checkbox, Switch, Tooltip } from "signal-design/react";
 
@@ -81,6 +81,10 @@ export function Consumer() {
       <Tooltip content="Tip" delay={undefined} className={undefined} onOpenChange={undefined}><Button>Tip</Button></Tooltip>
       {/* @ts-expect-error the delay is a number of milliseconds */}
       <Tooltip content="Tip" delay="300"><Button>Tip</Button></Tooltip>
+      <Dialog open={open} onOpenChange={setOpen} aria-label="Quick note" unmountOnClose><DialogBody>Body</DialogBody></Dialog>
+      <Dialog aria-labelledby="name" unmountOnClose={undefined} />
+      {/* @ts-expect-error unmountOnClose is a boolean */}
+      <Dialog unmountOnClose="yes" />
       <Dialog open={open} onOpenChange={setOpen} size="sm" ref={(node: HTMLDialogElement | null) => node?.close()}>
         <DialogHeader closeButton={false}>Title</DialogHeader>
       </Dialog>
@@ -237,6 +241,8 @@ export async function checkReactSsr() {
             h(sd.DialogHeader, null, "T"), h(sd.DialogBody, null, "b"),
             h(sd.DialogFooter, null, h(sd.DialogClose, null, h(sd.Button, null, "x")))),
           h(sd.Sheet, { defaultOpen: false }, h(sd.DialogHeader, null, "S")),
+          h(sd.Dialog, { defaultOpen: true, "aria-label": "Quick note", unmountOnClose: true }, h(sd.DialogBody, null, "bare")),
+          h(sd.Dialog, { "aria-label": "Quick note", unmountOnClose: true }, h(sd.DialogBody, null, "unmounted while closed")),
           h(sd.Popover, null, h(sd.PopoverTrigger, null, h(sd.Button, null, "p")), h(sd.PopoverContent, { pad: true }, "pop")),
           h(sd.Menu, null,
             h(sd.MenuTrigger, null, h(sd.Button, null, "m")),
@@ -278,6 +284,8 @@ export async function checkReactSsr() {
     ['aria-selected="true"', "the selected tab or row"],
     ['aria-invalid="true"', "the invalid control"],
     ['role="switch"', "the switch"],
+    ['<dialog aria-label="Quick note" class="sd-dialog"><div class="sd-dialog-body">bare</div></dialog>', "a dialog named by aria-label, with no aria-labelledby"],
+    ['<dialog aria-label="Quick note" class="sd-dialog"></dialog>', "a closed dialog that unmounts on close, empty"],
     ['<label class="sd-check"><input type="checkbox" role="switch" aria-label="Mute"/></label>', "a switch with no text"],
     ["99+", "the capped count"],
     ['data-icon="undo"', "an icon"],

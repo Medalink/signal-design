@@ -682,6 +682,47 @@ function AboveDialog() {
   );
 }
 
+function Counter() {
+  const [count, setCount] = useState(0);
+  return <Button onClick={() => setCount(count + 1)}>Clicked {count}</Button>;
+}
+
+function BareDialog() {
+  const [open, setOpen] = useState(false);
+  return (
+    <Demo
+      id="react-bare-dialog"
+      title="Dialog without a header"
+      code={`<Dialog open={open} onOpenChange={setOpen} size="sm" aria-label="Quick note" unmountOnClose>
+  <DialogBody><Counter /></DialogBody>
+  <DialogFooter><DialogClose><Button>Done</Button></DialogClose></DialogFooter>
+</Dialog>
+<Dialog aria-label="Named by label" trigger={<Button>…</Button>}>
+  <DialogHeader>Visible title</DialogHeader>
+  …
+</Dialog>`}
+    >
+      <div className="sd-actions">
+        <Button onClick={() => setOpen(true)}>Open bare dialog</Button>
+        <Dialog open={open} onOpenChange={setOpen} size="sm" aria-label="Quick note" unmountOnClose>
+          <DialogBody>
+            <Counter />
+          </DialogBody>
+          <DialogFooter>
+            <DialogClose>
+              <Button>Done</Button>
+            </DialogClose>
+          </DialogFooter>
+        </Dialog>
+        <Dialog size="sm" aria-label="Named by label" trigger={<Button>Open labeled dialog</Button>}>
+          <DialogHeader>Visible title</DialogHeader>
+          <DialogBody>The label on the dialog is its name.</DialogBody>
+        </Dialog>
+      </div>
+    </Demo>
+  );
+}
+
 function App() {
   return (
     <ToastProvider>
@@ -698,6 +739,7 @@ function App() {
       <TabsDemo />
       <Toasts />
       <AboveDialog />
+      <BareDialog />
     </ToastProvider>
   );
 }

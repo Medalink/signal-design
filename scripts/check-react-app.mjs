@@ -305,6 +305,46 @@ export async function checkReactApp(page, base) {
   expect(widths.none < 40 && widths.text === 400, `the click target of a label with no text is the control alone, got ${JSON.stringify(widths)}`);
   expect(await page.locator("#react-forms .sd-check-text").count() >= 3, "a control with a label still renders its text");
 
+  /* ---- Dialog without a header, and unmountOnClose ---- */
+  const naming = await page.evaluate(() => {
+    const dialog = document.querySelector("#react-dialog dialog:has(textarea)");
+    return { target: document.getElementById(dialog.getAttribute("aria-labelledby") ?? "")?.tagName, text: document.getElementById(dialog.getAttribute("aria-labelledby") ?? "")?.textContent, kept: dialog.querySelector("textarea") !== null, open: dialog.open };
+  });
+  expect(naming.target === "SPAN" && naming.text?.startsWith("Request changes"), `a dialog with a header is still named by it, got ${JSON.stringify(naming)}`);
+  expect(!naming.open && naming.kept, "a closed dialog keeps its children by default");
+
+  const bareBox = page.locator("#react-bare-dialog dialog").first();
+  const bareName = () => bareBox.evaluate((el) => ({ label: el.getAttribute("aria-label"), by: el.getAttribute("aria-labelledby") }));
+  expect(await bareBox.evaluate((el) => el.children.length) === 0, "a closed dialog that unmounts on close has no children");
+  await page.locator("#react-bare-dialog").getByRole("button", { name: "Open bare dialog" }).click();
+  expect(await until(() => document.querySelector("#react-bare-dialog dialog").open, null), "the dialog without a header opens");
+  expect(await page.getByRole("dialog", { name: "Quick note" }).count() === 1, "aria-label names a dialog that has no header");
+  expect(JSON.stringify(await bareName()) === JSON.stringify({ label: "Quick note", by: null }), `there is no aria-labelledby pointing at nothing, got ${JSON.stringify(await bareName())}`);
+  const counter = bareBox.getByRole("button", { name: /^Clicked/ });
+  await counter.click();
+  await counter.click();
+  expect(await counter.textContent() === "Clicked 2", "the children of an open dialog work");
+  const fade = await page.evaluate(async () => {
+    const dialog = document.querySelector("#react-bare-dialog dialog");
+    dialog.close();
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    return { kept: dialog.children.length > 0, fading: dialog.getAnimations().length > 0 };
+  });
+  expect(fade.kept || !fade.fading, `the children stay while the dialog fades out, got ${JSON.stringify(fade)}`);
+  expect(await until(() => document.querySelector("#react-bare-dialog dialog").children.length === 0, null), "the children unmount once the dialog has faded out");
+  await page.locator("#react-bare-dialog").getByRole("button", { name: "Open bare dialog" }).click();
+  expect(await until(() => document.querySelector("#react-bare-dialog dialog").open, null), "the dialog opens again");
+  expect(await bareBox.getByRole("button", { name: /^Clicked/ }).textContent() === "Clicked 0", "reopening mounts fresh children");
+  expect(await until(() => document.activeElement?.closest("#react-bare-dialog dialog") !== null, null), "focus moves into the reopened dialog");
+  await bareBox.getByRole("button", { name: "Done" }).click();
+  expect(await until(() => !document.querySelector("#react-bare-dialog dialog").open && document.querySelector("#react-bare-dialog dialog").children.length === 0, null), "a close button closes it and the children go");
+
+  await page.locator("#react-bare-dialog").getByRole("button", { name: "Open labeled dialog" }).click();
+  const labeled = page.getByRole("dialog", { name: "Named by label" });
+  expect(await labeled.count() === 1 && await labeled.getAttribute("aria-labelledby") === null, "an aria-label on a dialog with a header wins over the header");
+  await page.keyboard.press("Escape");
+  expect(await until(() => !document.querySelector("#react-bare-dialog dialog:modal"), null), "Escape closes the labeled dialog");
+
   expect(browserErrors.length === 0, `console errors: ${browserErrors.join(" | ")}`);
   return { errors, passed };
 }

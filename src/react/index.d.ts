@@ -211,6 +211,12 @@ export interface DialogProps extends Omit<ComponentProps<"dialog">, "open"> {
   side?: "left" | "right" | "bottom" | undefined;
   /** Escape and the backdrop do not close it. */
   static?: boolean | undefined;
+  /**
+   * Render the children only while the dialog is open, and drop them once it
+   * has faded out, so state inside is reset and nothing is mounted while it is
+   * closed. Default false: the children stay mounted.
+   */
+  unmountOnClose?: boolean | undefined;
 }
 export function Dialog(props: DialogProps): ReactElement;
 export interface SheetProps extends Omit<DialogProps, "side" | "size"> {
@@ -223,7 +229,7 @@ export interface DialogHeaderProps extends ComponentProps<"header"> {
   /** The × button's accessible name, such as "Close inspector". Default "Close". */
   closeLabel?: string | undefined;
 }
-/** The title row; its text names the dialog. */
+/** The title row; its text names the dialog. With no header, name the dialog with `aria-label` or `aria-labelledby` on it. */
 export function DialogHeader(props: DialogHeaderProps): ReactElement;
 export function DialogBody(props: ComponentProps<"div">): ReactElement;
 export function DialogFooter(props: ComponentProps<"footer">): ReactElement;

@@ -1151,6 +1151,12 @@ What they take over from `init()`:
   `side="bottom"` (the full width, as tall as its content up to 85% of the
   screen, `--sheet-max`). `DialogHeader` names its × button `Close`; give
   `closeLabel="Close inspector"` when the screen needs more.
+  A `DialogHeader` also names the dialog. Leave the header out and name it with
+  `aria-label` or `aria-labelledby` on the `Dialog`; an `aria-label` wins
+  over a header, and no `aria-labelledby` is written when there is no header.
+  Children stay mounted while the dialog is closed. `unmountOnClose` mounts
+  them only while it is open and drops them after the fade-out, so state inside
+  starts fresh each time.
 - **Popover and Menu** run on the native popover API. The trigger links to the
   panel with `popovertarget`, so a click on it toggles instead of dismissing
   and reopening. The panel is placed next to the trigger and flips at the
