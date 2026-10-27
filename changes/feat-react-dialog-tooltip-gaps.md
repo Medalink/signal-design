@@ -1,3 +1,6 @@
+### Added
+- React `Dialog` props `closeOnEscape` and `closeOnBackdrop` (default true) switch Escape and a backdrop click on their own. `static` is still the shorthand for both off, and either prop set to `true` turns its own way back on. `CommandPaletteProps` omits both, as it does `static`.
+
 ### Changed
 - React `DialogHeader` renders its title as an `h2` instead of a `span`, so the dialog has a heading for a screen reader, and `aria-labelledby` still points at it. `as` picks another level (`as="h3"`) or the old plain element (`as="span"`). The new `.sd-dialog-title` class resets the heading's type, margin and case, so the title looks exactly as it did.
 - React `Dialog` always writes an `id` on its `<dialog>`: the one you pass, or a generated one.

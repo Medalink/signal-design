@@ -37,7 +37,7 @@ function Opener({ open, id }) {
   return null;
 }
 
-export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size, side, static: isStatic, unmountOnClose, className, children, ref, onClose, onCancel, onClick, ...props }) {
+export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size, side, static: isStatic, closeOnEscape, closeOnBackdrop, unmountOnClose, className, children, ref, onClose, onCancel, onClick, ...props }) {
   const [isOpen, setOpen] = useControllable(open, defaultOpen, onOpenChange);
   const titleId = useId();
   const generated = useId();
@@ -69,6 +69,9 @@ export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size,
     };
   }, [isOpen, unmountOnClose]);
 
+  // `static` turns both off; either prop turns its own back on or off.
+  const escapeCloses = closeOnEscape ?? !isStatic;
+  const backdropCloses = closeOnBackdrop ?? !isStatic;
   const context = useMemo(() => ({ titleId, close: () => setOpen(false), setTitled }), [titleId, setOpen]);
   const mounted = !unmountOnClose || isOpen || present;
   // A header the server can see by type names the dialog in the first render. One nested in a component
@@ -85,7 +88,7 @@ export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size,
         ...props,
         ref: mergeRefs(node, ref),
         className: cx("sd-dialog", size && `sd-dialog-${size}`, side && "sd-sheet", side === "left" && "sd-sheet-left", side === "bottom" && "sd-sheet-bottom", className),
-        "data-sd-static": isStatic ? "" : undefined,
+        "data-sd-static": !escapeCloses && !backdropCloses ? "" : undefined,
         onClose: (event) => {
           onClose?.(event);
           setOpen(false);
@@ -93,13 +96,13 @@ export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size,
         },
         onCancel: (event) => {
           onCancel?.(event);
-          if (isStatic) event.preventDefault();
+          if (!escapeCloses) event.preventDefault();
         },
         onClick: (event) => {
           onClick?.(event);
           // A click that lands on the dialog itself and outside its box is on the backdrop.
           const dialog = event.currentTarget;
-          if (isStatic || event.target !== dialog) return;
+          if (!backdropCloses || event.target !== dialog) return;
           const box = dialog.getBoundingClientRect();
           const inside = event.clientX >= box.left && event.clientX <= box.right && event.clientY >= box.top && event.clientY <= box.bottom;
           if (!inside) setOpen(false);

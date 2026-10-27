@@ -1148,7 +1148,10 @@ What they take over from `init()`:
 - **Dialog and Sheet** run on the native `<dialog>`. `showModal()` follows
   `open`, the browser keeps focus inside and handles Escape, and its `close`
   event reaches `onOpenChange`. Focus returns to the opener and a backdrop
-  click closes it. `static` turns off both Escape and the backdrop. A `Sheet`
+  click closes it. `static` turns off both Escape and the backdrop;
+  `closeOnEscape={false}` or `closeOnBackdrop={false}` turns off just one, and
+  set to `true` with `static` turns that one back on, so `static closeOnEscape`
+  keeps Escape and ignores the backdrop. A `Sheet`
   is pinned to the right, or to the left with `side="left"` or the bottom with
   `side="bottom"` (the full width, as tall as its content up to 85% of the
   screen, `--sheet-max`). `DialogHeader` names its × button `Close`; give

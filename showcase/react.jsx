@@ -765,6 +765,27 @@ function MountedOpen() {
   );
 }
 
+/** One dialog for each way Escape and the backdrop can be switched, each with its own button to close it. */
+function Dismissals() {
+  const rows = [
+    ["Escape only", { closeOnBackdrop: false }],
+    ["Backdrop only", { closeOnEscape: false }],
+    ["Neither", { static: true }],
+    ["Static with Escape", { static: true, closeOnEscape: true }],
+    ["Static with backdrop", { static: true, closeOnBackdrop: true }],
+  ];
+  return rows.map(([name, props]) => (
+    <Dialog key={name} size="sm" aria-label={name} trigger={<Button>{name}</Button>} {...props}>
+      <DialogBody>{name}</DialogBody>
+      <DialogFooter>
+        <DialogClose>
+          <Button>Done</Button>
+        </DialogClose>
+      </DialogFooter>
+    </Dialog>
+  ));
+}
+
 function DialogOptions() {
   return (
     <Demo
@@ -783,7 +804,12 @@ function DialogOptions() {
 <Dialog trigger={…}>
   <DialogFooter><Button tone="danger">Delete</Button><Button data-autofocus>Cancel</Button></DialogFooter>
 </Dialog>
-{shown && <Dialog open onOpenChange={…}>…<input autoFocus />…</Dialog>}`}
+{shown && <Dialog open onOpenChange={…}>…<input autoFocus />…</Dialog>}
+<Dialog closeOnBackdrop={false}>…</Dialog>
+<Dialog closeOnEscape={false}>…</Dialog>
+<Dialog static>…</Dialog>
+<Dialog static closeOnEscape>…</Dialog>
+<Dialog static closeOnBackdrop>…</Dialog>`}
     >
       <div className="sd-actions">
         <Dialog size="sm" trigger={<Button>Heading level</Button>}>
@@ -819,6 +845,7 @@ function DialogOptions() {
           </DialogFooter>
         </Dialog>
         <MountedOpen />
+        <Dismissals />
       </div>
     </Demo>
   );

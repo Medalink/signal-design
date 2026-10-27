@@ -133,8 +133,13 @@ export function Consumer() {
       <Tooltip content="Tip" delay="300"><Button>Tip</Button></Tooltip>
       <Dialog open={open} onOpenChange={setOpen} aria-label="Quick note" unmountOnClose><DialogBody>Body</DialogBody></Dialog>
       <Dialog aria-labelledby="name" unmountOnClose={undefined} />
+      <Dialog aria-label="Keep" static closeOnEscape closeOnBackdrop={undefined} />
       {/* @ts-expect-error unmountOnClose is a boolean */}
       <Dialog unmountOnClose="yes" />
+      {/* @ts-expect-error closeOnEscape is a boolean */}
+      <Dialog closeOnEscape="no" />
+      {/* @ts-expect-error a command palette cannot be made undismissable */}
+      <CommandPalette items={[]} closeOnEscape={false} />
       <Dialog open={open} onOpenChange={setOpen} size="sm" ref={(node: HTMLDialogElement | null) => node?.close()}>
         <DialogHeader closeButton={false}>Title</DialogHeader>
         <DialogHeader as="h3" closeLabel="Close inspector">Inspector</DialogHeader>
@@ -307,6 +312,9 @@ export async function checkReactSsr() {
           h(sd.Dialog, { defaultOpen: true, "aria-label": "Label wins" }, h(sd.DialogHeader, null, "Beaten header")),
           h(sd.Dialog, { unmountOnClose: true }, h(sd.DialogHeader, null, "Unmounted header")),
           h(sd.Dialog, { id: "own", "aria-label": "Own id", unmountOnClose: true }),
+          h(sd.Dialog, { static: true, "aria-label": "Static" }),
+          h(sd.Dialog, { static: true, closeOnEscape: true, "aria-label": "Escape kept" }),
+          h(sd.Dialog, { closeOnEscape: false, closeOnBackdrop: false, "aria-label": "Both off" }),
           h(sd.Dialog, { defaultOpen: true, "aria-label": "Quick note", unmountOnClose: true }, h(sd.DialogBody, null, "bare")),
           h(sd.Dialog, { "aria-label": "Quick note", unmountOnClose: true }, h(sd.DialogBody, null, "unmounted while closed")),
           h(sd.Popover, null, h(sd.PopoverTrigger, null, h(sd.Button, null, "p")), h(sd.PopoverContent, { pad: true }, "pop")),
@@ -376,6 +384,10 @@ export async function checkReactSsr() {
   assert.ok(plain.includes('<dialog aria-label="Quick note" class="sd-dialog"></dialog>'), "a closed dialog that unmounts on close is not empty");
   assert.ok(plain.includes('<dialog aria-label="Label wins" class="sd-dialog"><header'), "an aria-label wins over the header's aria-labelledby on the server");
   assert.ok(plain.includes('<dialog class="sd-dialog"></dialog>'), "a closed dialog that unmounts its header has no aria-labelledby and no children");
+  assert.ok(plain.includes('<dialog aria-label="Static" class="sd-dialog" data-sd-static=""'), "a static dialog lost data-sd-static");
+  assert.ok(plain.includes('<dialog aria-label="Both off" class="sd-dialog" data-sd-static=""'), "a dialog with Escape and the backdrop both off lacks data-sd-static");
+  assert.ok(plain.includes('<dialog aria-label="Escape kept" class="sd-dialog"') && !plain.includes('aria-label="Escape kept" class="sd-dialog" data-sd-static'), "a static dialog that keeps Escape is marked static for both");
+  assert.ok(!/closeonescape|closeonbackdrop/i.test(html), "closeOnEscape or closeOnBackdrop reached the DOM");
   assert.ok(!html.includes("Unmounted header"), "a closed dialog that unmounts on close rendered its header");
   assert.ok(!html.includes('<span class="sd-check-desc"></span>'), "a description that draws nothing (an empty array or fragment) rendered an empty description span");
   assert.ok(!html.includes("sd-tooltip"), "a closed tooltip rendered on the server");

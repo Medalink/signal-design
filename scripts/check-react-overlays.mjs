@@ -105,7 +105,49 @@ export async function checkReactOverlays(page, base) {
   expect(await page.evaluate((sel) => document.querySelector(sel).open, mounted), "a dialog that mounts already open is open");
   await page.keyboard.press("Escape");
   await shut();
-  expect(await page.locator(mounted).count() === 0, "closing a dialog that was mounted open lets its owner unmount it");
+  expect(await until((sel) => document.querySelector(sel) === null, mounted), "closing a dialog that was mounted open lets its owner unmount it");
+
+  /* ---- Escape and the backdrop on their own ---- */
+  // Each way of switching them, and what each one leaves open. A dialog that refuses is pressed twice, because a
+  // browser may close a dialog on a second Escape that nothing has answered.
+  const pause = (ms) => page.waitForTimeout(ms);
+  for (const [name, escape, backdrop] of [
+    ["Escape only", true, false],
+    ["Backdrop only", false, true],
+    ["Neither", false, false],
+    ["Static with Escape", true, false],
+    ["Static with backdrop", false, true],
+  ]) {
+    const sel = `dialog[aria-label="${name}"]`;
+    const isOpen = () => page.evaluate((s) => document.querySelector(s).open, sel);
+    const opened = async () => {
+      await open("#react-dialog-options", name);
+      return until((s) => document.querySelector(s).open, sel);
+    };
+    expect(await opened(), `${name} opens`);
+    await page.keyboard.press("Escape");
+    if (escape) expect(await until((s) => !document.querySelector(s).open, sel), `${name}: Escape closes it`);
+    else {
+      await pause(250);
+      expect(await isOpen(), `${name}: Escape leaves it open`);
+      await page.keyboard.press("Escape");
+      await pause(250);
+      expect(await isOpen(), `${name}: a second Escape leaves it open`);
+    }
+    if (!await isOpen()) await opened();
+    await page.mouse.click(4, 4);
+    if (backdrop) expect(await until((s) => !document.querySelector(s).open, sel), `${name}: a click on the backdrop closes it`);
+    else {
+      await pause(250);
+      const stayed = await isOpen();
+      expect(stayed, `${name}: a click on the backdrop leaves it open`);
+      if (stayed) {
+        await page.locator(sel).getByRole("button", { name: "Done" }).click();
+        expect(await until((s) => !document.querySelector(s).open, sel), `${name}: its own button still closes it`);
+      }
+    }
+    await shut();
+  }
 
   expect(browserErrors.length === 0, `console errors: ${browserErrors.join(" | ")}`);
   return { errors, passed };

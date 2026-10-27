@@ -229,8 +229,12 @@ export interface DialogProps extends Omit<ComponentProps<"dialog">, "open"> {
   size?: "sm" | "md" | "lg" | undefined;
   /** Pins the dialog to an edge as a sheet: the right, the left or the bottom. */
   side?: "left" | "right" | "bottom" | undefined;
-  /** Escape and the backdrop do not close it. */
+  /** Escape and the backdrop do not close it. Shorthand for `closeOnEscape={false}` and `closeOnBackdrop={false}`; either of those, set to true, turns its own way back on. */
   static?: boolean | undefined;
+  /** Whether Escape closes it. Default true, or false with `static`. */
+  closeOnEscape?: boolean | undefined;
+  /** Whether a click on the backdrop closes it. Default true, or false with `static`. */
+  closeOnBackdrop?: boolean | undefined;
   /**
    * Render the children only while the dialog is open, and drop them once it
    * has faded out, so state inside is reset and nothing is mounted while it is
@@ -817,7 +821,7 @@ export interface ComboboxProps extends Omit<ComponentProps<"input">, "value" | "
 /** A searchable select: type to filter, arrows and Enter to choose, Escape to close. Use it inside `Field`. */
 export function Combobox(props: ComboboxProps): ReactElement;
 
-export interface CommandPaletteProps extends Omit<DialogProps, "open" | "defaultOpen" | "onOpenChange" | "trigger" | "size" | "side" | "static" | "children" | "onSelect"> {
+export interface CommandPaletteProps extends Omit<DialogProps, "open" | "defaultOpen" | "onOpenChange" | "trigger" | "size" | "side" | "static" | "closeOnEscape" | "closeOnBackdrop" | "children" | "onSelect"> {
   items: ListItem[];
   open?: boolean | undefined;
   defaultOpen?: boolean | undefined;
