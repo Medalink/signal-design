@@ -1,7 +1,12 @@
 /**
  * Scores every library block and every showcase page, then ranks them.
  *
- *   node scripts/score.mjs [baseUrl] [--only lib-components,chat] [--json file] [--md file] [--skip interact,snippets]
+ *   node scripts/score.mjs [baseUrl] [--only lib-components,chat] [--json file] [--md file] [--skip interact,snippets] [--components file]
+ *
+ * Copyable HTML and usage notes come from ai/components.json, which CI rebuilds
+ * on main. To score a branch's own showcase edits, build a copy and pass it:
+ *   SD_AI_OUT=.ai-local node scripts/build-ai.mjs
+ *   node scripts/score.mjs --components .ai-local/ai/components.json
  *
  * A block is one `.demo-block` on a library page (the same ids as
  * ai/components.json). A page is every page in showcase/pages.js, scored on
@@ -48,6 +53,7 @@ const only = flag("--only")?.split(",");
 const jsonOut = flag("--json");
 const mdOut = flag("--md");
 const skip = new Set(flag("--skip")?.split(",") ?? []);
+const componentsFile = flag("--components");
 const base = (args[0] || "http://localhost:5178/").replace(/\/?$/, "/");
 
 const WEIGHT = { critical: 10, major: 5, minor: 1 };
@@ -154,8 +160,10 @@ function probe({ scope, exclude, width }) {
     if (inlineLink(el)) return;
     // A label wrapping a small checkbox makes the whole label the target.
     const label = el.closest("label") ?? (el.id && document.querySelector(`label[for="${CSS.escape(el.id)}"]`));
-    const r = label && el.matches("input") ? label.getBoundingClientRect() : rects[i];
-    if (r.width < 24 || r.height < 24) {
+    const r = label && el.matches("input[type=checkbox], input[type=radio]") ? label.getBoundingClientRect() : rects[i];
+    // WCAG 2.5.8 exempts a target whose size is essential: a schedule block is
+    // as wide as its time slot.
+    if ((r.width < 24 || r.height < 24) && !el.matches(".sd-schedule-block")) {
       const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
       const crowded = rects.some((o, j) => {
         if (j === i || controls[j].contains(el) || el.contains(controls[j])) return false;
@@ -164,7 +172,12 @@ function probe({ scope, exclude, width }) {
       });
       if (crowded) add("target", "major", el, `${Math.round(r.width)}x${Math.round(r.height)} with a neighbour inside 24px`);
     }
-    if (width <= 400 && r.height < 40 && !el.matches("input[type=checkbox], input[type=radio], [role=switch]")) add("touch", "minor", el, `${Math.round(r.height)}px tall on a phone`);
+    // Touch skips what a finger never aims at by height: text in a line, a
+    // box that takes focus only to scroll, and parts whose size is the data.
+    const inline = getComputedStyle(el).display === "inline";
+    const scrollOnly = el.matches("[tabindex]:not(a, button, input, select, textarea, summary, [role])") && (el.scrollWidth > el.clientWidth || el.scrollHeight > el.clientHeight);
+    const data = el.matches(".sd-schedule-block, .sd-mark, .sd-gutter-marker, .sd-resize-handle, .sd-sidebar-resize");
+    if (width <= 400 && r.height < 40 && !inline && !scrollOnly && !data && !el.matches("input[type=checkbox], input[type=radio], [role=switch]")) add("touch", "minor", el, `${Math.round(r.height)}px tall on a phone`);
   });
 
   // Field boundaries (WCAG 1.4.11).
@@ -194,7 +207,8 @@ function probe({ scope, exclude, width }) {
     const s = getComputedStyle(el);
     const size = parseFloat(s.fontSize);
     if (size > 0 && size < 12) add("text", size < 11 ? "major" : "minor", el, `${size}px text`);
-    if (el.scrollWidth > el.clientWidth + 1 && s.overflowX === "hidden" && s.textOverflow !== "ellipsis" && s.whiteSpace === "nowrap") add("clip", "minor", el, "text cut without an ellipsis");
+    // Visually hidden text (a screen-reader box, a collapsed column) is clipped on purpose.
+    if (s.clipPath === "none" && s.clip === "auto" && el.scrollWidth > el.clientWidth + 1 && s.overflowX === "hidden" && s.textOverflow !== "ellipsis" && s.whiteSpace === "nowrap") add("clip", "minor", el, "text cut without an ellipsis");
   }
   return out;
 }
@@ -206,8 +220,8 @@ async function pixels(page, clip) {
 }
 
 /** Fraction of pixels that differ, and the larger size when the sizes differ. */
-async function diff(helper, a, b, relative = false) {
-  return helper.evaluate(async ([a, b, relative]) => {
+async function diff(helper, a, b, relative = false, limit = 48) {
+  return helper.evaluate(async ([a, b, relative, limit]) => {
     const load = async (s) => createImageBitmap(await (await fetch(`data:image/png;base64,${s}`)).blob());
     const [x, y] = await Promise.all([load(a), load(b)]);
     const w = Math.max(x.width, y.width), h = Math.max(x.height, y.height);
@@ -217,7 +231,7 @@ async function diff(helper, a, b, relative = false) {
       return c.getImageData(0, 0, w, h).data;
     };
     const p = read(x), q = read(y);
-    const far = (u, i, v, j) => Math.abs(u[i] - v[j]) + Math.abs(u[i + 1] - v[j + 1]) + Math.abs(u[i + 2] - v[j + 2]) > 48;
+    const far = (u, i, v, j) => Math.abs(u[i] - v[j]) + Math.abs(u[i + 1] - v[j + 1]) + Math.abs(u[i + 2] - v[j + 2]) > limit;
     // Relative: each image's most common color is its backdrop, so a part on
     // a slightly different panel still matches when everything on it does.
     const mode = (d) => {
@@ -246,7 +260,7 @@ async function diff(helper, a, b, relative = false) {
       changed = Math.min(changed, n);
     }
     return { changed, total: w * h, sameSize: x.width === y.width && x.height === y.height, a: [x.width, x.height], b: [y.width, y.height] };
-  }, [a, b, relative]);
+  }, [a, b, relative, limit]);
 }
 
 const CONTROL_SEL = 'a[href], button, input:not([type=hidden]), select, textarea, summary, [role=button], [role=tab], [role=switch], [role=checkbox], [role=radio], [role=menuitem], [role=option], [role=slider], [role=treeitem], [tabindex]:not([tabindex="-1"])';
@@ -264,7 +278,7 @@ async function interact(page, helper, { scope, exclude }) {
       const cls = [...el.classList].filter((c) => c.startsWith("sd-")).slice(0, 2).join(".");
       const label = (el.getAttribute("aria-label") || el.textContent || el.getAttribute("placeholder") || "").trim().replace(/\s+/g, " ").slice(0, 24);
       const type = el.matches("input") ? `[${el.type}]` : "";
-      return { sig: `${el.closest("[id]")?.id ?? ""}>${el.tagName.toLowerCase()}${type}${cls ? `.${cls}` : ""}${label ? ` "${label}"` : ""}`, text: el.matches("textarea, input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]):not([type=button]):not([type=submit]), [contenteditable]"), hoverable: el.matches("a[href], button, summary, [role=button], [role=tab], [role=menuitem], [role=option], [role=treeitem]") };
+      return { sig: `${el.closest("[id]")?.id ?? ""}>${el.tagName.toLowerCase()}${type}${cls ? `.${cls}` : ""}${label ? ` "${label}"` : ""}`, text: el.matches("textarea, input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]):not([type=button]):not([type=submit]), [contenteditable]"), hoverable: el.matches("a[href], button, summary, [role=button], [role=tab], [role=menuitem], [role=option], [role=treeitem]") && !el.matches("[aria-pressed=true], [aria-current]:not([aria-current=false]), [aria-selected=true], [aria-expanded=true], [aria-checked=true], [aria-disabled=true], details[open] > summary") };
     }, exclude);
     if (!info) continue;
     await h.scrollIntoViewIfNeeded({ timeout: 2000 }).catch(() => {});
@@ -321,11 +335,20 @@ async function interact(page, helper, { scope, exclude }) {
       if (d.changed < focused) findings.push({ check: "focus", severity: info.text ? "major" : "critical", el: info.sig, detail: `${d.changed} px change on focus` });
     }
     await page.evaluate(() => document.activeElement?.blur());
-    if (info.hoverable) {
+    // A control parked off screen until it takes focus (a skip link) has no hover.
+    // One already on (pressed, current, selected, open) is set apart at rest,
+    // and a disabled one does nothing.
+    if (info.hoverable && box.y + box.height > 0 && box.x + box.width > 0) {
       await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
       await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
       const shot = await pixels(page, clip);
-      const d = await diff(helper, rest, shot);
+      // The pointer moves nothing, so a quiet fill change (one grey step) counts.
+      const d = await diff(helper, rest, shot, false, 24);
+      if (process.env.SCORE_DEBUG && d.changed < 4) {
+        const name = info.sig.replace(/[^a-z0-9]+/gi, "-").slice(0, 60);
+        writeFileSync(`.audit/shots/hover-${name}-rest.png`, Buffer.from(rest, "base64"));
+        writeFileSync(`.audit/shots/hover-${name}-hover.png`, Buffer.from(shot, "base64"));
+      }
       if (d.changed < 4) findings.push({ check: "hover", severity: "minor", el: info.sig, detail: "no change under the pointer" });
       await page.mouse.move(0, 0);
     }
@@ -386,7 +409,7 @@ const record = (it, f, where) => {
 const progress = (label) => process.stdout.write(`\r${label} ${Math.round((performance.now() - t0) / 1000)}s          `);
 const BLOCK_PARTS = (id) => `#${id} > :not(.demo-head):not(.demo-code):not(.demo-usage):not(script)`;
 
-const components = JSON.parse(readFileSync(new URL("../ai/components.json", import.meta.url), "utf8")).components;
+const components = JSON.parse(readFileSync(componentsFile ?? new URL("../ai/components.json", import.meta.url), "utf8")).components;
 const meta = new Map(components.map((c) => [c.id, c]));
 const libPages = LIBRARY.filter((p) => !only || only.includes(keyOf(p)));
 const allPages = ALL.filter((p) => !only || only.includes(keyOf(p)));
