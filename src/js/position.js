@@ -4,7 +4,8 @@
  * engine Tauri ships (WebView2, WKWebView, WebKitGTK).
  *
  * The anchor is an element, anything with getBoundingClientRect, a rect
- * ({ left, top, right, bottom }) or a point ({ x, y }). A point has no size to
+ * ({ left, top, right, bottom }, where a missing right or bottom counts as the
+ * left or top) or a point ({ x, y }). A point has no size to
  * clear, so the default offset is 0 and the floating element's corner sits on
  * it (rounded down, so the point is inside the element). Nothing is placed without a floating element and an anchor.
  *
@@ -51,6 +52,6 @@ export function place(floating, anchor, { side = "bottom", align = "start", offs
 
 function measure(anchor) {
   if (typeof anchor.getBoundingClientRect === "function") return anchor.getBoundingClientRect();
-  if ("left" in anchor) return anchor;
+  if ("left" in anchor) return { left: anchor.left, top: anchor.top, right: anchor.right ?? anchor.left, bottom: anchor.bottom ?? anchor.top };
   return { left: anchor.x, top: anchor.y, right: anchor.x, bottom: anchor.y, point: true };
 }

@@ -91,6 +91,28 @@ export async function checkReactApp(page, base) {
   expect(placed.pointOffset.join() === "300px,210px", `an explicit offset applies to a point, got ${placed.pointOffset}`);
   expect(parseInt(placed.above[1]) + 50 <= 900, `near the bottom edge the element flips above the point, got ${placed.above}`);
 
+  const partial = await page.evaluate(async (api) => {
+    const { place } = await import(api);
+    // A fresh element each time: the browser ignores "NaNpx", so a reused one would keep the last case's value.
+    const where = (anchor, options) => {
+      const box = document.createElement("div");
+      box.style.cssText = "position:fixed;width:100px;height:50px";
+      document.body.append(box);
+      place(box, anchor, options);
+      const out = `${box.style.left},${box.style.top}`;
+      box.remove();
+      return out;
+    };
+    const differ = [];
+    for (const options of [{ side: "bottom", align: "center" }, { side: "bottom", align: "end" }, { side: "top", align: "end" }, { side: "right", align: "center" }, { side: "left", align: "center" }, { side: "right", align: "end" }]) {
+      const whole = where({ left: 200, top: 300, right: 200, bottom: 300 }, options);
+      const half = where({ left: 200, top: 300 }, options);
+      if (half !== whole) differ.push(`${JSON.stringify(options)}: ${half} for ${whole}`);
+    }
+    return differ;
+  }, `${base}@fs/${apiPath}`);
+  expect(partial.length === 0, `a rect with only left and top places like a rect of no size there, differing: ${partial.join("; ")}`);
+
   const card = page.locator("#react-context-menu article");
   const menuBox = () => page.evaluate(() => {
     const pop = document.querySelector('#react-context-menu ~ * [role=menu], [role=menu][aria-label="Message actions"]')?.parentElement;
