@@ -144,6 +144,7 @@
     color: var(--sd-fg-faint);
     font-size: var(--text-2xs);
     letter-spacing: var(--tracking-caps);
+    font-variant-numeric: tabular-nums;
   }
   .sd-steps > li[data-state="done"] {
     color: var(--sd-fg-muted);

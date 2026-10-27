@@ -83,6 +83,7 @@
     letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
     color: var(--sd-fg-subtle);
+    font-variant-numeric: tabular-nums;
   }
   .sd-meta > * + *::before {
     content: "\00B7";
