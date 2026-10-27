@@ -250,6 +250,7 @@ export async function checkReactSsr() {
   const html = renderToString(tree);
   for (const [needle, what] of [
     ['class="sd-shell"', "the shell"],
+    ['class="sd-toaster" popover="manual" role="status" aria-live="polite"', "the toaster as a manual popover and polite live region"],
     ['role="tree"', "the tree"],
     ['role="combobox"', "the combobox"],
     ['role="radiogroup"', "the radio group"],

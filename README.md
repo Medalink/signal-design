@@ -1168,7 +1168,14 @@ What they take over from `init()`:
   that click put it.
 - **Tabs** are roving: arrows, Home and End move focus and select.
 - **Toasts** are rendered by React inside one live region. A toast fades with
-  `data-leaving` for 160ms before it is removed, and hovering one holds it.
+  `data-leaving` for 160ms before it is removed, and hovering one holds it. The
+  region is a manual popover in the top layer, so a toast shows above a modal
+  `Dialog`; calling `toast()` while one is open lifts the region above it. A
+  dialog that opens over a toast already on screen covers it until the next
+  toast. The page behind a modal is inert, so a toast's action and its hover
+  hold do nothing until the dialog closes.
+- **Tooltip** is a manual popover too, so it shows above a modal dialog. Its
+  look and the `role="tooltip"` and `aria-describedby` link are unchanged.
 - **AppShell** renders `data-sidebar`, `data-aside`, `data-drawer` and
   `data-peek`, makes the page `inert` behind the drawer, closes the peek, the
   drawer and a floating right panel on Escape, and moves focus into the drawer.

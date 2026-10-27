@@ -124,10 +124,15 @@
     padding: 14px 16px;
   }
 
-  /* Tooltip: plain text, positioned by the JS. */
+  /* Tooltip: plain text, positioned by the JS. React's Tooltip makes it a
+     manual popover so it paints above a modal dialog; inset, margin and
+     overflow undo the browser's popover box. */
   .sd-tooltip {
     position: fixed;
+    inset: auto;
     z-index: 70;
+    margin: 0;
+    overflow: visible;
     max-width: 240px;
     padding: 4px 8px;
     border: 1px solid var(--sd-line-strong);

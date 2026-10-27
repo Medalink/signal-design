@@ -624,6 +624,44 @@ toast("Archived", { action: { label: "Undo", onClick: undo }, timeout: 0 });`}
   );
 }
 
+function AboveDialog() {
+  const toast = useToast();
+  const [open, setOpen] = useState(false);
+  return (
+    <Demo
+      id="react-above-dialog"
+      title="Toast and tooltip above a dialog"
+      code={`<Dialog open={open} onOpenChange={setOpen}>
+  <DialogHeader>Archive ACME-421?</DialogHeader>
+  <DialogBody>
+    <Tooltip content="Moves it out of the inbox"><Button>Archive</Button></Tooltip>
+  </DialogBody>
+  <DialogFooter><Button onClick={() => toast("Archived", { action: { label: "Undo" }, timeout: 0 })}>Archive</Button></DialogFooter>
+</Dialog>`}
+    >
+      <div className="sd-actions">
+        <Button onClick={() => setOpen(true)}>Open dialog</Button>
+        <Dialog open={open} onOpenChange={setOpen} size="sm">
+          <DialogHeader>Archive ACME-421?</DialogHeader>
+          <DialogBody>
+            <Tooltip content="Moves it out of the inbox">
+              <Button>What does archive do?</Button>
+            </Tooltip>
+          </DialogBody>
+          <DialogFooter>
+            <DialogClose>
+              <Button variant="ghost">Keep</Button>
+            </DialogClose>
+            <Button tone="danger" onClick={() => toast("Archived ACME-421", { tone: "success", action: { label: "Undo" }, timeout: 0 })}>
+              Archive
+            </Button>
+          </DialogFooter>
+        </Dialog>
+      </div>
+    </Demo>
+  );
+}
+
 function App() {
   return (
     <ToastProvider>
@@ -639,6 +677,7 @@ function App() {
       <Tooltips />
       <TabsDemo />
       <Toasts />
+      <AboveDialog />
     </ToastProvider>
   );
 }

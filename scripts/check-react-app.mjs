@@ -153,6 +153,105 @@ export async function checkReactApp(page, base) {
   await page.keyboard.press("Escape");
   await menuOpenAt(false);
 
+  /* ---- Toast and tooltip above a modal dialog ---- */
+  const over = page.locator("#react-above-dialog");
+  const dialog = over.locator("dialog");
+  const toaster = ".sd-toaster";
+  const clipOf = (box, dx = 0, dy = 0, size) => ({ x: Math.floor(box.x) + dx, y: Math.floor(box.y) + dy, width: size ?? Math.ceil(box.width), height: size ?? Math.ceil(box.height) });
+  // A toast sits under the dialog's translucent backdrop when it is not on top, so ask what colour the pixel is.
+  const toastPixel = async () => {
+    const box = await page.locator(`${toaster} .sd-toast`).last().boundingBox();
+    const png = await page.screenshot({ clip: clipOf(box, 6, 6, 1), animations: "disabled" });
+    return page.evaluate(async (b64) => {
+      const img = new Image();
+      img.src = `data:image/png;base64,${b64}`;
+      await img.decode();
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = 1;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      return Array.from(ctx.getImageData(0, 0, 1, 1).data).slice(0, 3);
+    }, png.toString("base64"));
+  };
+  const toastColor = () => page.locator(`${toaster} .sd-toast`).last().evaluate((el) => getComputedStyle(el).backgroundColor.match(/\d+/g).slice(0, 3).map(Number));
+  // The dialog panel is opaque, so a tooltip it covers changes no pixel when hidden.
+  const tipPaints = async () => {
+    const tip = page.locator("body > [role=tooltip]");
+    const clip = clipOf(await tip.boundingBox());
+    const shown = await page.screenshot({ clip, animations: "disabled" });
+    await tip.evaluate((el) => (el.style.visibility = "hidden"));
+    const hidden = await page.screenshot({ clip, animations: "disabled" });
+    await tip.evaluate((el) => (el.style.visibility = ""));
+    return !shown.equals(hidden);
+  };
+  const toastCount = () => page.locator(`${toaster} .sd-toast`).count();
+  const archive = dialog.getByRole("button", { name: "Archive", exact: true });
+
+  await over.getByRole("button", { name: "Open dialog" }).click();
+  expect(await until(() => document.querySelector("#react-above-dialog dialog:modal") !== null, null), "the dialog opens as a modal");
+  await archive.click();
+  expect(await until((sel) => document.querySelector(sel + " .sd-toast"), toaster), "a toast shows while the dialog is open");
+  expect(await until((sel) => document.querySelector(sel + " .sd-toast").getAnimations().length === 0, toaster), "the toast finishes its rise-in");
+  const first = await page.locator(`${toaster} .sd-toast`).first().elementHandle();
+  await archive.click();
+  expect(await until((sel) => document.querySelectorAll(sel + " .sd-toast").length === 2, toaster), "a second toast joins the first");
+  expect(await first.evaluate((el) => el.getAnimations().length === 0), "lifting the toaster above the dialog does not replay a toast already on screen");
+  const live = await page.locator(toaster).evaluate((el) => {
+    const style = getComputedStyle(el);
+    return {
+      open: el.matches(":popover-open"),
+      popover: el.getAttribute("popover"),
+      role: el.getAttribute("role"),
+      live: el.getAttribute("aria-live"),
+      padding: style.padding,
+      margin: style.margin,
+      border: style.borderTopWidth,
+      background: style.backgroundColor,
+      overflow: style.overflow,
+    };
+  });
+  expect(live.open && live.popover === "manual", `the toaster is a manual popover and open, got ${JSON.stringify(live)}`);
+  expect(live.role === "status" && live.live === "polite", `the toaster is still a polite live region, got ${live.role} and ${live.live}`);
+  expect(live.padding === "0px" && live.margin === "0px" && live.border === "0px" && live.background === "rgba(0, 0, 0, 0)" && live.overflow === "visible", `the toaster has no browser popover box, got ${JSON.stringify(live)}`);
+  const want = await toastColor();
+  const got = await toastPixel();
+  expect(got.every((c, i) => Math.abs(c - want[i]) <= 2), `a toast paints above the open dialog's backdrop, wanted ${want} at its corner, got ${got}`);
+
+  const edge = async () => page.locator(`${toaster} .sd-toast`).last().evaluate((el) => {
+    const r = el.getBoundingClientRect();
+    return { left: r.left, right: innerWidth - r.right, bottom: innerHeight - r.bottom };
+  });
+  const wide = await edge();
+  expect(Math.abs(wide.right - 24) <= 1 && Math.abs(wide.bottom - 24) <= 1, `on a wide screen the toast sits 24px from the corner, got ${JSON.stringify(wide)}`);
+  await page.setViewportSize({ width: 375, height: 700 });
+  await until(() => innerWidth === 375, null);
+  const narrow = await edge();
+  expect(Math.abs(narrow.left - 16) <= 1 && Math.abs(narrow.right - 16) <= 1 && Math.abs(narrow.bottom - 16) <= 1, `on a phone the toast spans the width 16px from the edges, got ${JSON.stringify(narrow)}`);
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await until(() => innerWidth === 1280, null);
+
+  const hint = dialog.getByRole("button", { name: "What does archive do?" });
+  await hint.hover();
+  expect(await until(() => document.querySelector("body > [role=tooltip]")?.matches(":popover-open"), null), "the tooltip opens as a popover while the dialog is open");
+  expect(await tipPaints(), "a tooltip paints above the open dialog");
+  const hinted = await hint.boundingBox();
+  const tip = await page.locator("body > [role=tooltip]").evaluate((el, a) => {
+    const t = el.getBoundingClientRect();
+    const s = getComputedStyle(el);
+    return { gap: a.y - t.bottom, off: t.left + t.width / 2 - (a.x + a.width / 2), margin: s.margin, overflow: s.overflow, padding: s.padding, border: s.borderTopWidth, position: s.position };
+  }, hinted);
+  expect(tip.gap >= 0 && tip.gap <= 10 && Math.abs(tip.off) <= 1, `the tooltip sits above its trigger, centered, got ${JSON.stringify(tip)}`);
+  expect(tip.margin === "0px" && tip.overflow === "visible" && tip.padding === "4px 8px" && tip.border === "1px" && tip.position === "fixed", `the tooltip keeps its own box, got ${JSON.stringify(tip)}`);
+  await page.keyboard.press("Escape");
+  expect(await until(() => !document.querySelector("body > [role=tooltip]"), null), "Escape hides the tooltip");
+
+  await page.keyboard.press("Escape");
+  expect(await until(() => document.querySelector("#react-above-dialog dialog:modal") === null, null), "Escape closes the dialog");
+  expect(await toastCount() === 2, "the toasts outlive the dialog");
+  for (let left = await toastCount(); left > 0; left--) await page.locator(toaster).getByRole("button", { name: "Undo" }).first().click();
+  expect(await until((sel) => !document.querySelector(sel + " .sd-toast"), toaster), "an action on a toast works once the dialog is closed");
+  expect(await page.locator(toaster).evaluate((el) => el.matches(":popover-open")), "the toaster stays open with no toast in it");
+
   expect(browserErrors.length === 0, `console errors: ${browserErrors.join(" | ")}`);
   return { errors, passed };
 }
