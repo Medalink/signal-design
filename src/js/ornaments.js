@@ -241,6 +241,10 @@ export function paintOrnaments(el) {
     const w = Math.max(2, Math.round(el.offsetWidth));
     const h = Math.max(2, Math.round(el.offsetHeight));
     const dim = style.colorScheme === "light" ? 0.16 : 0.14;
+    // Read the border the element has without its transition (a reduced-motion
+    // transition would report its starting color), then hide it the same way.
+    const transition = el.style.getPropertyValue("transition");
+    el.style.setProperty("transition", "none", "important");
     el.style.borderColor = "";
     const own = getComputedStyle(el);
     const baseSides = ["Top", "Right", "Bottom", "Left"].filter((side) => parseFloat(own[`border${side}Width`]) > 0).map((side) => side[0].toLowerCase()).join("");
@@ -248,6 +252,8 @@ export function paintOrnaments(el) {
     positions.push("left top");
     sizes.push(`${w}px ${h}px`);
     el.style.borderColor = "transparent";
+    void own.borderTopColor;
+    el.style.setProperty("transition", transition);
   }
 
   const base = seedOf(el.dataset.sdOrnamentsSeed) ?? 11;
