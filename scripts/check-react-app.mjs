@@ -28,28 +28,35 @@ export async function checkReactApp(page, base) {
     const { initScrollbars } = await import(api);
     const root = document.documentElement;
     const before = root.hasAttribute("data-sd-scrollbars");
+    // The DOM drops a listener it already has, and tells listeners apart by callback and capture flag. So the calls may each add one,
+    // as long as they all add the same one: count the distinct ones, since a second distinct one would mark every scroll twice.
+    const distinct = [];
+    const add = document.addEventListener;
+    document.addEventListener = function (type, listener, options) {
+      const capture = typeof options === "boolean" ? options : Boolean(options?.capture);
+      if (type === "scroll" && !distinct.some((known) => known.listener === listener && known.capture === capture)) distinct.push({ listener, capture });
+      return add.call(this, type, listener, options);
+    };
     initScrollbars();
     initScrollbars();
     const auto = root.dataset.sdScrollbars;
     initScrollbars("always");
     const mode = root.dataset.sdScrollbars;
     initScrollbars("auto");
-    return { before, auto, mode };
+    delete document.addEventListener;
+    return { before, auto, mode, listeners: distinct.length };
   }, `${base}@fs/${apiPath}`);
   expect(!bars.before && bars.auto === "auto" && bars.mode === "always", `initScrollbars sets the mode on <html>, got ${JSON.stringify(bars)}`);
+  expect(bars.listeners === 1, `initScrollbars listens for scrolling with one listener however often it is called, got ${bars.listeners} distinct ones`);
   await page.evaluate(() => {
     const box = document.createElement("div");
     box.id = "scroll-probe";
     box.style.cssText = "position:fixed;top:0;left:0;width:120px;height:80px;overflow:auto";
     box.innerHTML = '<div style="height:600px"></div>';
     document.body.append(box);
-    // Called twice above, the same listener is still one listener: the scroll marks the scroller once.
-    window.__marks = [];
-    new MutationObserver((records) => records.forEach((r) => window.__marks.push(r.target.hasAttribute("data-sd-scrolling")))).observe(box, { attributes: true, attributeFilter: ["data-sd-scrolling"] });
     box.scrollTop = 40;
   });
   expect(await until(() => document.getElementById("scroll-probe").hasAttribute("data-sd-scrolling"), null), "a scroller carries data-sd-scrolling while it scrolls, with no init()");
-  expect(await page.evaluate(() => window.__marks.join()) === "true", `one scroll marks the scroller once, got ${await page.evaluate(() => window.__marks.join())}`);
   expect(await until(() => document.documentElement.hasAttribute("data-sd-scrolling-page"), null), "<html> carries data-sd-scrolling-page while anything scrolls");
   expect(await until(() => !document.getElementById("scroll-probe").hasAttribute("data-sd-scrolling"), null, 5000), "data-sd-scrolling clears once the scroller has been still for 2s");
   await page.evaluate(() => document.getElementById("scroll-probe").remove());
