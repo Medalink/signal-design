@@ -181,19 +181,37 @@ function probe({ scope, exclude, width }) {
   });
 
   // Field boundaries (WCAG 1.4.11).
+  // An edged box (data-sd-edges) paints its own border under a glow and sets
+  // the real one transparent, so read the border it had.
   const edgeOf = (el) => {
+    const inline = el.matches("[data-sd-edges]") ? el.style.borderColor : null;
+    const transition = el.style.getPropertyValue("transition");
+    if (inline !== null) {
+      el.style.setProperty("transition", "none", "important");
+      el.style.borderColor = "";
+    }
     const s = getComputedStyle(el);
     const behind = backdrop(el.parentElement);
     const fill = over(rgba(s.backgroundColor), behind);
     const edges = ["Top", "Right", "Bottom", "Left"].filter((side) => parseFloat(s[`border${side}Width`]) > 0).map((side) => over(rgba(s[`border${side}Color`]), behind));
+    if (inline !== null) {
+      el.style.borderColor = inline;
+      void s.borderTopColor;
+      el.style.setProperty("transition", transition);
+    }
     return { drawn: edges.length > 0 || fill.some((v, i) => Math.abs(v - behind[i]) > 2), ratio: Math.max(contrast(fill, behind), ...edges.map((e) => contrast(e, behind))) };
   };
   for (const el of controls) {
     if (!el.matches('input:not([type=range], [type=color], [type=file], [type=submit], [type=reset], [type=button], [type=image]), select, textarea, [role=checkbox], [role=switch]')) continue;
     // A field with no edge of its own (the textarea in a composer, the input
-    // in a tag list) is bounded by the nearest wrapper that draws one.
+    // in a tag list) is bounded by the nearest wrapper, within three levels,
+    // whose edge can be seen.
     let box = edgeOf(el);
-    for (let n = el.parentElement, i = 0; !box.drawn && n && i < 3; n = n.parentElement, i++) box = edgeOf(n);
+    for (let n = el.parentElement, i = 0; !box.drawn && n && i < 3; n = n.parentElement, i++) {
+      const up = edgeOf(n);
+      if (up.ratio >= 3) { box = up; break; }
+      if (up.ratio > box.ratio) box = { drawn: false, ratio: up.ratio };
+    }
     if (box.ratio < 3) add("boundary", "major", el, `edge ${box.ratio.toFixed(2)}:1`);
   }
 
