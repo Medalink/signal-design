@@ -696,8 +696,12 @@
   }
 
   /* File */
+  /* Fills its column and gives way in a narrow one: the file name is clipped
+     instead of pushing the column wider. */
   :is(input[type="file"]) {
-    max-width: 100%;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
     color: var(--sd-fg-subtle);
     font-size: var(--text-sm);
     cursor: pointer;
