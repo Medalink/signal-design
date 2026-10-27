@@ -3,7 +3,7 @@
  * --sd-touch tall, so a finger lands on it; a mouse keeps the desktop density.
  * min-height does nothing to an inline link, so links in a sentence keep the
  * line. Left out: checkboxes, radios and switches (their label is the
- * target), ranges, and parts whose size is the data (a schedule block, a mark,
+ * target), and parts whose size is the data (a schedule block, a mark,
  * a gutter marker) or a hairline (a resize handle).
  */
 :root {
@@ -18,7 +18,7 @@
       summary,
       select,
       textarea,
-      input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="hidden"]),
+      input:not([type="checkbox"], [type="radio"], [type="hidden"]),
       [role="button"],
       [role="tab"],
       [role="menuitem"],
@@ -26,6 +26,13 @@
       [role="treeitem"]
     ):not(:where(.sd-mark, .sd-gutter-marker, .sd-schedule-block, .sd-sidebar-resize, .sd-resize-handle, .sd-skip, [role="switch"])) {
       min-height: var(--sd-touch);
+    }
+    input[type="color"] {
+      min-width: var(--sd-touch);
+    }
+    /* A table cell ignores min-height; its height is already a minimum. */
+    .sd-table th[data-sort] {
+      height: var(--sd-touch);
     }
   }
 }
