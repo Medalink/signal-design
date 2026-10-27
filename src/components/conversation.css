@@ -1034,7 +1034,7 @@
     border-color: var(--sd-fg-faint);
   }
   .sd-message-edit textarea:focus {
-    border-color: var(--sd-fg-subtle);
+    border-color: var(--sd-fg);
     outline: none;
   }
   .sd-message-edit-hint {

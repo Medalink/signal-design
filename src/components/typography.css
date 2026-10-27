@@ -10,6 +10,10 @@
     text-transform: uppercase;
     color: var(--sd-fg);
     text-decoration: none;
+    transition: color 120ms var(--ease-out);
+  }
+  a.sd-wordmark:hover {
+    color: var(--sd-fg-muted);
   }
 
   /* Two-tone display line: "32 open. <em>8 done.</em>" */

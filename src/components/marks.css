@@ -203,4 +203,8 @@
     border-color: var(--sd-line);
     color: var(--sd-fg-faint);
   }
+  .sd-gutter-marker[data-resolved]:hover {
+    border-color: var(--sd-fg-faint);
+    color: var(--sd-fg-muted);
+  }
 }
