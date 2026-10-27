@@ -322,6 +322,22 @@ export async function checkReactApp(page, base) {
   expect(await until((sel) => !document.querySelector(sel + " .sd-toast"), toaster), "an action on a toast works once the dialog is closed");
   expect(await page.locator(toaster).evaluate((el) => el.matches(":popover-open")), "the toaster stays open with no toast in it");
 
+  // Only a modal dialog covers the toaster. Lifting it for any open dialog hides and shows it, and moves focus.
+  await page.evaluate(() => {
+    const plain = document.createElement("dialog");
+    plain.id = "plain-dialog";
+    plain.textContent = "Not modal";
+    document.body.append(plain);
+    plain.show();
+    window.__toggles = [];
+    document.querySelector(".sd-toaster").addEventListener("beforetoggle", (event) => window.__toggles.push(event.newState));
+  });
+  await page.locator("#react-toast").getByRole("button", { name: "Quick toast" }).click();
+  expect(await until((sel) => document.querySelector(sel + " .sd-toast"), toaster), "a toast shows while a dialog that is not modal is open");
+  expect(await page.evaluate(() => window.__toggles.length) === 0, `a toast beside a dialog that is not modal leaves the toaster alone, it toggled ${await page.evaluate(() => window.__toggles.join())}`);
+  expect(await until((sel) => !document.querySelector(sel + " .sd-toast"), toaster, 5000), "the quick toast goes");
+  await page.evaluate(() => document.getElementById("plain-dialog").remove());
+
   /* ---- Tooltip delay, className and onOpenChange ---- */
   const delayed = page.locator("#react-tooltip").getByRole("button", { name: "Delayed tip" });
   const delayedTip = page.locator("body > [role=tooltip]");

@@ -81,7 +81,7 @@ export function ToastProvider({ timeout: defaultTimeout = 2400, children }) {
   const toast = useCallback(
     (message, { tone, timeout = defaultTimeout, action } = {}) => {
       const id = ++next.current;
-      if (document.querySelector("dialog[open]")) liftManual(region.current);
+      if (document.querySelector("dialog:modal")) liftManual(region.current);
       setToasts((all) => [...all, { id, message, tone, timeout, action }]);
       return () => dismiss(id);
     },
