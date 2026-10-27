@@ -708,6 +708,11 @@
   .sd-feed-jump[hidden] {
     display: none;
   }
+  /* The bar overlaps the bottom of the feed, so the feed keeps focus and
+     scrolled-to items clear of it. */
+  :has(+ .sd-feed-jump:not([hidden])) {
+    scroll-padding-block-end: 40px;
+  }
   .sd-feed-jump .sd-btn {
     gap: 6px;
   }
