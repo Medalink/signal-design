@@ -100,5 +100,6 @@
 
   .sd-muted { color: var(--sd-fg-muted); }
   .sd-subtle { color: var(--sd-fg-subtle); }
+  .sd-faint { color: var(--sd-fg-faint); }
   .sd-num { font-variant-numeric: tabular-nums; }
 }
