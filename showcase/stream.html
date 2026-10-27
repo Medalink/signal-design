@@ -22,8 +22,8 @@
     .st-intro h1 { font-size: clamp(2rem, 5vw, 3.125rem); line-height: 1.1; letter-spacing: -0.03em; font-weight: 400; text-wrap: balance; }
     .st-block { display: grid; gap: 16px; }
     .st-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; }
-    .st-head > div { display: grid; gap: 4px; }
-    .st-head h2 { font-size: var(--text-xl); font-weight: 400; }
+    .st-head > div:first-child { display: grid; gap: 4px; }
+    .st-head h2 { margin: 0; font-size: var(--text-xl); font-weight: 400; }
     .st-scene { outline: 1px solid var(--sd-line); }
     .st-fire { display: flex; flex-wrap: wrap; gap: 8px; }
     .st-game { inset: 0; display: grid; place-items: center; background: var(--sd-raised); color: var(--sd-fg-faint); font: calc(var(--sd-u) * 28) / 1 var(--sd-font-mono); letter-spacing: 0.3em; }
