@@ -195,7 +195,7 @@
   },
   {
    "name": "data-sd-scrollbars",
-   "description": "Set by init() on <html>: auto hides scrollbars when idle, always keeps them."
+   "description": "Set by init() or initScrollbars() on <html>: auto hides scrollbars when idle, always keeps them."
   },
   {
    "name": "data-sd-scrolling",
