@@ -76,17 +76,29 @@ export function Input(props: ComponentProps<"input">): ReactElement;
 export function Textarea(props: ComponentProps<"textarea">): ReactElement;
 export function Select(props: ComponentProps<"select">): ReactElement;
 
-type CheckInput = Omit<ComponentProps<"input">, "type" | "className" | "children"> & {
+export interface CheckboxProps extends Omit<ComponentProps<"input">, "type" | "className" | "children"> {
+  label: ReactNode;
+  description?: ReactNode | undefined;
   /** On the label; `ref` and the other props reach the input. */
   className?: string | undefined;
-};
-/** The text beside the box, or an accessible name and no text at all. */
-type CheckText =
-  | { label: ReactNode; description?: ReactNode | undefined }
-  | ({ label?: undefined; description?: undefined } & ({ "aria-label": string } | { "aria-labelledby": string }));
-export type CheckboxProps = CheckInput & CheckText;
-export type SwitchProps = Omit<CheckInput, "role"> & CheckText;
+}
+/**
+ * A checkbox with no text beside it, named by `aria-label` or `aria-labelledby`, such as one in a table cell or a toolbar.
+ * It is a union of the two names, so `Omit` of it loses the requirement; wrap it with an intersection and a rest
+ * destructure (`props: BareCheckboxProps & { dense?: boolean }`), which keeps it.
+ */
+export type BareCheckboxProps = Omit<CheckboxProps, "label" | "description"> & { label?: undefined; description?: undefined } & ({ "aria-label": string } | { "aria-labelledby": string });
+/** `Omit` that keeps each member of a union, so the bare type still requires its name. */
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+/** The props of a `Switch` with a label: those of a `Checkbox` without `role`. One object type, so `Omit` of it spreads back into `Switch`. */
+export type SwitchProps = Omit<CheckboxProps, "role">;
+/** A `Switch` with no text beside it, named by `aria-label` or `aria-labelledby`. */
+export type BareSwitchProps = DistributiveOmit<BareCheckboxProps, "role">;
+/** With a `label` (`CheckboxProps`), or with only `aria-label` or `aria-labelledby` (`BareCheckboxProps`). */
+export function Checkbox(props: BareCheckboxProps): ReactElement;
 export function Checkbox(props: CheckboxProps): ReactElement;
+/** With a `label` (`SwitchProps`), or with only `aria-label` or `aria-labelledby` (`BareSwitchProps`). */
+export function Switch(props: BareSwitchProps): ReactElement;
 export function Switch(props: SwitchProps): ReactElement;
 
 /* ---- Static parts ------------------------------------------------------ */
@@ -252,8 +264,8 @@ export interface PopoverContentProps extends ComponentProps<"div"> {
   align?: "start" | "center" | "end" | undefined;
   /**
    * Opens the panel beside this instead of the trigger, which it wins over: a `{ x, y }` point (the
-   * panel's corner sits on it, as for a context menu at the pointer), a rect, or an element or object
-   * with `getBoundingClientRect`. A panel with no trigger and no anchor is left where the browser puts a popover.
+   * panel's corner sits on it, as for a context menu at the pointer, and where it flips or shifts at an edge it
+   * still contains the point), a rect, or an element or object with `getBoundingClientRect`. A panel with no trigger and no anchor is left where the browser puts a popover.
    */
   anchor?: PlaceAnchor | undefined;
   /** Adds padding for prose. */
@@ -343,7 +355,12 @@ export function Segment(props: SegmentProps): ReactElement;
 export interface TooltipProps {
   content: ReactNode;
   side?: "top" | "bottom" | "left" | "right" | undefined;
-  /** Milliseconds the pointer must rest on the trigger before the tip shows. Keyboard focus shows it at once. Default 0. */
+  /**
+   * Milliseconds the pointer must rest on the trigger before the tip shows. Focus shows it at once unless that wait is
+   * still running on the trigger, so Tab does and a mouse press that focuses the trigger (or the input a click focuses)
+   * does not. A touch tap shows it as the finger lifts, whatever the delay, and it stays until the trigger blurs or a
+   * press lands elsewhere. Default 0.
+   */
   delay?: number | undefined;
   /** Added to the tip's `sd-tooltip` class. */
   className?: string | undefined;
@@ -379,6 +396,7 @@ export interface ToastOptions {
   tone?: Tone | undefined;
   /** Milliseconds on screen, 0 to stay until dismissed. Default is the provider's `timeout`. */
   timeout?: number | undefined;
+  /** A button on the toast. Over a modal dialog it cannot be clicked or reached by keyboard, because the page behind a modal is inert. */
   action?: { label: string; onClick?: (() => void) | undefined } | undefined;
 }
 /** Shows a toast and returns a function that dismisses it. */

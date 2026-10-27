@@ -128,8 +128,10 @@
   .sd-check > input[role="switch"] {
     margin-top: 0;
   }
-  /* With no text, only the control is the target. */
-  .sd-check:not(:has(.sd-check-text)) {
+  /* A control with no text beside it (a table cell, a toolbar): only the
+     control is the target. React's Checkbox and Switch add it when they have
+     no label or description; other markup keeps its width. */
+  .sd-check-bare {
     width: fit-content;
   }
   .sd-check:has(:disabled) {

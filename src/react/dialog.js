@@ -6,12 +6,17 @@
  * the dialog; without one, `aria-label` or `aria-labelledby` does.
  * `unmountOnClose` drops the children once the dialog has faded out.
  */
-import { Fragment, cloneElement, createContext, createElement as h, useContext, useId, useMemo, useReducer, useRef, useState } from "react";
+import { Children, Fragment, cloneElement, createContext, createElement as h, isValidElement, useContext, useId, useMemo, useReducer, useRef, useState } from "react";
 import { closeDialog, openDialog } from "../js/dialog.js";
 import { IconButton } from "./button.js";
 import { chain, cx, mergeRefs, useControllable, useIsomorphicLayoutEffect } from "./util.js";
 
 const DialogContext = createContext(null);
+
+/** Whether a `DialogHeader` is among these children, directly or in fragments, so the name is known on the server. */
+function hasHeader(children) {
+  return Children.toArray(children).some((child) => isValidElement(child) && (child.type === DialogHeader || (child.type === Fragment && hasHeader(child.props.children))));
+}
 
 export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size, side, static: isStatic, unmountOnClose, className, children, ref, onClose, onCancel, onClick, ...props }) {
   const [isOpen, setOpen] = useControllable(open, defaultOpen, onOpenChange);
@@ -44,13 +49,17 @@ export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size,
   }, [isOpen, unmountOnClose]);
 
   const context = useMemo(() => ({ titleId, close: () => setOpen(false), setTitled }), [titleId, setOpen]);
+  const mounted = !unmountOnClose || isOpen || present;
+  // A header the server can see by type names the dialog in the first render. One nested in a component
+  // of its own is found by its layout effect (`titled`), so it names the dialog only once the page has hydrated.
+  const named = mounted && (titled || hasHeader(children));
   const element = h(
     DialogContext.Provider,
     { value: context },
     h(
       "dialog",
       {
-        "aria-labelledby": titled && props["aria-label"] === undefined ? titleId : undefined,
+        "aria-labelledby": named && props["aria-label"] === undefined ? titleId : undefined,
         ...props,
         ref: mergeRefs(node, ref),
         className: cx("sd-dialog", size && `sd-dialog-${size}`, side && "sd-sheet", side === "left" && "sd-sheet-left", side === "bottom" && "sd-sheet-bottom", className),
@@ -74,7 +83,7 @@ export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size,
           if (!inside) setOpen(false);
         },
       },
-      !unmountOnClose || isOpen || present ? children : null,
+      mounted ? children : null,
     ),
   );
   if (!trigger) return element;

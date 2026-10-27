@@ -16,7 +16,8 @@ export async function checkReactApp(page, base) {
   const browserErrors = [];
   page.on("console", (m) => m.type() === "error" && browserErrors.push(m.text()));
   page.on("pageerror", (e) => browserErrors.push(e.message));
-  const until = (fn, arg, timeout = 2000) => page.waitForFunction(fn, arg, { timeout }).then(() => true, () => false);
+  const untilOn = (target, fn, arg, timeout = 2000) => target.waitForFunction(fn, arg, { timeout }).then(() => true, () => false);
+  const until = (fn, arg, timeout) => untilOn(page, fn, arg, timeout);
 
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto(`${base}react.html`);
@@ -25,25 +26,28 @@ export async function checkReactApp(page, base) {
   /* ---- Scrollbars without init() ---- */
   const bars = await page.evaluate(async (api) => {
     const { initScrollbars } = await import(api);
-    const listeners = [];
-    const add = document.addEventListener;
-    document.addEventListener = function (type, ...rest) {
-      if (type === "scroll") listeners.push(type);
-      return add.call(this, type, ...rest);
-    };
     const root = document.documentElement;
     const before = root.hasAttribute("data-sd-scrollbars");
+    // The DOM drops a listener it already has, and tells listeners apart by callback and capture flag. So the calls may each add one,
+    // as long as they all add the same one: count the distinct ones, since a second distinct one would mark every scroll twice.
+    const distinct = [];
+    const add = document.addEventListener;
+    document.addEventListener = function (type, listener, options) {
+      const capture = typeof options === "boolean" ? options : Boolean(options?.capture);
+      if (type === "scroll" && !distinct.some((known) => known.listener === listener && known.capture === capture)) distinct.push({ listener, capture });
+      return add.call(this, type, listener, options);
+    };
     initScrollbars();
     initScrollbars();
     const auto = root.dataset.sdScrollbars;
     initScrollbars("always");
     const mode = root.dataset.sdScrollbars;
     initScrollbars("auto");
-    document.addEventListener = add;
-    return { before, auto, mode, listeners: listeners.length };
+    delete document.addEventListener;
+    return { before, auto, mode, listeners: distinct.length };
   }, `${base}@fs/${apiPath}`);
   expect(!bars.before && bars.auto === "auto" && bars.mode === "always", `initScrollbars sets the mode on <html>, got ${JSON.stringify(bars)}`);
-  expect(bars.listeners === 1, `initScrollbars listens for scrolling once however often it is called, got ${bars.listeners} listeners`);
+  expect(bars.listeners === 1, `initScrollbars listens for scrolling with one listener however often it is called, got ${bars.listeners} distinct ones`);
   await page.evaluate(() => {
     const box = document.createElement("div");
     box.id = "scroll-probe";
@@ -91,6 +95,74 @@ export async function checkReactApp(page, base) {
   expect(placed.pointOffset.join() === "300px,210px", `an explicit offset applies to a point, got ${placed.pointOffset}`);
   expect(parseInt(placed.above[1]) + 50 <= 900, `near the bottom edge the element flips above the point, got ${placed.above}`);
 
+  const partial = await page.evaluate(async (api) => {
+    const { place } = await import(api);
+    // A fresh element each time: the browser ignores "NaNpx", so a reused one would keep the last case's value.
+    const where = (anchor, options) => {
+      const box = document.createElement("div");
+      box.style.cssText = "position:fixed;width:100px;height:50px";
+      document.body.append(box);
+      place(box, anchor, options);
+      const out = `${box.style.left},${box.style.top}`;
+      box.remove();
+      return out;
+    };
+    const differ = [];
+    for (const options of [{ side: "bottom", align: "center" }, { side: "bottom", align: "end" }, { side: "top", align: "end" }, { side: "right", align: "center" }, { side: "left", align: "center" }, { side: "right", align: "end" }]) {
+      const whole = where({ left: 200, top: 300, right: 200, bottom: 300 }, options);
+      const half = where({ left: 200, top: 300 }, options);
+      if (half !== whole) differ.push(`${JSON.stringify(options)}: ${half} for ${whole}`);
+    }
+    return differ;
+  }, `${base}@fs/${apiPath}`);
+  expect(partial.length === 0, `a rect with only left and top places like a rect of no size there, differing: ${partial.join("; ")}`);
+
+  const sized = await page.evaluate(async (api) => {
+    const { place } = await import(api);
+    const where = (anchor, options) => {
+      const box = document.createElement("div");
+      box.style.cssText = "position:fixed;width:100px;height:50px";
+      document.body.append(box);
+      place(box, anchor, options);
+      const out = `${box.style.left},${box.style.top}`;
+      box.remove();
+      return out;
+    };
+    const differ = [];
+    for (const options of [{ side: "bottom", align: "center" }, { side: "bottom", align: "end" }, { side: "top", align: "end" }, { side: "right", align: "center" }, { side: "left", align: "center" }, { side: "right", align: "end" }]) {
+      const whole = where({ left: 200, top: 300, right: 280, bottom: 320 }, options);
+      for (const sizes of [{ width: 80, height: 20 }, { right: 280, height: 20 }, { width: 80, bottom: 320 }, { right: 280, bottom: 320, width: 5, height: 5 }]) {
+        const given = where({ left: 200, top: 300, ...sizes }, options);
+        if (given !== whole) differ.push(`${JSON.stringify(options)} with ${JSON.stringify(sizes)}: ${given} for ${whole}`);
+      }
+    }
+    return differ;
+  }, `${base}@fs/${apiPath}`);
+  expect(sized.length === 0, `a rect gets a missing right or bottom from its width or height, and right or bottom wins over them, differing: ${sized.join("; ")}`);
+
+  const contained = await page.evaluate(async (api) => {
+    const { place } = await import(api);
+    const box = document.createElement("div");
+    box.style.cssText = "position:fixed;width:192px;height:132px";
+    document.body.append(box);
+    const outside = [];
+    const points = [[400, 300], [400, innerHeight - 100], [400, innerHeight - 5], [400, innerHeight - 4], [400, innerHeight - 1], [innerWidth - 4, 300], [innerWidth - 4, innerHeight - 5], [innerWidth - 1, innerHeight - 1], [3, 300], [3, 3]];
+    for (const [x, y] of points) {
+      for (const side of ["bottom", "top", "left", "right"]) {
+        for (const align of ["start", "center", "end"]) {
+          place(box, { x, y }, { side, align });
+          const r = box.getBoundingClientRect();
+          if (!(r.left <= x && x < r.right && r.top <= y && y < r.bottom)) outside.push(`${x},${y} ${side}/${align} got ${r.left},${r.top}`);
+          // Over its first 120ms a popover is held 4px higher (overlays.css), and the point must stay inside it then too.
+          if (!(r.top - 4 <= y && y < r.bottom - 4)) outside.push(`${x},${y} ${side}/${align} while sliding in, got ${r.left},${r.top}`);
+        }
+      }
+    }
+    box.remove();
+    return outside;
+  }, `${base}@fs/${apiPath}`);
+  expect(contained.length === 0, `the placed element contains its point on every side and align, even flipped or shifted at an edge; outside: ${contained.join("; ")}`);
+
   const card = page.locator("#react-context-menu article");
   const menuBox = () => page.evaluate(() => {
     const pop = document.querySelector('#react-context-menu ~ * [role=menu], [role=menu][aria-label="Message actions"]')?.parentElement;
@@ -137,21 +209,53 @@ export async function checkReactApp(page, base) {
   await page.locator("#react-context-menu h2").click();
   expect(await menuOpenAt(false), "a click outside closes the menu");
 
-  const corner = await page.evaluate(async () => {
+  const cornerAt = await page.evaluate(() => {
     const x = innerWidth - 10;
     const y = innerHeight - 10;
     document.querySelector("#react-context-menu article").dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true, clientX: x, clientY: y }));
-    await new Promise((resolve) => {
-      const wait = () => (document.querySelector('[role=menu][aria-label="Message actions"]').parentElement.matches(":popover-open") ? resolve() : requestAnimationFrame(wait));
-      wait();
-    });
-    const r = document.querySelector('[role=menu][aria-label="Message actions"]').parentElement.getBoundingClientRect();
-    return { x, y, left: r.left, top: r.top, right: r.right, bottom: r.bottom, width: innerWidth, height: innerHeight };
+    return { x, y, width: innerWidth, height: innerHeight };
   });
-  expect(corner.bottom <= corner.y + 1 && corner.top >= 8 - 1, `at the bottom edge the menu opens above the point, got ${JSON.stringify(corner)}`);
+  expect(await menuOpenAt(true), `the menu opens at the bottom right corner, got ${JSON.stringify(await menuBox())}`);
+  await until(() => document.querySelector('[role=menu][aria-label="Message actions"]').parentElement.getAnimations().length === 0, null);
+  const corner = { ...cornerAt, ...(await menuBox()) };
+  expect(corner.top < corner.y && corner.bottom >= corner.y && corner.bottom <= corner.y + 6 && corner.top >= 8 - 1, `at the bottom edge the menu opens above the point and overlaps it by a few pixels, got ${JSON.stringify(corner)}`);
   expect(corner.right <= corner.width - 8 + 1 && corner.left >= 8 - 1, `at the right edge the menu shifts inside the viewport, got ${JSON.stringify(corner)}`);
   await page.keyboard.press("Escape");
   await menuOpenAt(false);
+
+  // WKWebView and WebKitGTK fire contextmenu on mousedown, so the button is released at the point the menu opened on.
+  // The menu must still contain that point after it flips above it or shifts off an edge, or the release light dismisses it.
+  await page.evaluate(() => {
+    const cover = document.createElement("div");
+    cover.id = "pointerdown-cover";
+    cover.style.cssText = "position:fixed;inset:0;z-index:2147483647";
+    cover.addEventListener("pointerdown", (event) => {
+      document.querySelector("#react-context-menu article").dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true, clientX: event.clientX, clientY: event.clientY }));
+    });
+    document.body.append(cover);
+  });
+  try {
+    for (const [label, x, y] of [["below the point", 400, 300], ["flipped above the point", 400, 800], ["flipped at the bottom edge", 400, 895], ["in the last four rows of the viewport", 400, 896], ["on the last row of the viewport", 400, 899], ["shifted at the right edge", 1276, 300], ["shifted and flipped at the bottom right corner", 1276, 895], ["on the last pixel of the bottom right corner", 1279, 899]]) {
+      await page.mouse.move(x, y);
+      await page.mouse.down();
+      const pressed = await menuOpenAt(true);
+      // Hold the slide-in at its first frame, where the panel is 4px higher, so the release does not depend on how fast this run is.
+      await page.evaluate(() => document.querySelector('[role=menu][aria-label="Message actions"]').parentElement.getAnimations().forEach((animation) => {
+        animation.pause();
+        animation.currentTime = 0;
+      }));
+      const shown = await menuBox();
+      await page.mouse.up();
+      // A negative assertion: light dismiss runs on the release, and a menu that stays open has nothing to wait for.
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      expect(pressed, `a menu opens on pointerdown ${label}`);
+      expect((await menuBox()).open, `a menu opened on pointerdown ${label} stays open when the button is released at ${x},${y}, it spanned ${JSON.stringify(shown)}`);
+      await page.keyboard.press("Escape");
+      await menuOpenAt(false);
+    }
+  } finally {
+    await page.evaluate(() => document.getElementById("pointerdown-cover")?.remove());
+  }
 
   /* ---- Toast and tooltip above a modal dialog ---- */
   const over = page.locator("#react-above-dialog");
@@ -186,6 +290,15 @@ export async function checkReactApp(page, base) {
   };
   const toastCount = () => page.locator(`${toaster} .sd-toast`).count();
   const archive = dialog.getByRole("button", { name: "Archive", exact: true });
+  // The page behind a modal is inert and the toaster is part of it, so a toast above a modal is painted but never hit.
+  const lastToastCenter = async () => {
+    const box = await page.locator(`${toaster} .sd-toast`).last().boundingBox();
+    return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+  };
+  const hitAt = ({ x, y }) => page.evaluate(([px, py]) => {
+    const el = document.elementFromPoint(px, py);
+    return { tag: el?.tagName, inToaster: Boolean(el?.closest(".sd-toaster")) };
+  }, [x, y]);
 
   await over.getByRole("button", { name: "Open dialog" }).click();
   expect(await until(() => document.querySelector("#react-above-dialog dialog:modal") !== null, null), "the dialog opens as a modal");
@@ -216,6 +329,8 @@ export async function checkReactApp(page, base) {
   const want = await toastColor();
   const got = await toastPixel();
   expect(got.every((c, i) => Math.abs(c - want[i]) <= 2), `a toast paints above the open dialog's backdrop, wanted ${want} at its corner, got ${got}`);
+  const hit = await hitAt(await lastToastCenter());
+  expect(hit.tag === "DIALOG" && !hit.inToaster, `a pointer over a toast above a modal reaches the dialog, not the toast, got ${JSON.stringify(hit)}`);
 
   const edge = async () => page.locator(`${toaster} .sd-toast`).last().evaluate((el) => {
     const r = el.getBoundingClientRect();
@@ -242,15 +357,90 @@ export async function checkReactApp(page, base) {
   }, hinted);
   expect(tip.gap >= 0 && tip.gap <= 10 && Math.abs(tip.off) <= 1, `the tooltip sits above its trigger, centered, got ${JSON.stringify(tip)}`);
   expect(tip.margin === "0px" && tip.overflow === "visible" && tip.padding === "4px 8px" && tip.border === "1px" && tip.position === "fixed", `the tooltip keeps its own box, got ${JSON.stringify(tip)}`);
+  // The tooltip was opened by hover, so focus is on another button and its own Escape handler does not run:
+  // the one Escape cancels the dialog, and the tooltip goes because its trigger does. Escape on a focused trigger is checked below.
   await page.keyboard.press("Escape");
-  expect(await until(() => !document.querySelector("body > [role=tooltip]"), null), "Escape hides the tooltip");
-
-  await page.keyboard.press("Escape");
-  expect(await until(() => document.querySelector("#react-above-dialog dialog:modal") === null, null), "Escape closes the dialog");
+  expect(await until(() => document.querySelector("#react-above-dialog dialog:modal") === null, null), "one Escape closes the dialog even with a tooltip open over it");
+  expect(await until(() => !document.querySelector("body > [role=tooltip]"), null), "the tooltip goes with the dialog it described");
   expect(await toastCount() === 2, "the toasts outlive the dialog");
-  for (let left = await toastCount(); left > 0; left--) await page.locator(toaster).getByRole("button", { name: "Undo" }).first().click();
-  expect(await until((sel) => !document.querySelector(sel + " .sd-toast"), toaster), "an action on a toast works once the dialog is closed");
+
+  // A click on a toast above a centered dialog lands on the dialog outside its box, which is its backdrop.
+  await over.getByRole("button", { name: "Open dialog" }).click();
+  await archive.click();
+  expect(await until((sel) => document.querySelectorAll(sel + " .sd-toast").length === 3 && document.querySelectorAll(sel + " .sd-toast")[2].getAnimations().length === 0, toaster), "a toast shows over the reopened dialog");
+  const aimed = await lastToastCenter();
+  await page.mouse.click(aimed.x, aimed.y);
+  expect(await until(() => document.querySelector("#react-above-dialog dialog:modal") === null, null), "a click on a toast above a centered dialog closes the dialog through its backdrop");
+  expect(await toastCount() === 3, "that click leaves the toasts alone");
+  await over.getByRole("button", { name: "Clear toasts" }).click();
+  expect(await until((sel) => !document.querySelector(sel + " .sd-toast"), toaster), "the toasts can be cleared once the dialog is closed");
   expect(await page.locator(toaster).evaluate((el) => el.matches(":popover-open")), "the toaster stays open with no toast in it");
+
+  // Before Safari 16.4 `dialog:modal` is not a selector and querySelector throws on it, so a toast has to find an open dialog another way.
+  await page.evaluate(() => {
+    const native = document.querySelector;
+    document.querySelector = function (selector) {
+      if (String(selector).includes(":modal")) throw new SyntaxError(`'${selector}' is not a valid selector`);
+      return native.call(this, selector);
+    };
+  });
+  try {
+    await over.getByRole("button", { name: "Open dialog" }).click();
+    expect(await until(() => document.querySelector("#react-above-dialog dialog[open]") !== null, null), "the dialog opens with :modal unknown to the engine");
+    const errorsBefore = browserErrors.length;
+    await archive.click();
+    const shownWithout = await until((sel) => document.querySelector(sel + " .sd-toast")?.getAnimations().length === 0, toaster);
+    expect(shownWithout, "a toast shows over an open dialog when the engine has no :modal selector");
+    expect(browserErrors.length === errorsBefore, `a toast raised no error without :modal, got ${browserErrors.slice(errorsBefore).join("; ")}`);
+    if (shownWithout) {
+      const unknownWant = await toastColor();
+      const unknownGot = await toastPixel();
+      expect(unknownGot.every((c, i) => Math.abs(c - unknownWant[i]) <= 2), `the toaster is lifted above the dialog without :modal, wanted ${unknownWant} at the toast's corner, got ${unknownGot}`);
+    }
+    await page.keyboard.press("Escape");
+    await until(() => document.querySelector("#react-above-dialog dialog[open]") === null, null);
+  } finally {
+    await page.evaluate(() => delete document.querySelector);
+  }
+  await over.getByRole("button", { name: "Clear toasts" }).click();
+  expect(await until((sel) => !document.querySelector(sel + " .sd-toast"), toaster), "the toasts can be cleared after the engine without :modal");
+
+  // A sheet ignores the click, and a toast's action works once the sheet is closed.
+  const sheetOpen = () => page.evaluate(() => document.querySelector("dialog.sd-sheet:not(.sd-sheet-bottom)").open);
+  await page.locator("#react-dialog").getByRole("button", { name: "Sheet", exact: true }).click();
+  expect(await until(() => document.querySelector("dialog.sd-sheet:not(.sd-sheet-bottom)")?.open === true, null), "a sheet opens");
+  // The toast buttons are inert behind the sheet, so call the click the way a script would.
+  await page.evaluate(() => [...document.querySelectorAll("#react-toast button")].find((button) => button.textContent === "Toast with undo").click());
+  expect(await until((sel) => document.querySelector(sel + " .sd-toast")?.getAnimations().length === 0, toaster), "a toast with an action shows above the sheet");
+  const overSheet = await lastToastCenter();
+  const sheetHit = await hitAt(overSheet);
+  expect(sheetHit.tag === "DIALOG" && !sheetHit.inToaster, `a pointer over a toast above a sheet reaches the sheet, not the toast, got ${JSON.stringify(sheetHit)}`);
+  await page.mouse.click(overSheet.x, overSheet.y);
+  // A negative assertion: a click that closed the sheet would have done so by now.
+  await new Promise((resolve) => setTimeout(resolve, 250));
+  expect(await sheetOpen() && await toastCount() === 1, "a click on a toast above a sheet does nothing, not even to the toast");
+  await page.keyboard.press("Escape");
+  expect(await until(() => !document.querySelector("dialog.sd-sheet:not(.sd-sheet-bottom)").open, null), "Escape closes the sheet");
+  await page.locator(toaster).getByRole("button", { name: "Undo" }).click();
+  // The pointer rests where the toast was, and hovering the Restored toast that Undo shows would hold it on screen.
+  await page.mouse.move(2, 2);
+  expect(await until((sel) => !document.querySelector(sel + " .sd-toast"), toaster, 6000), "an action on a toast works once the modal is closed, and its own toast goes");
+
+  // Only a modal dialog covers the toaster. Lifting it for any open dialog hides and shows it, and moves focus.
+  await page.evaluate(() => {
+    const plain = document.createElement("dialog");
+    plain.id = "plain-dialog";
+    plain.textContent = "Not modal";
+    document.body.append(plain);
+    plain.show();
+    window.__toggles = [];
+    document.querySelector(".sd-toaster").addEventListener("beforetoggle", (event) => window.__toggles.push(event.newState));
+  });
+  await page.locator("#react-toast").getByRole("button", { name: "Quick toast" }).click();
+  expect(await until((sel) => document.querySelector(sel + " .sd-toast"), toaster), "a toast shows while a dialog that is not modal is open");
+  expect(await page.evaluate(() => window.__toggles.length) === 0, `a toast beside a dialog that is not modal leaves the toaster alone, it toggled ${await page.evaluate(() => window.__toggles.join())}`);
+  expect(await until((sel) => !document.querySelector(sel + " .sd-toast"), toaster, 5000), "the quick toast goes");
+  await page.evaluate(() => document.getElementById("plain-dialog").remove());
 
   /* ---- Tooltip delay, className and onOpenChange ---- */
   const delayed = page.locator("#react-tooltip").getByRole("button", { name: "Delayed tip" });
@@ -274,11 +464,84 @@ export async function checkReactApp(page, base) {
   await page.mouse.move(2, 2);
   expect(await until(() => !document.querySelector("body > [role=tooltip]"), null), "leaving hides the delayed tooltip at once");
   expect(await until(() => document.querySelector("#react-tooltip [data-tip-open]").textContent === "delayed tip: hidden", null), "onOpenChange reports the tip closing");
-  await delayed.focus();
-  expect(await until(() => document.querySelector("body > [role=tooltip]"), null, 450), "keyboard focus shows the tooltip without the delay");
+  // A mouse press focuses the button while the delay the hover started is still running, and that wait decides.
+  // WebKit does not focus a button on a press, so there this passes without the press ever focusing it.
+  await page.evaluate(() => (window.__tipsSeen = 0));
+  await delayed.hover();
+  await page.mouse.down();
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  const shownByPress = await page.evaluate(() => window.__tipsSeen);
+  await page.mouse.up();
+  expect(shownByPress === 0, `pressing the trigger inside the delay does not show the tooltip early, ${shownByPress} shown 300ms in`);
+  expect(await until(() => document.querySelector("body > [role=tooltip]"), null, 4000), "a pressed trigger shows the tooltip once the delay is up");
+  await page.mouse.move(2, 2);
+  expect(await until(() => !document.querySelector("body > [role=tooltip]"), null), "leaving hides the tooltip of a pressed trigger");
+  await delayed.blur();
+  await page.locator("#react-tooltip").getByRole("button", { name: "Settings" }).focus();
+  await page.keyboard.press("Tab");
+  expect(await until(() => document.activeElement?.textContent === "Delayed tip", null), "Tab reaches the delayed trigger");
+  expect(await until(() => document.querySelector("body > [role=tooltip]")?.textContent === "Resolved in 12 ms", null, 450), "keyboard focus shows the tooltip without the delay");
   await page.keyboard.press("Escape");
   expect(await until(() => !document.querySelector("body > [role=tooltip]") && document.querySelector("#react-tooltip [data-tip-open]").textContent === "delayed tip: hidden", null), "Escape hides the tooltip and reports it");
   await delayed.blur();
+
+  // A text input is focus-visible even after a click, so what skips the delay is no running wait, not the kind of focus.
+  const handle = page.locator("#react-tooltip [data-delayed-input]");
+  await page.evaluate(() => (window.__tipsSeen = 0));
+  await handle.click();
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  const shownByClick = await page.evaluate(() => window.__tipsSeen);
+  expect(shownByClick === 0, `clicking a text input inside the delay does not show its tooltip early, ${shownByClick} shown 300ms in`);
+  expect(await until(() => document.querySelector("body > [role=tooltip]")?.textContent === "Letters and digits only", null, 4000), "a clicked text input shows its tooltip once the delay is up");
+  await page.mouse.move(2, 2);
+  expect(await until(() => !document.querySelector("body > [role=tooltip]"), null), "leaving hides the tooltip of a clicked input");
+  await handle.blur();
+  await delayed.focus();
+  await page.keyboard.press("Tab");
+  expect(await until(() => document.activeElement?.hasAttribute("data-delayed-input") && document.querySelector("body > [role=tooltip]")?.textContent === "Letters and digits only", null, 450), "Tab onto the delayed input shows its tooltip without the delay");
+  await handle.blur();
+
+  /* ---- Tooltip on touch ---- */
+  // A tap is a pointer that enters and leaves within a moment, then focuses the trigger on most engines and on none of the buttons in Safari.
+  const touch = await page.context().browser().newContext({ hasTouch: true, viewport: { width: 1280, height: 900 } });
+  const hand = await touch.newPage();
+  const tipUp = () => untilOn(hand, () => document.querySelector("body > [role=tooltip]"), null, 450);
+  const tipGone = () => untilOn(hand, () => !document.querySelector("body > [role=tooltip]"), null);
+  try {
+    await hand.goto(`${base}react.html`);
+    await hand.waitForSelector("#react-tooltip button");
+    const tap = async (name, delay, focuses) => {
+      const trigger = hand.locator("#react-tooltip").getByRole("button", { name });
+      await trigger.scrollIntoViewIfNeeded();
+      if (!focuses) await trigger.evaluate((el) => el.addEventListener("mousedown", (event) => event.preventDefault(), { once: true }));
+      await trigger.tap();
+      expect(await tipUp(), `a tap on a ${delay}ms trigger shows its tooltip within 450ms${focuses ? "" : " though the tap never focuses it"}`);
+      await new Promise((resolve) => setTimeout(resolve, 900));
+      expect(await hand.evaluate(() => !!document.querySelector("body > [role=tooltip]")), `the tooltip a tap showed on a ${delay}ms trigger stays${focuses ? "" : " with no focus to lose"}`);
+      await hand.locator("#react-tooltip [data-tip-open]").tap();
+      expect(await tipGone(), `a tap elsewhere hides the tooltip of a ${delay}ms trigger`);
+    };
+    await tap("Hover or focus me", 0, true);
+    await tap("Delayed tip", 600, true);
+    await tap("Hover or focus me", 0, false);
+    await tap("Delayed tip", 600, false);
+  } finally {
+    await touch.close();
+  }
+
+  /* ---- Dialog whose header is in a component of its own ---- */
+  // The server cannot see that header by type, so the dialog is named by the header's layout effect once the page has mounted.
+  const wrapped = page.locator("#react-dialog").getByRole("button", { name: "Wrapped header", exact: true });
+  await wrapped.scrollIntoViewIfNeeded();
+  await wrapped.click();
+  const wrappedName = () => page.evaluate(() => {
+    const dialog = [...document.querySelectorAll("#react-dialog dialog[open]")].find((d) => d.textContent.includes("The title comes from a component of your own."));
+    return { open: Boolean(dialog), title: document.getElementById(dialog?.getAttribute("aria-labelledby") ?? "")?.textContent };
+  });
+  expect(await until(() => document.querySelector("#react-dialog dialog[open] [id]") !== null, null) && (await wrappedName()).title === "Header in a component", `a DialogHeader inside a component of its own names the dialog after mount, got ${JSON.stringify(await wrappedName())}`);
+  expect(await page.getByRole("dialog", { name: "Header in a component" }).count() === 1, "the dialog's accessible name is the header's text");
+  await page.keyboard.press("Escape");
+  expect(await until(() => !document.querySelector("#react-dialog dialog[open]"), null), "Escape closes the dialog with the wrapped header");
 
   /* ---- Switch and Checkbox with no text ---- */
   const bare = page.locator("#react-forms [data-bare]");
@@ -292,17 +555,20 @@ export async function checkReactApp(page, base) {
   expect(await mute.isChecked(), "clicking a bare switch turns it on");
   await mute.press("Space");
   expect(!await mute.isChecked(), "Space turns a focused bare switch off");
-  // In a block parent, as in a table cell, a label without text is as wide as its control and no wider.
+  // In a block parent, as in a table cell, the label React renders for a bare control is as wide as the control and no wider.
+  // Hand-written labels keep their width, whatever they hold, so markup that was full width before stays so.
   const widths = await page.evaluate(() => {
     const box = document.createElement("div");
     box.style.width = "400px";
-    box.innerHTML = '<label class="sd-check"><input type="checkbox" aria-label="Pick"></label><label class="sd-check"><input type="checkbox"><span class="sd-check-text">Text</span></label>';
+    box.innerHTML = '<label class="sd-check"><input type="checkbox"><span class="sd-check-text">Text</span></label><label class="sd-check"><input type="checkbox"> Plain text</label><label class="sd-check"><input type="checkbox"><span>Own span</span></label><label class="sd-check"><input type="checkbox" aria-label="Pick"></label>';
+    box.prepend(document.querySelector("#react-forms [data-bare] label.sd-check").cloneNode(true));
     document.body.append(box);
-    const [none, text] = [...box.children].map((el) => el.getBoundingClientRect().width);
+    const [bare, text, plain, own, nameless] = [...box.children].map((el) => el.getBoundingClientRect().width);
     box.remove();
-    return { none, text };
+    return { bare, text, plain, own, nameless };
   });
-  expect(widths.none < 40 && widths.text === 400, `the click target of a label with no text is the control alone, got ${JSON.stringify(widths)}`);
+  expect(widths.bare < 40, `the click target of a bare React control is the control alone, got ${JSON.stringify(widths)}`);
+  expect(widths.text === 400 && widths.plain === 400 && widths.own === 400 && widths.nameless === 400, `a hand-written label fills its parent, with a text span or without, got ${JSON.stringify(widths)}`);
   expect(await page.locator("#react-forms .sd-check-text").count() >= 3, "a control with a label still renders its text");
 
   /* ---- Dialog without a header, and unmountOnClose ---- */

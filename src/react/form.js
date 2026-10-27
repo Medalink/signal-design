@@ -4,7 +4,7 @@
  * can be any component that renders one of these.
  */
 import { createContext, createElement as h, useContext, useId, useMemo } from "react";
-import { cx } from "./util.js";
+import { cx, drawn } from "./util.js";
 
 const FieldContext = createContext(null);
 
@@ -58,12 +58,12 @@ export function Select(props) {
 }
 
 function Check({ role, label, description, className, ...props }) {
-  const text = Boolean(label || description);
+  const text = drawn(label) || drawn(description);
   return h(
     "label",
-    { className: cx("sd-check", className) },
+    { className: cx("sd-check", !text && "sd-check-bare", className) },
     h("input", { type: "checkbox", role, ...props }),
-    text && h("span", { className: "sd-check-text" }, label, description && h("span", { className: "sd-check-desc" }, description)),
+    text && h("span", { className: "sd-check-text" }, label, drawn(description) && h("span", { className: "sd-check-desc" }, description)),
   );
 }
 

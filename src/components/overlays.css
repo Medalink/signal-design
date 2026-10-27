@@ -110,6 +110,8 @@
       overlay 120ms allow-discrete,
       display 120ms allow-discrete;
   }
+  /* The slide-in starts 4px higher. That is SLIDE in src/js/position.js, which keeps a point the panel
+   * opens on inside it while it slides, so change them together. */
   .sd-popover:not(:popover-open) {
     opacity: 0;
     transform: translateY(-4px);

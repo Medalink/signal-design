@@ -38,9 +38,10 @@ export function PopoverTrigger({ children, haspopup }) {
 /**
  * The panel, placed next to its trigger on `side` and `align` and flipped at
  * the viewport edge. `anchor` places it beside something else instead, and
- * wins over the trigger: a `{ x, y }` point (the panel's corner sits on it),
- * a rect, or an element or object with `getBoundingClientRect`. `initialFocus`
- * is a selector for the element to focus on open.
+ * wins over the trigger: a `{ x, y }` point (the panel's corner sits on it, and
+ * it still contains the point where it flips or shifts at an edge), a rect, or
+ * an element or object with `getBoundingClientRect`. `initialFocus` is a
+ * selector for the element to focus on open.
  */
 export function PopoverContent({ side = "bottom", align = "start", pad, initialFocus, anchor, className, children, ref, onBeforeToggle, onToggle, ...props }) {
   const { id, isOpen, setOpen, trigger, opener } = usePopover();

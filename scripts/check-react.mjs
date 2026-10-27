@@ -8,7 +8,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { createElement as h } from "react";
+import { Fragment, createElement as h } from "react";
 import ts from "typescript";
 import { ICON_NAMES } from "../src/js/icons.js";
 import { checkReactEditor } from "./check-react-editor.mjs";
@@ -22,15 +22,59 @@ export function checkReactTypes() {
   const fixture = join(directory, "consumer.tsx");
   writeFileSync(
     fixture,
-    `import { useRef, useState } from "react";
+    `import { useRef, useState, type ComponentProps } from "react";
 import { AppShell, Button, Dialog, DialogBody, Menu, MenuContent, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 import { initScrollbars } from "signal-design/js";
-import { Checkbox, Switch, Tooltip } from "signal-design/react";
+import { Checkbox, Switch, Tooltip, type BareCheckboxProps, type BareSwitchProps, type CheckboxProps, type SwitchProps } from "signal-design/react";
 
 initScrollbars();
 initScrollbars("always");
 // @ts-expect-error the mode is auto or always
 initScrollbars("never");
+
+// CheckboxProps stays an interface a consumer extends, and Omit of it, of SwitchProps or of the component's own props stays spreadable into the component.
+interface DenseCheckboxProps extends CheckboxProps {
+  dense?: boolean;
+}
+export function DenseCheckbox({ dense, ...rest }: DenseCheckboxProps) {
+  return <Checkbox {...rest} className={dense ? "dense" : undefined} />;
+}
+export function WrappedCheckbox(props: Omit<CheckboxProps, "className"> & { dense?: boolean }) {
+  const { dense, ...rest } = props;
+  return <Checkbox {...rest} className={dense ? "dense" : undefined} />;
+}
+export function WrappedCheckboxProps(props: Omit<ComponentProps<typeof Checkbox>, "className">) {
+  return <Checkbox {...props} className="wrapped" />;
+}
+export function WrappedSwitch(props: SwitchProps) {
+  return <Switch {...props} />;
+}
+export function WrappedSwitchOmit(props: Omit<SwitchProps, "className">) {
+  return <Switch {...props} className="wrapped" />;
+}
+export function WrappedSwitchProps(props: Omit<ComponentProps<typeof Switch>, "className">) {
+  return <Switch {...props} className="wrapped" />;
+}
+export function WrappedBare(props: BareCheckboxProps) {
+  return <Checkbox {...props} />;
+}
+export function WrappedBareSwitch({ dense, ...rest }: BareSwitchProps & { dense?: boolean }) {
+  return <Switch {...rest} className={dense ? "dense" : undefined} />;
+}
+const dense: DenseCheckboxProps = { label: "Dense", dense: true };
+const bare: BareCheckboxProps = { "aria-label": "Select row" };
+const bareSwitch: BareSwitchProps = { "aria-labelledby": "mute" };
+// @ts-expect-error a bare checkbox keeps its accessible name as a required prop
+const unnamed: BareCheckboxProps = { label: undefined };
+// @ts-expect-error a switch props type still needs a label
+const unnamedSwitch: SwitchProps = { checked: true };
+// @ts-expect-error a bare switch keeps its accessible name as a required prop
+const unnamedBareSwitch: BareSwitchProps = { checked: true };
+export function OmitOfBare(props: Omit<BareCheckboxProps, "className">) {
+  // @ts-expect-error Omit of the bare union makes both names optional again, so it no longer spreads into Checkbox
+  return <Checkbox {...props} />;
+}
+console.log(dense, bare, bareSwitch, unnamed, unnamedSwitch, unnamedBareSwitch);
 
 export function Consumer() {
   const [open, setOpen] = useState(false);
@@ -63,9 +107,14 @@ export function Consumer() {
         <MenuContent anchor={{ x: 10, y: 20 }} label="At a point"><MenuItem>Reply</MenuItem></MenuContent>
         <MenuContent anchor={document.body} side="right" align="end"><MenuItem>Rect</MenuItem></MenuContent>
         <MenuContent anchor={{ left: 1, top: 2, right: 3, bottom: 4 }} />
+        <MenuContent anchor={{ left: 1, top: 2 }} />
+        <MenuContent anchor={{ left: 1, top: 2, width: 3, height: 4 }} />
+        <MenuContent anchor={new DOMRect(1, 2, 3, 4)} />
         <MenuContent anchor={undefined} />
         {/* @ts-expect-error a pointer event is not an anchor: it has clientX, not x */}
         <MenuContent anchor={{ clientX: 1, clientY: 2 }} />
+        {/* @ts-expect-error a rect needs its left and top, a width alone places nothing */}
+        <MenuContent anchor={{ width: 3, height: 4 }} />
       </Menu>
       <Switch aria-label="Mute" />
       <Checkbox aria-labelledby="name" defaultChecked />
@@ -193,6 +242,9 @@ function assertIconNamesMatch() {
 
 export async function checkReactSsr() {
   assert.equal(typeof document, "undefined", "the SSR check must run without a DOM");
+  // The package entry itself, as a client entry that is also evaluated on the server imports it.
+  const { initScrollbars } = await import("../src/js/index.js");
+  assert.doesNotThrow(() => (initScrollbars(), initScrollbars("always")), "initScrollbars throws on the server instead of doing nothing");
   const { renderToString } = await import("react-dom/server");
   const all = await import("../src/react/index.js");
   const used = new Set();
@@ -217,8 +269,10 @@ export async function checkReactSsr() {
           h(sd.Field, { label: "Bio" }, h(sd.Textarea)),
           h(sd.Field, { label: "Pick" }, h(sd.Select, null, h("option", null, "a"))),
           h(sd.Checkbox, { label: "c", description: "d" }),
+          h(sd.Checkbox, { label: 0, description: 0 }),
           h(sd.Switch, { label: "s" }),
           h(sd.Switch, { "aria-label": "Mute" }),
+          h(sd.Switch, { label: [null, ""], description: h(Fragment), "aria-label": "Nothing drawn" }),
           h(sd.Badge, { tone: "success" }, "ok"),
           h(sd.Avatar, { name: "Ada Lovelace" }),
           h(sd.Icon, { name: "undo" }),
@@ -241,6 +295,10 @@ export async function checkReactSsr() {
             h(sd.DialogHeader, null, "T"), h(sd.DialogBody, null, "b"),
             h(sd.DialogFooter, null, h(sd.DialogClose, null, h(sd.Button, null, "x")))),
           h(sd.Sheet, { defaultOpen: false }, h(sd.DialogHeader, null, "S")),
+          h(sd.Dialog, { defaultOpen: true }, h(sd.DialogHeader, null, "Named header")),
+          h(sd.Dialog, { defaultOpen: true }, h(Fragment, null, [h(sd.DialogHeader, { key: "h" }, "Fragment header")])),
+          h(sd.Dialog, { defaultOpen: true, "aria-label": "Label wins" }, h(sd.DialogHeader, null, "Beaten header")),
+          h(sd.Dialog, { unmountOnClose: true }, h(sd.DialogHeader, null, "Unmounted header")),
           h(sd.Dialog, { defaultOpen: true, "aria-label": "Quick note", unmountOnClose: true }, h(sd.DialogBody, null, "bare")),
           h(sd.Dialog, { "aria-label": "Quick note", unmountOnClose: true }, h(sd.DialogBody, null, "unmounted while closed")),
           h(sd.Popover, null, h(sd.PopoverTrigger, null, h(sd.Button, null, "p")), h(sd.PopoverContent, { pad: true }, "pop")),
@@ -257,7 +315,7 @@ export async function checkReactSsr() {
             h(sd.ToolbarButton, null, "Heading"),
             h(sd.ToolbarMore, null, h(sd.MenuItem, null, "Clear"))),
           h(sd.Manuscript, { measure: "30rem", face: "mono" }, h("p", null, "Text", h(sd.Mark, { kind: "comment", active: true, onClick() {} }, "c"), h(sd.Mark, { kind: "insert" }, "i"), h(sd.Mark, { kind: "find", active: true }, "f"), h(sd.HoverCard, { content: "card", defaultOpen: true }, h(sd.Mark, { kind: "entity", tabIndex: 0 }, "e")))),
-          h(sd.RadioGroup, { label: "Cycle", defaultValue: "m", name: "cycle" }, h(sd.Radio, { value: "m", label: "Monthly", description: "d" }), h(sd.Radio, { value: "y", label: "Yearly", disabled: true })),
+          h(sd.RadioGroup, { label: "Cycle", defaultValue: "m", name: "cycle" }, h(sd.Radio, { value: "m", label: "Monthly", description: "d" }), h(sd.Radio, { value: "y", label: "Yearly", disabled: true }), h(sd.Radio, { value: "z", label: "Zero", description: 0 }), h(sd.Radio, { value: "e", label: "Empty", description: [false, ""] }), h(sd.Radio, { value: "f", label: "Fragment", description: h(Fragment, null, [null, false]) })),
           h(sd.SegmentedControl, { label: "View", defaultValue: "a", inline: true }, h(sd.Segment, { value: "a" }, "A"), h(sd.Segment, { value: "b" }, "B")),
           h(sd.Menu, null, h(sd.MenuTrigger, null, h(sd.Button, null, "v")),
             h(sd.MenuContent, { label: "View" }, h(sd.MenuItemCheckbox, { checked: true }, "Words"),
@@ -284,9 +342,12 @@ export async function checkReactSsr() {
     ['aria-selected="true"', "the selected tab or row"],
     ['aria-invalid="true"', "the invalid control"],
     ['role="switch"', "the switch"],
+    ['<span class="sd-check-text">0<span class="sd-check-desc">0</span></span>', "a checkbox whose label and description are 0"],
     ['<dialog aria-label="Quick note" class="sd-dialog"><div class="sd-dialog-body">bare</div></dialog>', "a dialog named by aria-label, with no aria-labelledby"],
     ['<dialog aria-label="Quick note" class="sd-dialog"></dialog>', "a closed dialog that unmounts on close, empty"],
-    ['<label class="sd-check"><input type="checkbox" role="switch" aria-label="Mute"/></label>', "a switch with no text"],
+    ['<label class="sd-check sd-check-bare"><input type="checkbox" role="switch" aria-label="Mute"/></label>', "a switch with no text, marked bare"],
+    ['<label class="sd-check sd-check-bare"><input type="checkbox" role="switch" aria-label="Nothing drawn"/></label>', "a switch whose label is an empty array and description an empty fragment, marked bare"],
+    ['Zero<span class="sd-check-desc">0</span>', "a radio whose description is 0"],
     ["99+", "the capped count"],
     ['data-icon="undo"', "an icon"],
     ['style="--size:300px"', "a resizable panel"],
@@ -294,6 +355,14 @@ export async function checkReactSsr() {
     ['aria-valuenow="300"', "the handle's value"],
     ['role="img" aria-label="Not saved"', "a labeled icon"],
   ]) assert.ok(html.includes(needle), `server output is missing ${what}`);
+  // The id is whatever useId made, so the header's span has to carry the same one.
+  for (const [title, what] of [["T", "a closed dialog"], ["S", "a closed sheet"], ["Named header", "an open dialog"], ["Fragment header", "a header inside a fragment"]]) {
+    assert.match(html, new RegExp(`<dialog aria-labelledby="([^"]+)" class="sd-dialog[^"]*">(?:<header class="sd-dialog-head"><span id="\\1">${title}</span>)`), `server output lacks aria-labelledby on ${what} whose header says ${title}, so it has no accessible name until hydration`);
+  }
+  assert.ok(html.includes('<dialog aria-label="Label wins" class="sd-dialog"><header'), "an aria-label wins over the header's aria-labelledby on the server");
+  assert.ok(html.includes('<dialog class="sd-dialog"></dialog>'), "a closed dialog that unmounts its header has no aria-labelledby and no children");
+  assert.ok(!html.includes("Unmounted header"), "a closed dialog that unmounts on close rendered its header");
+  assert.ok(!html.includes('<span class="sd-check-desc"></span>'), "a description that draws nothing (an empty array or fragment) rendered an empty description span");
   assert.ok(!html.includes("sd-tooltip"), "a closed tooltip rendered on the server");
   assert.ok(!html.includes("sd-hovercard"), "an open hover card rendered on the server");
   const names = Object.keys(all).filter((name) => /^[A-Z]/.test(name));

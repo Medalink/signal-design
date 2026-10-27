@@ -159,14 +159,18 @@ export function getFont(): Font;
 export function restoreFont(fallback?: Font): void;
 
 /* Positioning */
-/** What an element can be placed beside: an element, anything with `getBoundingClientRect`, a rect, or a `{ x, y }` point. */
+/**
+ * What an element can be placed beside: an element, anything with `getBoundingClientRect`, a rect, or a `{ x, y }` point.
+ * A rect needs `left` and `top`. A missing `right` or `bottom` is `left` or `top` plus `width` or `height`, or just `left` or `top` when there is none.
+ */
 export type PlaceAnchor =
   | { getBoundingClientRect(): { left: number; top: number; right: number; bottom: number } }
-  | { left: number; top: number; right: number; bottom: number }
+  | { left: number; top: number; right?: number | undefined; bottom?: number | undefined; width?: number | undefined; height?: number | undefined }
   | { x: number; y: number };
 /**
  * Places a `position: fixed` element beside the anchor, flipped to the other side at the viewport edge.
  * A point has no size, so its default `offset` is 0 and the element's corner sits on it (6 otherwise).
+ * Where the element flips above or left of the point or shifts at an edge it overlaps the point by a few pixels, so it always contains it.
  * Nothing happens when the element or the anchor is null.
  */
 export function place(
@@ -242,7 +246,8 @@ export function setScrollbars(mode?: "auto" | "always"): void;
  * The auto-hiding scrollbars without `init()`: sets `data-sd-scrollbars` on
  * `<html>` and starts the scroll listener once. Safe to call again to change
  * the mode, and beside React, since it writes only that attribute and
- * `data-sd-scrolling` on whatever scrolls. Default "auto".
+ * `data-sd-scrolling` on whatever scrolls. Does nothing without a `document`, and
+ * `signal-design/js` imports in Node, so a client entry that is also run on the server does not throw. Default "auto".
  */
 export function initScrollbars(mode?: "auto" | "always"): void;
 

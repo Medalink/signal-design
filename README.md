@@ -834,6 +834,8 @@ A page that must not call `init()`, such as a React app, gets the same
 scrollbars from `initScrollbars()` in `signal-design/js`. It sets
 `data-sd-scrollbars` on `<html>` and starts the scroll listener once, and
 nothing else. Call it again to change the mode, as in `initScrollbars("always")`.
+It does nothing without a `document`, and `signal-design/js` imports in Node, so a
+client entry that server rendering also evaluates does not throw.
 
 ## FPS counter
 
@@ -1134,7 +1136,7 @@ import { Tab, TabList, TabPanel, Tabs } from "signal-design/react";
 | Part | Components | State |
 |---|---|---|
 | Buttons | `Button`, `IconButton`, `buttonClass()` for links | `busy` sets `aria-busy` |
-| Fields | `Field`, `Input`, `Textarea`, `Select`, `Checkbox`, `Switch` | `Field` gives its control the id, `aria-describedby`, `aria-invalid` and `required`; the controls are native, so `value` or `defaultValue` and `checked` or `defaultChecked` both work; `Checkbox` and `Switch` take `label` and `description`, or just `aria-label` or `aria-labelledby` for a bare control in a table cell or toolbar, which renders no text and is only as wide as the control |
+| Fields | `Field`, `Input`, `Textarea`, `Select`, `Checkbox`, `Switch` | `Field` gives its control the id, `aria-describedby`, `aria-invalid` and `required`; the controls are native, so `value` or `defaultValue` and `checked` or `defaultChecked` both work; `Checkbox` and `Switch` take `label` and `description`, or just `aria-label` or `aria-labelledby` for a bare control in a table cell or toolbar, which renders no text and is only as wide as the control; type a wrapper with `CheckboxProps` or `SwitchProps` (or `Omit<…, "className">` of them, or of `ComponentProps<typeof Checkbox>`) for the labelled form and `BareCheckboxProps` or `BareSwitchProps` for the bare one, and for a bare wrapper write `BareCheckboxProps & { dense?: boolean }` and destructure the extra prop, because `Omit` of a bare type makes the name optional again |
 | Status | `Badge`, `CountBadge`, `Avatar`, `AvatarStack` | `tone` is `data-tone`, `status` is `data-status` |
 | Surfaces | `Card`, `Panel`, `EmptyState`, `Table` with its rows, headers and cells | `TableHeader sort` is `aria-sort`, `TableRow selected` is `aria-selected` |
 | Overlays | `Dialog`, `Sheet`, `Popover`, `Menu`, `Tooltip`, `ToastProvider` with `useToast()` | `open` or `defaultOpen` with `onOpenChange` |
@@ -1154,6 +1156,9 @@ What they take over from `init()`:
   A `DialogHeader` also names the dialog. Leave the header out and name it with
   `aria-label` or `aria-labelledby` on the `Dialog`; an `aria-label` wins
   over a header, and no `aria-labelledby` is written when there is no header.
+  Server output carries the name when the `DialogHeader` is a child of the
+  `Dialog` or in a fragment there; a header inside a component of your own
+  names it once the page has hydrated.
   Children stay mounted while the dialog is closed. `unmountOnClose` mounts
   them only while it is open and drops them after the fade-out, so state inside
   starts fresh each time.
@@ -1167,8 +1172,11 @@ What they take over from `init()`:
   instead: a `{ x, y }` point, a rect, or an element or object with
   `getBoundingClientRect`. For a context menu keep the pointer in state, set it
   in `onContextMenu` (after `preventDefault()`) together with `open`, and pass
-  `anchor={point}`. The menu's corner sits on the point, it opens above the
-  point or shifts at the viewport edge, light dismiss, Escape and the arrow
+  `anchor={point}`. The menu's corner sits on the point. It opens above the
+  point or shifts at the viewport edge, and then it overlaps the point by a few
+  pixels, so the point is always inside the menu: on macOS and Linux the
+  `contextmenu` event fires on mouse down, and releasing the button outside
+  the menu would light dismiss it. Light dismiss, Escape and the arrow
   keys work as for a trigger, and focus goes back to whatever had it when the
   menu opened. A second right-click moves the open menu; focus stays where
   that click put it.
@@ -1178,15 +1186,23 @@ What they take over from `init()`:
   region is a manual popover in the top layer, so a toast shows above a modal
   `Dialog`; calling `toast()` while one is open lifts the region above it. A
   dialog that opens over a toast already on screen covers it until the next
-  toast. The page behind a modal is inert, so a toast's action and its hover
-  hold do nothing until the dialog closes.
+  toast. A toast over a modal can be read but not used. The page behind a
+  modal is inert and the toaster is part of it, so a click on a toast lands on
+  the dialog instead (a click outside the box of a centered `Dialog` closes it
+  unless it is `static`; a `Sheet` ignores it), the hover hold does nothing,
+  and the keyboard cannot reach a toast's action. Put no `action` on a toast
+  you show while a modal is open; show it after the dialog closes.
 - **Tooltip** is a manual popover too, so it shows above a modal dialog. Its
   look and the `role="tooltip"` and `aria-describedby` link are unchanged.
-  `delay` (milliseconds, default 0) holds the tip back until the pointer has
-  rested on the trigger that long; leaving first shows nothing, and keyboard
-  focus always shows it at once. `className` is added to the tip beside
-  `sd-tooltip`. `onOpenChange(open)` reports each show and hide, including
-  Escape and blur.
+  `delay` (milliseconds, default 0) holds back the pointer only: the tip waits
+  until the pointer has rested on the trigger that long, and leaving first
+  shows nothing. Focus shows it at once unless that delay is still running on
+  the trigger, which then decides. Tab shows it at once; a mouse press that
+  focuses the trigger, or the input a click focuses, is part of the hover and
+  waits out the delay. A touch tap shows it as the finger lifts, whatever the
+  delay, and it stays until the trigger blurs or a press lands elsewhere.
+  `className` is added to the tip beside `sd-tooltip`. `onOpenChange(open)`
+  reports each show and hide, including Escape and blur.
 - **AppShell** renders `data-sidebar`, `data-aside`, `data-drawer` and
   `data-peek`, makes the page `inert` behind the drawer, closes the peek, the
   drawer and a floating right panel on Escape, and moves focus into the drawer.

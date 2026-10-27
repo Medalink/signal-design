@@ -310,6 +310,11 @@ function Empty() {
   );
 }
 
+// A header in a component of your own still names its dialog, once the page has hydrated.
+function Titled({ children }) {
+  return <DialogHeader>{children}</DialogHeader>;
+}
+
 function Overlays() {
   const [open, setOpen] = useState(false);
   const [sheet, setSheet] = useState(false);
@@ -367,6 +372,10 @@ function Overlays() {
               <Button>Done</Button>
             </DialogClose>
           </DialogFooter>
+        </Dialog>
+        <Dialog size="sm" trigger={<Button>Wrapped header</Button>}>
+          <Titled>Header in a component</Titled>
+          <DialogBody>The title comes from a component of your own.</DialogBody>
         </Dialog>
         <Button onClick={() => setGuard(true)}>Guarded dialog</Button>
         <span className="sd-subtle text-sm" data-result>
@@ -560,6 +569,9 @@ function Tooltips() {
 <Tooltip content="Below" side="bottom"><IconButton label="Settings">…</IconButton></Tooltip>
 <Tooltip content="Resolved in 12 ms" delay={600} className="sd-num" onOpenChange={setOpen}>
   <Button>Delayed tip</Button>
+</Tooltip>
+<Tooltip content="Letters and digits only" delay={600}>
+  <Input aria-label="Handle" placeholder="Handle" />
 </Tooltip>`}
     >
       <div className="sd-actions">
@@ -573,6 +585,9 @@ function Tooltips() {
         </Tooltip>
         <Tooltip content="Resolved in 12 ms" delay={600} className="sd-num" onOpenChange={setDelayedOpen}>
           <Button>Delayed tip</Button>
+        </Tooltip>
+        <Tooltip content="Letters and digits only" delay={600}>
+          <Input aria-label="Handle" placeholder="Handle" data-delayed-input />
         </Tooltip>
         <span className="sd-subtle text-sm" data-tip-open>
           delayed tip: {delayedOpen ? "shown" : "hidden"}
@@ -647,6 +662,7 @@ toast("Archived", { action: { label: "Undo", onClick: undo }, timeout: 0 });`}
 function AboveDialog() {
   const toast = useToast();
   const [open, setOpen] = useState(false);
+  const shown = useRef([]);
   return (
     <Demo
       id="react-above-dialog"
@@ -656,11 +672,14 @@ function AboveDialog() {
   <DialogBody>
     <Tooltip content="Moves it out of the inbox"><Button>Archive</Button></Tooltip>
   </DialogBody>
-  <DialogFooter><Button onClick={() => toast("Archived", { action: { label: "Undo" }, timeout: 0 })}>Archive</Button></DialogFooter>
+  <DialogFooter><Button onClick={() => toast("Archived ACME-421", { tone: "success", timeout: 0 })}>Archive</Button></DialogFooter>
 </Dialog>`}
     >
       <div className="sd-actions">
         <Button onClick={() => setOpen(true)}>Open dialog</Button>
+        <Button variant="ghost" onClick={() => shown.current.splice(0).forEach((dismiss) => dismiss())}>
+          Clear toasts
+        </Button>
         <Dialog open={open} onOpenChange={setOpen} size="sm">
           <DialogHeader>Archive ACME-421?</DialogHeader>
           <DialogBody>
@@ -672,7 +691,7 @@ function AboveDialog() {
             <DialogClose>
               <Button variant="ghost">Keep</Button>
             </DialogClose>
-            <Button tone="danger" onClick={() => toast("Archived ACME-421", { tone: "success", action: { label: "Undo" }, timeout: 0 })}>
+            <Button tone="danger" onClick={() => shown.current.push(toast("Archived ACME-421", { tone: "success", timeout: 0 }))}>
               Archive
             </Button>
           </DialogFooter>
