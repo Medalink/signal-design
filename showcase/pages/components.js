@@ -8,15 +8,6 @@ mountLivingTableDemo();
 
 document.getElementById("icon-set").innerHTML = ICON_NAMES.map((name) => `<li>${icon(name)}<code>${name}</code></li>`).join("");
 
-for (const el of document.querySelectorAll("[data-cells]")) {
-  const on = Number(el.dataset.on);
-  for (let i = 0; i < Number(el.dataset.cells); i++) {
-    const cell = document.createElement("i");
-    if (i < on) cell.dataset.on = "";
-    el.append(cell);
-  }
-}
-
 document.addEventListener("click", (event) => {
   const t = event.target.closest("[data-demo-toast]");
   if (t) {

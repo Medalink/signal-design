@@ -119,6 +119,9 @@
         <div class="sd-code-head">src/billing.js</div>
         <pre class="sd-diff"><span data-line="@">@@ -12,6 +12,7 @@</span><span>function charge(customer) {</span><span data-line="-">  return pay(customer.card);</span><span data-line="+">  if (!customer.address) return missingAddress(customer);</span><span data-line="+">  return pay(customer.card);</span><span>}</span></pre>
       </div>
+      <script type="text/plain" data-demo-js>import { init } from "signal-design/js";
+
+init(); // draws every .sd-spark[data-values] that is on the page when it runs</script>
       <p class="demo-usage"><code>sd-spark</code> + <code>data-values</code> · <code>sd-bars</code> + <code>--v</code> · <code>sd-diff</code> + <code>data-line="+|-|@"</code></p>
     </div>
   </section>

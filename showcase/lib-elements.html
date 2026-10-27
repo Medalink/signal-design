@@ -198,6 +198,8 @@
           <button disabled>Disabled</button>
         </div>
       </form>
+      <script type="text/plain" data-demo-js>// indeterminate is a property, not an attribute: set it from script.
+for (const box of document.querySelectorAll("input[data-indeterminate]")) box.indeterminate = true;</script>
       <p class="demo-usage">Native <code>input</code>, <code>select</code>, <code>textarea</code>, <code>button</code>, <code>progress</code>, <code>meter</code> and <code>output</code>, styled with no class · <code>fieldset</code> + <code>legend</code> group them · <code>type="checkbox"</code> + <code>role="switch"</code> is the switch, <code>:indeterminate</code> the mixed checkbox · reach for <code>sd-field</code> when a control needs a label, hint and error</p>
     </div>
 
