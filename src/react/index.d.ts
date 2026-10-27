@@ -76,17 +76,18 @@ export function Input(props: ComponentProps<"input">): ReactElement;
 export function Textarea(props: ComponentProps<"textarea">): ReactElement;
 export function Select(props: ComponentProps<"select">): ReactElement;
 
-type CheckInput = Omit<ComponentProps<"input">, "type" | "className" | "children"> & {
+export interface CheckboxProps extends Omit<ComponentProps<"input">, "type" | "className" | "children"> {
+  label: ReactNode;
+  description?: ReactNode | undefined;
   /** On the label; `ref` and the other props reach the input. */
   className?: string | undefined;
-};
-/** The text beside the box, or an accessible name and no text at all. */
-type CheckText =
-  | { label: ReactNode; description?: ReactNode | undefined }
-  | ({ label?: undefined; description?: undefined } & ({ "aria-label": string } | { "aria-labelledby": string }));
-export type CheckboxProps = CheckInput & CheckText;
-export type SwitchProps = Omit<CheckInput, "role"> & CheckText;
-export function Checkbox(props: CheckboxProps): ReactElement;
+}
+/** A checkbox or switch with no text beside it, named by `aria-label` or `aria-labelledby`, such as one in a table cell or a toolbar. */
+export type BareCheckboxProps = Omit<CheckboxProps, "label" | "description"> & { label?: undefined; description?: undefined } & ({ "aria-label": string } | { "aria-labelledby": string });
+/** `Omit` that keeps each member of a union, so the bare one still requires its name. */
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+export type SwitchProps = DistributiveOmit<CheckboxProps | BareCheckboxProps, "role">;
+export function Checkbox(props: CheckboxProps | BareCheckboxProps): ReactElement;
 export function Switch(props: SwitchProps): ReactElement;
 
 /* ---- Static parts ------------------------------------------------------ */

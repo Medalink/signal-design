@@ -25,12 +25,37 @@ export function checkReactTypes() {
     `import { useRef, useState } from "react";
 import { AppShell, Button, Dialog, DialogBody, Menu, MenuContent, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 import { initScrollbars } from "signal-design/js";
-import { Checkbox, Switch, Tooltip } from "signal-design/react";
+import { Checkbox, Switch, Tooltip, type BareCheckboxProps, type CheckboxProps, type SwitchProps } from "signal-design/react";
 
 initScrollbars();
 initScrollbars("always");
 // @ts-expect-error the mode is auto or always
 initScrollbars("never");
+
+// CheckboxProps stays an interface a consumer extends, and Omit of it stays spreadable into the component.
+interface DenseCheckboxProps extends CheckboxProps {
+  dense?: boolean;
+}
+export function DenseCheckbox({ dense, ...rest }: DenseCheckboxProps) {
+  return <Checkbox {...rest} className={dense ? "dense" : undefined} />;
+}
+export function WrappedCheckbox(props: Omit<CheckboxProps, "className"> & { dense?: boolean }) {
+  const { dense, ...rest } = props;
+  return <Checkbox {...rest} className={dense ? "dense" : undefined} />;
+}
+export function WrappedSwitch(props: SwitchProps) {
+  return <Switch {...props} />;
+}
+export function WrappedBare(props: BareCheckboxProps) {
+  return <Checkbox {...props} />;
+}
+const dense: DenseCheckboxProps = { label: "Dense", dense: true };
+const bare: BareCheckboxProps = { "aria-label": "Select row" };
+// @ts-expect-error a bare checkbox keeps its accessible name as a required prop
+const unnamed: BareCheckboxProps = { label: undefined };
+// @ts-expect-error a switch props type still needs a label or a name
+const unnamedSwitch: SwitchProps = { checked: true };
+console.log(dense, bare, unnamed, unnamedSwitch);
 
 export function Consumer() {
   const [open, setOpen] = useState(false);
