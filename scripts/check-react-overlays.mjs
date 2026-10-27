@@ -255,6 +255,65 @@ export async function checkReactOverlays(page, base) {
   await away();
   expect(await gone(300), "a tip with no closeDelay goes as soon as the pointer leaves");
 
+  /* ---- A second right-click, with the contextmenu event on the press ---- */
+  // WKWebView and WebKitGTK fire contextmenu on mousedown. A cover turns each real press into that: the app hears
+  // contextmenu from the pointerdown, and the release lands wherever the real pointer is. `skew` moves the
+  // synthetic point away from the pointer, so the menu is not under the release: the control that proves a dismissal would show.
+  const card = page.locator("#react-context-menu article");
+  await card.scrollIntoViewIfNeeded();
+  const menu = '[role=menu][aria-label="Message actions"]';
+  const menuAt = () => page.evaluate((sel) => {
+    const pop = document.querySelector(sel).parentElement;
+    const r = pop.getBoundingClientRect();
+    return { open: pop.matches(":popover-open"), left: Math.round(r.left), top: Math.round(r.top) };
+  }, menu);
+  const menuIs = (open) => until(([sel, on]) => document.querySelector(sel).parentElement.matches(":popover-open") === on, [menu, open]);
+  const menuNear = (x, y) => until(([sel, x, y]) => {
+    const r = document.querySelector(sel).parentElement.getBoundingClientRect();
+    return Math.abs(r.left - x) <= 1 && Math.abs(r.top - y) <= 5;
+  }, [menu, x, y]);
+  const cover = (skew) => page.evaluate((skew) => {
+    document.getElementById("press-cover")?.remove();
+    const el = document.createElement("div");
+    el.id = "press-cover";
+    el.style.cssText = "position:fixed;inset:0;z-index:2147483647";
+    el.addEventListener("pointerdown", (event) => {
+      document.querySelector("#react-context-menu article").dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true, clientX: event.clientX + skew, clientY: event.clientY + skew }));
+    });
+    document.body.append(el);
+  }, skew);
+  const first = { x: 300, y: 200 };
+  const second = { x: 700, y: 260 };
+  try {
+    for (const button of ["right", "left"]) {
+      await cover(0);
+      await page.mouse.move(first.x, first.y);
+      await page.mouse.down({ button });
+      expect(await menuIs(true), `a ${button} press opens the menu`);
+      await page.mouse.up({ button });
+      await pause(250);
+      expect((await menuAt()).open && await menuNear(first.x, first.y), `the menu stays open at the first point when the ${button} button is released, got ${JSON.stringify(await menuAt())}`);
+      await page.mouse.move(second.x, second.y);
+      await page.mouse.down({ button });
+      expect(await menuNear(second.x, second.y), `a second ${button} press moves the open menu to the new point, got ${JSON.stringify(await menuAt())}`);
+      await page.mouse.up({ button });
+      await pause(250);
+      expect((await menuAt()).open && await menuNear(second.x, second.y), `the menu stays open at the second point when the ${button} button is released, got ${JSON.stringify(await menuAt())}`);
+      await page.evaluate(() => document.getElementById("press-cover")?.remove());
+      await page.keyboard.press("Escape");
+      expect(await menuIs(false), `Escape closes the menu after two ${button} presses`);
+    }
+    // The control: the menu opens away from the pointer, so the release is outside it and light dismisses it.
+    await cover(400);
+    await page.mouse.move(first.x, first.y);
+    await page.mouse.down({ button: "left" });
+    expect(await menuIs(true), "a press opens the menu away from the pointer");
+    await page.mouse.up({ button: "left" });
+    expect(await menuIs(false), "a release outside the menu light dismisses it, so the checks above can fail");
+  } finally {
+    await page.evaluate(() => document.getElementById("press-cover")?.remove());
+  }
+
   expect(browserErrors.length === 0, `console errors: ${browserErrors.join(" | ")}`);
   return { errors, passed };
 }
