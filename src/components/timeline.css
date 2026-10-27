@@ -140,7 +140,7 @@
     background: var(--sd-canvas);
     color: var(--sd-fg-faint);
     font-family: var(--font-mono);
-    font-size: 9px;
+    font-size: var(--text-3xs);
     line-height: 1;
     white-space: nowrap;
     translate: 0 -50%;
@@ -161,7 +161,7 @@
     border-block-start: 1px solid var(--sd-line-strong);
     color: var(--sd-fg-faint);
     font-family: var(--font-mono);
-    font-size: 9px;
+    font-size: var(--text-3xs);
     letter-spacing: 0.04em;
   }
   .sd-timeline-axis > span {
@@ -222,7 +222,7 @@
     left: calc((var(--from) + var(--to)) / 2 * 1%);
     transform: translateX(-50%);
     font-family: var(--font-mono);
-    font-size: 9px;
+    font-size: var(--text-3xs);
     font-weight: 400;
     letter-spacing: 0.04em;
     white-space: nowrap;

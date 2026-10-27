@@ -34,6 +34,8 @@
   --font-weight-bold: 500; /* regular and medium only */
 
   /* Size scale (rem, so the user's font-size preference still applies). */
+  --text-3xs: 0.75rem; /* 12px  dense data: chart labels, counts, initials. Nothing smaller. */
+  --text-3xs--line-height: 1.35;
   --text-2xs: 0.875rem; /* 14px  labels, status lines (caps) */
   --text-2xs--line-height: 1.4;
   --text-xs: 0.90625rem; /* 14.5px  nav, wordmark, kbd */

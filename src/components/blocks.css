@@ -186,7 +186,7 @@
     padding: 0 5px;
     background: var(--tone, var(--sd-fg));
     color: var(--sd-canvas);
-    font-size: 11px;
+    font-size: var(--text-3xs);
     font-weight: var(--font-weight-semibold);
     font-variant-numeric: tabular-nums;
     line-height: 1;
@@ -269,7 +269,7 @@
     height: 40px;
     border: 1px solid var(--sd-line-strong);
     color: var(--sd-fg-subtle);
-    font-size: 10px;
+    font-size: var(--text-3xs);
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
   }

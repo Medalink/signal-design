@@ -786,7 +786,7 @@
   }
   .sd-receipts > .sd-avatar {
     --sd-avatar-size: 16px;
-    font-size: 8px;
+    font-size: var(--text-3xs);
   }
 
   /* Typing indicator: who is typing, with three squares. While someone types,
@@ -1104,7 +1104,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 11px;
+    font-size: var(--text-3xs);
     font-weight: var(--font-weight-semibold);
     letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
@@ -1196,7 +1196,7 @@
     border: 1px dashed var(--sd-line-strong);
     color: var(--sd-fg-faint);
     font-family: var(--sd-font-mono);
-    font-size: 10px;
+    font-size: var(--text-3xs);
     text-transform: uppercase;
   }
   .sd-roster-row[data-presence="unresolved"] {
