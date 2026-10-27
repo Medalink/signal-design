@@ -968,9 +968,11 @@
   .sd-composer-status > .sd-typing {
     font-size: inherit;
   }
-  /* In a dock: one box, the status line over the composer. */
+  /* In a dock: one box, the status line over the composer. The dock's edge
+     is the field's edge, so it takes the control line (3:1). */
   .sd-shell-dock:has(> .sd-composer) {
     padding: 0;
+    border-color: var(--sd-line-control);
   }
   .sd-shell-dock > .sd-composer {
     border: 0;
