@@ -380,6 +380,7 @@ export interface ToastOptions {
   tone?: Tone | undefined;
   /** Milliseconds on screen, 0 to stay until dismissed. Default is the provider's `timeout`. */
   timeout?: number | undefined;
+  /** A button on the toast. Over a modal dialog it cannot be clicked or reached by keyboard, because the page behind a modal is inert. */
   action?: { label: string; onClick?: (() => void) | undefined } | undefined;
 }
 /** Shows a toast and returns a function that dismisses it. */

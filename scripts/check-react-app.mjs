@@ -256,6 +256,15 @@ export async function checkReactApp(page, base) {
   };
   const toastCount = () => page.locator(`${toaster} .sd-toast`).count();
   const archive = dialog.getByRole("button", { name: "Archive", exact: true });
+  // The page behind a modal is inert and the toaster is part of it, so a toast above a modal is painted but never hit.
+  const lastToastCenter = async () => {
+    const box = await page.locator(`${toaster} .sd-toast`).last().boundingBox();
+    return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+  };
+  const hitAt = ({ x, y }) => page.evaluate(([px, py]) => {
+    const el = document.elementFromPoint(px, py);
+    return { tag: el?.tagName, inToaster: Boolean(el?.closest(".sd-toaster")) };
+  }, [x, y]);
 
   await over.getByRole("button", { name: "Open dialog" }).click();
   expect(await until(() => document.querySelector("#react-above-dialog dialog:modal") !== null, null), "the dialog opens as a modal");
@@ -286,6 +295,8 @@ export async function checkReactApp(page, base) {
   const want = await toastColor();
   const got = await toastPixel();
   expect(got.every((c, i) => Math.abs(c - want[i]) <= 2), `a toast paints above the open dialog's backdrop, wanted ${want} at its corner, got ${got}`);
+  const hit = await hitAt(await lastToastCenter());
+  expect(hit.tag === "DIALOG" && !hit.inToaster, `a pointer over a toast above a modal reaches the dialog, not the toast, got ${JSON.stringify(hit)}`);
 
   const edge = async () => page.locator(`${toaster} .sd-toast`).last().evaluate((el) => {
     const r = el.getBoundingClientRect();
@@ -318,9 +329,39 @@ export async function checkReactApp(page, base) {
   await page.keyboard.press("Escape");
   expect(await until(() => document.querySelector("#react-above-dialog dialog:modal") === null, null), "Escape closes the dialog");
   expect(await toastCount() === 2, "the toasts outlive the dialog");
-  for (let left = await toastCount(); left > 0; left--) await page.locator(toaster).getByRole("button", { name: "Undo" }).first().click();
-  expect(await until((sel) => !document.querySelector(sel + " .sd-toast"), toaster), "an action on a toast works once the dialog is closed");
+
+  // A click on a toast above a centered dialog lands on the dialog outside its box, which is its backdrop.
+  await over.getByRole("button", { name: "Open dialog" }).click();
+  await archive.click();
+  expect(await until((sel) => document.querySelectorAll(sel + " .sd-toast").length === 3 && document.querySelectorAll(sel + " .sd-toast")[2].getAnimations().length === 0, toaster), "a toast shows over the reopened dialog");
+  const aimed = await lastToastCenter();
+  await page.mouse.click(aimed.x, aimed.y);
+  expect(await until(() => document.querySelector("#react-above-dialog dialog:modal") === null, null), "a click on a toast above a centered dialog closes the dialog through its backdrop");
+  expect(await toastCount() === 3, "that click leaves the toasts alone");
+  await over.getByRole("button", { name: "Clear toasts" }).click();
+  expect(await until((sel) => !document.querySelector(sel + " .sd-toast"), toaster), "the toasts can be cleared once the dialog is closed");
   expect(await page.locator(toaster).evaluate((el) => el.matches(":popover-open")), "the toaster stays open with no toast in it");
+
+  // A sheet ignores the click, and a toast's action works once the sheet is closed.
+  const sheetOpen = () => page.evaluate(() => document.querySelector("dialog.sd-sheet:not(.sd-sheet-bottom)").open);
+  await page.locator("#react-dialog").getByRole("button", { name: "Sheet", exact: true }).click();
+  expect(await until(() => document.querySelector("dialog.sd-sheet:not(.sd-sheet-bottom)")?.open === true, null), "a sheet opens");
+  // The toast buttons are inert behind the sheet, so call the click the way a script would.
+  await page.evaluate(() => [...document.querySelectorAll("#react-toast button")].find((button) => button.textContent === "Toast with undo").click());
+  expect(await until((sel) => document.querySelector(sel + " .sd-toast")?.getAnimations().length === 0, toaster), "a toast with an action shows above the sheet");
+  const overSheet = await lastToastCenter();
+  const sheetHit = await hitAt(overSheet);
+  expect(sheetHit.tag === "DIALOG" && !sheetHit.inToaster, `a pointer over a toast above a sheet reaches the sheet, not the toast, got ${JSON.stringify(sheetHit)}`);
+  await page.mouse.click(overSheet.x, overSheet.y);
+  // A negative assertion: a click that closed the sheet would have done so by now.
+  await new Promise((resolve) => setTimeout(resolve, 250));
+  expect(await sheetOpen() && await toastCount() === 1, "a click on a toast above a sheet does nothing, not even to the toast");
+  await page.keyboard.press("Escape");
+  expect(await until(() => !document.querySelector("dialog.sd-sheet:not(.sd-sheet-bottom)").open, null), "Escape closes the sheet");
+  await page.locator(toaster).getByRole("button", { name: "Undo" }).click();
+  // The pointer rests where the toast was, and hovering the Restored toast that Undo shows would hold it on screen.
+  await page.mouse.move(2, 2);
+  expect(await until((sel) => !document.querySelector(sel + " .sd-toast"), toaster, 6000), "an action on a toast works once the modal is closed, and its own toast goes");
 
   // Only a modal dialog covers the toaster. Lifting it for any open dialog hides and shows it, and moves focus.
   await page.evaluate(() => {

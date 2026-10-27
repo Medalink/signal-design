@@ -6,7 +6,7 @@
 - `Dialog` prop `unmountOnClose`: mounts the children only while the dialog is open and drops them after the fade-out. The default still keeps them mounted.
 
 ### Changed
-- `ToastProvider`'s `.sd-toaster` and `Tooltip`'s tip are manual popovers, so they paint above an open modal `<dialog>`. Their look is unchanged. A toast called while a dialog is open lifts the region above it. The page behind a modal is inert, so a toast's action and hover hold do nothing until the dialog closes.
+- `ToastProvider`'s `.sd-toaster` and `Tooltip`'s tip are manual popovers, so they paint above an open modal `<dialog>`. Their look is unchanged. A toast called while a dialog is open lifts the region above it. A toast over a modal can be read but not used: the page behind a modal is inert, so a click on a toast lands on the dialog (a centered `Dialog` closes on it unless it is `static`, a `Sheet` ignores it), and its action and hover hold work only once the dialog closes.
 
 ### Fixed
 - `place()` no longer throws when the element or the anchor is null.

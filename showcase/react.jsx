@@ -647,6 +647,7 @@ toast("Archived", { action: { label: "Undo", onClick: undo }, timeout: 0 });`}
 function AboveDialog() {
   const toast = useToast();
   const [open, setOpen] = useState(false);
+  const shown = useRef([]);
   return (
     <Demo
       id="react-above-dialog"
@@ -656,11 +657,14 @@ function AboveDialog() {
   <DialogBody>
     <Tooltip content="Moves it out of the inbox"><Button>Archive</Button></Tooltip>
   </DialogBody>
-  <DialogFooter><Button onClick={() => toast("Archived", { action: { label: "Undo" }, timeout: 0 })}>Archive</Button></DialogFooter>
+  <DialogFooter><Button onClick={() => toast("Archived ACME-421", { tone: "success", timeout: 0 })}>Archive</Button></DialogFooter>
 </Dialog>`}
     >
       <div className="sd-actions">
         <Button onClick={() => setOpen(true)}>Open dialog</Button>
+        <Button variant="ghost" onClick={() => shown.current.splice(0).forEach((dismiss) => dismiss())}>
+          Clear toasts
+        </Button>
         <Dialog open={open} onOpenChange={setOpen} size="sm">
           <DialogHeader>Archive ACME-421?</DialogHeader>
           <DialogBody>
@@ -672,7 +676,7 @@ function AboveDialog() {
             <DialogClose>
               <Button variant="ghost">Keep</Button>
             </DialogClose>
-            <Button tone="danger" onClick={() => toast("Archived ACME-421", { tone: "success", action: { label: "Undo" }, timeout: 0 })}>
+            <Button tone="danger" onClick={() => shown.current.push(toast("Archived ACME-421", { tone: "success", timeout: 0 }))}>
               Archive
             </Button>
           </DialogFooter>

@@ -4,7 +4,8 @@
  * `signal-design/js`. A toast leaves in two steps (`data-leaving` for the
  * 160ms fade, then it is removed), and hovering one holds it on screen. The
  * region is a manual popover, so it paints above a modal dialog; a toast
- * called while one is open lifts it above that dialog.
+ * called while one is open lifts it above that dialog. It is still part of the
+ * inert page behind the modal, so it can be read there but not clicked.
  */
 import { createContext, createElement as h, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Button } from "./button.js";

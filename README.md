@@ -1184,8 +1184,12 @@ What they take over from `init()`:
   region is a manual popover in the top layer, so a toast shows above a modal
   `Dialog`; calling `toast()` while one is open lifts the region above it. A
   dialog that opens over a toast already on screen covers it until the next
-  toast. The page behind a modal is inert, so a toast's action and its hover
-  hold do nothing until the dialog closes.
+  toast. A toast over a modal can be read but not used. The page behind a
+  modal is inert and the toaster is part of it, so a click on a toast lands on
+  the dialog instead (a click outside the box of a centered `Dialog` closes it
+  unless it is `static`; a `Sheet` ignores it), the hover hold does nothing,
+  and the keyboard cannot reach a toast's action. Put no `action` on a toast
+  you show while a modal is open; show it after the dialog closes.
 - **Tooltip** is a manual popover too, so it shows above a modal dialog. Its
   look and the `role="tooltip"` and `aria-describedby` link are unchanged.
   `delay` (milliseconds, default 0) holds the tip back until the pointer has
