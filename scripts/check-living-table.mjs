@@ -103,9 +103,9 @@ export async function checkLivingTable(page, base, engine) {
       await frameElement.dispose();
     }
   });
-  await page.evaluate(async (url) => {
+  const [source] = await page.locator("#components-living-tables .demo-code pre").allTextContents();
+  await page.evaluate(async ({ url, source }) => {
     const api = await import(url);
-    const source = document.querySelector("#components-living-tables .demo-code pre").textContent;
     const template = document.createElement("template");
     template.innerHTML = source;
     const root = template.content.querySelector("[data-sd-living-table]");
@@ -125,7 +125,7 @@ export async function checkLivingTable(page, base, engine) {
     } : node.textContent;
     window.livingCheck = { api, root, host, original: root.outerHTML, snapshot, before: JSON.stringify(snapshot(root)), events: [] };
     root.addEventListener("sd:living-table", (event) => window.livingCheck.events.push(event.detail));
-  }, served(base, "../src/js/index.js"));
+  }, { url: served(base, "../src/js/index.js"), source });
 
   const evaluate = (fn, argument) => page.evaluate(fn, argument);
   const resize = async (width) => {
