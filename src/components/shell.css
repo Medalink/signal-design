@@ -84,7 +84,7 @@
     display: grid;
     place-items: center;
     flex-shrink: 0;
-    height: var(--shell-head);
+    height: var(--shell-head, 4rem);
     border-block-end: 1px solid var(--sd-line-strong);
     color: var(--sd-fg);
     transition: background-color 120ms var(--ease-out);
@@ -317,7 +317,7 @@
     flex-shrink: 0;
     align-items: center;
     gap: 10px;
-    height: var(--shell-head);
+    height: var(--shell-head, 4rem);
     padding: 0 8px 0 16px;
     border-block-end: 1px solid var(--sd-line-strong);
     color: var(--sd-fg);
@@ -704,7 +704,7 @@
     flex-shrink: 0;
     align-items: center;
     gap: 10px;
-    height: var(--shell-head);
+    height: var(--shell-head, 4rem);
     padding: 0 8px 0 16px;
     border-block-end: 1px solid var(--sd-line);
     font-weight: var(--font-weight-semibold);
