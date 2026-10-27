@@ -126,6 +126,11 @@
     --mark: var(--sd-fg);
     text-decoration-line: underline;
   }
+  /* The current match already has a 1px outline; keyboard focus doubles it. */
+  .sd-mark:is([data-mark="find"], [data-mark="check"]):is(a, [role="button"], [tabindex]):focus-visible:not([aria-disabled="true"]) {
+    outline: 2px solid var(--sd-fg);
+    outline-offset: 2px;
+  }
 
   /*
    * Gutter marker: a square in the margin beside a block, for what is attached
