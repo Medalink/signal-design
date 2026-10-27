@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## 2.0.0 (2026-10-23)
+## 1.3.0 (2026-10-23)
 
 ### Changed
 - `sd-message`: a new layout for conversations. A 64px time column on the
