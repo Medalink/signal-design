@@ -708,6 +708,11 @@
   .sd-feed-jump[hidden] {
     display: none;
   }
+  /* The bar overlaps the bottom of the feed, so the feed keeps focus and
+     scrolled-to items clear of it. */
+  :has(+ .sd-feed-jump:not([hidden])) {
+    scroll-padding-block-end: 40px;
+  }
   .sd-feed-jump .sd-btn {
     gap: 6px;
   }
@@ -852,8 +857,12 @@
     border: 1px solid var(--sd-line-strong);
     background: var(--sd-surface);
   }
-  .sd-composer:focus-within {
-    border-color: var(--sd-fg-subtle);
+  /* An outline on the border line, so a composer drawn without its own edge
+     (in a dock, or with border: 0) shows focus too. Only the text field
+     lights it: a focused button inside has its own ring. */
+  .sd-composer:has(textarea:focus) {
+    outline: 1px solid var(--sd-fg);
+    outline-offset: -1px;
   }
   .sd-composer-row {
     display: flex;
