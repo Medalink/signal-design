@@ -58,15 +58,16 @@ export function Select(props) {
 }
 
 function Check({ role, label, description, className, ...props }) {
+  const text = Boolean(label || description);
   return h(
     "label",
     { className: cx("sd-check", className) },
     h("input", { type: "checkbox", role, ...props }),
-    h("span", { className: "sd-check-text" }, label, description && h("span", { className: "sd-check-desc" }, description)),
+    text && h("span", { className: "sd-check-text" }, label, description && h("span", { className: "sd-check-desc" }, description)),
   );
 }
 
-/** A checkbox with its label and optional description. `ref` reaches the input. */
+/** A checkbox with its label and optional description, or with just an `aria-label` or `aria-labelledby` and no text. `ref` reaches the input. */
 export function Checkbox(props) {
   return h(Check, props);
 }

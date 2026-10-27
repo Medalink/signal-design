@@ -124,7 +124,9 @@ function Forms() {
 <Field label="Bio"><Textarea /></Field>
 <Field label="Plan"><Select><option>Free</option></Select></Field>
 <Checkbox label="Weekly summary" description="Sent every Monday." />
-<Switch label="Push notifications" checked={notify} onChange={...} />`}
+<Switch label="Push notifications" checked={notify} onChange={...} />
+<Switch aria-label="Mute channel" />
+<Checkbox aria-labelledby="pinned" />`}
     >
       <form className="sd-form max-w-narrow" onSubmit={(event) => event.preventDefault()} noValidate>
         <Field label="Name" hint="Shown on your profile." error={error} required>
@@ -143,6 +145,14 @@ function Forms() {
           <Checkbox label="Email me a weekly summary" description="Sent every Monday morning." defaultChecked />
           <Switch label="Push notifications" description={notify ? "On" : "Off"} checked={notify} onChange={(event) => setNotify(event.target.checked)} />
           <Switch label="Auto-approve" description="Not available on your plan." disabled />
+        </div>
+        <div className="sd-actions" data-bare>
+          <Switch aria-label="Mute channel" />
+          <Checkbox aria-label="Select row" defaultChecked />
+          <span id="react-bare-name" className="sd-subtle text-sm">
+            Pinned
+          </span>
+          <Checkbox aria-labelledby="react-bare-name" />
         </div>
       </form>
     </Demo>

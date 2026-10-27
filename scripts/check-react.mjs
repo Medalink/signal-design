@@ -25,7 +25,7 @@ export function checkReactTypes() {
     `import { useRef, useState } from "react";
 import { AppShell, Button, Dialog, Menu, MenuContent, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 import { initScrollbars } from "signal-design/js";
-import { Tooltip } from "signal-design/react";
+import { Checkbox, Switch, Tooltip } from "signal-design/react";
 
 initScrollbars();
 initScrollbars("always");
@@ -67,6 +67,16 @@ export function Consumer() {
         {/* @ts-expect-error a pointer event is not an anchor: it has clientX, not x */}
         <MenuContent anchor={{ clientX: 1, clientY: 2 }} />
       </Menu>
+      <Switch aria-label="Mute" />
+      <Checkbox aria-labelledby="name" defaultChecked />
+      <Checkbox label="Label" aria-label="Override" description="d" />
+      <Switch label={undefined} aria-label="Mute" description={undefined} />
+      {/* @ts-expect-error a bare checkbox needs an accessible name */}
+      <Checkbox />
+      {/* @ts-expect-error a bare switch needs an accessible name */}
+      <Switch checked onChange={() => {}} />
+      {/* @ts-expect-error a description needs a label beside it */}
+      <Checkbox description="d" aria-label="Name" />
       <Tooltip content="Tip" side="bottom" delay={300} className="wide" onOpenChange={(shown: boolean) => console.log(shown)}><Button>Tip</Button></Tooltip>
       <Tooltip content="Tip" delay={undefined} className={undefined} onOpenChange={undefined}><Button>Tip</Button></Tooltip>
       {/* @ts-expect-error the delay is a number of milliseconds */}
@@ -204,6 +214,7 @@ export async function checkReactSsr() {
           h(sd.Field, { label: "Pick" }, h(sd.Select, null, h("option", null, "a"))),
           h(sd.Checkbox, { label: "c", description: "d" }),
           h(sd.Switch, { label: "s" }),
+          h(sd.Switch, { "aria-label": "Mute" }),
           h(sd.Badge, { tone: "success" }, "ok"),
           h(sd.Avatar, { name: "Ada Lovelace" }),
           h(sd.Icon, { name: "undo" }),
@@ -267,6 +278,7 @@ export async function checkReactSsr() {
     ['aria-selected="true"', "the selected tab or row"],
     ['aria-invalid="true"', "the invalid control"],
     ['role="switch"', "the switch"],
+    ['<label class="sd-check"><input type="checkbox" role="switch" aria-label="Mute"/></label>', "a switch with no text"],
     ["99+", "the capped count"],
     ['data-icon="undo"', "an icon"],
     ['style="--size:300px"', "a resizable panel"],

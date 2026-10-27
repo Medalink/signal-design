@@ -76,14 +76,18 @@ export function Input(props: ComponentProps<"input">): ReactElement;
 export function Textarea(props: ComponentProps<"textarea">): ReactElement;
 export function Select(props: ComponentProps<"select">): ReactElement;
 
-export interface CheckboxProps extends Omit<ComponentProps<"input">, "type" | "className" | "children"> {
-  label: ReactNode;
-  description?: ReactNode | undefined;
+type CheckInput = Omit<ComponentProps<"input">, "type" | "className" | "children"> & {
   /** On the label; `ref` and the other props reach the input. */
   className?: string | undefined;
-}
+};
+/** The text beside the box, or an accessible name and no text at all. */
+type CheckText =
+  | { label: ReactNode; description?: ReactNode | undefined }
+  | ({ label?: undefined; description?: undefined } & ({ "aria-label": string } | { "aria-labelledby": string }));
+export type CheckboxProps = CheckInput & CheckText;
+export type SwitchProps = Omit<CheckInput, "role"> & CheckText;
 export function Checkbox(props: CheckboxProps): ReactElement;
-export function Switch(props: Omit<CheckboxProps, "role">): ReactElement;
+export function Switch(props: SwitchProps): ReactElement;
 
 /* ---- Static parts ------------------------------------------------------ */
 

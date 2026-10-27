@@ -280,6 +280,31 @@ export async function checkReactApp(page, base) {
   expect(await until(() => !document.querySelector("body > [role=tooltip]") && document.querySelector("#react-tooltip [data-tip-open]").textContent === "delayed tip: hidden", null), "Escape hides the tooltip and reports it");
   await delayed.blur();
 
+  /* ---- Switch and Checkbox with no text ---- */
+  const bare = page.locator("#react-forms [data-bare]");
+  const mute = bare.getByRole("switch", { name: "Mute channel" });
+  const row = bare.getByRole("checkbox", { name: "Select row" });
+  const pinned = bare.getByRole("checkbox", { name: "Pinned" });
+  expect(await mute.count() === 1 && await row.count() === 1 && await pinned.count() === 1, "aria-label and aria-labelledby name a switch or checkbox with no label");
+  expect(await bare.locator("label.sd-check").count() === 3 && await bare.locator(".sd-check-text").count() === 0, "a control with no label renders no text span");
+  expect(await row.isChecked() && !await mute.isChecked(), "defaultChecked reaches a bare checkbox");
+  await mute.click();
+  expect(await mute.isChecked(), "clicking a bare switch turns it on");
+  await mute.press("Space");
+  expect(!await mute.isChecked(), "Space turns a focused bare switch off");
+  // In a block parent, as in a table cell, a label without text is as wide as its control and no wider.
+  const widths = await page.evaluate(() => {
+    const box = document.createElement("div");
+    box.style.width = "400px";
+    box.innerHTML = '<label class="sd-check"><input type="checkbox" aria-label="Pick"></label><label class="sd-check"><input type="checkbox"><span class="sd-check-text">Text</span></label>';
+    document.body.append(box);
+    const [none, text] = [...box.children].map((el) => el.getBoundingClientRect().width);
+    box.remove();
+    return { none, text };
+  });
+  expect(widths.none < 40 && widths.text === 400, `the click target of a label with no text is the control alone, got ${JSON.stringify(widths)}`);
+  expect(await page.locator("#react-forms .sd-check-text").count() >= 3, "a control with a label still renders its text");
+
   expect(browserErrors.length === 0, `console errors: ${browserErrors.join(" | ")}`);
   return { errors, passed };
 }
