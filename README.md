@@ -1114,6 +1114,8 @@ function Rename({ name, save }) {
 Tabs take their state the same way; `TabList` needs a `label`:
 
 ```jsx
+import { Tab, TabList, TabPanel, Tabs } from "signal-design/react";
+
 <Tabs defaultValue="overview">
   <TabList label="Project">
     <Tab value="overview">Overview</Tab>
