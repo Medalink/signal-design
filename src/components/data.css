@@ -207,8 +207,11 @@
   .sd-kv > dt {
     padding-top: 2px;
   }
+  /* A long unbroken value (an email, an id, a URL) wraps inside its column. */
   .sd-kv > dd {
+    min-width: 0;
     margin: 0;
+    overflow-wrap: anywhere;
   }
   /* Plain keys: sentence case at body size, cut off with an ellipsis (put the
      full text in a title) once they take half the row, so the values keep
