@@ -968,9 +968,11 @@
   .sd-composer-status > .sd-typing {
     font-size: inherit;
   }
-  /* In a dock: one box, the status line over the composer. */
+  /* In a dock: one box, the status line over the composer. The dock's edge
+     is the field's edge, so it takes the control line (3:1). */
   .sd-shell-dock:has(> .sd-composer) {
     padding: 0;
+    border-color: var(--sd-line-control);
   }
   .sd-shell-dock > .sd-composer {
     border: 0;
@@ -1026,6 +1028,10 @@
     font: inherit;
     line-height: 1.5;
     resize: none;
+  }
+  /* An edited message wears a lifted fill; the edge steps up to stay 3:1 on it. */
+  .sd-message[data-editing] .sd-message-edit textarea:not(:focus) {
+    border-color: var(--sd-fg-faint);
   }
   .sd-message-edit textarea:focus {
     border-color: var(--sd-fg-subtle);

@@ -898,6 +898,7 @@
     background: var(--sd-surface);
     user-select: none;
     -webkit-user-select: none;
+    container-type: inline-size;
   }
   .sd-titlebar-brand {
     position: absolute;
@@ -935,6 +936,12 @@
     font-size: var(--text-sm);
     letter-spacing: var(--tracking-wide);
     white-space: nowrap;
+  }
+  /* A narrow window keeps its controls and drops the metrics. */
+  @container (max-width: 32rem) {
+    .sd-titlebar-metric {
+      display: none;
+    }
   }
   .sd-titlebar-metric b {
     color: var(--sd-fg-subtle);

@@ -283,6 +283,9 @@
     color: var(--sd-fg);
     font-size: var(--text-base);
   }
+  .sd-option-desc {
+    color: var(--sd-fg-subtle);
+  }
   /* Selected: a 2px edge drawn over the preview, a lifted fill and a solid
      corner square. */
   .sd-option::before {

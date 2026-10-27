@@ -351,9 +351,12 @@
     border-block-end: 1px solid var(--sd-line);
     background: var(--sd-canvas);
   }
+  /* The strip scrolls, so it asks for no width of its own: a bar in a narrow
+     column shrinks instead of pushing out of it. */
   .sd-topbar > .sd-nav {
     flex: 1;
     min-width: 0;
+    contain: inline-size;
   }
   .sd-topbar-end {
     display: flex;
@@ -388,6 +391,7 @@
     white-space: nowrap;
     overflow-x: auto;
     scrollbar-width: none;
+    contain: inline-size;
   }
   .sd-statusbar > * {
     display: inline-flex;
