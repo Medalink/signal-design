@@ -73,21 +73,31 @@
     color: var(--sd-fg);
   }
 
-  /* Status line: OWNER · 07:55 · RISK. Children are separated by a dot. */
+  /* Status line: OWNER · 07:55 · RISK. Children are separated by a dot.
+     Each dot hangs in the 25px gap before its child and takes no width, so
+     a dot in front of a wrapped line's first child falls outside the box and
+     is clipped. The clip leaves 6px for a focus ring. */
   .sd-meta {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0 10px;
+    gap: 0 25px;
+    clip-path: inset(-100vh -100vw -100vh -6px);
     font-size: var(--text-2xs);
     letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
     color: var(--sd-fg-subtle);
     font-variant-numeric: tabular-nums;
   }
+  .sd-meta:dir(rtl) {
+    clip-path: inset(-100vh -6px -100vh -100vw);
+  }
   .sd-meta > * + *::before {
     content: "\00B7";
-    margin-inline-end: 10px;
+    display: inline-block;
+    width: 5px;
+    margin-inline: -15px 10px;
+    text-align: center;
     color: var(--sd-fg-faint);
   }
   .sd-meta [data-tone] {
