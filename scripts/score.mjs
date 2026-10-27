@@ -263,9 +263,21 @@ async function interact(page, helper, { scope, exclude }) {
     await h.scrollIntoViewIfNeeded({ timeout: 2000 }).catch(() => {});
     const box = await h.boundingBox();
     if (!box || box.width < 2) continue;
+    // A field inside a wrapper (composer, tags, combobox) may show focus on
+    // the wrapper's edge, so the picture takes in a snug wrapper too: an
+    // ancestor up to three levels up whose box is at most four times larger.
+    const area = await h.evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      let best = r;
+      for (let n = el.parentElement, i = 0; n && i < 3; n = n.parentElement, i++) {
+        const p = n.getBoundingClientRect();
+        if (p.width * p.height <= 4 * r.width * r.height) best = p;
+      }
+      return { x: best.left, y: best.top, width: best.width, height: best.height };
+    });
     const vp = page.viewportSize();
     const pad = 6;
-    const clip = { x: Math.max(0, box.x - pad), y: Math.max(0, box.y - pad), width: Math.min(box.width + pad * 2, vp.width - Math.max(0, box.x - pad)), height: Math.min(box.height + pad * 2, vp.height - Math.max(0, box.y - pad)) };
+    const clip = { x: Math.max(0, area.x - pad), y: Math.max(0, area.y - pad), width: Math.min(area.width + pad * 2, vp.width - Math.max(0, area.x - pad)), height: Math.min(area.height + pad * 2, vp.height - Math.max(0, area.y - pad)) };
     if (clip.width < 2 || clip.height < 2) continue;
     await page.mouse.move(0, 0);
     await page.evaluate(() => document.activeElement?.blur());
@@ -287,6 +299,11 @@ async function interact(page, helper, { scope, exclude }) {
       const shot = await pixels(page, clip);
       const d = await diff(helper, rest, shot);
       // A visible ring changes at least half of a 1px outline around the box.
+      if (process.env.SCORE_DEBUG && d.changed < box.width + box.height) {
+        const name = info.sig.replace(/[^a-z0-9]+/gi, "-").slice(0, 60);
+        writeFileSync(`.audit/shots/focus-${name}-rest.png`, Buffer.from(rest, "base64"));
+        writeFileSync(`.audit/shots/focus-${name}-focus.png`, Buffer.from(shot, "base64"));
+      }
       if (d.changed < (box.width + box.height)) findings.push({ check: "focus", severity: info.text ? "major" : "critical", el: info.sig, detail: `${d.changed} px change on focus` });
     }
     await page.evaluate(() => document.activeElement?.blur());
