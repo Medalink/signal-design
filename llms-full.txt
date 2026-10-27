@@ -18,7 +18,7 @@ It runs in browsers and in Tauri (WebView2, WKWebView, WebKitGTK).
 
 ```bash
 pnpm add github:Medalink/signal-design        # or: npm install github:Medalink/signal-design
-pnpm add github:Medalink/signal-design#v0.1.0 # pin a tag or commit for reproducible builds
+pnpm add github:Medalink/signal-design#v1.2.0 # pin a tag or commit for reproducible builds
 ```
 
 **With Tailwind v4** (no build step needed for Signal itself):
@@ -122,7 +122,7 @@ by `title` or `classes`) rather than inventing markup.
 | Need | Use |
 |---|---|
 | Reading page | `<main class="sd-page">` (720px column) or `sd-page sd-page-wide` |
-| App with navigation | Signal App Shell: `sd-shell` > `sd-rail`, `sd-sidebar`, `sd-shell-main` (`sd-shell-header` or `sd-shell-bar`, `sd-shell-content`, optional `sd-shell-dock`), `sd-shell-aside`, `sd-statusbar sd-shell-status` |
+| App with navigation | Signal App Shell: `sd-shell` > `sd-rail`, `sd-sidebar`, `sd-shell-main` (`sd-shell-header` or `sd-shell-bar`, `sd-shell-content`, optional `sd-shell-dock`), `sd-shell-aside`, `sd-statusbar sd-shell-status`. Copy the whole frame from [`showcase/shell.html`](https://github.com/Medalink/signal-design/blob/main/showcase/shell.html) in the repo (the package does not ship `showcase/`); README "Signal App Shell" lists its parts |
 | A rail of places (groups, servers) | `sd-rail-tile` (picture, initials or icon) in a 72px rail (`--shell-rail: 4.5rem`); `aria-current`, `data-unread`, `data-pending`, corner `sd-badge-count` |
 | Resizable sidebar | `sd-sidebar-resize` (`role="separator"`, `aria-valuemin`/`max`/`now`) last in `sd-sidebar`; `data-sd-shell="resize"` for the JS, or drive `--shell-sidebar` and `aria-valuenow` from your framework |
 | Desktop window chrome | `sd-titlebar` with `sd-window-controls` (`data-sd-window`) |
@@ -205,7 +205,7 @@ Every block from the library pages, with its copyable HTML. `JS:` says what `ini
 
 ## Tokens / Hard rules
 
-
+Square corners · flat, hairlines only · color only for status and focus · motion on state change, 120–200ms · tokens, never hex values · one text face in regular and medium, font-mono for code · see AGENTS.md for the full list and npx signal-design check to test a page against it
 
 Classes: none
 
@@ -224,7 +224,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Tokens / Semantic roles
 
-
+accent · success · danger · warning · pending · extra · apply with data-tone or text-danger, bg-success, border-warning · read the value from --sd-accent and its siblings, never from a hue name
 
 Classes: none
 
@@ -330,7 +330,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Tokens / Type scale
 
-
+text-3xs … text-5xl, each with its line height built in (--text-*) · text-base (16px) for body, text-sm for meta, text-2xs uppercase for labels, text-3xl for display · nothing below text-3xs (12px)
 
 Classes: sd-table, sd-table-wrap
 
@@ -342,7 +342,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Tokens / Tracking and weight
 
-
+tracking-display and tracking-tight for large text and row titles · tracking-caps on uppercase labels and status lines · tracking-widest for labels · tracking-wordmark for the wordmark only · weights are font-normal (400) and font-semibold (500); font-bold also maps to 500
 
 Classes: none
 
@@ -379,7 +379,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Tokens / Spacing, layout, motion
 
-
+4px base unit (--spacing) · max-w-column (720px), max-w-narrow (560px), max-w-wide (1024px) · transitions 120ms (hover, color), 160ms (collapse, toast), 200ms (expand, scroll) on ease-out · animate-slide-in, animate-fade-in, animate-rise-in for entrances
 
 Classes: sd-btn, sd-dot, sd-kv, sd-row, sd-row-body, sd-row-title
 
@@ -411,7 +411,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Elements / Headings
 
-
+Plain h1–h6, no class · em inside h1–h3 is the quiet half · one h1 per page, no skipped levels · use sd-title or sd-display only when the visual size must differ from the outline level
 
 Classes: none
 
@@ -430,7 +430,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Elements / Text
 
-
+Plain p, a, strong, em, small, mark, del, ins, abbr, time, code, kbd and address, no class · margins appear between siblings only · kbd kbd nests one key per cap · reach for sd-lead, sd-muted or sd-meta only to change emphasis
 
 Classes: none
 
@@ -446,7 +446,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Elements / Lists
 
-
+Plain ul, ol and dl, no class: square faint markers, tabular numbers, nested lists indent themselves · a list that carries any class is yours to style, so use sd-item or sd-row for interactive rows and sd-kv for aligned pairs
 
 Classes: none
 
@@ -475,7 +475,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Elements / Quote, code, rule
 
-
+Plain blockquote (with a footer or cite for the source), pre > code and hr, no class · use sd-code for a titled, copyable snippet with data-sd-copy
 
 Classes: none
 
@@ -495,7 +495,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Elements / Table
 
-
+Plain table with caption, thead, tbody, tfoot and th scope, no class · wrap it in sd-table-wrap so a narrow screen scrolls the table, not the page · use sd-table for density and row states
 
 Classes: sd-table-wrap
 
@@ -518,7 +518,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Elements / Form controls
 
-
+Native input, select, textarea, button, progress, meter and output, styled with no class · fieldset + legend group them · type="checkbox" + role="switch" is the switch, :indeterminate the mixed checkbox · reach for sd-field when a control needs a label, hint and error
 
 Classes: none
 
@@ -608,9 +608,14 @@ No JS needed: the HTML works with the CSS alone.
 </form>
 ```
 
+```js
+// indeterminate is a property, not an attribute: set it from script.
+for (const box of document.querySelectorAll("input[data-indeterminate]")) box.indeterminate = true;
+```
+
 ## Elements / Details, dialog, popover
 
-
+Native details + summary (stacked ones read as one accordion), dialog and [popover], no class · data-sd-open / data-sd-close drive a plain dialog, popovertarget a popover · use sd-dialog, sd-popover or sd-expand for header, body, anchoring and animation
 
 Classes: none
 
@@ -644,7 +649,7 @@ JS: init() from signal-design/js wires data-sd-open · data-sd-close · popovert
 
 ## Elements / Media
 
-
+Plain figure + figcaption, img, video, audio and iframe, no class · media scales to its container · give img and iframe width/height or alt/title so layout holds and screen readers have a name
 
 Classes: none
 
@@ -784,6 +789,12 @@ No JS needed: the HTML works with the CSS alone.
 <ul class="demo-icons" id="icon-set" aria-label="Icon set"></ul>
 ```
 
+```js
+import { ICON_NAMES, icon } from "signal-design/js/icons";
+
+document.getElementById("icon-set").innerHTML = ICON_NAMES.map((name) => `<li>${icon(name)}<code>${name}</code></li>`).join("");
+```
+
 ## Components / Markers, badges, chips, pill
 
 sd-dot + data-shape="hollow|dashed" · sd-badge · sd-badge-solid · sd-chip · sd-pill
@@ -876,7 +887,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Components / Fields
 
-
+sd-form > sd-form-row (side by side) > sd-field > sd-field-label + control + sd-field-hint + sd-field-error · sd-field-aside for "optional" · data-invalid or aria-invalid="true" shows the error and reddens the label · sd-input-group + sd-addon joins a prefix or button to an input · sd-seg with radios in labels is a segmented choice with no JS
 
 Classes: sd-actions, sd-actions-end, sd-addon, sd-btn, sd-btn-ghost, sd-btn-primary, sd-check, sd-check-desc, sd-check-text, sd-choices, sd-control-lg, sd-control-sm, sd-dropzone, sd-field, sd-field-aside, sd-field-error, sd-field-hint, sd-field-label, sd-form, sd-form-row, sd-input-group, sd-seg, sd-subtle
 
@@ -1168,7 +1179,7 @@ JS: init() from signal-design/js wires data-sd-toast.
 <div class="grid gap-6 sm:grid-cols-2 items-center">
   <div class="grid gap-2">
     <span class="sd-label">5 of 12 done</span>
-    <div class="sd-cells" data-cells="12" data-on="5"></div>
+    <div class="sd-cells"><i data-on=""></i><i data-on=""></i><i data-on=""></i><i data-on=""></i><i data-on=""></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
   </div>
   <div class="grid gap-5">
     <div>
@@ -1543,7 +1554,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Components / Layout
 
-sd-page (720px column) · sd-header · sd-panel · sd-card · sd-divider · sd-stack / sd-cluster / sd-split / sd-grid (with --gap and --min) for apps without Tailwind
+sd-page (720px column) · sd-header · sd-panel · sd-card · sd-divider (with a word; empty, it is a plain rule) · sd-stack / sd-cluster / sd-split / sd-grid (with --gap and --min) for apps without Tailwind
 
 Classes: sd-badge, sd-btn, sd-btn-ghost, sd-btn-primary, sd-btn-sm, sd-card, sd-card-body, sd-card-foot, sd-card-head, sd-chip, sd-cluster, sd-divider, sd-faint, sd-grid, sd-label, sd-muted, sd-page, sd-page-wide, sd-panel, sd-panel-desc, sd-panel-title, sd-seg, sd-split, sd-stack, sd-subtle
 
@@ -1582,10 +1593,7 @@ JS: init() from signal-design/js wires data-sd-ornaments · data-sd-seg.
   <div class="border border-dashed border-line"><div class="sd-page sd-page-wide border-x border-line" style="padding-block: 14px"><span class="sd-subtle text-sm">sd-page sd-page-wide: 1024px for dashboards</span></div></div>
 </div>
 
-<div class="grid gap-2">
-  <div class="sd-divider">or</div>
-  <p class="demo-usage"><code>sd-divider</code> with a word; empty, it is a plain rule.</p>
-</div>
+<div class="sd-divider">or</div>
 
 <div class="grid gap-6 md:grid-cols-2">
   <div class="grid gap-2 content-start">
@@ -1609,7 +1617,7 @@ JS: init() from signal-design/js wires data-sd-ornaments · data-sd-seg.
 
 ## Conversation / Items, presence, counts
 
-
+sd-item + -body|-title|-sub|-end|-group|-nested: rows in sd-item-group sections · data-status on sd-avatar is the presence square (--sd-ring matches it to the panel) · data-unread bolds a row, data-muted quiets it, aria-current marks the open one · sd-badge-count for a number, data-corner pins it to an icon button · data-tone colors the count only when it is a status
 
 Classes: sd-avatar, sd-avatar-lg, sd-badge-count, sd-btn, sd-btn-icon, sd-cluster, sd-item, sd-item-body, sd-item-end, sd-item-group, sd-item-nested, sd-item-sub, sd-item-title
 
@@ -1634,7 +1642,6 @@ No JS needed: the HTML works with the CSS alone.
       <span class="relative inline-grid"><button class="sd-btn sd-btn-icon" aria-label="Inbox, 3 unread">✉</button><span class="sd-badge-count" data-corner="">3</span></span>
       <span class="sd-badge-count" data-tone="danger">12</span>
     </div>
-    <p class="demo-usage"><code>sd-item</code> + <code>-body|-title|-sub|-end|-group|-nested</code> · <code>data-unread</code> · <code>data-muted</code> · <code>data-status="online|away|busy|offline"</code> · <code>sd-badge-count</code> + <code>data-corner</code></p>
   </div>
 </div>
 ```
@@ -1752,7 +1759,7 @@ No JS needed: the HTML works with the CSS alone.
     <button class="sd-message-ref"><b>anotherunbrokenauthornamewithnospacesatall</b><span>The quoted text keeps the rest of the line.</span></button>
     <time class="sd-message-time">12:30</time>
     <div class="sd-message-body">
-      <header class="sd-message-head"><b>anunbrokenauthornamewithnospacestowrapatall</b><span class="sd-badge">Lead</span><time>12:30</time></header>
+      <header class="sd-message-head"><b>anunbrokenauthornamewithnospacestowrapatall</b><span class="sd-badge">Lead</span></header>
       <div class="sd-message-text">The body column is <code>minmax(0, 1fr)</code>, so a long name cannot widen the row past its container. Names in the head and in a quote cut off with an ellipsis.</div>
     </div>
   </article>
@@ -1768,7 +1775,7 @@ No JS needed: the HTML works with the CSS alone.
     <div class="sd-message-ref"><b><a href="#conversation">anotherunbrokenauthornamewithnospacesatall</a></b><span>A clickable author is cut off the same way.</span></div>
     <time class="sd-message-time">12:30</time>
     <div class="sd-message-body">
-      <header class="sd-message-head"><b><button type="button">anunbrokenauthornamewithnospacestowrapatall</button></b><span class="sd-badge">Lead</span><time>12:30</time></header>
+      <header class="sd-message-head"><b><button type="button">anunbrokenauthornamewithnospacestowrapatall</button></b><span class="sd-badge">Lead</span></header>
       <div class="sd-message-text">The author is a button in the head and a link in the quote.</div>
     </div>
   </article>
@@ -1814,14 +1821,14 @@ jump.querySelector("button").addEventListener("click", () => feed.scrollTo({ top
 
 sd-composer + -row|-add|-send|-reply|-status|-chips|-hint · send stays quiet until there is text · sd-add-menu (the + opens every content type) · in an sd-shell-dock (data-flush to rest on the window bottom) the status line and composer share one box · data-sd-autogrow · data-sd-enter-submit · data-sd-suggest + data-sd-trigger · sd-suggest
 
-Classes: sd-add-menu, sd-avatar, sd-avatar-sm, sd-btn, sd-btn-ghost, sd-btn-icon, sd-btn-primary, sd-btn-sm, sd-composer, sd-composer-add, sd-composer-hint, sd-composer-reply, sd-composer-row, sd-composer-send, sd-composer-status, sd-menu, sd-message-menu, sd-popover, sd-suggest, sd-typing
+Classes: sd-add-menu, sd-avatar, sd-avatar-sm, sd-btn, sd-btn-ghost, sd-btn-icon, sd-btn-primary, sd-btn-sm, sd-composer, sd-composer-add, sd-composer-hint, sd-composer-reply, sd-composer-row, sd-composer-send, sd-composer-status, sd-menu, sd-message-menu, sd-popover, sd-shell-dock, sd-suggest, sd-typing
 
 JS: init() from signal-design/js wires data-sd-autogrow · data-sd-enter-submit · data-sd-suggest · popovertarget (placement, menu keys).
 
 ```html
-<div class="max-w-column border border-line" style="background: var(--sd-container)">
-  <div class="sd-composer-status" style="border-bottom: 1px solid var(--sd-line)"><span class="sd-typing"><i><b></b></i><span><b style="--who: var(--sd-extra)">Alex</b> is typing</span></span></div>
-  <form class="sd-composer" style="border: 0" onsubmit="event.preventDefault(); this.querySelector('textarea').value=''">
+<div class="max-w-column sd-shell-dock">
+  <div class="sd-composer-status"><span class="sd-typing"><i><b></b></i><span><b style="--who: var(--sd-extra)">Alex</b> is typing</span></span></div>
+  <form class="sd-composer" onsubmit="event.preventDefault(); this.querySelector('textarea').value=''">
     <div class="sd-composer-reply"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M6 3 2.5 6.5 6 10"></path><path d="M3.5 6.5h5.5a4.5 4.5 0 0 1 4.5 4.5v2"></path></svg><span>Replying to <b style="--who: var(--sd-extra)">Alex</b> · A message opens with its author in their name color.</span><button type="button" class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="Cancel reply">×</button></div>
     <div class="sd-composer-row">
       <button type="button" class="sd-btn sd-btn-ghost sd-btn-icon sd-composer-add" aria-label="Add" aria-haspopup="menu" popovertarget="demo-add-menu" data-sd-side="top"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 3v10M3 8h10"></path></svg></button>
@@ -2098,6 +2105,12 @@ No JS needed: the HTML works with the CSS alone.
 </div>
 ```
 
+```js
+import { init } from "signal-design/js";
+
+init(); // draws every .sd-spark[data-values] that is on the page when it runs
+```
+
 ## Charts / Live time series
 
 sd-chart + -bar|-plot · data-sd-chart-scale · createChart({ preset }) · data-chart-theme="mono|spectrum"
@@ -2196,6 +2209,14 @@ No JS needed: the HTML works with the CSS alone.
     <div class="sd-meter" style="--value: 84; --target: 75; --warn: 80; --crit: 95"><i data-at="warn"></i><i data-at="crit"></i></div>
   </div>
 </div>
+```
+
+```js
+// One <i> per square; the CSS reads --v (0–1) on the heatmap, data-s on the waffle, data-state on the uptime bar.
+document.getElementById("demo-heat").innerHTML = Array.from({ length: 7 * 24 }, () => `<i style="--v: ${Math.random().toFixed(2)}"></i>`).join("");
+document.getElementById("demo-waffle").innerHTML =
+  '<i data-s="1"></i>'.repeat(42) + '<i data-s="2"></i>'.repeat(31) + '<i data-s="3"></i>'.repeat(19) + "<i></i>".repeat(8);
+document.getElementById("demo-uptime").innerHTML = '<i data-state="ok"></i>'.repeat(57) + '<i data-state="degraded"></i><i data-state="down"></i><i data-state="ok"></i>';
 ```
 
 ## Charts / Timeline
@@ -2551,17 +2572,16 @@ JS: init() from signal-design/js wires data-sd-ornaments.
 
 ## Effects / Edge dust
 
-The same dust rising from a whole edge, softer, with a clear column at each side so dividers stay crisp. The shell uses it under the rail and the sidebar's page list.
+The same dust rising from a whole edge, softer, with a clear column at each side so dividers stay crisp. The shell uses it under the rail and the sidebar's page list. Set data-sd-ornaments="bottom" or "top".
 
 Classes: none
 
 JS: init() from signal-design/js wires data-sd-ornaments.
 
 ```html
-<div class="grid gap-4 sm:grid-cols-[6rem_18rem_1fr]">
+<div class="grid gap-4 sm:grid-cols-[6rem_18rem]">
   <div class="h-64 bg-surface border border-line-strong" data-sd-ornaments="bottom" data-sd-ornaments-size="200"></div>
   <div class="h-64 bg-surface border border-line-strong" data-sd-ornaments="bottom" data-sd-ornaments-size="200"></div>
-  <p class="demo-usage self-end"><code>data-sd-ornaments="bottom"</code> or <code>"top"</code></p>
 </div>
 ```
 
@@ -2675,18 +2695,18 @@ JS: init() from signal-design/js wires data-sd-tip.
 
 sd-sidebar-head (18px title, cut off with an ellipsis when it does not fit) · sd-sidebar-head-sm (16px title) · the title follows the head's size on a span or an h2
 
-Classes: sd-btn, sd-btn-ghost, sd-btn-icon, sd-btn-sm, sd-sidebar, sd-sidebar-head, sd-sidebar-head-sm, sd-sidebar-title
+Classes: sd-btn, sd-btn-ghost, sd-btn-icon, sd-btn-sm, sd-icon, sd-sidebar, sd-sidebar-head, sd-sidebar-head-sm, sd-sidebar-title
 
 No JS needed: the HTML works with the CSS alone.
 
 ```html
 <div class="flex flex-wrap gap-6">
   <div class="sd-sidebar border border-line" id="demo-head-default" style="--shell-sidebar: 15rem">
-    <div class="sd-sidebar-head"><svg><use href="#i-pages"></use></svg><span class="sd-sidebar-title">Direct Messages</span>
+    <div class="sd-sidebar-head"><svg class="sd-icon" data-icon="comment" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4 5h16v11h-8l-4 4v-4H4z"></path></svg><span class="sd-sidebar-title">Direct Messages</span>
       <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="New message">+</button></div>
   </div>
   <div class="sd-sidebar border border-line" id="demo-head-sm" style="--shell-sidebar: 15rem">
-    <div class="sd-sidebar-head sd-sidebar-head-sm"><svg><use href="#i-pages"></use></svg><span class="sd-sidebar-title">Direct Messages</span>
+    <div class="sd-sidebar-head sd-sidebar-head-sm"><svg class="sd-icon" data-icon="comment" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4 5h16v11h-8l-4 4v-4H4z"></path></svg><span class="sd-sidebar-title">Direct Messages</span>
       <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="New message">+</button></div>
   </div>
   <div class="sd-sidebar border border-line" id="demo-head-h2" style="--shell-sidebar: 15rem">
@@ -2737,7 +2757,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## ASCII / Looks
 
-
+sd-ascii + role="img" + aria-label · mountAscii(el, piece, { at, look }) from signal-design/ascii · look: original|dots|ascii|dense|numbers|binary|letters|blocks|squares|lines|dither · --sd-ascii-size sets the character size · still until aria-busy="true" · art.destroy() before remounting with another look
 
 Classes: sd-actions, sd-ascii, sd-btn, sd-seg, sd-seg-wrap
 
@@ -2745,7 +2765,7 @@ JS: init() from signal-design/js wires data-sd-seg.
 
 ```html
 <div class="grid justify-items-center gap-6 border border-line bg-surface p-6" id="ascii-stage">
-  <div class="sd-ascii" style="--sd-ascii-size: 20px" data-piece="spinning-torus" data-at="1.4" role="img" aria-label="Spinning torus"></div>
+  <div class="sd-ascii" style="--sd-ascii-size: 20px; --cols: 48; --rows: 24" data-piece="spinning-torus" data-at="1.4" role="img" aria-label="Spinning torus"></div>
   <div class="sd-actions w-full justify-center">
     <div class="sd-seg sd-seg-wrap" data-sd-seg="" aria-label="Look">
       <button type="button" value="original" aria-pressed="true">Original</button>
@@ -2776,7 +2796,7 @@ stage.setAttribute("aria-busy", "true");
 
 ## ASCII / While work runs
 
-
+mountAscii(el, piece, { at }) · the art plays while aria-busy="true" is on it or its closest ancestor that has the attribute, and holds the frame it is on when removed · set it on the panel that is working · art.busy(true|false) overrides · plays only on screen, in a visible tab and without prefers-reduced-motion
 
 Classes: sd-actions, sd-ascii, sd-btn, sd-btn-primary, sd-panel, sd-panel-title, sd-panel-wide, sd-progress, sd-progress-label
 
@@ -2788,7 +2808,7 @@ No JS needed: the HTML works with the CSS alone.
     <h4 class="sd-panel-title m-0">Pipeline</h4>
     <button class="sd-btn sd-btn-primary" type="button" data-ascii-job="">Run job</button>
   </div>
-  <div class="sd-ascii" data-piece="ci-pipeline" data-at="4" role="img" aria-label="A pipeline running its stages"></div>
+  <div class="sd-ascii" style="--cols: 96; --rows: 19" data-piece="ci-pipeline" data-at="4" role="img" aria-label="A pipeline running its stages"></div>
   <div>
     <p class="sd-progress-label"><span>Tests</span><span data-ascii-percent="">Idle</span></p>
     <div class="sd-progress" style="--value: 0" role="progressbar" aria-label="Tests" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
@@ -2810,7 +2830,7 @@ panel.removeAttribute("aria-busy");        // holds the frame it is on
 
 ## ASCII / Gallery
 
-
+One sd-ascii per piece, each with data-piece, data-at (seconds into the piece for the still frame), role="img" and aria-label · put the art in sd-card and set aria-busy on the card from hover or a play button · --cols and --rows size the box before the art loads
 
 Classes: sd-ascii, sd-btn, sd-btn-sm, sd-card, sd-card-body, sd-card-head
 
@@ -2820,43 +2840,43 @@ No JS needed: the HTML works with the CSS alone.
 <div class="grid gap-4 md:grid-cols-2">
   <article class="sd-card" data-ascii-card="">
     <div class="sd-card-head">Torus knot<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
-    <div class="sd-card-body"><div class="sd-ascii" data-piece="torus-knot" data-at="2" role="img" aria-label="Torus knot"></div></div>
+    <div class="sd-card-body"><div class="sd-ascii" style="--cols: 64; --rows: 32" data-piece="torus-knot" data-at="2" role="img" aria-label="Torus knot"></div></div>
   </article>
   <article class="sd-card" data-ascii-card="">
     <div class="sd-card-head">Owl<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
-    <div class="sd-card-body"><div class="sd-ascii" data-piece="owl-blink" data-at="3" role="img" aria-label="An owl blinking"></div></div>
+    <div class="sd-card-body"><div class="sd-ascii" style="--cols: 76; --rows: 38" data-piece="owl-blink" data-at="3" role="img" aria-label="An owl blinking"></div></div>
   </article>
   <article class="sd-card md:col-span-2" data-ascii-card="">
     <div class="sd-card-head">Dijkstra path<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
-    <div class="sd-card-body"><div class="sd-ascii" data-piece="dijkstra-path" data-at="3" role="img" aria-label="Dijkstra shortest path"></div></div>
+    <div class="sd-card-body"><div class="sd-ascii" style="--cols: 96; --rows: 27" data-piece="dijkstra-path" data-at="3" role="img" aria-label="Dijkstra shortest path"></div></div>
   </article>
   <article class="sd-card" data-ascii-card="">
     <div class="sd-card-head">Terminal session<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
-    <div class="sd-card-body"><div class="sd-ascii" data-piece="terminal-session" data-at="8" role="img" aria-label="A terminal session"></div></div>
+    <div class="sd-card-body"><div class="sd-ascii" style="--cols: 80; --rows: 24" data-piece="terminal-session" data-at="8" role="img" aria-label="A terminal session"></div></div>
   </article>
   <article class="sd-card" data-ascii-card="">
     <div class="sd-card-head">Tunnel<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
-    <div class="sd-card-body"><div class="sd-ascii" data-piece="tunnel" data-at="3" role="img" aria-label="A tunnel"></div></div>
+    <div class="sd-card-body"><div class="sd-ascii" style="--cols: 88; --rows: 30" data-piece="tunnel" data-at="3" role="img" aria-label="A tunnel"></div></div>
   </article>
   <article class="sd-card md:col-span-2" data-ascii-card="">
     <div class="sd-card-head">Spiral galaxy<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
-    <div class="sd-card-body"><div class="sd-ascii" data-piece="spiral-galaxy" data-at="3" role="img" aria-label="Spiral galaxy"></div></div>
+    <div class="sd-card-body"><div class="sd-ascii" style="--cols: 104; --rows: 40" data-piece="spiral-galaxy" data-at="3" role="img" aria-label="Spiral galaxy"></div></div>
   </article>
   <article class="sd-card" data-ascii-card="">
     <div class="sd-card-head">Lorenz attractor<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
-    <div class="sd-card-body"><div class="sd-ascii" data-piece="lorenz-attractor" data-at="6" role="img" aria-label="Lorenz attractor"></div></div>
+    <div class="sd-card-body"><div class="sd-ascii" style="--cols: 84; --rows: 34" data-piece="lorenz-attractor" data-at="6" role="img" aria-label="Lorenz attractor"></div></div>
   </article>
   <article class="sd-card" data-ascii-card="">
     <div class="sd-card-head">Extruded word<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
-    <div class="sd-card-body"><div class="sd-ascii" data-piece="extruded-word-spin" data-at="3" role="img" aria-label="A spinning extruded word"></div></div>
+    <div class="sd-card-body"><div class="sd-ascii" style="--cols: 104; --rows: 32" data-piece="extruded-word-spin" data-at="3" role="img" aria-label="A spinning extruded word"></div></div>
   </article>
   <article class="sd-card md:col-span-2" data-ascii-card="">
     <div class="sd-card-head">Sort race<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
-    <div class="sd-card-body"><div class="sd-ascii" data-piece="sort-race" data-at="4" role="img" aria-label="Two sorting algorithms racing"></div></div>
+    <div class="sd-card-body"><div class="sd-ascii" style="--cols: 100; --rows: 26" data-piece="sort-race" data-at="4" role="img" aria-label="Two sorting algorithms racing"></div></div>
   </article>
   <article class="sd-card md:col-span-2" data-ascii-card="">
     <div class="sd-card-head">Gauge cluster<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
-    <div class="sd-card-body"><div class="sd-ascii" data-piece="gauge-cluster" data-at="3" role="img" aria-label="Server gauges"></div></div>
+    <div class="sd-card-body"><div class="sd-ascii" style="--cols: 96; --rows: 24" data-piece="gauge-cluster" data-at="3" role="img" aria-label="Server gauges"></div></div>
   </article>
 </div>
 ```
@@ -2875,7 +2895,7 @@ card.addEventListener("pointerleave", () => card.removeAttribute("aria-busy"));
 
 ## ASCII / Empty state
 
-
+sd-empty > sd-ascii + sd-empty-title + text + a sd-btn · --sd-ascii-size, --cols, --rows fit the art to the space · leave it still: an empty state needs no motion
 
 Classes: sd-ascii, sd-btn, sd-empty, sd-empty-title
 
@@ -2883,7 +2903,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ```html
 <div class="sd-empty">
-  <div class="sd-ascii" style="--sd-ascii-size: 8px" data-piece="sleeping-cat" data-at="3" role="img" aria-label="A cat asleep"></div>
+  <div class="sd-ascii" style="--sd-ascii-size: 8px; --cols: 80; --rows: 30" data-piece="sleeping-cat" data-at="3" role="img" aria-label="A cat asleep"></div>
   <p class="sd-empty-title">No matches</p>
   <p>Nothing fits those filters.</p>
   <button class="sd-btn" type="button">Clear filters</button>
@@ -2899,7 +2919,7 @@ mountAscii(document.querySelector(".sd-empty .sd-ascii"), piece, { at: 3 });
 
 ## ASCII / Tone
 
-
+data-tone="danger|success|warning|pending|accent|extra" on sd-ascii paints the brightest level only; the rest stays grey · use it when the picture is the status, such as a failed or paid payment
 
 Classes: sd-ascii, sd-btn, sd-btn-sm, sd-card, sd-card-body, sd-card-head
 
@@ -2909,11 +2929,11 @@ No JS needed: the HTML works with the CSS alone.
 <div class="grid gap-4 md:grid-cols-2">
   <article class="sd-card" data-ascii-card="">
     <div class="sd-card-head">Failed<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
-    <div class="sd-card-body"><div class="sd-ascii" data-tone="danger" data-piece="empty-payment-failed" data-at="4" role="img" aria-label="Payment declined"></div></div>
+    <div class="sd-card-body"><div class="sd-ascii" style="--cols: 60; --rows: 20" data-tone="danger" data-piece="empty-payment-failed" data-at="4" role="img" aria-label="Payment declined"></div></div>
   </article>
   <article class="sd-card" data-ascii-card="">
     <div class="sd-card-head">Paid<button class="sd-btn sd-btn-sm" type="button" aria-pressed="false">Play</button></div>
-    <div class="sd-card-body"><div class="sd-ascii" data-tone="success" data-piece="empty-payment-success" data-at="4" role="img" aria-label="Payment successful"></div></div>
+    <div class="sd-card-body"><div class="sd-ascii" style="--cols: 60; --rows: 20" data-tone="success" data-piece="empty-payment-success" data-at="4" role="img" aria-label="Payment successful"></div></div>
   </article>
 </div>
 ```
@@ -3086,7 +3106,7 @@ function Toolbar() {
 
 ## JS / Setup and attributes
 
-
+init() once after the DOM exists; listeners are delegated, so later markup works · toast(text, { tone }) · hotkeys({ key: fn }) returns the off function · setTheme("ink|graphite|paper|auto") · every data-sd-* attribute does nothing without init() · a framework that renders the state leaves the attribute out and sets ARIA and data-* itself
 
 Classes: sd-actions, sd-btn, sd-btn-ghost, sd-btn-sm, sd-code, sd-code-head, sd-subtle, sd-table, sd-table-wrap
 
