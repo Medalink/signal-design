@@ -858,8 +858,9 @@
     background: var(--sd-surface);
   }
   /* An outline on the border line, so a composer drawn without its own edge
-     (in a dock, or with border: 0) shows focus too. */
-  .sd-composer:focus-within {
+     (in a dock, or with border: 0) shows focus too. Only the text field
+     lights it: a focused button inside has its own ring. */
+  .sd-composer:has(textarea:focus) {
     outline: 1px solid var(--sd-fg);
     outline-offset: -1px;
   }
