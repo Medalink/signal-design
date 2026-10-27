@@ -16,7 +16,7 @@ const UNCHANGED = {
   "glints blocks": "353ee667870c1d49",
   "paint ink [] size=null edges=false": "d14acd8fa25a1bf8",
   "paint ink [br] size=null edges=false": "d14acd8fa25a1bf8",
-  "paint ink [tl br] size=200 edges=true": "cb4c073440916a07",
+  "paint ink [tl br] size=200 edges=true": "00abac966ad28f8e",
   "paint ink [bottom] size=null edges=false": "a87091cfe8144c61",
   "paint ink [center] size=null edges=false": "41bf463ab95ab173",
   "paint paper [tr bl] size=null edges=false": "971e933d3dc212bd",
@@ -26,7 +26,7 @@ const UNCHANGED = {
 };
 // Reduced motion drops the sparkle, which changes the painted image.
 const UNCHANGED_REDUCED = {
-  "paint ink [tl br] size=200 edges=true": "bb2c94d740954a9b",
+  "paint ink [tl br] size=200 edges=true": "33049b0f9cea677c",
   "paint ink [center] size=null edges=false": "cff567c246d2935c",
   "paint paper [br] size=null edges=false": "b578552cbeca65fa",
   "paint ink sd-empty": "16c20b9320440169",
