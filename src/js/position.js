@@ -4,8 +4,9 @@
  * engine Tauri ships (WebView2, WKWebView, WebKitGTK).
  *
  * The anchor is an element, anything with getBoundingClientRect, a rect
- * ({ left, top, right, bottom }, where a missing right or bottom counts as the
- * left or top) or a point ({ x, y }). A point has no size to
+ * ({ left, top } with right and bottom or width and height; a missing right or
+ * bottom is left or top plus the width or height, or just left or top without
+ * one) or a point ({ x, y }). A point has no size to
  * clear, so the default offset is 0 and the floating element's corner sits on
  * it (rounded down, so the point is inside the element). Where the element
  * flips above or left of the point, or shifts off an edge, it overlaps the
@@ -15,7 +16,7 @@
  * Nothing is placed without a floating element and an anchor.
  *
  * @param {HTMLElement | null} floating  element with position: fixed
- * @param {Element | { getBoundingClientRect(): object } | { left: number, top: number, right: number, bottom: number } | { x: number, y: number } | null} anchor
+ * @param {Element | { getBoundingClientRect(): object } | { left: number, top: number, right?: number, bottom?: number, width?: number, height?: number } | { x: number, y: number } | null} anchor
  * @param {{side?: "bottom"|"top"|"left"|"right", align?: "start"|"center"|"end", offset?: number}} [opts]
  */
 export function place(floating, anchor, { side = "bottom", align = "start", offset } = {}) {
@@ -67,6 +68,9 @@ const SLIDE = 4;
 
 function measure(anchor) {
   if (typeof anchor.getBoundingClientRect === "function") return anchor.getBoundingClientRect();
-  if ("left" in anchor) return { left: anchor.left, top: anchor.top, right: anchor.right ?? anchor.left, bottom: anchor.bottom ?? anchor.top };
+  if ("left" in anchor) {
+    const { left, top } = anchor;
+    return { left, top, right: anchor.right ?? left + (anchor.width ?? 0), bottom: anchor.bottom ?? top + (anchor.height ?? 0) };
+  }
   return { left: anchor.x, top: anchor.y, right: anchor.x, bottom: anchor.y, point: true };
 }

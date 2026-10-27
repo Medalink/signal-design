@@ -159,10 +159,13 @@ export function getFont(): Font;
 export function restoreFont(fallback?: Font): void;
 
 /* Positioning */
-/** What an element can be placed beside: an element, anything with `getBoundingClientRect`, a rect, or a `{ x, y }` point. */
+/**
+ * What an element can be placed beside: an element, anything with `getBoundingClientRect`, a rect, or a `{ x, y }` point.
+ * A rect needs `left` and `top`. A missing `right` or `bottom` is `left` or `top` plus `width` or `height`, or just `left` or `top` when there is none.
+ */
 export type PlaceAnchor =
   | { getBoundingClientRect(): { left: number; top: number; right: number; bottom: number } }
-  | { left: number; top: number; right: number; bottom: number }
+  | { left: number; top: number; right?: number | undefined; bottom?: number | undefined; width?: number | undefined; height?: number | undefined }
   | { x: number; y: number };
 /**
  * Places a `position: fixed` element beside the anchor, flipped to the other side at the viewport edge.

@@ -110,6 +110,29 @@ export async function checkReactApp(page, base) {
   }, `${base}@fs/${apiPath}`);
   expect(partial.length === 0, `a rect with only left and top places like a rect of no size there, differing: ${partial.join("; ")}`);
 
+  const sized = await page.evaluate(async (api) => {
+    const { place } = await import(api);
+    const where = (anchor, options) => {
+      const box = document.createElement("div");
+      box.style.cssText = "position:fixed;width:100px;height:50px";
+      document.body.append(box);
+      place(box, anchor, options);
+      const out = `${box.style.left},${box.style.top}`;
+      box.remove();
+      return out;
+    };
+    const differ = [];
+    for (const options of [{ side: "bottom", align: "center" }, { side: "bottom", align: "end" }, { side: "top", align: "end" }, { side: "right", align: "center" }, { side: "left", align: "center" }, { side: "right", align: "end" }]) {
+      const whole = where({ left: 200, top: 300, right: 280, bottom: 320 }, options);
+      for (const sizes of [{ width: 80, height: 20 }, { right: 280, height: 20 }, { width: 80, bottom: 320 }, { right: 280, bottom: 320, width: 5, height: 5 }]) {
+        const given = where({ left: 200, top: 300, ...sizes }, options);
+        if (given !== whole) differ.push(`${JSON.stringify(options)} with ${JSON.stringify(sizes)}: ${given} for ${whole}`);
+      }
+    }
+    return differ;
+  }, `${base}@fs/${apiPath}`);
+  expect(sized.length === 0, `a rect gets a missing right or bottom from its width or height, and right or bottom wins over them, differing: ${sized.join("; ")}`);
+
   const contained = await page.evaluate(async (api) => {
     const { place } = await import(api);
     const box = document.createElement("div");

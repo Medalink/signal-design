@@ -107,9 +107,14 @@ export function Consumer() {
         <MenuContent anchor={{ x: 10, y: 20 }} label="At a point"><MenuItem>Reply</MenuItem></MenuContent>
         <MenuContent anchor={document.body} side="right" align="end"><MenuItem>Rect</MenuItem></MenuContent>
         <MenuContent anchor={{ left: 1, top: 2, right: 3, bottom: 4 }} />
+        <MenuContent anchor={{ left: 1, top: 2 }} />
+        <MenuContent anchor={{ left: 1, top: 2, width: 3, height: 4 }} />
+        <MenuContent anchor={new DOMRect(1, 2, 3, 4)} />
         <MenuContent anchor={undefined} />
         {/* @ts-expect-error a pointer event is not an anchor: it has clientX, not x */}
         <MenuContent anchor={{ clientX: 1, clientY: 2 }} />
+        {/* @ts-expect-error a rect needs its left and top, a width alone places nothing */}
+        <MenuContent anchor={{ width: 3, height: 4 }} />
       </Menu>
       <Switch aria-label="Mute" />
       <Checkbox aria-labelledby="name" defaultChecked />
