@@ -196,6 +196,7 @@ setTheme("paper");                        // ink | graphite | paper | auto</code
         <button class="sd-btn sd-btn-sm" data-sd-key="d" data-sd-open="demo-sheet">Sheet <kbd>D</kbd></button>
         <button class="sd-btn sd-btn-sm" data-sd-key="shift+t" data-sd-theme-cycle>Next theme <kbd>Shift+T</kbd></button>
       </div>
+      <p class="demo-usage"><code>init()</code> once after the DOM exists; listeners are delegated, so later markup works · <code>toast(text, { tone })</code> · <code>hotkeys({ key: fn })</code> returns the off function · <code>setTheme("ink|graphite|paper|auto")</code> · every <code>data-sd-*</code> attribute does nothing without <code>init()</code> · a framework that renders the state leaves the attribute out and sets ARIA and <code>data-*</code> itself</p>
     </div>
   </section>
 

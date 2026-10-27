@@ -51,11 +51,13 @@
         <li>Minimal by default, detail on expand.</li>
         <li>SF Pro for text in regular and medium; Source Code Pro for code. The font picker swaps the text face.</li>
       </ol>
+      <p class="demo-usage">Square corners · flat, hairlines only · color only for status and focus · motion on state change, 120–200ms · tokens, never hex values · one text face in regular and medium, <code>font-mono</code> for code · see AGENTS.md for the full list and <code>npx signal-design check</code> to test a page against it</p>
     </div>
 
     <div class="demo-block">
       <h3 class="sd-label">Semantic roles</h3>
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4" data-swatches="roles"></div>
+      <p class="demo-usage"><code>accent</code> · <code>success</code> · <code>danger</code> · <code>warning</code> · <code>pending</code> · <code>extra</code> · apply with <code>data-tone</code> or <code>text-danger</code>, <code>bg-success</code>, <code>border-warning</code> · read the value from <code>--sd-accent</code> and its siblings, never from a hue name</p>
     </div>
 
     <div class="demo-block">
@@ -124,6 +126,7 @@
     <div class="demo-block">
       <h3 class="sd-label">Type scale</h3>
       <div class="sd-table-wrap"><table class="sd-table" data-type-scale></table></div>
+      <p class="demo-usage"><code>text-3xs</code> … <code>text-5xl</code>, each with its line height built in (<code>--text-*</code>) · <code>text-base</code> (16px) for body, <code>text-sm</code> for meta, <code>text-2xs</code> uppercase for labels, <code>text-3xl</code> for display · nothing below <code>text-3xs</code> (12px)</p>
     </div>
 
     <div class="demo-block">
@@ -136,6 +139,7 @@
         <p class="text-xs uppercase tracking-wordmark font-semibold">wordmark 0.28em</p>
         <p class="text-lg"><span class="font-normal">400 regular</span> · <span class="font-semibold">500 medium</span></p>
       </div>
+      <p class="demo-usage"><code>tracking-display</code> and <code>tracking-tight</code> for large text and row titles · <code>tracking-caps</code> on uppercase labels and status lines · <code>tracking-widest</code> for labels · <code>tracking-wordmark</code> for the wordmark only · weights are <code>font-normal</code> (400) and <code>font-semibold</code> (500); <code>font-bold</code> also maps to 500</p>
     </div>
 
     <div class="demo-block">
@@ -173,6 +177,7 @@
           </div>
         </div>
       </div>
+      <p class="demo-usage">4px base unit (<code>--spacing</code>) · <code>max-w-column</code> (720px), <code>max-w-narrow</code> (560px), <code>max-w-wide</code> (1024px) · transitions 120ms (hover, color), 160ms (collapse, toast), 200ms (expand, scroll) on <code>ease-out</code> · <code>animate-slide-in</code>, <code>animate-fade-in</code>, <code>animate-rise-in</code> for entrances</p>
     </div>
   </section>
 </body>
