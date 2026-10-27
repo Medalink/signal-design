@@ -7,7 +7,11 @@
  * ({ left, top, right, bottom }, where a missing right or bottom counts as the
  * left or top) or a point ({ x, y }). A point has no size to
  * clear, so the default offset is 0 and the floating element's corner sits on
- * it (rounded down, so the point is inside the element). Nothing is placed without a floating element and an anchor.
+ * it (rounded down, so the point is inside the element). Where the element
+ * flips above or left of the point, or shifts off an edge, it overlaps the
+ * point instead of ending at it, so the element always contains the point:
+ * by 1px, and by SLIDE more above it. An explicit positive offset keeps its gap.
+ * Nothing is placed without a floating element and an anchor.
  *
  * @param {HTMLElement | null} floating  element with position: fixed
  * @param {Element | { getBoundingClientRect(): object } | { left: number, top: number, right: number, bottom: number } | { x: number, y: number } | null} anchor
@@ -43,12 +47,22 @@ export function place(floating, anchor, { side = "bottom", align = "start", offs
 
   left = Math.min(Math.max(pad, left), vw - f.width - pad);
   top = Math.min(Math.max(pad, top), vh - f.height - pad);
-  // Rounded down at a point, so the pointer stays inside the element it opened.
+  if (a.point && offset <= 0) {
+    // Keep the point inside the element however it flipped or shifted. It opens under a pointer that is
+    // released over it next, and a hit test is half-open: the far edge is outside, and so is the edge
+    // while the slide-in holds the element higher. Light dismiss then closes it.
+    left = Math.min(Math.max(left, a.left - f.width + 1), a.left);
+    top = Math.min(Math.max(top, Math.min(a.top - f.height + 1 + SLIDE, vh - f.height)), a.top);
+  }
+  // Rounded down at a point, so snapping never moves the far edge back to the point.
   const snap = a.point ? Math.floor : Math.round;
   floating.style.left = `${snap(left)}px`;
   floating.style.top = `${snap(top)}px`;
   floating.dataset.side = side;
 }
+
+// A popover slides in from this far above its place over its first 120ms (overlays.css).
+const SLIDE = 4;
 
 function measure(anchor) {
   if (typeof anchor.getBoundingClientRect === "function") return anchor.getBoundingClientRect();

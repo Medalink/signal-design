@@ -252,8 +252,8 @@ export interface PopoverContentProps extends ComponentProps<"div"> {
   align?: "start" | "center" | "end" | undefined;
   /**
    * Opens the panel beside this instead of the trigger, which it wins over: a `{ x, y }` point (the
-   * panel's corner sits on it, as for a context menu at the pointer), a rect, or an element or object
-   * with `getBoundingClientRect`. A panel with no trigger and no anchor is left where the browser puts a popover.
+   * panel's corner sits on it, as for a context menu at the pointer, and where it flips or shifts at an edge it
+   * still contains the point), a rect, or an element or object with `getBoundingClientRect`. A panel with no trigger and no anchor is left where the browser puts a popover.
    */
   anchor?: PlaceAnchor | undefined;
   /** Adds padding for prose. */

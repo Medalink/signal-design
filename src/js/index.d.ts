@@ -167,6 +167,7 @@ export type PlaceAnchor =
 /**
  * Places a `position: fixed` element beside the anchor, flipped to the other side at the viewport edge.
  * A point has no size, so its default `offset` is 0 and the element's corner sits on it (6 otherwise).
+ * Where the element flips above or left of the point or shifts at an edge it overlaps the point by a few pixels, so it always contains it.
  * Nothing happens when the element or the anchor is null.
  */
 export function place(

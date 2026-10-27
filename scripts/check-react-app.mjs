@@ -113,6 +113,27 @@ export async function checkReactApp(page, base) {
   }, `${base}@fs/${apiPath}`);
   expect(partial.length === 0, `a rect with only left and top places like a rect of no size there, differing: ${partial.join("; ")}`);
 
+  const contained = await page.evaluate(async (api) => {
+    const { place } = await import(api);
+    const box = document.createElement("div");
+    box.style.cssText = "position:fixed;width:192px;height:132px";
+    document.body.append(box);
+    const outside = [];
+    const points = [[400, 300], [400, innerHeight - 100], [400, innerHeight - 5], [innerWidth - 4, 300], [innerWidth - 4, innerHeight - 5], [3, 300], [3, 3]];
+    for (const [x, y] of points) {
+      for (const side of ["bottom", "top", "left", "right"]) {
+        for (const align of ["start", "center", "end"]) {
+          place(box, { x, y }, { side, align });
+          const r = box.getBoundingClientRect();
+          if (!(r.left <= x && x < r.right && r.top <= y && y < r.bottom)) outside.push(`${x},${y} ${side}/${align} got ${r.left},${r.top}`);
+        }
+      }
+    }
+    box.remove();
+    return outside;
+  }, `${base}@fs/${apiPath}`);
+  expect(contained.length === 0, `the placed element contains its point on every side and align, even flipped or shifted at an edge; outside: ${contained.join("; ")}`);
+
   const card = page.locator("#react-context-menu article");
   const menuBox = () => page.evaluate(() => {
     const pop = document.querySelector('#react-context-menu ~ * [role=menu], [role=menu][aria-label="Message actions"]')?.parentElement;
@@ -168,10 +189,39 @@ export async function checkReactApp(page, base) {
   expect(await menuOpenAt(true), `the menu opens at the bottom right corner, got ${JSON.stringify(await menuBox())}`);
   await until(() => document.querySelector('[role=menu][aria-label="Message actions"]').parentElement.getAnimations().length === 0, null);
   const corner = { ...cornerAt, ...(await menuBox()) };
-  expect(corner.bottom <= corner.y + 1 && corner.top >= 8 - 1, `at the bottom edge the menu opens above the point, got ${JSON.stringify(corner)}`);
+  expect(corner.top < corner.y && corner.bottom >= corner.y && corner.bottom <= corner.y + 6 && corner.top >= 8 - 1, `at the bottom edge the menu opens above the point and overlaps it by a few pixels, got ${JSON.stringify(corner)}`);
   expect(corner.right <= corner.width - 8 + 1 && corner.left >= 8 - 1, `at the right edge the menu shifts inside the viewport, got ${JSON.stringify(corner)}`);
   await page.keyboard.press("Escape");
   await menuOpenAt(false);
+
+  // WKWebView and WebKitGTK fire contextmenu on mousedown, so the button is released at the point the menu opened on.
+  // The menu must still contain that point after it flips above it or shifts off an edge, or the release light dismisses it.
+  await page.evaluate(() => {
+    const cover = document.createElement("div");
+    cover.id = "pointerdown-cover";
+    cover.style.cssText = "position:fixed;inset:0;z-index:2147483647";
+    cover.addEventListener("pointerdown", (event) => {
+      document.querySelector("#react-context-menu article").dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true, clientX: event.clientX, clientY: event.clientY }));
+    });
+    document.body.append(cover);
+  });
+  try {
+    for (const [label, x, y] of [["below the point", 400, 300], ["flipped above the point", 400, 800], ["flipped at the bottom edge", 400, 895], ["shifted at the right edge", 1276, 300], ["shifted and flipped at the bottom right corner", 1276, 895]]) {
+      await page.mouse.move(x, y);
+      await page.mouse.down();
+      const pressed = await menuOpenAt(true);
+      const shown = await menuBox();
+      await page.mouse.up();
+      // A negative assertion: light dismiss runs on the release, and a menu that stays open has nothing to wait for.
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      expect(pressed, `a menu opens on pointerdown ${label}`);
+      expect((await menuBox()).open, `a menu opened on pointerdown ${label} stays open when the button is released at ${x},${y}, it spanned ${JSON.stringify(shown)}`);
+      await page.keyboard.press("Escape");
+      await menuOpenAt(false);
+    }
+  } finally {
+    await page.evaluate(() => document.getElementById("pointerdown-cover")?.remove());
+  }
 
   /* ---- Toast and tooltip above a modal dialog ---- */
   const over = page.locator("#react-above-dialog");

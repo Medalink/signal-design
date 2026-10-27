@@ -1167,8 +1167,11 @@ What they take over from `init()`:
   instead: a `{ x, y }` point, a rect, or an element or object with
   `getBoundingClientRect`. For a context menu keep the pointer in state, set it
   in `onContextMenu` (after `preventDefault()`) together with `open`, and pass
-  `anchor={point}`. The menu's corner sits on the point, it opens above the
-  point or shifts at the viewport edge, light dismiss, Escape and the arrow
+  `anchor={point}`. The menu's corner sits on the point. It opens above the
+  point or shifts at the viewport edge, and then it overlaps the point by a few
+  pixels, so the point is always inside the menu: on macOS and Linux the
+  `contextmenu` event fires on mouse down, and releasing the button outside
+  the menu would light dismiss it. Light dismiss, Escape and the arrow
   keys work as for a trigger, and focus goes back to whatever had it when the
   menu opened. A second right-click moves the open menu; focus stays where
   that click put it.
