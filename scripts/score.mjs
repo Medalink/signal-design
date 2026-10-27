@@ -199,17 +199,18 @@ function probe({ scope, exclude, width }) {
       void s.borderTopColor;
       el.style.setProperty("transition", transition);
     }
-    return { drawn: edges.length > 0 || fill.some((v, i) => Math.abs(v - behind[i]) > 2), ratio: Math.max(contrast(fill, behind), ...edges.map((e) => contrast(e, behind))) };
+    const shows = (c) => c.some((v, i) => Math.abs(v - behind[i]) > 2);
+    return { drawn: edges.length > 0 || shows(fill), edged: edges.some(shows), ratio: Math.max(contrast(fill, behind), ...edges.map((e) => contrast(e, behind))) };
   };
   for (const el of controls) {
     if (!el.matches('input:not([type=range], [type=color], [type=file], [type=submit], [type=reset], [type=button], [type=image]), select, textarea, [role=checkbox], [role=switch]')) continue;
     // A field with no edge of its own (the textarea in a composer, the input
     // in a tag list) is bounded by the nearest wrapper, within three levels,
-    // whose edge can be seen.
+    // that draws a border; a wrapper that is only a fill is looked past.
     let box = edgeOf(el);
     for (let n = el.parentElement, i = 0; !box.drawn && n && i < 3; n = n.parentElement, i++) {
       const up = edgeOf(n);
-      if (up.ratio >= 3) { box = up; break; }
+      if (up.edged || up.ratio >= 3) { box = up; break; }
       if (up.ratio > box.ratio) box = { drawn: false, ratio: up.ratio };
     }
     if (box.ratio < 3) add("boundary", "major", el, `edge ${box.ratio.toFixed(2)}:1`);
