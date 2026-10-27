@@ -126,7 +126,8 @@ function Forms() {
 <Checkbox label="Weekly summary" description="Sent every Monday." />
 <Switch label="Push notifications" checked={notify} onChange={...} />
 <Switch aria-label="Mute channel" />
-<Checkbox aria-labelledby="pinned" />`}
+<Checkbox aria-labelledby="pinned" />
+<Switch aria-label="Locked switch" disabled />`}
     >
       <form className="sd-form max-w-narrow" onSubmit={(event) => event.preventDefault()} noValidate>
         <Field label="Name" hint="Shown on your profile." error={error} required>
@@ -153,6 +154,10 @@ function Forms() {
             Pinned
           </span>
           <Checkbox aria-labelledby="react-bare-name" />
+        </div>
+        <div className="sd-actions" data-disabled>
+          <Switch aria-label="Locked switch" disabled />
+          <Checkbox aria-label="Locked box" defaultChecked disabled />
         </div>
       </form>
     </Demo>
