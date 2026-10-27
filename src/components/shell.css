@@ -87,6 +87,10 @@
     height: var(--shell-head);
     border-block-end: 1px solid var(--sd-line-strong);
     color: var(--sd-fg);
+    transition: background-color 120ms var(--ease-out);
+  }
+  .sd-rail-home:hover {
+    background: var(--sd-raised);
   }
   .sd-rail-list {
     display: flex;
