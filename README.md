@@ -1154,6 +1154,9 @@ What they take over from `init()`:
   A `DialogHeader` also names the dialog. Leave the header out and name it with
   `aria-label` or `aria-labelledby` on the `Dialog`; an `aria-label` wins
   over a header, and no `aria-labelledby` is written when there is no header.
+  Server output carries the name when the `DialogHeader` is a child of the
+  `Dialog` or in a fragment there; a header inside a component of your own
+  names it once the page has hydrated.
   Children stay mounted while the dialog is closed. `unmountOnClose` mounts
   them only while it is open and drops them after the fade-out, so state inside
   starts fresh each time.

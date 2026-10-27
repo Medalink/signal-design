@@ -8,7 +8,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { createElement as h } from "react";
+import { Fragment, createElement as h } from "react";
 import ts from "typescript";
 import { ICON_NAMES } from "../src/js/icons.js";
 import { checkReactEditor } from "./check-react-editor.mjs";
@@ -267,6 +267,10 @@ export async function checkReactSsr() {
             h(sd.DialogHeader, null, "T"), h(sd.DialogBody, null, "b"),
             h(sd.DialogFooter, null, h(sd.DialogClose, null, h(sd.Button, null, "x")))),
           h(sd.Sheet, { defaultOpen: false }, h(sd.DialogHeader, null, "S")),
+          h(sd.Dialog, { defaultOpen: true }, h(sd.DialogHeader, null, "Named header")),
+          h(sd.Dialog, { defaultOpen: true }, h(Fragment, null, [h(sd.DialogHeader, { key: "h" }, "Fragment header")])),
+          h(sd.Dialog, { defaultOpen: true, "aria-label": "Label wins" }, h(sd.DialogHeader, null, "Beaten header")),
+          h(sd.Dialog, { unmountOnClose: true }, h(sd.DialogHeader, null, "Unmounted header")),
           h(sd.Dialog, { defaultOpen: true, "aria-label": "Quick note", unmountOnClose: true }, h(sd.DialogBody, null, "bare")),
           h(sd.Dialog, { "aria-label": "Quick note", unmountOnClose: true }, h(sd.DialogBody, null, "unmounted while closed")),
           h(sd.Popover, null, h(sd.PopoverTrigger, null, h(sd.Button, null, "p")), h(sd.PopoverContent, { pad: true }, "pop")),
@@ -321,6 +325,13 @@ export async function checkReactSsr() {
     ['aria-valuenow="300"', "the handle's value"],
     ['role="img" aria-label="Not saved"', "a labeled icon"],
   ]) assert.ok(html.includes(needle), `server output is missing ${what}`);
+  // The id is whatever useId made, so the header's span has to carry the same one.
+  for (const [title, what] of [["T", "a closed dialog"], ["S", "a closed sheet"], ["Named header", "an open dialog"], ["Fragment header", "a header inside a fragment"]]) {
+    assert.match(html, new RegExp(`<dialog aria-labelledby="([^"]+)" class="sd-dialog[^"]*">(?:<header class="sd-dialog-head"><span id="\\1">${title}</span>)`), `server output lacks aria-labelledby on ${what} whose header says ${title}, so it has no accessible name until hydration`);
+  }
+  assert.ok(html.includes('<dialog aria-label="Label wins" class="sd-dialog"><header'), "an aria-label wins over the header's aria-labelledby on the server");
+  assert.ok(html.includes('<dialog class="sd-dialog"></dialog>'), "a closed dialog that unmounts its header has no aria-labelledby and no children");
+  assert.ok(!html.includes("Unmounted header"), "a closed dialog that unmounts on close rendered its header");
   assert.ok(!html.includes("sd-tooltip"), "a closed tooltip rendered on the server");
   assert.ok(!html.includes("sd-hovercard"), "an open hover card rendered on the server");
   const names = Object.keys(all).filter((name) => /^[A-Z]/.test(name));
