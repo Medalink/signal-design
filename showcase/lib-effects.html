@@ -105,11 +105,10 @@
 
     <div class="demo-block">
       <h3 class="sd-label">Edge dust</h3>
-      <p class="demo-usage">The same dust rising from a whole edge, softer, with a clear column at each side so dividers stay crisp. The shell uses it under the rail and the sidebar's page list.</p>
-      <div class="grid gap-4 sm:grid-cols-[6rem_18rem_1fr]">
+      <p class="demo-usage">The same dust rising from a whole edge, softer, with a clear column at each side so dividers stay crisp. The shell uses it under the rail and the sidebar's page list. Set <code>data-sd-ornaments="bottom"</code> or <code>"top"</code>.</p>
+      <div class="grid gap-4 sm:grid-cols-[6rem_18rem]">
         <div class="h-64 bg-surface border border-line-strong" data-sd-ornaments="bottom" data-sd-ornaments-size="200"></div>
         <div class="h-64 bg-surface border border-line-strong" data-sd-ornaments="bottom" data-sd-ornaments-size="200"></div>
-        <p class="demo-usage self-end"><code>data-sd-ornaments="bottom"</code> or <code>"top"</code></p>
       </div>
     </div>
 
@@ -200,11 +199,11 @@
       <h3 class="sd-label">Sidebar head sizes</h3>
       <div class="flex flex-wrap gap-6">
         <div class="sd-sidebar border border-line" id="demo-head-default" style="--shell-sidebar: 15rem">
-          <div class="sd-sidebar-head"><svg><use href="#i-pages"/></svg><span class="sd-sidebar-title">Direct Messages</span>
+          <div class="sd-sidebar-head"><svg class="sd-icon" data-icon="comment" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4 5h16v11h-8l-4 4v-4H4z"/></svg><span class="sd-sidebar-title">Direct Messages</span>
             <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="New message">+</button></div>
         </div>
         <div class="sd-sidebar border border-line" id="demo-head-sm" style="--shell-sidebar: 15rem">
-          <div class="sd-sidebar-head sd-sidebar-head-sm"><svg><use href="#i-pages"/></svg><span class="sd-sidebar-title">Direct Messages</span>
+          <div class="sd-sidebar-head sd-sidebar-head-sm"><svg class="sd-icon" data-icon="comment" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4 5h16v11h-8l-4 4v-4H4z"/></svg><span class="sd-sidebar-title">Direct Messages</span>
             <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="New message">+</button></div>
         </div>
         <div class="sd-sidebar border border-line" id="demo-head-h2" style="--shell-sidebar: 15rem">
