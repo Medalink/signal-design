@@ -243,7 +243,8 @@ export function setScrollbars(mode?: "auto" | "always"): void;
  * The auto-hiding scrollbars without `init()`: sets `data-sd-scrollbars` on
  * `<html>` and starts the scroll listener once. Safe to call again to change
  * the mode, and beside React, since it writes only that attribute and
- * `data-sd-scrolling` on whatever scrolls. Default "auto".
+ * `data-sd-scrolling` on whatever scrolls. Does nothing without a `document`,
+ * so a client entry that is also run on the server does not throw. Default "auto".
  */
 export function initScrollbars(mode?: "auto" | "always"): void;
 

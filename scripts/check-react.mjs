@@ -218,6 +218,9 @@ function assertIconNamesMatch() {
 
 export async function checkReactSsr() {
   assert.equal(typeof document, "undefined", "the SSR check must run without a DOM");
+  // The subpath, because signal-design/js itself cannot be imported in Node (ornaments.js and scrolltabs.js build observers at load).
+  const { initScrollbars } = await import("../src/js/scrollbars.js");
+  assert.doesNotThrow(() => (initScrollbars(), initScrollbars("always")), "initScrollbars throws on the server instead of doing nothing");
   const { renderToString } = await import("react-dom/server");
   const all = await import("../src/react/index.js");
   const used = new Set();
