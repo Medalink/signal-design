@@ -164,7 +164,12 @@ function probe({ scope, exclude, width }) {
       });
       if (crowded) add("target", "major", el, `${Math.round(r.width)}x${Math.round(r.height)} with a neighbour inside 24px`);
     }
-    if (width <= 400 && r.height < 40 && !el.matches("input[type=checkbox], input[type=radio], [role=switch]")) add("touch", "minor", el, `${Math.round(r.height)}px tall on a phone`);
+    // Touch skips what a finger never aims at by height: text in a line, a
+    // box that takes focus only to scroll, and parts whose size is the data.
+    const inline = getComputedStyle(el).display === "inline";
+    const scrollOnly = el.matches("[tabindex]:not(a, button, input, select, textarea, summary, [role])") && (el.scrollWidth > el.clientWidth || el.scrollHeight > el.clientHeight);
+    const data = el.matches(".sd-schedule-block, .sd-mark, .sd-gutter-marker, .sd-resize-handle, .sd-sidebar-resize");
+    if (width <= 400 && r.height < 40 && !inline && !scrollOnly && !data && !el.matches("input[type=checkbox], input[type=radio], [role=switch]")) add("touch", "minor", el, `${Math.round(r.height)}px tall on a phone`);
   });
 
   // Field boundaries (WCAG 1.4.11).
