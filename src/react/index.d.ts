@@ -154,7 +154,7 @@ export function TableHead(props: ComponentProps<"thead">): ReactElement;
 export function TableBody(props: ComponentProps<"tbody">): ReactElement;
 export function TableFoot(props: ComponentProps<"tfoot">): ReactElement;
 export interface TableRowProps extends ComponentProps<"tr"> {
-  /** Sets `aria-selected`. */
+  /** Sets `aria-selected`. Pass `false`, not nothing, on the rows that can be selected. */
   selected?: boolean | undefined;
 }
 export function TableRow(props: TableRowProps): ReactElement;

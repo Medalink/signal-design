@@ -104,6 +104,7 @@
     "check": "node scripts/check.mjs",
     "perf": "node scripts/perf.mjs",
     "a11y": "node scripts/a11y.mjs",
+    "score": "node scripts/score.mjs",
     "build:ai": "node scripts/build-ai.mjs",
     "prepare": "node scripts/build-css.mjs && node scripts/build-js.mjs"
   },

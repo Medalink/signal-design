@@ -441,7 +441,7 @@
     width: 100%;
     min-height: 34px;
     padding: 6px 10px;
-    border: 1px solid var(--sd-line-strong);
+    border: 1px solid var(--sd-line-control);
     background-color: var(--sd-surface);
     color: var(--sd-fg);
     font: inherit;
@@ -452,7 +452,9 @@
   :is(input, textarea, select):is(:hover:not(:disabled, :focus)) {
     border-color: var(--sd-fg-faint);
   }
-  :is(input, textarea, select):is(:focus, :focus-visible) {
+  /* Text-like controls show focus on their own edge. Checkboxes, radios and
+     button-like inputs keep the outline: their edge is already that color. */
+  :is(input:where(:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"], [type="submit"], [type="button"], [type="reset"], [type="image"])), textarea, select):is(:focus, :focus-visible) {
     outline: none;
     border-color: var(--sd-fg);
   }
@@ -572,7 +574,7 @@
     width: 16px;
     height: 16px;
     margin: 0;
-    border: 1px solid var(--sd-line-strong);
+    border: 1px solid var(--sd-line-control);
     background: transparent center / 16px 16px no-repeat;
     vertical-align: -3px;
     cursor: pointer;
@@ -694,8 +696,12 @@
   }
 
   /* File */
+  /* Fills its column and gives way in a narrow one: the file name is clipped
+     instead of pushing the column wider. */
   :is(input[type="file"]) {
-    max-width: 100%;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
     color: var(--sd-fg-subtle);
     font-size: var(--text-sm);
     cursor: pointer;
@@ -830,6 +836,10 @@
     color: var(--sd-fg-subtle);
     font-size: var(--text-xs);
     line-height: 1;
+  }
+  :is(summary):hover::before {
+    border-color: var(--sd-fg-faint);
+    color: var(--sd-fg);
   }
   :is(details[open] > summary)::before {
     content: "\2212";

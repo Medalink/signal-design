@@ -62,9 +62,9 @@
             <span class="relative inline-grid"><button class="sd-btn sd-btn-icon" aria-label="Inbox, 3 unread">✉</button><span class="sd-badge-count" data-corner>3</span></span>
             <span class="sd-badge-count" data-tone="danger">12</span>
           </div>
-          <p class="demo-usage"><code>sd-item</code> + <code>-body|-title|-sub|-end|-group|-nested</code> · <code>data-unread</code> · <code>data-muted</code> · <code>data-status="online|away|busy|offline"</code> · <code>sd-badge-count</code> + <code>data-corner</code></p>
         </div>
       </div>
+      <p class="demo-usage"><code>sd-item</code> + <code>-body|-title|-sub|-end|-group|-nested</code>: rows in <code>sd-item-group</code> sections · <code>data-status</code> on <code>sd-avatar</code> is the presence square (<code>--sd-ring</code> matches it to the panel) · <code>data-unread</code> bolds a row, <code>data-muted</code> quiets it, <code>aria-current</code> marks the open one · <code>sd-badge-count</code> for a number, <code>data-corner</code> pins it to an icon button · <code>data-tone</code> colors the count only when it is a status</p>
     </div>
 
     <div class="demo-block">
@@ -160,7 +160,7 @@
           <button class="sd-message-ref"><b>anotherunbrokenauthornamewithnospacesatall</b><span>The quoted text keeps the rest of the line.</span></button>
           <time class="sd-message-time">12:30</time>
           <div class="sd-message-body">
-            <header class="sd-message-head"><b>anunbrokenauthornamewithnospacestowrapatall</b><span class="sd-badge">Lead</span><time>12:30</time></header>
+            <header class="sd-message-head"><b>anunbrokenauthornamewithnospacestowrapatall</b><span class="sd-badge">Lead</span></header>
             <div class="sd-message-text">The body column is <code>minmax(0, 1fr)</code>, so a long name cannot widen the row past its container. Names in the head and in a quote cut off with an ellipsis.</div>
           </div>
         </article>
@@ -175,7 +175,7 @@
           <div class="sd-message-ref"><b><a href="#conversation">anotherunbrokenauthornamewithnospacesatall</a></b><span>A clickable author is cut off the same way.</span></div>
           <time class="sd-message-time">12:30</time>
           <div class="sd-message-body">
-            <header class="sd-message-head"><b><button type="button">anunbrokenauthornamewithnospacestowrapatall</button></b><span class="sd-badge">Lead</span><time>12:30</time></header>
+            <header class="sd-message-head"><b><button type="button">anunbrokenauthornamewithnospacestowrapatall</button></b><span class="sd-badge">Lead</span></header>
             <div class="sd-message-text">The author is a button in the head and a link in the quote.</div>
           </div>
         </article>
@@ -213,9 +213,9 @@ jump.querySelector("button").addEventListener("click", () => feed.scrollTo({ top
 
     <div class="demo-block">
       <h3 class="sd-label">Composer</h3>
-      <div class="max-w-column border border-line" style="background: var(--sd-container)">
-        <div class="sd-composer-status" style="border-bottom: 1px solid var(--sd-line)"><span class="sd-typing"><i><b></b></i><span><b style="--who: var(--sd-extra)">Alex</b> is typing</span></span></div>
-        <form class="sd-composer" style="border: 0" onsubmit="event.preventDefault(); this.querySelector('textarea').value=''">
+      <div class="max-w-column sd-shell-dock">
+        <div class="sd-composer-status"><span class="sd-typing"><i><b></b></i><span><b style="--who: var(--sd-extra)">Alex</b> is typing</span></span></div>
+        <form class="sd-composer" onsubmit="event.preventDefault(); this.querySelector('textarea').value=''">
           <div class="sd-composer-reply"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M6 3 2.5 6.5 6 10"/><path d="M3.5 6.5h5.5a4.5 4.5 0 0 1 4.5 4.5v2"/></svg><span>Replying to <b style="--who: var(--sd-extra)">Alex</b> · A message opens with its author in their name color.</span><button type="button" class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="Cancel reply">×</button></div>
           <div class="sd-composer-row">
             <button type="button" class="sd-btn sd-btn-ghost sd-btn-icon sd-composer-add" aria-label="Add" aria-haspopup="menu" popovertarget="demo-add-menu" data-sd-side="top"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 3v10M3 8h10"/></svg></button>

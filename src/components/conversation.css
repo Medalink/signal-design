@@ -112,7 +112,7 @@
   .sd-message-head > b {
     min-width: 0;
     max-width: 60%; /* a long name leaves room for the tags and the status */
-    overflow: hidden;
+    overflow: clip visible; /* clips the name's line, not its touch target */
     text-overflow: ellipsis;
     white-space: nowrap;
     color: color-mix(in srgb, var(--who, var(--sd-extra)) 70%, var(--sd-fg));
@@ -132,6 +132,18 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  /* On a coarse pointer the name reaches a finger past the line it sits in;
+     negative margins keep the line's height. */
+  @media (pointer: coarse) {
+    .sd-message-author > :is(button, a),
+    .sd-message-head > b > :is(button, a),
+    .sd-reply > b > :is(button, a),
+    .sd-message-ref > b > :is(button, a) {
+      min-height: var(--sd-touch);
+      margin-block: calc((24px - var(--sd-touch)) / 2);
+      line-height: var(--sd-touch);
+    }
   }
   .sd-message-head time {
     font-variant-numeric: tabular-nums;
@@ -284,7 +296,7 @@
   .sd-message-ref > b {
     flex: 0 0 auto; /* the name keeps its width; the quote truncates */
     max-width: 40%;
-    overflow: hidden;
+    overflow: clip visible; /* clips the name's line, not its touch target */
     text-overflow: ellipsis;
     white-space: nowrap;
     color: color-mix(in srgb, var(--who, var(--sd-extra)) 70%, var(--sd-fg));
@@ -333,7 +345,7 @@
     flex: 0 0 auto; /* the name keeps its width; the quote truncates */
     min-width: 0;
     max-width: 40%;
-    overflow: hidden;
+    overflow: clip visible; /* clips the name's line, not its touch target */
     text-overflow: ellipsis;
     white-space: nowrap;
     color: color-mix(in srgb, var(--who, var(--sd-extra)) 70%, var(--sd-fg));
@@ -708,6 +720,11 @@
   .sd-feed-jump[hidden] {
     display: none;
   }
+  /* The bar overlaps the bottom of the feed, so the feed keeps focus and
+     scrolled-to items clear of it. */
+  :has(+ .sd-feed-jump:not([hidden])) {
+    scroll-padding-block-end: 40px;
+  }
   .sd-feed-jump .sd-btn {
     gap: 6px;
   }
@@ -781,7 +798,7 @@
   }
   .sd-receipts > .sd-avatar {
     --sd-avatar-size: 16px;
-    font-size: 8px;
+    font-size: var(--text-3xs);
   }
 
   /* Typing indicator: who is typing, with three squares. While someone types,
@@ -849,11 +866,15 @@
     grid-template-columns: minmax(0, 1fr);
     gap: 8px;
     padding: 8px;
-    border: 1px solid var(--sd-line-strong);
+    border: 1px solid var(--sd-line-control);
     background: var(--sd-surface);
   }
-  .sd-composer:focus-within {
-    border-color: var(--sd-fg-subtle);
+  /* An outline on the border line, so a composer drawn without its own edge
+     (in a dock, or with border: 0) shows focus too. Only the text field
+     lights it: a focused button inside has its own ring. */
+  .sd-composer:has(textarea:focus) {
+    outline: 1px solid var(--sd-fg);
+    outline-offset: -1px;
   }
   .sd-composer-row {
     display: flex;
@@ -959,9 +980,11 @@
   .sd-composer-status > .sd-typing {
     font-size: inherit;
   }
-  /* In a dock: one box, the status line over the composer. */
+  /* In a dock: one box, the status line over the composer. The dock's edge
+     is the field's edge, so it takes the control line (3:1). */
   .sd-shell-dock:has(> .sd-composer) {
     padding: 0;
+    border-color: var(--sd-line-control);
   }
   .sd-shell-dock > .sd-composer {
     border: 0;
@@ -1011,15 +1034,19 @@
     width: 100%;
     min-height: 0;
     padding: 7px 10px;
-    border: 1px solid var(--sd-line-strong);
+    border: 1px solid var(--sd-line-control);
     background: var(--sd-surface);
     color: var(--sd-fg);
     font: inherit;
     line-height: 1.5;
     resize: none;
   }
+  /* An edited message wears a lifted fill; the edge steps up to stay 3:1 on it. */
+  .sd-message[data-editing] .sd-message-edit textarea:not(:focus) {
+    border-color: var(--sd-fg-faint);
+  }
   .sd-message-edit textarea:focus {
-    border-color: var(--sd-fg-subtle);
+    border-color: var(--sd-fg);
     outline: none;
   }
   .sd-message-edit-hint {
@@ -1095,7 +1122,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 11px;
+    font-size: var(--text-3xs);
     font-weight: var(--font-weight-semibold);
     letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
@@ -1187,7 +1214,7 @@
     border: 1px dashed var(--sd-line-strong);
     color: var(--sd-fg-faint);
     font-family: var(--sd-font-mono);
-    font-size: 10px;
+    font-size: var(--text-3xs);
     text-transform: uppercase;
   }
   .sd-roster-row[data-presence="unresolved"] {

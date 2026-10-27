@@ -166,6 +166,10 @@
   }
   .sd-table tbody tr[aria-selected="true"] > :first-child {
     box-shadow: inset 1px 0 0 var(--sd-fg);
+  }
+  /* Rows that can be selected all keep room for the edge, so selecting one
+     moves nothing and the first column stays aligned with its header. */
+  .sd-table:has(tbody tr[aria-selected]) tr > :first-child {
     padding-inline-start: 12px;
   }
 
@@ -195,6 +199,7 @@
   .sd-stat-delta {
     font-size: var(--text-sm);
     color: var(--tone, var(--sd-fg-subtle));
+    font-variant-numeric: tabular-nums;
   }
 
   /* Key-value grid. */
@@ -207,8 +212,12 @@
   .sd-kv > dt {
     padding-top: 2px;
   }
+  /* A long unbroken value (an email, an id, a URL) wraps inside its column. */
   .sd-kv > dd {
+    min-width: 0;
     margin: 0;
+    overflow-wrap: anywhere;
+    font-variant-numeric: tabular-nums;
   }
   /* Plain keys: sentence case at body size, cut off with an ellipsis (put the
      full text in a title) once they take half the row, so the values keep
@@ -310,6 +319,7 @@
     font-size: var(--text-2xs);
     color: var(--sd-fg-subtle);
     min-height: 1em;
+    font-variant-numeric: tabular-nums;
   }
   .sd-stat-end {
     position: absolute;
@@ -444,6 +454,7 @@
     background: var(--sd-chart-tooltip-bg);
     color: var(--sd-chart-tooltip-body);
     font-size: var(--text-2xs);
+    font-variant-numeric: tabular-nums;
     white-space: nowrap;
     pointer-events: none;
   }

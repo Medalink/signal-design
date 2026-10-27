@@ -124,6 +124,9 @@
         <span class="sd-icon-text"><svg class="sd-icon" data-icon="warning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M12 4l8.5 16h-17zM12 10v4.5M12 17.5v.01"/></svg>Not saved</span>
       </div>
       <ul class="demo-icons" id="icon-set" aria-label="Icon set"></ul>
+      <script type="text/plain" data-demo-js>import { ICON_NAMES, icon } from "signal-design/js/icons";
+
+document.getElementById("icon-set").innerHTML = ICON_NAMES.map((name) => `<li>${icon(name)}<code>${name}</code></li>`).join("");</script>
       <p class="demo-usage"><code>sd-icon</code> with <code>data-icon</code> · line icons, 1.5 stroke, square caps, on the 24 grid with the 4-unit inset · <code>icon(name)</code> from <code>signal-design/js/icons</code> returns the markup, <code>ICONS</code> the paths · React: <code>&lt;Icon name="undo" /&gt;</code></p>
     </div>
 
@@ -257,6 +260,7 @@
           <button class="sd-btn sd-btn-primary" type="submit">Save</button>
         </div>
       </form>
+      <p class="demo-usage"><code>sd-form</code> > <code>sd-form-row</code> (side by side) > <code>sd-field</code> > <code>sd-field-label</code> + control + <code>sd-field-hint</code> + <code>sd-field-error</code> · <code>sd-field-aside</code> for "optional" · <code>data-invalid</code> or <code>aria-invalid="true"</code> shows the error and reddens the label · <code>sd-input-group</code> + <code>sd-addon</code> joins a prefix or button to an input · <code>sd-seg</code> with radios in labels is a segmented choice with no JS</p>
     </div>
 
     <div class="demo-block">
@@ -442,7 +446,7 @@
       <div class="grid gap-6 sm:grid-cols-2 items-center">
         <div class="grid gap-2">
           <span class="sd-label">5 of 12 done</span>
-          <div class="sd-cells" data-cells="12" data-on="5"></div>
+          <div class="sd-cells"><i data-on></i><i data-on></i><i data-on></i><i data-on></i><i data-on></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
         </div>
         <div class="grid gap-5">
           <div>
@@ -797,10 +801,7 @@ for (const button of preview.querySelectorAll("[data-living-width]")) {
         <div class="border border-dashed border-line"><div class="sd-page border-x border-line" style="padding-block: 14px"><span class="sd-subtle text-sm">sd-page: the 720px reading column, centered</span></div></div>
         <div class="border border-dashed border-line"><div class="sd-page sd-page-wide border-x border-line" style="padding-block: 14px"><span class="sd-subtle text-sm">sd-page sd-page-wide: 1024px for dashboards</span></div></div>
       </div>
-      <div class="grid gap-2">
-        <div class="sd-divider">or</div>
-        <p class="demo-usage"><code>sd-divider</code> with a word; empty, it is a plain rule.</p>
-      </div>
+      <div class="sd-divider">or</div>
       <div class="grid gap-6 md:grid-cols-2">
         <div class="grid gap-2 content-start">
           <p class="sd-label">sd-stack</p>
@@ -819,7 +820,7 @@ for (const button of preview.querySelectorAll("[data-living-width]")) {
           <div class="sd-grid" style="--min: 10rem; --gap: 8px"><div class="border border-line p-3 sd-muted">one</div><div class="border border-line p-3 sd-muted">two</div><div class="border border-line p-3 sd-muted">three</div><div class="border border-line p-3 sd-muted">four</div><div class="border border-line p-3 sd-muted">five</div></div>
         </div>
       </div>
-      <p class="demo-usage"><code>sd-page</code> (720px column) · <code>sd-header</code> · <code>sd-panel</code> · <code>sd-card</code> · <code>sd-divider</code> · <code>sd-stack</code> / <code>sd-cluster</code> / <code>sd-split</code> / <code>sd-grid</code> (with <code>--gap</code> and <code>--min</code>) for apps without Tailwind</p>
+      <p class="demo-usage"><code>sd-page</code> (720px column) · <code>sd-header</code> · <code>sd-panel</code> · <code>sd-card</code> · <code>sd-divider</code> (with a word; empty, it is a plain rule) · <code>sd-stack</code> / <code>sd-cluster</code> / <code>sd-split</code> / <code>sd-grid</code> (with <code>--gap</code> and <code>--min</code>) for apps without Tailwind</p>
     </div>
   </section>
 </body>

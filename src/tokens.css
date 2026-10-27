@@ -34,6 +34,8 @@
   --font-weight-bold: 500; /* regular and medium only */
 
   /* Size scale (rem, so the user's font-size preference still applies). */
+  --text-3xs: 0.75rem; /* 12px  dense data: chart labels, counts, initials. Nothing smaller. */
+  --text-3xs--line-height: 1.35;
   --text-2xs: 0.875rem; /* 14px  labels, status lines (caps) */
   --text-2xs--line-height: 1.4;
   --text-xs: 0.90625rem; /* 14.5px  nav, wordmark, kbd */
@@ -163,7 +165,8 @@
   --color-container: var(--sd-container); /* app content box */
   --color-shell: var(--sd-shell-bg); /* behind the app content box */
   --color-line: var(--sd-line); /* hairlines */
-  --color-line-strong: var(--sd-line-strong); /* control borders */
+  --color-line-strong: var(--sd-line-strong); /* strong hairlines */
+  --color-line-control: var(--sd-line-control); /* the edge of a field: 3:1 */
   --color-fg: var(--sd-fg); /* primary text */
   --color-fg-muted: var(--sd-fg-muted); /* secondary text */
   --color-fg-subtle: var(--sd-fg-subtle); /* labels, meta; still AA for small text */
@@ -199,6 +202,7 @@
   --sd-current-fill: color-mix(in srgb, var(--sd-fg) 10%, transparent);
   --sd-line: #262626;
   --sd-line-strong: #333333;
+  --sd-line-control: #676767; /* 3:1 on canvas, surface and raised (WCAG 1.4.11) */
   --sd-fg: #fafafa;
   --sd-fg-muted: #a3a3a3;
   --sd-fg-subtle: #949494;
@@ -235,6 +239,7 @@
   --sd-current-fill: color-mix(in srgb, var(--sd-fg) 10%, transparent);
   --sd-line: #2e2e2e;
   --sd-line-strong: #3d3d3d;
+  --sd-line-control: #6f6f6f; /* 3:1 on every graphite surface */
   --sd-fg: #f5f5f5;
   --sd-fg-muted: #adadad;
   --sd-fg-subtle: #999999;
@@ -270,6 +275,7 @@
   --sd-current-fill: color-mix(in srgb, var(--sd-fg) 10%, transparent);
   --sd-line: rgb(0 0 0 / 0.1);
   --sd-line-strong: rgb(0 0 0 / 0.22);
+  --sd-line-control: #858585; /* 3:1 on every light surface, the shell behind the app included */
   --sd-fg: var(--color-ink-1000);
   --sd-fg-muted: #2e2e33;
   --sd-fg-subtle: #5c5c66;
@@ -306,6 +312,7 @@
     --sd-current-fill: color-mix(in srgb, var(--sd-fg) 10%, transparent);
     --sd-line: rgb(0 0 0 / 0.1);
     --sd-line-strong: rgb(0 0 0 / 0.22);
+    --sd-line-control: #858585;
     --sd-fg: var(--color-ink-1000);
     --sd-fg-muted: #2e2e33;
     --sd-fg-subtle: #5c5c66;

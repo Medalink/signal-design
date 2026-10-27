@@ -101,7 +101,6 @@ ${EXAMPLES.map((p) => option(p, "example")).join("\n")}
 const aside = `  <aside class="sd-shell-aside" id="settings-panel" aria-label="Code views">
     <div class="sd-shell-aside-head"><span class="flex-1">Code views</span>
       <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="aside" aria-label="Close code views"><svg><use href="#i-close"/></svg></button></div>
-    <div class="sd-shell-aside-section text-sm sd-subtle">Show every block on this page as copyable code, or as a preview.</div>
     <div class="sd-shell-aside-section sd-actions"><button class="sd-btn sd-btn-sm" data-code-all="code">Show all code</button><button class="sd-btn sd-btn-sm sd-btn-ghost" data-code-all="preview">Show all previews</button></div>
   </aside>`;
 const asideButton = `      <div class="sd-shell-header-end">
@@ -119,13 +118,11 @@ function cards() {
   const grid = (items) => `    <div class="sd-grid" style="--min: 16rem; --gap: 12px">\n${items.join("\n")}\n    </div>`;
   return `  <section class="home-section" aria-labelledby="home-library-h">
     <h2 id="home-library-h" class="sd-title">Library</h2>
-    <p class="sd-muted mt-2 max-w-[42rem]">One page per section. Each shows its parts, with a Preview and Code flip on every block.</p>
 ${grid(LIBRARY.map((p, i) => card(p, `${String(i + 1).padStart(2, "0")} · ${blockCount(p.file)} blocks`)))}
   </section>
 
   <section class="home-section" aria-labelledby="home-examples-h">
     <h2 id="home-examples-h" class="sd-title">Examples</h2>
-    <p class="sd-muted mt-2 max-w-[42rem]">Whole pages built only from library parts.</p>
 ${grid(EXAMPLES.map((p) => card(p, "example")))}
   </section>`;
 }

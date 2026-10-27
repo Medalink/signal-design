@@ -134,6 +134,10 @@
   .sd-progress-label > :first-child {
     color: var(--sd-fg);
   }
+  /* The seconds left in a countdown (data-sd-countdown). */
+  [data-sd-countdown-value] {
+    font-variant-numeric: tabular-nums;
+  }
 
   /* Skeleton: static placeholder blocks. No shimmer, nothing loops. */
   .sd-skeleton {

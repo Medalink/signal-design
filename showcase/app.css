@@ -22,6 +22,10 @@
     padding-block: 56px;
     border-block-start: 1px solid var(--sd-line);
   }
+  /* A rule divides sections; the first one has nothing above it to divide. */
+  .demo-section:first-of-type {
+    border-block-start: 0;
+  }
   /* The featured intro at the top of a library page: prose only, never a demo block. */
   .demo-intro {
     display: grid;
@@ -233,12 +237,12 @@
       display: grid;
     }
   }
-  /* Nine pages plus home and search: tighter rail items so the whole rail shows at 768px tall and up. Shorter windows scroll the list. */
-  .sd-rail > .sd-rail-list {
+  /* Nine pages plus home and search: tighter rail items so the whole rail shows at 768px tall and up. Shorter windows scroll the list. A rail inside a demo block keeps the library spacing. */
+  .sd-rail:not(.demo-block *) > .sd-rail-list {
     gap: 2px;
     padding-block: 4px;
   }
-  .sd-rail > .sd-rail-list > .sd-rail-item {
+  .sd-rail:not(.demo-block *) > .sd-rail-list > .sd-rail-item {
     padding-block: 4px 3px;
     gap: 2px;
   }

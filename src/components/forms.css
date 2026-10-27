@@ -11,6 +11,7 @@
    */
   .sd-field {
     display: grid;
+    align-content: start;
     gap: 6px;
     min-width: 0;
   }
@@ -50,6 +51,7 @@
     display: none;
   }
   .sd-field:has(:user-invalid) .sd-field-label,
+  .sd-field:has([aria-invalid="true"]) .sd-field-label,
   .sd-field[data-invalid] .sd-field-label {
     color: var(--sd-danger);
   }
@@ -101,7 +103,7 @@
     display: inline-flex;
     align-items: center;
     padding: 0 10px;
-    border: 1px solid var(--sd-line-strong);
+    border: 1px solid var(--sd-line-control);
     background: transparent;
     color: var(--sd-fg-subtle);
     font-size: var(--text-sm);
@@ -282,6 +284,9 @@
     padding-inline-end: 12px;
     color: var(--sd-fg);
     font-size: var(--text-base);
+  }
+  .sd-option-desc {
+    color: var(--sd-fg-subtle);
   }
   /* Selected: a 2px edge drawn over the preview, a lifted fill and a solid
      corner square. */

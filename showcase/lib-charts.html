@@ -114,6 +114,11 @@ createChart(canvas, {
           <div class="sd-meter" style="--value: 84; --target: 75; --warn: 80; --crit: 95"><i data-at="warn"></i><i data-at="crit"></i></div>
         </div>
       </div>
+      <script type="text/plain" data-demo-js>// One <i> per square; the CSS reads --v (0–1) on the heatmap, data-s on the waffle, data-state on the uptime bar.
+document.getElementById("demo-heat").innerHTML = Array.from({ length: 7 * 24 }, () => `<i style="--v: ${Math.random().toFixed(2)}"></i>`).join("");
+document.getElementById("demo-waffle").innerHTML =
+  '<i data-s="1"></i>'.repeat(42) + '<i data-s="2"></i>'.repeat(31) + '<i data-s="3"></i>'.repeat(19) + "<i></i>".repeat(8);
+document.getElementById("demo-uptime").innerHTML = '<i data-state="ok"></i>'.repeat(57) + '<i data-state="degraded"></i><i data-state="down"></i><i data-state="ok"></i>';</script>
       <p class="demo-usage"><code>sd-heatmap</code> + <code>--v</code> · <code>sd-waffle</code> + <code>data-s</code> · <code>sd-key</code> · <code>sd-uptime</code> + <code>data-state</code> · <code>sd-meter</code> + <code>--value|--target|--warn|--crit</code> · <code>sd-weighted</code> + <code>--weight</code> and <code>data-state</code>. CSS only.</p>
     </div>
 

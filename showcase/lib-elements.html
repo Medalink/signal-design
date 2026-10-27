@@ -50,6 +50,7 @@
         <h5>Heading five</h5>
         <h6>Heading six</h6>
       </div>
+      <p class="demo-usage">Plain <code>h1</code>–<code>h6</code>, no class · <code>em</code> inside <code>h1</code>–<code>h3</code> is the quiet half · one <code>h1</code> per page, no skipped levels · use <code>sd-title</code> or <code>sd-display</code> only when the visual size must differ from the outline level</p>
     </div>
 
     <div class="demo-block">
@@ -59,6 +60,7 @@
         <p>A second paragraph follows with flow spacing. Margins only appear between siblings, never after the last one.</p>
         <address>ACME Inc. · 100 Main Street · Springfield</address>
       </div>
+      <p class="demo-usage">Plain <code>p</code>, <code>a</code>, <code>strong</code>, <code>em</code>, <code>small</code>, <code>mark</code>, <code>del</code>, <code>ins</code>, <code>abbr</code>, <code>time</code>, <code>code</code>, <code>kbd</code> and <code>address</code>, no class · margins appear between siblings only · <code>kbd kbd</code> nests one key per cap · reach for <code>sd-lead</code>, <code>sd-muted</code> or <code>sd-meta</code> only to change emphasis</p>
     </div>
 
     <div class="demo-block">
@@ -81,6 +83,7 @@
           <dt>Billing cycle</dt><dd>Monthly</dd>
         </dl>
       </div>
+      <p class="demo-usage">Plain <code>ul</code>, <code>ol</code> and <code>dl</code>, no class: square faint markers, tabular numbers, nested lists indent themselves · a list that carries any class is yours to style, so use <code>sd-item</code> or <code>sd-row</code> for interactive rows and <code>sd-kv</code> for aligned pairs</p>
     </div>
 
     <div class="demo-block">
@@ -92,6 +95,7 @@
       <pre><code>@import "tailwindcss";
 @import "signal-design";</code></pre>
       <hr>
+      <p class="demo-usage">Plain <code>blockquote</code> (with a <code>footer</code> or <code>cite</code> for the source), <code>pre &gt; code</code> and <code>hr</code>, no class · use <code>sd-code</code> for a titled, copyable snippet with <code>data-sd-copy</code></p>
     </div>
 
     <div class="demo-block">
@@ -108,6 +112,7 @@
           <tfoot><tr><td colspan="3">3 items</td><td>2 min</td></tr></tfoot>
         </table>
       </div>
+      <p class="demo-usage">Plain <code>table</code> with <code>caption</code>, <code>thead</code>, <code>tbody</code>, <code>tfoot</code> and <code>th scope</code>, no class · wrap it in <code>sd-table-wrap</code> so a narrow screen scrolls the table, not the page · use <code>sd-table</code> for density and row states</p>
     </div>
 
     <div class="demo-block">
@@ -193,6 +198,9 @@
           <button disabled>Disabled</button>
         </div>
       </form>
+      <script type="text/plain" data-demo-js>// indeterminate is a property, not an attribute: set it from script.
+for (const box of document.querySelectorAll("input[data-indeterminate]")) box.indeterminate = true;</script>
+      <p class="demo-usage">Native <code>input</code>, <code>select</code>, <code>textarea</code>, <code>button</code>, <code>progress</code>, <code>meter</code> and <code>output</code>, styled with no class · <code>fieldset</code> + <code>legend</code> group them · <code>type="checkbox"</code> + <code>role="switch"</code> is the switch, <code>:indeterminate</code> the mixed checkbox · reach for <code>sd-field</code> when a control needs a label, hint and error</p>
     </div>
 
     <div class="demo-block">
@@ -217,6 +225,7 @@
         <button data-sd-close>Close</button>
       </dialog>
       <div popover id="plain-popover"><p>Plain popover, centered by the browser.</p></div>
+      <p class="demo-usage">Native <code>details</code> + <code>summary</code> (stacked ones read as one accordion), <code>dialog</code> and <code>[popover]</code>, no class · <code>data-sd-open</code> / <code>data-sd-close</code> drive a plain dialog, <code>popovertarget</code> a popover · use <code>sd-dialog</code>, <code>sd-popover</code> or <code>sd-expand</code> for header, body, anchoring and animation</p>
     </div>
 
     <div class="demo-block">
@@ -231,6 +240,7 @@
           <iframe title="Inline frame" srcdoc="<body style='margin:0;font:12px monospace;color:#9A9AA2;background:#0A0A0B;display:grid;place-items:center;height:100vh'>iframe</body>" height="120" class="w-full"></iframe>
         </div>
       </div>
+      <p class="demo-usage">Plain <code>figure</code> + <code>figcaption</code>, <code>img</code>, <code>video</code>, <code>audio</code> and <code>iframe</code>, no class · media scales to its container · give <code>img</code> and <code>iframe</code> <code>width</code>/<code>height</code> or <code>alt</code>/<code>title</code> so layout holds and screen readers have a name</p>
     </div>
   </section>
 </body>
