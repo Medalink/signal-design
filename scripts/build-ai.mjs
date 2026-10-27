@@ -9,6 +9,7 @@
  *
  *   node scripts/build-ai.mjs           write the files
  *   node scripts/build-ai.mjs --check   fail if they are out of date (CI)
+ *   SD_AI_OUT=dir node scripts/build-ai.mjs   write under dir instead (a local look)
  *
  * Starts its own Vite server for the showcase, so it needs no dev server.
  */
@@ -21,6 +22,7 @@ import { LIBRARY } from "../showcase/pages.js";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const check = process.argv.includes("--check");
+const out = process.env.SD_AI_OUT ? resolve(process.env.SD_AI_OUT) : root;
 const pkg = JSON.parse(readFileSync(resolve(root, "package.json"), "utf8"));
 
 /** What each data-sd-* attribute does; the generator fails on an unknown one. */
@@ -265,7 +267,7 @@ try {
   };
   let stale = [];
   for (const [path, body] of Object.entries(files)) {
-    const file = resolve(root, path);
+    const file = resolve(check ? root : out, path);
     const current = existsSync(file) ? readFileSync(file, "utf8").replace(/\r\n/g, "\n") : null;
     if (check) {
       if (current !== body) stale.push(path);

@@ -1,7 +1,12 @@
 /**
  * Scores every library block and every showcase page, then ranks them.
  *
- *   node scripts/score.mjs [baseUrl] [--only lib-components,chat] [--json file] [--md file] [--skip interact,snippets]
+ *   node scripts/score.mjs [baseUrl] [--only lib-components,chat] [--json file] [--md file] [--skip interact,snippets] [--components file]
+ *
+ * Copyable HTML and usage notes come from ai/components.json, which CI rebuilds
+ * on main. To score a branch's own showcase edits, build a copy and pass it:
+ *   SD_AI_OUT=.ai-local node scripts/build-ai.mjs
+ *   node scripts/score.mjs --components .ai-local/ai/components.json
  *
  * A block is one `.demo-block` on a library page (the same ids as
  * ai/components.json). A page is every page in showcase/pages.js, scored on
@@ -48,6 +53,7 @@ const only = flag("--only")?.split(",");
 const jsonOut = flag("--json");
 const mdOut = flag("--md");
 const skip = new Set(flag("--skip")?.split(",") ?? []);
+const componentsFile = flag("--components");
 const base = (args[0] || "http://localhost:5178/").replace(/\/?$/, "/");
 
 const WEIGHT = { critical: 10, major: 5, minor: 1 };
@@ -403,7 +409,7 @@ const record = (it, f, where) => {
 const progress = (label) => process.stdout.write(`\r${label} ${Math.round((performance.now() - t0) / 1000)}s          `);
 const BLOCK_PARTS = (id) => `#${id} > :not(.demo-head):not(.demo-code):not(.demo-usage):not(script)`;
 
-const components = JSON.parse(readFileSync(new URL("../ai/components.json", import.meta.url), "utf8")).components;
+const components = JSON.parse(readFileSync(componentsFile ?? new URL("../ai/components.json", import.meta.url), "utf8")).components;
 const meta = new Map(components.map((c) => [c.id, c]));
 const libPages = LIBRARY.filter((p) => !only || only.includes(keyOf(p)));
 const allPages = ALL.filter((p) => !only || only.includes(keyOf(p)));

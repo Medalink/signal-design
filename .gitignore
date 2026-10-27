@@ -6,3 +6,4 @@ dist/
 examples/tauri/src-tauri/target/
 examples/tauri/web/
 node_modules/
+.ai-local/
