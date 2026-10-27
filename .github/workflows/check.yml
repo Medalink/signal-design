@@ -5,6 +5,9 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 # A new push to a pull request supersedes the run in progress.
 concurrency:
   group: check-${{ github.ref }}

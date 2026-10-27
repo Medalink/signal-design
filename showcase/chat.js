@@ -77,7 +77,7 @@ function react(message, emoji) {
   }
   const existing = [...bar.querySelectorAll("[data-sd-reaction]")].find((b) => b.querySelector("span").textContent === emoji);
   if (existing) return existing.click();
-  bar.querySelector(".sd-reactions-add").insertAdjacentHTML("beforebegin", `<button data-sd-reaction aria-pressed="true" data-new><span>${emoji}</span><b>1</b></button>`);
+  bar.querySelector(".sd-reactions-add").insertAdjacentHTML("beforebegin", `<button data-sd-reaction aria-pressed="true" data-new><span>${escape(emoji)}</span><b>1</b></button>`);
 }
 
 document.addEventListener("click", (event) => {

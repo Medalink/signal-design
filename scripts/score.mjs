@@ -597,7 +597,7 @@ console.log(checkList);
 for (const r of ranked.slice(0, 25)) console.log(`${String(r.score).padStart(3)}  ${r.kind.padEnd(6)} ${r.id.padEnd(44)} ${Object.entries(r.byCheck).map(([k, v]) => `${k}:${v}`).join(" ")}`);
 if (jsonOut) writeFileSync(jsonOut, JSON.stringify({ summary, ranked }, null, 1));
 if (mdOut) {
-  const cell = (s) => s.replace(/\|/g, "\\|");
+  const cell = (s) => s.replace(/[\\|]/g, "\\$&");
   const rows = ranked.map((r, i) => `| ${i + 1} | ${r.score} | ${r.kind} | \`${r.id}\` | ${cell(r.title)} | ${Object.entries(r.byCheck).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(", ") || "clean"} |`);
   const worst = ranked
     .filter((r) => r.weight)
