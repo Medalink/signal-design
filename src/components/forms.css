@@ -51,6 +51,7 @@
     display: none;
   }
   .sd-field:has(:user-invalid) .sd-field-label,
+  .sd-field:has([aria-invalid="true"]) .sd-field-label,
   .sd-field[data-invalid] .sd-field-label {
     color: var(--sd-danger);
   }
