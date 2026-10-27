@@ -854,7 +854,7 @@
     grid-template-columns: minmax(0, 1fr);
     gap: 8px;
     padding: 8px;
-    border: 1px solid var(--sd-line-strong);
+    border: 1px solid var(--sd-line-control);
     background: var(--sd-surface);
   }
   /* An outline on the border line, so a composer drawn without its own edge
@@ -1020,7 +1020,7 @@
     width: 100%;
     min-height: 0;
     padding: 7px 10px;
-    border: 1px solid var(--sd-line-strong);
+    border: 1px solid var(--sd-line-control);
     background: var(--sd-surface);
     color: var(--sd-fg);
     font: inherit;

@@ -101,7 +101,7 @@
     display: inline-flex;
     align-items: center;
     padding: 0 10px;
-    border: 1px solid var(--sd-line-strong);
+    border: 1px solid var(--sd-line-control);
     background: transparent;
     color: var(--sd-fg-subtle);
     font-size: var(--text-sm);
