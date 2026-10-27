@@ -16,7 +16,8 @@ export async function checkReactApp(page, base) {
   const browserErrors = [];
   page.on("console", (m) => m.type() === "error" && browserErrors.push(m.text()));
   page.on("pageerror", (e) => browserErrors.push(e.message));
-  const until = (fn, arg, timeout = 2000) => page.waitForFunction(fn, arg, { timeout }).then(() => true, () => false);
+  const untilOn = (target, fn, arg, timeout = 2000) => target.waitForFunction(fn, arg, { timeout }).then(() => true, () => false);
+  const until = (fn, arg, timeout) => untilOn(page, fn, arg, timeout);
 
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto(`${base}react.html`);
@@ -397,7 +398,7 @@ export async function checkReactApp(page, base) {
   await page.mouse.move(2, 2);
   expect(await until(() => !document.querySelector("body > [role=tooltip]"), null), "leaving hides the delayed tooltip at once");
   expect(await until(() => document.querySelector("#react-tooltip [data-tip-open]").textContent === "delayed tip: hidden", null), "onOpenChange reports the tip closing");
-  // A mouse press focuses the button, but that is not keyboard focus: the delay the hover started keeps running.
+  // A mouse press focuses the button while the delay the hover started is still running, and that wait decides.
   // WebKit does not focus a button on a press, so there this passes without the press ever focusing it.
   await page.evaluate(() => (window.__tipsSeen = 0));
   await delayed.hover();
@@ -410,7 +411,6 @@ export async function checkReactApp(page, base) {
   await page.mouse.move(2, 2);
   expect(await until(() => !document.querySelector("body > [role=tooltip]"), null), "leaving hides the tooltip of a pressed trigger");
   await delayed.blur();
-  // Tab, not focus(): after a press a scripted focus is not keyboard focus either.
   await page.locator("#react-tooltip").getByRole("button", { name: "Settings" }).focus();
   await page.keyboard.press("Tab");
   expect(await until(() => document.activeElement?.textContent === "Delayed tip", null), "Tab reaches the delayed trigger");
@@ -418,6 +418,50 @@ export async function checkReactApp(page, base) {
   await page.keyboard.press("Escape");
   expect(await until(() => !document.querySelector("body > [role=tooltip]") && document.querySelector("#react-tooltip [data-tip-open]").textContent === "delayed tip: hidden", null), "Escape hides the tooltip and reports it");
   await delayed.blur();
+
+  // A text input is focus-visible even after a click, so what skips the delay is no running wait, not the kind of focus.
+  const handle = page.locator("#react-tooltip [data-delayed-input]");
+  await page.evaluate(() => (window.__tipsSeen = 0));
+  await handle.click();
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  const shownByClick = await page.evaluate(() => window.__tipsSeen);
+  expect(shownByClick === 0, `clicking a text input inside the delay does not show its tooltip early, ${shownByClick} shown 300ms in`);
+  expect(await until(() => document.querySelector("body > [role=tooltip]")?.textContent === "Letters and digits only", null, 4000), "a clicked text input shows its tooltip once the delay is up");
+  await page.mouse.move(2, 2);
+  expect(await until(() => !document.querySelector("body > [role=tooltip]"), null), "leaving hides the tooltip of a clicked input");
+  await handle.blur();
+  await delayed.focus();
+  await page.keyboard.press("Tab");
+  expect(await until(() => document.activeElement?.hasAttribute("data-delayed-input") && document.querySelector("body > [role=tooltip]")?.textContent === "Letters and digits only", null, 450), "Tab onto the delayed input shows its tooltip without the delay");
+  await handle.blur();
+
+  /* ---- Tooltip on touch ---- */
+  // A tap is a pointer that enters and leaves within a moment, then focuses the trigger on most engines and on none of the buttons in Safari.
+  const touch = await page.context().browser().newContext({ hasTouch: true, viewport: { width: 1280, height: 900 } });
+  const hand = await touch.newPage();
+  const tipUp = () => untilOn(hand, () => document.querySelector("body > [role=tooltip]"), null, 450);
+  const tipGone = () => untilOn(hand, () => !document.querySelector("body > [role=tooltip]"), null);
+  try {
+    await hand.goto(`${base}react.html`);
+    await hand.waitForSelector("#react-tooltip button");
+    const tap = async (name, delay, focuses) => {
+      const trigger = hand.locator("#react-tooltip").getByRole("button", { name });
+      await trigger.scrollIntoViewIfNeeded();
+      if (!focuses) await trigger.evaluate((el) => el.addEventListener("mousedown", (event) => event.preventDefault(), { once: true }));
+      await trigger.tap();
+      expect(await tipUp(), `a tap on a ${delay}ms trigger shows its tooltip within 450ms${focuses ? "" : " though the tap never focuses it"}`);
+      await new Promise((resolve) => setTimeout(resolve, 900));
+      expect(await hand.evaluate(() => !!document.querySelector("body > [role=tooltip]")), `the tooltip a tap showed on a ${delay}ms trigger stays${focuses ? "" : " with no focus to lose"}`);
+      await hand.locator("#react-tooltip [data-tip-open]").tap();
+      expect(await tipGone(), `a tap elsewhere hides the tooltip of a ${delay}ms trigger`);
+    };
+    await tap("Hover or focus me", 0, true);
+    await tap("Delayed tip", 600, true);
+    await tap("Hover or focus me", 0, false);
+    await tap("Delayed tip", 600, false);
+  } finally {
+    await touch.close();
+  }
 
   /* ---- Switch and Checkbox with no text ---- */
   const bare = page.locator("#react-forms [data-bare]");

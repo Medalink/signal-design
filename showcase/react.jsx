@@ -560,6 +560,9 @@ function Tooltips() {
 <Tooltip content="Below" side="bottom"><IconButton label="Settings">…</IconButton></Tooltip>
 <Tooltip content="Resolved in 12 ms" delay={600} className="sd-num" onOpenChange={setOpen}>
   <Button>Delayed tip</Button>
+</Tooltip>
+<Tooltip content="Letters and digits only" delay={600}>
+  <Input aria-label="Handle" placeholder="Handle" />
 </Tooltip>`}
     >
       <div className="sd-actions">
@@ -573,6 +576,9 @@ function Tooltips() {
         </Tooltip>
         <Tooltip content="Resolved in 12 ms" delay={600} className="sd-num" onOpenChange={setDelayedOpen}>
           <Button>Delayed tip</Button>
+        </Tooltip>
+        <Tooltip content="Letters and digits only" delay={600}>
+          <Input aria-label="Handle" placeholder="Handle" data-delayed-input />
         </Tooltip>
         <span className="sd-subtle text-sm" data-tip-open>
           delayed tip: {delayedOpen ? "shown" : "hidden"}

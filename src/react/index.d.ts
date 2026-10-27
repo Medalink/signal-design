@@ -355,7 +355,12 @@ export function Segment(props: SegmentProps): ReactElement;
 export interface TooltipProps {
   content: ReactNode;
   side?: "top" | "bottom" | "left" | "right" | undefined;
-  /** Milliseconds the pointer must rest on the trigger before the tip shows. Keyboard focus shows it at once; a mouse press that focuses the trigger does not. Default 0. */
+  /**
+   * Milliseconds the pointer must rest on the trigger before the tip shows. Focus shows it at once unless that wait is
+   * still running on the trigger, so Tab does and a mouse press that focuses the trigger (or the input a click focuses)
+   * does not. A touch tap shows it as the finger lifts, whatever the delay, and it stays until the trigger blurs or a
+   * press lands elsewhere. Default 0.
+   */
   delay?: number | undefined;
   /** Added to the tip's `sd-tooltip` class. */
   className?: string | undefined;
