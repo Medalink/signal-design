@@ -177,6 +177,11 @@
     min-inline-size: 0;
     overflow: auto;
   }
+  /* The body scrolls and clips, so a full-width button or link draws its
+     ring inside its own edge. */
+  .sd-resizable-body :is(.sd-btn, a):focus-visible {
+    outline-offset: -2px;
+  }
   .sd-resizable:is([data-edge="top"], [data-edge="bottom"]) {
     inline-size: auto;
     block-size: var(--size, 18rem);
