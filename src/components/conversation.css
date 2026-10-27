@@ -1029,6 +1029,10 @@
     line-height: 1.5;
     resize: none;
   }
+  /* An edited message wears a lifted fill; the edge steps up to stay 3:1 on it. */
+  .sd-message[data-editing] .sd-message-edit textarea:not(:focus) {
+    border-color: var(--sd-fg-faint);
+  }
   .sd-message-edit textarea:focus {
     border-color: var(--sd-fg-subtle);
     outline: none;
