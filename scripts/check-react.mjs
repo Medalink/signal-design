@@ -272,6 +272,7 @@ export async function checkReactSsr() {
           h(sd.Checkbox, { label: 0, description: 0 }),
           h(sd.Switch, { label: "s" }),
           h(sd.Switch, { "aria-label": "Mute" }),
+          h(sd.Switch, { label: [null, ""], description: h(Fragment), "aria-label": "Nothing drawn" }),
           h(sd.Badge, { tone: "success" }, "ok"),
           h(sd.Avatar, { name: "Ada Lovelace" }),
           h(sd.Icon, { name: "undo" }),
@@ -314,7 +315,7 @@ export async function checkReactSsr() {
             h(sd.ToolbarButton, null, "Heading"),
             h(sd.ToolbarMore, null, h(sd.MenuItem, null, "Clear"))),
           h(sd.Manuscript, { measure: "30rem", face: "mono" }, h("p", null, "Text", h(sd.Mark, { kind: "comment", active: true, onClick() {} }, "c"), h(sd.Mark, { kind: "insert" }, "i"), h(sd.Mark, { kind: "find", active: true }, "f"), h(sd.HoverCard, { content: "card", defaultOpen: true }, h(sd.Mark, { kind: "entity", tabIndex: 0 }, "e")))),
-          h(sd.RadioGroup, { label: "Cycle", defaultValue: "m", name: "cycle" }, h(sd.Radio, { value: "m", label: "Monthly", description: "d" }), h(sd.Radio, { value: "y", label: "Yearly", disabled: true })),
+          h(sd.RadioGroup, { label: "Cycle", defaultValue: "m", name: "cycle" }, h(sd.Radio, { value: "m", label: "Monthly", description: "d" }), h(sd.Radio, { value: "y", label: "Yearly", disabled: true }), h(sd.Radio, { value: "z", label: "Zero", description: 0 }), h(sd.Radio, { value: "e", label: "Empty", description: [false, ""] }), h(sd.Radio, { value: "f", label: "Fragment", description: h(Fragment, null, [null, false]) })),
           h(sd.SegmentedControl, { label: "View", defaultValue: "a", inline: true }, h(sd.Segment, { value: "a" }, "A"), h(sd.Segment, { value: "b" }, "B")),
           h(sd.Menu, null, h(sd.MenuTrigger, null, h(sd.Button, null, "v")),
             h(sd.MenuContent, { label: "View" }, h(sd.MenuItemCheckbox, { checked: true }, "Words"),
@@ -345,6 +346,8 @@ export async function checkReactSsr() {
     ['<dialog aria-label="Quick note" class="sd-dialog"><div class="sd-dialog-body">bare</div></dialog>', "a dialog named by aria-label, with no aria-labelledby"],
     ['<dialog aria-label="Quick note" class="sd-dialog"></dialog>', "a closed dialog that unmounts on close, empty"],
     ['<label class="sd-check sd-check-bare"><input type="checkbox" role="switch" aria-label="Mute"/></label>', "a switch with no text, marked bare"],
+    ['<label class="sd-check sd-check-bare"><input type="checkbox" role="switch" aria-label="Nothing drawn"/></label>', "a switch whose label is an empty array and description an empty fragment, marked bare"],
+    ['Zero<span class="sd-check-desc">0</span>', "a radio whose description is 0"],
     ["99+", "the capped count"],
     ['data-icon="undo"', "an icon"],
     ['style="--size:300px"', "a resizable panel"],
@@ -359,6 +362,7 @@ export async function checkReactSsr() {
   assert.ok(html.includes('<dialog aria-label="Label wins" class="sd-dialog"><header'), "an aria-label wins over the header's aria-labelledby on the server");
   assert.ok(html.includes('<dialog class="sd-dialog"></dialog>'), "a closed dialog that unmounts its header has no aria-labelledby and no children");
   assert.ok(!html.includes("Unmounted header"), "a closed dialog that unmounts on close rendered its header");
+  assert.ok(!html.includes('<span class="sd-check-desc"></span>'), "a description that draws nothing (an empty array or fragment) rendered an empty description span");
   assert.ok(!html.includes("sd-tooltip"), "a closed tooltip rendered on the server");
   assert.ok(!html.includes("sd-hovercard"), "an open hover card rendered on the server");
   const names = Object.keys(all).filter((name) => /^[A-Z]/.test(name));

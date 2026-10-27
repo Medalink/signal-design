@@ -4,7 +4,7 @@
  * move and select, and form submission. React owns `value`.
  */
 import { createContext, createElement as h, useContext, useId, useMemo } from "react";
-import { cx, useControllable } from "./util.js";
+import { cx, drawn, useControllable } from "./util.js";
 
 const GroupContext = createContext(null);
 
@@ -42,7 +42,7 @@ export function Radio({ value, label, description, disabled, className, ...props
     "label",
     { className: cx("sd-check", className) },
     h("input", { type: "radio", ...props, ...radio }),
-    h("span", { className: "sd-check-text" }, label, description && h("span", { className: "sd-check-desc" }, description)),
+    h("span", { className: "sd-check-text" }, label, drawn(description) && h("span", { className: "sd-check-desc" }, description)),
   );
 }
 

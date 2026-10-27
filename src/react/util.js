@@ -2,12 +2,16 @@
  * Internals shared by the React bindings. Nothing here touches `window` or
  * `document`, so every module is safe to import during server rendering.
  */
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Fragment, isValidElement, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 /** `useLayoutEffect` in the browser; `useEffect` on the server, where layout effects only warn. */
 export const useIsomorphicLayoutEffect = typeof document === "undefined" ? useEffect : useLayoutEffect;
 
 export const cx = (...parts) => parts.filter(Boolean).join(" ");
+
+/** Whether React draws anything for a label or description: not nothing, a boolean, an empty string, or an array or fragment of those, but `0` is text. */
+export const drawn = (node) =>
+  Array.isArray(node) ? node.some(drawn) : isValidElement(node) && node.type === Fragment ? drawn(node.props.children) : node !== undefined && node !== null && typeof node !== "boolean" && node !== "";
 
 /**
  * State that is controlled when `value` is given and lives here otherwise.

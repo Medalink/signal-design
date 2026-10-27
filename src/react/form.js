@@ -4,7 +4,7 @@
  * can be any component that renders one of these.
  */
 import { createContext, createElement as h, useContext, useId, useMemo } from "react";
-import { cx } from "./util.js";
+import { cx, drawn } from "./util.js";
 
 const FieldContext = createContext(null);
 
@@ -56,9 +56,6 @@ export function Textarea(props) {
 export function Select(props) {
   return h("select", useControl(props));
 }
-
-/** Whether React draws anything for a label or description: not nothing, a boolean or an empty string, but `0` is a label. */
-const drawn = (node) => node !== undefined && node !== null && typeof node !== "boolean" && node !== "";
 
 function Check({ role, label, description, className, ...props }) {
   const text = drawn(label) || drawn(description);
