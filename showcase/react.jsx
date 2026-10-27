@@ -488,6 +488,58 @@ function Menus() {
   );
 }
 
+function ContextMenus() {
+  const [open, setOpen] = useState(false);
+  const [point, setPoint] = useState(null);
+  const [picked, setPicked] = useState("none");
+  return (
+    <Demo
+      id="react-context-menu"
+      title="Menu at a point"
+      code={`<Card tabIndex={0} onContextMenu={(event) => {
+  event.preventDefault();
+  setPoint({ x: event.clientX, y: event.clientY });
+  setOpen(true);
+}}>…</Card>
+<Menu open={open} onOpenChange={setOpen}>
+  <MenuContent anchor={point} label="Message actions">
+    <MenuItem onSelect={reply}>Reply</MenuItem>
+    <MenuItem tone="danger">Delete</MenuItem>
+  </MenuContent>
+</Menu>`}
+    >
+      <div className="sd-actions">
+        <Card
+          tabIndex={0}
+          aria-label="Message"
+          onContextMenu={(event) => {
+            event.preventDefault();
+            setPoint({ x: event.clientX, y: event.clientY });
+            setOpen(true);
+          }}
+        >
+          <CardBody>Right-click anywhere on this message.</CardBody>
+        </Card>
+        <Menu open={open} onOpenChange={setOpen}>
+          <MenuContent anchor={point ?? undefined} label="Message actions">
+            <MenuItem hint="R" onSelect={() => setPicked("reply")}>
+              Reply
+            </MenuItem>
+            <MenuItem onSelect={() => setPicked("copy")}>Copy text</MenuItem>
+            <MenuSeparator />
+            <MenuItem tone="danger" onSelect={() => setPicked("delete")}>
+              Delete
+            </MenuItem>
+          </MenuContent>
+        </Menu>
+        <span className="sd-subtle text-sm" data-context-picked>
+          chose: {picked}
+        </span>
+      </div>
+    </Demo>
+  );
+}
+
 function Tooltips() {
   return (
     <Demo
@@ -583,6 +635,7 @@ function App() {
       <Empty />
       <Overlays />
       <Menus />
+      <ContextMenus />
       <Tooltips />
       <TabsDemo />
       <Toasts />

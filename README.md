@@ -1156,7 +1156,16 @@ What they take over from `init()`:
   and reopening. The panel is placed next to the trigger and flips at the
   viewport edge. In a menu the arrows, Home and End move focus, a letter jumps
   to the next item that starts with it, disabled items are skipped, and
-  choosing an item closes the menu and returns focus to the trigger.
+  choosing an item closes the menu and returns focus to the trigger. A panel
+  with no trigger opens at an `anchor` on `PopoverContent` or `MenuContent`
+  instead: a `{ x, y }` point, a rect, or an element or object with
+  `getBoundingClientRect`. For a context menu keep the pointer in state, set it
+  in `onContextMenu` (after `preventDefault()`) together with `open`, and pass
+  `anchor={point}`. The menu's corner sits on the point, it opens above the
+  point or shifts at the viewport edge, light dismiss, Escape and the arrow
+  keys work as for a trigger, and focus goes back to whatever had it when the
+  menu opened. A second right-click moves the open menu; focus stays where
+  that click put it.
 - **Tabs** are roving: arrows, Home and End move focus and select.
 - **Toasts** are rendered by React inside one live region. A toast fades with
   `data-leaving` for 160ms before it is removed, and hovering one holds it.

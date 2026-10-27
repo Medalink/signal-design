@@ -4,6 +4,7 @@
  * accepted and passed through.
  */
 import type { IconName } from "../js/icons.js";
+import type { PlaceAnchor } from "../js/index.js";
 import type { ComponentProps, ElementType, HTMLAttributes, MouseEvent, MouseEventHandler, ReactElement, ReactNode, Ref, SyntheticEvent } from "react";
 
 export type Tone = "accent" | "success" | "danger" | "warning" | "pending" | "extra" | "neutral";
@@ -239,6 +240,12 @@ export function PopoverTrigger(props: { children: ReactElement; haspopup?: "menu
 export interface PopoverContentProps extends ComponentProps<"div"> {
   side?: "top" | "bottom" | "left" | "right" | undefined;
   align?: "start" | "center" | "end" | undefined;
+  /**
+   * Opens the panel beside this instead of the trigger, which it wins over: a `{ x, y }` point (the
+   * panel's corner sits on it, as for a context menu at the pointer), a rect, or an element or object
+   * with `getBoundingClientRect`. A panel with no trigger and no anchor is left where the browser puts a popover.
+   */
+  anchor?: PlaceAnchor | undefined;
   /** Adds padding for prose. */
   pad?: boolean | undefined;
   /** Selector of the element to focus when it opens. */

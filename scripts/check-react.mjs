@@ -23,7 +23,7 @@ export function checkReactTypes() {
   writeFileSync(
     fixture,
     `import { useRef, useState } from "react";
-import { AppShell, Button, Dialog, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
+import { AppShell, Button, Dialog, Menu, MenuContent, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 import { initScrollbars } from "signal-design/js";
 
 initScrollbars();
@@ -58,6 +58,14 @@ export function Consumer() {
       {/* @ts-expect-error an edge is start, end, top or bottom */}
       <ResizablePanel edge="left" />
       <Field label="Name" error="Required"><Input value="" onChange={(event) => console.log(event.target.value)} /></Field>
+      <Menu open={open} onOpenChange={setOpen}>
+        <MenuContent anchor={{ x: 10, y: 20 }} label="At a point"><MenuItem>Reply</MenuItem></MenuContent>
+        <MenuContent anchor={document.body} side="right" align="end"><MenuItem>Rect</MenuItem></MenuContent>
+        <MenuContent anchor={{ left: 1, top: 2, right: 3, bottom: 4 }} />
+        <MenuContent anchor={undefined} />
+        {/* @ts-expect-error a pointer event is not an anchor: it has clientX, not x */}
+        <MenuContent anchor={{ clientX: 1, clientY: 2 }} />
+      </Menu>
       <Dialog open={open} onOpenChange={setOpen} size="sm" ref={(node: HTMLDialogElement | null) => node?.close()}>
         <DialogHeader closeButton={false}>Title</DialogHeader>
       </Dialog>
