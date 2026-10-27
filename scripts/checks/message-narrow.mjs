@@ -1,5 +1,5 @@
 export const page = "conversation";
-/** A message in a narrow column: long unbroken author names must not widen the row; in the head and the quote they truncate and leave the badge, time and quoted text visible, and an inline author wraps. */
+/** A message in a narrow column: long unbroken author names must not widen the row; in the head and the quote they truncate and leave the badge on the name's line and the quoted text visible, and an inline author wraps. */
 export default async function checkMessageNarrow(page, where, fail) {
   const got = await page.evaluate(() => {
     const block = document.getElementById("conversation-message-in-a-narrow-column");
@@ -20,7 +20,8 @@ export default async function checkMessageNarrow(page, where, fail) {
       noOverflow: message.scrollWidth <= message.clientWidth,
       headNameTruncated: truncated(name),
       headNameShare: name.getBoundingClientRect().width <= head.getBoundingClientRect().width * 0.6 + 0.5,
-      headTimeInside: inside(head.querySelector("time")),
+      headBadgeInside: inside(head.querySelector(".sd-badge")),
+      headOneLine: head.querySelector(".sd-badge").getBoundingClientRect().top < name.getBoundingClientRect().bottom,
       replyNameTruncated: truncated(quoteName),
       replyNameShare: quoteName.getBoundingClientRect().width <= quoteName.parentElement.getBoundingClientRect().width * 0.4 + 0.5,
       replyQuoteVisible: quote.getBoundingClientRect().width > 40,
@@ -45,7 +46,7 @@ export default async function checkMessageNarrow(page, where, fail) {
       buttonTruncated: truncated(button),
       buttonInsideName: button.getBoundingClientRect().right <= button.parentElement.getBoundingClientRect().right + 0.5,
       buttonShare: button.parentElement.getBoundingClientRect().width <= head.getBoundingClientRect().width * 0.6 + 0.5,
-      timeInside: head.querySelector("time").getBoundingClientRect().right <= box.right + 0.5,
+      badgeInside: head.querySelector(".sd-badge").getBoundingClientRect().right <= box.right + 0.5,
       linkTruncated: truncated(link),
       linkShare: link.parentElement.getBoundingClientRect().width <= reply.getBoundingClientRect().width * 0.4 + 0.5,
     };
