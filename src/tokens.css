@@ -275,7 +275,7 @@
   --sd-current-fill: color-mix(in srgb, var(--sd-fg) 10%, transparent);
   --sd-line: rgb(0 0 0 / 0.1);
   --sd-line-strong: rgb(0 0 0 / 0.22);
-  --sd-line-control: #888888; /* 3:1 on every light surface */
+  --sd-line-control: #858585; /* 3:1 on every light surface, the shell behind the app included */
   --sd-fg: var(--color-ink-1000);
   --sd-fg-muted: #2e2e33;
   --sd-fg-subtle: #5c5c66;
@@ -312,7 +312,7 @@
     --sd-current-fill: color-mix(in srgb, var(--sd-fg) 10%, transparent);
     --sd-line: rgb(0 0 0 / 0.1);
     --sd-line-strong: rgb(0 0 0 / 0.22);
-    --sd-line-control: #888888;
+    --sd-line-control: #858585;
     --sd-fg: var(--color-ink-1000);
     --sd-fg-muted: #2e2e33;
     --sd-fg-subtle: #5c5c66;
