@@ -194,8 +194,8 @@ function probe({ scope, exclude, width }) {
     const s = getComputedStyle(el);
     const size = parseFloat(s.fontSize);
     if (size > 0 && size < 12) add("text", size < 11 ? "major" : "minor", el, `${size}px text`);
-    // Visually hidden text (a 1px screen-reader box) is clipped on purpose.
-    if (el.getBoundingClientRect().width > 1 && el.scrollWidth > el.clientWidth + 1 && s.overflowX === "hidden" && s.textOverflow !== "ellipsis" && s.whiteSpace === "nowrap") add("clip", "minor", el, "text cut without an ellipsis");
+    // Visually hidden text (a screen-reader box, a collapsed column) is clipped on purpose.
+    if (s.clipPath === "none" && s.clip === "auto" && el.scrollWidth > el.clientWidth + 1 && s.overflowX === "hidden" && s.textOverflow !== "ellipsis" && s.whiteSpace === "nowrap") add("clip", "minor", el, "text cut without an ellipsis");
   }
   return out;
 }
