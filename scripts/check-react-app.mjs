@@ -137,17 +137,15 @@ export async function checkReactApp(page, base) {
   await page.locator("#react-context-menu h2").click();
   expect(await menuOpenAt(false), "a click outside closes the menu");
 
-  const corner = await page.evaluate(async () => {
+  const cornerAt = await page.evaluate(() => {
     const x = innerWidth - 10;
     const y = innerHeight - 10;
     document.querySelector("#react-context-menu article").dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true, clientX: x, clientY: y }));
-    await new Promise((resolve) => {
-      const wait = () => (document.querySelector('[role=menu][aria-label="Message actions"]').parentElement.matches(":popover-open") ? resolve() : requestAnimationFrame(wait));
-      wait();
-    });
-    const r = document.querySelector('[role=menu][aria-label="Message actions"]').parentElement.getBoundingClientRect();
-    return { x, y, left: r.left, top: r.top, right: r.right, bottom: r.bottom, width: innerWidth, height: innerHeight };
+    return { x, y, width: innerWidth, height: innerHeight };
   });
+  expect(await menuOpenAt(true), `the menu opens at the bottom right corner, got ${JSON.stringify(await menuBox())}`);
+  await until(() => document.querySelector('[role=menu][aria-label="Message actions"]').parentElement.getAnimations().length === 0, null);
+  const corner = { ...cornerAt, ...(await menuBox()) };
   expect(corner.bottom <= corner.y + 1 && corner.top >= 8 - 1, `at the bottom edge the menu opens above the point, got ${JSON.stringify(corner)}`);
   expect(corner.right <= corner.width - 8 + 1 && corner.left >= 8 - 1, `at the right edge the menu shifts inside the viewport, got ${JSON.stringify(corner)}`);
   await page.keyboard.press("Escape");
