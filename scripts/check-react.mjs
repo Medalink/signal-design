@@ -313,7 +313,7 @@ export async function checkReactSsr() {
     ['<span class="sd-check-text">0<span class="sd-check-desc">0</span></span>', "a checkbox whose label and description are 0"],
     ['<dialog aria-label="Quick note" class="sd-dialog"><div class="sd-dialog-body">bare</div></dialog>', "a dialog named by aria-label, with no aria-labelledby"],
     ['<dialog aria-label="Quick note" class="sd-dialog"></dialog>', "a closed dialog that unmounts on close, empty"],
-    ['<label class="sd-check"><input type="checkbox" role="switch" aria-label="Mute"/></label>', "a switch with no text"],
+    ['<label class="sd-check sd-check-bare"><input type="checkbox" role="switch" aria-label="Mute"/></label>', "a switch with no text, marked bare"],
     ["99+", "the capped count"],
     ['data-icon="undo"', "an icon"],
     ['style="--size:300px"', "a resizable panel"],

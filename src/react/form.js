@@ -64,7 +64,7 @@ function Check({ role, label, description, className, ...props }) {
   const text = drawn(label) || drawn(description);
   return h(
     "label",
-    { className: cx("sd-check", className) },
+    { className: cx("sd-check", !text && "sd-check-bare", className) },
     h("input", { type: "checkbox", role, ...props }),
     text && h("span", { className: "sd-check-text" }, label, drawn(description) && h("span", { className: "sd-check-desc" }, description)),
   );

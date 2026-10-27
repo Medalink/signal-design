@@ -362,17 +362,20 @@ export async function checkReactApp(page, base) {
   expect(await mute.isChecked(), "clicking a bare switch turns it on");
   await mute.press("Space");
   expect(!await mute.isChecked(), "Space turns a focused bare switch off");
-  // In a block parent, as in a table cell, a label without text is as wide as its control and no wider.
+  // In a block parent, as in a table cell, the label React renders for a bare control is as wide as the control and no wider.
+  // Hand-written labels keep their width, whatever they hold, so markup that was full width before stays so.
   const widths = await page.evaluate(() => {
     const box = document.createElement("div");
     box.style.width = "400px";
-    box.innerHTML = '<label class="sd-check"><input type="checkbox" aria-label="Pick"></label><label class="sd-check"><input type="checkbox"><span class="sd-check-text">Text</span></label>';
+    box.innerHTML = '<label class="sd-check"><input type="checkbox"><span class="sd-check-text">Text</span></label><label class="sd-check"><input type="checkbox"> Plain text</label><label class="sd-check"><input type="checkbox"><span>Own span</span></label><label class="sd-check"><input type="checkbox" aria-label="Pick"></label>';
+    box.prepend(document.querySelector("#react-forms [data-bare] label.sd-check").cloneNode(true));
     document.body.append(box);
-    const [none, text] = [...box.children].map((el) => el.getBoundingClientRect().width);
+    const [bare, text, plain, own, nameless] = [...box.children].map((el) => el.getBoundingClientRect().width);
     box.remove();
-    return { none, text };
+    return { bare, text, plain, own, nameless };
   });
-  expect(widths.none < 40 && widths.text === 400, `the click target of a label with no text is the control alone, got ${JSON.stringify(widths)}`);
+  expect(widths.bare < 40, `the click target of a bare React control is the control alone, got ${JSON.stringify(widths)}`);
+  expect(widths.text === 400 && widths.plain === 400 && widths.own === 400 && widths.nameless === 400, `a hand-written label fills its parent, with a text span or without, got ${JSON.stringify(widths)}`);
   expect(await page.locator("#react-forms .sd-check-text").count() >= 3, "a control with a label still renders its text");
 
   /* ---- Dialog without a header, and unmountOnClose ---- */
