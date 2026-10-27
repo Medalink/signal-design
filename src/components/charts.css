@@ -405,7 +405,6 @@
   /* Phones: the scale buttons tighten so five fit on a 360px screen. */
   @media (max-width: 40rem) {
     .sd-chart-bar .sd-seg > button {
-      min-height: 30px;
       padding: 0 8px;
     }
   }
