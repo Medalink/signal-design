@@ -272,7 +272,7 @@ async function interact(page, helper, { scope, exclude }) {
       const cls = [...el.classList].filter((c) => c.startsWith("sd-")).slice(0, 2).join(".");
       const label = (el.getAttribute("aria-label") || el.textContent || el.getAttribute("placeholder") || "").trim().replace(/\s+/g, " ").slice(0, 24);
       const type = el.matches("input") ? `[${el.type}]` : "";
-      return { sig: `${el.closest("[id]")?.id ?? ""}>${el.tagName.toLowerCase()}${type}${cls ? `.${cls}` : ""}${label ? ` "${label}"` : ""}`, text: el.matches("textarea, input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]):not([type=button]):not([type=submit]), [contenteditable]"), hoverable: el.matches("a[href], button, summary, [role=button], [role=tab], [role=menuitem], [role=option], [role=treeitem]") };
+      return { sig: `${el.closest("[id]")?.id ?? ""}>${el.tagName.toLowerCase()}${type}${cls ? `.${cls}` : ""}${label ? ` "${label}"` : ""}`, text: el.matches("textarea, input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]):not([type=button]):not([type=submit]), [contenteditable]"), hoverable: el.matches("a[href], button, summary, [role=button], [role=tab], [role=menuitem], [role=option], [role=treeitem]") && !el.matches("[aria-pressed=true], [aria-current]:not([aria-current=false]), [aria-selected=true], [aria-expanded=true], [aria-checked=true], details[open] > summary") };
     }, exclude);
     if (!info) continue;
     await h.scrollIntoViewIfNeeded({ timeout: 2000 }).catch(() => {});
@@ -330,6 +330,7 @@ async function interact(page, helper, { scope, exclude }) {
     }
     await page.evaluate(() => document.activeElement?.blur());
     // A control parked off screen until it takes focus (a skip link) has no hover.
+    // One already on (pressed, current, selected, open) is set apart at rest.
     if (info.hoverable && box.y + box.height > 0 && box.x + box.width > 0) {
       await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
       await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
