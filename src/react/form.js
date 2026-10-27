@@ -57,13 +57,16 @@ export function Select(props) {
   return h("select", useControl(props));
 }
 
+/** Whether React draws anything for a label or description: not nothing, a boolean or an empty string, but `0` is a label. */
+const drawn = (node) => node !== undefined && node !== null && typeof node !== "boolean" && node !== "";
+
 function Check({ role, label, description, className, ...props }) {
-  const text = Boolean(label || description);
+  const text = drawn(label) || drawn(description);
   return h(
     "label",
     { className: cx("sd-check", className) },
     h("input", { type: "checkbox", role, ...props }),
-    text && h("span", { className: "sd-check-text" }, label, description && h("span", { className: "sd-check-desc" }, description)),
+    text && h("span", { className: "sd-check-text" }, label, drawn(description) && h("span", { className: "sd-check-desc" }, description)),
   );
 }
 
