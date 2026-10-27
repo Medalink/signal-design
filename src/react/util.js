@@ -9,6 +9,9 @@ export const useIsomorphicLayoutEffect = typeof document === "undefined" ? useEf
 
 export const cx = (...parts) => parts.filter(Boolean).join(" ");
 
+/** `data-autofocus` for a control given `autoFocus`: React focuses the control as it mounts, which a dialog opened later has missed, so the Dialog looks for this attribute instead. */
+export const autofocus = (props) => (props.autoFocus && props["data-autofocus"] === undefined ? { "data-autofocus": "" } : null);
+
 /** Whether React draws anything for a label or description: not nothing, a boolean, an empty string, or an array or fragment of those, but `0` is text. */
 export const drawn = (node) =>
   Array.isArray(node) ? node.some(drawn) : isValidElement(node) && node.type === Fragment ? drawn(node.props.children) : node !== undefined && node !== null && typeof node !== "boolean" && node !== "";

@@ -306,6 +306,7 @@ export async function checkReactSsr() {
           h(sd.Dialog, { defaultOpen: true }, h(sd.DialogHeader, { as: "span" }, "Plain title")),
           h(sd.Dialog, { defaultOpen: true, "aria-label": "Label wins" }, h(sd.DialogHeader, null, "Beaten header")),
           h(sd.Dialog, { unmountOnClose: true }, h(sd.DialogHeader, null, "Unmounted header")),
+          h(sd.Dialog, { id: "own", "aria-label": "Own id", unmountOnClose: true }),
           h(sd.Dialog, { defaultOpen: true, "aria-label": "Quick note", unmountOnClose: true }, h(sd.DialogBody, null, "bare")),
           h(sd.Dialog, { "aria-label": "Quick note", unmountOnClose: true }, h(sd.DialogBody, null, "unmounted while closed")),
           h(sd.Popover, null, h(sd.PopoverTrigger, null, h(sd.Button, null, "p")), h(sd.PopoverContent, { pad: true }, "pop")),
@@ -350,8 +351,7 @@ export async function checkReactSsr() {
     ['aria-invalid="true"', "the invalid control"],
     ['role="switch"', "the switch"],
     ['<span class="sd-check-text">0<span class="sd-check-desc">0</span></span>', "a checkbox whose label and description are 0"],
-    ['<dialog aria-label="Quick note" class="sd-dialog"><div class="sd-dialog-body">bare</div></dialog>', "a dialog named by aria-label, with no aria-labelledby"],
-    ['<dialog aria-label="Quick note" class="sd-dialog"></dialog>', "a closed dialog that unmounts on close, empty"],
+    ['<dialog id="own" aria-label="Own id" class="sd-dialog"></dialog>', "a dialog that keeps the id it was given"],
     ['<label class="sd-check sd-check-bare"><input type="checkbox" role="switch" aria-label="Mute"/></label>', "a switch with no text, marked bare"],
     ['<label class="sd-check sd-check-bare"><input type="checkbox" role="switch" aria-label="Nothing drawn"/></label>', "a switch whose label is an empty array and description an empty fragment, marked bare"],
     ['Zero<span class="sd-check-desc">0</span>', "a radio whose description is 0"],
@@ -364,12 +364,18 @@ export async function checkReactSsr() {
   ]) assert.ok(html.includes(needle), `server output is missing ${what}`);
   // The id is whatever useId made, so the header's span has to carry the same one.
   for (const [title, what] of [["T", "a closed dialog"], ["S", "a closed sheet"], ["Named header", "an open dialog"], ["Fragment header", "a header inside a fragment"]]) {
-    assert.match(html, new RegExp(`<dialog aria-labelledby="([^"]+)" class="sd-dialog[^"]*">(?:<header class="sd-dialog-head"><h2 id="\\1" class="sd-dialog-title">${title}</h2>)`), `server output lacks aria-labelledby on ${what} whose header says ${title}, so it has no accessible name until hydration`);
+    assert.match(html, new RegExp(`<dialog id="[^"]+" aria-labelledby="([^"]+)" class="sd-dialog[^"]*">(?:<header class="sd-dialog-head"><h2 id="\\1" class="sd-dialog-title">${title}</h2>)`), `server output lacks aria-labelledby on ${what} whose header says ${title}, so it has no accessible name until hydration`);
   }
   assert.match(html, /<h3 id="[^"]+" class="sd-dialog-title">Level three<\/h3>/, "a DialogHeader with as=\"h3\" did not render an h3 title on the server");
   assert.match(html, /<span id="[^"]+" class="sd-dialog-title">Plain title<\/span>/, "a DialogHeader with as=\"span\" did not render a span title on the server");
-  assert.ok(html.includes('<dialog aria-label="Label wins" class="sd-dialog"><header'), "an aria-label wins over the header's aria-labelledby on the server");
-  assert.ok(html.includes('<dialog class="sd-dialog"></dialog>'), "a closed dialog that unmounts its header has no aria-labelledby and no children");
+  // Every dialog carries an id, which is how the dialog is found as it mounts.
+  const dialogs = html.match(/<dialog [^>]*>/g) ?? [];
+  assert.ok(dialogs.length > 0 && dialogs.every((tag) => /^<dialog id="[^"]+"/.test(tag)), "a dialog rendered on the server without an id");
+  const plain = html.replace(/<dialog id="(?!own")[^"]*"/g, "<dialog");
+  assert.ok(plain.includes('<dialog aria-label="Quick note" class="sd-dialog"><div class="sd-dialog-body">bare</div></dialog>'), "a dialog named by aria-label has an aria-labelledby on the server");
+  assert.ok(plain.includes('<dialog aria-label="Quick note" class="sd-dialog"></dialog>'), "a closed dialog that unmounts on close is not empty");
+  assert.ok(plain.includes('<dialog aria-label="Label wins" class="sd-dialog"><header'), "an aria-label wins over the header's aria-labelledby on the server");
+  assert.ok(plain.includes('<dialog class="sd-dialog"></dialog>'), "a closed dialog that unmounts its header has no aria-labelledby and no children");
   assert.ok(!html.includes("Unmounted header"), "a closed dialog that unmounts on close rendered its header");
   assert.ok(!html.includes('<span class="sd-check-desc"></span>'), "a description that draws nothing (an empty array or fragment) rendered an empty description span");
   assert.ok(!html.includes("sd-tooltip"), "a closed tooltip rendered on the server");

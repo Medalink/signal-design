@@ -742,21 +742,78 @@ function BareDialog() {
   );
 }
 
+/** A dialog that mounts already open, the way a modal rendered under an `{open && …}` is. */
+function MountedOpen() {
+  const [shown, setShown] = useState(false);
+  return (
+    <>
+      <Button onClick={() => setShown(true)}>Mount open</Button>
+      {shown && (
+        <Dialog size="sm" aria-label="Mounted open" open onOpenChange={(next) => !next && setShown(false)}>
+          <DialogBody>
+            <Button>Before</Button>
+            <input aria-label="Handle" autoFocus />
+          </DialogBody>
+        </Dialog>
+      )}
+    </>
+  );
+}
+
 function DialogOptions() {
   return (
     <Demo
       id="react-dialog-options"
-      title="Dialog title level"
+      title="Dialog title, focus and dismissal"
       code={`<Dialog trigger={<Button>Heading level</Button>}>
   <DialogHeader as="h3">Level three title</DialogHeader>
   …
-</Dialog>`}
+</Dialog>
+<Dialog trigger={<Button>Autofocus field</Button>}>
+  <DialogBody><Button>Before</Button><Field label="Name"><Input autoFocus /></Field></DialogBody>
+</Dialog>
+<Dialog unmountOnClose trigger={…}>
+  <DialogBody><Button>Before</Button><input aria-label="Handle" autoFocus /></DialogBody>
+</Dialog>
+<Dialog trigger={…}>
+  <DialogFooter><Button tone="danger">Delete</Button><Button data-autofocus>Cancel</Button></DialogFooter>
+</Dialog>
+{shown && <Dialog open onOpenChange={…}>…<input autoFocus />…</Dialog>}`}
     >
       <div className="sd-actions">
         <Dialog size="sm" trigger={<Button>Heading level</Button>}>
           <DialogHeader as="h3">Level three title</DialogHeader>
           <DialogBody>The title is a level three heading.</DialogBody>
         </Dialog>
+        <Dialog size="sm" aria-label="Autofocus field" trigger={<Button>Autofocus field</Button>}>
+          <DialogBody>
+            <Button>Before</Button>
+            <Field label="Name">
+              <Input autoFocus />
+            </Field>
+          </DialogBody>
+        </Dialog>
+        <Dialog size="sm" aria-label="Autofocus native field" unmountOnClose trigger={<Button>Autofocus native field</Button>}>
+          <DialogBody>
+            <Button>Before</Button>
+            <input aria-label="Handle" autoFocus />
+          </DialogBody>
+          <DialogFooter>
+            <DialogClose>
+              <Button>Close</Button>
+            </DialogClose>
+          </DialogFooter>
+        </Dialog>
+        <Dialog size="sm" aria-label="Autofocus marked" trigger={<Button>Autofocus marked</Button>}>
+          <DialogBody>Delete this draft?</DialogBody>
+          <DialogFooter>
+            <Button tone="danger">Delete</Button>
+            <DialogClose>
+              <Button data-autofocus>Cancel</Button>
+            </DialogClose>
+          </DialogFooter>
+        </Dialog>
+        <MountedOpen />
       </div>
     </Demo>
   );

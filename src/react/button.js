@@ -1,5 +1,5 @@
 import { createElement as h } from "react";
-import { cx } from "./util.js";
+import { autofocus, cx } from "./util.js";
 
 /** The `sd-btn` classes, for a link or any other element that should look like a button. */
 export function buttonClass({ variant = "default", size = "md", block = false, className } = {}) {
@@ -12,6 +12,7 @@ export function Button({ variant, size, block, tone, busy, className, type = "bu
     className: buttonClass({ variant, size, block, className }),
     "data-tone": tone,
     "aria-busy": busy || undefined,
+    ...autofocus(props),
     ...props,
   });
 }
@@ -25,6 +26,7 @@ export function IconButton({ label, variant, size, tone, className, type = "butt
       className: cx(buttonClass({ variant, size }), "sd-btn-icon", className),
       "data-tone": tone,
       "aria-label": label,
+      ...autofocus(props),
       ...props,
     },
     children,

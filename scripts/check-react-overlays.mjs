@@ -66,6 +66,47 @@ export async function checkReactOverlays(page, base) {
   await page.keyboard.press("Escape");
   await shut();
 
+  /* ---- Focus on open ---- */
+  // Each dialog has a button before the field, so the field is not what the browser would focus first.
+  const focusOn = (selector) => until((sel) => document.querySelector(sel) === document.activeElement, selector);
+  const said = (selector) => page.evaluate((sel) => document.activeElement?.matches(sel) ? sel : `${document.activeElement?.tagName} ${document.activeElement?.textContent}`, selector);
+  const reopens = async (opener, field, what) => {
+    await open("#react-dialog-options", opener);
+    expect(await focusOn(field), `${what} has focus when the dialog opens, got ${await said(field)}`);
+    await page.keyboard.press("Escape");
+    await shut();
+    expect(await until((name) => document.activeElement?.textContent === name, opener), `closing returns focus to ${opener}`);
+  };
+
+  await reopens("Autofocus field", 'dialog[aria-label="Autofocus field"] input', "an Input with autoFocus, not the first field,");
+  await open("#react-dialog-options", "Autofocus field");
+  expect(await focusOn('dialog[aria-label="Autofocus field"] input'), "an Input with autoFocus has focus again when the dialog opens a second time");
+  await page.keyboard.press("Escape");
+  await shut();
+
+  const native = 'dialog[aria-label="Autofocus native field"]';
+  await reopens("Autofocus native field", `${native} input`, "a native input with autoFocus in a dialog that unmounts on close");
+  expect(await until((sel) => document.querySelector(sel).children.length === 0, native), "the children unmount once the dialog has faded out");
+  await open("#react-dialog-options", "Autofocus native field");
+  expect(await focusOn(`${native} input`), "a native input with autoFocus has focus when the dialog mounts it again");
+  await page.keyboard.press("Escape");
+  await shut();
+
+  const marked = 'dialog[aria-label="Autofocus marked"]';
+  await reopens("Autofocus marked", `${marked} [data-autofocus]`, "the data-autofocus button, not the first button,");
+  await open("#react-dialog-options", "Autofocus marked");
+  expect(await focusOn(`${marked} [data-autofocus]`), "the data-autofocus button has focus when the dialog opens a second time");
+  await page.keyboard.press("Escape");
+  await shut();
+
+  const mounted = 'dialog[aria-label="Mounted open"]';
+  await open("#react-dialog-options", "Mount open");
+  expect(await focusOn(`${mounted} input`), `a native input with autoFocus has focus in a dialog that mounts already open, got ${await said(`${mounted} input`)}`);
+  expect(await page.evaluate((sel) => document.querySelector(sel).open, mounted), "a dialog that mounts already open is open");
+  await page.keyboard.press("Escape");
+  await shut();
+  expect(await page.locator(mounted).count() === 0, "closing a dialog that was mounted open lets its owner unmount it");
+
   expect(browserErrors.length === 0, `console errors: ${browserErrors.join(" | ")}`);
   return { errors, passed };
 }

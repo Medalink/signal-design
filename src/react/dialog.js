@@ -18,9 +18,30 @@ function hasHeader(children) {
   return Children.toArray(children).some((child) => isValidElement(child) && (child.type === DialogHeader || (child.type === Fragment && hasHeader(child.props.children))));
 }
 
+/** Open the dialog, then focus what has `data-autofocus`: `showModal()` knows only the native `autofocus`, which React does not write. */
+function reveal(dialog) {
+  openDialog(dialog);
+  dialog.querySelector("[data-autofocus]")?.focus();
+}
+
+/**
+ * The first child of the dialog. React focuses an `autoFocus` field as it mounts, which a closed dialog
+ * cannot take, so this opens the dialog in the same commit, before the children after it mount. It finds
+ * the dialog by id because the dialog's ref is set after its children's effects have run.
+ */
+function Opener({ open, id }) {
+  useIsomorphicLayoutEffect(() => {
+    const dialog = document.getElementById(id);
+    if (open && dialog && !dialog.open) reveal(dialog);
+  }, [open, id]);
+  return null;
+}
+
 export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size, side, static: isStatic, unmountOnClose, className, children, ref, onClose, onCancel, onClick, ...props }) {
   const [isOpen, setOpen] = useControllable(open, defaultOpen, onOpenChange);
   const titleId = useId();
+  const generated = useId();
+  const id = props.id ?? generated;
   const node = useRef(null);
   const [, rerender] = useReducer((n) => n + 1, 0);
   const [titled, setTitled] = useState(false);
@@ -29,7 +50,7 @@ export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size,
   // Run after every render: a parent that refuses a close gets the dialog put back.
   useIsomorphicLayoutEffect(() => {
     const dialog = node.current;
-    if (isOpen && !dialog.open) openDialog(dialog);
+    if (isOpen && !dialog.open) reveal(dialog);
     else if (!isOpen && dialog.open) closeDialog(dialog);
   });
 
@@ -59,6 +80,7 @@ export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size,
     h(
       "dialog",
       {
+        id,
         "aria-labelledby": named && props["aria-label"] === undefined ? titleId : undefined,
         ...props,
         ref: mergeRefs(node, ref),
@@ -83,6 +105,7 @@ export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size,
           if (!inside) setOpen(false);
         },
       },
+      h(Opener, { open: isOpen, id }),
       mounted ? children : null,
     ),
   );

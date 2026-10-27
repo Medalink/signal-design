@@ -1161,6 +1161,13 @@ What they take over from `init()`:
   Server output carries the name when the `DialogHeader` is a child of the
   `Dialog` or in a fragment there; a header inside a component of your own
   names it once the page has hydrated.
+  A dialog opens with focus on the first element inside it that has
+  `autoFocus` or `data-autofocus`, each time it opens: mounted open, opened
+  later, or remounted by `unmountOnClose`. `Button`, `IconButton`, `Input`,
+  `Textarea`, `Select`, `Combobox`, `Checkbox` and `Switch` take `autoFocus`
+  and write `data-autofocus` for you; on an element of your own use a native
+  `autoFocus` or `data-autofocus`. With neither, the browser focuses the first
+  focusable element, as it does for any `<dialog>`.
   Children stay mounted while the dialog is closed. `unmountOnClose` mounts
   them only while it is open and drops them after the fade-out, so state inside
   starts fresh each time.
