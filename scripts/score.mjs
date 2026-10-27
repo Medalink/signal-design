@@ -507,8 +507,10 @@ if (!skip.has("snippets")) {
         .filter((el) => !el.closest("svg") || el.matches("svg"))
         .map((el) => {
           const r = el.getBoundingClientRect(), s = getComputedStyle(el);
+          // An edged box hides its border once the ornament script paints the glow.
+          const edge = el.matches("[data-sd-edges]") ? "edged" : s.borderTopColor;
           const cls = [...el.classList].filter((c) => c.startsWith("sd-")).join(".");
-          return { tag: el.tagName.toLowerCase() + (cls ? `.${cls}` : ""), box: [r.left - o.left, r.top - o.top, r.width, r.height].map(Math.round), style: [s.display, s.color, s.backgroundColor, s.borderTopColor, s.borderTopWidth, s.fontSize, s.fontWeight].join(" ") };
+          return { tag: el.tagName.toLowerCase() + (cls ? `.${cls}` : ""), box: [r.left - o.left, r.top - o.top, r.width, r.height].map(Math.round), style: [s.display, s.color, s.backgroundColor, edge, s.borderTopWidth, s.fontSize, s.fontWeight].join(" ") };
         });
     });
   for (const p of libPages) {
