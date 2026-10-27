@@ -238,7 +238,7 @@
     position: absolute;
     inset: auto 0 -18px;
     color: var(--sd-fg-faint);
-    font-size: 10px;
+    font-size: var(--text-3xs);
     text-align: center;
   }
 

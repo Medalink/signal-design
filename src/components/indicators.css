@@ -141,7 +141,7 @@
     height: 100%;
     object-fit: cover;
   }
-  .sd-avatar-sm { --sd-avatar-size: 22px; font-size: 11px; }
+  .sd-avatar-sm { --sd-avatar-size: 22px; font-size: var(--text-3xs); }
   .sd-avatar-md { --sd-avatar-size: 28px; font-size: 13px; }
   .sd-avatar-lg { --sd-avatar-size: 34px; font-size: 15px; }
   .sd-avatar-xl { --sd-avatar-size: 48px; font-size: var(--text-md); }

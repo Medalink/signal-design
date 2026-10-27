@@ -187,7 +187,8 @@ function probe({ scope, exclude, width }) {
   // Text size and clipping.
   for (const el of all) {
     // A stream scene is a 1920px canvas scaled to fit; OBS shows it full size.
-    if (!visible(el) || el.closest("svg, canvas, .sd-ascii, [aria-hidden=true], .sd-rain, kbd, .sd-scene")) continue;
+    // Superscripts and subscripts are smaller than their line by design.
+    if (!visible(el) || el.closest("svg, canvas, .sd-ascii, [aria-hidden=true], .sd-rain, kbd, .sd-scene, sub, sup")) continue;
     const own = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim());
     if (!own) continue;
     const s = getComputedStyle(el);
