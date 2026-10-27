@@ -834,6 +834,8 @@ A page that must not call `init()`, such as a React app, gets the same
 scrollbars from `initScrollbars()` in `signal-design/js`. It sets
 `data-sd-scrollbars` on `<html>` and starts the scroll listener once, and
 nothing else. Call it again to change the mode, as in `initScrollbars("always")`.
+It does nothing without a `document`, and `signal-design/js` imports in Node, so a
+client entry that server rendering also evaluates does not throw.
 
 ## FPS counter
 

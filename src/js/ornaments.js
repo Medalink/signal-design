@@ -390,13 +390,16 @@ const SELECTOR = "[data-sd-ornaments], [data-sd-edges], .sd-empty";
 // Painting reads an element's size, which would force layout of content the
 // browser is skipping (content-visibility, display: none). Paint those when
 // they come into view instead.
-const waiting = new IntersectionObserver((entries) => {
-  for (const e of entries) {
-    if (!e.isIntersecting) continue;
-    waiting.unobserve(e.target);
-    paintOrnaments(e.target);
-  }
-});
+// Created on first use, so importing this module needs no browser.
+let waiting;
+const waitFor = (el) =>
+  (waiting ??= new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      waiting.unobserve(e.target);
+      paintOrnaments(e.target);
+    }
+  })).observe(el);
 
 function rendered(el) {
   return el.checkVisibility ? el.checkVisibility({ contentVisibilityAuto: true }) : true;
@@ -405,24 +408,26 @@ function rendered(el) {
 function paintAll(root = document) {
   for (const el of root.querySelectorAll(SELECTOR)) {
     if (rendered(el)) paintOrnaments(el);
-    else waiting.observe(el);
+    else waitFor(el);
   }
 }
 
 let listening = false;
 
 // Edge ornaments span the element's width, so repaint when it changes.
-const resized = new ResizeObserver((entries) => {
-  for (const { target } of entries) {
-    if (!rendered(target)) continue;
-    const scroller = target.querySelector(":scope > .sd-glints[data-sticky]");
-    if (scroller || target.matches(".sd-empty") || "sdEdges" in target.dataset || /(top|bottom|center)/.test(target.dataset.sdOrnaments || "")) paintOrnaments(target);
-  }
-});
+let resized;
+const resize = (el) =>
+  (resized ??= new ResizeObserver((entries) => {
+    for (const { target } of entries) {
+      if (!rendered(target)) continue;
+      const scroller = target.querySelector(":scope > .sd-glints[data-sticky]");
+      if (scroller || target.matches(".sd-empty") || "sdEdges" in target.dataset || /(top|bottom|center)/.test(target.dataset.sdOrnaments || "")) paintOrnaments(target);
+    }
+  })).observe(el);
 
 export function initOrnaments(root = document) {
   paintAll(root);
-  for (const el of root.querySelectorAll(SELECTOR)) resized.observe(el);
+  for (const el of root.querySelectorAll(SELECTOR)) resize(el);
   if (listening) return;
   listening = true;
   // Theme changes swap the variables; repaint once styles apply.
