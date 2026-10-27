@@ -154,7 +154,7 @@ function probe({ scope, exclude, width }) {
     if (inlineLink(el)) return;
     // A label wrapping a small checkbox makes the whole label the target.
     const label = el.closest("label") ?? (el.id && document.querySelector(`label[for="${CSS.escape(el.id)}"]`));
-    const r = label && el.matches("input") ? label.getBoundingClientRect() : rects[i];
+    const r = label && el.matches("input[type=checkbox], input[type=radio]") ? label.getBoundingClientRect() : rects[i];
     if (r.width < 24 || r.height < 24) {
       const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
       const crowded = rects.some((o, j) => {
@@ -194,7 +194,8 @@ function probe({ scope, exclude, width }) {
     const s = getComputedStyle(el);
     const size = parseFloat(s.fontSize);
     if (size > 0 && size < 12) add("text", size < 11 ? "major" : "minor", el, `${size}px text`);
-    if (el.scrollWidth > el.clientWidth + 1 && s.overflowX === "hidden" && s.textOverflow !== "ellipsis" && s.whiteSpace === "nowrap") add("clip", "minor", el, "text cut without an ellipsis");
+    // Visually hidden text (a 1px screen-reader box) is clipped on purpose.
+    if (el.getBoundingClientRect().width > 1 && el.scrollWidth > el.clientWidth + 1 && s.overflowX === "hidden" && s.textOverflow !== "ellipsis" && s.whiteSpace === "nowrap") add("clip", "minor", el, "text cut without an ellipsis");
   }
   return out;
 }
@@ -321,7 +322,8 @@ async function interact(page, helper, { scope, exclude }) {
       if (d.changed < focused) findings.push({ check: "focus", severity: info.text ? "major" : "critical", el: info.sig, detail: `${d.changed} px change on focus` });
     }
     await page.evaluate(() => document.activeElement?.blur());
-    if (info.hoverable) {
+    // A control parked off screen until it takes focus (a skip link) has no hover.
+    if (info.hoverable && box.y + box.height > 0 && box.x + box.width > 0) {
       await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
       await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
       const shot = await pixels(page, clip);
