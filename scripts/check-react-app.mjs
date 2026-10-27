@@ -576,7 +576,7 @@ export async function checkReactApp(page, base) {
     const dialog = document.querySelector("#react-dialog dialog:has(textarea)");
     return { target: document.getElementById(dialog.getAttribute("aria-labelledby") ?? "")?.tagName, text: document.getElementById(dialog.getAttribute("aria-labelledby") ?? "")?.textContent, kept: dialog.querySelector("textarea") !== null, open: dialog.open };
   });
-  expect(naming.target === "SPAN" && naming.text?.startsWith("Request changes"), `a dialog with a header is still named by it, got ${JSON.stringify(naming)}`);
+  expect(naming.target === "H2" && naming.text?.startsWith("Request changes"), `a dialog with a header is still named by it, got ${JSON.stringify(naming)}`);
   expect(!naming.open && naming.kept, "a closed dialog keeps its children by default");
 
   const bareBox = page.locator("#react-bare-dialog dialog").first();

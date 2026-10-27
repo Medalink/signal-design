@@ -95,8 +95,8 @@ export function Sheet({ side = "right", ...props }) {
   return h(Dialog, { side, ...props });
 }
 
-/** The title row. Its text names the dialog; `closeButton={false}` leaves out the × button and `closeLabel` renames it. */
-export function DialogHeader({ closeButton = true, closeLabel = "Close", className, children, ...props }) {
+/** The title row. Its text names the dialog and is its heading, an `h2` unless `as` says otherwise; `closeButton={false}` leaves out the × button and `closeLabel` renames it. */
+export function DialogHeader({ as = "h2", closeButton = true, closeLabel = "Close", className, children, ...props }) {
   const { titleId, close, setTitled } = useContext(DialogContext);
   useIsomorphicLayoutEffect(() => {
     setTitled(true);
@@ -105,7 +105,7 @@ export function DialogHeader({ closeButton = true, closeLabel = "Close", classNa
   return h(
     "header",
     { className: cx("sd-dialog-head", className), ...props },
-    h("span", { id: titleId }, children),
+    h(as, { id: titleId, className: "sd-dialog-title" }, children),
     closeButton && h(IconButton, { label: closeLabel, variant: "ghost", size: "sm", onClick: close }, "×"),
   );
 }

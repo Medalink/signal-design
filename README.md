@@ -1153,7 +1153,9 @@ What they take over from `init()`:
   `side="bottom"` (the full width, as tall as its content up to 85% of the
   screen, `--sheet-max`). `DialogHeader` names its × button `Close`; give
   `closeLabel="Close inspector"` when the screen needs more.
-  A `DialogHeader` also names the dialog. Leave the header out and name it with
+  A `DialogHeader` also names the dialog, and its title is the dialog's
+  heading: an `h2`, or the level you pass as `as="h3"` (`as="span"` for none).
+  It looks the same at every level. Leave the header out and name it with
   `aria-label` or `aria-labelledby` on the `Dialog`; an `aria-label` wins
   over a header, and no `aria-labelledby` is written when there is no header.
   Server output carries the name when the `DialogHeader` is a child of the

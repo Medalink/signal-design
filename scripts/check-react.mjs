@@ -14,6 +14,7 @@ import { ICON_NAMES } from "../src/js/icons.js";
 import { checkReactEditor } from "./check-react-editor.mjs";
 import { checkReactApp } from "./check-react-app.mjs";
 import { checkReactGaps } from "./check-react-gaps.mjs";
+import { checkReactOverlays } from "./check-react-overlays.mjs";
 
 const rootPath = fileURLToPath(new URL("..", import.meta.url));
 
@@ -136,6 +137,10 @@ export function Consumer() {
       <Dialog unmountOnClose="yes" />
       <Dialog open={open} onOpenChange={setOpen} size="sm" ref={(node: HTMLDialogElement | null) => node?.close()}>
         <DialogHeader closeButton={false}>Title</DialogHeader>
+        <DialogHeader as="h3" closeLabel="Close inspector">Inspector</DialogHeader>
+        <DialogHeader as={undefined}>Default level</DialogHeader>
+        {/* @ts-expect-error the title is a heading, a paragraph or a plain element, not a link */}
+        <DialogHeader as="a">Link</DialogHeader>
       </Dialog>
       <Tabs defaultValue="a"><TabList label="Tabs"><Tab value="a">A</Tab></TabList><TabPanel value="a">A</TabPanel></Tabs>
       <Tabs value="a" onValueChange={(value) => console.log(value.length)}><TabList label="Tabs" /></Tabs>
@@ -297,6 +302,8 @@ export async function checkReactSsr() {
           h(sd.Sheet, { defaultOpen: false }, h(sd.DialogHeader, null, "S")),
           h(sd.Dialog, { defaultOpen: true }, h(sd.DialogHeader, null, "Named header")),
           h(sd.Dialog, { defaultOpen: true }, h(Fragment, null, [h(sd.DialogHeader, { key: "h" }, "Fragment header")])),
+          h(sd.Dialog, { defaultOpen: true }, h(sd.DialogHeader, { as: "h3" }, "Level three")),
+          h(sd.Dialog, { defaultOpen: true }, h(sd.DialogHeader, { as: "span" }, "Plain title")),
           h(sd.Dialog, { defaultOpen: true, "aria-label": "Label wins" }, h(sd.DialogHeader, null, "Beaten header")),
           h(sd.Dialog, { unmountOnClose: true }, h(sd.DialogHeader, null, "Unmounted header")),
           h(sd.Dialog, { defaultOpen: true, "aria-label": "Quick note", unmountOnClose: true }, h(sd.DialogBody, null, "bare")),
@@ -357,8 +364,10 @@ export async function checkReactSsr() {
   ]) assert.ok(html.includes(needle), `server output is missing ${what}`);
   // The id is whatever useId made, so the header's span has to carry the same one.
   for (const [title, what] of [["T", "a closed dialog"], ["S", "a closed sheet"], ["Named header", "an open dialog"], ["Fragment header", "a header inside a fragment"]]) {
-    assert.match(html, new RegExp(`<dialog aria-labelledby="([^"]+)" class="sd-dialog[^"]*">(?:<header class="sd-dialog-head"><span id="\\1">${title}</span>)`), `server output lacks aria-labelledby on ${what} whose header says ${title}, so it has no accessible name until hydration`);
+    assert.match(html, new RegExp(`<dialog aria-labelledby="([^"]+)" class="sd-dialog[^"]*">(?:<header class="sd-dialog-head"><h2 id="\\1" class="sd-dialog-title">${title}</h2>)`), `server output lacks aria-labelledby on ${what} whose header says ${title}, so it has no accessible name until hydration`);
   }
+  assert.match(html, /<h3 id="[^"]+" class="sd-dialog-title">Level three<\/h3>/, "a DialogHeader with as=\"h3\" did not render an h3 title on the server");
+  assert.match(html, /<span id="[^"]+" class="sd-dialog-title">Plain title<\/span>/, "a DialogHeader with as=\"span\" did not render a span title on the server");
   assert.ok(html.includes('<dialog aria-label="Label wins" class="sd-dialog"><header'), "an aria-label wins over the header's aria-labelledby on the server");
   assert.ok(html.includes('<dialog class="sd-dialog"></dialog>'), "a closed dialog that unmounts its header has no aria-labelledby and no children");
   assert.ok(!html.includes("Unmounted header"), "a closed dialog that unmounts on close rendered its header");
@@ -690,5 +699,7 @@ export async function checkReact(page, base) {
   errors.push(...gaps.errors);
   const app = await checkReactApp(page, base);
   errors.push(...app.errors);
-  return { errors, passed: passed + editor.passed + gaps.passed + app.passed };
+  const overlays = await checkReactOverlays(page, base);
+  errors.push(...overlays.errors);
+  return { errors, passed: passed + editor.passed + gaps.passed + app.passed + overlays.passed };
 }

@@ -26,6 +26,15 @@
   .sd-dialog-head > :last-child:not(:first-child) {
     margin-inline-start: auto;
   }
+  /* A title that is a heading looks like the text around it, whatever its level. */
+  .sd-dialog-title {
+    margin: 0;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: none;
+    text-wrap: inherit;
+  }
   .sd-dialog-body {
     padding: 20px;
     color: var(--sd-fg-muted);

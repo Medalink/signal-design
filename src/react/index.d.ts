@@ -236,12 +236,14 @@ export interface SheetProps extends Omit<DialogProps, "side" | "size"> {
 }
 export function Sheet(props: SheetProps): ReactElement;
 export interface DialogHeaderProps extends ComponentProps<"header"> {
+  /** The element the title is. Default `h2`, so a screen reader finds the dialog's heading; pick the level that fits the page, or `span` for no heading. It looks the same whichever. */
+  as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "div" | "span" | undefined;
   /** The × button. Default true. */
   closeButton?: boolean | undefined;
   /** The × button's accessible name, such as "Close inspector". Default "Close". */
   closeLabel?: string | undefined;
 }
-/** The title row; its text names the dialog. With no header, name the dialog with `aria-label` or `aria-labelledby` on it. */
+/** The title row; its text names the dialog and is its heading. With no header, name the dialog with `aria-label` or `aria-labelledby` on it. */
 export function DialogHeader(props: DialogHeaderProps): ReactElement;
 export function DialogBody(props: ComponentProps<"div">): ReactElement;
 export function DialogFooter(props: ComponentProps<"footer">): ReactElement;

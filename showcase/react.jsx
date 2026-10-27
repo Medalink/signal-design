@@ -742,6 +742,26 @@ function BareDialog() {
   );
 }
 
+function DialogOptions() {
+  return (
+    <Demo
+      id="react-dialog-options"
+      title="Dialog title level"
+      code={`<Dialog trigger={<Button>Heading level</Button>}>
+  <DialogHeader as="h3">Level three title</DialogHeader>
+  …
+</Dialog>`}
+    >
+      <div className="sd-actions">
+        <Dialog size="sm" trigger={<Button>Heading level</Button>}>
+          <DialogHeader as="h3">Level three title</DialogHeader>
+          <DialogBody>The title is a level three heading.</DialogBody>
+        </Dialog>
+      </div>
+    </Demo>
+  );
+}
+
 function App() {
   return (
     <ToastProvider>
@@ -752,6 +772,7 @@ function App() {
       <Tables />
       <Empty />
       <Overlays />
+      <DialogOptions />
       <Menus />
       <ContextMenus />
       <Tooltips />
