@@ -529,6 +529,20 @@ export async function checkReactApp(page, base) {
     await touch.close();
   }
 
+  /* ---- Dialog whose header is in a component of its own ---- */
+  // The server cannot see that header by type, so the dialog is named by the header's layout effect once the page has mounted.
+  const wrapped = page.locator("#react-dialog").getByRole("button", { name: "Wrapped header", exact: true });
+  await wrapped.scrollIntoViewIfNeeded();
+  await wrapped.click();
+  const wrappedName = () => page.evaluate(() => {
+    const dialog = [...document.querySelectorAll("#react-dialog dialog[open]")].find((d) => d.textContent.includes("The title comes from a component of your own."));
+    return { open: Boolean(dialog), title: document.getElementById(dialog?.getAttribute("aria-labelledby") ?? "")?.textContent };
+  });
+  expect(await until(() => document.querySelector("#react-dialog dialog[open] [id]") !== null, null) && (await wrappedName()).title === "Header in a component", `a DialogHeader inside a component of its own names the dialog after mount, got ${JSON.stringify(await wrappedName())}`);
+  expect(await page.getByRole("dialog", { name: "Header in a component" }).count() === 1, "the dialog's accessible name is the header's text");
+  await page.keyboard.press("Escape");
+  expect(await until(() => !document.querySelector("#react-dialog dialog[open]"), null), "Escape closes the dialog with the wrapped header");
+
   /* ---- Switch and Checkbox with no text ---- */
   const bare = page.locator("#react-forms [data-bare]");
   const mute = bare.getByRole("switch", { name: "Mute channel" });

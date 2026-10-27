@@ -310,6 +310,11 @@ function Empty() {
   );
 }
 
+// A header in a component of your own still names its dialog, once the page has hydrated.
+function Titled({ children }) {
+  return <DialogHeader>{children}</DialogHeader>;
+}
+
 function Overlays() {
   const [open, setOpen] = useState(false);
   const [sheet, setSheet] = useState(false);
@@ -367,6 +372,10 @@ function Overlays() {
               <Button>Done</Button>
             </DialogClose>
           </DialogFooter>
+        </Dialog>
+        <Dialog size="sm" trigger={<Button>Wrapped header</Button>}>
+          <Titled>Header in a component</Titled>
+          <DialogBody>The title comes from a component of your own.</DialogBody>
         </Dialog>
         <Button onClick={() => setGuard(true)}>Guarded dialog</Button>
         <span className="sd-subtle text-sm" data-result>
