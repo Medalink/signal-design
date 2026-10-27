@@ -214,8 +214,8 @@ async function pixels(page, clip) {
 }
 
 /** Fraction of pixels that differ, and the larger size when the sizes differ. */
-async function diff(helper, a, b, relative = false) {
-  return helper.evaluate(async ([a, b, relative]) => {
+async function diff(helper, a, b, relative = false, limit = 48) {
+  return helper.evaluate(async ([a, b, relative, limit]) => {
     const load = async (s) => createImageBitmap(await (await fetch(`data:image/png;base64,${s}`)).blob());
     const [x, y] = await Promise.all([load(a), load(b)]);
     const w = Math.max(x.width, y.width), h = Math.max(x.height, y.height);
@@ -225,7 +225,7 @@ async function diff(helper, a, b, relative = false) {
       return c.getImageData(0, 0, w, h).data;
     };
     const p = read(x), q = read(y);
-    const far = (u, i, v, j) => Math.abs(u[i] - v[j]) + Math.abs(u[i + 1] - v[j + 1]) + Math.abs(u[i + 2] - v[j + 2]) > 48;
+    const far = (u, i, v, j) => Math.abs(u[i] - v[j]) + Math.abs(u[i + 1] - v[j + 1]) + Math.abs(u[i + 2] - v[j + 2]) > limit;
     // Relative: each image's most common color is its backdrop, so a part on
     // a slightly different panel still matches when everything on it does.
     const mode = (d) => {
@@ -254,7 +254,7 @@ async function diff(helper, a, b, relative = false) {
       changed = Math.min(changed, n);
     }
     return { changed, total: w * h, sameSize: x.width === y.width && x.height === y.height, a: [x.width, x.height], b: [y.width, y.height] };
-  }, [a, b, relative]);
+  }, [a, b, relative, limit]);
 }
 
 const CONTROL_SEL = 'a[href], button, input:not([type=hidden]), select, textarea, summary, [role=button], [role=tab], [role=switch], [role=checkbox], [role=radio], [role=menuitem], [role=option], [role=slider], [role=treeitem], [tabindex]:not([tabindex="-1"])';
@@ -334,7 +334,13 @@ async function interact(page, helper, { scope, exclude }) {
       await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
       await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
       const shot = await pixels(page, clip);
-      const d = await diff(helper, rest, shot);
+      // The pointer moves nothing, so a quiet fill change (one grey step) counts.
+      const d = await diff(helper, rest, shot, false, 24);
+      if (process.env.SCORE_DEBUG && d.changed < 4) {
+        const name = info.sig.replace(/[^a-z0-9]+/gi, "-").slice(0, 60);
+        writeFileSync(`.audit/shots/hover-${name}-rest.png`, Buffer.from(rest, "base64"));
+        writeFileSync(`.audit/shots/hover-${name}-hover.png`, Buffer.from(shot, "base64"));
+      }
       if (d.changed < 4) findings.push({ check: "hover", severity: "minor", el: info.sig, detail: "no change under the pointer" });
       await page.mouse.move(0, 0);
     }
