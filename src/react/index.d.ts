@@ -210,6 +210,15 @@ export function WeightedBar(props: WeightedBarProps): ReactElement;
 
 /* ---- Dialog and sheet -------------------------------------------------- */
 
+/**
+ * A dialog opens with focus on the element inside it that has `data-autofocus`, every time it opens,
+ * whether it mounts open, opens later or remounts under `unmountOnClose`. Mark one element: with several,
+ * which one wins is not defined. `Button`, `IconButton`, `Input`, `Textarea`, `Select`, `Checkbox`,
+ * `Switch` and `Combobox` take `autoFocus` and add `data-autofocus` for you. A native `autoFocus` field of
+ * your own gets focus when it mounts with the dialog open, including each time `unmountOnClose` mounts it
+ * again; in a dialog that stays mounted and opens later, write `data-autofocus` on it.
+ * With neither, the browser focuses the first focusable element.
+ */
 export interface DialogProps extends Omit<ComponentProps<"dialog">, "open"> {
   /** Controlled. Leave out to let the dialog keep its own state. */
   open?: boolean | undefined;
@@ -221,8 +230,12 @@ export interface DialogProps extends Omit<ComponentProps<"dialog">, "open"> {
   size?: "sm" | "md" | "lg" | undefined;
   /** Pins the dialog to an edge as a sheet: the right, the left or the bottom. */
   side?: "left" | "right" | "bottom" | undefined;
-  /** Escape and the backdrop do not close it. */
+  /** Escape and the backdrop do not close it. Shorthand for `closeOnEscape={false}` and `closeOnBackdrop={false}`; either of those, set to true, turns its own way back on. */
   static?: boolean | undefined;
+  /** Whether Escape closes it. Default true, or false with `static`. */
+  closeOnEscape?: boolean | undefined;
+  /** Whether a click on the backdrop closes it. Default true, or false with `static`. */
+  closeOnBackdrop?: boolean | undefined;
   /**
    * Render the children only while the dialog is open, and drop them once it
    * has faded out, so state inside is reset and nothing is mounted while it is
@@ -236,12 +249,14 @@ export interface SheetProps extends Omit<DialogProps, "side" | "size"> {
 }
 export function Sheet(props: SheetProps): ReactElement;
 export interface DialogHeaderProps extends ComponentProps<"header"> {
+  /** The element the title is. Default `h2`, so a screen reader finds the dialog's heading; pick the level that fits the page, or `span` for no heading. It looks the same whichever. */
+  as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "div" | "span" | undefined;
   /** The × button. Default true. */
   closeButton?: boolean | undefined;
   /** The × button's accessible name, such as "Close inspector". Default "Close". */
   closeLabel?: string | undefined;
 }
-/** The title row; its text names the dialog. With no header, name the dialog with `aria-label` or `aria-labelledby` on it. */
+/** The title row; its text names the dialog and is its heading. With no header, name the dialog with `aria-label` or `aria-labelledby` on it. */
 export function DialogHeader(props: DialogHeaderProps): ReactElement;
 export function DialogBody(props: ComponentProps<"div">): ReactElement;
 export function DialogFooter(props: ComponentProps<"footer">): ReactElement;
@@ -359,9 +374,17 @@ export interface TooltipProps {
    * Milliseconds the pointer must rest on the trigger before the tip shows. Focus shows it at once unless that wait is
    * still running on the trigger, so Tab does and a mouse press that focuses the trigger (or the input a click focuses)
    * does not. A touch tap shows it as the finger lifts, whatever the delay, and it stays until the trigger blurs or a
-   * press lands elsewhere. Default 0.
+   * press lands elsewhere. Default 0. A different trigger the pointer reaches while a tip is open, or within 300 ms of
+   * one closing, shows its tip at once, whatever its delay.
    */
   delay?: number | undefined;
+  /**
+   * Milliseconds the tip stays after the pointer leaves the trigger. The tip also takes the pointer, so it can be
+   * reached and read, and it closes that long after the pointer leaves the tip. Coming back to the trigger keeps it.
+   * Escape, blur and a press elsewhere close it at once. Default 0: the tip goes as the pointer leaves and takes no pointer.
+   * Over an open modal `Dialog` the tip is inert, as a toast is: it lingers, but the pointer cannot reach it.
+   */
+  closeDelay?: number | undefined;
   /** Added to the tip's `sd-tooltip` class. */
   className?: string | undefined;
   /** Called when the tip shows or hides, with the new state. */
@@ -369,6 +392,7 @@ export interface TooltipProps {
   /** The one element the tooltip describes. */
   children: ReactElement;
 }
+/** One tip is open at a time on the page: showing a tip closes the one that was open. */
 export function Tooltip(props: TooltipProps): ReactElement;
 
 type TabsBase = Omit<ComponentProps<"div">, "defaultValue" | "onChange">;
@@ -807,7 +831,7 @@ export interface ComboboxProps extends Omit<ComponentProps<"input">, "value" | "
 /** A searchable select: type to filter, arrows and Enter to choose, Escape to close. Use it inside `Field`. */
 export function Combobox(props: ComboboxProps): ReactElement;
 
-export interface CommandPaletteProps extends Omit<DialogProps, "open" | "defaultOpen" | "onOpenChange" | "trigger" | "size" | "side" | "static" | "children" | "onSelect"> {
+export interface CommandPaletteProps extends Omit<DialogProps, "open" | "defaultOpen" | "onOpenChange" | "trigger" | "size" | "side" | "static" | "closeOnEscape" | "closeOnBackdrop" | "children" | "onSelect"> {
   items: ListItem[];
   open?: boolean | undefined;
   defaultOpen?: boolean | undefined;

@@ -134,9 +134,14 @@
   .sd-check-bare {
     width: fit-content;
   }
+  /* The label fades the control and its text together, once: the control's own
+     disabled fade (base.css) would stack on it. */
   .sd-check:has(:disabled) {
     opacity: 0.5;
     cursor: not-allowed;
+  }
+  .sd-check > input:disabled {
+    opacity: 1;
   }
   .sd-check-text {
     display: grid;

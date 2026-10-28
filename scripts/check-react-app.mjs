@@ -571,12 +571,32 @@ export async function checkReactApp(page, base) {
   expect(widths.text === 400 && widths.plain === 400 && widths.own === 400 && widths.nameless === 400, `a hand-written label fills its parent, with a text span or without, got ${JSON.stringify(widths)}`);
   expect(await page.locator("#react-forms .sd-check-text").count() >= 3, "a control with a label still renders its text");
 
+  // A disabled control is faded once, by the label around it. The control's own disabled fade used to stack on that.
+  const faded = await page.evaluate(() => {
+    const seen = (el) => {
+      let product = 1;
+      for (let node = el; node && node !== document.body; node = node.parentElement) product *= Number(getComputedStyle(node).opacity);
+      return Math.round(product * 1000) / 1000;
+    };
+    const control = (name) => document.querySelector(`#react-forms input[aria-label="${name}"]`);
+    const labelled = document.querySelector("#react-forms .sd-check:has(input:disabled) .sd-check-text");
+    return {
+      bareSwitch: seen(control("Locked switch")),
+      bareBox: seen(control("Locked box")),
+      labelledSwitch: seen(labelled.closest("label").querySelector("input")),
+      labelledText: seen(labelled),
+      enabled: seen(control("Mute channel")),
+    };
+  });
+  expect(faded.bareSwitch === faded.labelledText && faded.bareBox === faded.labelledText && faded.labelledSwitch === faded.labelledText, `a disabled control is faded once, to the same level as its label and as a bare one, got ${JSON.stringify(faded)}`);
+  expect(faded.labelledText < 1 && faded.enabled === 1, `a disabled control is faded and an enabled one is not, got ${JSON.stringify(faded)}`);
+
   /* ---- Dialog without a header, and unmountOnClose ---- */
   const naming = await page.evaluate(() => {
     const dialog = document.querySelector("#react-dialog dialog:has(textarea)");
     return { target: document.getElementById(dialog.getAttribute("aria-labelledby") ?? "")?.tagName, text: document.getElementById(dialog.getAttribute("aria-labelledby") ?? "")?.textContent, kept: dialog.querySelector("textarea") !== null, open: dialog.open };
   });
-  expect(naming.target === "SPAN" && naming.text?.startsWith("Request changes"), `a dialog with a header is still named by it, got ${JSON.stringify(naming)}`);
+  expect(naming.target === "H2" && naming.text?.startsWith("Request changes"), `a dialog with a header is still named by it, got ${JSON.stringify(naming)}`);
   expect(!naming.open && naming.kept, "a closed dialog keeps its children by default");
 
   const bareBox = page.locator("#react-bare-dialog dialog").first();

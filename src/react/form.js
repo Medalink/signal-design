@@ -4,7 +4,7 @@
  * can be any component that renders one of these.
  */
 import { createContext, createElement as h, useContext, useId, useMemo } from "react";
-import { cx, drawn } from "./util.js";
+import { autofocus, cx, drawn } from "./util.js";
 
 const FieldContext = createContext(null);
 
@@ -34,10 +34,12 @@ export function Field({ label, hint, error, aside, required, id, className, chil
 /** What a control takes from its Field: an id, the description it points at, invalid and required. */
 export function useControl(props) {
   const field = useContext(FieldContext);
-  if (!field) return props;
+  const focus = autofocus(props);
+  if (!field) return focus ? { ...props, ...focus } : props;
   const describedBy = cx(props["aria-describedby"], field.describedBy) || undefined;
   return {
     ...props,
+    ...focus,
     id: props.id ?? field.id,
     "aria-describedby": describedBy,
     "aria-invalid": props["aria-invalid"] ?? (field.invalid || undefined),
@@ -62,7 +64,7 @@ function Check({ role, label, description, className, ...props }) {
   return h(
     "label",
     { className: cx("sd-check", !text && "sd-check-bare", className) },
-    h("input", { type: "checkbox", role, ...props }),
+    h("input", { type: "checkbox", role, ...autofocus(props), ...props }),
     text && h("span", { className: "sd-check-text" }, label, drawn(description) && h("span", { className: "sd-check-desc" }, description)),
   );
 }

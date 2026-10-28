@@ -126,7 +126,8 @@ function Forms() {
 <Checkbox label="Weekly summary" description="Sent every Monday." />
 <Switch label="Push notifications" checked={notify} onChange={...} />
 <Switch aria-label="Mute channel" />
-<Checkbox aria-labelledby="pinned" />`}
+<Checkbox aria-labelledby="pinned" />
+<Switch aria-label="Locked switch" disabled />`}
     >
       <form className="sd-form max-w-narrow" onSubmit={(event) => event.preventDefault()} noValidate>
         <Field label="Name" hint="Shown on your profile." error={error} required>
@@ -153,6 +154,10 @@ function Forms() {
             Pinned
           </span>
           <Checkbox aria-labelledby="react-bare-name" />
+        </div>
+        <div className="sd-actions" data-disabled>
+          <Switch aria-label="Locked switch" disabled />
+          <Checkbox aria-label="Locked box" defaultChecked disabled />
         </div>
       </form>
     </Demo>
@@ -597,6 +602,34 @@ function Tooltips() {
   );
 }
 
+function TooltipGroup() {
+  return (
+    <Demo
+      id="react-tooltip-group"
+      title="Tooltips side by side"
+      code={`<Tooltip content="First tip" delay={600}><Button>First</Button></Tooltip>
+<Tooltip content="Second tip" delay={600}><Button>Second</Button></Tooltip>
+<Tooltip content="Stays a moment" delay={600} closeDelay={400}><Button>Linger</Button></Tooltip>
+<Tooltip content="No delay"><Button>Instant</Button></Tooltip>`}
+    >
+      <div className="sd-actions">
+        <Tooltip content="First tip" delay={600}>
+          <Button>First</Button>
+        </Tooltip>
+        <Tooltip content="Second tip" delay={600}>
+          <Button>Second</Button>
+        </Tooltip>
+        <Tooltip content="Stays a moment" delay={600} closeDelay={400}>
+          <Button>Linger</Button>
+        </Tooltip>
+        <Tooltip content="No delay">
+          <Button>Instant</Button>
+        </Tooltip>
+      </div>
+    </Demo>
+  );
+}
+
 function TabsDemo() {
   const [value, setValue] = useState("overview");
   return (
@@ -742,6 +775,110 @@ function BareDialog() {
   );
 }
 
+/** A dialog that mounts already open, the way a modal rendered under an `{open && …}` is. */
+function MountedOpen() {
+  const [shown, setShown] = useState(false);
+  return (
+    <>
+      <Button onClick={() => setShown(true)}>Mount open</Button>
+      {shown && (
+        <Dialog size="sm" aria-label="Mounted open" open onOpenChange={(next) => !next && setShown(false)}>
+          <DialogBody>
+            <Button>Before</Button>
+            <input aria-label="Handle" autoFocus />
+          </DialogBody>
+        </Dialog>
+      )}
+    </>
+  );
+}
+
+/** One dialog for each way Escape and the backdrop can be switched, each with its own button to close it. */
+function Dismissals() {
+  const rows = [
+    ["Escape only", { closeOnBackdrop: false }],
+    ["Backdrop only", { closeOnEscape: false }],
+    ["Neither", { static: true }],
+    ["Static with Escape", { static: true, closeOnEscape: true }],
+    ["Static with backdrop", { static: true, closeOnBackdrop: true }],
+  ];
+  return rows.map(([name, props]) => (
+    <Dialog key={name} size="sm" aria-label={name} trigger={<Button>{name}</Button>} {...props}>
+      <DialogBody>{name}</DialogBody>
+      <DialogFooter>
+        <DialogClose>
+          <Button>Done</Button>
+        </DialogClose>
+      </DialogFooter>
+    </Dialog>
+  ));
+}
+
+function DialogOptions() {
+  return (
+    <Demo
+      id="react-dialog-options"
+      title="Dialog title, focus and dismissal"
+      code={`<Dialog trigger={<Button>Heading level</Button>}>
+  <DialogHeader as="h3">Level three title</DialogHeader>
+  …
+</Dialog>
+<Dialog trigger={<Button>Autofocus field</Button>}>
+  <DialogBody><Button>Before</Button><Field label="Name"><Input autoFocus /></Field></DialogBody>
+</Dialog>
+<Dialog unmountOnClose trigger={…}>
+  <DialogBody><Button>Before</Button><input aria-label="Handle" autoFocus /></DialogBody>
+</Dialog>
+<Dialog trigger={…}>
+  <DialogFooter><Button tone="danger">Delete</Button><Button data-autofocus>Cancel</Button></DialogFooter>
+</Dialog>
+{shown && <Dialog open onOpenChange={…}>…<input autoFocus />…</Dialog>}
+<Dialog closeOnBackdrop={false}>…</Dialog>
+<Dialog closeOnEscape={false}>…</Dialog>
+<Dialog static>…</Dialog>
+<Dialog static closeOnEscape>…</Dialog>
+<Dialog static closeOnBackdrop>…</Dialog>`}
+    >
+      <div className="sd-actions">
+        <Dialog size="sm" trigger={<Button>Heading level</Button>}>
+          <DialogHeader as="h3">Level three title</DialogHeader>
+          <DialogBody>The title is a level three heading.</DialogBody>
+        </Dialog>
+        <Dialog size="sm" aria-label="Autofocus field" trigger={<Button>Autofocus field</Button>}>
+          <DialogBody>
+            <Button>Before</Button>
+            <Field label="Name">
+              <Input autoFocus />
+            </Field>
+          </DialogBody>
+        </Dialog>
+        <Dialog size="sm" aria-label="Autofocus native field" unmountOnClose trigger={<Button>Autofocus native field</Button>}>
+          <DialogBody>
+            <Button>Before</Button>
+            <input aria-label="Handle" autoFocus />
+          </DialogBody>
+          <DialogFooter>
+            <DialogClose>
+              <Button>Close</Button>
+            </DialogClose>
+          </DialogFooter>
+        </Dialog>
+        <Dialog size="sm" aria-label="Autofocus marked" trigger={<Button>Autofocus marked</Button>}>
+          <DialogBody>Delete this draft?</DialogBody>
+          <DialogFooter>
+            <Button tone="danger">Delete</Button>
+            <DialogClose>
+              <Button data-autofocus>Cancel</Button>
+            </DialogClose>
+          </DialogFooter>
+        </Dialog>
+        <MountedOpen />
+        <Dismissals />
+      </div>
+    </Demo>
+  );
+}
+
 function App() {
   return (
     <ToastProvider>
@@ -752,9 +889,11 @@ function App() {
       <Tables />
       <Empty />
       <Overlays />
+      <DialogOptions />
       <Menus />
       <ContextMenus />
       <Tooltips />
+      <TooltipGroup />
       <TabsDemo />
       <Toasts />
       <AboveDialog />

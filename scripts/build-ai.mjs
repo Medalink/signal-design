@@ -35,7 +35,7 @@ const ATTRIBUTES = {
   "data-sd-feed": "Scrollable stable-ID rows controlled by an explicit mountFeed(root, options) call, not init().",
   "data-sd-open": "Opens the <dialog> with this id as a modal.",
   "data-sd-close": "Closes the nearest dialog; a value becomes its returnValue.",
-  "data-sd-static": "On a dialog: a backdrop click does not close it.",
+  "data-sd-static": "On a dialog: Escape and a backdrop click do not close it. data-sd-static=\"escape\" or \"backdrop\" switches off only that one.",
   "data-sd-toggle": "Opens and closes the .sd-expand with this id; keeps aria-expanded in sync.",
   "data-sd-seg": "Single-select button group (aria-pressed); fires change.",
   "data-sd-key": "Clicks the element when this key combo is pressed (not while typing), e.g. \"a\", \"shift+n\", \"mod+k\".",

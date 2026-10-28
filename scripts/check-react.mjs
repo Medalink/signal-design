@@ -14,6 +14,7 @@ import { ICON_NAMES } from "../src/js/icons.js";
 import { checkReactEditor } from "./check-react-editor.mjs";
 import { checkReactApp } from "./check-react-app.mjs";
 import { checkReactGaps } from "./check-react-gaps.mjs";
+import { checkReactOverlays } from "./check-react-overlays.mjs";
 
 const rootPath = fileURLToPath(new URL("..", import.meta.url));
 
@@ -128,14 +129,27 @@ export function Consumer() {
       <Checkbox description="d" aria-label="Name" />
       <Tooltip content="Tip" side="bottom" delay={300} className="wide" onOpenChange={(shown: boolean) => console.log(shown)}><Button>Tip</Button></Tooltip>
       <Tooltip content="Tip" delay={undefined} className={undefined} onOpenChange={undefined}><Button>Tip</Button></Tooltip>
+      <Tooltip content="Tip" delay={600} closeDelay={400}><Button>Tip</Button></Tooltip>
+      <Tooltip content="Tip" closeDelay={undefined}><Button>Tip</Button></Tooltip>
       {/* @ts-expect-error the delay is a number of milliseconds */}
       <Tooltip content="Tip" delay="300"><Button>Tip</Button></Tooltip>
+      {/* @ts-expect-error the closeDelay is a number of milliseconds */}
+      <Tooltip content="Tip" closeDelay="400"><Button>Tip</Button></Tooltip>
       <Dialog open={open} onOpenChange={setOpen} aria-label="Quick note" unmountOnClose><DialogBody>Body</DialogBody></Dialog>
       <Dialog aria-labelledby="name" unmountOnClose={undefined} />
+      <Dialog aria-label="Keep" static closeOnEscape closeOnBackdrop={undefined} />
       {/* @ts-expect-error unmountOnClose is a boolean */}
       <Dialog unmountOnClose="yes" />
+      {/* @ts-expect-error closeOnEscape is a boolean */}
+      <Dialog closeOnEscape="no" />
+      {/* @ts-expect-error a command palette cannot be made undismissable */}
+      <CommandPalette items={[]} closeOnEscape={false} />
       <Dialog open={open} onOpenChange={setOpen} size="sm" ref={(node: HTMLDialogElement | null) => node?.close()}>
         <DialogHeader closeButton={false}>Title</DialogHeader>
+        <DialogHeader as="h3" closeLabel="Close inspector">Inspector</DialogHeader>
+        <DialogHeader as={undefined}>Default level</DialogHeader>
+        {/* @ts-expect-error the title is a heading, a paragraph or a plain element, not a link */}
+        <DialogHeader as="a">Link</DialogHeader>
       </Dialog>
       <Tabs defaultValue="a"><TabList label="Tabs"><Tab value="a">A</Tab></TabList><TabPanel value="a">A</TabPanel></Tabs>
       <Tabs value="a" onValueChange={(value) => console.log(value.length)}><TabList label="Tabs" /></Tabs>
@@ -297,8 +311,17 @@ export async function checkReactSsr() {
           h(sd.Sheet, { defaultOpen: false }, h(sd.DialogHeader, null, "S")),
           h(sd.Dialog, { defaultOpen: true }, h(sd.DialogHeader, null, "Named header")),
           h(sd.Dialog, { defaultOpen: true }, h(Fragment, null, [h(sd.DialogHeader, { key: "h" }, "Fragment header")])),
+          h(sd.Dialog, { defaultOpen: true }, h(sd.DialogHeader, { as: "h3" }, "Level three")),
+          h(sd.Dialog, { defaultOpen: true }, h(sd.DialogHeader, { as: "span" }, "Plain title")),
           h(sd.Dialog, { defaultOpen: true, "aria-label": "Label wins" }, h(sd.DialogHeader, null, "Beaten header")),
           h(sd.Dialog, { unmountOnClose: true }, h(sd.DialogHeader, null, "Unmounted header")),
+          h(sd.Dialog, { id: "own", "aria-label": "Own id", unmountOnClose: true }),
+          h(sd.Dialog, { static: true, "aria-label": "Static" }),
+          h(sd.Dialog, { static: true, closeOnEscape: true, "aria-label": "Escape kept" }),
+          h(sd.Dialog, { closeOnEscape: false, closeOnBackdrop: false, "aria-label": "Both off" }),
+          h(sd.Dialog, { closeOnEscape: false, "aria-label": "Escape off" }),
+          h(sd.Dialog, { closeOnBackdrop: false, "aria-label": "Backdrop off" }),
+          h(sd.Dialog, { id: undefined, "aria-label": "Undefined id" }),
           h(sd.Dialog, { defaultOpen: true, "aria-label": "Quick note", unmountOnClose: true }, h(sd.DialogBody, null, "bare")),
           h(sd.Dialog, { "aria-label": "Quick note", unmountOnClose: true }, h(sd.DialogBody, null, "unmounted while closed")),
           h(sd.Popover, null, h(sd.PopoverTrigger, null, h(sd.Button, null, "p")), h(sd.PopoverContent, { pad: true }, "pop")),
@@ -343,8 +366,7 @@ export async function checkReactSsr() {
     ['aria-invalid="true"', "the invalid control"],
     ['role="switch"', "the switch"],
     ['<span class="sd-check-text">0<span class="sd-check-desc">0</span></span>', "a checkbox whose label and description are 0"],
-    ['<dialog aria-label="Quick note" class="sd-dialog"><div class="sd-dialog-body">bare</div></dialog>', "a dialog named by aria-label, with no aria-labelledby"],
-    ['<dialog aria-label="Quick note" class="sd-dialog"></dialog>', "a closed dialog that unmounts on close, empty"],
+    ['<dialog id="own" aria-label="Own id" class="sd-dialog"></dialog>', "a dialog that keeps the id it was given"],
     ['<label class="sd-check sd-check-bare"><input type="checkbox" role="switch" aria-label="Mute"/></label>', "a switch with no text, marked bare"],
     ['<label class="sd-check sd-check-bare"><input type="checkbox" role="switch" aria-label="Nothing drawn"/></label>', "a switch whose label is an empty array and description an empty fragment, marked bare"],
     ['Zero<span class="sd-check-desc">0</span>', "a radio whose description is 0"],
@@ -357,10 +379,25 @@ export async function checkReactSsr() {
   ]) assert.ok(html.includes(needle), `server output is missing ${what}`);
   // The id is whatever useId made, so the header's span has to carry the same one.
   for (const [title, what] of [["T", "a closed dialog"], ["S", "a closed sheet"], ["Named header", "an open dialog"], ["Fragment header", "a header inside a fragment"]]) {
-    assert.match(html, new RegExp(`<dialog aria-labelledby="([^"]+)" class="sd-dialog[^"]*">(?:<header class="sd-dialog-head"><span id="\\1">${title}</span>)`), `server output lacks aria-labelledby on ${what} whose header says ${title}, so it has no accessible name until hydration`);
+    assert.match(html, new RegExp(`<dialog id="[^"]+" aria-labelledby="([^"]+)" class="sd-dialog[^"]*">(?:<header class="sd-dialog-head"><h2 id="\\1" class="sd-dialog-title">${title}</h2>)`), `server output lacks aria-labelledby on ${what} whose header says ${title}, so it has no accessible name until hydration`);
   }
-  assert.ok(html.includes('<dialog aria-label="Label wins" class="sd-dialog"><header'), "an aria-label wins over the header's aria-labelledby on the server");
-  assert.ok(html.includes('<dialog class="sd-dialog"></dialog>'), "a closed dialog that unmounts its header has no aria-labelledby and no children");
+  assert.match(html, /<h3 id="[^"]+" class="sd-dialog-title">Level three<\/h3>/, "a DialogHeader with as=\"h3\" did not render an h3 title on the server");
+  assert.match(html, /<span id="[^"]+" class="sd-dialog-title">Plain title<\/span>/, "a DialogHeader with as=\"span\" did not render a span title on the server");
+  // Every dialog carries an id, which is how the dialog is found as it mounts.
+  const dialogs = html.match(/<dialog [^>]*>/g) ?? [];
+  assert.ok(dialogs.length > 0 && dialogs.every((tag) => /^<dialog id="[^"]+"/.test(tag)), "a dialog rendered on the server without an id");
+  const plain = html.replace(/<dialog id="(?!own")[^"]*"/g, "<dialog");
+  assert.ok(plain.includes('<dialog aria-label="Quick note" class="sd-dialog"><div class="sd-dialog-body">bare</div></dialog>'), "a dialog named by aria-label has an aria-labelledby on the server");
+  assert.ok(plain.includes('<dialog aria-label="Quick note" class="sd-dialog"></dialog>'), "a closed dialog that unmounts on close is not empty");
+  assert.ok(plain.includes('<dialog aria-label="Label wins" class="sd-dialog"><header'), "an aria-label wins over the header's aria-labelledby on the server");
+  assert.ok(plain.includes('<dialog class="sd-dialog"></dialog>'), "a closed dialog that unmounts its header still has an aria-labelledby or children");
+  assert.ok(plain.includes('<dialog aria-label="Static" class="sd-dialog" data-sd-static=""'), "a static dialog lost data-sd-static");
+  assert.ok(plain.includes('<dialog aria-label="Both off" class="sd-dialog" data-sd-static=""'), "a dialog with Escape and the backdrop both off lacks data-sd-static");
+  assert.ok(plain.includes('<dialog aria-label="Escape kept" class="sd-dialog" data-sd-static="backdrop"'), "a static dialog that keeps Escape is not marked as switching off the backdrop only");
+  assert.ok(plain.includes('<dialog aria-label="Escape off" class="sd-dialog" data-sd-static="escape"'), "a dialog with only Escape off is not marked data-sd-static=\"escape\"");
+  assert.ok(plain.includes('<dialog aria-label="Backdrop off" class="sd-dialog" data-sd-static="backdrop"'), "a dialog with only the backdrop off is not marked data-sd-static=\"backdrop\"");
+  assert.ok(plain.includes('<dialog aria-label="Undefined id" class="sd-dialog"></dialog>'), "an explicit id={undefined} did not fall back to the generated id");
+  assert.ok(!/closeonescape|closeonbackdrop/i.test(html), "closeOnEscape or closeOnBackdrop reached the DOM");
   assert.ok(!html.includes("Unmounted header"), "a closed dialog that unmounts on close rendered its header");
   assert.ok(!html.includes('<span class="sd-check-desc"></span>'), "a description that draws nothing (an empty array or fragment) rendered an empty description span");
   assert.ok(!html.includes("sd-tooltip"), "a closed tooltip rendered on the server");
@@ -690,5 +727,7 @@ export async function checkReact(page, base) {
   errors.push(...gaps.errors);
   const app = await checkReactApp(page, base);
   errors.push(...app.errors);
-  return { errors, passed: passed + editor.passed + gaps.passed + app.passed };
+  const overlays = await checkReactOverlays(page, base);
+  errors.push(...overlays.errors);
+  return { errors, passed: passed + editor.passed + gaps.passed + app.passed + overlays.passed };
 }

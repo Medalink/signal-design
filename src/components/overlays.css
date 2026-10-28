@@ -26,6 +26,15 @@
   .sd-dialog-head > :last-child:not(:first-child) {
     margin-inline-start: auto;
   }
+  /* A title that is a heading looks like the text around it, whatever its level. */
+  .sd-dialog-title {
+    margin: 0;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: none;
+    text-wrap: inherit;
+  }
   .sd-dialog-body {
     padding: 20px;
     color: var(--sd-fg-muted);
@@ -144,6 +153,10 @@
     line-height: 1.4;
     pointer-events: none;
     animation: sd-fade-in 120ms var(--ease-out);
+  }
+  /* A tip that lingers (closeDelay) takes the pointer, so it can be read and selected. */
+  .sd-tooltip[data-hoverable] {
+    pointer-events: auto;
   }
 
   /* Command panel: a centered dialog for search and quick choices. */

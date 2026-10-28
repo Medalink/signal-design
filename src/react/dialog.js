@@ -18,19 +18,45 @@ function hasHeader(children) {
   return Children.toArray(children).some((child) => isValidElement(child) && (child.type === DialogHeader || (child.type === Fragment && hasHeader(child.props.children))));
 }
 
-export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size, side, static: isStatic, unmountOnClose, className, children, ref, onClose, onCancel, onClick, ...props }) {
+/** Open the dialog, then focus the first `data-autofocus` that is its own: `showModal()` knows only the native `autofocus`, which React does not write. */
+function reveal(dialog) {
+  openDialog(dialog);
+  [...dialog.querySelectorAll("[data-autofocus]")].find((mark) => mark.closest("dialog") === dialog)?.focus();
+}
+
+/**
+ * The first child of the dialog. React focuses an `autoFocus` field as it mounts, which a closed dialog
+ * cannot take, so this opens the dialog in the same commit, before the children after it mount. The
+ * dialog's ref is set after its children's effects have run, so it is there for every opening after the
+ * first commit; only a dialog that mounts open is found by its id.
+ */
+function Opener({ open, id, node }) {
+  useIsomorphicLayoutEffect(() => {
+    const dialog = node.current ?? document.getElementById(id);
+    if (open && dialog && !dialog.open) reveal(dialog);
+  }, [open, id, node]);
+  return null;
+}
+
+export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size, side, static: isStatic, id: idProp, closeOnEscape, closeOnBackdrop, unmountOnClose, className, children, ref, onClose, onCancel, onClick, ...props }) {
   const [isOpen, setOpen] = useControllable(open, defaultOpen, onOpenChange);
   const titleId = useId();
+  const generated = useId();
+  const id = idProp ?? generated;
   const node = useRef(null);
   const [, rerender] = useReducer((n) => n + 1, 0);
   const [titled, setTitled] = useState(false);
   const [present, setPresent] = useState(isOpen);
+  const wasOpen = useRef(false);
+  // Stable, so React leaves it attached between renders: the Opener reads it before a new ref would be set.
+  const setNode = useMemo(() => mergeRefs(node, ref), [ref]);
 
-  // Run after every render: a parent that refuses a close gets the dialog put back.
+  // Run after every render: a parent that refuses a close gets the dialog put back, with focus where it was.
   useIsomorphicLayoutEffect(() => {
     const dialog = node.current;
-    if (isOpen && !dialog.open) openDialog(dialog);
+    if (isOpen && !dialog.open) (wasOpen.current ? openDialog : reveal)(dialog);
     else if (!isOpen && dialog.open) closeDialog(dialog);
+    wasOpen.current = isOpen;
   });
 
   // Closing keeps the children until the fade has run, so the box does not empty while it fades.
@@ -48,6 +74,9 @@ export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size,
     };
   }, [isOpen, unmountOnClose]);
 
+  // `static` turns both off; either prop turns its own back on or off.
+  const escapeCloses = closeOnEscape ?? !isStatic;
+  const backdropCloses = closeOnBackdrop ?? !isStatic;
   const context = useMemo(() => ({ titleId, close: () => setOpen(false), setTitled }), [titleId, setOpen]);
   const mounted = !unmountOnClose || isOpen || present;
   // A header the server can see by type names the dialog in the first render. One nested in a component
@@ -59,11 +88,13 @@ export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size,
     h(
       "dialog",
       {
+        id,
         "aria-labelledby": named && props["aria-label"] === undefined ? titleId : undefined,
         ...props,
-        ref: mergeRefs(node, ref),
+        ref: setNode,
         className: cx("sd-dialog", size && `sd-dialog-${size}`, side && "sd-sheet", side === "left" && "sd-sheet-left", side === "bottom" && "sd-sheet-bottom", className),
-        "data-sd-static": isStatic ? "" : undefined,
+        // The vanilla handlers read this: empty switches both off, a name only that one.
+        "data-sd-static": !escapeCloses ? (backdropCloses ? "escape" : "") : backdropCloses ? undefined : "backdrop",
         onClose: (event) => {
           onClose?.(event);
           setOpen(false);
@@ -71,18 +102,19 @@ export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size,
         },
         onCancel: (event) => {
           onCancel?.(event);
-          if (isStatic) event.preventDefault();
+          if (!escapeCloses) event.preventDefault();
         },
         onClick: (event) => {
           onClick?.(event);
           // A click that lands on the dialog itself and outside its box is on the backdrop.
           const dialog = event.currentTarget;
-          if (isStatic || event.target !== dialog) return;
+          if (!backdropCloses || event.target !== dialog) return;
           const box = dialog.getBoundingClientRect();
           const inside = event.clientX >= box.left && event.clientX <= box.right && event.clientY >= box.top && event.clientY <= box.bottom;
           if (!inside) setOpen(false);
         },
       },
+      h(Opener, { open: isOpen, id, node }),
       mounted ? children : null,
     ),
   );
@@ -95,8 +127,8 @@ export function Sheet({ side = "right", ...props }) {
   return h(Dialog, { side, ...props });
 }
 
-/** The title row. Its text names the dialog; `closeButton={false}` leaves out the × button and `closeLabel` renames it. */
-export function DialogHeader({ closeButton = true, closeLabel = "Close", className, children, ...props }) {
+/** The title row. Its text names the dialog and is its heading, an `h2` unless `as` says otherwise; `closeButton={false}` leaves out the × button and `closeLabel` renames it. */
+export function DialogHeader({ as = "h2", closeButton = true, closeLabel = "Close", className, children, ...props }) {
   const { titleId, close, setTitled } = useContext(DialogContext);
   useIsomorphicLayoutEffect(() => {
     setTitled(true);
@@ -105,7 +137,7 @@ export function DialogHeader({ closeButton = true, closeLabel = "Close", classNa
   return h(
     "header",
     { className: cx("sd-dialog-head", className), ...props },
-    h("span", { id: titleId }, children),
+    h(as, { id: titleId, className: "sd-dialog-title" }, children),
     closeButton && h(IconButton, { label: closeLabel, variant: "ghost", size: "sm", onClick: close }, "×"),
   );
 }
