@@ -6,6 +6,7 @@
 import { rgba } from "./theme.js";
 import { formatValue } from "./format.js";
 import { formatTime } from "./time.js";
+import { chartText, defaultLocale } from "./locale.js";
 
 const reduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 const color = (chart, name, alpha) => rgba(chart.$sd.theme.colors[name], alpha);
@@ -185,7 +186,7 @@ export const forecast = {
     ctx.font = font(chart, 10);
     ctx.textBaseline = "top";
     ctx.fillStyle = color(chart, "forecast", 0.8);
-    ctx.fillText("FORECAST", left + 6, a.top + 4);
+    ctx.fillText(chartText("forecast", {}, chart.$sd.options.text), left + 6, a.top + 4);
     ctx.restore();
   },
 };
@@ -382,11 +383,13 @@ export function timeMode(chart, event) {
 export function tooltipTitle(chart, items) {
   const x = items[0]?.raw?.x;
   if (x == null) return "";
+  const { options } = chart.$sd;
+  const locale = options.locale ?? defaultLocale();
   const bucket = chart.$sd.bucketMs / 1000;
   if (bucket && bucket <= 60) {
-    return `${formatTime(x, "MMM d, h:mm:ss")} → ${formatTime(x + bucket * 1000, "h:mm:ss")} · ${bucket}s bucket`;
+    return `${formatTime(x, "MMM d, h:mm:ss", locale)} → ${formatTime(x + bucket * 1000, "h:mm:ss", locale)} · ${chartText("bucket", { seconds: bucket }, options.text)}`;
   }
-  return formatTime(x, "MMM d, h:mm a");
+  return formatTime(x, "MMM d, h:mm a", locale);
 }
 
 export const ALL = [pointer, rhythm, forecast, ranges, selection, crosshair, panelLabels, liveEdge, valueTags, offScaleCaps];
