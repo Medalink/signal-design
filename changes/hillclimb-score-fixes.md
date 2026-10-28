@@ -1,2 +1,0 @@
-### Changed
-- `pnpm score` counts only what a user can see or reach: it skips visually hidden text, off-screen controls, controls that are already on or disabled, text links and scroll-only boxes on a phone, and schedule blocks (their size is the data). Hover counts a one-step fill change as feedback. `--components <file>` scores a branch's own snippets and usage notes, built with `SD_AI_OUT=dir node scripts/build-ai.mjs`.

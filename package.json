@@ -1,6 +1,6 @@
 {
   "name": "signal-design",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Signal: a flat, square, mono design library for Tailwind CSS v4. Works in web apps, Tauri and anything that renders HTML.",
   "license": "MIT",
   "type": "module",

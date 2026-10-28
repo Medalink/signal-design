@@ -1,2 +1,0 @@
-### Fixed
-- Ornaments no longer disturb a box's rows when the box has a row utility such as `space-y-*` or `divide-y`. In a scrolling box the sparkle layer took the utility's margin or line and pushed every row down; in a box that does not scroll it was the last child, so the real last row got a trailing margin or a stray divider. The layer is now always the box's first child and never takes a margin or border.
