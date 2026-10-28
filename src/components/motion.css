@@ -101,6 +101,10 @@
     inset: auto;
     height: 0;
     overflow: visible;
+    /* It is the scroller's first child, so a spacing utility on the scroller
+       (space-y-*, which sits in a later layer) would give it a margin and push
+       every row down. */
+    margin: 0 !important;
   }
   .sd-glints-box {
     position: absolute;
