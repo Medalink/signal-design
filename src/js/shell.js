@@ -15,6 +15,8 @@
  *
  * Fires "sd:shell" on the shell with detail { sidebar, aside, drawer, section, width }.
  */
+import { getLabel } from "./labels.js";
+
 const KEY = "sd-shell-sidebar";
 const phone = () => matchMedia("(max-width: 47.99rem)").matches;
 // Tablets keep the rail and content; the sidebar peeks in when a section is picked.
@@ -41,7 +43,7 @@ function sync(shell) {
   const collapsed = shell.dataset.sidebar === "collapsed";
   for (const b of shell.querySelectorAll('[data-sd-shell="sidebar"]')) {
     b.setAttribute("aria-expanded", String(!collapsed));
-    b.setAttribute("aria-label", collapsed ? "Pin sidebar open" : "Collapse sidebar");
+    b.setAttribute("aria-label", getLabel(collapsed ? "shell.pin" : "shell.collapse"));
   }
   for (const b of shell.querySelectorAll('[data-sd-shell="aside"]')) {
     b.setAttribute("aria-expanded", String(shell.dataset.aside === "open"));

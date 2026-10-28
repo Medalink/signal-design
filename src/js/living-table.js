@@ -1,3 +1,5 @@
+import { getLabel } from "./labels.js";
+
 const mounts = new WeakSet();
 
 /**
@@ -184,7 +186,7 @@ export function mountLivingTable(root) {
     attr(grip, "aria-valuemax", max);
     const actualWidth = root.getBoundingClientRect().width;
     attr(grip, "aria-valuenow", actualWidth);
-    attr(grip, "aria-valuetext", `${Math.round(actualWidth)} pixels wide`);
+    attr(grip, "aria-valuetext", getLabel("table.width", { value: Math.round(actualWidth) }));
     emit();
   }
   function resize({ width }) {
@@ -262,7 +264,7 @@ export function mountLivingTable(root) {
   attr(grip, "tabindex", "0");
   attr(grip, "aria-orientation", "vertical");
   attr(grip, "aria-controls", wrap.id);
-  if (!grip.hasAttribute("aria-label")) attr(grip, "aria-label", "Resize table width");
+  if (!grip.hasAttribute("aria-label")) attr(grip, "aria-label", getLabel("table.resize"));
   refresh();
   root.addEventListener("click", click);
   const handlers = { pointerdown, pointermove, pointerup: pointerend, pointercancel: pointerend, lostpointercapture: pointerend, keydown };

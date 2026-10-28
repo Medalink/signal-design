@@ -22,6 +22,40 @@ export function init(options?: {
 export function openDialog(target: string | HTMLDialogElement): HTMLDialogElement | null;
 export function closeDialog(target: string | HTMLDialogElement, returnValue?: string): HTMLDialogElement | null;
 
+/* Labels: the words Signal's JS writes into the page. English by default. */
+export type LabelKey =
+  | "copy.done"
+  | "copy.failed"
+  | "list.empty"
+  | "tags.remove"
+  | "spark.trend"
+  | "fps.value"
+  | "table.resize"
+  | "table.width"
+  | "shell.pin"
+  | "shell.collapse"
+  | "window.maximize"
+  | "window.restore"
+  | "countdown.remaining"
+  | "countdown.running"
+  | "countdown.paused"
+  | "countdown.complete"
+  | `stream.${AlertKind}.${"label" | "detail"}`;
+/** A string with `{name}` placeholders, or a function of the values (for plurals). */
+export type LabelValue = string | ((vars: Record<string, string | number>) => string);
+/** The English defaults. Read-only; `setLabels` does not change it. */
+export const DEFAULT_LABELS: Readonly<Record<LabelKey, LabelValue>>;
+/**
+ * Replace some labels, once at startup. Unknown keys throw. A value of
+ * `undefined` restores that key's English default. `data-sd-empty` and an
+ * `aria-label` on the element still win over the table.
+ * Placeholders: `tags.remove` {value}; `spark.trend` {values}; `fps.value`
+ * {value}; `table.width` {value}; `countdown.remaining` {count} {state}.
+ */
+export function setLabels(labels: { [K in LabelKey]?: LabelValue | undefined }): void;
+/** The label for `key` with placeholders filled from `vars`. */
+export function getLabel(key: LabelKey, vars?: Record<string, string | number>): string;
+
 /* Tabs, expand */
 export function selectTab(tab: HTMLElement): void;
 export function setExpanded(target: string | HTMLElement, open?: boolean): void;
