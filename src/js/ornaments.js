@@ -328,8 +328,9 @@ function layGlints(el, glints, color, style, edgeWidth) {
     layer = document.createElement("span");
     layer.className = "sd-glints";
     layer.setAttribute("aria-hidden", "true");
-    if (scroller) el.prepend(layer);
-    else el.append(layer);
+    // First, so the box's own rows keep :last-child (spacing and divider
+    // utilities key on it); motion.css strips the margin and line they give the layer.
+    el.prepend(layer);
   }
   if (style.position === "static") el.style.position = "relative";
   el.style.isolation = "isolate";

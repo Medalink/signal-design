@@ -94,6 +94,11 @@
     z-index: -1;
     overflow: hidden;
     pointer-events: none;
+    /* The layer is the box's first child, so the box's rows keep :last-child.
+       Row utilities on the box (space-y-*, divide-y-*, in a later layer) then
+       style the layer as a row; this keeps it from taking their margin or line. */
+    margin: 0 !important;
+    border: 0 !important;
   }
   .sd-glints[data-sticky] {
     position: sticky;
@@ -101,10 +106,6 @@
     inset: auto;
     height: 0;
     overflow: visible;
-    /* It is the scroller's first child, so a spacing utility on the scroller
-       (space-y-*, which sits in a later layer) would give it a margin and push
-       every row down. */
-    margin: 0 !important;
   }
   .sd-glints-box {
     position: absolute;
