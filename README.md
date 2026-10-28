@@ -1611,6 +1611,10 @@ unchanged. The order of the fields in a date and the digits do not change.
 chart made afterwards. The charts keep their own table, so they work with the
 bundled `dist/signal.js` too.
 
+**CSS.** The one word the stylesheet draws is the `muted` mark on a call tile
+(`sd-tile[data-muted]`). Set `--sd-tile-muted-label: "stumm"` on the tile or any
+ancestor to replace it.
+
 ## Page concepts
 
 The showcase is built only from library parts. `index.html` is the overview,

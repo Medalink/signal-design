@@ -180,4 +180,22 @@ export default async function checkLabels(page, where, fail) {
     return errors;
   }, urls);
   for (const error of charts) fail(where, error);
+
+  // The one word the stylesheet draws: the muted mark on a call tile.
+  const tile = await page.evaluate(() => {
+    const el = document.createElement("div");
+    el.className = "sd-tile";
+    el.dataset.muted = "";
+    el.innerHTML = '<span class="sd-tile-name">x</span>';
+    document.body.append(el);
+    const name = el.querySelector(".sd-tile-name");
+    const read = () => getComputedStyle(name, "::after").content;
+    const english = read();
+    el.style.setProperty("--sd-tile-muted-label", '"stumm"');
+    const german = read();
+    el.remove();
+    return { english, german };
+  });
+  if (tile.english !== '"muted"') fail(where, `tile muted label default: got ${tile.english}`);
+  if (tile.german !== '"stumm"') fail(where, `--sd-tile-muted-label did not apply: got ${tile.german}`);
 }
