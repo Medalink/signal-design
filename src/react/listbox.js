@@ -36,7 +36,7 @@ export const optionId = (base, matches, item) => `${base}-o${matches.indexOf(ite
  * The listbox's children: a label where the group changes, an option per item
  * and a label when nothing matches. An item with `href` is a link.
  */
-export function Options({ base, matches, active, chosen, emptyText, busy, onPick, onActive }) {
+export function Options({ base, matches, active, chosen, emptyText, busy, busyText = "Loading", onPick, onActive }) {
   let group;
   const rows = matches.flatMap((item) => {
     const heading = item.group && item.group !== group ? h("div", { key: `group-${item.group}`, className: "sd-menu-label", role: "presentation" }, item.group) : null;
@@ -56,7 +56,7 @@ export function Options({ base, matches, active, chosen, emptyText, busy, onPick
     const option = item.href !== undefined ? h("a", { ...props, href: item.href }, content) : h("button", { ...props, type: "button" }, content);
     return heading ? [heading, option] : [option];
   });
-  if (!matches.length) rows.push(h("p", { key: "empty", className: "sd-menu-label", role: "presentation" }, busy ? "Loading" : emptyText));
+  if (!matches.length) rows.push(h("p", { key: "empty", className: "sd-menu-label", role: "presentation" }, busy ? busyText : emptyText));
   return h(Fragment, null, rows);
 }
 

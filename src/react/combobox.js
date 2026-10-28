@@ -24,6 +24,7 @@ export function Combobox({
   filter,
   busy,
   emptyText = "No matches",
+  busyText = "Loading",
   listLabel = "Suggestions",
   name,
   className,
@@ -116,7 +117,7 @@ export function Combobox({
         // A press on the list must not take focus from the input, or the blur would close it first.
         onMouseDown: (event) => event.preventDefault(),
       },
-      isOpen && h(Options, { base, matches, active, chosen, emptyText, busy, onPick: pick, onActive: setActive }),
+      isOpen && h(Options, { base, matches, active, chosen, emptyText, busy, busyText, onPick: pick, onActive: setActive }),
     ),
   );
 }
