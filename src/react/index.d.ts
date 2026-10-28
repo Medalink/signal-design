@@ -211,11 +211,12 @@ export function WeightedBar(props: WeightedBarProps): ReactElement;
 /* ---- Dialog and sheet -------------------------------------------------- */
 
 /**
- * A dialog opens with focus on the element inside it that has `autoFocus` or
- * `data-autofocus`, every time it opens, whether it mounts open, opens later or
- * remounts under `unmountOnClose`. Mark one element: with several, which one wins is not defined. `Button`, `IconButton`, `Input`, `Textarea`,
- * `Select`, `Checkbox`, `Switch` and `Combobox` take `autoFocus` and add `data-autofocus` for you;
- * on your own element write `autoFocus` (a native field) or `data-autofocus`.
+ * A dialog opens with focus on the element inside it that has `data-autofocus`, every time it opens,
+ * whether it mounts open, opens later or remounts under `unmountOnClose`. Mark one element: with several,
+ * which one wins is not defined. `Button`, `IconButton`, `Input`, `Textarea`, `Select`, `Checkbox`,
+ * `Switch` and `Combobox` take `autoFocus` and add `data-autofocus` for you. A native `autoFocus` field of
+ * your own gets focus when it mounts with the dialog open, including each time `unmountOnClose` mounts it
+ * again; in a dialog that stays mounted and opens later, write `data-autofocus` on it.
  * With neither, the browser focuses the first focusable element.
  */
 export interface DialogProps extends Omit<ComponentProps<"dialog">, "open"> {

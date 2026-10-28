@@ -4,7 +4,13 @@
  * backdrop on their own, a disabled bare switch, tooltips that share the page,
  * and a second right-click. Called from checkReact in check-react.mjs:
  *   checkReactOverlays(page, base) -> { errors, passed }
+ * Run alone, in each engine with its pass count and time:
+ *   node scripts/check-react-overlays.mjs http://localhost:5194/ [--engine chromium|webkit]
  */
+import { readFileSync } from "node:fs";
+import { fileURLToPath, pathToFileURL } from "node:url";
+
+const dialogSource = readFileSync(fileURLToPath(new URL("../src/js/dialog.js", import.meta.url)), "utf8");
 
 export async function checkReactOverlays(page, base) {
   const errors = [];
@@ -111,42 +117,86 @@ export async function checkReactOverlays(page, base) {
   // Each way of switching them, and what each one leaves open. A dialog that refuses is pressed twice, because a
   // browser may close a dialog on a second Escape that nothing has answered.
   const pause = (ms) => page.waitForTimeout(ms);
-  for (const [name, escape, backdrop] of [
-    ["Escape only", true, false],
-    ["Backdrop only", false, true],
-    ["Neither", false, false],
-    ["Static with Escape", true, false],
-    ["Static with backdrop", false, true],
-  ]) {
-    const sel = `dialog[aria-label="${name}"]`;
-    const isOpen = () => page.evaluate((s) => document.querySelector(s).open, sel);
-    const opened = async () => {
-      await open("#react-dialog-options", name);
-      return until((s) => document.querySelector(s).open, sel);
-    };
-    expect(await opened(), `${name} opens`);
-    await page.keyboard.press("Escape");
-    if (escape) expect(await until((s) => !document.querySelector(s).open, sel), `${name}: Escape closes it`);
-    else {
-      await pause(250);
-      expect(await isOpen(), `${name}: Escape leaves it open`);
+  const dismissals = async (pass) => {
+    for (const [name, escape, backdrop] of [
+      ["Escape only", true, false],
+      ["Backdrop only", false, true],
+      ["Neither", false, false],
+      ["Static with Escape", true, false],
+      ["Static with backdrop", false, true],
+    ]) {
+      const sel = `dialog[aria-label="${name}"]`;
+      const isOpen = () => page.evaluate((s) => document.querySelector(s).open, sel);
+      const opened = async () => {
+        await open("#react-dialog-options", name);
+        return until((s) => document.querySelector(s).open, sel);
+      };
+      expect(await opened(), `${pass}${name} opens`);
       await page.keyboard.press("Escape");
-      await pause(250);
-      expect(await isOpen(), `${name}: a second Escape leaves it open`);
-    }
-    if (!await isOpen()) await opened();
-    await page.mouse.click(4, 4);
-    if (backdrop) expect(await until((s) => !document.querySelector(s).open, sel), `${name}: a click on the backdrop closes it`);
-    else {
-      await pause(250);
-      const stayed = await isOpen();
-      expect(stayed, `${name}: a click on the backdrop leaves it open`);
-      if (stayed) {
-        await page.locator(sel).getByRole("button", { name: "Done" }).click();
-        expect(await until((s) => !document.querySelector(s).open, sel), `${name}: its own button still closes it`);
+      if (escape) expect(await until((s) => !document.querySelector(s).open, sel), `${pass}${name}: Escape closes it`);
+      else {
+        await pause(250);
+        expect(await isOpen(), `${pass}${name}: Escape leaves it open`);
+        await page.keyboard.press("Escape");
+        await pause(250);
+        expect(await isOpen(), `${pass}${name}: a second Escape leaves it open`);
       }
+      if (!await isOpen()) await opened();
+      await page.mouse.click(4, 4);
+      if (backdrop) expect(await until((s) => !document.querySelector(s).open, sel), `${pass}${name}: a click on the backdrop closes it`);
+      else {
+        await pause(250);
+        const stayed = await isOpen();
+        expect(stayed, `${pass}${name}: a click on the backdrop leaves it open`);
+        if (stayed) {
+          await page.locator(sel).getByRole("button", { name: "Done" }).click();
+          expect(await until((s) => !document.querySelector(s).open, sel), `${pass}${name}: its own button still closes it`);
+        }
+      }
+      await shut();
     }
-    await shut();
+  };
+  await dismissals("");
+
+  // The same dialogs on a page that also runs init(): its document handlers read data-sd-static, and must leave
+  // open what the dialog's own props leave open. This loads src/js/dialog.js and wires them as src/js/index.js does.
+  await page.addScriptTag({ type: "module", content: `${dialogSource}
+window.__sdDialog = { onDialogClick, onDialogKeydown };` });
+  await page.waitForFunction(() => window.__sdDialog);
+  await page.evaluate(() => {
+    document.addEventListener("click", window.__sdDialog.onDialogClick);
+    document.addEventListener("keydown", window.__sdDialog.onDialogKeydown);
+  });
+  try {
+    await dismissals("with init(): ");
+    // The handlers on their own, on a dialog that is not React's: what each value of data-sd-static leaves open.
+    const bare = await page.evaluate(() => {
+      const out = {};
+      for (const value of [undefined, "", "escape", "backdrop"]) {
+        const dialog = document.createElement("dialog");
+        if (value !== undefined) dialog.dataset.sdStatic = value;
+        dialog.innerHTML = "<button>x</button>";
+        document.body.append(dialog);
+        dialog.showModal();
+        dialog.querySelector("button").dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
+        const escape = !dialog.open;
+        if (!dialog.open) dialog.showModal();
+        dialog.dispatchEvent(new MouseEvent("click", { bubbles: true, clientX: 2, clientY: 2 }));
+        out[String(value)] = { escape, backdrop: !dialog.open };
+        dialog.close();
+        dialog.remove();
+      }
+      return out;
+    });
+    for (const [value, escape, backdrop] of [["undefined", true, true], ["", false, false], ["escape", false, true], ["backdrop", true, false]]) {
+      expect(bare[value].escape === escape, `data-sd-static=${JSON.stringify(value)}: the init() handler ${escape ? "closes" : "leaves open"} a dialog on Escape, got ${JSON.stringify(bare[value])}`);
+      expect(bare[value].backdrop === backdrop, `data-sd-static=${JSON.stringify(value)}: the init() handler ${backdrop ? "closes" : "leaves open"} a dialog on a backdrop click, got ${JSON.stringify(bare[value])}`);
+    }
+  } finally {
+    await page.evaluate(() => {
+      document.removeEventListener("click", window.__sdDialog.onDialogClick);
+      document.removeEventListener("keydown", window.__sdDialog.onDialogKeydown);
+    });
   }
 
   /* ---- Tooltips share the page ---- */
@@ -194,16 +244,32 @@ export async function checkReactOverlays(page, base) {
   await pause(250);
   expect((await tipsNow()).length === 0, "after the warm window a hover waits for the delay again");
 
-  // Escape forgets the warm window: the next trigger is cold. (Passes without it too; it guards the reset.)
   await cold();
   await trigger("First").focus();
   expect(await shows("First tip", 450), "keyboard focus shows the tip without the delay");
   await page.keyboard.press("Escape");
   expect(await gone(), "Escape hides the tip");
-  await hoverOn(trigger("Second"));
-  await pause(250);
-  expect((await tipsNow()).length === 0, "after Escape the next trigger waits its delay");
   await trigger("First").blur();
+
+  // Escape forgets the warm window. First's tip closes as the pointer leaves, which opens the window for 300 ms; focus
+  // then shows Second's tip, and Escape closes it. Without the reset in `dismiss` the window is still open, so the
+  // pointer reaching Second shows its tip at once; with it, Second waits its delay. The window is what makes this able
+  // to fail, so the steps are timed and a run too slow to keep inside it fails instead of passing for nothing.
+  await cold();
+  await hoverOn(trigger("First"));
+  expect(await shows("First tip", 2500), "a hover from cold shows its tip, so leaving it opens the warm window");
+  const target = await trigger("Second").boundingBox();
+  const clock = () => page.evaluate(() => performance.now());
+  const began = await clock();
+  await away();
+  await trigger("Second").focus();
+  await page.keyboard.press("Escape");
+  await page.mouse.move(target.x + target.width / 2, target.y + target.height / 2);
+  const spent = (await clock()) - began;
+  await pause(250);
+  expect(spent < 280, `the steps fit inside the 300 ms warm window, took ${Math.round(spent)} ms`);
+  expect((await tipsNow()).length === 0, `after Escape closed a tip the next trigger waits its delay even inside the warm window, got ${JSON.stringify(await tipsNow())}`);
+  await trigger("Second").blur();
 
   // At delay 0 too: a tip opened by focus gives way to the one the pointer opens, even in another demo.
   await cold();
@@ -316,4 +382,30 @@ export async function checkReactOverlays(page, base) {
 
   expect(browserErrors.length === 0, `console errors: ${browserErrors.join(" | ")}`);
   return { errors, passed };
+}
+
+if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) {
+  const { chromium, webkit } = await import("playwright");
+  const args = process.argv.slice(2);
+  const base = args.find((arg) => /^https?:/.test(arg));
+  const only = args.includes("--engine") ? args[args.indexOf("--engine") + 1] : null;
+  if (!base || (only && !["chromium", "webkit"].includes(only))) {
+    console.error("usage: node scripts/check-react-overlays.mjs http://localhost:5194/ [--engine chromium|webkit]");
+    process.exit(2);
+  }
+  let failed = 0;
+  for (const [name, engine] of Object.entries({ chromium, webkit })) {
+    if (only && only !== name) continue;
+    const started = performance.now();
+    const browser = await engine.launch();
+    try {
+      const { errors, passed } = await checkReactOverlays(await browser.newPage(), base.endsWith("/") ? base : `${base}/`);
+      console.log(`${name}: ${passed} passed, ${errors.length} failed in ${((performance.now() - started) / 1000).toFixed(1)}s`);
+      for (const error of errors) console.log(`  FAIL ${error}`);
+      failed += errors.length;
+    } finally {
+      await browser.close();
+    }
+  }
+  process.exit(failed ? 1 : 0);
 }

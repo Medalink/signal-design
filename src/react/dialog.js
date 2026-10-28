@@ -18,40 +18,45 @@ function hasHeader(children) {
   return Children.toArray(children).some((child) => isValidElement(child) && (child.type === DialogHeader || (child.type === Fragment && hasHeader(child.props.children))));
 }
 
-/** Open the dialog, then focus what has `data-autofocus`: `showModal()` knows only the native `autofocus`, which React does not write. */
+/** Open the dialog, then focus the first `data-autofocus` that is its own: `showModal()` knows only the native `autofocus`, which React does not write. */
 function reveal(dialog) {
   openDialog(dialog);
-  dialog.querySelector("[data-autofocus]")?.focus();
+  [...dialog.querySelectorAll("[data-autofocus]")].find((mark) => mark.closest("dialog") === dialog)?.focus();
 }
 
 /**
  * The first child of the dialog. React focuses an `autoFocus` field as it mounts, which a closed dialog
- * cannot take, so this opens the dialog in the same commit, before the children after it mount. It finds
- * the dialog by id because the dialog's ref is set after its children's effects have run.
+ * cannot take, so this opens the dialog in the same commit, before the children after it mount. The
+ * dialog's ref is set after its children's effects have run, so it is there for every opening after the
+ * first commit; only a dialog that mounts open is found by its id.
  */
-function Opener({ open, id }) {
+function Opener({ open, id, node }) {
   useIsomorphicLayoutEffect(() => {
-    const dialog = document.getElementById(id);
+    const dialog = node.current ?? document.getElementById(id);
     if (open && dialog && !dialog.open) reveal(dialog);
-  }, [open, id]);
+  }, [open, id, node]);
   return null;
 }
 
-export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size, side, static: isStatic, closeOnEscape, closeOnBackdrop, unmountOnClose, className, children, ref, onClose, onCancel, onClick, ...props }) {
+export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size, side, static: isStatic, id: idProp, closeOnEscape, closeOnBackdrop, unmountOnClose, className, children, ref, onClose, onCancel, onClick, ...props }) {
   const [isOpen, setOpen] = useControllable(open, defaultOpen, onOpenChange);
   const titleId = useId();
   const generated = useId();
-  const id = props.id ?? generated;
+  const id = idProp ?? generated;
   const node = useRef(null);
   const [, rerender] = useReducer((n) => n + 1, 0);
   const [titled, setTitled] = useState(false);
   const [present, setPresent] = useState(isOpen);
+  const wasOpen = useRef(false);
+  // Stable, so React leaves it attached between renders: the Opener reads it before a new ref would be set.
+  const setNode = useMemo(() => mergeRefs(node, ref), [ref]);
 
-  // Run after every render: a parent that refuses a close gets the dialog put back.
+  // Run after every render: a parent that refuses a close gets the dialog put back, with focus where it was.
   useIsomorphicLayoutEffect(() => {
     const dialog = node.current;
-    if (isOpen && !dialog.open) reveal(dialog);
+    if (isOpen && !dialog.open) (wasOpen.current ? openDialog : reveal)(dialog);
     else if (!isOpen && dialog.open) closeDialog(dialog);
+    wasOpen.current = isOpen;
   });
 
   // Closing keeps the children until the fade has run, so the box does not empty while it fades.
@@ -86,9 +91,10 @@ export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size,
         id,
         "aria-labelledby": named && props["aria-label"] === undefined ? titleId : undefined,
         ...props,
-        ref: mergeRefs(node, ref),
+        ref: setNode,
         className: cx("sd-dialog", size && `sd-dialog-${size}`, side && "sd-sheet", side === "left" && "sd-sheet-left", side === "bottom" && "sd-sheet-bottom", className),
-        "data-sd-static": !escapeCloses && !backdropCloses ? "" : undefined,
+        // The vanilla handlers read this: empty switches both off, a name only that one.
+        "data-sd-static": !escapeCloses ? (backdropCloses ? "escape" : "") : backdropCloses ? undefined : "backdrop",
         onClose: (event) => {
           onClose?.(event);
           setOpen(false);
@@ -108,7 +114,7 @@ export function Dialog({ open, defaultOpen = false, onOpenChange, trigger, size,
           if (!inside) setOpen(false);
         },
       },
-      h(Opener, { open: isOpen, id }),
+      h(Opener, { open: isOpen, id, node }),
       mounted ? children : null,
     ),
   );

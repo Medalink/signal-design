@@ -63,7 +63,14 @@ export function Tooltip({ content, side = "top", delay = 0, closeDelay = 0, clas
       if (shared.tip === mine) shared.tip = null;
     };
   }, [visible]);
-  useEffect(() => stop, []);
+  // A tooltip that unmounts leaves nothing behind that holds it.
+  useEffect(
+    () => () => {
+      stop();
+      if (shared.from === me.current) shared.from = null;
+    },
+    [],
+  );
 
   const show = (hold = 0) => {
     stop();

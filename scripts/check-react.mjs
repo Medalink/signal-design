@@ -319,6 +319,9 @@ export async function checkReactSsr() {
           h(sd.Dialog, { static: true, "aria-label": "Static" }),
           h(sd.Dialog, { static: true, closeOnEscape: true, "aria-label": "Escape kept" }),
           h(sd.Dialog, { closeOnEscape: false, closeOnBackdrop: false, "aria-label": "Both off" }),
+          h(sd.Dialog, { closeOnEscape: false, "aria-label": "Escape off" }),
+          h(sd.Dialog, { closeOnBackdrop: false, "aria-label": "Backdrop off" }),
+          h(sd.Dialog, { id: undefined, "aria-label": "Undefined id" }),
           h(sd.Dialog, { defaultOpen: true, "aria-label": "Quick note", unmountOnClose: true }, h(sd.DialogBody, null, "bare")),
           h(sd.Dialog, { "aria-label": "Quick note", unmountOnClose: true }, h(sd.DialogBody, null, "unmounted while closed")),
           h(sd.Popover, null, h(sd.PopoverTrigger, null, h(sd.Button, null, "p")), h(sd.PopoverContent, { pad: true }, "pop")),
@@ -387,10 +390,13 @@ export async function checkReactSsr() {
   assert.ok(plain.includes('<dialog aria-label="Quick note" class="sd-dialog"><div class="sd-dialog-body">bare</div></dialog>'), "a dialog named by aria-label has an aria-labelledby on the server");
   assert.ok(plain.includes('<dialog aria-label="Quick note" class="sd-dialog"></dialog>'), "a closed dialog that unmounts on close is not empty");
   assert.ok(plain.includes('<dialog aria-label="Label wins" class="sd-dialog"><header'), "an aria-label wins over the header's aria-labelledby on the server");
-  assert.ok(plain.includes('<dialog class="sd-dialog"></dialog>'), "a closed dialog that unmounts its header has no aria-labelledby and no children");
+  assert.ok(plain.includes('<dialog class="sd-dialog"></dialog>'), "a closed dialog that unmounts its header still has an aria-labelledby or children");
   assert.ok(plain.includes('<dialog aria-label="Static" class="sd-dialog" data-sd-static=""'), "a static dialog lost data-sd-static");
   assert.ok(plain.includes('<dialog aria-label="Both off" class="sd-dialog" data-sd-static=""'), "a dialog with Escape and the backdrop both off lacks data-sd-static");
-  assert.ok(plain.includes('<dialog aria-label="Escape kept" class="sd-dialog"') && !plain.includes('aria-label="Escape kept" class="sd-dialog" data-sd-static'), "a static dialog that keeps Escape is marked static for both");
+  assert.ok(plain.includes('<dialog aria-label="Escape kept" class="sd-dialog" data-sd-static="backdrop"'), "a static dialog that keeps Escape is not marked as switching off the backdrop only");
+  assert.ok(plain.includes('<dialog aria-label="Escape off" class="sd-dialog" data-sd-static="escape"'), "a dialog with only Escape off is not marked data-sd-static=\"escape\"");
+  assert.ok(plain.includes('<dialog aria-label="Backdrop off" class="sd-dialog" data-sd-static="backdrop"'), "a dialog with only the backdrop off is not marked data-sd-static=\"backdrop\"");
+  assert.ok(plain.includes('<dialog aria-label="Undefined id" class="sd-dialog"></dialog>'), "an explicit id={undefined} did not fall back to the generated id");
   assert.ok(!/closeonescape|closeonbackdrop/i.test(html), "closeOnEscape or closeOnBackdrop reached the DOM");
   assert.ok(!html.includes("Unmounted header"), "a closed dialog that unmounts on close rendered its header");
   assert.ok(!html.includes('<span class="sd-check-desc"></span>'), "a description that draws nothing (an empty array or fragment) rendered an empty description span");

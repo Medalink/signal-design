@@ -864,7 +864,7 @@ const off = hotkeys({ j: next, k: prev, "shift+n": newest, "mod+k": search });
 
 | Attribute | Does |
 |---|---|
-| `data-sd-open="id"`, `data-sd-close` | Open a `<dialog>` as modal; close the nearest one. Backdrop click closes unless `data-sd-static`. |
+| `data-sd-open="id"`, `data-sd-close` | Open a `<dialog>` as modal; close the nearest one. Escape and a backdrop click close it unless `data-sd-static` (empty: both off; `data-sd-static="escape"` or `"backdrop"`: only that one off). |
 | `popovertarget` + `.sd-popover` | Place the popover next to its trigger and flip at edges. In `role="menu"`: arrows, Home/End, type to jump. |
 | `role="tab"` | Select tabs and panels, arrow keys, roving focus. |
 | `data-sd-toggle="id"` | Open and close an `.sd-expand`, keep `aria-expanded` in sync. |
@@ -1071,7 +1071,8 @@ own the piece and copy its events into your state:
 - `[popovertarget]` with a `[popover].sd-popover`: positions the popover
   (inline `style`, `data-side`), sets `aria-expanded` on the invoker, and
   closes the popover when a `menuitem` or `option` in it is clicked.
-- `<dialog open>`: Escape closes it unless it has `data-sd-static`.
+- `<dialog open>`: Escape closes it unless it has `data-sd-static` or
+  `data-sd-static="escape"`.
 - `.sd-table-wrap`, `.sd-code > pre`, `pre.sd-diff`, `.sd-statusbar`: get
   `tabindex="0"` when they overflow and `data-sd-scrolling` while they
   scroll. `<html>` gets `data-sd-scrollbars` and `data-sd-scrolling-page`.
@@ -1151,7 +1152,10 @@ What they take over from `init()`:
   click closes it. `static` turns off both Escape and the backdrop;
   `closeOnEscape={false}` or `closeOnBackdrop={false}` turns off just one, and
   set to `true` with `static` turns that one back on, so `static closeOnEscape`
-  keeps Escape and ignores the backdrop. A `Sheet`
+  keeps Escape and ignores the backdrop. The `<dialog>` carries what is off in
+  `data-sd-static` (empty for both, `"escape"` or `"backdrop"` for one), which
+  the handlers of `init()` read, so a page that runs `init()` beside a React
+  `Dialog` keeps it open the same way. A `Sheet`
   is pinned to the right, or to the left with `side="left"` or the bottom with
   `side="bottom"` (the full width, as tall as its content up to 85% of the
   screen, `--sheet-max`). `DialogHeader` names its × button `Close`; give
@@ -1164,14 +1168,16 @@ What they take over from `init()`:
   Server output carries the name when the `DialogHeader` is a child of the
   `Dialog` or in a fragment there; a header inside a component of your own
   names it once the page has hydrated.
-  A dialog opens with focus on the element inside it that has `autoFocus` or
-  `data-autofocus`, each time it opens: mounted open, opened later, or
-  remounted by `unmountOnClose`. Mark one element; with several, which one
-  wins is not defined. `Button`, `IconButton`, `Input`,
-  `Textarea`, `Select`, `Combobox`, `Checkbox` and `Switch` take `autoFocus`
-  and write `data-autofocus` for you; on an element of your own use a native
-  `autoFocus` or `data-autofocus`. With neither, the browser focuses the first
-  focusable element, as it does for any `<dialog>`.
+  A dialog opens with focus on the element inside it that has `data-autofocus`,
+  each time it opens: mounted open, opened later, or remounted by
+  `unmountOnClose`. Mark one element; with several, which one wins is not
+  defined. `Button`, `IconButton`, `Input`, `Textarea`, `Select`, `Combobox`,
+  `Checkbox` and `Switch` take `autoFocus` and write `data-autofocus` for you.
+  A native `<input autoFocus>` of your own gets focus when it mounts with the
+  dialog open, including each time `unmountOnClose` mounts it again; in a
+  dialog that stays mounted and opens later, write `data-autofocus` on it. With
+  neither, the browser focuses the first focusable element, as it does for any
+  `<dialog>`.
   Children stay mounted while the dialog is closed. `unmountOnClose` mounts
   them only while it is open and drops them after the fade-out, so state inside
   starts fresh each time.
