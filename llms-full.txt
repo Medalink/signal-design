@@ -2971,7 +2971,7 @@ setTheme("paper");                        // ink | graphite | paper | auto</code
   <table class="sd-table">
     <thead><tr><th>Attribute</th><th>Does</th></tr></thead>
     <tbody>
-      <tr><td><code>data-sd-open="id"</code> · <code>data-sd-close</code></td><td>Opens a dialog as modal; closes the nearest dialog. Backdrop click closes unless <code>data-sd-static</code>.</td></tr>
+      <tr><td><code>data-sd-open="id"</code> · <code>data-sd-close</code></td><td>Opens a dialog as modal; closes the nearest dialog. Escape and a backdrop click close it unless <code>data-sd-static</code> (<code>data-sd-static="escape"</code> or <code>"backdrop"</code> switches off only that one).</td></tr>
       <tr><td><code>popovertarget</code> + <code>.sd-popover</code></td><td>Places the popover next to its trigger, flips at edges, keyboard for menus.</td></tr>
       <tr><td><code>role="tab"</code></td><td>Selects tabs and panels, arrow keys, roving focus.</td></tr>
       <tr><td><code>data-sd-toggle="id"</code></td><td>Opens and closes an <code>.sd-expand</code>, keeps <code>aria-expanded</code> in sync.</td></tr>

@@ -31,7 +31,7 @@
   },
   {
    "name": "data-sd-static",
-   "description": "On a dialog: a backdrop click does not close it."
+   "description": "On a dialog: Escape and a backdrop click do not close it. data-sd-static=\"escape\" or \"backdrop\" switches off only that one."
   },
   {
    "name": "data-sd-toggle",
