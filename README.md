@@ -1164,9 +1164,10 @@ What they take over from `init()`:
   Server output carries the name when the `DialogHeader` is a child of the
   `Dialog` or in a fragment there; a header inside a component of your own
   names it once the page has hydrated.
-  A dialog opens with focus on the first element inside it that has
-  `autoFocus` or `data-autofocus`, each time it opens: mounted open, opened
-  later, or remounted by `unmountOnClose`. `Button`, `IconButton`, `Input`,
+  A dialog opens with focus on the element inside it that has `autoFocus` or
+  `data-autofocus`, each time it opens: mounted open, opened later, or
+  remounted by `unmountOnClose`. Mark one element; with several, which one
+  wins is not defined. `Button`, `IconButton`, `Input`,
   `Textarea`, `Select`, `Combobox`, `Checkbox` and `Switch` take `autoFocus`
   and write `data-autofocus` for you; on an element of your own use a native
   `autoFocus` or `data-autofocus`. With neither, the browser focuses the first
@@ -1222,7 +1223,8 @@ What they take over from `init()`:
   leaves. The tip then takes the pointer, so it can be reached and read; it
   closes `closeDelay` after the pointer leaves the tip, and coming back to the
   trigger or the tip keeps it. Without `closeDelay` the tip goes as the pointer
-  leaves and takes no pointer.
+  leaves and takes no pointer. Over an open modal `Dialog` the tip is inert,
+  like a toast there: it lingers, but the pointer cannot reach it.
   `className` is added to the tip beside `sd-tooltip`. `onOpenChange(open)`
   reports each show and hide, including Escape and blur.
 - **AppShell** renders `data-sidebar`, `data-aside`, `data-drawer` and

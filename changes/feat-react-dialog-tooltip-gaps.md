@@ -1,7 +1,7 @@
 ### Added
 - React `Dialog` props `closeOnEscape` and `closeOnBackdrop` (default true) switch Escape and a backdrop click on their own. `static` is still the shorthand for both off, and either prop set to `true` turns its own way back on. `CommandPaletteProps` omits both, as it does `static`.
 
-- React `Tooltip` prop `closeDelay` (milliseconds, default 0): the tip stays after the pointer leaves the trigger, takes the pointer so it can be reached and read (`.sd-tooltip[data-hoverable]` has `pointer-events: auto`), and closes `closeDelay` after the pointer leaves the tip. Coming back to the trigger or the tip keeps it. Without it nothing changes.
+- React `Tooltip` prop `closeDelay` (milliseconds, default 0): the tip stays after the pointer leaves the trigger, takes the pointer so it can be reached and read (`.sd-tooltip[data-hoverable]` has `pointer-events: auto`), and closes `closeDelay` after the pointer leaves the tip. Coming back to the trigger or the tip keeps it. Over an open modal `Dialog` the tip is inert, as a toast there is, so it lingers but the pointer cannot reach it. Without it nothing changes.
 - React `Tooltip` warm window: a different trigger the pointer reaches while a tip is open, or within 300 ms of one closing, shows its tip at once and skips its `delay`. With no `delay` nothing changes. The trigger a tip just closed on, and any trigger after Escape, blur or a press elsewhere closed the tip, still waits.
 
 ### Changed
@@ -10,5 +10,5 @@
 - React `Dialog` always writes an `id` on its `<dialog>`: the one you pass, or a generated one.
 
 ### Fixed
-- `autoFocus` now works inside a React `Dialog`. React focuses an `autoFocus` field as it mounts, which a closed `<dialog>` cannot take, so the browser fell back to the first focusable element. A dialog now opens with focus on the first element inside it that has `autoFocus` or `data-autofocus`, whether it mounts open, opens later, or remounts under `unmountOnClose`. `Button`, `IconButton`, `Input`, `Textarea`, `Select`, `Combobox`, `Checkbox` and `Switch` write `data-autofocus` when given `autoFocus`; with neither attribute the browser's default holds.
+- `autoFocus` now works inside a React `Dialog`. React focuses an `autoFocus` field as it mounts, which a closed `<dialog>` cannot take, so the browser fell back to the first focusable element. A dialog now opens with focus on the element inside it that has `autoFocus` or `data-autofocus` (mark one), whether it mounts open, opens later, or remounts under `unmountOnClose`. `Button`, `IconButton`, `Input`, `Textarea`, `Select`, `Combobox`, `Checkbox` and `Switch` write `data-autofocus` when given `autoFocus`; with neither attribute the browser's default holds.
 - A disabled `sd-check` (Checkbox, Radio and Switch, with a label or without) is faded once, to half opacity, by the label around it. The control's own disabled fade used to stack on that, so the control showed at one fifth opacity beside text at one half, and a bare switch with no text was nearly invisible. The control now matches its text. Anyone who relied on the fainter look can set `.sd-check > input:disabled { opacity: 0.4 }`.

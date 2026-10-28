@@ -211,9 +211,9 @@ export function WeightedBar(props: WeightedBarProps): ReactElement;
 /* ---- Dialog and sheet -------------------------------------------------- */
 
 /**
- * A dialog opens with focus on the first thing inside it that has `autoFocus` or
+ * A dialog opens with focus on the element inside it that has `autoFocus` or
  * `data-autofocus`, every time it opens, whether it mounts open, opens later or
- * remounts under `unmountOnClose`. `Button`, `IconButton`, `Input`, `Textarea`,
+ * remounts under `unmountOnClose`. Mark one element: with several, which one wins is not defined. `Button`, `IconButton`, `Input`, `Textarea`,
  * `Select`, `Checkbox`, `Switch` and `Combobox` take `autoFocus` and add `data-autofocus` for you;
  * on your own element write `autoFocus` (a native field) or `data-autofocus`.
  * With neither, the browser focuses the first focusable element.
@@ -381,6 +381,7 @@ export interface TooltipProps {
    * Milliseconds the tip stays after the pointer leaves the trigger. The tip also takes the pointer, so it can be
    * reached and read, and it closes that long after the pointer leaves the tip. Coming back to the trigger keeps it.
    * Escape, blur and a press elsewhere close it at once. Default 0: the tip goes as the pointer leaves and takes no pointer.
+   * Over an open modal `Dialog` the tip is inert, as a toast is: it lingers, but the pointer cannot reach it.
    */
   closeDelay?: number | undefined;
   /** Added to the tip's `sd-tooltip` class. */
