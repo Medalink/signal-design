@@ -249,7 +249,7 @@ export function TreeItem({ id, label, icon, meta, actions, disabled, className, 
                 tabIndex: -1,
                 className: "sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm",
                 "data-tone": action.tone,
-                title: `${action.label} (${action.key})`,
+                title: action.title ?? `${action.label} (${action.key})`,
                 onMouseDown: (event) => event.preventDefault(),
                 onClick: (event) => {
                   event.stopPropagation();

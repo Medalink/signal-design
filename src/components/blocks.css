@@ -519,7 +519,7 @@
     box-shadow: inset 0 0 0 1px var(--sd-success);
   }
   .sd-tile[data-muted] .sd-tile-name::after {
-    content: "muted";
+    content: var(--sd-tile-muted-label, "muted");
     margin-inline-start: auto;
     color: var(--sd-fg-subtle);
     font-size: var(--text-2xs);

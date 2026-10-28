@@ -17,14 +17,22 @@
  *
  * Bursts are flat squares in the alert's tone. prefers-reduced-motion turns
  * the burst off and the card cuts in and out.
+ *
+ * The default label and detail of each kind are in the labels table
+ * (`stream.<kind>.label`, `stream.<kind>.detail`); `setLabels` changes them.
+ * A label in the alert itself wins, then one set with `setLabels`, then the
+ * kind's own (which a custom kind in ALERT_KINDS supplies).
  */
+import { DEFAULT_LABELS, customLabel } from "./labels.js";
+
+const text = (kind, field) => DEFAULT_LABELS[`stream.${kind}.${field}`];
 
 /** What each kind means, in Signal tones. */
 export const ALERT_KINDS = {
-  follow: { tone: "extra", label: "New follower", detail: "Welcome to the stream" },
-  sub: { tone: "success", label: "New sub", detail: "Thanks for the sub" },
-  raid: { tone: "accent", label: "Raid", detail: "Incoming raid", size: "big" },
-  bits: { tone: "warning", label: "Bits", detail: "Thanks for the bits" },
+  follow: { tone: "extra", label: text("follow", "label"), detail: text("follow", "detail") },
+  sub: { tone: "success", label: text("sub", "label"), detail: text("sub", "detail") },
+  raid: { tone: "accent", label: text("raid", "label"), detail: text("raid", "detail"), size: "big" },
+  bits: { tone: "warning", label: text("bits", "label"), detail: text("bits", "detail") },
 };
 
 const reduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -155,10 +163,10 @@ export function mountStream(scene, { hold = 4500, burst = true } = {}) {
     card.dataset.tone = tone;
     if (alert.size ?? kind.size) card.dataset.size = alert.size ?? kind.size;
     else delete card.dataset.size;
-    card.querySelector(".sd-stream-alert-kind").textContent = alert.label ?? kind.label ?? "";
+    card.querySelector(".sd-stream-alert-kind").textContent = alert.label ?? customLabel(`stream.${alert.kind}.label`) ?? kind.label ?? "";
     card.querySelector(".sd-stream-alert-name").textContent = alert.name ?? "";
     const detail = card.querySelector(".sd-stream-alert-detail");
-    if (detail) detail.textContent = alert.detail ?? kind.detail ?? "";
+    if (detail) detail.textContent = alert.detail ?? customLabel(`stream.${alert.kind}.detail`) ?? kind.detail ?? "";
     card.hidden = false;
     delete card.dataset.state;
     void card.offsetWidth;

@@ -24,6 +24,7 @@ export function CommandPalette({
   filter,
   busy,
   emptyText = "No matches",
+  busyText = "Loading",
   label = "Search",
   placeholder,
   listLabel = "Results",
@@ -91,7 +92,7 @@ export function CommandPalette({
         // A press on the list must not take focus from the search box.
         onMouseDown: (event) => event.preventDefault(),
       },
-      isOpen && h(Options, { base, matches, active, emptyText, busy, onPick: pick, onActive: setActive }),
+      isOpen && h(Options, { base, matches, active, emptyText, busy, busyText, onPick: pick, onActive: setActive }),
     ),
     foot && h("p", { className: "sd-command-foot" }, foot),
   );

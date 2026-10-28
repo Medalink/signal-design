@@ -25,6 +25,7 @@ import { formatValue, formatDelta } from "./format.js";
 import { SCALE_MODES, scaleBounds, smooth, envelope, bursts, significance, flowRate, upsertTail } from "./data.js";
 import { createSymlogScale } from "./scales.js";
 import { timeAdapter, formatTime } from "./time.js";
+import { chartText, defaultLocale, rangeText } from "./locale.js";
 import { readTheme, rgba, mix, kindOf } from "./theme.js";
 import * as plugins from "./plugins.js";
 import { createLayer, effectsLevel } from "./effects.js";
@@ -34,6 +35,7 @@ export { formatValue, formatBandwidth, formatMs, formatDelta } from "./format.js
 export { SCALE_MODES, percentile, scaleBounds, smooth, envelope, bursts, significance, flowRate } from "./data.js";
 export { setEffectsLevel, effectsLevel, EFFECTS } from "./effects.js";
 export { formatTime } from "./time.js";
+export { setChartDefaults, DEFAULT_CHART_TEXT } from "./locale.js";
 
 let registered = false;
 function register() {
@@ -240,18 +242,18 @@ export function createChart(canvas, options = {}) {
     }
     for (const b of opts.baselines ?? []) {
       const c = b.color ? colorFor(null, b.color) : theme.colors.baseline;
-      sets.push({ label: b.label ?? "baseline", data: across(b.value), yAxisID: b.axis ?? "y", _role: "threshold", _color: c, borderColor: rgba(c), borderWidth: 1, borderDash: [3, 4], pointRadius: 0, pointHitRadius: 0, fill: false, order: 3, _noHover: true });
+      sets.push({ label: b.label ?? chartText("baseline", {}, opts.text), data: across(b.value), yAxisID: b.axis ?? "y", _role: "threshold", _color: c, borderColor: rgba(c), borderWidth: 1, borderDash: [3, 4], pointRadius: 0, pointHitRadius: 0, fill: false, order: 3, _noHover: true });
     }
     const events = opts.events ?? [];
     for (const kind of ["surge", "drop"]) {
       const list = events.filter((e) => e.kind === kind);
       if (!list.length) continue;
       const c = theme.colors[kind];
-      sets.push({ label: kind, data: list.map((e) => ({ x: +e.x, y: e.y, label: e.label, unexpected: e.unexpected })), yAxisID: "y", _role: "event", _eventKind: kind, _color: c, _unit: PRESETS[preset].unit, showLine: false, pointStyle: "rect", pointRadius: 4, pointHoverRadius: 5, backgroundColor: rgba(c), borderColor: rgba(c), order: 0 });
+      sets.push({ label: chartText(`event.${kind}`, {}, opts.text), data: list.map((e) => ({ x: +e.x, y: e.y, label: e.label, unexpected: e.unexpected })), yAxisID: "y", _role: "event", _eventKind: kind, _color: c, _unit: PRESETS[preset].unit, showLine: false, pointStyle: "rect", pointRadius: 4, pointHoverRadius: 5, backgroundColor: rgba(c), borderColor: rgba(c), order: 0 });
     }
     if (opts.peaks?.length) {
       const c = theme.colors.burst;
-      sets.push({ label: "daily peak", data: opts.peaks.map((p) => ({ x: +p.x, y: p.y })), yAxisID: "y", _role: "event", _color: c, _unit: PRESETS[preset].unit, showLine: false, pointStyle: "rect", pointRadius: 5, pointHoverRadius: 6, borderWidth: 1.5, backgroundColor: "transparent", borderColor: rgba(c), order: 0 });
+      sets.push({ label: chartText("dailyPeak", {}, opts.text), data: opts.peaks.map((p) => ({ x: +p.x, y: p.y })), yAxisID: "y", _role: "event", _color: c, _unit: PRESETS[preset].unit, showLine: false, pointStyle: "rect", pointRadius: 5, pointHoverRadius: 6, borderWidth: 1.5, backgroundColor: "transparent", borderColor: rgba(c), order: 0 });
     }
     return { sets, xMin, xMax };
   }
@@ -285,6 +287,7 @@ export function createChart(canvas, options = {}) {
         type: "time",
         min: xMin,
         max: xMax,
+        adapters: { date: { locale: opts.locale ?? defaultLocale() } },
         time: { unit: timeUnit(xMax - xMin), displayFormats: { minute: "h:mm a", hour: "h a", day: "MMM d" }, tooltipFormat: "MMM d, h:mm a" },
         grid,
         border: { display: false },
@@ -429,7 +432,7 @@ export function createChart(canvas, options = {}) {
             const lo = nearest(ds._band.min, p.x);
             const hi = nearest(ds._band.max, p.x);
             if (lo != null && hi != null) {
-              text += ds._kind === "rtt" ? ` · jitter ±${formatValue(Math.round(((hi - lo) / 2) * 100) / 100, " ms").trim()}` : ` · range ${formatValue(lo, ds._unit)} – ${formatValue(hi, ds._unit)}`;
+              text += ds._kind === "rtt" ? ` · ${chartText("band.jitter", { value: formatValue(Math.round(((hi - lo) / 2) * 100) / 100, " ms").trim() }, opts.text)}` : ` · ${chartText("band.range", { from: formatValue(lo, ds._unit), to: formatValue(hi, ds._unit) }, opts.text)}`;
             }
           }
           if (bucketMs <= 10_000) {
@@ -442,7 +445,7 @@ export function createChart(canvas, options = {}) {
         afterBody: (items) => {
           const x = items[0]?.raw?.x;
           const r = (opts.ranges ?? []).find((range) => x >= range.from && x <= range.to);
-          return r ? [`${r.label ?? r.kind}${r.detail ? ` · ${r.detail}` : ""}`] : [];
+          return r ? [`${r.label ?? rangeText(r.kind, opts.text)}${r.detail ? ` · ${r.detail}` : ""}`] : [];
         },
       },
     };

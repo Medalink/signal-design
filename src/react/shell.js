@@ -111,7 +111,7 @@ export function AppShell({
 }
 
 /** The sidebar, right panel or drawer button. Its `aria-expanded` follows the state. */
-export function ShellToggle({ target, onClick, ...props }) {
+export function ShellToggle({ target, pinLabel = "Pin sidebar open", collapseLabel = "Collapse sidebar", onClick, ...props }) {
   const shell = useShell();
   const expanded = { sidebar: !shell.collapsed, aside: shell.asideOpen, drawer: shell.drawerOpen }[target];
   const toggle = {
@@ -122,7 +122,7 @@ export function ShellToggle({ target, onClick, ...props }) {
   return h("button", {
     type: "button",
     "aria-expanded": expanded,
-    "aria-label": target === "sidebar" ? (shell.collapsed ? "Pin sidebar open" : "Collapse sidebar") : undefined,
+    "aria-label": target === "sidebar" ? (shell.collapsed ? pinLabel : collapseLabel) : undefined,
     ...props,
     onClick: chain(onClick, toggle),
   });

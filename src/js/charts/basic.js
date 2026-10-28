@@ -15,6 +15,7 @@
 import { Chart } from "chart.js";
 import { formatValue } from "./format.js";
 import { formatTime } from "./time.js";
+import { chartText, defaultLocale } from "./locale.js";
 import { readTheme, rgba } from "./theme.js";
 import { pointer, crosshair, cursorPositioner } from "./plugins.js";
 
@@ -142,7 +143,7 @@ export function createBasicChart(canvas, opts) {
     const stacked = !!opts.stacked;
     const horizontal = type === "hbar";
     const x = timeX
-      ? { type: "time", grid, border: { display: false }, ticks: { ...ticks, maxRotation: 0, autoSkipPadding: 24 }, time: { displayFormats: { minute: "h:mm a", hour: "h a", day: "MMM d" } } }
+      ? { type: "time", adapters: { date: { locale: opts.locale ?? defaultLocale() } }, grid, border: { display: false }, ticks: { ...ticks, maxRotation: 0, autoSkipPadding: 24 }, time: { displayFormats: { minute: "h:mm a", hour: "h a", day: "MMM d" } } }
       : type === "scatter"
         ? { type: "linear", grid, border: { display: false }, ticks: { ...ticks, maxTicksLimit: 8, callback: (v) => formatValue(v, xUnit) } }
         : { type: "category", grid: { ...grid, display: type !== "bar" && type !== "histogram" && !horizontal }, border: { display: false }, ticks: { ...ticks, maxRotation: 0, autoSkipPadding: 12 } };
@@ -181,14 +182,14 @@ export function createBasicChart(canvas, opts) {
           const it = items[0];
           if (!it) return "";
           if (type === "scatter") return `${formatValue(it.parsed.x, xUnit)}`;
-          if (timeX) return formatTime(it.parsed.x, "MMM d, h:mm a");
+          if (timeX) return formatTime(it.parsed.x, "MMM d, h:mm a", opts.locale ?? defaultLocale());
           return it.label;
         },
         label: (item) => ` ${item.dataset.label}: ${formatValue(type === "hbar" ? item.parsed.x : item.parsed.y, unit)}`,
         footer: (items) => {
           if (!opts.stacked || items.length < 2) return "";
           const total = items.reduce((sum, it) => sum + (type === "hbar" ? it.parsed.x : it.parsed.y), 0);
-          return `Total ${formatValue(total, unit)}`;
+          return chartText("total", { value: formatValue(total, unit) }, opts.text);
         },
         labelColor: (item) => ({ borderColor: rgba(item.dataset._color), backgroundColor: rgba(item.dataset._color), borderWidth: 0, borderRadius: 0 }),
       },

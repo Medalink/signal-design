@@ -40,7 +40,29 @@ export interface Range {
   detail?: string;
 }
 
-export interface ChartOptions {
+export type ChartTextKey =
+  | "forecast"
+  | "bucket"
+  | "total"
+  | "dailyPeak"
+  | "baseline"
+  | "band.jitter"
+  | "band.range"
+  | "event.surge"
+  | "event.drop"
+  | `range.${NonNullable<Range["kind"]>}`;
+/** A string with `{name}` placeholders, or a function of the values. */
+export type ChartTextValue = string | ((vars: Record<string, string | number>) => string);
+
+/** What every chart accepts for language. */
+export interface ChartLocaleOptions {
+  /** BCP-47 tag for month names, am/pm and the 12 or 24 hour clock on dates. Default "en", or what `setChartDefaults` set. The order of fields in a date and number formats do not change with it. */
+  locale?: string;
+  /** Replaces some of the chart's words; the rest keep the defaults. Placeholders: `bucket` {seconds}; `total` {value}; `band.jitter` {value}; `band.range` {from} {to}. */
+  text?: { [K in ChartTextKey]?: ChartTextValue };
+}
+
+export interface ChartOptions extends ChartLocaleOptions {
   preset?: "bandwidth" | "latency" | "core";
   series: Series[];
   /** Bucket size of the data; ≤10 adds tooltip deltas and burst markers. Default 10. */
@@ -108,7 +130,7 @@ export interface BasicSeries {
   size?: number;
 }
 
-export interface BasicChartOptions {
+export interface BasicChartOptions extends ChartLocaleOptions {
   type: "line" | "area" | "step" | "bar" | "hbar" | "histogram" | "scatter";
   series: BasicSeries[];
   labels?: string[];
@@ -143,7 +165,12 @@ export function formatValue(value: number | null | undefined, unit?: string): st
 export function formatBandwidth(mbps: number): string;
 export function formatMs(ms: number): string;
 export function formatDelta(diff: number, unit?: string): string;
-export function formatTime(time: number, pattern: string): string;
+/** Format `time` with tokens yyyy MMM MM M dd d HH H hh h mm ss SSS a. `locale` defaults to "en", or what `setChartDefaults` set. */
+export function formatTime(time: number, pattern: string, locale?: string): string;
+/** The English defaults for `text`. Read-only. */
+export const DEFAULT_CHART_TEXT: Readonly<Record<ChartTextKey, ChartTextValue>>;
+/** Set the `locale` and `text` that charts made afterwards start from. `locale: undefined` or a `text` value of `undefined` restores English. Unknown `text` keys throw. */
+export function setChartDefaults(defaults: ChartLocaleOptions): void;
 export function percentile(values: number[], p: number): number;
 export function scaleBounds(values: (number | null)[], mode?: ScaleMode, floorMax?: number): { max: number; ceiling: number | null };
 export function smooth(points: Point[], options?: { window?: number; iterations?: number }): Point[];

@@ -14,6 +14,7 @@ import { ICON_NAMES } from "../src/js/icons.js";
 import { checkReactEditor } from "./check-react-editor.mjs";
 import { checkReactApp } from "./check-react-app.mjs";
 import { checkReactGaps } from "./check-react-gaps.mjs";
+import { checkReactLabels } from "./check-react-labels.mjs";
 import { checkReactOverlays } from "./check-react-overlays.mjs";
 
 const rootPath = fileURLToPath(new URL("..", import.meta.url));
@@ -405,6 +406,7 @@ export async function checkReactSsr() {
   const names = Object.keys(all).filter((name) => /^[A-Z]/.test(name));
   const missed = names.filter((name) => !used.has(name));
   assert.deepEqual(missed, [], `exports the server render never touched: ${missed.join(", ")}`);
+  checkReactLabels();
   return names.length;
 }
 

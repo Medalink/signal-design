@@ -469,6 +469,10 @@ export function useShell(): ShellState;
 
 export interface ShellToggleProps extends ComponentProps<"button"> {
   target: "sidebar" | "aside" | "drawer";
+  /** The sidebar button's accessible name while the sidebar is collapsed. Default "Pin sidebar open". An `aria-label` you pass replaces both names. */
+  pinLabel?: string | undefined;
+  /** The sidebar button's accessible name while the sidebar is open. Default "Collapse sidebar". */
+  collapseLabel?: string | undefined;
 }
 /** A button that toggles part of the shell and keeps `aria-expanded` current. */
 export function ShellToggle(props: ShellToggleProps): ReactElement;
@@ -732,6 +736,8 @@ export function Tree(props: TreeProps): ReactElement;
 export interface TreeAction {
   /** Names the action in the button's tooltip. */
   label: string;
+  /** The whole tooltip. Default `${label} (${key})`. */
+  title?: string | undefined;
   /** The key that runs it while the item has focus, a `KeyboardEvent.key` without modifiers, such as "F2" or "Delete". Unique in the item. */
   key: string;
   /** The glyph on the row's pointer button. */
@@ -818,10 +824,12 @@ export interface ComboboxProps extends Omit<ComponentProps<"input">, "value" | "
   defaultOpen?: boolean | undefined;
   onOpenChange?: ((open: boolean) => void) | undefined;
   filter?: ListFilter | undefined;
-  /** Sets `aria-busy` on the list and shows "Loading" when there are no items. */
+  /** Sets `aria-busy` on the list and shows `busyText` when there are no items. */
   busy?: boolean | undefined;
   /** Shown when nothing matches. Default "No matches". */
   emptyText?: string | undefined;
+  /** Shown instead of `emptyText` while `busy` and there are no items. Default "Loading". */
+  busyText?: string | undefined;
   /** The list's accessible name. Default "Suggestions". */
   listLabel?: string | undefined;
   /** Adds a hidden input carrying the chosen value to a form. */
@@ -843,8 +851,12 @@ export interface CommandPaletteProps extends Omit<DialogProps, "open" | "default
   /** Called when an item is chosen; the palette closes after. A link follows its `href` unless you call `event.preventDefault()`, as a router does. */
   onSelect?: ((item: ListItem, event: MouseEvent<HTMLElement>) => void) | undefined;
   filter?: ListFilter | undefined;
+  /** Sets `aria-busy` on the list and shows `busyText` when there are no items. */
   busy?: boolean | undefined;
+  /** Shown when nothing matches. Default "No matches". */
   emptyText?: string | undefined;
+  /** Shown instead of `emptyText` while `busy` and there are no items. Default "Loading". */
+  busyText?: string | undefined;
   /** The palette's name and its search box's. Default "Search". */
   label?: string | undefined;
   placeholder?: string | undefined;

@@ -2,17 +2,53 @@
  * A small Chart.js date adapter on the platform clock and Intl, so the
  * time axis needs no date library. Format tokens: yyyy MMM MM M dd d
  * HH H hh h mm ss SSS a.
+ *
+ * Month names, am/pm and the 12 or 24 hour clock follow a locale (a BCP-47
+ * tag, default "en" or what `setChartDefaults` set). The order of the fields
+ * in a pattern and the digits do not change with it.
  */
+import { defaultLocale } from "./locale.js";
+
 const MS = { millisecond: 1, second: 1e3, minute: 6e4, hour: 36e5, day: 864e5, week: 6048e5 };
-const MONTHS = Array.from({ length: 12 }, (_, m) => new Date(2000, m, 1).toLocaleString("en", { month: "short" }));
 const pad = (n, w = 2) => String(n).padStart(w, "0");
 
-export function formatTime(time, pattern) {
+const monthNames = new Map();
+const hourCycles = new Map();
+const periods = new Map();
+const english = (locale) => new Intl.Locale(locale).language === "en";
+
+/** The twelve short month names in `locale`. */
+function monthsOf(locale) {
+  if (!monthNames.has(locale)) monthNames.set(locale, Array.from({ length: 12 }, (_, m) => new Date(2000, m, 1).toLocaleString(locale, { month: "short" })));
+  return monthNames.get(locale);
+}
+
+/** Whether `locale` keeps time on a 12 hour clock. */
+function twelveHour(locale) {
+  if (!hourCycles.has(locale)) hourCycles.set(locale, /^h1[12]$/.test(new Intl.DateTimeFormat(locale, { hour: "numeric" }).resolvedOptions().hourCycle));
+  return hourCycles.get(locale);
+}
+
+/** am or pm: lowercase and literal in English, the locale's own day period elsewhere. */
+function dayPeriod(d, locale) {
+  if (english(locale)) return d.getHours() < 12 ? "am" : "pm";
+  if (!periods.has(locale)) periods.set(locale, new Intl.DateTimeFormat(locale, { hour: "numeric", hour12: true }));
+  return periods.get(locale).formatToParts(d).find((part) => part.type === "dayPeriod")?.value ?? "";
+}
+
+/** A pattern written for a 12 hour clock, rewritten for a 24 hour one when `locale` uses it. */
+export function localizePattern(pattern, locale = defaultLocale()) {
+  if (twelveHour(locale)) return pattern;
+  return pattern.replace(/\bh a\b/, "HH:00").replace(/\bh(?=:mm)/, "HH").replace(/ a$/, "");
+}
+
+export function formatTime(time, pattern, locale = defaultLocale()) {
   const d = new Date(time);
+  const local = localizePattern(pattern, locale);
   const h = d.getHours();
   const tokens = {
     yyyy: d.getFullYear(),
-    MMM: MONTHS[d.getMonth()],
+    MMM: monthsOf(locale)[d.getMonth()],
     MM: pad(d.getMonth() + 1),
     M: d.getMonth() + 1,
     dd: pad(d.getDate()),
@@ -24,9 +60,9 @@ export function formatTime(time, pattern) {
     mm: pad(d.getMinutes()),
     ss: pad(d.getSeconds()),
     SSS: pad(d.getMilliseconds(), 3),
-    a: h < 12 ? "am" : "pm",
+    a: local.includes("a") ? dayPeriod(d, locale) : "",
   };
-  return pattern.replace(/yyyy|MMM|MM|M|dd|d|HH|H|hh|h|mm|ss|SSS|a/g, (t) => tokens[t]);
+  return local.replace(/yyyy|MMM|MM|M|dd|d|HH|H|hh|h|mm|ss|SSS|a/g, (t) => tokens[t]);
 }
 
 function startOf(time, unit, weekday = 0) {
@@ -73,7 +109,10 @@ export const timeAdapter = {
     year: "yyyy",
   }),
   parse: (value) => (value == null ? null : value instanceof Date ? value.getTime() : typeof value === "number" ? value : Date.parse(value) || null),
-  format: (time, pattern) => formatTime(time, pattern),
+  // A method, not an arrow: Chart.js binds `this` to the adapter, whose options hold the chart's locale.
+  format(time, pattern) {
+    return formatTime(time, pattern, this.options?.locale);
+  },
   add,
   diff: (max, min, unit) => {
     if (unit === "month" || unit === "quarter" || unit === "year") {

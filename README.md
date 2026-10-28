@@ -1563,6 +1563,58 @@ Server-rendered pages can skip the JS call: put the options as JSON in a
 `<script type="application/json">` inside `<figure data-sd-chart>` and call
 `initCharts()`.
 
+## Translating labels
+
+Signal writes a few words itself: the toasts of `data-sd-copy`, the names of the
+remove button on a tag and of the sidebar toggle, the empty row of a list. They
+are English until you replace them. Nothing is translated for you and no second
+language ships.
+
+**JS.** One table, set once at startup. A value is a string with `{name}`
+placeholders, or a function of the values (for plurals); `undefined` restores
+the English default. An unknown key throws. A `data-sd-empty` or an `aria-label`
+on the element still wins over the table.
+
+```js
+import { setLabels } from "signal-design/js";
+setLabels({ "copy.done": "Kopiert", "tags.remove": "{value} entfernen" });
+```
+
+| Key | Placeholders | English |
+|---|---|---|
+| `copy.done`, `copy.failed` | | `Copied`, `Copy unavailable. Select the line instead.` |
+| `list.empty` | | `No matches` |
+| `tags.remove` | `value` | `Remove {value}` |
+| `spark.trend` | `values` | `Trend: {values}` |
+| `fps.value` | `value` | `{value} frames per second` |
+| `table.resize`, `table.width` | `value` | `Resize table width`, `{value} pixels wide` |
+| `shell.pin`, `shell.collapse` | | `Pin sidebar open`, `Collapse sidebar` |
+| `window.maximize`, `window.restore` | | `Maximize`, `Restore` |
+| `countdown.remaining` | `count`, `state` | `{count} second(s) remaining, {state}` |
+| `countdown.running`, `.paused`, `.complete` | | `running`, `paused`, `complete` |
+| `stream.<kind>.label`, `.detail` | | `New follower`, `Welcome to the stream`, … for `follow`, `sub`, `raid`, `bits` |
+
+`DEFAULT_LABELS` lists every key with its English value. A stream alert's own
+`label` and `detail` win over the table.
+
+**React.** Every default is a prop: `closeLabel` (`DialogHeader`), `label`
+(`CommandPalette`, `HoverCard`, `ResizablePanel`, `ToolbarMore`, `ToolbarGroup`),
+`listLabel`, `emptyText` and `busyText` (`Combobox`, `CommandPalette`),
+`pinLabel` and `collapseLabel` (`ShellToggle`), and `title` on a `TreeAction`.
+The components do not read the JS table.
+
+**Charts.** `createChart(canvas, { locale: "de" })` writes month names, am/pm and
+the 12 or 24 hour clock for a BCP-47 tag; the default is `"en"` and its output is
+unchanged. The order of the fields in a date and the digits do not change.
+`text` replaces the chart's own words (`forecast`, `bucket`, `total`, …, listed in
+`DEFAULT_CHART_TEXT`). `setChartDefaults({ locale, text })` sets both for every
+chart made afterwards. The charts keep their own table, so they work with the
+bundled `dist/signal.js` too.
+
+**CSS.** The one word the stylesheet draws is the `muted` mark on a call tile
+(`sd-tile[data-muted]`). Set `--sd-tile-muted-label: "stumm"` on the tile or any
+ancestor to replace it.
+
 ## Page concepts
 
 The showcase is built only from library parts. `index.html` is the overview,
