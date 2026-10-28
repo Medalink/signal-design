@@ -158,6 +158,15 @@ The library meets WCAG 2.2 AA contrast and wires keyboard behavior. You still mu
 - keep focus visible (do not remove outlines);
 - respect `prefers-reduced-motion` in any motion you add.
 
+## Translating labels
+
+The words Signal's JS writes (toasts, aria-labels, empty rows) are English by
+default. Replace them once with `setLabels({ "copy.done": "Kopiert" })` from
+`signal-design/js`; keys and placeholders are in README "Translating labels".
+React components take the same words as props (`closeLabel`, `emptyText`,
+`busyText`, `pinLabel`, `collapseLabel`). `createChart(canvas, { locale })` sets
+the language of a chart's dates and `text` its other words.
+
 ## Check your work
 
 ```bash
