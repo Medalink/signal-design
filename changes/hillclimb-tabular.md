@@ -1,2 +1,0 @@
-### Fixed
-- Numbers that change or line up in a column now use tabular figures, so they hold still when a digit changes: `sd-meta` times, `sd-badge`, `sd-pill`, `sd-status`, `sd-item-end` and `sd-item-group` counts, `sd-file-meta`, `sd-poll-meta`, `sd-stat-delta` and `sd-stat-sub`, `sd-kv` values, `sd-plot-readout`, `sd-tree-meta`, `sd-statusbar` segments, the `sd-steps` numbers and the `data-sd-countdown-value` seconds.

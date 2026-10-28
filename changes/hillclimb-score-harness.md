@@ -1,2 +1,0 @@
-### Added
-- `scripts/score.mjs` (`pnpm score`): scores every library block and every showcase page on what CI does not check (visible keyboard focus, hover feedback, 24px targets, phone touch targets, field edges at 3:1, text under 12px, clipped text, overflow, copyable HTML that renders differently on a bare page, classes no rule styles, untested behavior, parts no app composes), weights each finding and ranks them. `docs/scorecard.md` is the first ranking.
