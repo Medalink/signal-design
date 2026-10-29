@@ -62,10 +62,11 @@ export default async function checkRuleNames(page, where, fail) {
 <div data-sd-check-ignore="corners shadows"><div id="exempt" style="width:20px;height:20px;border-radius:8px;${shadow}"></div></div>`,
     );
     const url = pathToFileURL(file).href;
-    const run = (...args) => {
-      const done = spawnSync(process.execPath, [cli, "check", url, "--widths", "1280", ...args], { cwd: root, encoding: "utf8" });
+    const runOn = (target, ...args) => {
+      const done = spawnSync(process.execPath, [cli, "check", target, "--widths", "1280", ...args], { cwd: root, encoding: "utf8" });
       return { code: done.status, out: `${done.stdout}${done.stderr}` };
     };
+    const run = (...args) => runOn(url, ...args);
     // The page loads no Signal CSS, so the fonts rule has nothing to say about it.
     const all = run("--skip", "fonts");
     if (all.code !== 1) fail(`${where} rule names`, `the CLI exited ${all.code} on a page with a rounded corner and a blurred shadow`);
@@ -80,6 +81,18 @@ export default async function checkRuleNames(page, where, fail) {
     if (unknown.code !== 2 || !unknown.out.includes("sparkles") || !unknown.out.includes("shadows")) fail(`${where} rule names`, `--skip with an unknown rule exited ${unknown.code}: ${unknown.out.trim()}`);
     const bare = run("--skip");
     if (bare.code !== 2) fail(`${where} rule names`, `--skip without names exited ${bare.code}`);
+
+    // A stylesheet the page cannot read (file:, another origin) still gives the
+    // color rule its tokens.
+    const styled = join(dir, "styled.html");
+    writeFileSync(
+      styled,
+      `<!doctype html><html data-theme="ink"><title>t</title><link rel="stylesheet" href="${pathToFileURL(join(root, "dist/signal.css")).href}">
+<p id="hex" style="color:#3b82f6">hex</p>
+<p id="token" style="color:var(--sd-fg-muted)">token</p>`,
+    );
+    const color = runOn(pathToFileURL(styled).href, "--skip", "fonts");
+    if (!/FAIL \S+ @1280px: color: p#hex/.test(color.out) || color.out.includes("p#token")) fail(`${where} rule names`, `the color rule on a page whose stylesheet it cannot read: ${color.out.trim()}`);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

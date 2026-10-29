@@ -57,7 +57,8 @@ npx signal-design check http://localhost:5173/ --a11y
 
 It fails on rounded corners, blurred shadows, text in a weight other than 400
 and 500 (600 in the reading face) or in a family that is not a Signal font
-token, a color written by hand (the same in every theme and no `--sd-*` token),
+token, a color written by hand (the same in every theme and no `--sd-*` token's value;
+a hex copied from a token passes),
 a signal color on navigation or headings, a second primary button in one view,
 a text field named only by its placeholder, horizontal overflow at 1280/768/375px,
 fonts that did not load, console errors and (with `--a11y`) WCAG 2.2 AA

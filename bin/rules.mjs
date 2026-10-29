@@ -69,12 +69,15 @@ export function typeRule() {
 /**
  * No hard-coded colors (color). A color that comes from a token changes with
  * the theme, so the page is read in ink and in paper, and a color that is the
- * same in both, and is not the value of any --sd-* token, was written by hand.
+ * same in both, and is not the value of any --sd-* token in any theme, was
+ * written by hand. A hex copied from a token passes: the rule cannot tell it
+ * from the token.
  * Tints of a token pass (alpha is ignored), and so does a person's own color
- * (--who, --edge) and anything inside an element with its own data-theme. The
- * theme is put back when the function returns. Transitions are off while it
- * reads, and the restored styles are computed before they come back, so the
- * flip starts none; animations are left running, since stopping them restarts them.
+ * (--who, --edge). Every element that carries data-theme flips with <html>, so
+ * an app themed on its body or root is read too. The themes are put back when
+ * the function returns. Transitions are off while it reads, and the restored
+ * styles are computed before they come back, so the flip starts none;
+ * animations are left running, since stopping them restarts them.
  */
 export function colorRule() {
   const found = new Map();
@@ -82,25 +85,6 @@ export function colorRule() {
   const ignored = (el, rule) => !!el.closest(`[data-sd-check-ignore~="${rule}"]`);
   const describe = (el) =>
     el.tagName.toLowerCase() + (el.id ? `#${el.id}` : "") + (el.getAttribute("class")?.trim() ? `.${el.getAttribute("class").trim().split(/\s+/).slice(0, 3).join(".")}` : "");
-
-  // Every --sd-* custom property the page's stylesheets declare.
-  const names = new Set();
-  const scan = (sheet) => {
-    try {
-      walk(sheet.cssRules);
-    } catch {
-      // A cross-origin sheet cannot be read.
-    }
-  };
-  const walk = (rules) => {
-    for (const rule of rules) {
-      if (rule.style) for (const property of rule.style) if (property.startsWith("--sd-")) names.add(property);
-      if (rule.styleSheet) scan(rule.styleSheet);
-      if (rule.cssRules) walk(rule.cssRules);
-    }
-  };
-  for (const sheet of [...document.styleSheets, ...document.adoptedStyleSheets]) scan(sheet);
-  if (!names.size) return [];
 
   // "r,g,b" of any CSS color, alpha dropped, by painting it on a canvas (that reads hex, oklch() and color-mix() alike).
   const ctx = Object.assign(document.createElement("canvas"), { width: 1, height: 1 }).getContext("2d", { willReadFrequently: true });
@@ -130,6 +114,25 @@ export function colorRule() {
     return memo.get(value);
   };
 
+  // Every element that sets a theme, <html> first: an app may set it on its
+  // body or its root instead, and a part of the page may set its own.
+  const holders = [...new Set([html, ...document.querySelectorAll("[data-theme]")])];
+  // The tokens are the --sd-* custom properties a theme holder has. Its
+  // computed style lists them whatever origin the stylesheet came from.
+  const tokens = new Set();
+  const collect = () => {
+    for (const holder of holders) {
+      const s = getComputedStyle(holder);
+      for (const name of s) if (name.startsWith("--sd-")) tokens.add(rgb(s.getPropertyValue(name)));
+    }
+    tokens.delete("");
+  };
+  // A token's value in the page's own theme counts, and in each of Signal's:
+  // a script that painted a token's color inline (the ornament glints)
+  // repaints on sd:theme, which this flip does not send.
+  collect();
+  if (!tokens.size) return [];
+
   const properties = [
     ["color", "color", null],
     ["background-color", "backgroundColor", null],
@@ -140,7 +143,7 @@ export function colorRule() {
     ["outline-color", "outlineColor", "outlineWidth"],
   ];
   const shown = [html, ...document.querySelectorAll("body, body *")].filter(
-    (el) => el.getClientRects().length && getComputedStyle(el).visibility !== "hidden" && !el.closest("[data-theme]:not(html)") && !ignored(el, "color"),
+    (el) => el.getClientRects().length && getComputedStyle(el).visibility !== "hidden" && !ignored(el, "color"),
   );
   const index = new Map(shown.map((el, i) => [el, i]));
   const read = () =>
@@ -149,33 +152,29 @@ export function colorRule() {
       return properties.map(([, key, width]) => (width && !(parseFloat(s[width]) > 0 && (key !== "outlineColor" || s.outlineStyle !== "none")) ? "" : s[key]));
     });
 
-  const was = html.getAttribute("data-theme");
+  const was = holders.map((el) => el.getAttribute("data-theme"));
   const quiet = document.createElement("style");
   quiet.textContent = "*,*::before,*::after{transition:none!important}";
   document.head.append(quiet);
-  const tokens = new Set();
   let ink, paper, user;
   try {
-    for (const theme of ["ink", "paper"]) {
-      html.setAttribute("data-theme", theme);
-      const root = getComputedStyle(html);
-      for (const name of names) tokens.add(rgb(root.getPropertyValue(name)));
+    for (const theme of ["ink", "graphite", "paper"]) {
+      for (const holder of holders) holder.setAttribute("data-theme", theme);
+      collect();
       if (theme === "ink") {
         ink = read();
         user = shown.map((el) => {
           const s = getComputedStyle(el);
           return [rgb(s.getPropertyValue("--who")), rgb(s.getPropertyValue("--edge"))];
         });
-      } else paper = read();
+      } else if (theme === "paper") paper = read();
     }
   } finally {
-    if (was == null) html.removeAttribute("data-theme");
-    else html.setAttribute("data-theme", was);
+    holders.forEach((holder, i) => (was[i] == null ? holder.removeAttribute("data-theme") : holder.setAttribute("data-theme", was[i])));
     // Compute the restored styles while transitions are still off, so none starts when the style goes.
     read();
     quiet.remove();
   }
-  tokens.delete("");
 
   shown.forEach((el, i) =>
     properties.forEach(([name], j) => {

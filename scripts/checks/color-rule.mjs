@@ -3,7 +3,7 @@ import { probeRule } from "../rule-probe.mjs";
 
 export const page = "color";
 
-/** The color rule fails a color written by hand and lets tokens, tints of a token, a person's color and a themed subtree through. */
+/** The color rule fails a color written by hand, in a themed subtree too, and lets tokens, tints of a token and a person's color through. */
 export default async function checkColorRule(page, where, fail) {
   const at = `${where} color rule`;
   const state = () => page.evaluate(() => ({
@@ -28,7 +28,10 @@ export default async function checkColorRule(page, where, fail) {
     noBorder: box("border:0 solid #ee9900;outline:0 solid #00aa55;outline-style:none"),
     who: `<p class="rule-probe" style="--who:#12ab34;color:var(--who)">name</p>`,
     edge: box("--edge:#ab12cd;border-left:2px solid var(--edge)"),
+    // A part of the page, or an app's root, that sets its own theme flips with <html>.
     themed: `<div data-theme="paper">${box("background:#3b82f6")}</div>`,
+    root: `<div data-theme="ink"><div>${box("background:#3b82f6")}</div></div>`,
+    themedToken: `<div data-theme="paper">${box("background:var(--sd-fg);border:1px solid var(--sd-line)")}</div>`,
     inherited: `<div style="color:#ff00aa"><p class="rule-probe">one</p><p class="rule-probe">two</p></div>`,
     parent: `<div class="rule-probe" style="color:#ff00aa"><p>one</p><p>two</p></div>`,
     silent: `<div data-sd-check-ignore="color">${box("background:#3b82f6")}</div>`,
@@ -40,11 +43,34 @@ export default async function checkColorRule(page, where, fail) {
   if (!says(found.text, "p.rule-probe: color rgb(255, 0, 170)")) fail(at, `a hard-coded text color was not reported: ${JSON.stringify(found.text)}`);
   if (!says(found.border, "border-top-color rgb(238, 153, 0)")) fail(at, `a hard-coded border was not reported: ${JSON.stringify(found.border)}`);
   if (!says(found.outline, "outline-color rgb(0, 170, 85)")) fail(at, `a hard-coded outline was not reported: ${JSON.stringify(found.outline)}`);
+  if (!says(found.themed, "background-color rgb(59, 130, 246)")) fail(at, `a hard-coded background in a data-theme="paper" subtree was not reported: ${JSON.stringify(found.themed)}`);
+  if (!says(found.root, "background-color rgb(59, 130, 246)")) fail(at, `a hard-coded background under an app root with data-theme="ink" was not reported: ${JSON.stringify(found.root)}`);
   if (found.parent.length !== 1) fail(at, `a color set on a parent should be reported once, on the parent: ${JSON.stringify(found.parent)}`);
-  for (const name of ["token", "tint", "tintSrgb", "clear", "noBorder", "who", "edge", "themed", "inherited", "silent"]) {
+  for (const name of ["token", "tint", "tintSrgb", "clear", "noBorder", "who", "edge", "themedToken", "inherited", "silent"]) {
     if (found[name].length) fail(at, `${name} was reported: ${JSON.stringify(found[name])}`);
   }
   if (!says(found.otherRule, "background-color rgb(59, 130, 246)")) fail(at, 'data-sd-check-ignore="type" silenced the color rule');
+
+  // On a graphite page a script that painted a token's color inline (the
+  // ornament glints) keeps it through the rule's flip, which sends no
+  // sd:theme. That color is still a token's, so it passes.
+  const setTheme = (name) =>
+    page.evaluate((name) => {
+      const html = document.documentElement;
+      const quiet = Object.assign(document.createElement("style"), { textContent: "*,*::before,*::after{transition:none!important}" });
+      document.head.append(quiet);
+      const was = html.getAttribute("data-theme");
+      if (name == null) html.removeAttribute("data-theme");
+      else html.setAttribute("data-theme", name);
+      for (const el of document.querySelectorAll("*")) getComputedStyle(el).color;
+      quiet.remove();
+      return was;
+    }, name);
+  const was = await setTheme("graphite");
+  const fg = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("--sd-fg").trim());
+  const stale = await probeRule(page, colorRule, { painted: `<p class="rule-probe" style="color:${fg}">glints</p>` });
+  await setTheme(was);
+  if (stale.painted.length) fail(at, `a token's color painted inline on a graphite page was reported: ${JSON.stringify(stale.painted)}`);
 
   const after = await state();
   if (after.theme !== before.theme) fail(at, `the rule left data-theme at ${after.theme}, was ${before.theme}`);
