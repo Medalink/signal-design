@@ -199,7 +199,8 @@ it breaks:
   variants side by side takes `data-sd-check-ignore="primary"`.
 - `label`: a visible text field or textarea with a placeholder and no `<label>`,
   `aria-label`, `aria-labelledby` or `title`. axe accepts a placeholder as a name;
-  it should not, because it disappears when the user types.
+  it should not, because it disappears when the user types. The rule asks only
+  for a name; the visible label (see Accessibility) is still yours to add.
 - `overflow`: horizontal overflow at 1280/768/375px.
 - `fonts`: a font that did not load.
 - `console`: a console error.

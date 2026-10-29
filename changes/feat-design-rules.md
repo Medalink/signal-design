@@ -29,6 +29,10 @@
 - The gate is stricter. A project that passed `signal-design check` before can
   fail now on `type`, `color`, `nav-color`, `primary` or `label`. `--skip <rule>`
   or `data-sd-check-ignore="<rule>"` is the way out while the project fixes it.
+- Every finding starts with its rule, so the text changed: `console error:` is
+  now `console:`, `horizontal overflow Npx` is `overflow: Npx wider than the
+  window`, `font not loaded` is `fonts: not loaded`, and `a11y <id>` is
+  `a11y: <id>`. A script that matches the old text needs the new.
 
 ### Added
 - `signal-design check` names the rule in every finding: `corners`, `shadows`,
@@ -43,6 +47,7 @@
   coarse-pointer rule that hides a shortcut hint now covers a `kbd` directly in
   `.sd-rail-item`, and a rail label that holds only a hint is hidden whole. The
   library pages label that item "Go to a page" and add `aria-keyshortcuts` where
-  the page owns Ctrl K. The rule moved from `navigation.css` to `touch.css`.
+  the rail's search owns Ctrl K (a page with its own command palette keeps the
+  key for it). The rule moved from `navigation.css` to `touch.css`.
 - The form example's found-server and found-agent rows show a "Model" label over
   their model control, and the agent field's placeholder reads "Optional".

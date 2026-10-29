@@ -84,7 +84,7 @@
   --container-narrow: 35rem; /* 560px: settings panels, forms */
   --container-wide: 64rem;
 
-  /* Motion: state changes only, 120-200ms, nothing loops. */
+  /* Motion: transitions run 120-200ms. */
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
   --default-transition-duration: 160ms;
