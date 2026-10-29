@@ -51,7 +51,7 @@
   },
   {
    "name": "--sd-accent",
-   "description": "Signal: focus, current, selection. ink #00d4ff · graphite #00d4ff · paper #00718f"
+   "description": "Signal: selected, active, now. Focus rings and the current item use fg, not accent. ink #00d4ff · graphite #00d4ff · paper #00718f"
   },
   {
    "name": "--sd-success",
