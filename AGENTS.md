@@ -175,19 +175,29 @@ npx signal-design check http://localhost:5173/          # your running app
 npx signal-design check http://localhost:5173/ --a11y   # plus an axe WCAG 2.2 AA audit
 ```
 
-It loads each URL in Chromium (Playwright) and fails on: rounded corners,
-blurred shadows, text in a weight other than 400 and 500 (600 in the reading
-face) or in a family that is not `--sd-font-sans`, `--sd-font-mono` or
-`--sd-font-reading`, horizontal overflow at 1280/768/375px, fonts
-that did not load, console errors, and (with `--a11y`) accessibility
-violations. Needs `playwright` (and `axe-core` for `--a11y`) installed, and
+It loads each URL in Chromium (Playwright). Every finding starts with the rule
+it breaks:
+
+- `corners`: a rounded corner.
+- `shadows`: a blurred shadow.
+- `type`: text in a weight other than 400 and 500 (600 only in the reading
+  face), or in a family that is not `--sd-font-sans`, `--sd-font-mono` or
+  `--sd-font-reading`.
+- `color`: a color that is the same in the ink and paper themes and is not the
+  value of any `--sd-*` token, such as a hex you wrote. Tints of a token, a
+  person's `--who` and `--edge`, and a subtree with its own `data-theme` pass.
+- `overflow`: horizontal overflow at 1280/768/375px.
+- `fonts`: a font that did not load.
+- `console`: a console error.
+- `a11y`: an accessibility violation (with `--a11y`).
+
+Needs `playwright` (and `axe-core` for `--a11y`) installed, and
 `npx playwright install chromium` once.
 
-Every finding starts with its rule: `corners`, `shadows`, `type`, `overflow`,
-`fonts`, `console`, `a11y`. `--skip shadows,fonts` turns rules off for the whole run
-(an unknown name exits 2). `data-sd-check-ignore="shadows"` on an element exempts
-it and what it holds from the rules it names. Use it only for what is right on
-purpose, never to hide a violation.
+`--skip color,fonts` turns rules off for the whole run; an unknown name exits 2.
+`data-sd-check-ignore="color"` on an element exempts it and what it holds from
+the rules it names (`"color type"` for two). It is for what is right on purpose,
+such as a palette swatch; never use it to hide a violation.
 
 ## Files for tools
 

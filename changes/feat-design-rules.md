@@ -7,13 +7,17 @@
 - `signal-design check` now fails text in a weight other than 400 and 500 (600
   in the reading face), or in a font family that is not `--sd-font-sans`,
   `--sd-font-mono` or `--sd-font-reading` on that element. The rule is `type`.
+- `signal-design check` now fails a color that is the same in the ink and paper
+  themes and is not the value of any `--sd-*` token, on a text, background,
+  border or outline. The rule is `color`. Tints of a token, a person's `--who`
+  and `--edge`, and a subtree with its own `data-theme` pass.
 
 ### Added
-- `signal-design check` names the rule in every finding (`corners`, `shadows`,
-  `type`, `overflow`, `fonts`, `console`, `a11y`). `--skip <rule,...>` turns rules off
-  for a run, and an unknown name exits 2 with the list. An element with
-  `data-sd-check-ignore="<rule> ..."` is exempt from those rules, itself and
-  what it holds.
+- `signal-design check` names the rule in every finding: `corners`, `shadows`,
+  `type`, `color`, `overflow`, `fonts`, `console`, `a11y`. `--skip <rule,...>`
+  turns rules off for a run, and an unknown name exits 2 with the list. An
+  element with `data-sd-check-ignore="<rule> ..."` is exempt from those rules,
+  itself and what it holds.
 
 ### Fixed
 - On a touch screen the rail's search item no longer shows "Ctrl K". The

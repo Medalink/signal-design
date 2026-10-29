@@ -52,14 +52,14 @@
     <div class="demo-block" id="tokens-greys">
       <h2 class="sd-label">Greys</h2>
       <p class="demo-usage"><b class="text-fg font-semibold">Ink</b> is the shipped Signal ramp: cool and near-black. <b class="text-fg font-semibold">Graphite</b> is the original ramp from the spec table. The ink theme uses the first, the graphite theme the second.</p>
-      <div class="grid grid-cols-[repeat(13,minmax(0,1fr))] gap-1" data-swatches="ink"></div>
-      <div class="grid grid-cols-[repeat(13,minmax(0,1fr))] gap-1" data-swatches="graphite"></div>
+      <div class="grid grid-cols-[repeat(13,minmax(0,1fr))] gap-1" data-swatches="ink" data-sd-check-ignore="color"></div>
+      <div class="grid grid-cols-[repeat(13,minmax(0,1fr))] gap-1" data-swatches="graphite" data-sd-check-ignore="color"></div>
     </div>
 
     <div class="demo-block" id="tokens-spec-vs-shipped">
       <h2 class="sd-label">Spec vs shipped</h2>
       <p class="demo-usage">The original spec table and the shipped stylesheet disagree. Ink, the shipped ramp, is the canonical default. Graphite keeps the spec values as an optional theme.</p>
-      <div class="sd-table-wrap">
+      <div class="sd-table-wrap" data-sd-check-ignore="color">
         <table class="sd-table">
           <thead><tr><th>Role</th><th>Ink (default)</th><th>Graphite (spec)</th></tr></thead>
           <tbody>
