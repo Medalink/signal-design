@@ -176,13 +176,15 @@ npx signal-design check http://localhost:5173/ --a11y   # plus an axe WCAG 2.2 A
 ```
 
 It loads each URL in Chromium (Playwright) and fails on: rounded corners,
-blurred shadows, horizontal overflow at 1280/768/375px, fonts
+blurred shadows, text in a weight other than 400 and 500 (600 in the reading
+face) or in a family that is not `--sd-font-sans`, `--sd-font-mono` or
+`--sd-font-reading`, horizontal overflow at 1280/768/375px, fonts
 that did not load, console errors, and (with `--a11y`) accessibility
 violations. Needs `playwright` (and `axe-core` for `--a11y`) installed, and
 `npx playwright install chromium` once.
 
-Every finding starts with its rule: `corners`, `shadows`, `overflow`, `fonts`,
-`console`, `a11y`. `--skip shadows,fonts` turns rules off for the whole run
+Every finding starts with its rule: `corners`, `shadows`, `type`, `overflow`,
+`fonts`, `console`, `a11y`. `--skip shadows,fonts` turns rules off for the whole run
 (an unknown name exits 2). `data-sd-check-ignore="shadows"` on an element exempts
 it and what it holds from the rules it names. Use it only for what is right on
 purpose, never to hide a violation.

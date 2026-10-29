@@ -50,13 +50,13 @@ Run the checker against the running page(s):
 npx signal-design check http://localhost:5173/ --a11y
 ```
 
-Fix every failure it reports: rounded corners, blurred shadows,
-horizontal overflow at 1280/768/375px, fonts not loaded, console errors, and
+Fix every failure it reports: rounded corners, blurred shadows, a font weight
+other than 400 and 500 or a family set by name, horizontal overflow at 1280/768/375px, fonts not loaded, console errors, and
 accessibility violations. If Playwright or axe-core is missing, install them
 as dev dependencies (`pnpm add -D playwright axe-core && npx playwright install chromium`).
 
-Each line starts with its rule (`corners`, `shadows`, `overflow`, `fonts`, `console`,
-`a11y`). Put `data-sd-check-ignore="shadows"` on an element that is right on purpose,
+Each line starts with its rule (`corners`, `shadows`, `type`, `overflow`, `fonts`,
+`console`, `a11y`). Put `data-sd-check-ignore="shadows"` on an element that is right on purpose,
 or pass `--skip shadows` to turn a rule off for the run. Never use either to hide a
 real violation.
 

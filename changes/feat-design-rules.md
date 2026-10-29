@@ -4,10 +4,13 @@
   at their ends again.
 - Loops are allowed, decoration included. Rule 6 now asks only that transitions
   run 120–200ms.
+- `signal-design check` now fails text in a weight other than 400 and 500 (600
+  in the reading face), or in a font family that is not `--sd-font-sans`,
+  `--sd-font-mono` or `--sd-font-reading` on that element. The rule is `type`.
 
 ### Added
 - `signal-design check` names the rule in every finding (`corners`, `shadows`,
-  `overflow`, `fonts`, `console`, `a11y`). `--skip <rule,...>` turns rules off
+  `type`, `overflow`, `fonts`, `console`, `a11y`). `--skip <rule,...>` turns rules off
   for a run, and an unknown name exits 2 with the list. An element with
   `data-sd-check-ignore="<rule> ..."` is exempt from those rules, itself and
   what it holds.

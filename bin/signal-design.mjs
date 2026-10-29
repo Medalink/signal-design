@@ -5,25 +5,25 @@
  *   npx signal-design check <url> [more urls] [--a11y] [--widths 1280,768,375] [--theme ink] [--skip rule,rule]
  *
  * Loads each URL in Chromium and fails (exit 1) on what Signal does not allow:
- * rounded corners, blurred shadows, horizontal overflow, fonts
- * that did not load, and console errors. --a11y adds an axe-core audit
- * (WCAG 2.2 A/AA). Every finding starts with its rule (see RULES in
- * rules.mjs). --skip turns rules off for the run; data-sd-check-ignore="rule …"
- * on an element exempts that element and what it holds. Needs playwright in
- * your project (and axe-core for --a11y):
+ * rounded corners, blurred shadows, a font weight or family outside Signal's,
+ * horizontal overflow, fonts that did not load, and console errors. --a11y
+ * adds an axe-core audit (WCAG 2.2 A/AA). Every finding starts with its rule
+ * (see RULES in rules.mjs). --skip turns rules off for the run;
+ * data-sd-check-ignore="rule …" on an element exempts that element and what it
+ * holds. Needs playwright in your project (and axe-core for --a11y):
  *
  *   pnpm add -D playwright axe-core && npx playwright install chromium
  */
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
-import { RULES, sweep, fontFaces, overflow } from "./rules.mjs";
+import { RULES, sweep, typeRule, fontFaces, overflow } from "./rules.mjs";
 
 const USAGE = `Usage: signal-design check <url> [url…] [--a11y] [--widths 1280,768,375] [--theme ink|graphite|paper] [--skip rule,rule]
 
 Checks a page against Signal's rules: square corners, no blurred shadows,
-no horizontal overflow, Source Code Pro loaded, no console errors.
---a11y also runs axe-core (WCAG 2.2 A/AA).
+two font weights and Signal's font families, no horizontal overflow, Source
+Code Pro loaded, no console errors. --a11y also runs axe-core (WCAG 2.2 A/AA).
 
 Every finding starts with its rule: ${RULES.join(", ")}.
 --skip turns rules off for the whole run. To exempt one part of a page, put
@@ -105,6 +105,7 @@ for (const url of urls) {
       const found = (await page.evaluate(sweep)).filter((b) => !skip.has(b.slice(0, b.indexOf(":"))));
       for (const b of found.slice(0, 20)) report(where, b);
     }
+    if (!skip.has("type")) for (const b of (await page.evaluate(typeRule)).slice(0, 20)) report(where, b);
     if (!skip.has("overflow")) {
       const over = await page.evaluate(overflow);
       if (over.px > 0) report(where, `overflow: ${over.px}px wider than the window: ${over.culprits.join(" | ")}`);
