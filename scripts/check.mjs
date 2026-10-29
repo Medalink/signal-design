@@ -609,9 +609,10 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
   if (faces.length < 2 || faces.some((f) => !f.endsWith("loaded"))) fail(where, `fonts: ${faces.join(" ") || "none"}`);
 
   for (const b of (await page.evaluate(sweep)).slice(0, 15)) fail(where, b);
-  // The rules that read every element's style run once per page, at the first width and theme.
+  // The rules that read every element's style run at the first theme, at the
+  // widest and the narrowest width, where phone-only chrome shows.
   // One primary button per view holds on the example screens; a library page shows variants side by side.
-  if (width === widths[0] && theme === themes[0]) {
+  if ((width === widths[0] || width === widths.at(-1)) && theme === themes[0]) {
     for (const rule of [typeRule, colorRule, navColorRule, labelRule, ...(examplePages.has(pageName) ? [primaryRule] : [])]) for (const b of (await page.evaluate(rule)).slice(0, 15)) fail(where, b);
   }
 
