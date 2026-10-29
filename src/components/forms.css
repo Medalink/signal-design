@@ -4,9 +4,9 @@
    * control is invalid after the user touched it, no JS needed.
    *   <div class="sd-field">
    *     <label class="sd-field-label" for="x">Name</label>
-   *     <input id="x" required>
-   *     <p class="sd-field-hint">Shown on receipts.</p>
-   *     <p class="sd-field-error">Name is required.</p>
+   *     <input id="x" required aria-describedby="x-hint x-error">
+   *     <p class="sd-field-hint" id="x-hint">Shown on receipts.</p>
+   *     <p class="sd-field-error" id="x-error">Name is required.</p>
    *   </div>
    */
   .sd-field {
@@ -57,6 +57,11 @@
   }
   .sd-field:has(:disabled) .sd-field-label {
     opacity: 0.5;
+  }
+  /* Focusing a control, from a failed submit or a skip link, leaves its label
+     above it and its message below it in view. */
+  .sd-field :is(input, select, textarea) {
+    scroll-margin-block: 5rem;
   }
 
   /* Form layout: one column on phones, two when there is room. */

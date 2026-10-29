@@ -8,14 +8,14 @@
         <div class="sd-form-row">
           <div class="sd-field">
             <label class="sd-field-label" for="f-name">Name</label>
-            <input id="f-name" required placeholder="Jane Doe">
-            <p class="sd-field-hint">Shown on your profile.</p>
-            <p class="sd-field-error">Name is required.</p>
+            <input id="f-name" required placeholder="Jane Doe" aria-describedby="f-name-hint f-name-error">
+            <p class="sd-field-hint" id="f-name-hint">Shown on your profile.</p>
+            <p class="sd-field-error" id="f-name-error">Name is required.</p>
           </div>
           <div class="sd-field" data-invalid>
             <label class="sd-field-label" for="f-mail">Email <span class="sd-field-aside">optional</span></label>
-            <input id="f-mail" type="email" value="jane@acme" aria-invalid="true">
-            <p class="sd-field-error">Enter an address like jane@acme.example.</p>
+            <input id="f-mail" type="email" value="jane@acme" aria-invalid="true" aria-describedby="f-mail-error">
+            <p class="sd-field-error" id="f-mail-error">Enter an address like jane@acme.example.</p>
           </div>
         </div>
         <div class="sd-field">
