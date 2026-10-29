@@ -66,8 +66,8 @@ const foundAgentRow = (a) => `<li class="grid gap-2" data-agent-id="${a.id}">
   <p class="break-all font-mono">${esc(a.name)}</p>
   <div class="flex items-end gap-3">
     <div class="sd-field min-w-0 flex-1">
-      <label class="sd-field-label" for="agent-model-${a.id}">Model</label>
-      <input id="agent-model-${a.id}" class="sd-control-sm" aria-label="Model for ${esc(a.name)}" placeholder="Optional" autocomplete="off">
+      <label class="sd-field-label" for="agent-model-${a.id}">Model <span class="sd-field-aside">optional</span></label>
+      <input id="agent-model-${a.id}" class="sd-control-sm" aria-label="Model for ${esc(a.name)}" autocomplete="off">
     </div>
     <button type="button" class="sd-btn sd-btn-sm" data-act="connect-agent" aria-label="Connect ${esc(a.name)}">Connect</button>
   </div>
