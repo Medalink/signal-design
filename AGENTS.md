@@ -71,8 +71,8 @@ scrollbars there, call `initScrollbars()` from `signal-design/js` instead.
    The one exception is prose to be read at length (a manuscript, an article):
    `font-reading` / `var(--sd-font-reading)`, Literata, with real italics and a
    semibold for strong text. Interface text never uses it.
-6. **Motion on state change only.** 120–200ms transitions. Nothing loops for decoration.
-   Live activity may loop while it lasts (the `sd-typing` squares while someone types).
+6. **Motion.** Transitions run 120–200ms. Loops are allowed, decoration included (the ornament
+   sparkle, the `sd-typing` squares); `prefers-reduced-motion` stops them.
 7. **Style state, not classes.** The JS writes ARIA and `data-*` (`aria-pressed`,
    `aria-expanded`, `aria-current`, `aria-selected`, `data-open`, `data-tone`);
    the CSS keys on those. Set the same attributes from your own code to drive state.
@@ -135,14 +135,14 @@ by `title` or `classes`) rather than inventing markup.
 | Overlays | `<dialog class="sd-dialog">` + `data-sd-open`; `popover` + `.sd-popover`; `data-sd-tip`; `toast()` |
 | Lists and rows | `sd-item`, `sd-row`, `sd-table`, `sd-kv` (`sd-kv-plain` for sentence-case, truncating keys) |
 | Settings groups | `sd-panel` (560px), `sd-panel-wide` (1024px), `sd-panel-fluid` (no cap) |
-| Status | `sd-badge`, `sd-status`, `sd-dot`, `sd-count`, `sd-progress` (`data-state="indeterminate"` when the amount is unknown; never a looping bar), `sd-checks`, `sd-level` (live level from `--level`, 0–1) |
+| Status | `sd-badge`, `sd-status`, `sd-dot`, `sd-count`, `sd-progress` (`data-state="indeterminate"` when the amount is unknown), `sd-checks`, `sd-level` (live level from `--level`, 0–1) |
 | People | `sd-avatar` (`-sm` `-md` `-lg` `-xl`, or `--sd-avatar-size`) with `data-status`; on your own panel set `--sd-ring` to its background so the presence ring matches |
 | Chat and feeds | `sd-message` (time column, inline `sd-message-author`; `--who` name color, `--edge` role color, `data-grouped`, `data-own`, `data-reply` + `sd-message-ref`, `data-editing`, `data-selected`), `sd-message-actions`, `sd-message-menu`, `sd-emoji-picker`, `sd-feed-day`, `sd-event`, `sd-feed-jump`, `sd-composer` (`-add`, `-reply`, `-status`; `sd-add-menu`) in an `sd-shell-dock` (`data-flush`), `sd-reactions`, `sd-roster`, `sd-banner`, `sd-file`, `sd-link-card` (`-hero`, `-compact`, `-type`, `data-blocked`, `aria-busy`) |
 | Data | `sd-stat`, `sd-stat-box`, `createChart(canvas, { type })`, `sd-plot`, `sd-heatmap`, `sd-uptime`, `sd-meter`, `sd-timeline` (`--from`/`--to` ranges over one axis), `sd-schedule` (hour roster, `data-status` blocks, mono/spectrum), `sd-weighted` (segments sized by `--weight` toward a goal) |
 | ASCII art | `mountAscii(el, piece)` from `signal-design/ascii` draws an `ascii-magic-art` piece as greys in `sd-ascii`; still until `aria-busy="true"` (`pnpm add ascii-magic-art`); `data-tone` colors the brightest level |
 | Stream overlays (OBS) | `sd-scene` (1920×1080 units in `--sd-u`; `data-full`, `data-clear`) with `sd-scene-copy`, `sd-scene-bar`, `sd-scene-label`, `sd-cam`, `sd-scene-goal`, `sd-credits`, `sd-stream-alert`; `mountStream(scene).alert({ kind, name })` |
 | Empty | `sd-empty` (gets a center ornament automatically) |
-| Ornaments | `data-sd-ornaments="<placement> <style>"`: dust by default; a style word draws art instead: `contours` (fiction), `lattice` (research), `waveform` (blogs, notes), `dashed` (empty, planned), `book` (the hero), `stack` (manuscripts). Placements `tl tr bl br top bottom center`, `data-sd-ornaments-size`, `data-sd-ornaments-seed`. Still, faint, behind content |
+| Ornaments | `data-sd-ornaments="<placement> <style>"`: dust by default; a style word draws art instead: `contours` (fiction), `lattice` (research), `waveform` (blogs, notes), `dashed` (empty, planned), `book` (the hero), `stack` (manuscripts). Placements `tl tr bl br top bottom center`, `data-sd-ornaments-size`, `data-sd-ornaments-seed`. Faint, behind content |
 | React app | `signal-design/react`: `Button`, `Field` + `Input`, `Dialog`, `Menu`, `Tabs`, `ToastProvider`, `Table`, `AppShell` with `Rail`, `Sidebar` and `ShellMain`; editor parts `Toolbar`, `ToolbarButton`, `Manuscript`, `StatusSegment`, `Mark`, `HoverCard`, `Tree`, `Combobox`, `CommandPalette`, `RadioGroup`, `SegmentedControl`, `MenuItemCheckbox`; props are the state (`open`/`onOpenChange`, `value`/`onValueChange`, `pressed`/`onPressedChange`); also `Icon`, `GutterBlock` (a margin marker for a block), `HoverCardHost` (a hover card for a trigger React does not render), `ResizablePanel`, `WeightedBar`, `Tree` row `actions` (keys, not buttons inside the treeitem), `Sheet side="bottom"` |
 
 Tone anything with `data-tone`. Mark the current location with `aria-current`.

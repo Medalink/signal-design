@@ -2,6 +2,8 @@
 - Gradients are allowed. `signal-design check` no longer fails a CSS gradient,
   as a background or as a mask, and the shell's crumb and action bars fade out
   at their ends again.
+- Loops are allowed, decoration included. Rule 6 now asks only that transitions
+  run 120–200ms.
 
 ### Fixed
 - On a touch screen the rail's search item no longer shows "Ctrl K". The

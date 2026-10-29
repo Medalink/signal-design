@@ -58,7 +58,7 @@ opposite by rule, and the rules are enforced, not suggested.
 - The hard rules in `AGENTS.md` are binding: square corners; flat (no blurred
   shadow, glow or glass); color only through status and selection roles
   (`accent`, `success`, `danger`, `warning`, `pending`, `extra`); tokens, never
-  hard-coded values; two text weights; motion on state change only; style
+  hard-coded values; two text weights; transitions of 120–200ms; style
   keyed on ARIA and `data-*` state; one writer per state.
 - Themes: `ink` (default), `graphite`, `paper`, `auto`. Fonts: system (SF Pro /
   Segoe UI) by default, Leon Sans and Source Code Pro selectable; Source Code

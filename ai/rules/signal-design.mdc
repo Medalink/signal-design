@@ -17,7 +17,7 @@ Hard rules:
 - Tokens only (`var(--sd-*)`, `bg-surface`, `text-fg-muted`); never hex values.
 - Two weights only, regular (400) and medium (500). Families through `font-sans` and
   `font-mono` (Source Code Pro, for code), never by name; `font-reading` only for long prose.
-- Motion only on state change, 120–200ms.
+- Transitions run 120–200ms.
 - Drive state with ARIA and `data-*` attributes; call `init()` from `signal-design/js`
   when markup uses `data-sd-*`.
 

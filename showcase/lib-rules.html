@@ -29,7 +29,6 @@
           <p class="sd-label">Leave it out when</p>
           <ul>
             <li>Coloring navigation, headings or icons. Color is for status.</li>
-            <li>A looping progress bar. When the amount is unknown, set <code>data-state="indeterminate"</code> on <code>sd-progress</code>. It stays still.</li>
             <li>Your own sidebar layout around an app. Use the App Shell, <code>sd-shell</code>.</li>
           </ul>
         </div>
@@ -41,13 +40,13 @@
       <h2 class="sd-label">Hard rules</h2>
       <ol class="grid gap-y-2 gap-x-16 sm:grid-cols-2 text-fg-muted" style="list-style: decimal-leading-zero; padding-inline-start: 2.2em">
         <li>Square corners everywhere, avatars and checkboxes included.</li>
-        <li>Flat surfaces. No glass, grain, glow or shadow. Fades are for borders and edges only.</li>
-        <li>Color is for important things: risk, status, success, focus. Everything else is black, white and grey, navigation included.</li>
-        <li>Motion on state change only: 120–200ms transitions and a one-pass hover shimmer. The rain moves only while work runs or when the reader turns it on.</li>
+        <li>Flat surfaces. No glass, grain, glow or shadow.</li>
+        <li>Color is for important things: risk, status, success and selection. Everything else is black, white and grey, navigation included.</li>
+        <li>120–200ms transitions and a one-pass hover shimmer. Loops are allowed; the rain moves while work runs or when the reader turns it on.</li>
         <li>Minimal by default, detail on expand.</li>
         <li>SF Pro for text in regular and medium; Source Code Pro for code. The font picker swaps the text face.</li>
       </ol>
-      <p class="demo-usage">Square corners · flat, hairlines only · color only for status and selection · motion on state change, 120–200ms · tokens, never hex values · one text face in regular and medium, <code>font-mono</code> for code · see AGENTS.md for the full list and <code>npx signal-design check</code> to test a page against it</p>
+      <p class="demo-usage">Square corners · flat, hairlines only · color only for status and selection · transitions of 120–200ms · tokens, never hex values · one text face in regular and medium, <code>font-mono</code> for code · see AGENTS.md for the full list and <code>npx signal-design check</code> to test a page against it</p>
     </div>
 </body>
 </html>

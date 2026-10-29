@@ -7,7 +7,7 @@ Tauri apps and plain HTML.
 - **Square corners everywhere**, avatars and checkboxes included.
 - **Flat surfaces.** No glass, glow or shadow.
 - **Color is for important things:** risk, status, success and selection. Everything else, navigation included, is black, white and grey; focus rings and the current item are too.
-- **Motion on state change only:** 120–200ms transitions and a one-pass hover shimmer. The rain backdrop moves only while work runs. `prefers-reduced-motion` turns motion off.
+- **Motion:** 120–200ms transitions and a one-pass hover shimmer. Loops are allowed: the ornament sparkle, and the rain while work runs. `prefers-reduced-motion` turns motion off.
 
 ## Install
 
@@ -751,8 +751,8 @@ Alerts queue and show one at a time, in their tone (follow is `extra`, sub
 `success`, raid `accent` and big, bits `warning`), with a burst of flat square
 particles and one shimmer across the name. `[data-sd-latest="follow"]`,
 `[data-sd-goal="sub"]` and `[data-sd-timer="300"]` / `"up"` update on their own.
-A stream scene may loop (rain, credits, the live square): it is the one place
-Signal allows it, and `prefers-reduced-motion` still stops it. See
+A stream scene loops (rain, credits, the live square), and
+`prefers-reduced-motion` stops it. See
 `showcase/stream.html`; `stream.html?scene=start` is the scene alone as a source.
 
 ## Ornaments
