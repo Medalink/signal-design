@@ -153,5 +153,150 @@ document.getElementById("demo-uptime").innerHTML = '<i data-state="ok"></i>'.rep
 init(); // draws every .sd-spark[data-values] that is on the page when it runs</script>
       <p class="demo-usage"><code>sd-spark</code> + <code>data-values</code> · <code>sd-bars</code> + <code>--v</code> · <code>sd-diff</code> + <code>data-line="+|-|@"</code></p>
     </div>
+
+    <div class="demo-block" id="charts-time-series-presets">
+      <h2 class="sd-label">Time series presets</h2>
+      <p class="sd-muted max-w-[46rem]">The three presets of <code>createChart</code> on 10 second, 5 minute and 1 minute data: the core view with live appends, a week of bandwidth and a latency view with a forecast.</p>
+      <figure class="sd-chart" data-chart-theme="mono" style="--h: 500px" id="core">
+      <div class="sd-chart-bar">
+        <div><span class="sd-label sd-label-strong">Core</span><span class="sd-status" data-tone="success" data-live>live · 2s</span></div>
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="sd-seg" data-sd-chart-scale aria-label="Scale">
+            <button type="button" data-value="clamp">clamp</button>
+            <button type="button" data-value="p95">p95</button>
+            <button type="button" data-value="p90">p90</button>
+            <button type="button" data-value="linear">linear</button>
+            <button type="button" data-value="log">log</button>
+          </div>
+          <button class="sd-btn sd-btn-sm" data-pause aria-pressed="false">Pause feed</button>
+        </div>
+      </div>
+      <div class="sd-chart-plot"><canvas aria-label="Core bandwidth and round-trip time, last hour" role="img"></canvas></div>
+      <p class="sd-subtle text-sm">preset "core": bandwidth (Mbps) over path health (RTT ms with a jitter band). Raw 10s data with a min/max envelope and a trend line, maintenance and missing-data ranges, a warning threshold, surge and drop events, value tags, live edge, effects.</p>
+      </figure>
+      <div class="grid gap-10 lg:grid-cols-2">
+      <figure class="sd-chart" data-chart-theme="mono" style="--h: 320px" id="bandwidth">
+        <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Internet uplink · 7 days</span></div></div>
+        <div class="sd-chart-plot"><canvas aria-label="Internet bandwidth, last 7 days" role="img"></canvas></div>
+        <p class="sd-subtle text-sm">preset "bandwidth": 5-minute rollup, smoothed (window 7, tension 0.35), daily peaks, a week-over-week ghost, working hours and day lines.</p>
+      </figure>
+      <figure class="sd-chart" data-chart-theme="mono" style="--h: 320px" id="latency">
+        <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Branch → core RTT</span></div></div>
+        <div class="sd-chart-plot"><canvas aria-label="Branch round-trip time, last 8 hours" role="img"></canvas></div>
+        <p class="sd-subtle text-sm">preset "latency": RTT with a jitter band, warning and critical thresholds, a forecast past now.</p>
+      </figure>
+      </div>
+      <p class="demo-usage"><code>createChart({ preset: "core" | "bandwidth" | "latency" })</code> · <code>thresholds</code> · <code>ranges</code> · <code>events</code> · <code>peaks</code> · <code>forecastFrom</code> · <code>rhythm</code> · <code>envelope</code> · <code>smoothing</code></p>
+    </div>
+
+    <div class="demo-block" id="charts-gallery">
+      <h2 class="sd-label">Gallery</h2>
+      <p class="sd-muted max-w-[46rem]">The same tokens drive every chart type: <code>createChart(canvas, { type })</code> for line, area, step, bar, ranking bars, histogram and scatter, and CSS-only squares for heatmaps, part-of-whole, uptime and meters. Series take colors 1–6 in order; in mono, lines also take a dash each.</p>
+      <div class="grid gap-x-10 gap-y-12 lg:grid-cols-2">
+        <figure class="sd-chart" data-chart-theme="mono" style="--h: 300px" id="g-percentiles">
+          <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Response time</span></div><span class="sd-subtle text-sm">type "line" · p50 / p95 / p99 · SLO marker</span></div>
+          <div class="sd-chart-plot"><canvas role="img" aria-label="Response time"></canvas></div>
+        </figure>
+        <figure class="sd-chart" data-chart-theme="mono" style="--h: 300px" id="g-region">
+          <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Traffic by region</span></div><span class="sd-subtle text-sm">type "area" · stacked</span></div>
+          <div class="sd-chart-plot"><canvas role="img" aria-label="Traffic by region"></canvas></div>
+        </figure>
+        <figure class="sd-chart" data-chart-theme="mono" style="--h: 300px" id="g-services">
+          <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Requests by service</span></div><span class="sd-subtle text-sm">type "bar" · grouped</span></div>
+          <div class="sd-chart-plot"><canvas role="img" aria-label="Requests by service"></canvas></div>
+        </figure>
+        <figure class="sd-chart" data-chart-theme="mono" style="--h: 300px" id="g-errors">
+          <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Errors by class</span></div><span class="sd-subtle text-sm">type "bar" · stacked</span></div>
+          <div class="sd-chart-plot"><canvas role="img" aria-label="Errors by class"></canvas></div>
+        </figure>
+        <figure class="sd-chart" data-chart-theme="mono" style="--h: 300px" id="g-endpoints">
+          <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Slowest endpoints</span></div><span class="sd-subtle text-sm">type "hbar" · ranked with values</span></div>
+          <div class="sd-chart-plot"><canvas role="img" aria-label="Slowest endpoints"></canvas></div>
+        </figure>
+        <figure class="sd-chart" data-chart-theme="mono" style="--h: 300px" id="g-histogram">
+          <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Latency distribution</span></div><span class="sd-subtle text-sm">type "histogram" · percentile markers</span></div>
+          <div class="sd-chart-plot"><canvas role="img" aria-label="Latency distribution"></canvas></div>
+        </figure>
+        <figure class="sd-chart" data-chart-theme="mono" style="--h: 300px" id="g-scatter">
+          <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Duration vs payload</span></div><span class="sd-subtle text-sm">type "scatter" · quadrants</span></div>
+          <div class="sd-chart-plot"><canvas role="img" aria-label="Duration vs payload"></canvas></div>
+        </figure>
+        <figure class="sd-chart" data-chart-theme="mono" style="--h: 300px" id="g-queue">
+          <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Queue depth</span></div><span class="sd-subtle text-sm">type "step"</span></div>
+          <div class="sd-chart-plot"><canvas role="img" aria-label="Queue depth"></canvas></div>
+        </figure>
+
+        <figure class="sd-chart" data-chart-theme="mono" id="g-heatmap">
+          <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Deploys by hour</span></div><span class="sd-subtle text-sm">sd-heatmap · 7 × 24</span></div>
+          <div class="grid gap-2" style="grid-template-columns: auto minmax(0,1fr)">
+            <div class="grid sd-faint text-xs" style="grid-template-rows: repeat(7, 1fr); align-items: center" data-heat-rows></div>
+            <div class="sd-heatmap" style="--cols: 24" data-heat></div>
+          </div>
+          <div class="flex items-center justify-between sd-faint text-xs"><span>00:00</span><span>12:00</span><span>23:00</span></div>
+          <div class="sd-heatmap-key">less <i style="--v: 0"></i><i style="--v: .25"></i><i style="--v: .5"></i><i style="--v: .75"></i><i style="--v: 1"></i> more</div>
+        </figure>
+        <figure class="sd-chart" data-chart-theme="mono" id="g-waffle">
+          <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Traffic share</span></div><span class="sd-subtle text-sm">sd-waffle + sd-key · 100 squares</span></div>
+          <div class="flex flex-wrap items-center gap-10">
+            <div class="sd-waffle" style="--w: 210px" data-waffle></div>
+            <ul class="sd-key min-w-[14rem] flex-1" data-waffle-key></ul>
+          </div>
+        </figure>
+        <figure class="sd-chart" data-chart-theme="mono" id="g-uptime">
+          <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Uptime · 90 days</span></div><span class="sd-subtle text-sm">sd-uptime · ok, degraded, down</span></div>
+          <div class="grid gap-4" data-uptime></div>
+        </figure>
+        <figure class="sd-chart" data-chart-theme="mono" id="g-meters">
+          <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Capacity</span></div><span class="sd-subtle text-sm">sd-meter · value, target, thresholds</span></div>
+          <div class="grid gap-5">
+            <div class="grid gap-2"><div class="flex justify-between text-sm"><span>CPU</span><span class="sd-subtle">62% · target 75%</span></div><div class="sd-meter" style="--value: 62; --target: 75; --warn: 80; --crit: 95"><i data-at="warn"></i><i data-at="crit"></i></div></div>
+            <div class="grid gap-2"><div class="flex justify-between text-sm"><span>Memory</span><span class="sd-subtle">84% · target 75%</span></div><div class="sd-meter" style="--value: 84; --target: 75; --warn: 80; --crit: 95"><i data-at="warn"></i><i data-at="crit"></i></div></div>
+            <div class="grid gap-2"><div class="flex justify-between text-sm"><span>Disk</span><span class="sd-subtle">97% · over</span></div><div class="sd-meter" data-over style="--value: 97; --target: 75; --warn: 80; --crit: 95"><i data-at="warn"></i><i data-at="crit"></i></div></div>
+            <div class="grid gap-2"><div class="flex justify-between text-sm"><span>Uplink</span><span class="sd-subtle">4.9 of 10 Gbps</span></div><div class="sd-meter" style="--value: 49; --target: 70"></div></div>
+          </div>
+        </figure>
+      </div>
+      <p class="demo-usage"><code>createChart(canvas, { type })</code> · <code>markers</code> · <code>stacked</code> · <code>sd-heatmap</code> · <code>sd-waffle</code> + <code>sd-key</code> · <code>sd-uptime</code> · <code>sd-meter</code></p>
+    </div>
+
+    <div class="demo-block" id="charts-plots-from-data">
+      <h2 class="sd-label">Plots from your own points</h2>
+      <p class="sd-muted max-w-[46rem]">When your app already has the points and wants a small, static line, draw an SVG and let <code>sd-plot</code> style it. No Chart.js, no axes, no live engine. <code>data-series</code> picks the same color as the matching chart series.</p>
+      <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <div class="sd-card">
+          <div class="sd-card-head"><span>Core ↓ · last 10 minutes</span><span class="sd-subtle">hover for the value</span></div>
+          <div class="sd-card-body">
+            <div class="sd-plot" data-series="down" style="--h: 140px" id="plot-down" data-unit="Mbps"></div>
+          </div>
+        </div>
+        <div class="sd-card">
+          <div class="sd-card-head"><span>Sparklines</span><span class="sd-subtle">sd-plot-inline</span></div>
+          <div class="sd-card-body grid gap-3" id="sparks">
+            <div class="flex items-center gap-4"><span class="w-24 sd-subtle text-sm">Core ↓</span><span class="sd-plot sd-plot-inline" data-series="down" data-from="down"></span><b class="w-24 text-right font-normal" data-last></b></div>
+            <div class="flex items-center gap-4"><span class="w-24 sd-subtle text-sm">Core ↑</span><span class="sd-plot sd-plot-inline" data-series="up" data-from="up"></span><b class="w-24 text-right font-normal" data-last></b></div>
+            <div class="flex items-center gap-4"><span class="w-24 sd-subtle text-sm">RTT</span><span class="sd-plot sd-plot-inline" data-series="rtt" data-from="rtt"></span><b class="w-24 text-right font-normal" data-last></b></div>
+          </div>
+        </div>
+      </div>
+      <table class="max-w-[52rem]">
+        <thead><tr><th>Use</th><th>When</th></tr></thead>
+        <tbody>
+          <tr><td><code>sd-plot</code></td><td>You have the points; you want a small static line or a sparkline. CSS only.</td></tr>
+          <tr><td><code>createChart</code></td><td>Time axes, units, several series, bands, tooltips, live data. Needs Chart.js.</td></tr>
+        </tbody>
+      </table>
+      <p class="demo-usage"><code>sd-plot</code> + <code>data-series</code> · <code>sd-plot-readout</code> · <code>sd-plot-inline</code></p>
+    </div>
+
+    <div class="demo-block" id="charts-formatting">
+      <h2 class="sd-label">Formatting</h2>
+      <div class="max-w-[52rem]">
+        <table>
+          <thead><tr><th>Call</th><th>Result</th></tr></thead>
+          <tbody id="formats"></tbody>
+        </table>
+      </div>
+      <p class="demo-usage"><code>formatValue(value, unit)</code> from <code>signal-design/charts</code></p>
+    </div>
 </body>
 </html>

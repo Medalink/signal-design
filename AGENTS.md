@@ -124,7 +124,7 @@ by `title` or `classes`) rather than inventing markup.
 | Need | Use |
 |---|---|
 | Reading page | `<main class="sd-page">` (720px column) or `sd-page sd-page-wide` |
-| App with navigation | Signal App Shell: `sd-shell` > `sd-rail`, `sd-sidebar`, `sd-shell-main` (`sd-shell-header` or `sd-shell-bar`, `sd-shell-content`, optional `sd-shell-dock`), `sd-shell-aside`, `sd-statusbar sd-shell-status`. Copy the whole frame from [`showcase/shell.html`](https://github.com/Medalink/signal-design/blob/main/showcase/shell.html) in the repo (the package does not ship `showcase/`); README "Signal App Shell" lists its parts |
+| App with navigation | Signal App Shell: `sd-shell` > `sd-rail`, `sd-sidebar`, `sd-shell-main` (`sd-shell-header` or `sd-shell-bar`, `sd-shell-content`, optional `sd-shell-dock`), `sd-shell-aside`, `sd-statusbar sd-shell-status`. Copy the whole frame from [`showcase/chat.html`](https://github.com/Medalink/signal-design/blob/main/showcase/chat.html) in the repo (the package does not ship `showcase/`); README "Signal App Shell" lists its parts |
 | A rail of places (groups, servers) | `sd-rail-tile` (picture, initials or icon) in a 72px rail (`--shell-rail: 4.5rem`); `aria-current`, `data-unread`, `data-pending`, corner `sd-badge-count` |
 | Resizable sidebar | `sd-sidebar-resize` (`role="separator"`, `aria-valuemin`/`max`/`now`) last in `sd-sidebar`; `data-sd-shell="resize"` for the JS, or drive `--shell-sidebar` and `aria-valuenow` from your framework |
 | Desktop window chrome | `sd-titlebar` with `sd-window-controls` (`data-sd-window`) |

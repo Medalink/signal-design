@@ -358,10 +358,13 @@
    *   <th data-sort="created" aria-sort="descending">Created</th>
    */
   .sd-table :where(th)[data-sort] {
-    text-align: inherit;
     cursor: pointer;
     user-select: none;
     transition: color 120ms var(--ease-out);
+  }
+  /* A number header keeps its end alignment: sd-num sets it. */
+  .sd-table :where(th)[data-sort]:not(.sd-num, [data-num]) {
+    text-align: inherit;
   }
   .sd-table :where(th)[data-sort]:hover {
     color: var(--sd-fg);

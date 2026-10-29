@@ -1,344 +1,288 @@
-import { mountBar, savedScrollbars, setChartColors } from "./viewport.js";
+import { mountBar, savedScrollbars } from "./viewport.js";
 import { init } from "../src/js/index.js";
-import { createChart, formatValue } from "../src/js/charts/index.js";
-import { lazyChart } from "./lazy.js";
+import { icon } from "../src/js/icons.js";
+import { createChart } from "../src/js/charts/index.js";
 
 mountBar();
 init({ scrollbars: savedScrollbars() });
 
-// Seeded noise so every load (and every test run) draws the same chart.
-let seed = 42;
-const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
-const noise = (amp) => (rand() - 0.5) * 2 * amp;
+for (const el of document.querySelectorAll("[data-icon]")) el.insertAdjacentHTML("afterbegin", icon(el.dataset.icon));
 
-const now = Math.floor(Date.now() / 10_000) * 10_000;
-const HOUR = 36e5;
+const $ = (id) => document.getElementById(id);
 
-/* ---- core: 1h of 10s points ------------------------------------------- */
-function coreSeries() {
-  const down = [];
-  const up = [];
-  const rtt = [];
-  const jMin = [];
-  const jMax = [];
-  let d = 4200;
-  let u = 1600;
-  for (let t = now - HOUR; t <= now; t += 10_000) {
-    const k = (t - (now - HOUR)) / HOUR;
-    d += noise(220) + (4400 - d) * 0.05;
-    u += noise(120) + (1700 - u) * 0.05;
-    let dv = d + Math.sin(k * 9) * 600;
-    if (k > 0.62 && k < 0.66) dv += 8200 * Math.sin(((k - 0.62) / 0.04) * Math.PI); // a burst
-    const gap = k > 0.3 && k < 0.33; // the collector dropped out
-    down.push({ x: t, y: gap ? null : Math.max(0, dv) });
-    up.push({ x: t, y: gap ? null : Math.max(0, u + Math.cos(k * 7) * 300) });
-    const base = 4.2 + Math.sin(k * 5) * 0.8 + (k > 0.62 && k < 0.66 ? 6 : 0);
-    const r = base + noise(0.6);
-    const j = 0.6 + rand() * 0.9;
-    rtt.push({ x: t, y: +r.toFixed(2) });
-    jMin.push({ x: t, y: +(r - j).toFixed(2) });
-    jMax.push({ x: t, y: +(r + j).toFixed(2) });
-  }
-  return { down, up, rtt, jMin, jMax };
+/* ---- Simulated history: the same numbers every time for one range ----------- */
+
+const MIN = 60_000;
+const HOUR = 60 * MIN;
+const RANGES = {
+  "1h": { hours: 1, bucket: MIN, every: "1 min", seed: 11 },
+  "24h": { hours: 24, bucket: 5 * MIN, every: "5 min", seed: 24 },
+  "7d": { hours: 168, bucket: 30 * MIN, every: "30 min", seed: 7 },
+  "30d": { hours: 720, bucket: 2 * HOUR, every: "2 h", seed: 30 },
+};
+// Where total memory climbs past the limit, as a share of the range, its width and how far it climbs (GiB).
+const SURGES = {
+  "1h": [],
+  "24h": [[0.62, 0.05, 1.4]],
+  "7d": [[0.31, 0.02, 1.1], [0.8, 0.016, 1.5]],
+  "30d": [[0.2, 0.01, 1], [0.55, 0.008, 1.2], [0.9, 0.012, 2]],
+};
+const LIMIT = 3; // GiB, the combined limit of the containers that have one
+const WSL = { cpus: 32, memory: 45.9 };
+const WINDOWS = { cpus: 64, memory: 127.9 };
+const GiB = 1024 ** 3;
+const MiB = 1024 ** 2;
+
+// Averages are shares of WSL's processors and GiB; traffic is MiB per hour; restarts and downtime are per week.
+const CONTAINERS = [
+  { name: "checkout-api", group: "acme-shop", cpu: 1.4, mem: 0.46, limit: 0.75, net: [310, 520], disk: [40, 90], restarts: 0, down: 0 },
+  { name: "worker", group: "acme-shop", cpu: 2.1, mem: 0.38, limit: 0.5, net: [120, 90], disk: [210, 260], restarts: 3, down: 0.004 },
+  { name: "storefront", group: "acme-shop", cpu: 0.5, mem: 0.31, limit: 0.5, net: [880, 1400], disk: [12, 30], restarts: 1, down: 0.001 },
+  { name: "postgres", group: "acme-shop", cpu: 0.9, mem: 0.62, limit: 1, net: [260, 410], disk: [900, 1300], restarts: 0, down: 0 },
+  { name: "redis", group: "acme-shop", cpu: 0.1, mem: 0.12, limit: 0.25, net: [190, 210], disk: [2, 18], restarts: 0, down: 0 },
+  { name: "mailer", group: "acme-shop", cpu: 0.1, mem: 0.15, limit: null, net: [20, 60], disk: [1, 4], restarts: 2, down: 0.126 },
+  { name: "blog-web", group: "blog", cpu: 0.2, mem: 0.21, limit: null, net: [240, 610], disk: [6, 9], restarts: 0, down: 0 },
+  { name: "blog-db", group: "blog", cpu: 0.2, mem: 0.33, limit: null, net: [30, 45], disk: [160, 210], restarts: 0, down: 0 },
+];
+// Containers whose busiest minute went past their own memory limit, per range.
+const OVER = { "1h": [], "24h": ["worker"], "7d": ["worker"], "30d": ["worker", "redis"] };
+
+/** A small seeded generator, so a range always draws the same history. */
+function rng(seed) {
+  let a = seed * 2654435761;
+  return () => {
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
 }
 
-const c = coreSeries();
-const core = createChart(document.querySelector("#core canvas"), {
-  preset: "core",
-  bucketSeconds: 10,
-  live: 2,
-  window: HOUR,
-  envelope: 120,
-  series: [
-    { label: "Core ↓", data: c.down },
-    { label: "Core ↑", data: c.up },
-    { label: "Core → MDF RTT", unit: " ms", data: c.rtt, min: c.jMin, max: c.jMax },
-  ],
-  thresholds: [{ label: "Warning 9 Gbps", value: 9000, level: "warning" }],
-  ranges: [
-    { from: now - 0.9 * HOUR, to: now - 0.8 * HOUR, kind: "maintenance", label: "Maintenance · switch firmware" },
-    { from: now - 0.7 * HOUR, to: now - 0.67 * HOUR, kind: "missing", label: "No data" },
-  ],
-  events: [
-    { x: now - 0.36 * HOUR, y: c.down[Math.round(0.64 * 360)]?.y ?? 8000, kind: "surge", label: "unexpected", unexpected: true },
-    { x: now - 0.12 * HOUR, y: 2600, kind: "drop", label: "expected" },
-  ],
-});
+function simulate(key) {
+  const { hours, bucket, seed } = RANGES[key];
+  const rnd = rng(seed);
+  const count = (hours * HOUR) / bucket;
+  const end = Math.floor(Date.now() / bucket) * bucket;
+  // Busy minutes average out over wide buckets, so long ranges get a few lower peaks.
+  const spikes = Array.from({ length: { 1: 2, 24: 4, 168: 9, 720: 14 }[hours] }, () => [rnd(), 0.4 + rnd() * 0.8, (8 + rnd() * 16) * { 1: 1, 24: 1, 168: 0.8, 720: 0.55 }[hours]]);
+  const cpu = [];
+  const memory = [];
+  for (let i = 0; i < count; i++) {
+    const at = end - (count - 1 - i) * bucket;
+    const frac = i / (count - 1);
+    const date = new Date(at);
+    const day = Math.max(0, Math.sin(((date.getHours() + date.getMinutes() / 60 - 7) / 24) * Math.PI * 2));
+    let c = 3.2 + 4 * day + rnd() * 1.4;
+    for (const [at0, width, height] of spikes) c += height * Math.exp(-0.5 * (((frac - at0) * count) / (width * Math.max(1, count / 160))) ** 2);
+    let m = key === "1h" ? 2.3 + 0.38 * frac + rnd() * 0.06 : 2.4 + 0.2 * day + rnd() * 0.08;
+    for (const [at0, width, height] of SURGES[key]) m += height * Math.exp(-0.5 * ((frac - at0) / (width / 2)) ** 2);
+    // The monitor was closed for a while: a gap, not a zero.
+    const gap = key === "7d" && frac > 0.45 && frac < 0.48;
+    cpu.push({ x: at, y: gap ? null : +Math.min(c, 100).toFixed(2) });
+    memory.push({ x: at, y: gap ? null : +m.toFixed(3) });
+  }
 
-// A live feed: a new point every 2 seconds, paused with the button.
-let paused = false;
-let t = now;
-let d = c.down.at(-1).y;
-let u = c.up.at(-1).y;
-let r = c.rtt.at(-1).y;
-setInterval(() => {
-  if (paused || document.hidden) return;
-  t += 10_000;
-  d = Math.max(0, d + noise(300) + (4400 - d) * 0.08);
-  u = Math.max(0, u + noise(150) + (1700 - u) * 0.08);
-  r = Math.max(1, r + noise(0.5) + (4.5 - r) * 0.1);
-  const j = 0.6 + rand() * 0.9;
-  core.append({
-    "Core ↓": [{ x: t, y: d }],
-    "Core ↑": [{ x: t, y: u }],
-    "Core → MDF RTT": [{ x: t, y: +r.toFixed(2), min: +(r - j).toFixed(2), max: +(r + j).toFixed(2) }],
+  const rows = CONTAINERS.map((c) => {
+    const avg = c.cpu * (0.9 + rnd() * 0.2);
+    const p95 = avg * (2 + rnd() * 1.2);
+    const memAvg = c.mem * (0.92 + rnd() * 0.16);
+    const memMax = c.limit
+      ? OVER[key].includes(c.name) ? c.limit * (1.16 + rnd() * 0.2) : Math.min(memAvg * (1.1 + rnd() * 0.4), c.limit * 0.9)
+      : memAvg * (1.1 + rnd() * 0.4);
+    const down = hours >= 24 ? c.down : 0;
+    return {
+      name: c.name,
+      group: c.group,
+      cpuAvg: avg,
+      cpuP95: p95,
+      cpuMax: Math.min(100, p95 * (1.3 + rnd() * 0.9)),
+      memAvg: memAvg * GiB,
+      memMax: memMax * GiB,
+      limit: c.limit ? c.limit * GiB : 0,
+      netIn: c.net[0] * hours * (0.9 + rnd() * 0.2) * MiB,
+      netOut: c.net[1] * hours * (0.9 + rnd() * 0.2) * MiB,
+      diskRead: c.disk[0] * hours * (0.9 + rnd() * 0.2) * MiB,
+      diskWrite: c.disk[1] * hours * (0.9 + rnd() * 0.2) * MiB,
+      uptime: 100 * (1 - down * (0.9 + rnd() * 0.2)),
+      restarts: hours >= 24 ? Math.round((c.restarts * hours) / 168 + (c.restarts ? rnd() * 0.8 : 0)) : 0,
+    };
   });
-}, 2000);
-document.querySelector("[data-pause]").addEventListener("click", (e) => {
-  paused = !paused;
-  e.currentTarget.setAttribute("aria-pressed", String(paused));
-  e.currentTarget.textContent = paused ? "Resume feed" : "Pause feed";
-  const status = document.querySelector("[data-live]");
-  status.dataset.tone = paused ? "pending" : "success";
-  status.textContent = paused ? "paused" : "live · 2s";
-});
 
-/* ---- bandwidth: 7 days of 5-minute rollups ---------------------------- */
-const week = [];
-const ghost = [];
-const peaks = [];
-const DAY = 24 * HOUR;
-for (let x = now - 7 * DAY; x <= now; x += 5 * 60_000) {
-  const h = new Date(x).getHours() + new Date(x).getMinutes() / 60;
-  const workday = new Date(x).getDay() % 6 !== 0;
-  const daily = Math.max(0, Math.sin(((h - 6) / 24) * Math.PI * 2)) * (workday ? 1 : 0.35);
-  week.push({ x, y: 300 + daily * 2600 + noise(160) });
-  ghost.push({ x, y: 280 + daily * 2300 + noise(80) });
-}
-for (let day = 0; day < 7; day++) {
-  const slice = week.filter((p) => p.x >= now - (7 - day) * DAY && p.x < now - (6 - day) * DAY);
-  const top = slice.reduce((a, b) => (b.y > a.y ? b : a), slice[0]);
-  if (top) peaks.push(top);
-}
-lazyChart(document.querySelector("#bandwidth canvas"), {
-  preset: "bandwidth",
-  bucketSeconds: 300,
-  tension: 0.35,
-  smoothing: { window: 7 },
-  rhythm: { hours: [7.5, 15.5] },
-  series: [
-    { label: "Internet ↓", data: week },
-    { label: "Last week ↓", data: ghost, ghost: true, kind: "ghost" },
-  ],
-  peaks,
-});
-
-/* ---- latency: 8 hours of 60s points, with a forecast ------------------- */
-const lat = [];
-const lMin = [];
-const lMax = [];
-for (let x = now - 8 * HOUR; x <= now + HOUR; x += 60_000) {
-  const k = (x - (now - 8 * HOUR)) / (9 * HOUR);
-  const v = 18 + Math.sin(k * 12) * 6 + (k > 0.55 && k < 0.6 ? 28 : 0) + noise(2.5);
-  const j = 1 + rand() * 3;
-  lat.push({ x, y: +v.toFixed(2) });
-  lMin.push({ x, y: +(v - j).toFixed(2) });
-  lMax.push({ x, y: +(v + j).toFixed(2) });
-}
-lazyChart(document.querySelector("#latency canvas"), {
-  preset: "latency",
-  bucketSeconds: 60,
-  series: [{ label: "Branch → core RTT", unit: " ms", data: lat, min: lMin, max: lMax }],
-  thresholds: [
-    { label: "Warning 40 ms", value: 40, level: "warning", unit: " ms" },
-    { label: "Critical 60 ms", value: 60, level: "critical", unit: " ms" },
-  ],
-  forecastFrom: now,
-});
-
-/* ---- sd-plot: the app draws the SVG, the CSS styles it ----------------- */
-const SVG = "http://www.w3.org/2000/svg";
-function drawPlot(el, points, { grid = true } = {}) {
-  const w = 600;
-  const h = 100;
-  const ys = points.map((p) => p.y).filter(Number.isFinite);
-  const lo = Math.min(...ys);
-  const hi = Math.max(...ys);
-  const x0 = points[0].x;
-  const span = points.at(-1).x - x0 || 1;
-  const xy = (p) => [((p.x - x0) / span) * w, h - 4 - ((p.y - lo) / (hi - lo || 1)) * (h - 8)];
-  const line = points.filter((p) => p.y != null).map((p) => xy(p).map((n) => n.toFixed(1)).join(",")).join(" ");
-  el.querySelector("svg")?.remove();
-  const svg = document.createElementNS(SVG, "svg");
-  svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
-  svg.setAttribute("preserveAspectRatio", "none");
-  svg.setAttribute("aria-hidden", "true");
-  svg.innerHTML = `${grid ? `<path class="grid" d="M0 25H${w}M0 50H${w}M0 75H${w}"/>` : ""}<polygon class="area" points="0,${h} ${line} ${w},${h}"/><polyline class="line" points="${line}"/>`;
-  el.prepend(svg);
-  return { xy, w, h };
+  const events = Object.entries({ start: 0.55, stop: 0.42, restart: 0.12, create: 0.09, remove: 0.06 })
+    .map(([kind, rate]) => [kind, Math.max(kind === "start" ? 1 : 0, Math.round(rate * hours * (0.8 + rnd() * 0.4)))])
+    .sort((a, b) => b[1] - a[1]);
+  return { key, bucket, cpu, memory, rows, events };
 }
 
-const recent = (key) => c[key].slice(-60);
-const big = document.querySelector("#plot-down");
-const geom = drawPlot(big, recent("down"));
-const readout = document.createElement("span");
-readout.className = "sd-plot-readout";
-readout.hidden = true;
-big.append(readout);
-big.addEventListener("pointermove", (e) => {
-  const r = big.getBoundingClientRect();
-  const pts = recent("down").filter((p) => p.y != null);
-  const t = (e.clientX - r.left) / r.width;
-  const p = pts[Math.min(pts.length - 1, Math.max(0, Math.round(t * (pts.length - 1))))];
-  const [, y] = geom.xy(p);
-  let cross = big.querySelector(".cross");
-  if (!cross) {
-    cross = document.createElementNS(SVG, "path");
-    cross.setAttribute("class", "cross");
-    big.querySelector("svg").append(cross);
+/* ---- Words and numbers ---------------------------------------------------- */
+
+const count = (n) => n.toLocaleString("en-US");
+const percent = (v) => `${v.toFixed(v >= 10 ? 0 : 1)}%`;
+const pad = (n) => String(n).padStart(2, "0");
+function bytes(n) {
+  if (!n) return "0 B";
+  const units = ["B", "KiB", "MiB", "GiB", "TiB"];
+  const power = Math.min(units.length - 1, Math.floor(Math.log(n) / Math.log(1024)));
+  const scaled = n / 1024 ** power;
+  return `${scaled.toFixed(power === 0 || scaled >= 100 ? 0 : 1)} ${units[power]}`;
+}
+const gib = (v) => `${v.toFixed(1)} GiB`;
+/** Two sizes in the unit of the larger one: "0.7 / 1.2 GiB". */
+function pair(a, b) {
+  const units = ["B", "KiB", "MiB", "GiB", "TiB"];
+  const power = Math.min(units.length - 1, Math.floor(Math.log(Math.max(a, b, 1)) / Math.log(1024)));
+  const part = (n) => {
+    const scaled = n / 1024 ** power;
+    return scaled.toFixed(power === 0 || scaled >= 100 ? 0 : 1);
+  };
+  return `${part(a)} / ${part(b)} ${units[power]}`;
+}
+const duration = (ms) => {
+  const m = Math.round(ms / MIN);
+  return m < 60 ? `${m} min` : m % 60 ? `${Math.floor(m / 60)} h ${m % 60} min` : `${m / 60} h`;
+};
+const moment = (at, key) => {
+  const d = new Date(at);
+  const clock = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  return key === "1h" || key === "24h" ? clock : `${d.toLocaleDateString("en-US", { month: "short", day: "numeric" })}, ${clock}`;
+};
+const rangeWords = { "1h": "the last hour", "24h": "the last 24 hours", "7d": "the last 7 days", "30d": "the last 30 days" };
+
+/* ---- The screen ------------------------------------------------------------- */
+
+let key = "24h";
+let sort = { key: "cpuAvg", dir: -1 };
+let data = null;
+
+const COLUMNS = [
+  { key: "name", label: "Container", text: true },
+  { key: "cpuAvg", label: "CPU avg", format: percent },
+  { key: "cpuP95", label: "CPU p95", format: percent },
+  { key: "cpuMax", label: "CPU max", format: percent },
+  { key: "memMax", label: "Memory max/limit", format: (v, r) => (r.limit ? pair(v, r.limit) : `${bytes(v)} / —`), over: (r) => r.limit && r.memMax > r.limit },
+  { key: "netIn", label: "Net in/out", format: (v, r) => pair(v, r.netOut) },
+  { key: "diskRead", label: "Disk read/write", format: (v, r) => pair(v, r.diskWrite) },
+  { key: "uptime", label: "Uptime", format: percent },
+  { key: "restarts", label: "Restarts", format: count },
+];
+
+const table = $("table");
+
+function drawHead() {
+  table.innerHTML = `<thead><tr>${COLUMNS.map((c) => `<th data-sort="${c.key}" tabindex="0"${c.text ? "" : " data-num"}>${c.label}</th>`).join("")}</tr></thead><tbody></tbody>`;
+  sortRows();
+}
+
+function sortRows() {
+  const column = COLUMNS.find((c) => c.key === sort.key);
+  const rows = [...data.rows].sort((a, b) => (column.text ? a.name.localeCompare(b.name) : a[sort.key] - b[sort.key]) * sort.dir);
+  for (const th of table.tHead.rows[0].cells) {
+    if (th.dataset.sort === sort.key) th.setAttribute("aria-sort", sort.dir > 0 ? "ascending" : "descending");
+    else th.removeAttribute("aria-sort");
   }
-  const x = geom.xy(p)[0];
-  cross.setAttribute("d", `M${x} 0V${geom.h}`);
-  readout.hidden = false;
-  readout.innerHTML = `${new Date(p.x).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}<b>${formatValue(p.y, "Mbps")}</b>`;
-  readout.style.left = `${Math.min(r.width - 150, Math.max(0, e.clientX - r.left + 12))}px`;
-  readout.style.top = `${Math.max(0, (y / geom.h) * r.height - 30)}px`;
-});
-big.addEventListener("pointerleave", () => {
-  readout.hidden = true;
-  big.querySelector(".cross")?.remove();
-});
-for (const row of document.querySelectorAll("#sparks > div")) {
-  const key = row.querySelector("[data-from]").dataset.from;
-  const pts = recent(key);
-  drawPlot(row.querySelector("[data-from]"), pts, { grid: false });
-  row.querySelector("[data-last]").textContent = formatValue(pts.at(-1).y, key === "rtt" ? " ms" : "Mbps");
+  table.tBodies[0].innerHTML = rows
+    .map(
+      (r) =>
+        `<tr>${COLUMNS.map((c) => {
+          if (c.text) return `<td>${r.name}<span class="sd-subtle block text-sm">${r.group}</span></td>`;
+          const text = c.format(r[c.key], r);
+          return c.over?.(r) ? `<td class="sd-num whitespace-nowrap text-danger">${text}<span class="sd-sr-only"> over the limit</span></td>` : `<td class="sd-num whitespace-nowrap">${text}</td>`;
+        }).join("")}</tr>`,
+    )
+    .join("");
 }
 
-/* ---- gallery: generic types on the same tokens --------------------------- */
-const canvasOf = (id) => document.querySelector(`#${id} canvas`);
-const hours = Array.from({ length: 24 }, (_, h) => `${String(h).padStart(2, "0")}:00`);
-const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const wave = (h, peak = 14) => Math.max(0, Math.sin(((h - 6) / 24) * Math.PI * 2));
-
-lazyChart(canvasOf("g-percentiles"), {
-  type: "line",
-  labels: hours,
-  unit: " ms",
-  series: [
-    { label: "p50", data: hours.map((_, h) => Math.round(80 + wave(h) * 40 + noise(6))) },
-    { label: "p95", data: hours.map((_, h) => Math.round(180 + wave(h) * 110 + noise(14))) },
-    { label: "p99", data: hours.map((_, h) => Math.round(260 + wave(h) * 190 + (h === 15 ? 140 : 0) + noise(20))) },
-  ],
-  markers: [{ axis: "y", value: 300, label: "SLO 300 ms", tone: "warning" }],
+function pick(th) {
+  const next = th.dataset.sort;
+  const column = COLUMNS.find((c) => c.key === next);
+  sort = sort.key === next ? { key: next, dir: -sort.dir } : { key: next, dir: column.text ? 1 : -1 };
+  sortRows();
+}
+table.addEventListener("click", (e) => {
+  const th = e.target.closest("th[data-sort]");
+  if (th) pick(th);
+});
+table.addEventListener("keydown", (e) => {
+  const th = e.target.closest("th[data-sort]");
+  if (th && (e.key === "Enter" || e.key === " ")) {
+    e.preventDefault();
+    pick(th);
+  }
 });
 
-lazyChart(canvasOf("g-region"), {
-  type: "area",
-  stacked: true,
-  labels: hours,
-  unit: "Mbps",
-  series: ["US East", "US West", "Europe", "Asia"].map((label, i) => ({
-    label,
-    data: hours.map((_, h) => Math.round((900 - i * 170) * (0.35 + wave((h + i * 5) % 24) * 0.9) + noise(40))),
-  })),
+function stats(points) {
+  const ys = points.filter((p) => p.y != null);
+  const peak = ys.reduce((best, p) => (p.y > best.y ? p : best), ys[0]);
+  return { peak, avg: ys.reduce((sum, p) => sum + p.y, 0) / ys.length, latest: ys.at(-1).y };
+}
+
+const nice = (v, step) => Math.ceil(v / step) * step;
+
+/** Draw one chart again for the range; the canvas is reused. */
+function plot(id, options, name, summary) {
+  const canvas = document.querySelector(`#${id} canvas`);
+  canvas.sdChart?.destroy();
+  createChart(canvas, { type: "area", legend: options.series.length > 1, ...options });
+  canvas.setAttribute("aria-label", `${name} over ${rangeWords[key]}. ${summary.replace(/<[^>]+>/g, "")}`);
+}
+
+function render() {
+  data = simulate(key);
+  const { cpu, memory, bucket, events } = data;
+  const c = stats(cpu);
+  const m = stats(memory);
+  const at = (p) => moment(p.x, key);
+  const over = memory.filter((p) => p.y != null && p.y > LIMIT);
+  const overBy = m.peak.y - LIMIT;
+
+  $("peak-cpu").textContent = percent(c.peak.y);
+  $("peak-cpu-note").textContent = `of WSL at ${at(c.peak)}`;
+  $("peak-memory").textContent = gib(m.peak.y);
+  $("peak-memory-box").toggleAttribute("data-tone", overBy > 0);
+  if (overBy > 0) $("peak-memory-box").dataset.tone = "danger";
+  $("peak-memory-note").textContent = overBy > 0 ? `${gib(overBy)} over the ${LIMIT} GiB limit at ${at(m.peak)}` : `${percent((m.peak.y / WSL.memory) * 100)} of WSL at ${at(m.peak)}`;
+  $("running").textContent = (data.rows.reduce((sum, r) => sum + r.uptime, 0) / 100).toFixed(1);
+  $("events").textContent = count(events.reduce((sum, [, n]) => sum + n, 0));
+  $("events-note").textContent = events.slice(0, 3).map(([kind, n]) => `${kind} ${n}`).join(" · ");
+  $("win-cpu").textContent = percent((c.peak.y * WSL.cpus) / WINDOWS.cpus);
+  $("win-cpu-note").textContent = `of ${WINDOWS.cpus} processors at ${at(c.peak)}`;
+  $("win-memory").textContent = percent((m.peak.y / WINDOWS.memory) * 100);
+  $("win-memory-note").textContent = `of ${WINDOWS.memory} GiB at ${at(m.peak)}`;
+
+  const cpuSummary = `<span>Peak ${percent(c.peak.y)} at ${at(c.peak)}</span><span>Average ${percent(c.avg)}</span><span>Latest ${percent(c.latest)}</span>`;
+  const memSummary =
+    `<span>Peak ${gib(m.peak.y)} at ${at(m.peak)}</span><span>Average ${gib(m.avg)}</span><span>Latest ${gib(m.latest)}</span>` +
+    (over.length ? `<span class="text-danger">Over the limit for ${duration(over.length * bucket)}</span>` : "");
+  document.querySelector("#cpu [data-summary]").innerHTML = cpuSummary;
+  document.querySelector("#memory [data-summary]").innerHTML = memSummary;
+
+  plot("cpu", { unit: "%", yMax: nice(c.peak.y * 1.15, 5), series: [{ label: "Total CPU", data: cpu }] }, "Total CPU, share of WSL", cpuSummary);
+  // The part above the limit is its own series in the danger role; its neighbors join it so the line stays whole.
+  const series = [{ label: "Total memory", data: memory }];
+  if (over.length) {
+    const high = (i) => memory[i]?.y != null && memory[i].y > LIMIT;
+    series.push({ label: "Over the limit", tone: "critical", dash: [], data: memory.map((p, i) => ({ x: p.x, y: high(i - 1) || high(i) || high(i + 1) ? p.y : null })) });
+  }
+  plot(
+    "memory",
+    { unit: " GiB", yMax: nice(Math.max(LIMIT * 1.2, m.peak.y * 1.1), 0.5), series, markers: [{ axis: "y", value: LIMIT, label: `Limit ${LIMIT} GiB`, tone: "warning" }] },
+    "Total memory",
+    memSummary + ` The limit is ${LIMIT} GiB.`,
+  );
+
+  $("count").textContent = data.rows.length;
+  drawHead();
+  $("table-note").textContent = `CPU is a share of WSL's ${WSL.cpus} processors. p95 is taken over ${RANGES[key].every} averages, not single samples. Uptime is the share of watched time a container was running.`;
+  $("oldest").textContent = moment(Date.now() - 31.4 * 24 * HOUR, "30d");
+  $("status").textContent = `${key} · ${count(cpu.length)} samples, ${RANGES[key].every} apart`;
+}
+
+$("range").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-range]");
+  if (!b || b.dataset.range === key) return;
+  key = b.dataset.range;
+  for (const other of $("range").querySelectorAll("button")) other.setAttribute("aria-pressed", String(other === b));
+  render();
 });
 
-lazyChart(canvasOf("g-services"), {
-  type: "bar",
-  labels: days,
-  unit: "",
-  series: ["api", "web", "worker"].map((label, i) => ({
-    label,
-    data: days.map((_, d) => Math.round((5200 - i * 1400) * (d > 4 ? 0.45 : 1) + noise(500))),
-  })),
-});
-
-lazyChart(canvasOf("g-errors"), {
-  type: "bar",
-  stacked: true,
-  labels: hours.slice(8, 20),
-  series: [
-    { label: "4xx", data: hours.slice(8, 20).map(() => Math.round(40 + rand() * 30)) },
-    { label: "5xx", data: hours.slice(8, 20).map((_, i) => Math.round(4 + rand() * 6 + (i === 6 ? 38 : 0))), tone: "critical" },
-    { label: "timeout", data: hours.slice(8, 20).map(() => Math.round(rand() * 8)) },
-  ],
-});
-
-const endpoints = [["/api/search", 412], ["/api/export", 388], ["/api/reports", 261], ["/api/items", 174], ["/api/upload", 158], ["/api/users", 96], ["/api/auth", 71], ["/health", 12]];
-lazyChart(canvasOf("g-endpoints"), {
-  type: "hbar",
-  labels: endpoints.map((e) => e[0]),
-  unit: " ms",
-  series: [{ label: "p95", data: endpoints.map((e) => e[1]) }],
-});
-
-const buckets = Array.from({ length: 24 }, (_, i) => (i + 1) * 20);
-const hist = buckets.map((b) => Math.round(900 * Math.exp(-((b - 140) ** 2) / (2 * 60 ** 2)) + 40 * Math.exp(-((b - 420) ** 2) / 800) + rand() * 25));
-lazyChart(canvasOf("g-histogram"), {
-  type: "histogram",
-  labels: buckets.map((b) => `${b}`),
-  series: [{ label: "requests", data: hist }],
-  markers: [
-    { value: 6, label: "p50 140 ms" },
-    { value: 13, label: "p95 280 ms", tone: "warning" },
-    { value: 20, label: "p99 420 ms", tone: "critical" },
-  ],
-});
-
-const pts = Array.from({ length: 160 }, () => {
-  const kb = 2 ** (rand() * 10);
-  return { x: Math.round(kb), y: Math.max(12, Math.round(40 + kb * 0.35 + noise(60) + (rand() < 0.06 ? 400 : 0))) };
-});
-lazyChart(canvasOf("g-scatter"), {
-  type: "scatter",
-  unit: " ms",
-  xUnit: " KB",
-  series: [
-    { label: "ok", data: pts.filter((p) => p.y < 300) },
-    { label: "slow", data: pts.filter((p) => p.y >= 300), tone: "critical", size: 4 },
-  ],
-  markers: [{ axis: "y", value: 300, label: "300 ms", tone: "warning" }, { value: 512, label: "512 KB" }],
-});
-
-let depth = 20;
-lazyChart(canvasOf("g-queue"), {
-  type: "step",
-  labels: Array.from({ length: 48 }, (_, i) => `${String(Math.floor(i / 2)).padStart(2, "0")}:${i % 2 ? "30" : "00"}`),
-  series: [{ label: "jobs waiting", data: Array.from({ length: 48 }, (_, i) => (depth = Math.max(0, depth + Math.round(noise(9)) + (i === 30 ? 60 : 0) - (i > 31 && i < 36 ? 14 : 0)))) }],
-});
-
-// Heatmap: deploys by weekday and hour.
-document.querySelector("[data-heat-rows]").innerHTML = days.map((d) => `<span>${d}</span>`).join("");
-document.querySelector("[data-heat]").innerHTML = days
-  .flatMap((d, di) => hours.map((h, hi) => {
-    const work = di < 5 && hi >= 9 && hi <= 17;
-    const v = Math.min(1, (work ? 0.35 + rand() * 0.65 : rand() * 0.22) * (hi === 16 && di === 4 ? 0.1 : 1));
-    return `<i style="--v: ${v.toFixed(2)}" title="${d} ${h} · ${Math.round(v * 24)} deploys"></i>`;
-  }))
-  .join("");
-
-// Waffle: share of traffic in 100 squares.
-const share = [["API", 42], ["Web", 27], ["Mobile", 18], ["Partners", 9]];
-let cells = "";
-share.forEach(([, n], i) => (cells += `<i data-s="${i + 1}"></i>`.repeat(n)));
-cells += "<i></i>".repeat(100 - share.reduce((a, [, n]) => a + n, 0));
-document.querySelector("[data-waffle]").innerHTML = cells;
-document.querySelector("[data-waffle-key]").innerHTML =
-  share.map(([l, n], i) => `<li><i data-s="${i + 1}"></i>${l}<b>${n}%</b></li>`).join("") + `<li><i style="border:1px solid var(--sd-line)"></i>Other<b>4%</b></li>`;
-
-// Uptime: 90 days per service.
-const services = [["api", [61, 62]], ["web", []], ["worker", [12, 40, 41]], ["search", [77]]];
-document.querySelector("[data-uptime]").innerHTML = services
-  .map(([name, bad]) => {
-    const sq = Array.from({ length: 90 }, (_, d) => {
-      const state = d < 3 && name === "search" ? "none" : bad.includes(d) ? (d % 2 ? "down" : "degraded") : "ok";
-      return `<i data-state="${state}" title="${name} · day ${d + 1} · ${state}"></i>`;
-    }).join("");
-    const pct = (100 - bad.length * 0.21).toFixed(2);
-    return `<div class="grid gap-2"><div class="flex justify-between text-sm"><span>${name}</span><span class="sd-subtle">${pct}%</span></div><div class="sd-uptime">${sq}</div></div>`;
-  })
-  .join("");
-
-/* ---- theme switch for every chart -------------------------------------- */
-// This switch and the showcase bar's chart colors share one setter, which also restores the remembered choice.
-document.querySelector("#chart-theme").addEventListener("click", (e) => {
-  const b = e.target.closest("button[data-value]");
-  if (b) setChartColors(b.dataset.value);
-});
-
-/* ---- formatter table --------------------------------------------------- */
-const rows = [[1500, "Mbps"], [250000, "Mbps"], [0.5, "Mbps"], [1.2e6, "Mbps"], [12.3, " ms"]];
-document.querySelector("#formats").innerHTML = rows
-  .map(([v, unit]) => `<tr><td><code>formatValue(${v}, "${unit}")</code></td><td><code>${formatValue(v, unit)}</code></td></tr>`)
-  .join("");
+render();
