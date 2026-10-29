@@ -271,22 +271,23 @@ mountFeed(root);
 
 async function checkLegacyRepeat(page, name) {
   const before = failures;
-  await page.goto(pages.shell);
-  await page.keyboard.down("j");
-  await page.keyboard.down("j");
-  await page.keyboard.down("j");
-  await page.keyboard.up("j");
-  const afterNext = await page.locator('[data-feed] [aria-current="true"]').getAttribute("data-n");
-  if (afterNext !== "18") fail(name, `holding j should reach row 18, got ${afterNext}`);
-  await page.locator('[data-feed] [data-n="18"]').click({ position: { x: 10, y: 10 } });
-  const startPrevious = await page.locator('[data-feed] [aria-current="true"]').getAttribute("data-n");
-  if (startPrevious !== "18") fail(name, `holding k should start from row 18, got ${startPrevious}`);
-  for (const expected of ["19", "20", "21"]) {
-    await page.keyboard.down("k");
-    const afterPrevious = await page.locator('[data-feed] [aria-current="true"]').getAttribute("data-n");
-    if (afterPrevious !== expected) fail(name, `holding k should reach row ${expected}, got ${afterPrevious}`);
+  await page.goto(pages["lib-live-feed"]);
+  const feed = page.locator("#demo-feed");
+  for (let i = 0; i < 4; i++) await page.locator("#feed-insert").click();
+  const index = () => feed.evaluate((root) => [...root.querySelectorAll(".sd-row[data-id]")].findIndex((row) => row.getAttribute("aria-current") === "true"));
+  await feed.focus();
+  const start = await index();
+  if (start < 3) fail(name, `feed should start with 3 rows above the current one, got index ${start}`);
+  // Each keydown of a held key moves the current row once: k up the list, then j back down.
+  for (const [key, step] of [["k", -1], ["j", 1]]) {
+    const from = await index();
+    for (let n = 1; n <= 3; n++) {
+      await page.keyboard.down(key);
+      const at = await index();
+      if (at !== from + step * n) fail(name, `holding ${key} should reach row index ${from + step * n}, got ${at}`);
+    }
+    await page.keyboard.up(key);
   }
-  await page.keyboard.up("k");
   await page.goto(jsPage);
   await page.evaluate(async (apiUrl) => {
     const { hotkeys } = await import(apiUrl);
@@ -309,7 +310,7 @@ async function checkLegacyRepeat(page, name) {
   });
   if (calls !== 1) fail(name, `repeat-disabled action should run once, got ${calls}`);
   if (repeatedCalls !== 2) fail(name, `default-repeat action should run twice, got ${repeatedCalls}`);
-  if (failures === before) console.log(`ok   ${name} legacy repeat 7 behavioral assertions`);
+  if (failures === before) console.log(`ok   ${name} legacy repeat 9 behavioral assertions`);
 }
 
 
@@ -705,6 +706,13 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
   }
 
   if (pageName === "chat" && width === 1280 && theme === "ink") {
+    const aside = () => page.evaluate(() => ({ state: document.getElementById("shell").dataset.aside ?? "closed", expanded: document.querySelector('[data-sd-shell="aside"]').getAttribute("aria-expanded") }));
+    await page.locator("body").press("]");
+    const closed = await aside();
+    if (closed.state !== "closed" || closed.expanded !== "false") fail(where, `] did not close the members aside ${JSON.stringify(closed)}`);
+    await page.locator("body").press("]");
+    const reopened = await aside();
+    if (reopened.state !== "open" || reopened.expanded !== "true") fail(where, `] did not open the members aside ${JSON.stringify(reopened)}`);
     const box = page.locator("[data-composer] textarea");
     await box.click();
     await box.type("Hi @ro");
