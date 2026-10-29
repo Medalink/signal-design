@@ -7,7 +7,7 @@
  */
 
 /** Every rule the gate checks, by the name a finding, --skip and data-sd-check-ignore use. */
-export const RULES = ["corners", "shadows", "type", "color", "nav-color", "overflow", "fonts", "console", "a11y"];
+export const RULES = ["corners", "shadows", "type", "color", "nav-color", "primary", "overflow", "fonts", "console", "a11y"];
 
 /** Rounded corners (corners) and blurred shadows (shadows) anywhere on the page. */
 export function sweep() {
@@ -243,6 +243,32 @@ export function navColorRule() {
     if (role) found.set(`${describe(el)} ${role}`, `nav-color: ${describe(el)}: color ${s.color} is the ${role} role (navigation and headings stay grey)`);
   }
   return [...found.values()];
+}
+
+/**
+ * One primary button per view (primary). A view is the page, or the open
+ * dialog or popover a button is in, so a confirm dialog may have its own.
+ * A finding names the view and its buttons.
+ */
+export function primaryRule() {
+  const describe = (el) =>
+    el.tagName.toLowerCase() + (el.id ? `#${el.id}` : "") + (el.getAttribute("class")?.trim() ? `.${el.getAttribute("class").trim().split(/\s+/).slice(0, 3).join(".")}` : "");
+  const views = new Map();
+  for (const el of document.querySelectorAll(".sd-btn-primary")) {
+    if (!el.getClientRects().length || getComputedStyle(el).visibility === "hidden" || el.closest('[data-sd-check-ignore~="primary"]')) continue;
+    let view = null;
+    try {
+      view = el.closest("dialog[open], [popover]:popover-open");
+    } catch {
+      view = el.closest("dialog[open]");
+    }
+    if (!views.has(view)) views.set(view, []);
+    views.get(view).push(el);
+  }
+  const text = (el) => (el.getAttribute("aria-label") || el.textContent || "").trim().replace(/\s+/g, " ").slice(0, 30);
+  return [...views]
+    .filter(([, buttons]) => buttons.length > 1)
+    .map(([view, buttons]) => `primary: ${view ? describe(view) : "the page"} has ${buttons.length} primary buttons (one per view): ${buttons.map((b) => `${describe(b)} "${text(b)}"`).join(", ")}`);
 }
 
 /** Source Code Pro faces after loading: ["400:loaded", "600:loaded", …]. */

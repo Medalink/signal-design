@@ -15,10 +15,14 @@
   sidebar links, rail items, tabs, breadcrumb links, and an icon in one) whose
   text color is a signal role. The rule is `nav-color`. Status inside a
   `data-tone`, badge, count, dot or status, and a person's `--who`, pass.
+- `signal-design check` now fails a view with more than one visible
+  `sd-btn-primary`. The view is the page, or the open dialog or popover the
+  button is in. The rule is `primary`; a gallery that shows variants takes
+  `data-sd-check-ignore="primary"`.
 
 ### Added
 - `signal-design check` names the rule in every finding: `corners`, `shadows`,
-  `type`, `color`, `nav-color`, `overflow`, `fonts`, `console`, `a11y`. `--skip <rule,...>`
+  `type`, `color`, `nav-color`, `primary`, `overflow`, `fonts`, `console`, `a11y`. `--skip <rule,...>`
   turns rules off for a run, and an unknown name exits 2 with the list. An
   element with `data-sd-check-ignore="<rule> ..."` is exempt from those rules,
   itself and what it holds.

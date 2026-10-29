@@ -189,6 +189,9 @@ it breaks:
 - `nav-color`: a heading, nav link, sidebar link, rail item, tab or breadcrumb
   link (or an icon in one) whose text color is a signal role. Status inside a
   `data-tone`, badge, count, dot or status, and a person's `--who`, pass.
+- `primary`: more than one visible `sd-btn-primary` in a view. The view is the
+  page, or the open dialog or popover the button is in. A gallery that shows
+  variants side by side takes `data-sd-check-ignore="primary"`.
 - `overflow`: horizontal overflow at 1280/768/375px.
 - `fonts`: a font that did not load.
 - `console`: a console error.
