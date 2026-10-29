@@ -756,7 +756,7 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
     for (const check of componentChecks.filter((c) => c.page === library.id)) await check.run(page, where, fail);
   }
 
-  if (pageName === "charts" && width === 1280 && theme === "ink") {
+  if (pageName === "lib-charts" && width === 1280 && theme === "ink") {
     const core = () => page.evaluate(() => {
       const c = document.querySelector("#core canvas").sdChart.chart;
       return {
@@ -847,18 +847,70 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
       heat: document.querySelectorAll("[data-heat] > i").length,
       waffle: document.querySelectorAll("[data-waffle] > i").length,
       waffleW: document.querySelector("[data-waffle]").getBoundingClientRect().width,
-      uptime: document.querySelectorAll(".sd-uptime > i").length,
+      uptime: document.querySelectorAll("[data-uptime] .sd-uptime > i").length,
     }));
     if (squares.heat !== 168 || squares.waffle !== 100 || squares.waffleW < 150 || squares.uptime !== 360) fail(where, `square charts ${JSON.stringify(squares)}`);
     // Theme: spectrum colors the series.
-    await page.click('#chart-theme [data-value="spectrum"]');
+    // The showcase bar owns the chart colors; its settings panel is closed here, so click the button directly.
+    await page.evaluate(() => document.querySelector('#vp-chart-colors [data-value="spectrum"]').click());
     await page.waitForFunction(() => {
       const c = document.querySelector("#core canvas").sdChart.chart.data.datasets.find((d) => d.label === "Core ↓")._color;
       return c.g > c.r + 60;
     }, null, { timeout: 2000 }).catch(() => {});
     const spec = (await core()).down;
     if (!(spec.g > spec.r + 60)) fail(where, `spectrum download is not green ${JSON.stringify(spec)}`);
-    await page.click('#chart-theme [data-value="mono"]');
+    await page.evaluate(() => document.querySelector('#vp-chart-colors [data-value="mono"]').click());
+  }
+
+  if (pageName === "charts" && width === 1280 && theme === "ink") {
+    const view = () => page.evaluate(() => {
+      const drawn = (id) => {
+        const cv = document.querySelector(`#${id} canvas:not(.sd-chart-fx)`);
+        const d = cv.getContext("2d").getImageData(0, 0, cv.width, cv.height).data;
+        let n = 0;
+        for (let i = 3; i < d.length; i += 4) if (d[i] > 0) n++;
+        return n;
+      };
+      const memory = document.querySelector("#memory canvas").sdChart.chart;
+      return {
+        pressed: [...document.querySelectorAll("#range [aria-pressed=true]")].map((b) => b.dataset.range).join(),
+        cpu: drawn("cpu"),
+        memory: drawn("memory"),
+        series: memory.data.datasets.map((d) => d.label).join(),
+        peak: document.getElementById("peak-memory").textContent,
+        tone: document.getElementById("peak-memory-box").dataset.tone ?? "",
+        label: document.querySelector("#cpu canvas").getAttribute("aria-label"),
+        summary: document.querySelector("#memory [data-summary]").textContent,
+        rows: document.querySelectorAll("#table tbody tr").length,
+        over: document.querySelectorAll("#table td.text-danger").length,
+        edges: [...document.querySelectorAll("[data-tone]:not(.sd-fps)")].map((el) => el.dataset.tone).filter((t) => t && t !== "danger").join(),
+        overflow: document.documentElement.scrollWidth - innerWidth,
+      };
+    });
+    const day = await view();
+    if (day.pressed !== "24h" || day.cpu < 3000 || day.memory < 3000) fail(where, `stats charts did not draw for 24h ${JSON.stringify(day)}`);
+    if (!day.series.includes("Over the limit") || day.tone !== "danger" || !/Over the limit for/.test(day.summary) || day.over < 1) fail(where, `24h memory over the limit is not marked in the chart, tile, summary and table ${JSON.stringify(day)}`);
+    if (day.edges) fail(where, `stats colors something that is not over a limit: ${day.edges}`);
+    if (day.rows !== 8 || !/24 hours/.test(day.label) || !/Peak/.test(day.label)) fail(where, `stats table or chart label ${JSON.stringify(day)}`);
+    // Range: keyboard reachable, and every number follows it.
+    await page.locator('#range [data-range="1h"]').focus();
+    await page.keyboard.press("Enter");
+    await page.waitForFunction(() => document.querySelector("#range [aria-pressed=true]")?.dataset.range === "1h", null, { timeout: 2000 }).catch(() => {});
+    const hour = await view();
+    if (hour.pressed !== "1h" || hour.series !== "Total memory" || hour.tone || hour.summary.includes("Over the limit") || hour.over !== 0 || !/last hour/.test(hour.label)) fail(where, `1h does not stay under the limit ${JSON.stringify(hour)}`);
+    if (hour.peak === day.peak) fail(where, "the peak memory tile did not change with the range");
+    const again = await (async () => {
+      await page.locator('#range [data-range="24h"]').click();
+      return view();
+    })();
+    if (again.peak !== day.peak || again.summary.replace(/ at .*?(Average)/, "$1") !== day.summary.replace(/ at .*?(Average)/, "$1")) fail(where, "24h shows different numbers the second time");
+    // Table: a header sorts from the keyboard.
+    await page.locator('#table th[data-sort="name"]').focus();
+    await page.keyboard.press("Enter");
+    const names = await page.evaluate(() => [...document.querySelectorAll("#table tbody tr td:first-child")].map((td) => td.firstChild.textContent));
+    if (names.join() !== [...names].sort().join()) fail(where, `table did not sort by name from the keyboard: ${names.join()}`);
+    const sorted = await page.evaluate(() => document.querySelector('#table th[data-sort="name"]').getAttribute("aria-sort"));
+    if (sorted !== "ascending") fail(where, `aria-sort is ${sorted}`);
   }
 }
 

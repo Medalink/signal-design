@@ -86,36 +86,32 @@ export async function checkShowcaseBar(browser, base, name) {
   await page.close();
 
   page = await open("charts.html", 1280);
-  expect((await page.evaluate(() => document.querySelector("#chart-theme [aria-pressed=true]")?.dataset.value)) === "spectrum", "the charts example follows the remembered chart colors");
-  await page.click('.vp-bar [popovertarget="vp-settings"]');
-  await page.waitForFunction(() => document.getElementById("vp-settings").matches(":popover-open"), null, { timeout: 2000 });
-  await page.click('#vp-chart-colors [data-value="mono"]');
-  expect((await page.evaluate(() => document.querySelector("#chart-theme [aria-pressed=true]")?.dataset.value)) === "mono", "the bar's chart colors reach the example's own switch");
-  await page.keyboard.press("Escape");
-  await page.click('#chart-theme [data-value="spectrum"]');
-  const both = await page.evaluate(() => ({
+  expect((await page.evaluate(() => [document.documentElement.dataset.chartTheme, document.querySelector("#cpu").dataset.chartTheme].join())) === "spectrum,spectrum", "the charts example follows the remembered chart colors");
+  const setColors = async (value) => {
+    await page.click('.vp-bar [popovertarget="vp-settings"]');
+    await page.waitForFunction(() => document.getElementById("vp-settings").matches(":popover-open"), null, { timeout: 2000 });
+    await page.click(`#vp-chart-colors [data-value="${value}"]`);
+    await page.keyboard.press("Escape");
+  };
+  await setColors("mono");
+  const mono = await page.evaluate(() => ({
     bar: document.querySelector("#vp-chart-colors [aria-pressed=true]")?.dataset.value,
-    own: document.querySelector("#chart-theme [aria-pressed=true]")?.dataset.value,
     root: document.documentElement.dataset.chartTheme,
-    figure: document.querySelector("#core").dataset.chartTheme,
+    figures: [...document.querySelectorAll(".sd-chart")].map((f) => f.dataset.chartTheme).join(),
     stored: localStorage.getItem("sd-chart-theme"),
   }));
-  expect(Object.values(both).every((v) => v === "spectrum"), `the example's switch reaches the bar, the page and storage ${JSON.stringify(both)}`);
+  expect(mono.bar === "mono" && mono.root === "mono" && mono.figures === "mono,mono" && mono.stored === "mono", `the bar's chart colors reach the example's charts and storage ${JSON.stringify(mono)}`);
 
-  // Chart colors chosen in the width frame reach the page that opened it, and the other way round.
+  // Chart colors chosen on the page reach the frame that shows it at a set width.
   await page.click('.vp-bar [data-vp="1024"]');
   await page.waitForSelector(".vp-dialog[open] iframe[src]");
-  await page.frameLocator(".vp-dialog iframe").locator("#chart-theme").waitFor();
+  await page.frameLocator(".vp-dialog iframe").locator("#cpu").waitFor();
   const colors = () =>
     page.evaluate(() => {
-      const read = (doc) => [doc.documentElement.dataset.chartTheme, doc.querySelector("#core").dataset.chartTheme, doc.querySelector("#chart-theme [aria-pressed=true]")?.dataset.value, doc.querySelector("#vp-chart-colors [aria-pressed=true]")?.dataset.value ?? doc.querySelector("#chart-theme [aria-pressed=true]")?.dataset.value];
+      const read = (doc) => [doc.documentElement.dataset.chartTheme, doc.querySelector("#cpu").dataset.chartTheme, doc.querySelector("#memory").dataset.chartTheme];
       return { page: read(document), frame: read(document.querySelector(".vp-dialog iframe").contentDocument) };
     });
-  const reaches = (want) => page.waitForFunction((v) => [document, document.querySelector(".vp-dialog iframe").contentDocument].every((doc) => doc.documentElement.dataset.chartTheme === v && doc.querySelector("#core").dataset.chartTheme === v && doc.querySelector("#chart-theme [aria-pressed=true]")?.dataset.value === v), want, { timeout: 2000 }).catch(() => {});
-  await page.frameLocator(".vp-dialog iframe").locator('#chart-theme [data-value="mono"]').click();
-  await reaches("mono");
-  const fromFrame = await colors();
-  expect(Object.values(fromFrame).flat().every((v) => v === "mono") && (await page.evaluate(() => document.querySelector("#vp-chart-colors [aria-pressed=true]")?.dataset.value)) === "mono", `chart colors chosen in the frame reach the page's switch, figures and bar ${JSON.stringify(fromFrame)}`);
+  const reaches = (want) => page.waitForFunction((v) => [document, document.querySelector(".vp-dialog iframe").contentDocument].every((doc) => doc.documentElement.dataset.chartTheme === v && doc.querySelector("#cpu").dataset.chartTheme === v), want, { timeout: 2000 }).catch(() => {});
   await page.evaluate(() => document.querySelector('#vp-chart-colors [data-value="spectrum"]').click());
   await reaches("spectrum");
   const fromPage = await colors();

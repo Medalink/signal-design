@@ -2,6 +2,8 @@ import { mountLibrary } from "../library.js";
 import { lazyChart } from "../lazy.js";
 
 mountLibrary();
+// After mountLibrary(), which snapshots each block's markup before these scripts fill it.
+await import("./charts-gallery.js");
 
 let seed = 7;
 const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);

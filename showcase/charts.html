@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Signal Charts</title>
+  <title>Watcher Stats</title>
   <script>
     try { const t = localStorage.getItem("sd-theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
   </script>
@@ -13,173 +13,117 @@
 <body>
 <a class="sd-skip" href="#main">Skip to content</a>
 
-<header class="sd-topbar">
-  <a class="sd-wordmark" href="./index.html">ACME</a>
-  <nav class="sd-nav sd-desktop-only" aria-label="Examples">
-    <a href="./index.html">Library</a>
-    <a href="./shell.html">App shell</a>
-    <a href="./chat.html">Chat</a>
-    <a href="./form.html">Form</a>
-    <a href="./landing.html">Landing</a>
-    <a href="./charts.html" aria-current="page">Charts</a>
+<div class="sd-shell" id="shell" data-sidebar="collapsed">
+  <canvas class="sd-rain" data-sd-rain data-sd-rain-style="squares" aria-hidden="true"></canvas>
+
+  <div class="sd-titlebar sd-desktop-only" data-tauri-drag-region role="region" aria-label="Window">
+    <div class="sd-titlebar-start"><span class="sd-titlebar-brand"><b>Stats</b></span></div>
+    <div class="sd-titlebar-end">
+      <div class="sd-window-controls">
+        <button data-sd-window="minimize" data-icon="minus" aria-label="Minimize"></button>
+        <button data-sd-window="maximize" data-icon="expand" aria-label="Maximize"></button>
+        <button data-sd-window="close" data-icon="close" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <header class="sd-shell-topbar">
+    <button class="sd-btn sd-btn-ghost sd-btn-icon" data-sd-shell="drawer" aria-controls="shell-rail" data-icon="menu" aria-label="Open navigation"></button>
+    <span class="sd-shell-topbar-label">Stats</span>
+  </header>
+
+  <nav class="sd-rail" id="shell-rail" aria-label="Pages" data-sd-ornaments="bottom" data-sd-ornaments-size="200">
+    <a class="sd-rail-home" href="./index.html" data-icon="view" aria-label="Signal library"></a>
+    <div class="sd-rail-list">
+      <a class="sd-rail-item" href="./shell.html" data-icon="object"><span>Containers</span></a>
+      <a class="sd-rail-item" href="./charts.html" data-icon="list-number" aria-current="page"><span>Stats</span></a>
+      <a class="sd-rail-item" href="#" data-icon="history"><span>Activity</span></a>
+      <a class="sd-rail-item" href="#" data-icon="contract"><span>Resources</span></a>
+      <a class="sd-rail-item" href="#" data-icon="edit"><span>Manage</span></a>
+      <a class="sd-rail-item" href="#" data-icon="list-bullet"><span>Logs</span></a>
+    </div>
   </nav>
-  <div class="sd-topbar-end">
-    <div class="sd-seg" data-chart-colors aria-label="Chart theme" id="chart-theme">
-      <button type="button" data-value="mono" aria-pressed="true">mono</button>
-      <button type="button" data-value="spectrum" aria-pressed="false">spectrum</button>
-    </div>
-    <button class="sd-btn sd-btn-sm" data-sd-theme-cycle>Theme</button>
-  </div>
-</header>
 
-<main class="sd-page sd-page-wide" id="main" tabindex="-1" style="max-width: 80rem">
-  <p class="sd-label">Charts</p>
-  <h1 class="sd-display mt-2">Bandwidth and latency. <em>Live.</em></h1>
-  <p class="sd-lead mt-4 max-w-[46rem]">Time-series charts on Chart.js, with two color themes: <b>mono</b>, black and white with color only for thresholds, heat and alerts, and <b>spectrum</b>, the full signal palette. Hover for the tooltip, drag to select, use the scale modes, click the legend.</p>
+  <main class="sd-shell-main" id="main" tabindex="-1">
+    <div class="sd-shell-content" data-sd-ornaments data-sd-edges>
+      <div class="mx-auto grid w-full max-w-[72rem] gap-8">
 
-  <!-- Core: bandwidth over latency, one chart -->
-  <figure class="sd-chart mt-12" data-chart-theme="mono" style="--h: 500px" id="core">
-    <div class="sd-chart-bar">
-      <div><span class="sd-label sd-label-strong">Core</span><span class="sd-status" data-tone="success" data-live>live · 2s</span></div>
-      <div class="flex flex-wrap items-center gap-2">
-        <div class="sd-seg" data-sd-chart-scale aria-label="Scale">
-          <button type="button" data-value="clamp">clamp</button>
-          <button type="button" data-value="p95">p95</button>
-          <button type="button" data-value="p90">p90</button>
-          <button type="button" data-value="linear">linear</button>
-          <button type="button" data-value="log">log</button>
+        <header class="flex flex-wrap items-center justify-between gap-4">
+          <h1 class="sd-title">Stats</h1>
+          <div class="sd-seg sd-seg-inline" id="range" role="group" aria-label="Range">
+            <button type="button" data-range="1h" aria-pressed="false">1h</button>
+            <button type="button" data-range="24h" aria-pressed="true">24h</button>
+            <button type="button" data-range="7d" aria-pressed="false">7d</button>
+            <button type="button" data-range="30d" aria-pressed="false">30d</button>
+          </div>
+        </header>
+
+        <section class="grid gap-3" aria-label="Peaks">
+          <div class="grid gap-3 grid-cols-[repeat(auto-fit,minmax(min(100%,8.5rem),1fr))]">
+            <div class="sd-stat-box"><span class="sd-stat-label">Peak total CPU</span><span class="sd-stat-value" id="peak-cpu"></span><span class="sd-stat-sub" id="peak-cpu-note"></span></div>
+            <div class="sd-stat-box" id="peak-memory-box"><span class="sd-stat-label">Peak total memory</span><span class="sd-stat-value" id="peak-memory"></span><span class="sd-stat-sub" id="peak-memory-note"></span></div>
+            <div class="sd-stat-box"><span class="sd-stat-label">Average running</span><span class="sd-stat-value" id="running"></span><span class="sd-stat-sub">of 8 containers</span></div>
+            <div class="sd-stat-box"><span class="sd-stat-label">Activity events</span><span class="sd-stat-value" id="events"></span><span class="sd-stat-sub" id="events-note"></span></div>
+          </div>
+        </section>
+
+        <section class="grid gap-3" aria-labelledby="windows-h">
+          <h2 class="sd-label" id="windows-h">Windows</h2>
+          <div class="grid gap-3 grid-cols-[repeat(auto-fit,minmax(min(100%,14rem),1fr))]">
+            <div class="sd-stat-box sd-stat-box-sm"><span class="sd-stat-label">Peak CPU of Windows</span><span class="sd-stat-value" id="win-cpu"></span><span class="sd-stat-sub" id="win-cpu-note"></span></div>
+            <div class="sd-stat-box sd-stat-box-sm"><span class="sd-stat-label">Peak memory of Windows</span><span class="sd-stat-value" id="win-memory"></span><span class="sd-stat-sub" id="win-memory-note"></span></div>
+            <div class="sd-stat-box sd-stat-box-sm"><span class="sd-stat-label">WSL size</span><span class="sd-stat-value">32 processors · 45.9 GiB</span><span class="sd-stat-sub">what containers see</span></div>
+            <div class="sd-stat-box sd-stat-box-sm"><span class="sd-stat-label">Windows size</span><span class="sd-stat-value">64 processors · 127.9 GiB</span><span class="sd-stat-sub">this PC</span></div>
+          </div>
+        </section>
+
+        <div class="grid gap-8 grid-cols-[repeat(auto-fit,minmax(min(100%,30rem),1fr))]">
+          <figure class="sd-chart" data-chart-theme="mono" style="--h: 260px" id="cpu">
+            <div class="sd-chart-bar"><h2 class="sd-label sd-label-strong">Total CPU</h2></div>
+            <p class="sd-subtle text-sm">Share of WSL's 32 processors, added up across containers.</p>
+            <div class="sd-chart-plot"><canvas role="img"></canvas></div>
+            <p class="sd-meta" data-summary></p>
+          </figure>
+          <figure class="sd-chart" data-chart-theme="mono" style="--h: 260px" id="memory">
+            <div class="sd-chart-bar"><h2 class="sd-label sd-label-strong">Total memory</h2></div>
+            <p class="sd-subtle text-sm">Memory in use by all containers. The dashed line is the 3 GiB limit.</p>
+            <div class="sd-chart-plot"><canvas role="img"></canvas></div>
+            <p class="sd-meta" data-summary></p>
+          </figure>
         </div>
-        <button class="sd-btn sd-btn-sm" data-pause aria-pressed="false">Pause feed</button>
+
+        <section class="grid gap-3" aria-labelledby="containers-h">
+          <div class="flex items-baseline gap-2"><h2 class="sd-label sd-label-strong" id="containers-h">Containers</h2><span class="sd-count" id="count"></span></div>
+          <div class="sd-table-wrap" tabindex="0" role="region" aria-label="Containers table">
+            <table class="sd-table sd-table-compact" id="table"></table>
+          </div>
+          <p class="sd-subtle text-sm" id="table-note"></p>
+        </section>
+
+        <section class="grid gap-3" aria-labelledby="database-h">
+          <h2 class="sd-label sd-label-strong" id="database-h">Database</h2>
+          <dl class="sd-kv sd-kv-plain max-w-[44rem]">
+            <dt>Path</dt><dd>C:\Users\sam\AppData\Local\Watcher\watcher.db</dd>
+            <dt>Size</dt><dd>38.4 MiB</dd>
+            <dt>Rows</dt><dd>1,284,350 samples · 41,290 minutes · 2,318 events</dd>
+            <dt>Oldest data</dt><dd id="oldest"></dd>
+            <dt>Retention</dt><dd>raw samples 48 h · minute rollups and events forever</dd>
+            <dt>Sample interval</dt><dd>2.0 s</dd>
+            <dt>Snapshot write</dt><dd>last 0.84 ms · avg 0.91 ms</dd>
+          </dl>
+        </section>
+
       </div>
     </div>
-    <div class="sd-chart-plot"><canvas aria-label="Core bandwidth and round-trip time, last hour" role="img"></canvas></div>
-    <p class="sd-subtle text-sm">preset "core": bandwidth (Mbps) over path health (RTT ms with a jitter band). Raw 10s data with a min/max envelope and a trend line, maintenance and missing-data ranges, a warning threshold, surge and drop events, value tags, live edge, effects.</p>
-  </figure>
+  </main>
 
-  <div class="grid gap-10 mt-14 lg:grid-cols-2">
-    <figure class="sd-chart" data-chart-theme="mono" style="--h: 320px" id="bandwidth">
-      <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Internet uplink · 7 days</span></div></div>
-      <div class="sd-chart-plot"><canvas aria-label="Internet bandwidth, last 7 days" role="img"></canvas></div>
-      <p class="sd-subtle text-sm">preset "bandwidth": 5-minute rollup, smoothed (window 7, tension 0.35), daily peaks, a week-over-week ghost, working hours and day lines.</p>
-    </figure>
-    <figure class="sd-chart" data-chart-theme="mono" style="--h: 320px" id="latency">
-      <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Branch → core RTT</span></div></div>
-      <div class="sd-chart-plot"><canvas aria-label="Branch round-trip time, last 8 hours" role="img"></canvas></div>
-      <p class="sd-subtle text-sm">preset "latency": RTT with a jitter band, warning and critical thresholds, a forecast past now.</p>
-    </figure>
-  </div>
+  <footer class="sd-statusbar sd-shell-status">
+    <span class="sd-status" id="status"></span>
+    <span class="sd-statusbar-end"><span class="sd-fps" data-sd-fps data-sd-tip="Browser frame rate" data-sd-tip-side="top"><b>--</b> fps</span></span>
+  </footer>
 
-  <!-- Gallery: generic chart types on the same tokens -->
-  <section class="mt-16 grid gap-6" aria-labelledby="gallery-h">
-    <div>
-      <h2 id="gallery-h" class="sd-title">Gallery</h2>
-      <p class="sd-muted mt-2 max-w-[46rem]">The same tokens drive every chart type: <code>createChart(canvas, { type })</code> for line, area, step, bar, ranking bars, histogram and scatter, and CSS-only squares for heatmaps, part-of-whole, uptime and meters. Series take colors 1–6 in order; in mono, lines also take a dash each.</p>
-    </div>
-    <div class="grid gap-x-10 gap-y-12 lg:grid-cols-2">
-      <figure class="sd-chart" data-chart-theme="mono" style="--h: 300px" id="g-percentiles">
-        <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Response time</span></div><span class="sd-subtle text-sm">type "line" · p50 / p95 / p99 · SLO marker</span></div>
-        <div class="sd-chart-plot"><canvas role="img" aria-label="Response time"></canvas></div>
-      </figure>
-      <figure class="sd-chart" data-chart-theme="mono" style="--h: 300px" id="g-region">
-        <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Traffic by region</span></div><span class="sd-subtle text-sm">type "area" · stacked</span></div>
-        <div class="sd-chart-plot"><canvas role="img" aria-label="Traffic by region"></canvas></div>
-      </figure>
-      <figure class="sd-chart" data-chart-theme="mono" style="--h: 300px" id="g-services">
-        <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Requests by service</span></div><span class="sd-subtle text-sm">type "bar" · grouped</span></div>
-        <div class="sd-chart-plot"><canvas role="img" aria-label="Requests by service"></canvas></div>
-      </figure>
-      <figure class="sd-chart" data-chart-theme="mono" style="--h: 300px" id="g-errors">
-        <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Errors by class</span></div><span class="sd-subtle text-sm">type "bar" · stacked</span></div>
-        <div class="sd-chart-plot"><canvas role="img" aria-label="Errors by class"></canvas></div>
-      </figure>
-      <figure class="sd-chart" data-chart-theme="mono" style="--h: 300px" id="g-endpoints">
-        <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Slowest endpoints</span></div><span class="sd-subtle text-sm">type "hbar" · ranked with values</span></div>
-        <div class="sd-chart-plot"><canvas role="img" aria-label="Slowest endpoints"></canvas></div>
-      </figure>
-      <figure class="sd-chart" data-chart-theme="mono" style="--h: 300px" id="g-histogram">
-        <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Latency distribution</span></div><span class="sd-subtle text-sm">type "histogram" · percentile markers</span></div>
-        <div class="sd-chart-plot"><canvas role="img" aria-label="Latency distribution"></canvas></div>
-      </figure>
-      <figure class="sd-chart" data-chart-theme="mono" style="--h: 300px" id="g-scatter">
-        <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Duration vs payload</span></div><span class="sd-subtle text-sm">type "scatter" · quadrants</span></div>
-        <div class="sd-chart-plot"><canvas role="img" aria-label="Duration vs payload"></canvas></div>
-      </figure>
-      <figure class="sd-chart" data-chart-theme="mono" style="--h: 300px" id="g-queue">
-        <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Queue depth</span></div><span class="sd-subtle text-sm">type "step"</span></div>
-        <div class="sd-chart-plot"><canvas role="img" aria-label="Queue depth"></canvas></div>
-      </figure>
-
-      <figure class="sd-chart" data-chart-theme="mono" id="g-heatmap">
-        <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Deploys by hour</span></div><span class="sd-subtle text-sm">sd-heatmap · 7 × 24</span></div>
-        <div class="grid gap-2" style="grid-template-columns: auto minmax(0,1fr)">
-          <div class="grid sd-faint text-xs" style="grid-template-rows: repeat(7, 1fr); align-items: center" data-heat-rows></div>
-          <div class="sd-heatmap" style="--cols: 24" data-heat></div>
-        </div>
-        <div class="flex items-center justify-between sd-faint text-xs"><span>00:00</span><span>12:00</span><span>23:00</span></div>
-        <div class="sd-heatmap-key">less <i style="--v: 0"></i><i style="--v: .25"></i><i style="--v: .5"></i><i style="--v: .75"></i><i style="--v: 1"></i> more</div>
-      </figure>
-      <figure class="sd-chart" data-chart-theme="mono" id="g-waffle">
-        <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Traffic share</span></div><span class="sd-subtle text-sm">sd-waffle + sd-key · 100 squares</span></div>
-        <div class="flex flex-wrap items-center gap-10">
-          <div class="sd-waffle" style="--w: 210px" data-waffle></div>
-          <ul class="sd-key min-w-[14rem] flex-1" data-waffle-key></ul>
-        </div>
-      </figure>
-      <figure class="sd-chart" data-chart-theme="mono" id="g-uptime">
-        <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Uptime · 90 days</span></div><span class="sd-subtle text-sm">sd-uptime · ok, degraded, down</span></div>
-        <div class="grid gap-4" data-uptime></div>
-      </figure>
-      <figure class="sd-chart" data-chart-theme="mono" id="g-meters">
-        <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Capacity</span></div><span class="sd-subtle text-sm">sd-meter · value, target, thresholds</span></div>
-        <div class="grid gap-5">
-          <div class="grid gap-2"><div class="flex justify-between text-sm"><span>CPU</span><span class="sd-subtle">62% · target 75%</span></div><div class="sd-meter" style="--value: 62; --target: 75; --warn: 80; --crit: 95"><i data-at="warn"></i><i data-at="crit"></i></div></div>
-          <div class="grid gap-2"><div class="flex justify-between text-sm"><span>Memory</span><span class="sd-subtle">84% · target 75%</span></div><div class="sd-meter" style="--value: 84; --target: 75; --warn: 80; --crit: 95"><i data-at="warn"></i><i data-at="crit"></i></div></div>
-          <div class="grid gap-2"><div class="flex justify-between text-sm"><span>Disk</span><span class="sd-subtle">97% · over</span></div><div class="sd-meter" data-over style="--value: 97; --target: 75; --warn: 80; --crit: 95"><i data-at="warn"></i><i data-at="crit"></i></div></div>
-          <div class="grid gap-2"><div class="flex justify-between text-sm"><span>Uplink</span><span class="sd-subtle">4.9 of 10 Gbps</span></div><div class="sd-meter" style="--value: 49; --target: 70"></div></div>
-        </div>
-      </figure>
-    </div>
-  </section>
-
-  <!-- The same tokens, without Chart.js -->
-  <section class="mt-16 grid gap-6" aria-labelledby="plots-h">
-    <div>
-      <h2 id="plots-h" class="sd-title">Small plots: <code>sd-plot</code></h2>
-      <p class="sd-muted mt-2 max-w-[46rem]">When your app already has the points and wants a small, static line, draw an SVG and let <code>sd-plot</code> style it. No Chart.js, no axes, no live engine. <code>data-series</code> picks the same color as the matching chart series, and the theme switch above applies to both.</p>
-    </div>
-    <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-      <div class="sd-card">
-        <div class="sd-card-head"><span>Core ↓ · last 10 minutes</span><span class="sd-subtle">hover for the value</span></div>
-        <div class="sd-card-body">
-          <div class="sd-plot" data-series="down" style="--h: 140px" id="plot-down" data-unit="Mbps"></div>
-        </div>
-      </div>
-      <div class="sd-card">
-        <div class="sd-card-head"><span>Sparklines</span><span class="sd-subtle">sd-plot-inline</span></div>
-        <div class="sd-card-body grid gap-3" id="sparks">
-          <div class="flex items-center gap-4"><span class="w-24 sd-subtle text-sm">Core ↓</span><span class="sd-plot sd-plot-inline" data-series="down" data-from="down"></span><b class="w-24 text-right font-normal" data-last></b></div>
-          <div class="flex items-center gap-4"><span class="w-24 sd-subtle text-sm">Core ↑</span><span class="sd-plot sd-plot-inline" data-series="up" data-from="up"></span><b class="w-24 text-right font-normal" data-last></b></div>
-          <div class="flex items-center gap-4"><span class="w-24 sd-subtle text-sm">RTT</span><span class="sd-plot sd-plot-inline" data-series="rtt" data-from="rtt"></span><b class="w-24 text-right font-normal" data-last></b></div>
-        </div>
-      </div>
-    </div>
-    <table class="max-w-[52rem]">
-      <thead><tr><th>Use</th><th>When</th></tr></thead>
-      <tbody>
-        <tr><td><code>sd-plot</code></td><td>You have the points; you want a small static line or a sparkline. CSS only.</td></tr>
-        <tr><td><code>createChart</code></td><td>Time axes, units, several series, bands, tooltips, live data. Needs Chart.js.</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section class="mt-14 grid gap-4 max-w-[52rem]">
-    <h2 class="sd-title">Formatting</h2>
-    <table>
-      <thead><tr><th>Call</th><th>Result</th></tr></thead>
-      <tbody id="formats"></tbody>
-    </table>
-  </section>
-</main>
+  <div class="sd-shell-scrim" data-sd-shell="close"></div>
+</div>
 
 </body>
 </html>
