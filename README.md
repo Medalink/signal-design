@@ -307,7 +307,8 @@ A full app frame: an optional title bar, a 96px icon rail, a 288px sidebar
 with collapsible groups, a breadcrumb header (or a solid header bar), the page,
 an optional dock, an optional right panel and an optional status bar. On
 phones a top bar replaces the rail, and the rail and sidebar open together as
-a drawer. See `showcase/shell.html`.
+a drawer. See `showcase/chat.html` for the whole frame and `showcase/shell.html`
+for one with no sidebar.
 
 ```html
 <div class="sd-shell">
@@ -1306,7 +1307,8 @@ Two ways to chart, with one set of colors:
 
 Both read the `--sd-chart-*` tokens and follow `data-chart-theme` (`mono` or
 `spectrum`), set on the element or any element above it, so a sparkline in a
-table matches the full chart above it. See `showcase/charts.html`.
+table matches the full chart above it. See `showcase/lib-charts.html`, and
+`showcase/charts.html` for charts in an app screen.
 
 ### Small plots: `sd-plot`
 
@@ -1625,9 +1627,9 @@ filed the way an app files its pages: the rail holds the sections
 sidebar lists its pages under folding groups (Forms, Navigation, Status, Data
 and so on). Each page is an app in
 the Signal App Shell and shows its blocks with a Preview / Code flip
-(copyable HTML, the JS it needs, and a JS snippet where one applies). Example apps use those parts together: an app console
-(`shell.html`), a chat app (`chat.html`), a multi-step form (`form.html`), a
-landing page (`landing.html`), live charts (`charts.html`), and two built from
+(copyable HTML, the JS it needs, and a JS snippet where one applies). Example apps use those parts together in real app screens: a container
+dashboard (`shell.html`), a group chat (`chat.html`), AI settings (`form.html`),
+a download page (`landing.html`), usage stats (`charts.html`), and two built from
 the React components (`react.html`, `react-shell.html`). A bar at the top
 of every page links back to the overview and holds the theme, width and
 settings controls; example apps carry a grey Mock marker in it.

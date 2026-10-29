@@ -116,11 +116,11 @@ const examples = {
   id: "examples", title: "Examples", label: "Examples", icon: "pages",
   groups: [
     group("HTML apps", [
-      { file: "shell.html", title: "App shell", summary: "A console in the Signal App Shell: rail, sidebar, live feed, palette and details panel." },
-      { file: "chat.html", title: "Chat", summary: "A team chat with mentions, reactions, polls, a context menu and an emoji picker." },
-      { file: "form.html", title: "Form", summary: "A three step workspace form with validation, a live price and a dropzone." },
-      { file: "landing.html", title: "Landing", summary: "A marketing page with a hero, rain backdrop, pricing and an FAQ." },
-      { file: "charts.html", title: "Charts", summary: "Live bandwidth and latency charts with scale modes and the full chart gallery." },
+      { file: "shell.html", title: "App shell", summary: "Watcher's Containers screen: tiles, container groups whose rows open to details and actions, a confirm before Remove, a live status bar." },
+      { file: "chat.html", title: "Chat", summary: "A group channel in the full app frame: group rail, resizable channel sidebar, feed with a poll and replies, members by role." },
+      { file: "form.html", title: "Form", summary: "AI settings: connected servers, a found server, command-line agents and an add-a-server form that validates on blur and counts its errors." },
+      { file: "landing.html", title: "Landing", summary: "A one-screen download page: a hero, four points and a download block." },
+      { file: "charts.html", title: "Charts", summary: "Watcher's Stats screen: range, tiles, CPU and memory plots with a limit line, a per-container table and database facts." },
       { file: "stream.html", title: "Stream", summary: "A Twitch overlay package: starting soon, in game, BRB and ending scenes with live alerts, ready for OBS." },
     ]),
     group("React apps", [
