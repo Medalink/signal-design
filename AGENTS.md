@@ -208,7 +208,8 @@ it breaks:
 Needs `playwright` (and `axe-core` for `--a11y`) installed, and
 `npx playwright install chromium` once.
 
-`--skip color,fonts` turns rules off for the whole run; an unknown name exits 2.
+`--skip color,fonts` (or `--skip=color,fonts`; repeats add up) turns rules off
+for the whole run; an unknown name exits 2.
 `data-sd-check-ignore="color"` on an element exempts it and what it holds from
 the rules it names (`"color type"` for two). It is for what is right on purpose,
 such as a palette swatch; never use it to hide a violation.

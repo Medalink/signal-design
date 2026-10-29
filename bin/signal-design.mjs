@@ -39,17 +39,18 @@ if (command !== "check" || rest.includes("--help") || !rest.some((a) => /^https?
   process.exit(command === "check" || command === "--help" || !command ? 0 : 1);
 }
 
-const flag = (name) => {
-  const i = rest.indexOf(`--${name}`);
-  return i >= 0 ? rest[i + 1] : undefined;
-};
+/** Every value given for a flag, as "--name value" or "--name=value". */
+const values = (name) => rest.flatMap((a, i) => (a === `--${name}` ? [rest[i + 1]] : a.startsWith(`--${name}=`) ? [a.slice(name.length + 3)] : []));
+const flag = (name) => values(name)[0];
 const urls = rest.filter((a) => /^https?:|^file:/.test(a));
 const widths = (flag("widths") || "1280,768,375").split(",").map(Number);
 const theme = flag("theme");
 const a11y = rest.includes("--a11y");
-const skip = new Set((flag("skip") ?? "").split(",").filter(Boolean));
+// --skip may be given more than once; the names add up.
+const skips = values("skip");
+const skip = new Set(skips.flatMap((value) => (value ?? "").split(",")).filter(Boolean));
 const unknown = [...skip].filter((name) => !RULES.includes(name));
-if (rest.includes("--skip") && (!skip.size || unknown.length)) {
+if (skips.length && (!skip.size || unknown.length)) {
   console.error(`${unknown.length ? `Unknown rule for --skip: ${unknown.join(", ")}` : "--skip needs rule names."}
 Rules: ${RULES.join(", ")}`);
   process.exit(2);

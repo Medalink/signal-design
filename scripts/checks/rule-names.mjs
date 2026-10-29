@@ -81,6 +81,13 @@ export default async function checkRuleNames(page, where, fail) {
     if (unknown.code !== 2 || !unknown.out.includes("sparkles") || !unknown.out.includes("shadows")) fail(`${where} rule names`, `--skip with an unknown rule exited ${unknown.code}: ${unknown.out.trim()}`);
     const bare = run("--skip");
     if (bare.code !== 2) fail(`${where} rule names`, `--skip without names exited ${bare.code}`);
+    // --skip=names works like --skip names, and repeated flags add up.
+    const equals = run("--skip=fonts,corners");
+    if (equals.out.includes("corners:") || !equals.out.includes("shadows: div#glow")) fail(`${where} rule names`, `--skip=fonts,corners: ${equals.out.trim()}`);
+    const repeated = run("--skip", "fonts", "--skip=corners", "--skip", "shadows");
+    if (repeated.code !== 0) fail(`${where} rule names`, `three --skip flags still exited ${repeated.code}: ${repeated.out.trim()}`);
+    const unknownEquals = run("--skip=sparkles");
+    if (unknownEquals.code !== 2 || !unknownEquals.out.includes("sparkles")) fail(`${where} rule names`, `--skip=sparkles exited ${unknownEquals.code}: ${unknownEquals.out.trim()}`);
 
     // A stylesheet the page cannot read (file:, another origin) still gives the
     // color rule its tokens.

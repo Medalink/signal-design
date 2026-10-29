@@ -33,10 +33,10 @@
 ### Added
 - `signal-design check` names the rule in every finding: `corners`, `shadows`,
   `type`, `color`, `nav-color`, `primary`, `label`, `overflow`, `fonts`,
-  `console`, `a11y`. `--skip <rule,...>` turns rules off for a run, and an
-  unknown name exits 2 with the list. An element with
-  `data-sd-check-ignore="<rule> ..."` is exempt from those rules, itself and
-  what it holds.
+  `console`, `a11y`. `--skip <rule,...>` (or `--skip=<rule,...>`, repeats add
+  up) turns rules off for a run, and an unknown name exits 2 with the list. An
+  element with `data-sd-check-ignore="<rule> ..."` is exempt from those rules,
+  itself and what it holds.
 
 ### Fixed
 - On a touch screen the rail's search item no longer shows "Ctrl K". The
