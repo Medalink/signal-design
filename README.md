@@ -284,12 +284,12 @@ margin and review (`comment`, `sparkle`, `history`, `bookmark`, `view`, `link`,
 `check`), chat (`hash`, `lock`, `reply`, `send`, `pin`, `smile`, `bell`),
 app screens (`container`, `chart`, `database`, `sliders`, `settings`, `logs`,
 `theme`, `rain`), window controls (`minimize`, `maximize`, `restore`) and
-interface (`close`, `plus`, `minus`, `search`, `menu`, `more`, the four
-`chevron-*`, `chevrons-left`, `chevrons-right`, `expand`, `contract`). They
-follow the rest of the kit: straight lines and right angles, a 1.5 stroke with
-square caps and mitered corners, `currentColor`, drawn inside the 4-unit inset
-of the 24 grid so they size like any `sd-icon`. The component page lists them
-all with their names.
+interface (`close`, `play`, `pause`, `plus`, `minus`, `search`, `menu`, `more`,
+the four `chevron-*`, `chevrons-left`, `chevrons-right`, `expand`, `contract`).
+They follow the rest of the kit: straight lines and right angles, a 1.5 stroke
+with square caps and mitered corners, `currentColor`, drawn inside the 4-unit
+inset of the 24 grid so they size like any `sd-icon`. The component page lists
+them all with their names.
 
 ```html
 <button class="sd-btn sd-btn-icon sd-btn-ghost" aria-label="Undo">
