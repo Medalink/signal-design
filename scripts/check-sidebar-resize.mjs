@@ -1,12 +1,12 @@
 /**
  * Behavior checks for the sidebar resize handle (data-sd-shell="resize") on
- * showcase/shell.html and the standalone demo on the effects page.
+ * showcase/chat.html and the standalone demo on the effects page.
  * Called from scripts/check.mjs once per engine.
  */
 import { byId } from "../showcase/pages.js";
 
-const KEY = "sd-shell-sidebar-width:section-sidebar";
-const HANDLE = '#section-sidebar > [data-sd-shell="resize"]';
+const KEY = "sd-shell-sidebar-width:channels";
+const HANDLE = '#channels > [data-sd-shell="resize"]';
 
 export async function checkSidebarResize(page, base, apiUrl) {
   const errors = [];
@@ -14,7 +14,7 @@ export async function checkSidebarResize(page, base, apiUrl) {
   const expect = (ok, message) => (ok ? passed++ : errors.push(message));
   const state = () => page.evaluate(({ HANDLE, KEY }) => {
     const shell = document.querySelector(".sd-shell");
-    const sidebar = document.getElementById("section-sidebar");
+    const sidebar = document.getElementById("channels");
     const handle = document.querySelector(HANDLE);
     const main = shell.querySelector(".sd-shell-main").getBoundingClientRect();
     return {
@@ -40,7 +40,7 @@ export async function checkSidebarResize(page, base, apiUrl) {
   };
 
   await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto(`${base}shell.html`);
+  await page.goto(`${base}chat.html`);
   await page.evaluate(() => localStorage.clear());
   await page.reload();
   await page.waitForSelector(HANDLE);
@@ -105,22 +105,22 @@ export async function checkSidebarResize(page, base, apiUrl) {
   await page.evaluate(() => document.documentElement.removeAttribute("dir"));
 
   await page.evaluate((sel) => document.querySelector(sel).removeAttribute("data-sd-shell"), HANDLE);
-  const before = (await page.locator("#section-sidebar").boundingBox()).width;
-  const box = await page.locator("#section-sidebar > .sd-sidebar-resize").boundingBox();
+  const before = (await page.locator("#channels").boundingBox()).width;
+  const box = await page.locator("#channels > .sd-sidebar-resize").boundingBox();
   await page.mouse.move(box.x + box.width / 2, box.y + 200);
   await page.mouse.down();
   await page.mouse.move(box.x + 80, box.y + 200, { steps: 4 });
   await page.mouse.up();
-  const after = (await page.locator("#section-sidebar").boundingBox()).width;
+  const after = (await page.locator("#channels").boundingBox()).width;
   expect(before === after, `without data-sd-shell the handle is only the look (width ${before} -> ${after})`);
 
-  await page.goto(`${base}shell.html`);
+  await page.goto(`${base}chat.html`);
   await page.waitForSelector(HANDLE);
   await page.evaluate(async (url) => (await import(url)).setSidebar(document.querySelector(".sd-shell"), "collapsed"), apiUrl);
   expect(!(await state()).shown, "a collapsed sidebar shows no handle");
   await page.evaluate(async (url) => {
     const api = await import(url);
-    api.selectSection(document.querySelector(".sd-shell"), "projects");
+    api.selectSection(document.querySelector(".sd-shell"), "garden-club");
   }, apiUrl);
   expect(await page.evaluate((sel) => "peek" in document.querySelector(".sd-shell").dataset && document.querySelector(sel).getClientRects().length === 0, HANDLE), "a peeking sidebar shows no handle");
   await page.evaluate(async (url) => (await import(url)).setSidebar(document.querySelector(".sd-shell"), "pinned"), apiUrl);

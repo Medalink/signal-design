@@ -86,36 +86,32 @@ export async function checkShowcaseBar(browser, base, name) {
   await page.close();
 
   page = await open("charts.html", 1280);
-  expect((await page.evaluate(() => document.querySelector("#chart-theme [aria-pressed=true]")?.dataset.value)) === "spectrum", "the charts example follows the remembered chart colors");
-  await page.click('.vp-bar [popovertarget="vp-settings"]');
-  await page.waitForFunction(() => document.getElementById("vp-settings").matches(":popover-open"), null, { timeout: 2000 });
-  await page.click('#vp-chart-colors [data-value="mono"]');
-  expect((await page.evaluate(() => document.querySelector("#chart-theme [aria-pressed=true]")?.dataset.value)) === "mono", "the bar's chart colors reach the example's own switch");
-  await page.keyboard.press("Escape");
-  await page.click('#chart-theme [data-value="spectrum"]');
-  const both = await page.evaluate(() => ({
+  expect((await page.evaluate(() => [document.documentElement.dataset.chartTheme, document.querySelector("#cpu").dataset.chartTheme].join())) === "spectrum,spectrum", "the charts example follows the remembered chart colors");
+  const setColors = async (value) => {
+    await page.click('.vp-bar [popovertarget="vp-settings"]');
+    await page.waitForFunction(() => document.getElementById("vp-settings").matches(":popover-open"), null, { timeout: 2000 });
+    await page.click(`#vp-chart-colors [data-value="${value}"]`);
+    await page.keyboard.press("Escape");
+  };
+  await setColors("mono");
+  const mono = await page.evaluate(() => ({
     bar: document.querySelector("#vp-chart-colors [aria-pressed=true]")?.dataset.value,
-    own: document.querySelector("#chart-theme [aria-pressed=true]")?.dataset.value,
     root: document.documentElement.dataset.chartTheme,
-    figure: document.querySelector("#core").dataset.chartTheme,
+    figures: [...document.querySelectorAll(".sd-chart")].map((f) => f.dataset.chartTheme).join(),
     stored: localStorage.getItem("sd-chart-theme"),
   }));
-  expect(Object.values(both).every((v) => v === "spectrum"), `the example's switch reaches the bar, the page and storage ${JSON.stringify(both)}`);
+  expect(mono.bar === "mono" && mono.root === "mono" && mono.figures === "mono,mono" && mono.stored === "mono", `the bar's chart colors reach the example's charts and storage ${JSON.stringify(mono)}`);
 
-  // Chart colors chosen in the width frame reach the page that opened it, and the other way round.
+  // Chart colors chosen on the page reach the frame that shows it at a set width.
   await page.click('.vp-bar [data-vp="1024"]');
   await page.waitForSelector(".vp-dialog[open] iframe[src]");
-  await page.frameLocator(".vp-dialog iframe").locator("#chart-theme").waitFor();
+  await page.frameLocator(".vp-dialog iframe").locator("#cpu").waitFor();
   const colors = () =>
     page.evaluate(() => {
-      const read = (doc) => [doc.documentElement.dataset.chartTheme, doc.querySelector("#core").dataset.chartTheme, doc.querySelector("#chart-theme [aria-pressed=true]")?.dataset.value, doc.querySelector("#vp-chart-colors [aria-pressed=true]")?.dataset.value ?? doc.querySelector("#chart-theme [aria-pressed=true]")?.dataset.value];
+      const read = (doc) => [doc.documentElement.dataset.chartTheme, doc.querySelector("#cpu").dataset.chartTheme, doc.querySelector("#memory").dataset.chartTheme];
       return { page: read(document), frame: read(document.querySelector(".vp-dialog iframe").contentDocument) };
     });
-  const reaches = (want) => page.waitForFunction((v) => [document, document.querySelector(".vp-dialog iframe").contentDocument].every((doc) => doc.documentElement.dataset.chartTheme === v && doc.querySelector("#core").dataset.chartTheme === v && doc.querySelector("#chart-theme [aria-pressed=true]")?.dataset.value === v), want, { timeout: 2000 }).catch(() => {});
-  await page.frameLocator(".vp-dialog iframe").locator('#chart-theme [data-value="mono"]').click();
-  await reaches("mono");
-  const fromFrame = await colors();
-  expect(Object.values(fromFrame).flat().every((v) => v === "mono") && (await page.evaluate(() => document.querySelector("#vp-chart-colors [aria-pressed=true]")?.dataset.value)) === "mono", `chart colors chosen in the frame reach the page's switch, figures and bar ${JSON.stringify(fromFrame)}`);
+  const reaches = (want) => page.waitForFunction((v) => [document, document.querySelector(".vp-dialog iframe").contentDocument].every((doc) => doc.documentElement.dataset.chartTheme === v && doc.querySelector("#cpu").dataset.chartTheme === v), want, { timeout: 2000 }).catch(() => {});
   await page.evaluate(() => document.querySelector('#vp-chart-colors [data-value="spectrum"]').click());
   await reaches("spectrum");
   const fromPage = await colors();
@@ -176,7 +172,7 @@ export async function checkShowcaseBar(browser, base, name) {
   const themes = () => page.evaluate(() => [document.documentElement.dataset.theme, document.querySelector(".vp-dialog iframe").contentDocument.documentElement.dataset.theme]);
   for (const [from, queue] of [
     ["page", () => { for (const t of ["paper", "auto"]) document.querySelector(`.vp-dialog [data-sd-theme="${t}"]`).click(); }],
-    ["frame", () => { for (let i = 0; i < 2; i++) document.querySelector("[data-sd-theme-cycle]").click(); }],
+    ["frame", () => { for (let i = 0; i < 2; i++) document.body.dispatchEvent(new KeyboardEvent("keydown", { key: "T", shiftKey: true, bubbles: true })); }],
   ]) {
     await page.evaluate(countEvents);
     await frame.evaluate(countEvents);
@@ -206,13 +202,13 @@ export async function checkShowcaseBar(browser, base, name) {
   await page.waitForTimeout(300);
   expect(await page.evaluate(() => document.querySelector(".vp-dialog").open), "Esc during an IME composition in the frame leaves the frame open");
 
-  // Esc inside the frame closes the dialog, unless a palette in the frame takes it first.
+  // Esc inside the frame closes the dialog, unless a dialog in the frame takes it first.
   await page.frameLocator(".vp-dialog iframe").locator("#main").focus();
-  await page.keyboard.press("Control+k");
+  await frame.evaluate(() => document.getElementById("confirm-remove").showModal());
   await frame.waitForFunction(() => [...document.querySelectorAll("dialog")].some((d) => d.open), null, { timeout: 2000 });
   await page.keyboard.press("Escape");
   await frame.waitForFunction(() => ![...document.querySelectorAll("dialog")].some((d) => d.open), null, { timeout: 2000 });
-  expect(await page.evaluate(() => document.querySelector(".vp-dialog").open), "Esc closes a palette in the frame, not the frame");
+  expect(await page.evaluate(() => document.querySelector(".vp-dialog").open), "Esc closes a dialog in the frame, not the frame");
   await page.frameLocator(".vp-dialog iframe").locator("#main").focus();
   await page.keyboard.press("Escape");
   await page.waitForFunction(() => !document.querySelector(".vp-dialog").open, null, { timeout: 2000 }).catch(() => {});

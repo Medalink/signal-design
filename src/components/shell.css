@@ -187,6 +187,12 @@
   .sd-rail-item:focus-visible {
     outline-offset: -1px;
   }
+  /* A section that is not available: dimmed like a disabled button. */
+  .sd-rail-item:disabled,
+  .sd-rail-item[aria-disabled="true"] {
+    opacity: 0.35;
+    pointer-events: none;
+  }
 
   /* A place: a square image, initials or icon, for a narrow rail of groups,
      servers or workspaces. Sized for a 72px rail (--shell-rail: 4.5rem).
@@ -522,8 +528,8 @@
     padding: var(--shell-gap);
   }
   /*
-   * Header: two bars above the content, the crumb bar fading out to the
-   * right and the action bar fading out to the left. A ladder bridge (two
+   * Header: two bars above the content, the crumb bar at the start and the
+   * action bar at the end, each as wide as its contents. A ladder bridge (two
    * rails and a square node) drops from each bar's outer end to the content.
    *   <div class="sd-shell-header">
    *     <div class="sd-shell-crumbs">[» pin] <ol class="sd-breadcrumb">…</ol></div>
@@ -598,17 +604,14 @@
     border: 1px solid var(--sd-line);
     background: var(--sd-container);
   }
-  /* Crumb bar: as wide as its crumbs, fading out past the last one. */
+  /* Crumb bar: as wide as its crumbs. */
   .sd-shell-crumbs {
     min-width: 0;
     max-width: 100%;
-    padding: 4px 4rem 4px 6px;
+    padding: 4px 6px;
     overflow: hidden;
-    border-inline-end: 0;
-    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 4rem), transparent);
-    mask-image: linear-gradient(to right, #000 calc(100% - 4rem), transparent);
   }
-  /* Crumbs keep their size; when space runs out they run under the fade. */
+  /* Crumbs keep their size; when space runs out the bar clips them. */
   .sd-shell-crumbs > .sd-breadcrumb {
     flex-wrap: nowrap;
     white-space: nowrap;
@@ -624,13 +627,10 @@
   .sd-shell[data-sidebar="collapsed"] .sd-shell-pin {
     display: inline-flex;
   }
-  /* Action bar: the mirror image, fading out to the left. */
+  /* Action bar: as wide as its actions, at the end. */
   .sd-shell-header-end {
     flex-shrink: 0;
-    padding: 4px 6px 4px 4rem;
-    border-inline-start: 0;
-    -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 4rem), transparent);
-    mask-image: linear-gradient(to left, #000 calc(100% - 4rem), transparent);
+    padding: 4px 6px;
   }
   .sd-shell-header-end > .sd-btn:not(:hover, .sd-btn-primary),
   .sd-shell-crumbs > .sd-btn:not(:hover) {
@@ -792,7 +792,8 @@
   /* Phones and narrow windows: top bar, and rail + sidebar as a drawer. */
   @media (max-width: 47.99rem) {
     .sd-shell,
-    .sd-shell[data-sidebar="collapsed"] {
+    .sd-shell[data-sidebar="collapsed"],
+    .sd-shell:not(:has(> .sd-sidebar)) {
       grid-template-columns: minmax(0, 1fr);
       grid-template-areas:
         "title"
@@ -851,6 +852,18 @@
     }
     /* Phones keep only the live status line. */
     .sd-shell-status > :not(.sd-status) {
+      display: none;
+    }
+    /* The top bar already names the page, so its crumb chip would say it
+       twice: the chip and the bridge under it go, the actions stay. */
+    .sd-shell:has(> .sd-shell-topbar > .sd-shell-topbar-label) .sd-shell-crumbs,
+    .sd-shell:has(> .sd-shell-topbar > .sd-shell-topbar-label) .sd-shell-header::before {
+      display: none;
+    }
+    .sd-shell:has(> .sd-shell-topbar > .sd-shell-topbar-label) .sd-shell-header {
+      justify-content: flex-end;
+    }
+    .sd-shell:has(> .sd-shell-topbar > .sd-shell-topbar-label) .sd-shell-header:not(:has(> .sd-shell-header-end)) {
       display: none;
     }
   }

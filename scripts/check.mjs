@@ -271,22 +271,23 @@ mountFeed(root);
 
 async function checkLegacyRepeat(page, name) {
   const before = failures;
-  await page.goto(pages.shell);
-  await page.keyboard.down("j");
-  await page.keyboard.down("j");
-  await page.keyboard.down("j");
-  await page.keyboard.up("j");
-  const afterNext = await page.locator('[data-feed] [aria-current="true"]').getAttribute("data-n");
-  if (afterNext !== "18") fail(name, `holding j should reach row 18, got ${afterNext}`);
-  await page.locator('[data-feed] [data-n="18"]').click({ position: { x: 10, y: 10 } });
-  const startPrevious = await page.locator('[data-feed] [aria-current="true"]').getAttribute("data-n");
-  if (startPrevious !== "18") fail(name, `holding k should start from row 18, got ${startPrevious}`);
-  for (const expected of ["19", "20", "21"]) {
-    await page.keyboard.down("k");
-    const afterPrevious = await page.locator('[data-feed] [aria-current="true"]').getAttribute("data-n");
-    if (afterPrevious !== expected) fail(name, `holding k should reach row ${expected}, got ${afterPrevious}`);
+  await page.goto(pages["lib-live-feed"]);
+  const feed = page.locator("#demo-feed");
+  for (let i = 0; i < 4; i++) await page.locator("#feed-insert").click();
+  const index = () => feed.evaluate((root) => [...root.querySelectorAll(".sd-row[data-id]")].findIndex((row) => row.getAttribute("aria-current") === "true"));
+  await feed.focus();
+  const start = await index();
+  if (start < 3) fail(name, `feed should start with 3 rows above the current one, got index ${start}`);
+  // Each keydown of a held key moves the current row once: k up the list, then j back down.
+  for (const [key, step] of [["k", -1], ["j", 1]]) {
+    const from = await index();
+    for (let n = 1; n <= 3; n++) {
+      await page.keyboard.down(key);
+      const at = await index();
+      if (at !== from + step * n) fail(name, `holding ${key} should reach row index ${from + step * n}, got ${at}`);
+    }
+    await page.keyboard.up(key);
   }
-  await page.keyboard.up("k");
   await page.goto(jsPage);
   await page.evaluate(async (apiUrl) => {
     const { hotkeys } = await import(apiUrl);
@@ -309,7 +310,7 @@ async function checkLegacyRepeat(page, name) {
   });
   if (calls !== 1) fail(name, `repeat-disabled action should run once, got ${calls}`);
   if (repeatedCalls !== 2) fail(name, `default-repeat action should run twice, got ${repeatedCalls}`);
-  if (failures === before) console.log(`ok   ${name} legacy repeat 7 behavioral assertions`);
+  if (failures === before) console.log(`ok   ${name} legacy repeat 9 behavioral assertions`);
 }
 
 
@@ -643,28 +644,31 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
   if (pageName === "shell") {
     const state = () => page.evaluate(() => ({ ...document.getElementById("shell").dataset, mainInert: document.getElementById("main").inert }));
     if (width === 1280 && theme === "ink") {
-      await page.keyboard.press("]");
-      if ((await state()).aside !== "open") fail(where, "] did not open the aside");
-      await page.keyboard.press("]");
-      await page.keyboard.press("[");
-      if ((await state()).sidebar !== "collapsed") fail(where, "[ did not collapse the sidebar");
-      await page.click('.sd-rail-item[data-sd-section="teams"]');
-      const peek = await page.evaluate(() => ({ peek: "peek" in document.getElementById("shell").dataset, visible: !!document.querySelector('.sd-sidebar-panel[data-section="teams"]').offsetParent }));
-      if (!peek.peek || !peek.visible) fail(where, `rail click did not peek the teams panel ${JSON.stringify(peek)}`);
-      await page.keyboard.press("Escape");
-      if ("peek" in (await state())) fail(where, "Escape did not close the peek");
-      await page.click('.sd-rail-item[data-sd-section="projects"]');
-      await page.keyboard.press("Escape");
-      await page.keyboard.press("[");
-      if ((await state()).sidebar === "collapsed") fail(where, "[ did not pin the sidebar again");
-      await page.keyboard.press("Control+k");
-      if (!(await page.evaluate(() => document.getElementById("palette").open))) fail(where, "Ctrl K did not open the palette");
-      await page.keyboard.press("Escape");
-      // WebKit returns focus from a closed modal a moment later; wait for it like a person would.
-      await page.waitForFunction(() => !document.getElementById("palette").open && !document.getElementById("palette").contains(document.activeElement), null, { timeout: 1000 }).catch(() => {});
-      await page.keyboard.press("a");
-      const done = await page.evaluate(() => document.querySelector('.sd-row[data-n="21"]').hasAttribute("data-done"));
-      if (!done) fail(where, "a did not approve the focused item");
+      const badge = (id) => page.evaluate((id) => { const b = document.querySelector(`[data-id="${id}"] .sd-badge`); return b && `${b.textContent}|${b.dataset.tone ?? ""}`; }, id);
+      const tone = await page.evaluate(() => document.querySelector("[data-orphans-tile]").dataset.tone ?? "");
+      if (tone) fail(where, `Orphaned is colored at 0 (${tone})`);
+      await page.click('[data-sd-toggle="detail-checkout-api"]');
+      await page.waitForFunction(() => document.getElementById("detail-checkout-api").getBoundingClientRect().height >= 100, null, { timeout: 2000 }).catch(() => {});
+      const open = await page.evaluate(() => ({ h: document.getElementById("detail-checkout-api").getBoundingClientRect().height, expanded: document.querySelector('[data-sd-toggle="detail-checkout-api"]').getAttribute("aria-expanded") }));
+      if (open.h < 100 || open.expanded !== "true") fail(where, `container row did not open ${JSON.stringify(open)}`);
+      await page.click('[data-id="checkout-api"] [data-act="restart"]');
+      if ((await badge("checkout-api")) !== "restarting|pending") fail(where, `Restart did not show restarting: ${await badge("checkout-api")}`);
+      await page.waitForFunction(() => document.querySelector('[data-id="checkout-api"] .sd-badge').textContent === "running", null, { timeout: 5000 }).catch(() => {});
+      if ((await badge("checkout-api")) !== "running|success") fail(where, `Restart did not end running: ${await badge("checkout-api")}`);
+      await page.click('th[data-sort="memory"]');
+      const sorted = await page.evaluate(() => document.querySelector('th[data-sort="memory"]').getAttribute("aria-sort"));
+      if (sorted !== "ascending") fail(where, `sorting by Memory gave aria-sort ${sorted}`);
+      await page.click('[data-sd-toggle="detail-storefront"]');
+      await page.waitForFunction(() => document.getElementById("detail-storefront").getBoundingClientRect().height >= 100, null, { timeout: 2000 }).catch(() => {});
+      await page.click('[data-id="storefront"] [data-act="remove"]');
+      if (!(await page.evaluate(() => document.getElementById("confirm-remove").open))) fail(where, "Remove did not ask first");
+      await page.click("#confirm-remove [data-sd-close]:not([data-sd-close=remove])");
+      if (!(await page.evaluate(() => !!document.querySelector('[data-id="storefront"]')))) fail(where, "Cancel removed the container");
+      await page.click('[data-id="storefront"] [data-act="remove"]');
+      await page.click('#confirm-remove [data-sd-close="remove"]');
+      await page.waitForFunction(() => !document.querySelector('[data-id="storefront"]'), null, { timeout: 2000 }).catch(() => {});
+      const gone = await page.evaluate(() => ({ row: !!document.querySelector('[data-id="storefront"]'), removed: document.querySelector("[data-removed-count]").textContent }));
+      if (gone.row || gone.removed !== "4") fail(where, `confirmed Remove did not remove ${JSON.stringify(gone)}`);
     }
     if (width === 375 && theme === "ink") {
       await page.click('.sd-shell-topbar [data-sd-shell="drawer"]');
@@ -702,16 +706,27 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
   }
 
   if (pageName === "chat" && width === 1280 && theme === "ink") {
+    const aside = () => page.evaluate(() => ({ state: document.getElementById("shell").dataset.aside ?? "closed", expanded: document.querySelector('[data-sd-shell="aside"]').getAttribute("aria-expanded") }));
+    await page.locator("body").press("]");
+    const closed = await aside();
+    if (closed.state !== "closed" || closed.expanded !== "false") fail(where, `] did not close the members aside ${JSON.stringify(closed)}`);
+    await page.locator("body").press("]");
+    const reopened = await aside();
+    if (reopened.state !== "open" || reopened.expanded !== "true") fail(where, `] did not open the members aside ${JSON.stringify(reopened)}`);
     const box = page.locator("[data-composer] textarea");
+    await page.locator("[data-composer-emoji]").click();
+    await page.locator("#emoji .sd-emoji-grid > button", { hasText: "🎉" }).click();
+    if (!(await box.inputValue()).includes("🎉")) fail(where, `composer emoji button did not put the emoji in the message: ${await box.inputValue()}`);
+    await box.fill("");
     await box.click();
-    await box.type("Hi @al");
+    await box.type("Hi @ro");
     const shown = await page.evaluate(() => !document.getElementById("mentions").hidden && [...document.querySelectorAll('#mentions [role="option"]:not([hidden])')].map((o) => o.dataset.value).join(","));
-    if (shown !== "Alex") fail(where, `mention suggestions showed ${shown}`);
+    if (shown !== "Rosa") fail(where, `mention suggestions showed ${shown}`);
     await page.keyboard.press("Enter");
-    if (!(await box.inputValue()).startsWith("Hi @Alex ")) fail(where, `mention not inserted: ${await box.inputValue()}`);
+    if (!(await box.inputValue()).startsWith("Hi @Rosa ")) fail(where, `mention not inserted: ${await box.inputValue()}`);
     await page.keyboard.press("Enter");
     const sent = await page.evaluate(() => [...document.querySelectorAll("[data-feed] .sd-message-text")].at(-1).textContent.trim());
-    if (sent !== "Hi @Alex") fail(where, `send appended "${sent}"`);
+    if (sent !== "Hi @Rosa") fail(where, `send appended "${sent}"`);
     const r = page.locator("[data-sd-reaction]").first();
     const before = await r.locator("b").textContent();
     await r.click();
@@ -735,7 +750,7 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
     await page.locator(".sd-message").nth(2).hover();
     await page.locator('.sd-message >> nth=2 >> .sd-message-actions [aria-label="Reply"]').click();
     const reply = await page.evaluate(() => ({ bar: document.querySelector(".sd-composer-reply b")?.textContent, current: document.querySelectorAll('.sd-message[aria-current="true"]').length }));
-    if (reply.bar !== "Sam" || reply.current !== 1) fail(where, `reply bar ${JSON.stringify(reply)}`);
+    if (reply.bar !== "Rosa" || reply.current !== 1) fail(where, `reply bar ${JSON.stringify(reply)}`);
     await page.locator("[data-cancel-reply]").click();
     await page.evaluate(() => { const f = document.querySelector("[data-feed]"); f.scrollTop = 0; f.dispatchEvent(new Event("scroll")); });
     if (await page.locator("[data-jump]").isHidden()) fail(where, "jump to present did not show when scrolled up");
@@ -756,7 +771,7 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
     for (const check of componentChecks.filter((c) => c.page === library.id)) await check.run(page, where, fail);
   }
 
-  if (pageName === "charts" && width === 1280 && theme === "ink") {
+  if (pageName === "lib-charts" && width === 1280 && theme === "ink") {
     const core = () => page.evaluate(() => {
       const c = document.querySelector("#core canvas").sdChart.chart;
       return {
@@ -847,18 +862,84 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
       heat: document.querySelectorAll("[data-heat] > i").length,
       waffle: document.querySelectorAll("[data-waffle] > i").length,
       waffleW: document.querySelector("[data-waffle]").getBoundingClientRect().width,
-      uptime: document.querySelectorAll(".sd-uptime > i").length,
+      uptime: document.querySelectorAll("[data-uptime] .sd-uptime > i").length,
     }));
     if (squares.heat !== 168 || squares.waffle !== 100 || squares.waffleW < 150 || squares.uptime !== 360) fail(where, `square charts ${JSON.stringify(squares)}`);
     // Theme: spectrum colors the series.
-    await page.click('#chart-theme [data-value="spectrum"]');
+    // The showcase bar owns the chart colors; its settings panel is closed here, so click the button directly.
+    await page.evaluate(() => document.querySelector('#vp-chart-colors [data-value="spectrum"]').click());
     await page.waitForFunction(() => {
       const c = document.querySelector("#core canvas").sdChart.chart.data.datasets.find((d) => d.label === "Core ↓")._color;
       return c.g > c.r + 60;
     }, null, { timeout: 2000 }).catch(() => {});
     const spec = (await core()).down;
     if (!(spec.g > spec.r + 60)) fail(where, `spectrum download is not green ${JSON.stringify(spec)}`);
-    await page.click('#chart-theme [data-value="mono"]');
+    await page.evaluate(() => document.querySelector('#vp-chart-colors [data-value="mono"]').click());
+  }
+
+  if (pageName === "charts" && width === 1280 && theme === "ink") {
+    const view = () => page.evaluate(() => {
+      const drawn = (id) => {
+        const cv = document.querySelector(`#${id} canvas:not(.sd-chart-fx)`);
+        const d = cv.getContext("2d").getImageData(0, 0, cv.width, cv.height).data;
+        let n = 0;
+        for (let i = 3; i < d.length; i += 4) if (d[i] > 0) n++;
+        return n;
+      };
+      const memory = document.querySelector("#memory canvas").sdChart.chart;
+      return {
+        pressed: [...document.querySelectorAll("#range [aria-pressed=true]")].map((b) => b.dataset.range).join(),
+        cpu: drawn("cpu"),
+        memory: drawn("memory"),
+        series: memory.data.datasets.map((d) => d.label).join(),
+        peak: document.getElementById("peak-memory").textContent,
+        tone: document.getElementById("peak-memory-box").dataset.tone ?? "",
+        label: document.querySelector("#cpu canvas").getAttribute("aria-label"),
+        summary: document.querySelector("#memory [data-summary]").textContent,
+        rows: document.querySelectorAll("#table tbody tr").length,
+        over: document.querySelectorAll("#table td.text-danger").length,
+        edges: [...document.querySelectorAll("[data-tone]:not(.sd-fps)")].map((el) => el.dataset.tone).filter((t) => t && t !== "danger").join(),
+        overflow: document.documentElement.scrollWidth - innerWidth,
+      };
+    });
+    const day = await view();
+    if (day.pressed !== "24h" || day.cpu < 3000 || day.memory < 3000) fail(where, `stats charts did not draw for 24h ${JSON.stringify(day)}`);
+    if (!day.series.includes("Over the limit") || day.tone !== "danger" || !/Over the limit for/.test(day.summary) || day.over < 1) fail(where, `24h memory over the limit is not marked in the chart, tile, summary and table ${JSON.stringify(day)}`);
+    if (day.edges) fail(where, `stats colors something that is not over a limit: ${day.edges}`);
+    if (day.rows !== 8 || !/24 hours/.test(day.label) || !/Peak/.test(day.label)) fail(where, `stats table or chart label ${JSON.stringify(day)}`);
+    // Range: keyboard reachable, and every number follows it.
+    await page.locator('#range [data-range="1h"]').focus();
+    await page.keyboard.press("Enter");
+    await page.waitForFunction(() => document.querySelector("#range [aria-pressed=true]")?.dataset.range === "1h", null, { timeout: 2000 }).catch(() => {});
+    const hour = await view();
+    if (hour.pressed !== "1h" || hour.series !== "Total memory" || hour.tone || hour.summary.includes("Over the limit") || hour.over !== 0 || !/last hour/.test(hour.label)) fail(where, `1h does not stay under the limit ${JSON.stringify(hour)}`);
+    if (hour.peak === day.peak) fail(where, "the peak memory tile did not change with the range");
+    const again = await (async () => {
+      await page.locator('#range [data-range="24h"]').click();
+      return view();
+    })();
+    if (again.peak !== day.peak || again.summary.replace(/ at .*?(Average)/, "$1") !== day.summary.replace(/ at .*?(Average)/, "$1")) fail(where, "24h shows different numbers the second time");
+    // Table: a header sorts from the keyboard.
+    await page.locator('#table th[data-sort="name"]').focus();
+    await page.keyboard.press("Enter");
+    const names = await page.evaluate(() => [...document.querySelectorAll("#table tbody tr td:first-child")].map((td) => td.firstChild.textContent));
+    if (names.join() !== [...names].sort().join()) fail(where, `table did not sort by name from the keyboard: ${names.join()}`);
+    const sorted = await page.evaluate(() => document.querySelector('#table th[data-sort="name"]').getAttribute("aria-sort"));
+    if (sorted !== "ascending") fail(where, `aria-sort is ${sorted}`);
+  }
+
+  // The two Watcher screens lead to each other from the rail; its other sections are dimmed and cannot be pressed.
+  if ((pageName === "shell" || pageName === "charts") && width === 1280 && theme === "ink") {
+    const rail = () => page.evaluate(() => [...document.querySelectorAll("#shell-rail .sd-rail-list > .sd-rail-item")].map((item) => `${item.textContent.trim()}:${item.disabled ? "disabled" : item.getAttribute("aria-current") === "page" ? "current" : item.getAttribute("href")}`).join());
+    const dead = "Activity:disabled,Resources:disabled,Manage:disabled,Logs:disabled";
+    const other = pageName === "shell" ? "charts" : "shell";
+    const here = await rail();
+    const expected = pageName === "shell" ? `Containers:current,Stats:./charts.html,${dead}` : `Containers:./shell.html,Stats:current,${dead}`;
+    if (here !== expected) fail(where, `rail is ${here}`);
+    await page.locator("#shell-rail .sd-rail-item", { hasText: pageName === "shell" ? "Stats" : "Containers" }).click();
+    await page.waitForURL(`**/${other}.html`);
+    const there = await rail();
+    if (there === here || !there.startsWith(pageName === "shell" ? "Containers:./shell.html,Stats:current" : "Containers:current")) fail(where, `${other} rail after the click is ${there}`);
   }
 }
 

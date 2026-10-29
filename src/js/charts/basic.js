@@ -250,7 +250,7 @@ export function createBasicChart(canvas, opts) {
   document.addEventListener("sd:theme", refresh);
   const scheme = matchMedia("(prefers-color-scheme: light)");
   scheme.addEventListener("change", refresh);
-  document.fonts?.load?.(`13px ${state.theme.font}`).then(() => chart.update("none"), () => {});
+  document.fonts?.load?.(`13px ${state.theme.font}`).then(() => chart.canvas && chart.update("none"), () => {});
 
   const api = {
     chart,
