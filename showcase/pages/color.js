@@ -6,7 +6,7 @@ mountLibrary();
 
 const ROLES = ["canvas", "surface", "raised", "overlay", "line", "line-strong", "fg", "fg-muted", "fg-subtle", "fg-faint", "primary", "on-primary"];
 const SIGNALS = [
-  ["accent", "focus, current"],
+  ["accent", "selected, active"],
   ["success", "approved, passing"],
   ["danger", "irreversible, risk"],
   ["warning", "costly"],

@@ -601,7 +601,7 @@
   :is(input[type="checkbox"], input[type="radio"]):is(:disabled) {
     opacity: 0.4;
   }
-  :is(input[type="checkbox"], input[type="radio"]):is(:user-invalid) {
+  :is(input[type="checkbox"], input[type="radio"]):is(:user-invalid, [aria-invalid="true"]) {
     border-color: var(--sd-danger);
   }
 

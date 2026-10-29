@@ -43,23 +43,23 @@
   </dl>
 
   <form class="sd-form mt-10" data-form novalidate>
-    <div class="sd-note" data-tone="pending" hidden data-form-error role="alert">Check the highlighted fields.</div>
+    <div class="sd-note sticky top-0 z-10 bg-canvas" data-tone="danger" hidden data-form-error role="alert"></div>
 
     <div class="sd-form-row">
       <div class="sd-field">
         <label class="sd-field-label" for="ws-name">Workspace name</label>
-        <input id="ws-name" name="name" required minlength="3" placeholder="ACME Design">
-        <p class="sd-field-hint">Shown to everyone you invite.</p>
-        <p class="sd-field-error">Use at least 3 characters.</p>
+        <input id="ws-name" name="name" required minlength="3" placeholder="ACME Design" aria-describedby="ws-name-hint ws-name-error">
+        <p class="sd-field-hint" id="ws-name-hint">Shown to everyone you invite.</p>
+        <p class="sd-field-error" id="ws-name-error">Use at least 3 characters.</p>
       </div>
       <div class="sd-field">
         <label class="sd-field-label" for="ws-url">Address</label>
         <div class="sd-input-group">
-          <input id="ws-url" name="slug" required pattern="[a-z0-9-]+" placeholder="acme-design">
+          <input id="ws-url" name="slug" required pattern="[a-z0-9-]+" placeholder="acme-design" aria-describedby="ws-url-hint ws-url-error">
           <span class="sd-addon">.acme.example</span>
         </div>
-        <p class="sd-field-hint">Lowercase letters, numbers and dashes.</p>
-        <p class="sd-field-error">Only lowercase letters, numbers and dashes.</p>
+        <p class="sd-field-hint" id="ws-url-hint">Lowercase letters, numbers and dashes.</p>
+        <p class="sd-field-error" id="ws-url-error">Only lowercase letters, numbers and dashes.</p>
       </div>
     </div>
 
@@ -89,10 +89,11 @@
         <label class="sd-field-label" for="ws-seats">Seats</label>
         <div class="sd-number" data-sd-number>
           <button type="button" data-step="-1" aria-label="Fewer seats">−</button>
-          <input id="ws-seats" name="seats" type="number" value="5" min="1" max="50">
+          <input id="ws-seats" name="seats" type="number" value="5" min="1" max="50" aria-describedby="ws-seats-hint ws-seats-error">
           <button type="button" data-step="1" aria-label="More seats">+</button>
         </div>
-        <p class="sd-field-hint">$8 per seat per month. <span data-price>$40</span> total.</p>
+        <p class="sd-field-hint" id="ws-seats-hint">$8 per seat per month. <span data-price>$40</span> total.</p>
+        <p class="sd-field-error" id="ws-seats-error">Choose between 1 and 50 seats.</p>
       </div>
     </div>
 
@@ -126,7 +127,10 @@
       <label class="sd-dropzone"><input type="file" accept="image/*" name="logo"><span>Drop an image or <u>browse</u></span><span class="sd-subtle text-2xs uppercase tracking-caps" data-file-names>png · svg · up to 2 MB</span></label>
     </div>
 
-    <label class="sd-check"><input type="checkbox" required name="terms"><span class="sd-check-text">I agree to the terms of service</span></label>
+    <div class="sd-field">
+      <label class="sd-check"><input type="checkbox" required name="terms" aria-describedby="ws-terms-error"><span class="sd-check-text">I agree to the terms of service</span></label>
+      <p class="sd-field-error" id="ws-terms-error">Agree to the terms to continue.</p>
+    </div>
 
     <div class="sd-divider"></div>
     <div class="sd-split">

@@ -12,10 +12,11 @@ inventing it.
 Hard rules:
 - Square corners: never `rounded-*` or `border-radius`.
 - Flat: no blurred shadows, glow, glass or CSS gradients.
-- Color only for status and focus, through roles (`data-tone="danger"`, `text-danger`);
+- Color only for status and selection, through roles (`data-tone="danger"`, `text-danger`);
   navigation, headings and icons stay black, white and grey.
 - Tokens only (`var(--sd-*)`, `bg-surface`, `text-fg-muted`); never hex values.
-- Source Code Pro 400/600 only.
+- Two weights only, regular (400) and medium (500). Families through `font-sans` and
+  `font-mono` (Source Code Pro, for code), never by name; `font-reading` only for long prose.
 - Motion only on state change, 120–200ms.
 - Drive state with ARIA and `data-*` attributes; call `init()` from `signal-design/js`
   when markup uses `data-sd-*`.

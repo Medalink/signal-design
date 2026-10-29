@@ -1,7 +1,9 @@
 import { mountBar, savedScrollbars } from "./viewport.js";
 import { init, rain } from "../src/js/index.js";
+import { icon } from "../src/js/icons.js";
 
 mountBar();
+document.querySelector("[data-menu-icon]").innerHTML = icon("menu");
 init({ scrollbars: savedScrollbars() });
 
 // The hero rain moves for a few seconds on arrival (a state change: the page

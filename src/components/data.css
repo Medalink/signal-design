@@ -82,6 +82,17 @@
   .sd-row:focus-visible {
     outline-offset: 4px;
   }
+  /* Phones: a title is an outcome the reader has to finish, so it wraps to
+     two lines before it is cut. */
+  @media (max-width: 47.99rem) {
+    .sd-row-title {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      white-space: normal;
+    }
+  }
   @media (max-width: 40rem) {
     .sd-row {
       min-height: 60px;
