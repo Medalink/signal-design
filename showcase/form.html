@@ -13,134 +13,97 @@
 <body>
 <a class="sd-skip" href="#main">Skip to content</a>
 
-<header class="sd-topbar">
-  <a class="sd-wordmark" href="./index.html">ACME</a>
-  <nav class="sd-nav sd-desktop-only" aria-label="Examples">
-    <a href="./index.html">Library</a>
-    <a href="./shell.html">App shell</a>
-    <a href="./chat.html">Chat</a>
-    <a href="./form.html" aria-current="page">Form</a>
-    <a href="./landing.html">Landing</a>
-  </nav>
-  <div class="sd-topbar-end"><button class="sd-btn sd-btn-sm" data-sd-theme-cycle>Theme</button></div>
-</header>
+<main class="sd-page sd-page-wide" id="main" tabindex="-1">
+  <h1 class="mb-8 text-2xl">AI</h1>
 
-<main class="sd-page" id="main" tabindex="-1" style="max-width: var(--container-narrow)">
-  <header class="sd-header">
-    <span class="sd-wordmark">New workspace</span>
-    <h1 class="sd-display">Set up your team. <em>Three short steps.</em></h1>
-  </header>
+  <div class="grid items-start gap-6 lg:grid-cols-2">
+    <div class="grid min-w-0 gap-4 [&>.sd-panel]:m-0">
+      <section class="sd-panel sd-panel-fluid" aria-labelledby="connected-title" data-connected-panel>
+        <h2 class="sd-panel-title" id="connected-title">Connected</h2>
+        <ul class="m-0 list-none p-0" data-connected></ul>
+      </section>
 
-  <ol class="sd-steps" aria-label="Progress">
-    <li data-state="done">Account</li>
-    <li aria-current="step">Workspace</li>
-    <li>Invite</li>
-  </ol>
-
-  <dl class="sd-kv sd-kv-plain mt-8" aria-label="Account">
-    <dt>Signed in as</dt><dd>jane@acme.example</dd>
-    <dt title="Billing contact for invoices, receipts and renewal notices">Billing contact for invoices, receipts and renewal notices</dt><dd>finance@acme.example</dd>
-  </dl>
-
-  <form class="sd-form mt-10" data-form novalidate>
-    <div class="sd-note sticky top-0 z-10 bg-canvas" data-tone="danger" hidden data-form-error role="alert"></div>
-
-    <div class="sd-form-row">
-      <div class="sd-field">
-        <label class="sd-field-label" for="ws-name">Workspace name</label>
-        <input id="ws-name" name="name" required minlength="3" placeholder="ACME Design" aria-describedby="ws-name-hint ws-name-error">
-        <p class="sd-field-hint" id="ws-name-hint">Shown to everyone you invite.</p>
-        <p class="sd-field-error" id="ws-name-error">Use at least 3 characters.</p>
+      <div class="sd-empty" data-empty hidden>
+        <p class="sd-empty-title" tabindex="-1">Nothing is connected.</p>
       </div>
-      <div class="sd-field">
-        <label class="sd-field-label" for="ws-url">Address</label>
-        <div class="sd-input-group">
-          <input id="ws-url" name="slug" required pattern="[a-z0-9-]+" placeholder="acme-design" aria-describedby="ws-url-hint ws-url-error">
-          <span class="sd-addon">.acme.example</span>
-        </div>
-        <p class="sd-field-hint" id="ws-url-hint">Lowercase letters, numbers and dashes.</p>
-        <p class="sd-field-error" id="ws-url-error">Only lowercase letters, numbers and dashes.</p>
-      </div>
-    </div>
 
-    <div class="sd-form-row">
-      <div class="sd-field">
-        <label class="sd-field-label" for="ws-tz">Time zone</label>
-        <div class="sd-combobox" data-sd-combobox>
-          <input id="ws-tz" role="combobox" aria-controls="tz-list" aria-expanded="false" aria-autocomplete="list" placeholder="Search time zones" autocomplete="off">
-          <input type="hidden" name="tz">
-          <div class="sd-menu sd-combobox-list" role="listbox" id="tz-list" hidden>
-            <div class="sd-menu-label" role="presentation">Americas</div>
-            <button type="button" role="option" data-value="America/Los_Angeles">Los Angeles · UTC−8</button>
-            <button type="button" role="option" data-value="America/Denver">Denver · UTC−7</button>
-            <button type="button" role="option" data-value="America/Chicago">Chicago · UTC−6</button>
-            <button type="button" role="option" data-value="America/New_York">New York · UTC−5</button>
-            <div class="sd-menu-label" role="presentation">Europe</div>
-            <button type="button" role="option" data-value="Europe/London">London · UTC+0</button>
-            <button type="button" role="option" data-value="Europe/Berlin">Berlin · UTC+1</button>
-            <div class="sd-menu-label" role="presentation">Asia Pacific</div>
-            <button type="button" role="option" data-value="Asia/Tokyo">Tokyo · UTC+9</button>
-            <button type="button" role="option" data-value="Australia/Sydney">Sydney · UTC+10</button>
+      <section class="sd-panel sd-panel-fluid" aria-labelledby="found-title" data-found-panel hidden>
+        <h2 class="sd-panel-title" id="found-title">Running on this machine</h2>
+        <ul class="m-0 grid list-none gap-4 p-0" data-found></ul>
+      </section>
+
+      <section class="sd-panel sd-panel-fluid" aria-labelledby="server-title">
+        <h2 class="sd-panel-title" id="server-title">Add a server</h2>
+        <form class="grid gap-4" id="server-form" data-form novalidate>
+          <div class="sd-note sticky top-0 z-10 bg-canvas" data-tone="danger" hidden data-form-error role="alert"></div>
+
+          <div class="sd-field">
+            <label class="sd-field-label" for="srv-address">Server address</label>
+            <div class="sd-input-group">
+              <input id="srv-address" name="address" type="text" inputmode="url" autocomplete="off" aria-required="true" placeholder="http://localhost:11434">
+              <button type="submit" class="sd-btn" aria-disabled="true" aria-describedby="srv-reason" data-detect>Detect</button>
+            </div>
+            <p class="sd-field-error" id="srv-address-error">Enter a server address.</p>
           </div>
-        </div>
-        <p class="sd-field-hint">Used for due dates and quiet hours.</p>
-      </div>
-      <div class="sd-field">
-        <label class="sd-field-label" for="ws-seats">Seats</label>
-        <div class="sd-number" data-sd-number>
-          <button type="button" data-step="-1" aria-label="Fewer seats">−</button>
-          <input id="ws-seats" name="seats" type="number" value="5" min="1" max="50" aria-describedby="ws-seats-hint ws-seats-error">
-          <button type="button" data-step="1" aria-label="More seats">+</button>
-        </div>
-        <p class="sd-field-hint" id="ws-seats-hint">$8 per seat per month. <span data-price>$40</span> total.</p>
-        <p class="sd-field-error" id="ws-seats-error">Choose between 1 and 50 seats.</p>
-      </div>
+          <p class="sd-field-hint" id="srv-reason" data-reason></p>
+
+          <p class="sd-note" data-tone="danger" role="alert" hidden data-detect-failure></p>
+
+          <details>
+            <summary>API key</summary>
+            <input type="password" name="key" aria-label="API key" autocomplete="off">
+          </details>
+
+          <div class="sd-field" hidden data-detected>
+            <label class="sd-field-label" for="srv-model">Model</label>
+            <select id="srv-model" name="model" aria-required="true"></select>
+            <p class="sd-field-error" id="srv-model-error">Choose a model.</p>
+          </div>
+
+          <div class="sd-actions">
+            <button type="button" class="sd-btn sd-btn-primary" aria-disabled="true" aria-describedby="srv-reason" data-connect>Connect</button>
+          </div>
+        </form>
+      </section>
     </div>
 
-    <div class="sd-field">
-      <label class="sd-field-label" for="ws-labels">Default labels</label>
-      <div class="sd-tags" data-sd-tags data-name="labels">
-        <span class="sd-chip" data-value="design">design <button type="button" aria-label="Remove design">×</button><input type="hidden" name="labels" value="design"></span>
-        <span class="sd-chip" data-value="bug">bug <button type="button" aria-label="Remove bug">×</button><input type="hidden" name="labels" value="bug"></span>
-        <input id="ws-labels" placeholder="Add a label">
-      </div>
-      <p class="sd-field-hint">Enter or comma adds a label.</p>
-    </div>
+    <section class="sd-panel sd-panel-fluid m-0 min-w-0" aria-labelledby="agents-title">
+      <h2 class="sd-panel-title" id="agents-title">Command-line agents</h2>
+      <ul class="m-0 mb-4 grid list-none gap-4 p-0" data-agents hidden></ul>
+      <details open>
+        <summary>Add a command</summary>
+        <form class="grid gap-5" id="command-form" data-form novalidate>
+          <div class="sd-note sticky top-0 z-10 bg-canvas" data-tone="danger" hidden data-form-error role="alert"></div>
 
-    <div class="sd-field">
-      <span class="sd-field-label">Plan</span>
-      <div class="sd-seg" role="radiogroup" aria-label="Plan">
-        <label><input type="radio" name="plan" value="starter"> Starter</label>
-        <label><input type="radio" name="plan" value="pro" checked> Pro</label>
-        <label><input type="radio" name="plan" value="enterprise"> Enterprise</label>
-      </div>
-    </div>
+          <div class="sd-field">
+            <label class="sd-field-label" for="cmd-program">Program</label>
+            <input id="cmd-program" name="program" autocomplete="off" aria-required="true">
+            <p class="sd-field-error" id="cmd-program-error">Enter a program name or path.</p>
+          </div>
 
-    <fieldset class="sd-choices" style="border:0;padding:0">
-      <legend class="sd-field-label" style="margin-bottom:12px">Notifications</legend>
-      <label class="sd-check"><input type="checkbox" role="switch" name="digest" checked><span class="sd-check-text">Weekly digest<span class="sd-check-desc">A Monday summary of what changed.</span></span></label>
-      <label class="sd-check"><input type="checkbox" role="switch" name="mentions" checked><span class="sd-check-text">Mentions<span class="sd-check-desc">Notify me when someone @mentions me.</span></span></label>
-    </fieldset>
+          <div class="sd-field">
+            <label class="sd-field-label" for="cmd-args">Arguments <span class="sd-field-aside">a line each</span></label>
+            <textarea id="cmd-args" name="args" rows="3" spellcheck="false"></textarea>
+          </div>
 
-    <div class="sd-field">
-      <span class="sd-field-label">Logo <span class="sd-field-aside">optional</span></span>
-      <label class="sd-dropzone"><input type="file" accept="image/*" name="logo"><span>Drop an image or <u>browse</u></span><span class="sd-subtle text-2xs uppercase tracking-caps" data-file-names>png · svg · up to 2 MB</span></label>
-    </div>
+          <div class="sd-field">
+            <label class="sd-field-label" for="cmd-model">Model <span class="sd-field-aside">optional</span></label>
+            <input id="cmd-model" name="model" autocomplete="off">
+            <p class="sd-field-error" id="cmd-model-error">A model name has no spaces.</p>
+          </div>
 
-    <div class="sd-field">
-      <label class="sd-check"><input type="checkbox" required name="terms" aria-describedby="ws-terms-error"><span class="sd-check-text">I agree to the terms of service</span></label>
-      <p class="sd-field-error" id="ws-terms-error">Agree to the terms to continue.</p>
-    </div>
+          <div class="sd-field">
+            <label class="sd-check"><input type="checkbox" id="cmd-trust" name="trust" aria-required="true"><span class="sd-check-text">I trust this program to run on this computer</span></label>
+            <p class="sd-field-error" id="cmd-trust-error">Confirm you trust this program.</p>
+          </div>
 
-    <div class="sd-divider"></div>
-    <div class="sd-split">
-      <button type="button" class="sd-btn sd-btn-ghost">Back</button>
-      <div class="sd-actions">
-        <button type="button" class="sd-btn">Save draft</button>
-        <button type="submit" class="sd-btn sd-btn-primary">Continue <kbd>↵</kbd></button>
-      </div>
-    </div>
-  </form>
+          <div class="sd-actions">
+            <button type="submit" class="sd-btn">Add command</button>
+          </div>
+        </form>
+      </details>
+    </section>
+  </div>
 </main>
 
 </body>
