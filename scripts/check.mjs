@@ -7,7 +7,7 @@
  * the example apps; a page's name here is its file without .html), and the
  * prebuilt dist/signal.css loaded without Tailwind (scripts/standalone.html).
  * Fails on: console errors, a font face that did not load, any rounded
- * corner, any blurred shadow (glow), any gradient, horizontal scroll at
+ * corner, any blurred shadow (glow), horizontal scroll at
  * phone width, and broken JS behaviors.
  */
 import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";

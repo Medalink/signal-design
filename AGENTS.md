@@ -53,7 +53,7 @@ scrollbars there, call `initScrollbars()` from `signal-design/js` instead.
 ## Hard rules (do not break these)
 
 1. **Square corners.** No `rounded-*`, no `border-radius`. Avatars and checkboxes too.
-2. **Flat.** No blurred `box-shadow`, no glow, no glass, no CSS gradients. Hairlines only.
+2. **Flat.** No blurred `box-shadow`, no glow, no glass. Hairlines only.
 3. **Color means something.** Only status and selection are colored, via the roles
    `accent`, `success`, `danger`, `warning`, `pending`, `extra` (`data-tone="danger"`,
    `text-danger`). Everything else, navigation included, is black, white and grey.
@@ -176,7 +176,7 @@ npx signal-design check http://localhost:5173/ --a11y   # plus an axe WCAG 2.2 A
 ```
 
 It loads each URL in Chromium (Playwright) and fails on: rounded corners,
-blurred shadows, CSS gradients, horizontal overflow at 1280/768/375px, fonts
+blurred shadows, horizontal overflow at 1280/768/375px, fonts
 that did not load, console errors, and (with `--a11y`) accessibility
 violations. Needs `playwright` (and `axe-core` for `--a11y`) installed, and
 `npx playwright install chromium` once.
@@ -194,7 +194,7 @@ violations. Needs `playwright` (and `axe-core` for `--a11y`) installed, and
 
 ## Common mistakes
 
-- Adding `rounded`, `shadow-lg` or `bg-gradient-*` from Tailwind habit. Remove them.
+- Adding `rounded` or `shadow-lg` from Tailwind habit. Remove them.
 - Coloring navigation, headings or icons. Keep them grey; color is for status.
 - Writing `color: #...` or `bg-[#...]`. Use a role token.
 - Forgetting `init()`, so `data-sd-*` attributes do nothing.

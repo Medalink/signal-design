@@ -5,7 +5,7 @@
 - `.sd-rail-item:disabled` (and `aria-disabled="true"`) dims a rail section
   that is not available, like a disabled button.
 - Checks: `shell-no-sidebar`, `shell-phone-label`, `table-sort-num`,
-  `flat-masks` and `chart-teardown`.
+  and `chart-teardown`.
 
 ### Changed
 - The five example apps are real app screens instead of ACME demos.
@@ -21,10 +21,6 @@
   charts library page.
 - `AGENTS.md` and the README point at `showcase/chat.html` for the whole app
   frame, and at `showcase/shell.html` for a shell with no sidebar.
-- The shell's crumb bar and action bar are closed boxes as wide as their
-  contents, instead of fading out with a gradient mask.
-- `signal-design check` fails a gradient used as a mask, as it already did
-  for a gradient used as a background.
 
 ### Fixed
 - An `sd-shell` with no `sd-sidebar` kept four grid tracks on phones and

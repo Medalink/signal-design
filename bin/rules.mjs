@@ -4,7 +4,7 @@
  * (pass it to page.evaluate).
  */
 
-/** Rounded corners, blurred shadows and CSS gradients (as an image or as a mask) anywhere on the page. */
+/** Rounded corners and blurred shadows anywhere on the page. */
 export function sweep() {
   const bad = [];
   const describe = (el) =>
@@ -24,17 +24,6 @@ export function sweep() {
           const [, , blur = "0px"] = nums;
           if (parseFloat(blur) > 0) bad.push(`${where}: blurred shadow ${part.trim()} (Signal is flat)`);
         }
-      }
-      // CSS gradients only: an SVG image may mention gradients inside its url().
-      if (/(^|[\s,])(repeating-)?(linear|radial|conic)-gradient\(/.test(s.backgroundImage.replace(/url\([^)]*\)/g, ""))) {
-        bad.push(`${where}: CSS gradient (Signal is flat)`);
-      }
-      // A gradient mask is a gradient: it fades the element out. The one
-      // exception is the stream scene's fade layer, which is composited over
-      // video in an overlay and is not interface chrome.
-      const mask = `${s.maskImage} ${s.webkitMaskImage}`.replace(/url\([^)]*\)/g, "");
-      if (/(^|[\s,])(repeating-)?(linear|radial|conic)-gradient\(/.test(mask) && !el.closest(".sd-scene-fade")) {
-        bad.push(`${where}: CSS gradient mask (Signal is flat)`);
       }
     }
   }

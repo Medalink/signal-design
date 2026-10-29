@@ -161,7 +161,7 @@ Signal is the black face of a lab instrument. At rest it is greys on near-black:
 
 Parts are drawn, not built. A button, a field, a panel is an outline on the canvas, never an object with bulk: no rounding, no shading, no lift. State changes the line or the text (an edge goes from line to fg, a background steps from canvas to raised, a label brightens), never the shape. Density is that of a working tool: 34px controls, 16px body, uppercase tracked labels, content in a 720px column or a full app shell.
 
-The system rejects the default look of neighboring kits: rounded corners, drop shadows, glass, glow, gradients and decorative color are all forbidden, and the `signal-design check` command fails a page that uses them.
+The system rejects the default look of neighboring kits: rounded corners, drop shadows, glass, glow and decorative color are all forbidden, and the `signal-design check` command fails a page that uses them.
 
 **Key Characteristics:**
 - Square corners everywhere, avatars and checkboxes included (0px).
@@ -332,7 +332,7 @@ Faint, still line art behind content (`data-sd-ornaments`): dust by default, or 
 
 ### Don't:
 - **Don't** use `rounded-*` or any `border-radius`, on avatars and checkboxes too.
-- **Don't** use blurred `box-shadow`, glow, glass, backdrop blur or CSS gradients.
+- **Don't** use blurred `box-shadow`, glow, glass or backdrop blur.
 - **Don't** color navigation, headings or icons, or use a hue directly (`text-pink`, `#ff3366`).
 - **Don't** fill a header, panel or region with a signal color; only a toned primary button and a solid badge are solid.
 - **Don't** use weights other than 400 and 500, or name a font family directly.

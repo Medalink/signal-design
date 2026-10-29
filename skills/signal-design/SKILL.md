@@ -7,7 +7,7 @@ description: Build or change UI with the Signal design library (signal-design) -
 
 Signal has a strict look: square corners, flat surfaces, color only for status,
 tokens instead of values, two faces (one text face, chosen by the font picker, and one code face), plus a reading serif for long-form prose only. Generic UI habits (rounded cards, shadows,
-gradients, colored nav, custom dropdowns) break it. Work from the library's own
+colored nav, custom dropdowns) break it. Work from the library's own
 parts and check the result.
 
 ## 1. Load the contract
@@ -50,14 +50,14 @@ Run the checker against the running page(s):
 npx signal-design check http://localhost:5173/ --a11y
 ```
 
-Fix every failure it reports: rounded corners, blurred shadows, gradients,
+Fix every failure it reports: rounded corners, blurred shadows,
 horizontal overflow at 1280/768/375px, fonts not loaded, console errors, and
 accessibility violations. If Playwright or axe-core is missing, install them
 as dev dependencies (`pnpm add -D playwright axe-core && npx playwright install chromium`).
 
 ## Quick don'ts
 
-- No `rounded-*`, `shadow-*` (blurred), `bg-gradient-*`, hex colors or new fonts.
+- No `rounded-*`, `shadow-*` (blurred), hex colors or new fonts.
 - No color on navigation, headings or decorative icons.
 - No custom modal, tooltip, tabs, dropdown or sidebar layout: use `<dialog class="sd-dialog">`,
   `data-sd-tip`, `role="tab"`, `<select>`/`sd-combobox`, and `sd-shell`.

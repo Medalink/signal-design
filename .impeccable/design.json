@@ -671,7 +671,7 @@
   ],
   "narrative": {
     "northStar": "The Instrument Panel",
-    "overview": "Signal is the black face of a lab instrument. At rest it is greys on near-black: hairline edges, quiet labels, numbers in a monospaced face. Nothing is lit until something reads out. When a check passes, a job fails, a cost lands or a value is selected, one small mark lights in the one color that means that thing, and goes dark again when the state ends. The panel is the same on every app it is fitted to; Whisper, Publighter and Watcher differ in what they measure, not in how the readouts look.\n\nParts are drawn, not built. A button, a field, a panel is an outline on the canvas, never an object with bulk: no rounding, no shading, no lift. State changes the line or the text (an edge goes from line to fg, a background steps from canvas to raised, a label brightens), never the shape. Density is that of a working tool: 34px controls, 16px body, uppercase tracked labels, content in a 720px column or a full app shell.\n\nThe system rejects the default look of neighboring kits: rounded corners, drop shadows, glass, glow, gradients and decorative color are all forbidden, and the `signal-design check` command fails a page that uses them.",
+    "overview": "Signal is the black face of a lab instrument. At rest it is greys on near-black: hairline edges, quiet labels, numbers in a monospaced face. Nothing is lit until something reads out. When a check passes, a job fails, a cost lands or a value is selected, one small mark lights in the one color that means that thing, and goes dark again when the state ends. The panel is the same on every app it is fitted to; Whisper, Publighter and Watcher differ in what they measure, not in how the readouts look.\n\nParts are drawn, not built. A button, a field, a panel is an outline on the canvas, never an object with bulk: no rounding, no shading, no lift. State changes the line or the text (an edge goes from line to fg, a background steps from canvas to raised, a label brightens), never the shape. Density is that of a working tool: 34px controls, 16px body, uppercase tracked labels, content in a 720px column or a full app shell.\n\nThe system rejects the default look of neighboring kits: rounded corners, drop shadows, glass, glow and decorative color are all forbidden, and the `signal-design check` command fails a page that uses them.",
     "keyCharacteristics": [
       "Square corners everywhere, avatars and checkboxes included (0px).",
       "Flat: depth comes from tonal steps and 1px hairlines, never shadow.",
@@ -730,7 +730,7 @@
     ],
     "donts": [
       "**Don't** use `rounded-*` or any `border-radius`, on avatars and checkboxes too.",
-      "**Don't** use blurred `box-shadow`, glow, glass, backdrop blur or CSS gradients.",
+      "**Don't** use blurred `box-shadow`, glow, glass or backdrop blur.",
       "**Don't** color navigation, headings or icons, or use a hue directly (`text-pink`, `#ff3366`).",
       "**Don't** fill a header, panel or region with a signal color; only a toned primary button and a solid badge are solid.",
       "**Don't** use weights other than 400 and 500, or name a font family directly.",

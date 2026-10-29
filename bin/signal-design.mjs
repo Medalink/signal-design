@@ -5,7 +5,7 @@
  *   npx signal-design check <url> [more urls] [--a11y] [--widths 1280,768,375] [--theme ink]
  *
  * Loads each URL in Chromium and fails (exit 1) on what Signal does not allow:
- * rounded corners, blurred shadows, CSS gradients, horizontal overflow, fonts
+ * rounded corners, blurred shadows, horizontal overflow, fonts
  * that did not load, and console errors. --a11y adds an axe-core audit
  * (WCAG 2.2 A/AA). Needs playwright in your project (and axe-core for --a11y):
  *
@@ -18,8 +18,8 @@ import { sweep, fontFaces, overflow } from "./rules.mjs";
 
 const USAGE = `Usage: signal-design check <url> [url…] [--a11y] [--widths 1280,768,375] [--theme ink|graphite|paper]
 
-Checks a page against Signal's rules: square corners, no blurred shadows or
-gradients, no horizontal overflow, Source Code Pro loaded, no console errors.
+Checks a page against Signal's rules: square corners, no blurred shadows,
+no horizontal overflow, Source Code Pro loaded, no console errors.
 --a11y also runs axe-core (WCAG 2.2 A/AA).`;
 
 const args = process.argv.slice(2);

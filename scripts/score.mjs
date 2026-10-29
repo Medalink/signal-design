@@ -27,7 +27,7 @@
  *   text       visible text under 12px
  *   clip       text cut off without an ellipsis
  *   overflow   a part sticking out of its block, or the page scrolling sideways
- *   rules      a rounded corner, blurred shadow or gradient (the hard rules)
+ *   rules      a rounded corner or blurred shadow (the hard rules)
  *   axe        an axe-core WCAG 2.2 AA violation
  *   snippet    the copyable HTML renders differently on a bare Tailwind + Signal page
  *   class      a class in the copyable HTML that no stylesheet styles
@@ -126,7 +126,6 @@ function probe({ scope, exclude, width }) {
         const nums = part.replace(/rgba?\([^)]*\)|oklch\([^)]*\)|#[0-9a-f]+/gi, "").match(/-?[\d.]+px/g) || [];
         if (parseFloat(nums[2] ?? "0") > 0) add("rules", "critical", el, `blurred shadow ${pseudo ?? ""}`);
       }
-      if (/(^|[\s,])(repeating-)?(linear|radial|conic)-gradient\(/.test(s.backgroundImage.replace(/url\([^)]*\)/g, ""))) add("rules", "critical", el, `gradient ${pseudo ?? ""}`);
     }
   }
 

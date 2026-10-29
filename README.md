@@ -5,7 +5,7 @@ Tauri apps and plain HTML.
 
 - **Two faces, two weights, and one to read.** SF Pro (system UI font, Segoe UI on Windows) in regular and medium for text; Source Code Pro (bundled, OFL) for code, charts and numbers. A font picker swaps the text face for Leon Sans or Source Code Pro. Literata (bundled, OFL) is for prose read at length, such as a manuscript, and never for interface text.
 - **Square corners everywhere**, avatars and checkboxes included.
-- **Flat surfaces.** No glass, glow, shadow or gradient.
+- **Flat surfaces.** No glass, glow or shadow.
 - **Color is for important things:** risk, status, success and selection. Everything else, navigation included, is black, white and grey; focus rings and the current item are too.
 - **Motion on state change only:** 120–200ms transitions and a one-pass hover shimmer. The rain backdrop moves only while work runs. `prefers-reduced-motion` turns motion off.
 
@@ -55,7 +55,7 @@ pnpm add -D playwright axe-core && npx playwright install chromium
 npx signal-design check http://localhost:5173/ --a11y
 ```
 
-It fails on rounded corners, blurred shadows, CSS gradients, horizontal
+It fails on rounded corners, blurred shadows, horizontal
 overflow at 1280/768/375px, fonts that did not load, console errors and (with
 `--a11y`) WCAG 2.2 AA violations. `--widths` and `--theme` adjust the run.
 
@@ -1687,7 +1687,7 @@ pnpm a11y          # axe-core audit of every page, theme and width
 
 `scripts/check.mjs` loads the showcase in Chromium and WebKit, in every theme, at
 1280px and 375px. It fails on console errors, any rounded corner, any blurred
-shadow, any gradient, horizontal scroll on phones, and broken dialog, popover,
+shadow, horizontal scroll on phones, and broken dialog, popover,
 menu, tabs, expand or segmented behavior.
 
 Before opening a pull request, read `CONTRIBUTING.md`: changelog entries go in

@@ -47,7 +47,7 @@ opposite by rule, and the rules are enforced, not suggested.
   skill and VS Code completion data. These are generated from the showcase by
   `pnpm build:ai`.
 - Quality gates: `signal-design check` (rounded corners, blurred shadows,
-  gradients, overflow at 1280/768/375px, font loading, console errors, axe
+  overflow at 1280/768/375px, font loading, console errors, axe
   WCAG 2.2 AA with `--a11y`), `scripts/check.mjs` behavior checks in Chromium
   and WebKit, and `scripts/score.mjs` (`docs/scorecard.md`).
 - Parallel pull requests, usually one component each; `CONTRIBUTING.md` sets
@@ -56,7 +56,7 @@ opposite by rule, and the rules are enforced, not suggested.
 ## Capabilities and Constraints
 
 - The hard rules in `AGENTS.md` are binding: square corners; flat (no blurred
-  shadow, glow, glass or gradient); color only through status and selection roles
+  shadow, glow or glass); color only through status and selection roles
   (`accent`, `success`, `danger`, `warning`, `pending`, `extra`); tokens, never
   hard-coded values; two text weights; motion on state change only; style
   keyed on ARIA and `data-*` state; one writer per state.
