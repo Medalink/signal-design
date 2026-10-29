@@ -1,0 +1,742 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-29T04:52:20.964Z",
+  "title": "Design System: Signal",
+  "extensions": {
+    "colorMeta": {
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Canvas Black",
+        "canonical": "#000000",
+        "cssVar": "--sd-canvas",
+        "tonalRamp": [
+          "#050506",
+          "#111113",
+          "#1f1f23",
+          "#3f3f46",
+          "#6e6e78",
+          "#9a9aa2",
+          "#d4d4d8",
+          "#fafafa"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "canonical": "#0a0a0a",
+        "cssVar": "--sd-surface",
+        "tonalRamp": [
+          "#050506",
+          "#111113",
+          "#1f1f23",
+          "#3f3f46",
+          "#6e6e78",
+          "#9a9aa2",
+          "#d4d4d8",
+          "#fafafa"
+        ]
+      },
+      "raised": {
+        "role": "neutral",
+        "displayName": "Raised",
+        "canonical": "#191a1d",
+        "cssVar": "--sd-raised",
+        "tonalRamp": [
+          "#050506",
+          "#111113",
+          "#1f1f23",
+          "#3f3f46",
+          "#6e6e78",
+          "#9a9aa2",
+          "#d4d4d8",
+          "#fafafa"
+        ]
+      },
+      "overlay": {
+        "role": "neutral",
+        "displayName": "Overlay",
+        "canonical": "#191a1d",
+        "cssVar": "--sd-overlay",
+        "tonalRamp": [
+          "#050506",
+          "#111113",
+          "#1f1f23",
+          "#3f3f46",
+          "#6e6e78",
+          "#9a9aa2",
+          "#d4d4d8",
+          "#fafafa"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#262626",
+        "cssVar": "--sd-line",
+        "tonalRamp": [
+          "#050506",
+          "#111113",
+          "#1f1f23",
+          "#3f3f46",
+          "#6e6e78",
+          "#9a9aa2",
+          "#d4d4d8",
+          "#fafafa"
+        ]
+      },
+      "line-strong": {
+        "role": "neutral",
+        "displayName": "Strong Hairline",
+        "canonical": "#333333",
+        "cssVar": "--sd-line-strong",
+        "tonalRamp": [
+          "#050506",
+          "#111113",
+          "#1f1f23",
+          "#3f3f46",
+          "#6e6e78",
+          "#9a9aa2",
+          "#d4d4d8",
+          "#fafafa"
+        ]
+      },
+      "line-control": {
+        "role": "neutral",
+        "displayName": "Control Edge",
+        "canonical": "#676767",
+        "cssVar": "--sd-line-control",
+        "tonalRamp": [
+          "#050506",
+          "#111113",
+          "#1f1f23",
+          "#3f3f46",
+          "#6e6e78",
+          "#9a9aa2",
+          "#d4d4d8",
+          "#fafafa"
+        ]
+      },
+      "fg": {
+        "role": "neutral",
+        "displayName": "Text",
+        "canonical": "#fafafa",
+        "cssVar": "--sd-fg",
+        "tonalRamp": [
+          "#050506",
+          "#111113",
+          "#1f1f23",
+          "#3f3f46",
+          "#6e6e78",
+          "#9a9aa2",
+          "#d4d4d8",
+          "#fafafa"
+        ]
+      },
+      "fg-muted": {
+        "role": "neutral",
+        "displayName": "Muted Text",
+        "canonical": "#a3a3a3",
+        "cssVar": "--sd-fg-muted",
+        "tonalRamp": [
+          "#050506",
+          "#111113",
+          "#1f1f23",
+          "#3f3f46",
+          "#6e6e78",
+          "#9a9aa2",
+          "#d4d4d8",
+          "#fafafa"
+        ]
+      },
+      "fg-subtle": {
+        "role": "neutral",
+        "displayName": "Subtle Text",
+        "canonical": "#949494",
+        "cssVar": "--sd-fg-subtle",
+        "tonalRamp": [
+          "#050506",
+          "#111113",
+          "#1f1f23",
+          "#3f3f46",
+          "#6e6e78",
+          "#9a9aa2",
+          "#d4d4d8",
+          "#fafafa"
+        ]
+      },
+      "fg-faint": {
+        "role": "neutral",
+        "displayName": "Faint Text",
+        "canonical": "#828282",
+        "cssVar": "--sd-fg-faint",
+        "tonalRamp": [
+          "#050506",
+          "#111113",
+          "#1f1f23",
+          "#3f3f46",
+          "#6e6e78",
+          "#9a9aa2",
+          "#d4d4d8",
+          "#fafafa"
+        ]
+      },
+      "primary": {
+        "role": "primary",
+        "displayName": "Instrument White",
+        "canonical": "#fafafa",
+        "cssVar": "--sd-primary",
+        "tonalRamp": [
+          "#050506",
+          "#111113",
+          "#1f1f23",
+          "#3f3f46",
+          "#6e6e78",
+          "#9a9aa2",
+          "#d4d4d8",
+          "#fafafa"
+        ]
+      },
+      "on-primary": {
+        "role": "neutral",
+        "displayName": "On Primary",
+        "canonical": "#050506",
+        "cssVar": "--sd-on-primary",
+        "tonalRamp": [
+          "#050506",
+          "#111113",
+          "#1f1f23",
+          "#3f3f46",
+          "#6e6e78",
+          "#9a9aa2",
+          "#d4d4d8",
+          "#fafafa"
+        ]
+      },
+      "accent": {
+        "role": "signal",
+        "displayName": "Selection Cyan",
+        "canonical": "#00d4ff",
+        "cssVar": "--sd-accent",
+        "tonalRamp": [
+          "#003540",
+          "#005f73",
+          "#008aa6",
+          "#00b4d9",
+          "#00d4ff",
+          "#4de1ff",
+          "#8cecff",
+          "#ccf6ff"
+        ]
+      },
+      "success": {
+        "role": "signal",
+        "displayName": "Pass Green",
+        "canonical": "#00ff88",
+        "cssVar": "--sd-success",
+        "tonalRamp": [
+          "#004022",
+          "#00733d",
+          "#00a658",
+          "#00d974",
+          "#00ff88",
+          "#4dffac",
+          "#8cffc9",
+          "#ccffe7"
+        ]
+      },
+      "danger": {
+        "role": "signal",
+        "displayName": "Risk Pink",
+        "canonical": "#ff3366",
+        "cssVar": "--sd-danger",
+        "tonalRamp": [
+          "#400d1a",
+          "#73172e",
+          "#a62142",
+          "#d92b57",
+          "#ff3366",
+          "#ff7094",
+          "#ffa3ba",
+          "#ffd6e0"
+        ]
+      },
+      "warning": {
+        "role": "signal",
+        "displayName": "Cost Orange",
+        "canonical": "#ff8800",
+        "cssVar": "--sd-warning",
+        "tonalRamp": [
+          "#402200",
+          "#733d00",
+          "#a65800",
+          "#d97400",
+          "#ff8800",
+          "#ffac4d",
+          "#ffc98c",
+          "#ffe7cc"
+        ]
+      },
+      "pending": {
+        "role": "signal",
+        "displayName": "Pending Amber",
+        "canonical": "#ffaa00",
+        "cssVar": "--sd-pending",
+        "tonalRamp": [
+          "#402b00",
+          "#734c00",
+          "#a66f00",
+          "#d99100",
+          "#ffaa00",
+          "#ffc44d",
+          "#ffd98c",
+          "#ffeecc"
+        ]
+      },
+      "extra": {
+        "role": "signal",
+        "displayName": "Presence Violet",
+        "canonical": "#8855ff",
+        "cssVar": "--sd-extra",
+        "tonalRamp": [
+          "#221540",
+          "#3d2673",
+          "#5837a6",
+          "#7448d9",
+          "#8855ff",
+          "#ac88ff",
+          "#c9b3ff",
+          "#e7ddff"
+        ]
+      },
+      "accent-deep": {
+        "role": "signal",
+        "displayName": "Selection Cyan (paper)",
+        "canonical": "#00718f",
+        "cssVar": "--sd-accent under data-theme=paper",
+        "tonalRamp": [
+          "#001c24",
+          "#003340",
+          "#00495d",
+          "#00607a",
+          "#00718f",
+          "#4d9cb1",
+          "#8cbfcd",
+          "#cce3e9"
+        ]
+      },
+      "success-deep": {
+        "role": "signal",
+        "displayName": "Pass Green (paper)",
+        "canonical": "#00804a",
+        "cssVar": "--sd-success under data-theme=paper",
+        "tonalRamp": [
+          "#002013",
+          "#003a21",
+          "#005330",
+          "#006d3f",
+          "#00804a",
+          "#4da680",
+          "#8cc6ae",
+          "#cce6db"
+        ]
+      },
+      "danger-deep": {
+        "role": "signal",
+        "displayName": "Risk Pink (paper)",
+        "canonical": "#c8003a",
+        "cssVar": "--sd-danger under data-theme=paper",
+        "tonalRamp": [
+          "#32000f",
+          "#5a001a",
+          "#820026",
+          "#aa0031",
+          "#c8003a",
+          "#d94d75",
+          "#e68ca6",
+          "#f4ccd8"
+        ]
+      },
+      "warning-deep": {
+        "role": "signal",
+        "displayName": "Cost Orange (paper)",
+        "canonical": "#a84d00",
+        "cssVar": "--sd-warning under data-theme=paper",
+        "tonalRamp": [
+          "#2a1300",
+          "#4c2300",
+          "#6d3200",
+          "#8f4100",
+          "#a84d00",
+          "#c2824d",
+          "#d8af8c",
+          "#eedbcc"
+        ]
+      },
+      "pending-deep": {
+        "role": "signal",
+        "displayName": "Pending Amber (paper)",
+        "canonical": "#855800",
+        "cssVar": "--sd-pending under data-theme=paper",
+        "tonalRamp": [
+          "#211600",
+          "#3c2800",
+          "#563900",
+          "#714b00",
+          "#855800",
+          "#aa8a4d",
+          "#c8b48c",
+          "#e7decc"
+        ]
+      },
+      "extra-deep": {
+        "role": "signal",
+        "displayName": "Presence Violet (paper)",
+        "canonical": "#5b2fd1",
+        "cssVar": "--sd-extra under data-theme=paper",
+        "tonalRamp": [
+          "#170c34",
+          "#29155e",
+          "#3b1f88",
+          "#4d28b2",
+          "#5b2fd1",
+          "#8c6ddf",
+          "#b5a1ea",
+          "#ded5f6"
+        ]
+      }
+    },
+    "themes": {
+      "ink": {
+        "canvas": "#000000",
+        "surface": "#0a0a0a",
+        "raised": "#191a1d",
+        "overlay": "#191a1d",
+        "line": "#262626",
+        "line-strong": "#333333",
+        "fg": "#fafafa",
+        "fg-muted": "#a3a3a3",
+        "fg-subtle": "#949494",
+        "fg-faint": "#828282",
+        "primary": "#fafafa",
+        "on-primary": "#050506",
+        "accent": "#00d4ff",
+        "success": "#00ff88",
+        "danger": "#ff3366",
+        "warning": "#ff8800",
+        "pending": "#ffaa00",
+        "extra": "#8855ff",
+        "backdrop": "#000000a3",
+        "shell-bg": "#000000",
+        "container": "#0a0a0a",
+        "flash": "#ffffff"
+      },
+      "graphite": {
+        "canvas": "#151515",
+        "surface": "#1a1a1a",
+        "raised": "#242424",
+        "overlay": "#242424",
+        "line": "#2e2e2e",
+        "line-strong": "#3d3d3d",
+        "fg": "#f5f5f5",
+        "fg-muted": "#adadad",
+        "fg-subtle": "#999999",
+        "fg-faint": "#8b8b8b",
+        "primary": "#f5f5f5",
+        "on-primary": "#0f0f0f",
+        "accent": "#00d4ff",
+        "success": "#00ff88",
+        "danger": "#ff4775",
+        "warning": "#ff8800",
+        "pending": "#ffaa00",
+        "extra": "#8855ff",
+        "backdrop": "#00000099",
+        "shell-bg": "#0f0f0f",
+        "container": "#1a1a1a",
+        "flash": "#ffffff"
+      },
+      "paper": {
+        "canvas": "#ffffff",
+        "surface": "#f6f6f7",
+        "raised": "#eeeef0",
+        "overlay": "#ffffff",
+        "line": "#0000001a",
+        "line-strong": "#00000038",
+        "fg": "#050506",
+        "fg-muted": "#2e2e33",
+        "fg-subtle": "#5c5c66",
+        "fg-faint": "#6a6a72",
+        "primary": "#050506",
+        "on-primary": "#ffffff",
+        "accent": "#00718f",
+        "success": "#00804a",
+        "danger": "#c8003a",
+        "warning": "#a84d00",
+        "pending": "#855800",
+        "extra": "#5b2fd1",
+        "backdrop": "#05050652",
+        "shell-bg": "#e9e9ec",
+        "container": "#f6f6f7",
+        "flash": "#000000"
+      }
+    },
+    "themeNote": "Frontmatter colors are the ink theme. Every role is a --sd-* variable that switches with data-theme (ink, graphite, paper, auto). Use the variables, never these values.",
+    "typographyMeta": {
+      "display-xl": {
+        "displayName": "Display XL",
+        "purpose": "Hero lines on landing surfaces; 3.125rem on phones."
+      },
+      "display": {
+        "displayName": "Display",
+        "purpose": "The page's two-tone display line; 1.75rem on phones."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Page and panel titles."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "The muted sentence under a title."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running text and controls."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Uppercase section heads, field labels, badges, status lines."
+      },
+      "wordmark": {
+        "displayName": "Wordmark",
+        "purpose": "The product name, tracked 0.28em."
+      },
+      "data": {
+        "displayName": "Data",
+        "purpose": "Source Code Pro for chart labels, counts, initials; the smallest size in the system."
+      },
+      "reading": {
+        "displayName": "Reading",
+        "purpose": "Literata for manuscripts and articles only; never interface text."
+      }
+    },
+    "shadows": [],
+    "elevationNote": "No shadow scale. Depth is tonal (canvas, surface, raised, overlay) with 1px hairlines; dialogs use the flat --sd-backdrop.",
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "purpose": "Default easing for every state transition."
+      },
+      {
+        "name": "ease-in-out",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Two-way moves."
+      },
+      {
+        "name": "duration-control",
+        "value": "120ms",
+        "purpose": "Hover, border and color changes on controls."
+      },
+      {
+        "name": "duration-default",
+        "value": "160ms",
+        "purpose": "Default transition; fade-in and rise-in."
+      },
+      {
+        "name": "slide-in",
+        "value": "sd-slide-in 180ms var(--ease-out)",
+        "purpose": "Banners and toasts entering from the top."
+      },
+      {
+        "name": "hover-shimmer",
+        "value": "one pass per hover",
+        "purpose": "A bright band sweeps once across nav, tab, menu and button labels; off with reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "768px",
+        "purpose": "sd-desktop-only / sd-phone-only split"
+      },
+      {
+        "name": "narrow",
+        "value": "40rem",
+        "purpose": "Display type and page padding shrink"
+      }
+    ],
+    "containers": [
+      {
+        "name": "column",
+        "value": "720px"
+      },
+      {
+        "name": "narrow",
+        "value": "560px"
+      },
+      {
+        "name": "wide",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Button",
+      "kind": "button",
+      "refersTo": "button",
+      "description": "Default outline button.",
+      "html": "<button class=\"ds-btn\">Export</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:34px;padding:7px 16px;border:1px solid var(--sd-line-strong);border-radius:0;background:transparent;color:var(--sd-fg);font:inherit;font-size:1rem;line-height:22px;letter-spacing:.02em;white-space:nowrap;cursor:pointer;transition:background-color 120ms cubic-bezier(.2,.8,.2,1),border-color 120ms cubic-bezier(.2,.8,.2,1),color 120ms cubic-bezier(.2,.8,.2,1),opacity 120ms cubic-bezier(.2,.8,.2,1)}.ds-btn:hover{background:var(--sd-raised);border-color:var(--sd-fg-faint)}.ds-btn:active{transform:translateY(1px)}.ds-btn:focus-visible{outline:1px solid var(--sd-fg);outline-offset:2px}"
+    },
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one filled action per view.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Save changes</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:34px;padding:7px 16px;border:1px solid var(--sd-line-strong);border-radius:0;background:transparent;color:var(--sd-fg);font:inherit;font-size:1rem;line-height:22px;letter-spacing:.02em;white-space:nowrap;cursor:pointer;transition:background-color 120ms cubic-bezier(.2,.8,.2,1),border-color 120ms cubic-bezier(.2,.8,.2,1),color 120ms cubic-bezier(.2,.8,.2,1),opacity 120ms cubic-bezier(.2,.8,.2,1)}.ds-btn:hover{background:var(--sd-raised);border-color:var(--sd-fg-faint)}.ds-btn:active{transform:translateY(1px)}.ds-btn:focus-visible{outline:1px solid var(--sd-fg);outline-offset:2px}.ds-btn-primary{background:var(--sd-primary);color:var(--sd-on-primary);border-color:transparent;font-weight:500}.ds-btn-primary:hover{background:var(--sd-primary);border-color:transparent;opacity:.88}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Borderless secondary action.",
+      "html": "<button class=\"ds-btn ds-btn-ghost\">Cancel</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:34px;padding:7px 16px;border:1px solid var(--sd-line-strong);border-radius:0;background:transparent;color:var(--sd-fg);font:inherit;font-size:1rem;line-height:22px;letter-spacing:.02em;white-space:nowrap;cursor:pointer;transition:background-color 120ms cubic-bezier(.2,.8,.2,1),border-color 120ms cubic-bezier(.2,.8,.2,1),color 120ms cubic-bezier(.2,.8,.2,1),opacity 120ms cubic-bezier(.2,.8,.2,1)}.ds-btn:hover{background:var(--sd-raised);border-color:var(--sd-fg-faint)}.ds-btn:active{transform:translateY(1px)}.ds-btn:focus-visible{outline:1px solid var(--sd-fg);outline-offset:2px}.ds-btn-ghost,.ds-btn-ghost:hover{border-color:transparent}"
+    },
+    {
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "button",
+      "description": "Toned hairline for an irreversible action.",
+      "html": "<button class=\"ds-btn ds-btn-danger\">Delete project</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:34px;padding:7px 16px;border:1px solid var(--sd-line-strong);border-radius:0;background:transparent;color:var(--sd-fg);font:inherit;font-size:1rem;line-height:22px;letter-spacing:.02em;white-space:nowrap;cursor:pointer;transition:background-color 120ms cubic-bezier(.2,.8,.2,1),border-color 120ms cubic-bezier(.2,.8,.2,1),color 120ms cubic-bezier(.2,.8,.2,1),opacity 120ms cubic-bezier(.2,.8,.2,1)}.ds-btn:hover{background:var(--sd-raised);border-color:var(--sd-fg-faint)}.ds-btn:active{transform:translateY(1px)}.ds-btn:focus-visible{outline:1px solid var(--sd-fg);outline-offset:2px}.ds-btn-danger,.ds-btn-danger:hover{color:var(--sd-danger);border-color:color-mix(in srgb,var(--sd-danger) 40%,transparent)}.ds-btn-danger:hover{background:color-mix(in srgb,var(--sd-danger) 8%,transparent)}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Label, control and hint.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-label\">Project name</span><input class=\"ds-input\" value=\"Watcher\"><span class=\"ds-hint\">Shown in the rail.</span></label>",
+      "css": ".ds-field{display:grid;gap:6px;max-width:320px}.ds-label{font-size:.875rem;letter-spacing:.16em;text-transform:uppercase;color:var(--sd-fg-subtle)}.ds-hint{font-size:.9375rem;color:var(--sd-fg-faint)}.ds-input{appearance:none;min-height:34px;padding:6px 10px;border:1px solid var(--sd-line-control);border-radius:0;background:var(--sd-surface);color:var(--sd-fg);font:inherit;font-size:1rem;line-height:20px;transition:border-color 120ms cubic-bezier(.2,.8,.2,1)}.ds-input:hover:not(:focus){border-color:var(--sd-fg-faint)}.ds-input:focus{outline:none;border-color:var(--sd-fg)}"
+    },
+    {
+      "name": "Tabs",
+      "kind": "nav",
+      "refersTo": "item-current",
+      "description": "Grey tabs on a hairline; the selected one gets a 1px fg underline.",
+      "html": "<div class=\"ds-tabs\" role=\"tablist\"><button role=\"tab\" aria-selected=\"true\">Overview</button><button role=\"tab\" aria-selected=\"false\">Runs</button><button role=\"tab\" aria-selected=\"false\">Settings</button></div>",
+      "css": ".ds-tabs{display:flex;gap:24px;border-bottom:1px solid var(--sd-line)}.ds-tabs>button{display:inline-flex;align-items:center;gap:8px;padding:10px 0;margin-bottom:-1px;border:0;border-bottom:1px solid transparent;background:none;color:var(--sd-fg-subtle);font:inherit;font-size:.9375rem;letter-spacing:.08em;white-space:nowrap;cursor:pointer;transition:color 120ms cubic-bezier(.2,.8,.2,1),border-color 120ms cubic-bezier(.2,.8,.2,1)}.ds-tabs>button:hover,.ds-tabs>button[aria-selected=true]{color:var(--sd-fg)}.ds-tabs>button[aria-selected=true]{border-bottom-color:var(--sd-fg)}.ds-tabs>button:focus-visible{outline:1px solid var(--sd-fg);outline-offset:-1px}"
+    },
+    {
+      "name": "Sidebar Item",
+      "kind": "nav",
+      "refersTo": "item-current",
+      "description": "Current item: raised fill and an fg start edge.",
+      "html": "<nav class=\"ds-side\"><a href=\"#\" aria-current=\"page\">Inbox</a><a href=\"#\">Drafts</a><a href=\"#\">Archive</a></nav>",
+      "css": ".ds-side{display:grid;width:220px}.ds-side a{display:flex;align-items:center;gap:10px;padding:7px 12px 7px 1.625rem;border-left:2px solid transparent;color:var(--sd-fg-muted);font-size:1.125rem;text-decoration:none;transition:background-color 120ms cubic-bezier(.2,.8,.2,1),color 120ms cubic-bezier(.2,.8,.2,1)}.ds-side a:hover{background:var(--sd-raised);color:var(--sd-fg)}.ds-side a[aria-current]{border-left-color:var(--sd-fg);background:var(--sd-raised);color:var(--sd-fg)}.ds-side a:focus-visible{outline:1px solid var(--sd-fg);outline-offset:-1px}"
+    },
+    {
+      "name": "Badges and Status",
+      "kind": "chip",
+      "refersTo": "badge",
+      "description": "Toned hairline badges and dot-plus-word status.",
+      "html": "<div class=\"ds-row\"><span class=\"ds-badge\">Draft</span><span class=\"ds-badge\" style=\"--tone:var(--sd-success)\">Passing</span><span class=\"ds-badge\" style=\"--tone:var(--sd-danger)\">Failed</span><span class=\"ds-status\" style=\"--tone:var(--sd-pending)\">3 waiting</span></div>",
+      "css": ".ds-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.ds-badge{display:inline-flex;padding:2px 7px;border:1px solid color-mix(in srgb,var(--tone,var(--sd-fg-subtle)) 45%,transparent);color:var(--tone,var(--sd-fg-subtle));font-size:.875rem;line-height:18px;letter-spacing:.14em;text-transform:uppercase}.ds-status{display:inline-flex;align-items:center;gap:8px;font-size:.9375rem;color:var(--sd-fg-muted);font-variant-numeric:tabular-nums}.ds-status::before{content:\"\";width:6px;height:6px;background:var(--tone,var(--sd-fg-subtle))}"
+    },
+    {
+      "name": "Chip and Pill",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Square chip on surface; square counter pill in uppercase.",
+      "html": "<div class=\"ds-row\"><span class=\"ds-chip\">status: open</span><span class=\"ds-pill\">↑ 21 new above</span></div>",
+      "css": ".ds-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.ds-chip{display:inline-flex;align-items:center;gap:8px;min-height:28px;padding:3px 10px;border:1px solid var(--sd-line-strong);background:var(--sd-surface);color:var(--sd-fg);font-size:.9375rem;white-space:nowrap}.ds-pill{display:inline-flex;align-items:center;gap:10px;padding:5px 12px;border:1px solid var(--sd-line);background:var(--sd-canvas);color:var(--sd-fg-muted);font-size:.90625rem;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;font-variant-numeric:tabular-nums}"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Hairline card with a head and body; a toned card colors its top edge.",
+      "html": "<article class=\"ds-card\" style=\"--tone:var(--sd-warning)\"><header class=\"ds-card-head\">Monthly spend</header><div class=\"ds-card-body\"><span class=\"ds-num\">$4,210</span><span class=\"ds-quiet\">of $5,000</span></div></article>",
+      "css": ".ds-card{display:flex;flex-direction:column;max-width:320px;border:1px solid var(--sd-line);border-top-color:var(--tone,var(--sd-line));background:var(--sd-canvas)}.ds-card-head{display:flex;align-items:center;gap:10px;min-height:44px;padding:10px 16px;border-bottom:1px solid var(--sd-line);font-size:.875rem;letter-spacing:.16em;text-transform:uppercase;color:var(--sd-fg-subtle)}.ds-card-body{display:flex;align-items:baseline;gap:10px;padding:16px}.ds-num{font-family:var(--sd-font-mono);font-size:1.75rem;font-variant-numeric:tabular-nums;color:var(--sd-fg)}.ds-quiet{color:var(--sd-fg-faint)}"
+    },
+    {
+      "name": "Display Line",
+      "kind": "custom",
+      "refersTo": "display",
+      "description": "The page's two-tone display sentence.",
+      "html": "<p class=\"ds-display\">32 open. <em>8 done.</em></p>",
+      "css": ".ds-display{margin:0;font-size:2.375rem;font-weight:400;line-height:1.18;letter-spacing:-.03em;color:var(--sd-fg)}.ds-display em{font-style:normal;color:var(--sd-fg-faint)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Instrument Panel",
+    "overview": "Signal is the black face of a lab instrument. At rest it is greys on near-black: hairline edges, quiet labels, numbers in a monospaced face. Nothing is lit until something reads out. When a check passes, a job fails, a cost lands or a value is selected, one small mark lights in the one color that means that thing, and goes dark again when the state ends. The panel is the same on every app it is fitted to; Whisper, Publighter and Watcher differ in what they measure, not in how the readouts look.\n\nParts are drawn, not built. A button, a field, a panel is an outline on the canvas, never an object with bulk: no rounding, no shading, no lift. State changes the line or the text (an edge goes from line to fg, a background steps from canvas to raised, a label brightens), never the shape. Density is that of a working tool: 34px controls, 16px body, uppercase tracked labels, content in a 720px column or a full app shell.\n\nThe system rejects the default look of neighboring kits: rounded corners, drop shadows, glass, glow, gradients and decorative color are all forbidden, and the `signal-design check` command fails a page that uses them.",
+    "keyCharacteristics": [
+      "Square corners everywhere, avatars and checkboxes included (0px).",
+      "Flat: depth comes from tonal steps and 1px hairlines, never shadow.",
+      "Monochrome by default; six signal colors, each with one meaning.",
+      "One text face in two weights (400, 500); Source Code Pro for code and numbers; Literata only for long-form prose.",
+      "Motion only on state change, 120–200ms; live activity (the typing squares, the rain while work runs) may loop only while it lasts.",
+      "Four themes from one set of role tokens: ink (default), graphite, paper, auto."
+    ],
+    "rules": [
+      {
+        "name": "The Lit Readout Rule",
+        "body": "Color appears only when it means something: status, risk, selection. Navigation, headings, icons and current items stay grey. If a colored mark could be removed without losing information, it should not be there.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tokens Not Values Rule",
+        "body": "Code reads `--sd-*` variables or the Tailwind utilities on them (`bg-canvas`, `text-fg-muted`, `border-line`). The hex values here are a reference; hard-coding one breaks every other theme.",
+        "section": "colors"
+      },
+      {
+        "name": "The Small Mark Rule",
+        "body": "A signal is a dot, a 1–3px edge, a hairline border at 40–45% mix, a word, or a wash at 8%. Only two small parts are filled solid: a toned primary button (the view's one action, when that action is the status, such as Approve or Delete) and a solid badge. A signal never fills a panel, a header or a region.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Weights Rule",
+        "body": "Only 400 and 500 exist; `font-bold` resolves to 500. Medium is for the primary button, the wordmark and strong labels. Never reach for 600 or 700 in interface text.",
+        "section": "typography"
+      },
+      {
+        "name": "The Names Not Families Rule",
+        "body": "Set families through `font-sans`, `font-mono`, `font-reading` or their variables, never by name, so the font picker works.",
+        "section": "typography"
+      },
+      {
+        "name": "The Reading Room Rule",
+        "body": "Literata is for a manuscript or an article, with real italics and a semibold for strong text. Interface text never uses it.",
+        "section": "typography"
+      },
+      {
+        "name": "The No Lift Rule",
+        "body": "Nothing floats. A popover, a menu and a dialog sit on the same plane as the page, set apart by tone and a hairline. Blurred `box-shadow`, glow, glass and backdrop blur are forbidden.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** read every color from a `--sd-*` role or its Tailwind utility, so all four themes work.",
+      "**Do** keep every corner square (0px) and every edge a 1px hairline.",
+      "**Do** separate layers by tone (canvas, surface, raised, overlay) and hairlines.",
+      "**Do** color only status, risk and selection, through `data-tone` and the six roles, as small marks.",
+      "**Do** use one primary button per view.",
+      "**Do** style state through ARIA and `data-*` attributes (`aria-current`, `aria-pressed`, `data-open`, `data-tone`), and let one writer own each state.",
+      "**Do** keep transitions at 120–200ms on `cubic-bezier(0.2, 0.8, 0.2, 1)` and only on state change.",
+      "**Do** set numbers and code in Source Code Pro with tabular figures.",
+      "**Do** copy markup from `ai/components.json` and run `signal-design check --a11y` on the result."
+    ],
+    "donts": [
+      "**Don't** use `rounded-*` or any `border-radius`, on avatars and checkboxes too.",
+      "**Don't** use blurred `box-shadow`, glow, glass, backdrop blur or CSS gradients.",
+      "**Don't** color navigation, headings or icons, or use a hue directly (`text-pink`, `#ff3366`).",
+      "**Don't** fill a header, panel or region with a signal color; only a toned primary button and a solid badge are solid.",
+      "**Don't** use weights other than 400 and 500, or name a font family directly.",
+      "**Don't** set interface text in Literata.",
+      "**Don't** loop motion for decoration or use a looping progress bar; indeterminate progress is a static state. Only live activity (someone typing, work running) may loop, and only while it lasts.",
+      "**Don't** build a custom dropdown, tooltip, modal, tabs or sidebar layout; use the native element plus Signal, and `sd-shell` for app frames."
+    ]
+  }
+}
