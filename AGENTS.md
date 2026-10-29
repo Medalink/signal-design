@@ -157,6 +157,8 @@ The library meets WCAG 2.2 AA contrast and wires keyboard behavior. You still mu
   the target `id="main" tabindex="-1"`;
 - label a desktop title bar: `role="region" aria-label="Window"`;
 - keep focus visible (do not remove outlines);
+- label every field with visible text (`sd-field-label`); a placeholder is a hint
+  that disappears when you type, not a label;
 - respect `prefers-reduced-motion` in any motion you add.
 
 ## Translating labels
@@ -223,6 +225,8 @@ such as a palette swatch; never use it to hide a violation.
 
 - Adding `rounded` or `shadow-lg` from Tailwind habit. Remove them.
 - Coloring navigation, headings or icons. Keep them grey; color is for status.
+- Dimming text with `opacity`. It drops contrast under 4.5:1; use `text-fg-muted`
+  or `text-fg-faint`.
 - Writing `color: #...` or `bg-[#...]`. Use a role token.
 - Forgetting `init()`, so `data-sd-*` attributes do nothing.
 - Keeping `data-sd-seg`, `data-sd-toggle` or `data-sd-reaction` on markup whose
