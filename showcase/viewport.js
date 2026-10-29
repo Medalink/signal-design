@@ -92,9 +92,9 @@ function pick(group, value) {
 }
 
 /**
- * The one setter for chart colors. The bar's control and a page's own switch
- * (the charts example marks its with data-chart-colors) both call it, so they
- * agree with the page and with what is remembered.
+ * The one setter for chart colors. The bar's control (marked
+ * data-chart-colors) and the width frame both call it, so they agree with
+ * the page and with what is remembered.
  */
 export function setChartColors(name, { persist = true } = {}) {
   document.documentElement.dataset.chartTheme = name;
