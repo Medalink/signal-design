@@ -643,28 +643,31 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
   if (pageName === "shell") {
     const state = () => page.evaluate(() => ({ ...document.getElementById("shell").dataset, mainInert: document.getElementById("main").inert }));
     if (width === 1280 && theme === "ink") {
-      await page.keyboard.press("]");
-      if ((await state()).aside !== "open") fail(where, "] did not open the aside");
-      await page.keyboard.press("]");
-      await page.keyboard.press("[");
-      if ((await state()).sidebar !== "collapsed") fail(where, "[ did not collapse the sidebar");
-      await page.click('.sd-rail-item[data-sd-section="teams"]');
-      const peek = await page.evaluate(() => ({ peek: "peek" in document.getElementById("shell").dataset, visible: !!document.querySelector('.sd-sidebar-panel[data-section="teams"]').offsetParent }));
-      if (!peek.peek || !peek.visible) fail(where, `rail click did not peek the teams panel ${JSON.stringify(peek)}`);
-      await page.keyboard.press("Escape");
-      if ("peek" in (await state())) fail(where, "Escape did not close the peek");
-      await page.click('.sd-rail-item[data-sd-section="projects"]');
-      await page.keyboard.press("Escape");
-      await page.keyboard.press("[");
-      if ((await state()).sidebar === "collapsed") fail(where, "[ did not pin the sidebar again");
-      await page.keyboard.press("Control+k");
-      if (!(await page.evaluate(() => document.getElementById("palette").open))) fail(where, "Ctrl K did not open the palette");
-      await page.keyboard.press("Escape");
-      // WebKit returns focus from a closed modal a moment later; wait for it like a person would.
-      await page.waitForFunction(() => !document.getElementById("palette").open && !document.getElementById("palette").contains(document.activeElement), null, { timeout: 1000 }).catch(() => {});
-      await page.keyboard.press("a");
-      const done = await page.evaluate(() => document.querySelector('.sd-row[data-n="21"]').hasAttribute("data-done"));
-      if (!done) fail(where, "a did not approve the focused item");
+      const badge = (id) => page.evaluate((id) => { const b = document.querySelector(`[data-id="${id}"] .sd-badge`); return b && `${b.textContent}|${b.dataset.tone ?? ""}`; }, id);
+      const tone = await page.evaluate(() => document.querySelector("[data-orphans-tile]").dataset.tone ?? "");
+      if (tone) fail(where, `Orphaned is colored at 0 (${tone})`);
+      await page.click('[data-sd-toggle="detail-checkout-api"]');
+      await page.waitForFunction(() => document.getElementById("detail-checkout-api").getBoundingClientRect().height >= 100, null, { timeout: 2000 }).catch(() => {});
+      const open = await page.evaluate(() => ({ h: document.getElementById("detail-checkout-api").getBoundingClientRect().height, expanded: document.querySelector('[data-sd-toggle="detail-checkout-api"]').getAttribute("aria-expanded") }));
+      if (open.h < 100 || open.expanded !== "true") fail(where, `container row did not open ${JSON.stringify(open)}`);
+      await page.click('[data-id="checkout-api"] [data-act="restart"]');
+      if ((await badge("checkout-api")) !== "restarting|pending") fail(where, `Restart did not show restarting: ${await badge("checkout-api")}`);
+      await page.waitForFunction(() => document.querySelector('[data-id="checkout-api"] .sd-badge').textContent === "running", null, { timeout: 5000 }).catch(() => {});
+      if ((await badge("checkout-api")) !== "running|success") fail(where, `Restart did not end running: ${await badge("checkout-api")}`);
+      await page.click('th[data-sort="memory"]');
+      const sorted = await page.evaluate(() => document.querySelector('th[data-sort="memory"]').getAttribute("aria-sort"));
+      if (sorted !== "ascending") fail(where, `sorting by Memory gave aria-sort ${sorted}`);
+      await page.click('[data-sd-toggle="detail-storefront"]');
+      await page.waitForFunction(() => document.getElementById("detail-storefront").getBoundingClientRect().height >= 100, null, { timeout: 2000 }).catch(() => {});
+      await page.click('[data-id="storefront"] [data-act="remove"]');
+      if (!(await page.evaluate(() => document.getElementById("confirm-remove").open))) fail(where, "Remove did not ask first");
+      await page.click("#confirm-remove [data-sd-close]:not([data-sd-close=remove])");
+      if (!(await page.evaluate(() => !!document.querySelector('[data-id="storefront"]')))) fail(where, "Cancel removed the container");
+      await page.click('[data-id="storefront"] [data-act="remove"]');
+      await page.click('#confirm-remove [data-sd-close="remove"]');
+      await page.waitForFunction(() => !document.querySelector('[data-id="storefront"]'), null, { timeout: 2000 }).catch(() => {});
+      const gone = await page.evaluate(() => ({ row: !!document.querySelector('[data-id="storefront"]'), removed: document.querySelector("[data-removed-count]").textContent }));
+      if (gone.row || gone.removed !== "4") fail(where, `confirmed Remove did not remove ${JSON.stringify(gone)}`);
     }
     if (width === 375 && theme === "ink") {
       await page.click('.sd-shell-topbar [data-sd-shell="drawer"]');

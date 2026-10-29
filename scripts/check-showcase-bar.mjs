@@ -172,7 +172,7 @@ export async function checkShowcaseBar(browser, base, name) {
   const themes = () => page.evaluate(() => [document.documentElement.dataset.theme, document.querySelector(".vp-dialog iframe").contentDocument.documentElement.dataset.theme]);
   for (const [from, queue] of [
     ["page", () => { for (const t of ["paper", "auto"]) document.querySelector(`.vp-dialog [data-sd-theme="${t}"]`).click(); }],
-    ["frame", () => { for (let i = 0; i < 2; i++) document.querySelector("[data-sd-theme-cycle]").click(); }],
+    ["frame", () => { for (let i = 0; i < 2; i++) document.body.dispatchEvent(new KeyboardEvent("keydown", { key: "T", shiftKey: true, bubbles: true })); }],
   ]) {
     await page.evaluate(countEvents);
     await frame.evaluate(countEvents);
@@ -202,13 +202,13 @@ export async function checkShowcaseBar(browser, base, name) {
   await page.waitForTimeout(300);
   expect(await page.evaluate(() => document.querySelector(".vp-dialog").open), "Esc during an IME composition in the frame leaves the frame open");
 
-  // Esc inside the frame closes the dialog, unless a palette in the frame takes it first.
+  // Esc inside the frame closes the dialog, unless a dialog in the frame takes it first.
   await page.frameLocator(".vp-dialog iframe").locator("#main").focus();
-  await page.keyboard.press("Control+k");
+  await frame.evaluate(() => document.getElementById("confirm-remove").showModal());
   await frame.waitForFunction(() => [...document.querySelectorAll("dialog")].some((d) => d.open), null, { timeout: 2000 });
   await page.keyboard.press("Escape");
   await frame.waitForFunction(() => ![...document.querySelectorAll("dialog")].some((d) => d.open), null, { timeout: 2000 });
-  expect(await page.evaluate(() => document.querySelector(".vp-dialog").open), "Esc closes a palette in the frame, not the frame");
+  expect(await page.evaluate(() => document.querySelector(".vp-dialog").open), "Esc closes a dialog in the frame, not the frame");
   await page.frameLocator(".vp-dialog iframe").locator("#main").focus();
   await page.keyboard.press("Escape");
   await page.waitForFunction(() => !document.querySelector(".vp-dialog").open, null, { timeout: 2000 }).catch(() => {});
