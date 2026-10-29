@@ -86,6 +86,8 @@ export default async function checkRuleNames(page, where, fail) {
     if (equals.out.includes("corners:") || !equals.out.includes("shadows: div#glow")) fail(`${where} rule names`, `--skip=fonts,corners: ${equals.out.trim()}`);
     const repeated = run("--skip", "fonts", "--skip=corners", "--skip", "shadows");
     if (repeated.code !== 0) fail(`${where} rule names`, `three --skip flags still exited ${repeated.code}: ${repeated.out.trim()}`);
+    const trailing = run("--skip=fonts", "--skip");
+    if (trailing.code !== 2) fail(`${where} rule names`, `a bare --skip after --skip=fonts exited ${trailing.code}`);
     const unknownEquals = run("--skip=sparkles");
     if (unknownEquals.code !== 2 || !unknownEquals.out.includes("sparkles")) fail(`${where} rule names`, `--skip=sparkles exited ${unknownEquals.code}: ${unknownEquals.out.trim()}`);
 

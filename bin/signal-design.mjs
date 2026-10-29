@@ -48,9 +48,11 @@ const theme = flag("theme");
 const a11y = rest.includes("--a11y");
 // --skip may be given more than once; the names add up.
 const skips = values("skip");
-const skip = new Set(skips.flatMap((value) => (value ?? "").split(",")).filter(Boolean));
+const names = (value) => (value ?? "").split(",").filter(Boolean);
+const skip = new Set(skips.flatMap(names));
 const unknown = [...skip].filter((name) => !RULES.includes(name));
-if (skips.length && (!skip.size || unknown.length)) {
+// Every --skip needs a name, so a bare one after a good one is not dropped.
+if (skips.some((value) => !names(value).length) || unknown.length) {
   console.error(`${unknown.length ? `Unknown rule for --skip: ${unknown.join(", ")}` : "--skip needs rule names."}
 Rules: ${RULES.join(", ")}`);
   process.exit(2);
