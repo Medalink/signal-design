@@ -204,6 +204,10 @@
   {
    "name": "data-sd-scrolling-page",
    "description": "Set by the JS on <html> while anything scrolls (idle motion pauses)."
+  },
+  {
+   "name": "data-sd-check-ignore",
+   "description": "Space-separated rule names (\"color\", \"primary\", ...) that signal-design check skips for this element and what it holds. For what is right on purpose, such as a palette swatch."
   }
  ]
 }
