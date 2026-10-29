@@ -95,7 +95,12 @@
   .sd-item[data-muted] .sd-item-sub {
     color: var(--sd-fg-faint);
   }
+  /* A muted avatar is a flat grey with the canvas color on it, 4.5:1 in every theme. */
   .sd-item[data-muted] .sd-avatar {
+    background: var(--sd-fg-faint);
+    color: var(--sd-canvas);
+  }
+  .sd-item[data-muted] .sd-avatar img {
     filter: saturate(0);
   }
   /* Nested rows, e.g. people inside a voice channel. */
@@ -219,8 +224,12 @@
     color: var(--sd-fg);
     font-weight: var(--font-weight-semibold);
   }
-  .sd-sidebar-link[data-muted] {
-    opacity: 0.5;
+  /* Muted steps back by color, not opacity; hover and the current link read at full strength. */
+  .sd-sidebar-link[data-muted]:not(:hover, [aria-current]:not([aria-current="false"])) {
+    color: var(--sd-fg-faint);
+  }
+  .sd-sidebar-link[data-muted]:not(:hover, [aria-current]:not([aria-current="false"])) > svg {
+    color: var(--sd-fg-faint);
   }
 
   /*

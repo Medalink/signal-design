@@ -25,6 +25,20 @@
       <p class="demo-usage"><code>sd-sidebar-head</code> (18px title, cut off with an ellipsis when it does not fit) · <code>sd-sidebar-head-sm</code> (16px title) · the title follows the head's size on a <code>span</code> or an <code>h2</code></p>
     </div>
 
+    <div class="demo-block" id="effects-muted-sidebar-rows">
+      <h2 class="sd-label">Muted rows</h2>
+      <div class="sd-sidebar border border-line" id="demo-muted-sidebar" style="--shell-sidebar: 15rem">
+        <nav class="sd-sidebar-body" aria-label="Demo muted channels">
+          <a class="sd-sidebar-link" href="#effects-muted-sidebar-rows" aria-current="page"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M6 2.5 5 13.5M11 2.5l-1 11M2.5 6h11M2 10h11"/></svg>general</a>
+          <a class="sd-sidebar-link" href="#effects-muted-sidebar-rows"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M6 2.5 5 13.5M11 2.5l-1 11M2.5 6h11M2 10h11"/></svg>release</a>
+          <a class="sd-sidebar-link" href="#effects-muted-sidebar-rows" data-muted><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M6 2.5 5 13.5M11 2.5l-1 11M2.5 6h11M2 10h11"/></svg>random</a>
+          <a class="sd-item" href="#effects-muted-sidebar-rows"><span class="sd-avatar" data-tone="warning">SK</span><span class="sd-item-body"><span class="sd-item-title">Sam</span><span class="sd-item-sub">Can you look at this?</span></span></a>
+          <a class="sd-item" href="#effects-muted-sidebar-rows" data-muted><span class="sd-avatar" data-tone="extra">AL</span><span class="sd-item-body"><span class="sd-item-title">Alex</span><span class="sd-item-sub">Muted</span></span></a>
+        </nav>
+      </div>
+      <p class="demo-usage"><code>data-muted</code> on <code>sd-sidebar-link</code> or <code>sd-item</code> steps the row back by color, not opacity: text and icon take the faint role, the avatar a grey fill · hover and <code>aria-current</code> bring the row back to full strength</p>
+    </div>
+
     <div class="demo-block" id="effects-resizable-sidebar">
       <h2 class="sd-label">Resizable sidebar</h2>
       <p class="demo-usage">A <code>role="separator"</code> handle over the sidebar's trailing border. With <code>data-sd-shell="resize"</code>, <code>init()</code> drags it, steps it with the arrow keys (16px, Shift for 64px), Home and End jump to <code>aria-valuemin</code> and <code>aria-valuemax</code>, Escape cancels a drag, and the width is remembered per sidebar <code>id</code>. Inside the shell it sets <code>--shell-sidebar</code> on <code>.sd-shell</code>; this page's own sidebar has one too. When a framework owns the width, leave out <code>data-sd-shell</code>: set <code>--shell-sidebar</code> and <code>aria-valuenow</code> yourself, and <code>data-resizing</code> on the shell while a drag runs.</p>
