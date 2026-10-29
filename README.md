@@ -281,12 +281,12 @@ Signal draws a set of line icons for what an editor and its app need: history
 margin and review (`comment`, `sparkle`, `history`, `bookmark`, `view`, `link`,
 `unlink`), things (`person`, `account`, `object`, `place`, `write`, `edit`,
 `delete`, `copy`, `external`, `publish`, `sync`, `warning`, `check`) and
-interface (`close`, `plus`, `minus`, `search`, `menu`, `more`, the four
-`chevron-*`, `chevrons-left`, `chevrons-right`, `expand`, `contract`). They
-follow the rest of the kit: straight lines and right angles, a 1.5 stroke with
-square caps and mitered corners, `currentColor`, drawn inside the 4-unit inset
-of the 24 grid so they size like any `sd-icon`. The component page lists them
-all with their names.
+interface (`close`, `play`, `pause`, `plus`, `minus`, `search`, `menu`,
+`more`, the four `chevron-*`, `chevrons-left`, `chevrons-right`, `expand`,
+`contract`). They follow the rest of the kit: straight lines and right angles,
+a 1.5 stroke with square caps and mitered corners, `currentColor`, drawn
+inside the 4-unit inset of the 24 grid so they size like any `sd-icon`. The
+component page lists them all with their names.
 
 ```html
 <button class="sd-btn sd-btn-icon sd-btn-ghost" aria-label="Undo">
