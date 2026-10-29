@@ -110,7 +110,7 @@
   --color-white: #ffffff;
   --color-black: #000000;
 
-  --color-cyan: #00d4ff; /* focus, current, selection */
+  --color-cyan: #00d4ff; /* selected, active, now */
   --color-green: #00ff88; /* approved, passing, your position */
   --color-pink: #ff3366; /* irreversible, high risk, reject */
   --color-orange: #ff8800; /* costly */

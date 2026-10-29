@@ -54,9 +54,10 @@ scrollbars there, call `initScrollbars()` from `signal-design/js` instead.
 
 1. **Square corners.** No `rounded-*`, no `border-radius`. Avatars and checkboxes too.
 2. **Flat.** No blurred `box-shadow`, no glow, no glass, no CSS gradients. Hairlines only.
-3. **Color means something.** Only status and focus are colored, via the roles
+3. **Color means something.** Only status and selection are colored, via the roles
    `accent`, `success`, `danger`, `warning`, `pending`, `extra` (`data-tone="danger"`,
    `text-danger`). Everything else, navigation included, is black, white and grey.
+   Focus rings and the current item (`aria-current`) are `fg`, not a color.
    Never use hues directly (`text-pink`, `#ff3366`). In a conversation every
    name is colored: names take the person's color through `--who` (user data)
    and fall back to `extra`.

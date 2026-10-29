@@ -1,6 +1,6 @@
 /*
  * Tones. One attribute colors any component by meaning:
- *   data-tone="accent"   focus, current          (cyan)
+ *   data-tone="accent"   selected, active, now   (cyan)
  *   data-tone="success"  approved, passing       (green)
  *   data-tone="danger"   irreversible, high risk (pink)
  *   data-tone="warning"  costly                  (orange)

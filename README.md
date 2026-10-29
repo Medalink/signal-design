@@ -6,7 +6,7 @@ Tauri apps and plain HTML.
 - **Two faces, two weights, and one to read.** SF Pro (system UI font, Segoe UI on Windows) in regular and medium for text; Source Code Pro (bundled, OFL) for code, charts and numbers. A font picker swaps the text face for Leon Sans or Source Code Pro. Literata (bundled, OFL) is for prose read at length, such as a manuscript, and never for interface text.
 - **Square corners everywhere**, avatars and checkboxes included.
 - **Flat surfaces.** No glass, glow, shadow or gradient.
-- **Color is for important things:** risk, status, success and focus. Everything else, navigation included, is black, white and grey.
+- **Color is for important things:** risk, status, success and selection. Everything else, navigation included, is black, white and grey; focus rings and the current item are too.
 - **Motion on state change only:** 120–200ms transitions and a one-pass hover shimmer. The rain backdrop moves only while work runs. `prefers-reduced-motion` turns motion off.
 
 ## Install
@@ -225,7 +225,7 @@ out switches the attribute and changes nothing visible.
 
 | Role | Means |
 |---|---|
-| `accent` | focus, current |
+| `accent` | selected, active, now |
 | `success` | approved, passing, your position |
 | `danger` | irreversible, high risk |
 | `warning` | costly |

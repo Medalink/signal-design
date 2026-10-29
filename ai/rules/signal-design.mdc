@@ -12,7 +12,7 @@ inventing it.
 Hard rules:
 - Square corners: never `rounded-*` or `border-radius`.
 - Flat: no blurred shadows, glow, glass or CSS gradients.
-- Color only for status and focus, through roles (`data-tone="danger"`, `text-danger`);
+- Color only for status and selection, through roles (`data-tone="danger"`, `text-danger`);
   navigation, headings and icons stay black, white and grey.
 - Tokens only (`var(--sd-*)`, `bg-surface`, `text-fg-muted`); never hex values.
 - Source Code Pro 400/600 only.
