@@ -484,8 +484,9 @@ export function createChart(canvas, options = {}) {
   document.addEventListener("sd:theme", onTheme);
   const scheme = matchMedia("(prefers-color-scheme: light)");
   scheme.addEventListener("change", onTheme);
-  // Canvas text needs the font loaded before the first real layout.
-  document.fonts?.load?.(`13px ${theme.font}`).then(() => chart.update("none"), () => {});
+  // Canvas text needs the font loaded before the first real layout. A chart
+  // destroyed before then has no canvas left to lay out.
+  document.fonts?.load?.(`13px ${theme.font}`).then(() => chart.canvas && chart.update("none"), () => {});
 
   /* ---- scale mode toolbar ------------------------------------------------ */
 
