@@ -48,8 +48,9 @@ opposite by rule, and the rules are enforced, not suggested.
   `pnpm build:ai`.
 - Quality gates: `signal-design check` (rounded corners, blurred shadows,
   overflow at 1280/768/375px, font loading, console errors, axe
-  WCAG 2.2 AA with `--a11y`), `scripts/check.mjs` behavior checks in Chromium
-  and WebKit, and `scripts/score.mjs` (`docs/scorecard.md`).
+  WCAG 2.2 AA with `--a11y`; each finding names its rule, and `--skip` or
+  `data-sd-check-ignore` sets one aside), `scripts/check.mjs` behavior checks
+  in Chromium and WebKit, and `scripts/score.mjs` (`docs/scorecard.md`).
 - Parallel pull requests, usually one component each; `CONTRIBUTING.md` sets
   the rules that keep them from conflicting.
 

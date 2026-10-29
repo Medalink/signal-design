@@ -603,7 +603,7 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
     await Promise.all([...document.fonts].map((f) => f.load().catch(() => {})));
     return [...document.fonts].filter((f) => f.family.includes("Source Code Pro")).map((f) => `${f.weight}:${f.status}`);
   });
-  if (faces.length < 2 || faces.some((f) => !f.endsWith("loaded"))) fail(where, `fonts ${faces.join(" ") || "none"}`);
+  if (faces.length < 2 || faces.some((f) => !f.endsWith("loaded"))) fail(where, `fonts: ${faces.join(" ") || "none"}`);
 
   for (const b of (await page.evaluate(sweep)).slice(0, 15)) fail(where, b);
 
@@ -615,7 +615,7 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
         .slice(0, 5)
         .map((el) => el.outerHTML.slice(0, 90)),
     );
-    fail(where, `horizontal overflow ${overflow}px: ${culprits.join(" | ")}`);
+    fail(where, `overflow: ${overflow}px wider than the window: ${culprits.join(" | ")}`);
   }
 
   if (shots && theme !== "graphite") {

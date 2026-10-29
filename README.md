@@ -58,6 +58,10 @@ npx signal-design check http://localhost:5173/ --a11y
 It fails on rounded corners, blurred shadows, horizontal
 overflow at 1280/768/375px, fonts that did not load, console errors and (with
 `--a11y`) WCAG 2.2 AA violations. `--widths` and `--theme` adjust the run.
+Every finding starts with its rule (`corners`, `shadows`, `overflow`, `fonts`,
+`console`, `a11y`). `--skip shadows,fonts` turns rules off for the run, and an
+unknown name exits 2. `data-sd-check-ignore="shadows"` on an element exempts it
+and what it holds from the rules it names.
 
 **Editor completions (VS Code).** Add to `.vscode/settings.json`:
 
@@ -1688,7 +1692,8 @@ pnpm a11y          # axe-core audit of every page, theme and width
 `scripts/check.mjs` loads the showcase in Chromium and WebKit, in every theme, at
 1280px and 375px. It fails on console errors, any rounded corner, any blurred
 shadow, horizontal scroll on phones, and broken dialog, popover,
-menu, tabs, expand or segmented behavior.
+menu, tabs, expand or segmented behavior. Its findings start with the rule's
+name, as the command's do.
 
 Before opening a pull request, read `CONTRIBUTING.md`: changelog entries go in
 `changes/`, and the generated AI files are rebuilt on `main`, not in the pull

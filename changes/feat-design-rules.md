@@ -5,6 +5,13 @@
 - Loops are allowed, decoration included. Rule 6 now asks only that transitions
   run 120–200ms.
 
+### Added
+- `signal-design check` names the rule in every finding (`corners`, `shadows`,
+  `overflow`, `fonts`, `console`, `a11y`). `--skip <rule,...>` turns rules off
+  for a run, and an unknown name exits 2 with the list. An element with
+  `data-sd-check-ignore="<rule> ..."` is exempt from those rules, itself and
+  what it holds.
+
 ### Fixed
 - On a touch screen the rail's search item no longer shows "Ctrl K". The
   coarse-pointer rule that hides a shortcut hint now covers a `kbd` directly in

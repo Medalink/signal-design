@@ -55,6 +55,11 @@ horizontal overflow at 1280/768/375px, fonts not loaded, console errors, and
 accessibility violations. If Playwright or axe-core is missing, install them
 as dev dependencies (`pnpm add -D playwright axe-core && npx playwright install chromium`).
 
+Each line starts with its rule (`corners`, `shadows`, `overflow`, `fonts`, `console`,
+`a11y`). Put `data-sd-check-ignore="shadows"` on an element that is right on purpose,
+or pass `--skip shadows` to turn a rule off for the run. Never use either to hide a
+real violation.
+
 ## Quick don'ts
 
 - No `rounded-*`, `shadow-*` (blurred), hex colors or new fonts.
