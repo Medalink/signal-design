@@ -7,7 +7,7 @@
  */
 
 /** Every rule the gate checks, by the name a finding, --skip and data-sd-check-ignore use. */
-export const RULES = ["corners", "shadows", "type", "color", "nav-color", "primary", "overflow", "fonts", "console", "a11y"];
+export const RULES = ["corners", "shadows", "type", "color", "nav-color", "primary", "label", "overflow", "fonts", "console", "a11y"];
 
 /** Rounded corners (corners) and blurred shadows (shadows) anywhere on the page. */
 export function sweep() {
@@ -269,6 +269,26 @@ export function primaryRule() {
   return [...views]
     .filter(([, buttons]) => buttons.length > 1)
     .map(([view, buttons]) => `primary: ${view ? describe(view) : "the page"} has ${buttons.length} primary buttons (one per view): ${buttons.map((b) => `${describe(b)} "${text(b)}"`).join(", ")}`);
+}
+
+/**
+ * A placeholder is not a label (label). A text field with a placeholder needs
+ * a name that stays once the user types: a <label>, aria-label,
+ * aria-labelledby or title. axe takes the placeholder as a name; WCAG 3.3.2
+ * does not, because it disappears.
+ */
+export function labelRule() {
+  const found = [];
+  const describe = (el) =>
+    el.tagName.toLowerCase() + (el.id ? `#${el.id}` : "") + (el.getAttribute("class")?.trim() ? `.${el.getAttribute("class").trim().split(/\s+/).slice(0, 3).join(".")}` : "");
+  const named = (el, attribute) => !!el.getAttribute(attribute)?.trim();
+  const fields = "input:not([type=checkbox],[type=radio],[type=hidden],[type=button],[type=submit],[type=reset],[type=image],[type=range],[type=color],[type=file]), textarea";
+  for (const el of document.querySelectorAll(fields)) {
+    if (!el.placeholder?.trim() || !el.getClientRects().length || getComputedStyle(el).visibility === "hidden") continue;
+    if (el.labels?.length || named(el, "aria-label") || named(el, "aria-labelledby") || named(el, "title") || el.closest('[data-sd-check-ignore~="label"]')) continue;
+    found.push(`label: ${describe(el)}: the placeholder "${el.placeholder.trim().slice(0, 30)}" is the only name (add a label, aria-label or aria-labelledby; a placeholder disappears when you type)`);
+  }
+  return found;
 }
 
 /** Source Code Pro faces after loading: ["400:loaded", "600:loaded", …]. */

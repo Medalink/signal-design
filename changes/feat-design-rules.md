@@ -19,13 +19,22 @@
   `sd-btn-primary`. The view is the page, or the open dialog or popover the
   button is in. The rule is `primary`; a gallery that shows variants takes
   `data-sd-check-ignore="primary"`.
+- `signal-design check` now fails a visible text field or textarea whose only
+  name is its placeholder: it has a placeholder and no `<label>`, `aria-label`,
+  `aria-labelledby` or `title`. The rule is `label`. axe accepts a placeholder
+  as a name; WCAG 3.3.2 does not, because it disappears when the user types.
+  The two size demos on the Fields page now have labels.
+- The gate is stricter. A project that passed `signal-design check` before can
+  fail now on `type`, `color`, `nav-color`, `primary` or `label`. `--skip <rule>`
+  or `data-sd-check-ignore="<rule>"` is the way out while the project fixes it.
 
 ### Added
 - `signal-design check` names the rule in every finding: `corners`, `shadows`,
-  `type`, `color`, `nav-color`, `primary`, `overflow`, `fonts`, `console`, `a11y`. `--skip <rule,...>`
-  turns rules off for a run, and an unknown name exits 2 with the list. An
-  element with `data-sd-check-ignore="<rule> ..."` is exempt from those rules,
-  itself and what it holds.
+  `type`, `color`, `nav-color`, `primary`, `label`, `overflow`, `fonts`,
+  `console`, `a11y`. `--skip <rule,...>` turns rules off for a run, and an
+  unknown name exits 2 with the list. An element with
+  `data-sd-check-ignore="<rule> ..."` is exempt from those rules, itself and
+  what it holds.
 
 ### Fixed
 - On a touch screen the rail's search item no longer shows "Ctrl K". The

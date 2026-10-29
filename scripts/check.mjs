@@ -9,7 +9,8 @@
  * Fails on: console errors, a font face that did not load, any rounded
  * corner, any blurred shadow (glow), a font weight or family outside Signal's,
  * a hard-coded color, colored navigation, a second primary button on an example
- * screen, horizontal scroll at phone width, and broken JS behaviors.
+ * screen, a text field named only by its placeholder, horizontal scroll at
+ * phone width, and broken JS behaviors.
  */
 import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -17,7 +18,7 @@ import { join } from "node:path";
 import ts from "typescript";
 import { fileURLToPath } from "node:url";
 import { chromium, webkit } from "playwright";
-import { sweep as rulesSweep, typeRule, colorRule, navColorRule, primaryRule } from "../bin/rules.mjs";
+import { sweep as rulesSweep, typeRule, colorRule, navColorRule, primaryRule, labelRule } from "../bin/rules.mjs";
 import { checkLivingTable, checkLivingTableTypes } from "./check-living-table.mjs";
 import { checkReact, checkReactSsr, checkReactTypes } from "./check-react.mjs";
 import { checkFonts } from "./check-fonts.mjs";
@@ -611,7 +612,7 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
   // The rules that read every element's style run once per page, at the first width and theme.
   // One primary button per view holds on the example screens; a library page shows variants side by side.
   if (width === widths[0] && theme === themes[0]) {
-    for (const rule of [typeRule, colorRule, navColorRule, ...(examplePages.has(pageName) ? [primaryRule] : [])]) for (const b of (await page.evaluate(rule)).slice(0, 15)) fail(where, b);
+    for (const rule of [typeRule, colorRule, navColorRule, labelRule, ...(examplePages.has(pageName) ? [primaryRule] : [])]) for (const b of (await page.evaluate(rule)).slice(0, 15)) fail(where, b);
   }
 
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);

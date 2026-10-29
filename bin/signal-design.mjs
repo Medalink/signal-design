@@ -7,8 +7,8 @@
  * Loads each URL in Chromium and fails (exit 1) on what Signal does not allow:
  * rounded corners, blurred shadows, a font weight or family outside Signal's,
  * a color written by hand, colored navigation or headings, a second primary
- * button in one view, horizontal overflow, fonts that did not load, and
- * console errors. --a11y adds an axe-core audit (WCAG 2.2 A/AA). Every finding
+ * button in one view, a text field named only by its placeholder, horizontal
+ * overflow, fonts that did not load, and console errors. --a11y adds an axe-core audit (WCAG 2.2 A/AA). Every finding
  * starts with its rule (see RULES in rules.mjs). --skip turns rules off for the
  * run; data-sd-check-ignore="rule …" on an element exempts that element and
  * what it holds. Needs playwright in your project (and axe-core for --a11y):
@@ -18,14 +18,15 @@
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
-import { RULES, sweep, typeRule, colorRule, navColorRule, primaryRule, fontFaces, overflow } from "./rules.mjs";
+import { RULES, sweep, typeRule, colorRule, navColorRule, primaryRule, labelRule, fontFaces, overflow } from "./rules.mjs";
 
 const USAGE = `Usage: signal-design check <url> [url…] [--a11y] [--widths 1280,768,375] [--theme ink|graphite|paper] [--skip rule,rule]
 
 Checks a page against Signal's rules: square corners, no blurred shadows, two
 font weights and Signal's font families, no hard-coded colors, grey navigation
-and headings, one primary button per view, no horizontal overflow, Source Code
-Pro loaded, no console errors. --a11y also runs axe-core (WCAG 2.2 A/AA).
+and headings, one primary button per view, a label on every text field, no horizontal
+overflow, Source Code Pro loaded, no console errors. --a11y also runs axe-core
+(WCAG 2.2 A/AA).
 
 Every finding starts with its rule: ${RULES.join(", ")}.
 --skip turns rules off for the whole run. To exempt one part of a page, put
@@ -111,6 +112,7 @@ for (const url of urls) {
     if (!skip.has("color")) for (const b of (await page.evaluate(colorRule)).slice(0, 20)) report(where, b);
     if (!skip.has("nav-color")) for (const b of (await page.evaluate(navColorRule)).slice(0, 20)) report(where, b);
     if (!skip.has("primary")) for (const b of (await page.evaluate(primaryRule)).slice(0, 20)) report(where, b);
+    if (!skip.has("label")) for (const b of (await page.evaluate(labelRule)).slice(0, 20)) report(where, b);
     if (!skip.has("overflow")) {
       const over = await page.evaluate(overflow);
       if (over.px > 0) report(where, `overflow: ${over.px}px wider than the window: ${over.culprits.join(" | ")}`);

@@ -192,6 +192,9 @@ it breaks:
 - `primary`: more than one visible `sd-btn-primary` in a view. The view is the
   page, or the open dialog or popover the button is in. A gallery that shows
   variants side by side takes `data-sd-check-ignore="primary"`.
+- `label`: a visible text field or textarea with a placeholder and no `<label>`,
+  `aria-label`, `aria-labelledby` or `title`. axe accepts a placeholder as a name;
+  it should not, because it disappears when the user types.
 - `overflow`: horizontal overflow at 1280/768/375px.
 - `fonts`: a font that did not load.
 - `console`: a console error.

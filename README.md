@@ -59,10 +59,11 @@ It fails on rounded corners, blurred shadows, text in a weight other than 400
 and 500 (600 in the reading face) or in a family that is not a Signal font
 token, a color written by hand (the same in every theme and no `--sd-*` token),
 a signal color on navigation or headings, a second primary button in one view,
-horizontal overflow at 1280/768/375px, fonts that did not load, console errors
-and (with `--a11y`) WCAG 2.2 AA violations. `--widths` and `--theme` adjust the
-run. Every finding starts with its rule (`corners`, `shadows`, `type`, `color`,
-`nav-color`, `primary`, `overflow`, `fonts`, `console`, `a11y`). `--skip color,fonts` turns rules off for
+a text field named only by its placeholder, horizontal overflow at 1280/768/375px,
+fonts that did not load, console errors and (with `--a11y`) WCAG 2.2 AA
+violations. `--widths` and `--theme` adjust the run. Every finding starts with
+its rule (`corners`, `shadows`, `type`, `color`, `nav-color`, `primary`, `label`,
+`overflow`, `fonts`, `console`, `a11y`). `--skip color,fonts` turns rules off for
 the run, and an unknown name exits 2. `data-sd-check-ignore="color"` on an
 element, such as a palette swatch, exempts it and what it holds from the rules
 it names.
@@ -1696,7 +1697,8 @@ pnpm a11y          # axe-core audit of every page, theme and width
 `scripts/check.mjs` loads the showcase in Chromium and WebKit, in every theme, at
 1280px and 375px. It fails on console errors, any rounded corner, any blurred
 shadow, a font weight or family outside Signal's, a hard-coded color, colored
-navigation, a second primary button on an example screen, horizontal scroll on phones, and broken dialog, popover, menu, tabs, expand or
+navigation, a second primary button on an example screen, a text field named only by its
+placeholder, horizontal scroll on phones, and broken dialog, popover, menu, tabs, expand or
 segmented behavior. Its findings start with the rule's name, as the command's do.
 
 Before opening a pull request, read `CONTRIBUTING.md`: changelog entries go in
