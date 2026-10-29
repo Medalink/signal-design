@@ -169,8 +169,8 @@
 
   <!-- Main -->
   <main class="sd-shell-main" id="main" tabindex="-1">
-    <div class="sd-shell-header">
-      <div class="sd-shell-crumbs">
+    <div class="sd-shell-header max-md:before:hidden">
+      <div class="sd-shell-crumbs sd-desktop-only">
         <button class="sd-btn sd-btn-icon sd-btn-sm sd-shell-pin" data-sd-shell="sidebar" data-sd-key="[" data-sd-tip="Show sidebar ([)" data-sd-tip-side="bottom" aria-label="Pin sidebar open"><svg><use href="#i-collapse"/></svg></button>
         <ol class="sd-breadcrumb" aria-label="Breadcrumb">
           <li><a href="./index.html" aria-label="Home"><svg><use href="#i-home"/></svg></a></li>
@@ -178,7 +178,7 @@
           <li><span aria-current="page" data-crumb-page>All items</span></li>
         </ol>
       </div>
-      <div class="sd-shell-header-end">
+      <div class="sd-shell-header-end ml-auto">
         <button class="sd-btn sd-btn-sm" data-run-batch aria-label="Run checks" data-sd-tip="Animates the rain while it runs" data-sd-tip-side="bottom"><svg><use href="#i-play"/></svg><span class="sd-desktop-only">Run checks</span></button>
         <button class="sd-btn sd-btn-sm" data-sd-shell="aside" data-sd-key="]" aria-controls="detail-panel"><svg><use href="#i-panel"/></svg><span class="sd-desktop-only">Details</span> <kbd>]</kbd></button>
       </div>
