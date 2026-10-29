@@ -704,14 +704,14 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
   if (pageName === "chat" && width === 1280 && theme === "ink") {
     const box = page.locator("[data-composer] textarea");
     await box.click();
-    await box.type("Hi @al");
+    await box.type("Hi @ro");
     const shown = await page.evaluate(() => !document.getElementById("mentions").hidden && [...document.querySelectorAll('#mentions [role="option"]:not([hidden])')].map((o) => o.dataset.value).join(","));
-    if (shown !== "Alex") fail(where, `mention suggestions showed ${shown}`);
+    if (shown !== "Rosa") fail(where, `mention suggestions showed ${shown}`);
     await page.keyboard.press("Enter");
-    if (!(await box.inputValue()).startsWith("Hi @Alex ")) fail(where, `mention not inserted: ${await box.inputValue()}`);
+    if (!(await box.inputValue()).startsWith("Hi @Rosa ")) fail(where, `mention not inserted: ${await box.inputValue()}`);
     await page.keyboard.press("Enter");
     const sent = await page.evaluate(() => [...document.querySelectorAll("[data-feed] .sd-message-text")].at(-1).textContent.trim());
-    if (sent !== "Hi @Alex") fail(where, `send appended "${sent}"`);
+    if (sent !== "Hi @Rosa") fail(where, `send appended "${sent}"`);
     const r = page.locator("[data-sd-reaction]").first();
     const before = await r.locator("b").textContent();
     await r.click();
@@ -735,7 +735,7 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
     await page.locator(".sd-message").nth(2).hover();
     await page.locator('.sd-message >> nth=2 >> .sd-message-actions [aria-label="Reply"]').click();
     const reply = await page.evaluate(() => ({ bar: document.querySelector(".sd-composer-reply b")?.textContent, current: document.querySelectorAll('.sd-message[aria-current="true"]').length }));
-    if (reply.bar !== "Sam" || reply.current !== 1) fail(where, `reply bar ${JSON.stringify(reply)}`);
+    if (reply.bar !== "Rosa" || reply.current !== 1) fail(where, `reply bar ${JSON.stringify(reply)}`);
     await page.locator("[data-cancel-reply]").click();
     await page.evaluate(() => { const f = document.querySelector("[data-feed]"); f.scrollTop = 0; f.dispatchEvent(new Event("scroll")); });
     if (await page.locator("[data-jump]").isHidden()) fail(where, "jump to present did not show when scrolled up");

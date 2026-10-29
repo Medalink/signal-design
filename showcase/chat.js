@@ -1,7 +1,14 @@
 import { mountBar, savedScrollbars } from "./viewport.js";
 import { init, toast } from "../src/js/index.js";
+import { icon } from "../src/js/icons.js";
 
 mountBar();
+/* Each <i data-ic="name"> in the markup becomes the icon of that name, keeping its classes. */
+for (const slot of document.querySelectorAll("[data-ic]")) {
+  slot.insertAdjacentHTML("afterend", icon(slot.dataset.ic));
+  slot.nextElementSibling.classList.add(...slot.classList);
+  slot.remove();
+}
 init({ scrollbars: savedScrollbars() });
 
 const feed = document.querySelector("[data-feed]");
@@ -59,7 +66,7 @@ function setReply(message) {
   replyTo = { name, who, text: quote };
   message.setAttribute("aria-current", "true");
   form.querySelector(".sd-composer-reply")?.remove();
-  form.insertAdjacentHTML("afterbegin", `<div class="sd-composer-reply"><svg><use href="#i-reply2"/></svg><span>Replying to <b style="--who:${who}">${escape(name)}</b> · ${escape(quote)}</span><button type="button" class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="Cancel reply" data-cancel-reply><svg width="14" height="14"><use href="#i-close"/></svg></button></div>`);
+  form.insertAdjacentHTML("afterbegin", `<div class="sd-composer-reply">${icon("undo")}<span>Replying to <b style="--who:${who}">${escape(name)}</b> · ${escape(quote)}</span><button type="button" class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="Cancel reply" data-sd-tip="Cancel reply" data-cancel-reply>${icon("close")}</button></div>`);
   input.focus();
 }
 function clearReply() {
@@ -72,7 +79,7 @@ function clearReply() {
 function react(message, emoji) {
   let bar = message.querySelector(".sd-reactions");
   if (!bar) {
-    message.querySelector(".sd-message-body").insertAdjacentHTML("beforeend", '<div class="sd-reactions"><button class="sd-reactions-add" aria-label="Add reaction" popovertarget="emoji"><svg><use href="#i-react"/></svg></button></div>');
+    message.querySelector(".sd-message-body").insertAdjacentHTML("beforeend", '<div class="sd-reactions"><button class="sd-reactions-add" aria-label="Add reaction" data-sd-tip="Add reaction" popovertarget="emoji">${icon("plus")}</button></div>');
     bar = message.querySelector(".sd-reactions");
   }
   const existing = [...bar.querySelectorAll("[data-sd-reaction]")].find((b) => b.querySelector("span").textContent === emoji);
@@ -101,10 +108,19 @@ document.addEventListener("click", (event) => {
     head.setAttribute("aria-expanded", String(open));
     head.closest(".sd-roster-group").querySelector("ul").hidden = !open;
   }
-  const tab = event.target.closest("[data-show-tab]");
-  if (tab) {
-    document.getElementById("shell").dataset.aside = "open";
-    document.getElementById(`t-${tab.dataset.showTab}`).click();
+});
+
+/* Member search: rows that do not match are hidden, and a role with no match goes with them. */
+const members = document.querySelector("[data-roster-search]");
+members.addEventListener("input", () => {
+  const q = members.value.trim().toLowerCase();
+  for (const group of document.querySelectorAll(".sd-roster-group")) {
+    let shown = 0;
+    for (const row of group.querySelectorAll("li")) {
+      row.hidden = !row.querySelector(".sd-roster-name").textContent.toLowerCase().includes(q);
+      if (!row.hidden) shown++;
+    }
+    group.hidden = shown === 0;
   }
 });
 document.addEventListener("sd:reaction", (event) => {
@@ -135,13 +151,7 @@ picker.addEventListener("click", (event) => {
   if (!option) return;
   const emoji = option.textContent;
   picker.hidePopover();
-  const fromComposer = document.activeElement?.closest?.(".sd-composer") || !lastTarget;
-  if (fromComposer) {
-    input.setRangeText(emoji, input.selectionStart, input.selectionEnd, "end");
-    input.focus();
-    return;
-  }
-  react(lastTarget, emoji);
+  if (lastTarget) react(lastTarget, emoji);
 });
 search.addEventListener("input", () => {
   const q = search.value.trim();
@@ -154,15 +164,15 @@ form.addEventListener("submit", (event) => {
   const text = input.value.trim();
   if (!text) return;
   const last = [...feed.querySelectorAll(".sd-message")].at(-1);
-  const grouped = last && !replyTo && author(last).name === "Jane";
+  const grouped = last && !replyTo && author(last).name === "Dana";
   const body = escape(text).replace(/@(\w+)/g, '<span class="sd-mention">@$1</span>');
-  const ref = replyTo ? `<span class="sd-message-ref-mark"><svg><use href="#i-reply2"/></svg></span><button class="sd-message-ref"><b style="--who:${replyTo.who}">${escape(replyTo.name)}</b><span>${escape(replyTo.text)}</span></button>` : "";
+  const ref = replyTo ? `<span class="sd-message-ref-mark">${icon("undo")}</span><button class="sd-message-ref"><b style="--who:${replyTo.who}">${escape(replyTo.name)}</b><span>${escape(replyTo.text)}</span></button>` : "";
   const actions = feed.querySelector(".sd-message-actions").outerHTML;
   feed.insertAdjacentHTML(
     "beforeend",
     grouped
       ? `<article class="sd-message" data-own data-grouped data-pending data-new data-sd-contextmenu="msg-menu" title="${now()}" style="--who: var(--sd-success)"><div class="sd-message-body"><div class="sd-message-text">${body}</div></div>${actions}</article>`
-      : `<article class="sd-message" data-own${replyTo ? " data-reply" : ""} data-pending data-new data-sd-contextmenu="msg-menu" style="--who: var(--sd-success)">${ref}<time class="sd-message-time">${now()}</time><div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Jane</b>${body}</div></div>${actions}</article>`,
+      : `<article class="sd-message" data-own${replyTo ? " data-reply" : ""} data-pending data-new data-sd-contextmenu="msg-menu" style="--who: var(--sd-success)">${ref}<time class="sd-message-time">${now()}</time><div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Dana</b>${body}</div></div>${actions}</article>`,
   );
   const added = feed.lastElementChild;
   added.addEventListener("animationend", () => added.removeAttribute("data-new"), { once: true });
