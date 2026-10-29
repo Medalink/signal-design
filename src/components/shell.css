@@ -854,6 +854,18 @@
     .sd-shell-status > :not(.sd-status) {
       display: none;
     }
+    /* The top bar already names the page, so its crumb chip would say it
+       twice: the chip and the bridge under it go, the actions stay. */
+    .sd-shell:has(> .sd-shell-topbar > .sd-shell-topbar-label) .sd-shell-crumbs,
+    .sd-shell:has(> .sd-shell-topbar > .sd-shell-topbar-label) .sd-shell-header::before {
+      display: none;
+    }
+    .sd-shell:has(> .sd-shell-topbar > .sd-shell-topbar-label) .sd-shell-header {
+      justify-content: flex-end;
+    }
+    .sd-shell:has(> .sd-shell-topbar > .sd-shell-topbar-label) .sd-shell-header:not(:has(> .sd-shell-header-end)) {
+      display: none;
+    }
   }
   @keyframes sd-aside-in {
     from { transform: translateX(24px); opacity: 0; }
