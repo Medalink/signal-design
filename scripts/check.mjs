@@ -7,7 +7,9 @@
  * the example apps; a page's name here is its file without .html), and the
  * prebuilt dist/signal.css loaded without Tailwind (scripts/standalone.html).
  * Fails on: console errors, a font face that did not load, any rounded
- * corner, any blurred shadow (glow), any gradient, horizontal scroll at
+ * corner, any blurred shadow (glow), a font weight or family outside Signal's,
+ * a hard-coded color, colored navigation, a second primary button on an example
+ * screen, a text field named only by its placeholder, horizontal scroll at
  * phone width, and broken JS behaviors.
  */
 import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -16,14 +18,14 @@ import { join } from "node:path";
 import ts from "typescript";
 import { fileURLToPath } from "node:url";
 import { chromium, webkit } from "playwright";
-import { sweep as rulesSweep } from "../bin/rules.mjs";
+import { sweep as rulesSweep, typeRule, colorRule, navColorRule, primaryRule, labelRule } from "../bin/rules.mjs";
 import { checkLivingTable, checkLivingTableTypes } from "./check-living-table.mjs";
 import { checkReact, checkReactSsr, checkReactTypes } from "./check-react.mjs";
 import { checkFonts } from "./check-fonts.mjs";
 import { checkSidebarResize } from "./check-sidebar-resize.mjs";
 import { checkHashRedirects, checkRailSections, checkShowcasePages, checkShowcaseRegistry } from "./check-showcase-pages.mjs";
 import { checkShowcaseBar } from "./check-showcase-bar.mjs";
-import { ALL, HOME, LIBRARY, byId, keyOf } from "../showcase/pages.js";
+import { ALL, EXAMPLES, HOME, LIBRARY, byId, keyOf } from "../showcase/pages.js";
 
 // One file per component in scripts/checks/, each exporting
 // `default async (page, where, fail)` and `page`, the id of the library page
@@ -84,6 +86,7 @@ for (const [flag, given, allowed] of [["--engine", onlyEngines, ["chromium", "we
 const engines = Object.fromEntries(Object.entries({ chromium, webkit }).filter(([name]) => !onlyEngines || onlyEngines.includes(name)));
 const runs =(part) => (!onlyParts || onlyParts.includes(part)) && !exceptParts?.includes(part);
 const themes = ["ink", "graphite", "paper"];
+const examplePages = new Set(EXAMPLES.map(keyOf));
 // Desktop, small laptop, tablet, phone. The in-between widths run in ink only.
 const widths = [1280, 1024, 768, 375];
 let failures = 0;
@@ -603,9 +606,15 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
     await Promise.all([...document.fonts].map((f) => f.load().catch(() => {})));
     return [...document.fonts].filter((f) => f.family.includes("Source Code Pro")).map((f) => `${f.weight}:${f.status}`);
   });
-  if (faces.length < 2 || faces.some((f) => !f.endsWith("loaded"))) fail(where, `fonts ${faces.join(" ") || "none"}`);
+  if (faces.length < 2 || faces.some((f) => !f.endsWith("loaded"))) fail(where, `fonts: ${faces.join(" ") || "none"}`);
 
   for (const b of (await page.evaluate(sweep)).slice(0, 15)) fail(where, b);
+  // The rules that read every element's style run at the first theme, at the
+  // widest and the narrowest width, where phone-only chrome shows.
+  // One primary button per view holds on the example screens; a library page shows variants side by side.
+  if ((width === widths[0] || width === widths.at(-1)) && theme === themes[0]) {
+    for (const rule of [typeRule, colorRule, navColorRule, labelRule, ...(examplePages.has(pageName) ? [primaryRule] : [])]) for (const b of (await page.evaluate(rule)).slice(0, 15)) fail(where, b);
+  }
 
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   if (overflow > 0) {
@@ -615,7 +624,7 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
         .slice(0, 5)
         .map((el) => el.outerHTML.slice(0, 90)),
     );
-    fail(where, `horizontal overflow ${overflow}px: ${culprits.join(" | ")}`);
+    fail(where, `overflow: ${overflow}px wider than the window: ${culprits.join(" | ")}`);
   }
 
   if (shots && theme !== "graphite") {

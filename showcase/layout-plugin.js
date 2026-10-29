@@ -168,8 +168,8 @@ export function renderPage(page, html) {
         ].join("\n          ")
       : `<li><span aria-current="page">Overview</span></li>`,
     // A page whose own content has a command palette keeps Ctrl K for it.
-    search_key: own ? "" : ' data-sd-key="mod+k"',
-    search_label: own ? "Go to a page" : "Go to a page (Ctrl K)",
+    search_key: own ? "" : ' data-sd-key="mod+k" aria-keyshortcuts="Control+K"',
+    search_label: "Go to a page",
     search_kbd: own ? "" : "<span><kbd>Ctrl K</kbd></span>",
     rail: rail(page),
     sidebar: sidebar(page),

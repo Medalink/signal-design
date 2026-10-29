@@ -46,19 +46,22 @@ opposite by rule, and the rules are enforced, not suggested.
   `ai/components.json`, `ai/tokens.json`, a Cursor rule, a Claude Code plugin
   skill and VS Code completion data. These are generated from the showcase by
   `pnpm build:ai`.
-- Quality gates: `signal-design check` (rounded corners, blurred shadows,
-  gradients, overflow at 1280/768/375px, font loading, console errors, axe
-  WCAG 2.2 AA with `--a11y`), `scripts/check.mjs` behavior checks in Chromium
-  and WebKit, and `scripts/score.mjs` (`docs/scorecard.md`).
+- Quality gates: `signal-design check` (rounded corners, blurred shadows, font
+  weights and families, hard-coded colors, colored navigation, a second
+  primary button in a view, a placeholder standing in for a label, overflow at
+  1280/768/375px, font loading, console errors, axe WCAG 2.2 AA with
+  `--a11y`; each finding names its rule, and `--skip` or
+  `data-sd-check-ignore` sets one aside), `scripts/check.mjs` behavior checks
+  in Chromium and WebKit, and `scripts/score.mjs` (`docs/scorecard.md`).
 - Parallel pull requests, usually one component each; `CONTRIBUTING.md` sets
   the rules that keep them from conflicting.
 
 ## Capabilities and Constraints
 
 - The hard rules in `AGENTS.md` are binding: square corners; flat (no blurred
-  shadow, glow, glass or gradient); color only through status and selection roles
+  shadow, glow or glass); color only through status and selection roles
   (`accent`, `success`, `danger`, `warning`, `pending`, `extra`); tokens, never
-  hard-coded values; two text weights; motion on state change only; style
+  hard-coded values; two text weights; transitions of 120–200ms; style
   keyed on ARIA and `data-*` state; one writer per state.
 - Themes: `ink` (default), `graphite`, `paper`, `auto`. Fonts: system (SF Pro /
   Segoe UI) by default, Leon Sans and Source Code Pro selectable; Source Code

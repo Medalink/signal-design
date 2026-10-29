@@ -26,6 +26,10 @@ exempt so it can fold the fragments into `CHANGELOG.md`.
   WebKit) at 1280px in ink, and fails when `page` is missing or unknown. Do not
   add a function or a call to `check.mjs`. A check that needs its own page
   (like `check-sidebar-resize.mjs`) is its own module too.
+- **Rules of `signal-design check`:** the rule is a function in
+  `bin/rules.mjs`, and its sample goes in `samples` in `e2e/check.mjs`: a page
+  with markup that breaks the rule and markup that keeps it, every element
+  with an id, and the ids the CLI must name. The e2e runs the real CLI on it.
 - **Showcase:** the showcase is one page per component type, filed as rail
   section, then sidebar group, then page in `showcase/pages.js` (the only list
   of pages; the rail, the sidebar, the nav palette, the overview cards, the
@@ -93,6 +97,7 @@ node scripts/check.mjs http://localhost:5178/ --engine webkit --only chat,behavi
 pnpm a11y                                       # axe-core audit
 pnpm score -- --md docs/scorecard.md            # score and rank every block and page (see the scorecard)
 node scripts/check-showcase-build.mjs           # production build under /signal-design/, every page
+node e2e/check.mjs                              # the check CLI on a sample page per rule (after build:css)
 node scripts/changelog.mjs --check              # changelog fragments
 ```
 

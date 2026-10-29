@@ -13,7 +13,7 @@
           <li><b class="text-fg font-semibold">Color means something.</b> Only status and selection are colored. Everything else, navigation, focus rings and the current item included, is black, white and grey.</li>
           <li><b class="text-fg font-semibold">Text stays readable.</b> Every text role meets 4.5:1 on every surface of its theme. The contrast block below shows each ratio live.</li>
           <li><b class="text-fg font-semibold">Two faces, two weights.</b> One text face in regular and medium, and Source Code Pro for code. The text face is SF Pro (Segoe UI on Windows) unless the font picker swaps it. Set a family through <code>font-sans</code> or <code>var(--sd-font-sans)</code>, never by name. Prose read at length, such as a manuscript, is the one exception: <code>font-reading</code>.</li>
-          <li><b class="text-fg font-semibold">Motion marks a state change.</b> Transitions run 120 to 200ms on <code>ease-out</code>. Nothing loops for decoration.</li>
+          <li><b class="text-fg font-semibold">Transitions are short.</b> They run 120 to 200ms on <code>ease-out</code>. Loops are allowed.</li>
         </ul>
       </div>
       <div class="grid content-start gap-8">
@@ -30,7 +30,7 @@
           <ul>
             <li>Reaching for a brand hue. Color is reserved for status, so Signal has no decorative colors.</li>
             <li>Hard-coding a hex value or a pixel size. Themes and the type scale would stop applying.</li>
-            <li>Adding a shadow, glow or gradient. Surfaces are flat and use hairlines only.</li>
+            <li>Adding a shadow or glow. Surfaces are flat and use hairlines only.</li>
           </ul>
         </div>
       </div>
@@ -52,14 +52,14 @@
     <div class="demo-block" id="tokens-greys">
       <h2 class="sd-label">Greys</h2>
       <p class="demo-usage"><b class="text-fg font-semibold">Ink</b> is the shipped Signal ramp: cool and near-black. <b class="text-fg font-semibold">Graphite</b> is the original ramp from the spec table. The ink theme uses the first, the graphite theme the second.</p>
-      <div class="grid grid-cols-[repeat(13,minmax(0,1fr))] gap-1" data-swatches="ink"></div>
-      <div class="grid grid-cols-[repeat(13,minmax(0,1fr))] gap-1" data-swatches="graphite"></div>
+      <div class="grid grid-cols-[repeat(13,minmax(0,1fr))] gap-1" data-swatches="ink" data-sd-check-ignore="color"></div>
+      <div class="grid grid-cols-[repeat(13,minmax(0,1fr))] gap-1" data-swatches="graphite" data-sd-check-ignore="color"></div>
     </div>
 
     <div class="demo-block" id="tokens-spec-vs-shipped">
       <h2 class="sd-label">Spec vs shipped</h2>
       <p class="demo-usage">The original spec table and the shipped stylesheet disagree. Ink, the shipped ramp, is the canonical default. Graphite keeps the spec values as an optional theme.</p>
-      <div class="sd-table-wrap">
+      <div class="sd-table-wrap" data-sd-check-ignore="color">
         <table class="sd-table">
           <thead><tr><th>Role</th><th>Ink (default)</th><th>Graphite (spec)</th></tr></thead>
           <tbody>
@@ -74,7 +74,7 @@
 
     <div class="demo-block" id="tokens-themes-side-by-side">
       <h2 class="sd-label">Themes side by side</h2>
-      <div class="grid gap-4 sm:grid-cols-3">
+      <div class="grid gap-4 sm:grid-cols-3" data-sd-check-ignore="primary">
         <div data-theme="ink" class="grid content-start gap-3 border border-line bg-canvas p-4 text-fg">
           <p class="sd-label">ink</p>
           <p class="text-lg">Approve the release</p>

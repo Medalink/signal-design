@@ -79,6 +79,7 @@ const ATTRIBUTES = {
   "data-sd-scrollbars": "Set by init() or initScrollbars() on <html>: auto hides scrollbars when idle, always keeps them.",
   "data-sd-scrolling": "Set by the JS on a scroller while it moves (scrollbar shows).",
   "data-sd-scrolling-page": "Set by the JS on <html> while anything scrolls (idle motion pauses).",
+  "data-sd-check-ignore": "Space-separated rule names (\"color\", \"primary\", ...) that signal-design check skips for this element and what it holds. For what is right on purpose, such as a palette swatch.",
 };
 
 /** What each semantic token is for. */

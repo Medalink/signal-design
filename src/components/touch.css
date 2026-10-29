@@ -40,4 +40,19 @@
       height: var(--sd-touch);
     }
   }
+
+  /* Key hints: on a touch screen there is no key to press, so a kbd that
+     only advertises a shortcut goes away. A kbd inside a sentence or a
+     shortcut list (.sd-shortcuts) is content and stays. A status bar cluster
+     that is only a hint ("N next") goes whole, or its word would be left
+     with nothing to explain. A rail label whose one element is a hint goes the
+     same way, so no empty label box is left. CSS cannot see text beside that
+     kbd, so a rail label with words keeps its kbd in a span of its own. */
+  @media (pointer: coarse) {
+    :is(.sd-btn, .sd-pill, .sd-marker-end, [role="menuitem"], .sd-rail-item) > :is(kbd, .sd-kbd),
+    .sd-rail-item > span:has(> :is(kbd, .sd-kbd):only-child),
+    .sd-statusbar > :has(> :is(kbd, .sd-kbd)):not(.sd-statusbar-end) {
+      display: none;
+    }
+  }
 }

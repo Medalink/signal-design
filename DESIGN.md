@@ -161,14 +161,14 @@ Signal is the black face of a lab instrument. At rest it is greys on near-black:
 
 Parts are drawn, not built. A button, a field, a panel is an outline on the canvas, never an object with bulk: no rounding, no shading, no lift. State changes the line or the text (an edge goes from line to fg, a background steps from canvas to raised, a label brightens), never the shape. Density is that of a working tool: 34px controls, 16px body, uppercase tracked labels, content in a 720px column or a full app shell.
 
-The system rejects the default look of neighboring kits: rounded corners, drop shadows, glass, glow, gradients and decorative color are all forbidden, and the `signal-design check` command fails a page that uses them.
+The system rejects the default look of neighboring kits: rounded corners, drop shadows, glass, glow and decorative color are all forbidden, and the `signal-design check` command fails a page that uses them.
 
 **Key Characteristics:**
 - Square corners everywhere, avatars and checkboxes included (0px).
 - Flat: depth comes from tonal steps and 1px hairlines, never shadow.
 - Monochrome by default; six signal colors, each with one meaning.
 - One text face in two weights (400, 500); Source Code Pro for code and numbers; Literata only for long-form prose.
-- Motion only on state change, 120–200ms; live activity (the typing squares, the rain while work runs) may loop only while it lasts.
+- Transitions of 120–200ms; loops are allowed (the ornament sparkle, the typing squares, the rain while work runs).
 - Four themes from one set of role tokens: ink (default), graphite, paper, auto.
 
 ## Colors
@@ -282,7 +282,7 @@ Outlines that brighten under the pointer.
 - **Primary:** filled with Instrument White, on-primary text, weight 500, no border; hover dims to 88% opacity. One per view.
 - **Ghost / Link:** ghost drops the border; link is subtle text with a hairline underline 3px below, brightening to fg on hover.
 - **Toned:** `data-tone` colors the text and a 40% hairline; hover adds an 8% wash and strengthens the hairline to 70%. A toned primary button fills solid with the tone and sets canvas-colored text.
-- **Disabled / Busy:** disabled at 35% opacity; busy dims to 70% and says so in words, never with a spinner loop.
+- **Disabled / Busy:** disabled at 35% opacity; busy dims to 70% and says so in words.
 
 ### Chips and Badges
 - **Chip:** a square token on surface fill with a strong hairline, 28px tall, 3px 10px padding, fg text at 0.9375rem; a button chip shimmers on hover.
@@ -332,10 +332,9 @@ Faint, still line art behind content (`data-sd-ornaments`): dust by default, or 
 
 ### Don't:
 - **Don't** use `rounded-*` or any `border-radius`, on avatars and checkboxes too.
-- **Don't** use blurred `box-shadow`, glow, glass, backdrop blur or CSS gradients.
+- **Don't** use blurred `box-shadow`, glow, glass or backdrop blur.
 - **Don't** color navigation, headings or icons, or use a hue directly (`text-pink`, `#ff3366`).
 - **Don't** fill a header, panel or region with a signal color; only a toned primary button and a solid badge are solid.
 - **Don't** use weights other than 400 and 500, or name a font family directly.
 - **Don't** set interface text in Literata.
-- **Don't** loop motion for decoration or use a looping progress bar; indeterminate progress is a static state. Only live activity (someone typing, work running) may loop, and only while it lasts.
 - **Don't** build a custom dropdown, tooltip, modal, tabs or sidebar layout; use the native element plus Signal, and `sd-shell` for app frames.

@@ -2,25 +2,35 @@
 /**
  * signal-design command line.
  *
- *   npx signal-design check <url> [more urls] [--a11y] [--widths 1280,768,375] [--theme ink]
+ *   npx signal-design check <url> [more urls] [--a11y] [--widths 1280,768,375] [--theme ink] [--skip rule,rule]
  *
  * Loads each URL in Chromium and fails (exit 1) on what Signal does not allow:
- * rounded corners, blurred shadows, CSS gradients, horizontal overflow, fonts
- * that did not load, and console errors. --a11y adds an axe-core audit
- * (WCAG 2.2 A/AA). Needs playwright in your project (and axe-core for --a11y):
+ * rounded corners, blurred shadows, a font weight or family outside Signal's,
+ * a color written by hand, colored navigation or headings, a second primary
+ * button in one view, a text field named only by its placeholder, horizontal
+ * overflow, fonts that did not load, and console errors. --a11y adds an axe-core audit (WCAG 2.2 A/AA). Every finding
+ * starts with its rule (see RULES in rules.mjs). --skip turns rules off for the
+ * run; data-sd-check-ignore="rule …" on an element exempts that element and
+ * what it holds. Needs playwright in your project (and axe-core for --a11y):
  *
  *   pnpm add -D playwright axe-core && npx playwright install chromium
  */
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
-import { sweep, fontFaces, overflow } from "./rules.mjs";
+import { RULES, sweep, typeRule, colorRule, navColorRule, primaryRule, labelRule, fontFaces, overflow } from "./rules.mjs";
 
-const USAGE = `Usage: signal-design check <url> [url…] [--a11y] [--widths 1280,768,375] [--theme ink|graphite|paper]
+const USAGE = `Usage: signal-design check <url> [url…] [--a11y] [--widths 1280,768,375] [--theme ink|graphite|paper] [--skip rule,rule]
 
-Checks a page against Signal's rules: square corners, no blurred shadows or
-gradients, no horizontal overflow, Source Code Pro loaded, no console errors.
---a11y also runs axe-core (WCAG 2.2 A/AA).`;
+Checks a page against Signal's rules: square corners, no blurred shadows, two
+font weights and Signal's font families, no hard-coded colors, grey navigation
+and headings, one primary button per view, a label on every text field, no horizontal
+overflow, Source Code Pro loaded, no console errors. --a11y also runs axe-core
+(WCAG 2.2 A/AA).
+
+Every finding starts with its rule: ${RULES.join(", ")}.
+--skip turns rules off for the whole run. To exempt one part of a page, put
+data-sd-check-ignore="rule rule" on its element.`;
 
 const args = process.argv.slice(2);
 const [command, ...rest] = args;
@@ -29,14 +39,24 @@ if (command !== "check" || rest.includes("--help") || !rest.some((a) => /^https?
   process.exit(command === "check" || command === "--help" || !command ? 0 : 1);
 }
 
-const flag = (name) => {
-  const i = rest.indexOf(`--${name}`);
-  return i >= 0 ? rest[i + 1] : undefined;
-};
+/** Every value given for a flag, as "--name value" or "--name=value". */
+const values = (name) => rest.flatMap((a, i) => (a === `--${name}` ? [rest[i + 1]] : a.startsWith(`--${name}=`) ? [a.slice(name.length + 3)] : []));
+const flag = (name) => values(name)[0];
 const urls = rest.filter((a) => /^https?:|^file:/.test(a));
 const widths = (flag("widths") || "1280,768,375").split(",").map(Number);
 const theme = flag("theme");
 const a11y = rest.includes("--a11y");
+// --skip may be given more than once; the names add up.
+const skips = values("skip");
+const names = (value) => (value ?? "").split(",").filter(Boolean);
+const skip = new Set(skips.flatMap(names));
+const unknown = [...skip].filter((name) => !RULES.includes(name));
+// Every --skip needs a name, so a bare one after a good one is not dropped.
+if (skips.some((value) => !names(value).length) || unknown.length) {
+  console.error(`${unknown.length ? `Unknown rule for --skip: ${unknown.join(", ")}` : "--skip needs rule names."}
+Rules: ${RULES.join(", ")}`);
+  process.exit(2);
+}
 
 const require = createRequire(`${process.cwd()}/`);
 let chromium;
@@ -49,7 +69,7 @@ try {
   process.exit(2);
 }
 let axeSource = null;
-if (a11y) {
+if (a11y && !skip.has("a11y")) {
   try {
     axeSource = readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
   } catch {
@@ -60,9 +80,10 @@ if (a11y) {
 
 const browser = await chromium.launch();
 let problems = 0;
-const report = (where, msg) => {
+/** A finding is "<rule>: <what>". */
+const report = (where, finding) => {
   problems++;
-  console.log(`FAIL ${where}: ${msg}`);
+  console.log(`FAIL ${where}: ${finding}`);
 };
 
 for (const url of urls) {
@@ -80,13 +101,25 @@ for (const url of urls) {
     await page.addStyleTag({ content: "*{content-visibility:visible!important}" });
     await page.waitForTimeout(200);
 
-    for (const e of errors) report(where, `console error: ${e}`);
-    const faces = await page.evaluate(fontFaces);
-    if (faces.length && faces.some((f) => !f.endsWith("loaded"))) report(where, `font not loaded: ${faces.join(" ")}`);
-    if (!faces.length) report(where, "Source Code Pro is not loaded (is signal-design's CSS on the page?)");
-    for (const b of (await page.evaluate(sweep)).slice(0, 20)) report(where, b);
-    const over = await page.evaluate(overflow);
-    if (over.px > 0) report(where, `horizontal overflow ${over.px}px: ${over.culprits.join(" | ")}`);
+    if (!skip.has("console")) for (const e of errors) report(where, `console: ${e}`);
+    if (!skip.has("fonts")) {
+      const faces = await page.evaluate(fontFaces);
+      if (faces.length && faces.some((f) => !f.endsWith("loaded"))) report(where, `fonts: not loaded: ${faces.join(" ")}`);
+      if (!faces.length) report(where, "fonts: Source Code Pro is not loaded (is signal-design's CSS on the page?)");
+    }
+    if (!skip.has("corners") || !skip.has("shadows")) {
+      const found = (await page.evaluate(sweep)).filter((b) => !skip.has(b.slice(0, b.indexOf(":"))));
+      for (const b of found.slice(0, 20)) report(where, b);
+    }
+    if (!skip.has("type")) for (const b of (await page.evaluate(typeRule)).slice(0, 20)) report(where, b);
+    if (!skip.has("color")) for (const b of (await page.evaluate(colorRule)).slice(0, 20)) report(where, b);
+    if (!skip.has("nav-color")) for (const b of (await page.evaluate(navColorRule)).slice(0, 20)) report(where, b);
+    if (!skip.has("primary")) for (const b of (await page.evaluate(primaryRule)).slice(0, 20)) report(where, b);
+    if (!skip.has("label")) for (const b of (await page.evaluate(labelRule)).slice(0, 20)) report(where, b);
+    if (!skip.has("overflow")) {
+      const over = await page.evaluate(overflow);
+      if (over.px > 0) report(where, `overflow: ${over.px}px wider than the window: ${over.culprits.join(" | ")}`);
+    }
 
     if (axeSource && width === widths[0]) {
       await page.addScriptTag({ content: axeSource });
@@ -94,7 +127,7 @@ for (const url of urls) {
         window.axe.run(document, { runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"] }, resultTypes: ["violations"] }),
       );
       for (const v of result.violations) {
-        for (const n of v.nodes.slice(0, 5)) report(where, `a11y ${v.id} (${v.impact}): ${v.help} at ${n.target.join(" ")}`);
+        for (const n of v.nodes.slice(0, 5)) report(where, `a11y: ${v.id} (${v.impact}): ${v.help} at ${n.target.join(" ")}`);
       }
     }
     await page.close();

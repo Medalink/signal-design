@@ -53,7 +53,7 @@ scrollbars there, call `initScrollbars()` from `signal-design/js` instead.
 ## Hard rules (do not break these)
 
 1. **Square corners.** No `rounded-*`, no `border-radius`. Avatars and checkboxes too.
-2. **Flat.** No blurred `box-shadow`, no glow, no glass, no CSS gradients. Hairlines only.
+2. **Flat.** No blurred `box-shadow`, no glow, no glass. Hairlines only.
 3. **Color means something.** Only status and selection are colored, via the roles
    `accent`, `success`, `danger`, `warning`, `pending`, `extra` (`data-tone="danger"`,
    `text-danger`). Everything else, navigation included, is black, white and grey.
@@ -71,8 +71,8 @@ scrollbars there, call `initScrollbars()` from `signal-design/js` instead.
    The one exception is prose to be read at length (a manuscript, an article):
    `font-reading` / `var(--sd-font-reading)`, Literata, with real italics and a
    semibold for strong text. Interface text never uses it.
-6. **Motion on state change only.** 120–200ms transitions. Nothing loops for decoration.
-   Live activity may loop while it lasts (the `sd-typing` squares while someone types).
+6. **Motion.** Transitions run 120–200ms. Loops are allowed, decoration included (the ornament
+   sparkle, the `sd-typing` squares); `prefers-reduced-motion` stops them.
 7. **Style state, not classes.** The JS writes ARIA and `data-*` (`aria-pressed`,
    `aria-expanded`, `aria-current`, `aria-selected`, `data-open`, `data-tone`);
    the CSS keys on those. Set the same attributes from your own code to drive state.
@@ -135,14 +135,14 @@ by `title` or `classes`) rather than inventing markup.
 | Overlays | `<dialog class="sd-dialog">` + `data-sd-open`; `popover` + `.sd-popover`; `data-sd-tip`; `toast()` |
 | Lists and rows | `sd-item`, `sd-row`, `sd-table`, `sd-kv` (`sd-kv-plain` for sentence-case, truncating keys) |
 | Settings groups | `sd-panel` (560px), `sd-panel-wide` (1024px), `sd-panel-fluid` (no cap) |
-| Status | `sd-badge`, `sd-status`, `sd-dot`, `sd-count`, `sd-progress` (`data-state="indeterminate"` when the amount is unknown; never a looping bar), `sd-checks`, `sd-level` (live level from `--level`, 0–1) |
+| Status | `sd-badge`, `sd-status`, `sd-dot`, `sd-count`, `sd-progress` (`data-state="indeterminate"` when the amount is unknown), `sd-checks`, `sd-level` (live level from `--level`, 0–1) |
 | People | `sd-avatar` (`-sm` `-md` `-lg` `-xl`, or `--sd-avatar-size`) with `data-status`; on your own panel set `--sd-ring` to its background so the presence ring matches |
 | Chat and feeds | `sd-message` (time column, inline `sd-message-author`; `--who` name color, `--edge` role color, `data-grouped`, `data-own`, `data-reply` + `sd-message-ref`, `data-editing`, `data-selected`), `sd-message-actions`, `sd-message-menu`, `sd-emoji-picker`, `sd-feed-day`, `sd-event`, `sd-feed-jump`, `sd-composer` (`-add`, `-reply`, `-status`; `sd-add-menu`) in an `sd-shell-dock` (`data-flush`), `sd-reactions`, `sd-roster`, `sd-banner`, `sd-file`, `sd-link-card` (`-hero`, `-compact`, `-type`, `data-blocked`, `aria-busy`) |
 | Data | `sd-stat`, `sd-stat-box`, `createChart(canvas, { type })`, `sd-plot`, `sd-heatmap`, `sd-uptime`, `sd-meter`, `sd-timeline` (`--from`/`--to` ranges over one axis), `sd-schedule` (hour roster, `data-status` blocks, mono/spectrum), `sd-weighted` (segments sized by `--weight` toward a goal) |
 | ASCII art | `mountAscii(el, piece)` from `signal-design/ascii` draws an `ascii-magic-art` piece as greys in `sd-ascii`; still until `aria-busy="true"` (`pnpm add ascii-magic-art`); `data-tone` colors the brightest level |
 | Stream overlays (OBS) | `sd-scene` (1920×1080 units in `--sd-u`; `data-full`, `data-clear`) with `sd-scene-copy`, `sd-scene-bar`, `sd-scene-label`, `sd-cam`, `sd-scene-goal`, `sd-credits`, `sd-stream-alert`; `mountStream(scene).alert({ kind, name })` |
 | Empty | `sd-empty` (gets a center ornament automatically) |
-| Ornaments | `data-sd-ornaments="<placement> <style>"`: dust by default; a style word draws art instead: `contours` (fiction), `lattice` (research), `waveform` (blogs, notes), `dashed` (empty, planned), `book` (the hero), `stack` (manuscripts). Placements `tl tr bl br top bottom center`, `data-sd-ornaments-size`, `data-sd-ornaments-seed`. Still, faint, behind content |
+| Ornaments | `data-sd-ornaments="<placement> <style>"`: dust by default; a style word draws art instead: `contours` (fiction), `lattice` (research), `waveform` (blogs, notes), `dashed` (empty, planned), `book` (the hero), `stack` (manuscripts). Placements `tl tr bl br top bottom center`, `data-sd-ornaments-size`, `data-sd-ornaments-seed`. Faint, behind content |
 | React app | `signal-design/react`: `Button`, `Field` + `Input`, `Dialog`, `Menu`, `Tabs`, `ToastProvider`, `Table`, `AppShell` with `Rail`, `Sidebar` and `ShellMain`; editor parts `Toolbar`, `ToolbarButton`, `Manuscript`, `StatusSegment`, `Mark`, `HoverCard`, `Tree`, `Combobox`, `CommandPalette`, `RadioGroup`, `SegmentedControl`, `MenuItemCheckbox`; props are the state (`open`/`onOpenChange`, `value`/`onValueChange`, `pressed`/`onPressedChange`); also `Icon`, `GutterBlock` (a margin marker for a block), `HoverCardHost` (a hover card for a trigger React does not render), `ResizablePanel`, `WeightedBar`, `Tree` row `actions` (keys, not buttons inside the treeitem), `Sheet side="bottom"` |
 
 Tone anything with `data-tone`. Mark the current location with `aria-current`.
@@ -157,6 +157,8 @@ The library meets WCAG 2.2 AA contrast and wires keyboard behavior. You still mu
   the target `id="main" tabindex="-1"`;
 - label a desktop title bar: `role="region" aria-label="Window"`;
 - keep focus visible (do not remove outlines);
+- label every field with visible text (`sd-field-label`); a placeholder is a hint
+  that disappears when you type, not a label;
 - respect `prefers-reduced-motion` in any motion you add.
 
 ## Translating labels
@@ -175,11 +177,43 @@ npx signal-design check http://localhost:5173/          # your running app
 npx signal-design check http://localhost:5173/ --a11y   # plus an axe WCAG 2.2 AA audit
 ```
 
-It loads each URL in Chromium (Playwright) and fails on: rounded corners,
-blurred shadows, CSS gradients, horizontal overflow at 1280/768/375px, fonts
-that did not load, console errors, and (with `--a11y`) accessibility
-violations. Needs `playwright` (and `axe-core` for `--a11y`) installed, and
+It loads each URL in Chromium (Playwright). Every finding starts with the rule
+it breaks:
+
+- `corners`: a rounded corner.
+- `shadows`: a blurred shadow.
+- `type`: text in a weight other than 400 and 500 (600 only in the reading
+  face), or in a family that is not `--sd-font-sans`, `--sd-font-mono` or
+  `--sd-font-reading`.
+- `color`: a color that is the same in the ink and paper themes and is not the
+  value of any `--sd-*` token in ink, in paper or in the theme the page is in,
+  such as a hex you wrote. Every element with `data-theme` flips along with the
+  page, so a themed subtree or an app root is checked too. Tints of a token and a person's `--who` and `--edge`
+  pass. A hex copied from a token's value passes too: the gate cannot tell it
+  from the token, so write the token.
+- `nav-color`: a heading, nav link, sidebar link, rail item, tab or breadcrumb
+  link (or an icon in one) whose text color is a signal role. Status inside a
+  `data-tone`, badge, count, dot or status, and a person's `--who`, pass.
+- `primary`: more than one visible `sd-btn-primary` in a view. The view is the
+  page, or the open dialog or popover the button is in. A gallery that shows
+  variants side by side takes `data-sd-check-ignore="primary"`.
+- `label`: a visible text field or textarea with a placeholder and no `<label>`,
+  `aria-label`, `aria-labelledby` or `title`. axe accepts a placeholder as a name;
+  it should not, because it disappears when the user types. The rule asks only
+  for a name; the visible label (see Accessibility) is still yours to add.
+- `overflow`: horizontal overflow at 1280/768/375px.
+- `fonts`: a font that did not load.
+- `console`: a console error.
+- `a11y`: an accessibility violation (with `--a11y`).
+
+Needs `playwright` (and `axe-core` for `--a11y`) installed, and
 `npx playwright install chromium` once.
+
+`--skip color,fonts` (or `--skip=color,fonts`; repeats add up) turns rules off
+for the whole run; an unknown name exits 2.
+`data-sd-check-ignore="color"` on an element exempts it and what it holds from
+the rules it names (`"color type"` for two). It is for what is right on purpose,
+such as a palette swatch; never use it to hide a violation.
 
 ## Files for tools
 
@@ -194,8 +228,10 @@ violations. Needs `playwright` (and `axe-core` for `--a11y`) installed, and
 
 ## Common mistakes
 
-- Adding `rounded`, `shadow-lg` or `bg-gradient-*` from Tailwind habit. Remove them.
+- Adding `rounded` or `shadow-lg` from Tailwind habit. Remove them.
 - Coloring navigation, headings or icons. Keep them grey; color is for status.
+- Dimming text with `opacity`. It drops contrast under 4.5:1; use `text-fg-muted`
+  or `text-fg-faint`.
 - Writing `color: #...` or `bg-[#...]`. Use a role token.
 - Forgetting `init()`, so `data-sd-*` attributes do nothing.
 - Keeping `data-sd-seg`, `data-sd-toggle` or `data-sd-reaction` on markup whose
