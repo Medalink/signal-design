@@ -16,6 +16,7 @@ const jump = document.querySelector("[data-jump]");
 const form = document.querySelector("[data-composer]");
 const input = form.querySelector("textarea");
 let lastTarget = null;
+let forComposer = false;
 let replyTo = null;
 
 const escape = (text) => text.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -45,6 +46,8 @@ jump.addEventListener("animationend", () => jump.removeAttribute("data-new"));
 document.addEventListener("click", (event) => {
   const message = event.target.closest(".sd-message");
   if (message) lastTarget = message;
+  const opener = event.target.closest('[popovertarget="emoji"]');
+  if (opener) forComposer = opener.hasAttribute("data-composer-emoji");
 });
 document.addEventListener("sd:contextmenu", (event) => {
   lastTarget = event.detail.target;
@@ -52,8 +55,9 @@ document.addEventListener("sd:contextmenu", (event) => {
 for (const id of ["msg-menu", "emoji"]) {
   document.getElementById(id).addEventListener("toggle", (event) => {
     const open = event.newState === "open";
-    lastTarget?.toggleAttribute("data-hover", open);
-    lastTarget?.querySelector(`[popovertarget="${id}"]`)?.setAttribute("aria-expanded", String(open));
+    const target = id === "emoji" && forComposer ? null : lastTarget;
+    target?.toggleAttribute("data-hover", open);
+    target?.querySelector(`[popovertarget="${id}"]`)?.setAttribute("aria-expanded", String(open));
   });
 }
 
@@ -79,7 +83,7 @@ function clearReply() {
 function react(message, emoji) {
   let bar = message.querySelector(".sd-reactions");
   if (!bar) {
-    message.querySelector(".sd-message-body").insertAdjacentHTML("beforeend", '<div class="sd-reactions"><button class="sd-reactions-add" aria-label="Add reaction" data-sd-tip="Add reaction" popovertarget="emoji">${icon("plus")}</button></div>');
+    message.querySelector(".sd-message-body").insertAdjacentHTML("beforeend", `<div class="sd-reactions"><button class="sd-reactions-add" aria-label="Add reaction" data-sd-tip="Add reaction" popovertarget="emoji">${icon("plus")}</button></div>`);
     bar = message.querySelector(".sd-reactions");
   }
   const existing = [...bar.querySelectorAll("[data-sd-reaction]")].find((b) => b.querySelector("span").textContent === emoji);
@@ -151,7 +155,11 @@ picker.addEventListener("click", (event) => {
   if (!option) return;
   const emoji = option.textContent;
   picker.hidePopover();
-  if (lastTarget) react(lastTarget, emoji);
+  if (forComposer) {
+    input.setRangeText(emoji, input.selectionStart, input.selectionEnd, "end");
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.focus();
+  } else if (lastTarget) react(lastTarget, emoji);
 });
 search.addEventListener("input", () => {
   const q = search.value.trim();

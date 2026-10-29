@@ -23,8 +23,8 @@
     <div class="sd-titlebar-start"><span class="text-sm">Containers</span></div>
     <div class="sd-titlebar-end">
       <div class="sd-window-controls [&_svg]:size-5">
-        <button data-sd-window="minimize" aria-label="Minimize"><i data-ic="minus"></i></button>
-        <button data-sd-window="maximize" aria-label="Maximize"><span class="sd-icon-maximize"><i data-ic="expand"></i></span><span class="sd-icon-restore"><i data-ic="contract"></i></span></button>
+        <button data-sd-window="minimize" aria-label="Minimize"><i data-ic="minimize"></i></button>
+        <button data-sd-window="maximize" aria-label="Maximize"><span class="sd-icon-maximize"><i data-ic="maximize"></i></span><span class="sd-icon-restore"><i data-ic="restore"></i></span></button>
         <button data-sd-window="close" aria-label="Close"><i data-ic="close"></i></button>
       </div>
     </div>
@@ -40,12 +40,16 @@
   <nav class="sd-rail" id="shell-rail" aria-label="Pages" data-sd-ornaments="bottom" data-sd-ornaments-size="200">
     <span class="sd-rail-home" aria-hidden="true"><i data-ic="view"></i></span>
     <div class="sd-rail-list">
-      <a class="sd-rail-item" href="./shell.html" aria-current="page"><i data-ic="object"></i><span>Containers</span></a>
-      <a class="sd-rail-item" href="./charts.html"><i data-ic="list-number"></i><span>Stats</span></a>
+      <a class="sd-rail-item" href="./shell.html" aria-current="page"><i data-ic="container"></i><span>Containers</span></a>
+      <a class="sd-rail-item" href="./charts.html"><i data-ic="chart"></i><span>Stats</span></a>
       <button class="sd-rail-item" type="button" data-elsewhere="Activity"><i data-ic="history"></i><span>Activity</span></button>
-      <button class="sd-rail-item" type="button" data-elsewhere="Resources"><i data-ic="place"></i><span>Resources</span></button>
-      <button class="sd-rail-item" type="button" data-elsewhere="Manage"><i data-ic="edit"></i><span>Manage</span></button>
-      <button class="sd-rail-item" type="button" data-elsewhere="Logs"><i data-ic="list-bullet"></i><span>Logs</span></button>
+      <button class="sd-rail-item" type="button" data-elsewhere="Resources"><i data-ic="sliders"></i><span>Resources</span></button>
+      <button class="sd-rail-item" type="button" data-elsewhere="Manage"><i data-ic="settings"></i><span>Manage</span></button>
+      <button class="sd-rail-item" type="button" data-elsewhere="Logs"><i data-ic="logs"></i><span>Logs</span></button>
+    </div>
+    <div class="sd-rail-tools">
+      <button class="sd-rail-item" type="button" data-sd-theme-cycle><i data-ic="theme"></i><span>Theme</span></button>
+      <button class="sd-rail-item" type="button" data-sd-rain-toggle aria-pressed="false"><i data-ic="rain"></i><span>Rain</span></button>
     </div>
   </nav>
 

@@ -34,8 +34,8 @@
     <span class="sd-titlebar-brand"><b>Chat</b></span>
     <div class="sd-titlebar-end">
       <div class="sd-window-controls">
-        <button data-sd-window="minimize" aria-label="Minimize" data-sd-tip="Minimize" data-sd-tip-side="bottom"><i data-ic="minus"></i></button>
-        <button data-sd-window="maximize" aria-label="Maximize" data-sd-tip="Maximize" data-sd-tip-side="bottom"><i data-ic="expand" class="sd-icon-maximize"></i><i data-ic="contract" class="sd-icon-restore"></i></button>
+        <button data-sd-window="minimize" aria-label="Minimize" data-sd-tip="Minimize" data-sd-tip-side="bottom"><i data-ic="minimize"></i></button>
+        <button data-sd-window="maximize" aria-label="Maximize" data-sd-tip="Maximize" data-sd-tip-side="bottom"><i data-ic="maximize" class="sd-icon-maximize"></i><i data-ic="restore" class="sd-icon-restore"></i></button>
         <button data-sd-window="close" aria-label="Close" data-sd-tip="Close" data-sd-tip-side="bottom"><i data-ic="close"></i></button>
       </div>
     </div>
@@ -64,11 +64,11 @@
         <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="sidebar" data-sd-key="[" aria-label="Collapse sidebar" data-sd-tip="Collapse sidebar ([)"><i data-ic="chevrons-left"></i></button></div>
       <nav class="sd-sidebar-body" aria-label="Channels">
         <div class="sd-item-group">Channels <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="New channel" data-sd-tip="New channel"><i data-ic="plus"></i></button></div>
-        <a class="sd-sidebar-link" href="#" aria-current="page"><i data-ic="comment"></i> plans</a>
-        <a class="sd-sidebar-link" href="#" data-unread><i data-ic="comment"></i> recipes <span class="sd-badge-count" data-tone="danger">2</span></a>
-        <a class="sd-sidebar-link" href="#" data-muted><i data-ic="comment"></i> photos</a>
-        <a class="sd-sidebar-link" href="#"><i data-ic="account"></i> seed-swap<span class="sd-sr-only"> (closed channel)</span></a>
-        <a class="sd-sidebar-link" href="#" data-unread><i data-ic="account"></i> committee<span class="sd-sr-only"> (closed channel)</span></a>
+        <a class="sd-sidebar-link" href="#" aria-current="page"><i data-ic="hash"></i> plans</a>
+        <a class="sd-sidebar-link" href="#" data-unread><i data-ic="hash"></i> recipes <span class="sd-badge-count" data-tone="danger">2</span></a>
+        <a class="sd-sidebar-link" href="#" data-muted><i data-ic="hash"></i> photos</a>
+        <a class="sd-sidebar-link" href="#"><i data-ic="lock"></i> seed-swap<span class="sd-sr-only"> (closed channel)</span></a>
+        <a class="sd-sidebar-link" href="#" data-unread><i data-ic="lock"></i> committee<span class="sd-sr-only"> (closed channel)</span></a>
       </nav>
       <div class="sd-sidebar-foot chat-account">
         <span class="sd-avatar" data-status="online">DA</span>
@@ -87,13 +87,13 @@
       <div class="sd-shell-bar-title">
         <button class="sd-icon-btn sd-phone-only" data-sd-shell="drawer" aria-controls="shell-rail" aria-label="Open navigation" data-sd-tip="Open navigation" data-sd-tip-side="bottom"><i data-ic="menu"></i></button>
         <button class="sd-icon-btn sd-shell-pin sd-desktop-only" data-sd-shell="sidebar" data-sd-key="[" aria-label="Pin sidebar open" data-sd-tip="Pin sidebar open ([)" data-sd-tip-side="bottom"><i data-ic="chevrons-right"></i></button>
-        <i data-ic="comment"></i><b>plans</b><span class="sd-desktop-only">Beds, dates and who brings what</span>
+        <i data-ic="hash"></i><b>plans</b><span class="sd-desktop-only">Beds, dates and who brings what</span>
       </div>
       <div class="sd-shell-bar-center sd-desktop-only"><span class="sd-status" data-tone="success">6 online</span></div>
       <div class="sd-shell-bar-end">
-        <button class="sd-icon-btn" popovertarget="pinned" aria-label="Pinned, 2" data-sd-tip="Pinned" data-sd-tip-side="bottom"><i data-ic="bookmark"></i><span class="sd-badge-count">2</span></button>
+        <button class="sd-icon-btn" popovertarget="pinned" aria-label="Pinned, 2" data-sd-tip="Pinned" data-sd-tip-side="bottom"><i data-ic="pin"></i><span class="sd-badge-count">2</span></button>
         <button class="sd-icon-btn" data-sd-open="palette" data-sd-key="mod+k" aria-label="Search" data-sd-tip="Search (Ctrl K)" data-sd-tip-side="bottom"><i data-ic="search"></i></button>
-        <button class="sd-icon-btn" data-sd-shell="aside" data-sd-key="]" aria-label="Members" data-sd-tip="Members (])" data-sd-tip-side="bottom"><i data-ic="person"></i></button>
+        <button class="sd-icon-btn" data-sd-shell="aside" data-sd-key="]" aria-label="Members" data-sd-tip="Members (])" data-sd-tip-side="bottom"><i data-ic="people"></i></button>
       </div>
     </header>
 
@@ -105,7 +105,7 @@
           <time class="sd-message-time" datetime="16:02">16:02</time>
           <div class="sd-message-body">
             <div class="sd-message-text"><b class="sd-message-author">Ines</b><span class="sd-message-tag">Owner</span>Here is the planting plan for the east beds. The third row still needs a crop.</div>
-            <div class="sd-file"><span class="sd-file-type">pdf</span><span class="sd-file-body"><span class="sd-file-name">east-beds-plan.pdf</span><span class="sd-file-meta">1.8 MB</span></span><button class="sd-file-dl sd-btn-ghost" aria-label="Open file" data-sd-tip="Open file"><i data-ic="external"></i></button></div>
+            <div class="sd-file"><span class="sd-file-type">pdf</span><span class="sd-file-body"><span class="sd-file-name">east-beds-plan.pdf</span><span class="sd-file-meta">1.8 MB</span></span><button class="sd-file-dl sd-btn-ghost" aria-label="Download file" data-sd-tip="Download file"><i data-ic="download"></i></button></div>
             <div class="sd-reactions"><button data-sd-reaction aria-pressed="true"><span>👍</span><b>3</b></button><button data-sd-reaction aria-pressed="false"><span>👀</span><b>1</b></button><button class="sd-reactions-add" aria-label="Add reaction" data-sd-tip="Add reaction" popovertarget="emoji"><i data-ic="plus"></i></button></div>
           </div>
           <div class="sd-message-actions" role="toolbar" aria-label="Message actions"><button data-emoji aria-label="React 👍">👍</button><button data-emoji aria-label="React 😂">😂</button><button data-emoji aria-label="React 🔥">🔥</button><hr><button aria-label="Add reaction" data-sd-tip="Add reaction (E)" data-key="E" popovertarget="emoji"><i data-ic="plus"></i></button><button aria-label="Reply" data-sd-tip="Reply (R)" data-key="R" data-reply><i data-ic="undo"></i></button><hr><button aria-label="More" data-sd-tip="More" aria-haspopup="menu" popovertarget="msg-menu"><i data-ic="more"></i></button></div>
@@ -146,7 +146,7 @@
         <div class="sd-marker" data-tone="danger"><span>New</span></div>
 
         <article class="sd-message" data-mention data-reply data-sd-contextmenu="msg-menu" style="--who: var(--sd-pending)">
-          <span class="sd-message-ref-mark"><i data-ic="undo"></i></span>
+          <span class="sd-message-ref-mark"><i data-ic="reply"></i></span>
           <button class="sd-message-ref"><b style="--who: var(--sd-extra)">Ines</b><span>Here is the planting plan for the east beds. The third row still needs a crop.</span></button>
           <time class="sd-message-time">10:05</time>
           <div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Mara</b><span class="sd-mention" style="--who: var(--sd-success)">@Dana</span> can you take the third row? I can bring seedlings on Saturday.</div></div>
@@ -171,7 +171,8 @@
         <div class="sd-composer-row">
           <button type="button" class="sd-btn sd-btn-ghost sd-btn-icon sd-composer-add" aria-label="Add" data-sd-tip="Add" aria-haspopup="menu" popovertarget="add-menu" data-sd-side="top"><i data-ic="plus"></i></button>
           <textarea rows="1" data-sd-autogrow data-sd-enter-submit data-sd-suggest="mentions" placeholder="Message #plans" aria-label="Message"></textarea>
-          <button class="sd-btn sd-btn-primary sd-btn-icon sd-composer-send" aria-label="Send" data-sd-tip="Send"><i data-ic="chevron-right"></i></button>
+          <button type="button" class="sd-btn sd-btn-ghost sd-btn-icon" aria-label="Emoji" data-sd-tip="Emoji" aria-haspopup="dialog" popovertarget="emoji" data-composer-emoji><i data-ic="smile"></i></button>
+          <button class="sd-btn sd-btn-primary sd-btn-icon sd-composer-send" aria-label="Send" data-sd-tip="Send"><i data-ic="send"></i></button>
         </div>
         <div class="sd-suggest" id="mentions" hidden>
           <div class="sd-menu" role="listbox" aria-label="Mention someone">
@@ -256,10 +257,10 @@
 <!-- Message menu (right-click, or More in the action bar) -->
 <div popover id="msg-menu" class="sd-popover sd-message-menu">
   <div class="sd-menu" role="menu" aria-label="Message">
-    <button role="menuitem" data-menu-reply><i data-ic="undo"></i>Reply<kbd>R</kbd></button>
+    <button role="menuitem" data-menu-reply><i data-ic="reply"></i>Reply<kbd>R</kbd></button>
     <button role="menuitem"><i data-ic="plus"></i>Add reaction<kbd>E</kbd></button>
     <button role="menuitem"><i data-ic="copy"></i>Copy text<kbd>C</kbd></button>
-    <button role="menuitem"><i data-ic="bookmark"></i>Pin<kbd>P</kbd></button>
+    <button role="menuitem"><i data-ic="pin"></i>Pin<kbd>P</kbd></button>
     <hr class="sd-menu-sep">
     <button role="menuitem" data-tone="danger"><i data-ic="delete"></i>Delete</button>
   </div>
@@ -278,8 +279,8 @@
 <div popover id="pinned" class="sd-popover sd-popover-panel" data-sd-align="end">
   <div class="sd-popover-head">Pinned <button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" popovertarget="pinned" popovertargetaction="hide" aria-label="Close" data-sd-tip="Close"><i data-ic="close"></i></button></div>
   <div class="sd-popover-body">
-    <a class="sd-item" href="#"><i data-ic="bookmark"></i><span class="sd-item-body"><span class="sd-item-title">Seed list</span><span class="sd-item-sub">Ines · yesterday</span></span></a>
-    <a class="sd-item" href="#"><i data-ic="bookmark"></i><span class="sd-item-body"><span class="sd-item-title">east-beds-plan.pdf</span><span class="sd-item-sub">Ines · yesterday</span></span></a>
+    <a class="sd-item" href="#"><i data-ic="pin"></i><span class="sd-item-body"><span class="sd-item-title">Seed list</span><span class="sd-item-sub">Ines · yesterday</span></span></a>
+    <a class="sd-item" href="#"><i data-ic="pin"></i><span class="sd-item-body"><span class="sd-item-title">east-beds-plan.pdf</span><span class="sd-item-sub">Ines · yesterday</span></span></a>
   </div>
 </div>
 

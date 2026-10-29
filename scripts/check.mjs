@@ -714,6 +714,10 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
     const reopened = await aside();
     if (reopened.state !== "open" || reopened.expanded !== "true") fail(where, `] did not open the members aside ${JSON.stringify(reopened)}`);
     const box = page.locator("[data-composer] textarea");
+    await page.locator("[data-composer-emoji]").click();
+    await page.locator("#emoji .sd-emoji-grid > button", { hasText: "🎉" }).click();
+    if (!(await box.inputValue()).includes("🎉")) fail(where, `composer emoji button did not put the emoji in the message: ${await box.inputValue()}`);
+    await box.fill("");
     await box.click();
     await box.type("Hi @ro");
     const shown = await page.evaluate(() => !document.getElementById("mentions").hidden && [...document.querySelectorAll('#mentions [role="option"]:not([hidden])')].map((o) => o.dataset.value).join(","));

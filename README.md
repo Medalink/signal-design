@@ -279,8 +279,11 @@ Signal draws a set of line icons for what an editor and its app need: history
 (`undo`, `redo`), text (`bold`, `italic`, `underline`, `strike`, `list-bullet`,
 `list-number`, `align-left`, `align-center`, `align-right`, `align-justify`),
 margin and review (`comment`, `sparkle`, `history`, `bookmark`, `view`, `link`,
-`unlink`), things (`person`, `account`, `object`, `place`, `write`, `edit`,
-`delete`, `copy`, `external`, `publish`, `sync`, `warning`, `check`) and
+`unlink`), things (`person`, `people`, `account`, `object`, `place`, `write`,
+`edit`, `delete`, `copy`, `external`, `publish`, `download`, `sync`, `warning`,
+`check`), chat (`hash`, `lock`, `reply`, `send`, `pin`, `smile`, `bell`),
+app screens (`container`, `chart`, `database`, `sliders`, `settings`, `logs`,
+`theme`, `rain`), window controls (`minimize`, `maximize`, `restore`) and
 interface (`close`, `plus`, `minus`, `search`, `menu`, `more`, the four
 `chevron-*`, `chevrons-left`, `chevrons-right`, `expand`, `contract`). They
 follow the rest of the kit: straight lines and right angles, a 1.5 stroke with
