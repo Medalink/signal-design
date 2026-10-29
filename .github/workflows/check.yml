@@ -86,6 +86,9 @@ jobs:
       - name: Production showcase build keeps the bar
         if: matrix.suite == 'chromium'
         run: node scripts/check-showcase-build.mjs
+      - name: The check CLI names every break of its rules
+        if: matrix.suite == 'chromium'
+        run: node e2e/check.mjs
 
       - if: matrix.suite != 'a11y'
         run: node scripts/check.mjs http://localhost:5178/ ${{ matrix.args }}
