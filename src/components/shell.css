@@ -792,7 +792,8 @@
   /* Phones and narrow windows: top bar, and rail + sidebar as a drawer. */
   @media (max-width: 47.99rem) {
     .sd-shell,
-    .sd-shell[data-sidebar="collapsed"] {
+    .sd-shell[data-sidebar="collapsed"],
+    .sd-shell:not(:has(> .sd-sidebar)) {
       grid-template-columns: minmax(0, 1fr);
       grid-template-areas:
         "title"

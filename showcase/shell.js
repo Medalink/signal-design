@@ -154,9 +154,9 @@ function updateRow(c) {
 
 const COLUMNS = [
   ["name", "Name", ""],
-  ["port", "Port", "max-md:hidden sd-num text-end"],
-  ["cpu", "CPU", "max-md:hidden sd-num text-end"],
-  ["memory", "Memory", "max-md:hidden sd-num text-end"],
+  ["port", "Port", "max-md:hidden sd-num"],
+  ["cpu", "CPU", "max-md:hidden sd-num"],
+  ["memory", "Memory", "max-md:hidden sd-num"],
   ["uptime", "Uptime", "max-md:hidden ps-8"],
   ["state", "State", ""],
 ];
