@@ -218,12 +218,25 @@ function stats(points) {
 
 const nice = (v, step) => Math.ceil(v / step) * step;
 
+/** Write a chart's facts under it, one span each; a fact with a tone is colored. */
+function summarize(id, facts) {
+  const line = document.querySelector(`#${id} [data-summary]`);
+  line.replaceChildren(
+    ...facts.map(({ text, tone }) => {
+      const span = document.createElement("span");
+      span.textContent = text;
+      if (tone) span.className = `text-${tone}`;
+      return span;
+    }),
+  );
+}
+
 /** Draw one chart again for the range; the canvas is reused. */
-function plot(id, options, name, summary) {
+function plot(id, options, name, facts) {
   const canvas = document.querySelector(`#${id} canvas`);
   canvas.sdChart?.destroy();
   createChart(canvas, { type: "area", legend: options.series.length > 1, ...options });
-  canvas.setAttribute("aria-label", `${name} over ${rangeWords[key]}. ${summary.replace(/<[^>]+>/g, "")}`);
+  canvas.setAttribute("aria-label", `${name} over ${rangeWords[key]}. ${facts.map((f) => f.text).join(". ")}.`);
 }
 
 function render() {
@@ -249,14 +262,13 @@ function render() {
   $("win-memory").textContent = percent((m.peak.y / WINDOWS.memory) * 100);
   $("win-memory-note").textContent = `of ${WINDOWS.memory} GiB at ${at(m.peak)}`;
 
-  const cpuSummary = `<span>Peak ${percent(c.peak.y)} at ${at(c.peak)}</span><span>Average ${percent(c.avg)}</span><span>Latest ${percent(c.latest)}</span>`;
-  const memSummary =
-    `<span>Peak ${gib(m.peak.y)} at ${at(m.peak)}</span><span>Average ${gib(m.avg)}</span><span>Latest ${gib(m.latest)}</span>` +
-    (over.length ? `<span class="text-danger">Over the limit for ${duration(over.length * bucket)}</span>` : "");
-  document.querySelector("#cpu [data-summary]").innerHTML = cpuSummary;
-  document.querySelector("#memory [data-summary]").innerHTML = memSummary;
+  const cpuFacts = [{ text: `Peak ${percent(c.peak.y)} at ${at(c.peak)}` }, { text: `Average ${percent(c.avg)}` }, { text: `Latest ${percent(c.latest)}` }];
+  const memFacts = [{ text: `Peak ${gib(m.peak.y)} at ${at(m.peak)}` }, { text: `Average ${gib(m.avg)}` }, { text: `Latest ${gib(m.latest)}` }];
+  if (over.length) memFacts.push({ text: `Over the limit for ${duration(over.length * bucket)}`, tone: "danger" });
+  summarize("cpu", cpuFacts);
+  summarize("memory", memFacts);
 
-  plot("cpu", { unit: "%", yMax: nice(c.peak.y * 1.15, 5), series: [{ label: "Total CPU", data: cpu }] }, "Total CPU, share of WSL", cpuSummary);
+  plot("cpu", { unit: "%", yMax: nice(c.peak.y * 1.15, 5), series: [{ label: "Total CPU", data: cpu }] }, "Total CPU, share of WSL", cpuFacts);
   // The part above the limit is its own series in the danger role; its neighbors join it so the line stays whole.
   const series = [{ label: "Total memory", data: memory }];
   if (over.length) {
@@ -267,7 +279,7 @@ function render() {
     "memory",
     { unit: " GiB", yMax: nice(Math.max(LIMIT * 1.2, m.peak.y * 1.1), 0.5), series, markers: [{ axis: "y", value: LIMIT, label: `Limit ${LIMIT} GiB`, tone: "warning" }] },
     "Total memory",
-    memSummary + ` The limit is ${LIMIT} GiB.`,
+    [...memFacts, { text: `The limit is ${LIMIT} GiB` }],
   );
 
   $("count").textContent = data.rows.length;
