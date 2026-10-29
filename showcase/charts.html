@@ -17,9 +17,9 @@
   <canvas class="sd-rain" data-sd-rain data-sd-rain-style="squares" aria-hidden="true"></canvas>
 
   <div class="sd-titlebar sd-desktop-only" data-tauri-drag-region role="region" aria-label="Window">
-    <div class="sd-titlebar-start"><span class="sd-titlebar-brand"><b>Stats</b></span></div>
+    <div class="sd-titlebar-start"><span class="sd-titlebar-brand"><b>Watcher</b></span></div>
     <div class="sd-titlebar-end">
-      <div class="sd-window-controls">
+      <div class="sd-window-controls [&_svg]:size-5">
         <button data-sd-window="minimize" data-icon="minimize" aria-label="Minimize"></button>
         <button data-sd-window="maximize" aria-label="Maximize"><span class="sd-icon-maximize" data-icon="maximize"></span><span class="sd-icon-restore" data-icon="restore"></span></button>
         <button data-sd-window="close" data-icon="close" aria-label="Close"></button>
@@ -37,10 +37,10 @@
     <div class="sd-rail-list">
       <a class="sd-rail-item" href="./shell.html" data-icon="container"><span>Containers</span></a>
       <a class="sd-rail-item" href="./charts.html" data-icon="chart" aria-current="page"><span>Stats</span></a>
-      <a class="sd-rail-item" href="#" data-icon="history"><span>Activity</span></a>
-      <a class="sd-rail-item" href="#" data-icon="sliders"><span>Resources</span></a>
-      <a class="sd-rail-item" href="#" data-icon="settings"><span>Manage</span></a>
-      <a class="sd-rail-item" href="#" data-icon="logs"><span>Logs</span></a>
+      <button class="sd-rail-item" type="button" disabled data-icon="history"><span>Activity</span></button>
+      <button class="sd-rail-item" type="button" disabled data-icon="sliders"><span>Resources</span></button>
+      <button class="sd-rail-item" type="button" disabled data-icon="settings"><span>Manage</span></button>
+      <button class="sd-rail-item" type="button" disabled data-icon="logs"><span>Logs</span></button>
     </div>
     <div class="sd-rail-tools">
       <button class="sd-rail-item" type="button" data-sd-theme-cycle data-icon="theme"><span>Theme</span></button>
@@ -82,13 +82,13 @@
         </section>
 
         <div class="grid gap-8 grid-cols-[repeat(auto-fit,minmax(min(100%,30rem),1fr))]">
-          <figure class="sd-chart" data-chart-theme="mono" style="--h: 260px" id="cpu">
+          <figure class="sd-chart content-start" data-chart-theme="mono" style="--h: 260px" id="cpu">
             <div class="sd-chart-bar"><h2 class="sd-label sd-label-strong">Total CPU</h2></div>
             <p class="sd-subtle text-sm">Share of WSL's 32 processors, added up across containers.</p>
             <div class="sd-chart-plot"><canvas role="img"></canvas></div>
             <p class="sd-meta" data-summary></p>
           </figure>
-          <figure class="sd-chart" data-chart-theme="mono" style="--h: 260px" id="memory">
+          <figure class="sd-chart content-start" data-chart-theme="mono" style="--h: 260px" id="memory">
             <div class="sd-chart-bar"><h2 class="sd-label sd-label-strong">Total memory</h2></div>
             <p class="sd-subtle text-sm">Memory in use by all containers. The dashed line is the 3 GiB limit.</p>
             <div class="sd-chart-plot"><canvas role="img"></canvas></div>

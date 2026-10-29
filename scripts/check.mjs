@@ -927,6 +927,20 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
     const sorted = await page.evaluate(() => document.querySelector('#table th[data-sort="name"]').getAttribute("aria-sort"));
     if (sorted !== "ascending") fail(where, `aria-sort is ${sorted}`);
   }
+
+  // The two Watcher screens lead to each other from the rail; its other sections are dimmed and cannot be pressed.
+  if ((pageName === "shell" || pageName === "charts") && width === 1280 && theme === "ink") {
+    const rail = () => page.evaluate(() => [...document.querySelectorAll("#shell-rail .sd-rail-list > .sd-rail-item")].map((item) => `${item.textContent.trim()}:${item.disabled ? "disabled" : item.getAttribute("aria-current") === "page" ? "current" : item.getAttribute("href")}`).join());
+    const dead = "Activity:disabled,Resources:disabled,Manage:disabled,Logs:disabled";
+    const other = pageName === "shell" ? "charts" : "shell";
+    const here = await rail();
+    const expected = pageName === "shell" ? `Containers:current,Stats:./charts.html,${dead}` : `Containers:./shell.html,Stats:current,${dead}`;
+    if (here !== expected) fail(where, `rail is ${here}`);
+    await page.locator("#shell-rail .sd-rail-item", { hasText: pageName === "shell" ? "Stats" : "Containers" }).click();
+    await page.waitForURL(`**/${other}.html`);
+    const there = await rail();
+    if (there === here || !there.startsWith(pageName === "shell" ? "Containers:./shell.html,Stats:current" : "Containers:current")) fail(where, `${other} rail after the click is ${there}`);
+  }
 }
 
 for (const [name, engine] of Object.entries(engines)) {

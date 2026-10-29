@@ -7,8 +7,6 @@ mountBar();
 init({ scrollbars: savedScrollbars() });
 
 for (const el of document.querySelectorAll("[data-icon]")) el.insertAdjacentHTML("afterbegin", icon(el.dataset.icon));
-// The rail's pages that this example does not build stay where they are.
-for (const link of document.querySelectorAll('a[href="#"]')) link.addEventListener("click", (e) => e.preventDefault());
 
 const $ = (id) => document.getElementById(id);
 

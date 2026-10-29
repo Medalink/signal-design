@@ -187,6 +187,12 @@
   .sd-rail-item:focus-visible {
     outline-offset: -1px;
   }
+  /* A section that is not available: dimmed like a disabled button. */
+  .sd-rail-item:disabled,
+  .sd-rail-item[aria-disabled="true"] {
+    opacity: 0.35;
+    pointer-events: none;
+  }
 
   /* A place: a square image, initials or icon, for a narrow rail of groups,
      servers or workspaces. Sized for a 72px rail (--shell-rail: 4.5rem).

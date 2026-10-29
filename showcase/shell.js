@@ -154,11 +154,11 @@ function updateRow(c) {
 
 const COLUMNS = [
   ["name", "Name", ""],
-  ["port", "Port", "max-md:hidden sd-num"],
-  ["cpu", "CPU", "max-md:hidden sd-num"],
-  ["memory", "Memory", "max-md:hidden sd-num"],
-  ["uptime", "Uptime", "max-md:hidden ps-8"],
-  ["state", "State", ""],
+  ["port", "Port", "max-md:hidden sd-num w-24"],
+  ["cpu", "CPU", "max-md:hidden sd-num w-24"],
+  ["memory", "Memory", "max-md:hidden sd-num w-32"],
+  ["uptime", "Uptime", "max-md:hidden ps-8 w-40"],
+  ["state", "State", "w-40"],
 ];
 const sorters = {
   name: (a, b) => a.id.localeCompare(b.id),
@@ -178,7 +178,7 @@ function buildGroup(name) {
     <section class="grid gap-3" aria-labelledby="group-${name}">
       <h2 class="sd-label" id="group-${name}">${name} <span class="sd-count" data-group-count></span></h2>
       <div class="sd-table-wrap">
-        <table class="sd-table">
+        <table class="sd-table w-full md:table-fixed">
           <thead><tr>${COLUMNS.map(([key, label, cls]) => `<th class="${cls}" data-sort="${key}" tabindex="0">${label}</th>`).join("")}</tr></thead>
         </table>
       </div>
@@ -386,12 +386,6 @@ expandAll.addEventListener("click", () => {
 groupsEl.addEventListener("click", (event) => {
   if (event.target.closest("[data-sd-toggle]")) queueMicrotask(syncExpandAll);
 });
-
-/* ---- Rail ---------------------------------------------------------------------- */
-
-for (const button of document.querySelectorAll("[data-elsewhere]")) {
-  button.addEventListener("click", () => toast(`${button.dataset.elsewhere} is not part of this example`));
-}
 
 /* ---- Live numbers: a state change every two seconds, not ambient motion --------------- */
 
