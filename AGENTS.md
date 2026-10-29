@@ -186,9 +186,9 @@ it breaks:
   face), or in a family that is not `--sd-font-sans`, `--sd-font-mono` or
   `--sd-font-reading`.
 - `color`: a color that is the same in the ink and paper themes and is not the
-  value of any `--sd-*` token in any theme, such as a hex you wrote. Every
-  element with `data-theme` flips along with the page, so a themed subtree or an
-  app root is checked too. Tints of a token and a person's `--who` and `--edge`
+  value of any `--sd-*` token in ink, in paper or in the theme the page is in,
+  such as a hex you wrote. Every element with `data-theme` flips along with the
+  page, so a themed subtree or an app root is checked too. Tints of a token and a person's `--who` and `--edge`
   pass. A hex copied from a token's value passes too: the gate cannot tell it
   from the token, so write the token.
 - `nav-color`: a heading, nav link, sidebar link, rail item, tab or breadcrumb

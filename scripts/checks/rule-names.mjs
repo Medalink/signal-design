@@ -90,16 +90,33 @@ export default async function checkRuleNames(page, where, fail) {
     if (unknownEquals.code !== 2 || !unknownEquals.out.includes("sparkles")) fail(`${where} rule names`, `--skip=sparkles exited ${unknownEquals.code}: ${unknownEquals.out.trim()}`);
 
     // A stylesheet the page cannot read (file:, another origin) still gives the
-    // color rule its tokens.
+    // color rule its tokens. On an ink page with no graphite part, a value
+    // only graphite's tokens have (its surface, say) was written by hand.
+    const graphiteOnly = await page.evaluate(() => {
+      const values = (theme) => {
+        const el = document.createElement("div");
+        el.setAttribute("data-theme", theme);
+        document.body.append(el);
+        const s = getComputedStyle(el);
+        const found = [...s].filter((name) => name.startsWith("--sd-")).map((name) => s.getPropertyValue(name).trim().toLowerCase());
+        el.remove();
+        return found;
+      };
+      const others = new Set([...values("ink"), ...values("paper")]);
+      return values("graphite").find((value) => /^#[0-9a-f]{6}$/.test(value) && !others.has(value));
+    });
+    if (!graphiteOnly) fail(`${where} rule names`, "no graphite token has a hex value that ink and paper lack; the graphite-only case needs another token");
     const styled = join(dir, "styled.html");
     writeFileSync(
       styled,
       `<!doctype html><html data-theme="ink"><title>t</title><link rel="stylesheet" href="${pathToFileURL(join(root, "dist/signal.css")).href}">
 <p id="hex" style="color:#3b82f6">hex</p>
-<p id="token" style="color:var(--sd-fg-muted)">token</p>`,
+<p id="token" style="color:var(--sd-fg-muted)">token</p>
+<p id="graphite" style="color:${graphiteOnly}">graphite</p>`,
     );
     const color = runOn(pathToFileURL(styled).href, "--skip", "fonts");
     if (!/FAIL \S+ @1280px: color: p#hex/.test(color.out) || color.out.includes("p#token")) fail(`${where} rule names`, `the color rule on a page whose stylesheet it cannot read: ${color.out.trim()}`);
+    if (!/FAIL \S+ @1280px: color: p#graphite/.test(color.out)) fail(`${where} rule names`, `${graphiteOnly}, a graphite token's value written by hand on an ink page, was not reported: ${color.out.trim()}`);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

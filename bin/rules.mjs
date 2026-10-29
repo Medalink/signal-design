@@ -69,9 +69,9 @@ export function typeRule() {
 /**
  * No hard-coded colors (color). A color that comes from a token changes with
  * the theme, so the page is read in ink and in paper, and a color that is the
- * same in both, and is not the value of any --sd-* token in any theme, was
- * written by hand. A hex copied from a token passes: the rule cannot tell it
- * from the token.
+ * same in both, and is not the value of any --sd-* token in ink, in paper or
+ * in the theme the page is in, was written by hand. A hex copied from a token
+ * passes: the rule cannot tell it from the token.
  * Tints of a token pass (alpha is ignored), and so does a person's own color
  * (--who, --edge). Every element that carries data-theme flips with <html>, so
  * an app themed on its body or root is read too. The themes are put back when
@@ -127,9 +127,10 @@ export function colorRule() {
     }
     tokens.delete("");
   };
-  // A token's value in the page's own theme counts, and in each of Signal's:
+  // A token's value in the theme the page is in counts, and in ink and paper:
   // a script that painted a token's color inline (the ornament glints)
-  // repaints on sd:theme, which this flip does not send.
+  // repaints on sd:theme, which this flip does not send. Graphite's values
+  // count only on a page in graphite, or #1a1a1a written by hand would pass.
   collect();
   if (!tokens.size) return [];
 
@@ -158,7 +159,7 @@ export function colorRule() {
   document.head.append(quiet);
   let ink, paper, user;
   try {
-    for (const theme of ["ink", "graphite", "paper"]) {
+    for (const theme of ["ink", "paper"]) {
       for (const holder of holders) holder.setAttribute("data-theme", theme);
       collect();
       if (theme === "ink") {
@@ -167,7 +168,7 @@ export function colorRule() {
           const s = getComputedStyle(el);
           return [rgb(s.getPropertyValue("--who")), rgb(s.getPropertyValue("--edge"))];
         });
-      } else if (theme === "paper") paper = read();
+      } else paper = read();
     }
   } finally {
     holders.forEach((holder, i) => (was[i] == null ? holder.removeAttribute("data-theme") : holder.setAttribute("data-theme", was[i])));
