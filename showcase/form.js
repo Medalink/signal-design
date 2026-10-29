@@ -53,16 +53,22 @@ const foundServerRow = (s) => `<li class="grid gap-2" data-found-id="${s.id}">
     <p>${esc(s.name)}</p>
     <p class="sd-subtle break-all font-mono text-sm">${esc(s.address)}</p>
   </div>
-  <div class="flex gap-3">
-    <select class="sd-control-sm min-w-0 flex-1" aria-label="Model for ${esc(s.name)}">${s.models.map((m) => `<option>${esc(m)}</option>`).join("")}</select>
+  <div class="flex items-end gap-3">
+    <div class="sd-field min-w-0 flex-1">
+      <label class="sd-field-label" for="found-model-${s.id}">Model</label>
+      <select id="found-model-${s.id}" class="sd-control-sm" aria-label="Model for ${esc(s.name)}">${s.models.map((m) => `<option>${esc(m)}</option>`).join("")}</select>
+    </div>
     <button type="button" class="sd-btn sd-btn-sm" data-act="connect-server" aria-label="Connect ${esc(s.name)}">Connect</button>
   </div>
 </li>`;
 
 const foundAgentRow = (a) => `<li class="grid gap-2" data-agent-id="${a.id}">
   <p class="break-all font-mono">${esc(a.name)}</p>
-  <div class="flex gap-3">
-    <input class="sd-control-sm min-w-0 flex-1" aria-label="Model for ${esc(a.name)}" placeholder="Model (optional)" autocomplete="off">
+  <div class="flex items-end gap-3">
+    <div class="sd-field min-w-0 flex-1">
+      <label class="sd-field-label" for="agent-model-${a.id}">Model</label>
+      <input id="agent-model-${a.id}" class="sd-control-sm" aria-label="Model for ${esc(a.name)}" placeholder="Optional" autocomplete="off">
+    </div>
     <button type="button" class="sd-btn sd-btn-sm" data-act="connect-agent" aria-label="Connect ${esc(a.name)}">Connect</button>
   </div>
 </li>`;
