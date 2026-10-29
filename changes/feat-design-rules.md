@@ -11,10 +11,14 @@
   themes and is not the value of any `--sd-*` token, on a text, background,
   border or outline. The rule is `color`. Tints of a token, a person's `--who`
   and `--edge`, and a subtree with its own `data-theme` pass.
+- `signal-design check` now fails navigation and headings (`h1`-`h6`, `nav a`,
+  sidebar links, rail items, tabs, breadcrumb links, and an icon in one) whose
+  text color is a signal role. The rule is `nav-color`. Status inside a
+  `data-tone`, badge, count, dot or status, and a person's `--who`, pass.
 
 ### Added
 - `signal-design check` names the rule in every finding: `corners`, `shadows`,
-  `type`, `color`, `overflow`, `fonts`, `console`, `a11y`. `--skip <rule,...>`
+  `type`, `color`, `nav-color`, `overflow`, `fonts`, `console`, `a11y`. `--skip <rule,...>`
   turns rules off for a run, and an unknown name exits 2 with the list. An
   element with `data-sd-check-ignore="<rule> ..."` is exempt from those rules,
   itself and what it holds.

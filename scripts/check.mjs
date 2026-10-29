@@ -8,7 +8,8 @@
  * prebuilt dist/signal.css loaded without Tailwind (scripts/standalone.html).
  * Fails on: console errors, a font face that did not load, any rounded
  * corner, any blurred shadow (glow), a font weight or family outside
- * Signal's, a hard-coded color, horizontal scroll at phone width, and broken JS behaviors.
+ * Signal's, a hard-coded color, colored navigation, horizontal scroll at
+ * phone width, and broken JS behaviors.
  */
 import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -16,7 +17,7 @@ import { join } from "node:path";
 import ts from "typescript";
 import { fileURLToPath } from "node:url";
 import { chromium, webkit } from "playwright";
-import { sweep as rulesSweep, typeRule, colorRule } from "../bin/rules.mjs";
+import { sweep as rulesSweep, typeRule, colorRule, navColorRule } from "../bin/rules.mjs";
 import { checkLivingTable, checkLivingTableTypes } from "./check-living-table.mjs";
 import { checkReact, checkReactSsr, checkReactTypes } from "./check-react.mjs";
 import { checkFonts } from "./check-fonts.mjs";
@@ -608,7 +609,7 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
   for (const b of (await page.evaluate(sweep)).slice(0, 15)) fail(where, b);
   // The rules that read every element's style run once per page, at the first width and theme.
   if (width === widths[0] && theme === themes[0]) {
-    for (const rule of [typeRule, colorRule]) for (const b of (await page.evaluate(rule)).slice(0, 15)) fail(where, b);
+    for (const rule of [typeRule, colorRule, navColorRule]) for (const b of (await page.evaluate(rule)).slice(0, 15)) fail(where, b);
   }
 
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);

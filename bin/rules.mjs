@@ -7,7 +7,7 @@
  */
 
 /** Every rule the gate checks, by the name a finding, --skip and data-sd-check-ignore use. */
-export const RULES = ["corners", "shadows", "type", "color", "overflow", "fonts", "console", "a11y"];
+export const RULES = ["corners", "shadows", "type", "color", "nav-color", "overflow", "fonts", "console", "a11y"];
 
 /** Rounded corners (corners) and blurred shadows (shadows) anywhere on the page. */
 export function sweep() {
@@ -48,7 +48,7 @@ export function typeRule() {
   const found = new Set();
   const ignored = (el, rule) => !!el.closest(`[data-sd-check-ignore~="${rule}"]`);
   const describe = (el) =>
-    el.tagName.toLowerCase() + (el.id ? `#${el.id}` : "") + (el.className && typeof el.className === "string" ? `.${el.className.trim().split(/\s+/).slice(0, 3).join(".")}` : "");
+    el.tagName.toLowerCase() + (el.id ? `#${el.id}` : "") + (el.getAttribute("class")?.trim() ? `.${el.getAttribute("class").trim().split(/\s+/).slice(0, 3).join(".")}` : "");
   const norm = (family) => family.replace(/["']/g, "").replace(/\s+/g, "").toLowerCase();
   const field = "input:not([type=checkbox],[type=radio],[type=range],[type=color],[type=hidden]), textarea, select, button";
   for (const el of document.querySelectorAll("body *")) {
@@ -81,7 +81,7 @@ export function colorRule() {
   const html = document.documentElement;
   const ignored = (el, rule) => !!el.closest(`[data-sd-check-ignore~="${rule}"]`);
   const describe = (el) =>
-    el.tagName.toLowerCase() + (el.id ? `#${el.id}` : "") + (el.className && typeof el.className === "string" ? `.${el.className.trim().split(/\s+/).slice(0, 3).join(".")}` : "");
+    el.tagName.toLowerCase() + (el.id ? `#${el.id}` : "") + (el.getAttribute("class")?.trim() ? `.${el.getAttribute("class").trim().split(/\s+/).slice(0, 3).join(".")}` : "");
 
   // Every --sd-* custom property the page's stylesheets declare.
   const names = new Set();
@@ -190,6 +190,58 @@ export function colorRule() {
       if (!found.has(label)) found.set(label, `color: ${describe(el)}: ${name} ${value} is the same in every theme (use a --sd-* token)`);
     }),
   );
+  return [...found.values()];
+}
+
+/**
+ * Navigation and headings stay grey (nav-color). Their text color is never a
+ * signal role: accent, success, danger, warning, pending or extra, read on the
+ * element so a themed subtree counts. Status is allowed to be colored, so
+ * anything in a data-tone, a badge, a count, a dot or a status is left alone,
+ * and so is a person's own color (--who).
+ */
+export function navColorRule() {
+  const found = new Map();
+  const ignored = (el, rule) => !!el.closest(`[data-sd-check-ignore~="${rule}"]`);
+  const describe = (el) =>
+    el.tagName.toLowerCase() + (el.id ? `#${el.id}` : "") + (el.getAttribute("class")?.trim() ? `.${el.getAttribute("class").trim().split(/\s+/).slice(0, 3).join(".")}` : "");
+  // "r,g,b" of any CSS color, alpha dropped, by painting it on a canvas.
+  const ctx = Object.assign(document.createElement("canvas"), { width: 1, height: 1 }).getContext("2d", { willReadFrequently: true });
+  const paint = (value) => {
+    ctx.clearRect(0, 0, 1, 1);
+    ctx.fillStyle = "#010203";
+    ctx.fillStyle = value;
+    ctx.fillRect(0, 0, 1, 1);
+    return ctx.getImageData(0, 0, 1, 1).data;
+  };
+  const unset = ([r, g, b, a]) => r === 1 && g === 2 && b === 3 && a === 255;
+  const memo = new Map();
+  const rgb = (value) => {
+    value = value.trim();
+    if (!value) return "";
+    if (!memo.has(value)) {
+      const plain = paint(value);
+      let key = "";
+      if (plain[3] !== 0 && !unset(plain)) {
+        const opaque = paint(`rgb(from ${value} r g b / 1)`);
+        const [r, g, b] = unset(opaque) ? plain : opaque;
+        key = `${r},${g},${b}`;
+      }
+      memo.set(value, key);
+    }
+    return memo.get(value);
+  };
+  const roles = ["accent", "success", "danger", "warning", "pending", "extra"];
+  const nav = ["h1", "h2", "h3", "h4", "h5", "h6", "nav a", ".sd-sidebar-link", ".sd-rail-item", "[role=tab]", ".sd-breadcrumb a"];
+  for (const el of document.querySelectorAll([...nav, ...nav.map((selector) => `${selector} svg`)].join(", "))) {
+    if (!el.getClientRects().length || el.closest('[data-tone], [class*="sd-badge"], .sd-count, .sd-dot, .sd-status') || ignored(el, "nav-color")) continue;
+    const s = getComputedStyle(el);
+    if (s.visibility === "hidden") continue;
+    const color = rgb(s.color);
+    if (!color || color === rgb(s.getPropertyValue("--who"))) continue;
+    const role = roles.find((name) => rgb(s.getPropertyValue(`--sd-${name}`)) === color);
+    if (role) found.set(`${describe(el)} ${role}`, `nav-color: ${describe(el)}: color ${s.color} is the ${role} role (navigation and headings stay grey)`);
+  }
   return [...found.values()];
 }
 

@@ -186,6 +186,9 @@ it breaks:
 - `color`: a color that is the same in the ink and paper themes and is not the
   value of any `--sd-*` token, such as a hex you wrote. Tints of a token, a
   person's `--who` and `--edge`, and a subtree with its own `data-theme` pass.
+- `nav-color`: a heading, nav link, sidebar link, rail item, tab or breadcrumb
+  link (or an icon in one) whose text color is a signal role. Status inside a
+  `data-tone`, badge, count, dot or status, and a person's `--who`, pass.
 - `overflow`: horizontal overflow at 1280/768/375px.
 - `fonts`: a font that did not load.
 - `console`: a console error.
