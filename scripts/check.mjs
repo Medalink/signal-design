@@ -741,8 +741,9 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
     await r.click();
     const after = await r.locator("b").textContent();
     if (Number(after) !== Number(before) - 1 || (await r.getAttribute("aria-pressed")) !== "false") fail(where, `reaction toggle ${before}->${after}`);
-    await page.locator(".sd-poll-option").nth(1).click();
-    const votes = await page.evaluate(() => [...document.querySelectorAll(".sd-poll-option")].map((o) => o.getAttribute("aria-pressed")).join(","));
+    const poll = page.locator("[data-sd-poll]").first();
+    await poll.locator(".sd-poll-option").nth(1).click();
+    const votes = await poll.evaluate((p) => [...p.querySelectorAll(".sd-poll-option")].map((o) => o.getAttribute("aria-pressed")).join(","));
     if (votes !== "false,true,false") fail(where, `poll votes ${votes}`);
     await page.locator(".sd-message").first().click({ button: "right" });
     if (!(await page.evaluate(() => document.getElementById("msg-menu").matches(":popover-open")))) fail(where, "context menu did not open");

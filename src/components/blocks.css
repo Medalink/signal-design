@@ -425,9 +425,24 @@
 
   /*
    * Poll: a question with options. Each option is a button with a fill bar
-   * for its share. aria-pressed marks the viewer's choice.
+   * for its share of the voters (--share, 0 to 100). aria-pressed marks the
+   * viewer's choice.
    *   <div class="sd-poll"><p class="sd-poll-q">…</p>
    *     <button class="sd-poll-option" style="--share: 62" aria-pressed="true">Option <span>62%</span></button>…</div>
+   * Decision: a poll one person decides, such as an agent asking to approve
+   * or deny. sd-poll-head opens it with its state (a badge: who it waits on,
+   * or who chose what) and the time left. data-tone lights the start edge
+   * while it waits; drop it once it is decided or closed. Options draw no
+   * fill: data-chosen marks the pick (with a check icon in its text), and
+   * sd-poll-voters names who tapped each option, every name in its --who.
+   * Once an option is chosen, it is the only one drawn as selected. Disabled
+   * options (a closed poll, or one the viewer decided) keep their contrast.
+   *   <div class="sd-poll" data-tone="pending">
+   *     <div class="sd-poll-head"><span class="sd-badge" data-tone="pending">Waiting on you</span>
+   *       <span class="sd-poll-meta">Closes in 9 min</span></div>
+   *     <p class="sd-poll-q">…</p>
+   *     <button class="sd-poll-option" aria-pressed="false"><span>Approve
+   *       <span class="sd-poll-voters"><b style="--who: …">Ana</b></span></span><span>1</span></button>…</div>
    */
   .sd-poll {
     display: grid;
@@ -437,9 +452,29 @@
     border: 1px solid var(--sd-line-strong);
     background: var(--sd-surface);
   }
+  .sd-poll[data-tone] {
+    border-inline-start: 2px solid var(--tone);
+    padding-inline-start: 13px;
+  }
+  /* A row of state and meta above the question (head) or under the options (foot). */
+  .sd-poll-head,
+  .sd-poll-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px 12px;
+  }
+  .sd-poll-head > .sd-badge {
+    white-space: normal;
+  }
+  .sd-poll-head > .sd-poll-meta {
+    white-space: nowrap;
+  }
   .sd-poll-q {
     margin: 0 0 4px;
     color: var(--sd-fg);
+    overflow-wrap: anywhere;
   }
   .sd-poll-option {
     --share: 0;
@@ -448,13 +483,14 @@
     align-items: center;
     gap: 10px;
     min-height: 34px;
-    padding: 0 10px;
+    padding: 4px 10px;
     border: 1px solid var(--sd-line-strong);
     background: transparent;
     color: var(--sd-fg-muted);
     font: inherit;
     font-size: var(--text-sm);
     text-align: start;
+    overflow-wrap: anywhere;
     cursor: pointer;
     isolation: isolate;
   }
@@ -468,17 +504,41 @@
     transition: width 200ms var(--ease-out);
   }
   .sd-poll-option > :last-child {
+    flex: none;
     margin-inline-start: auto;
     color: var(--sd-fg-subtle);
     font-variant-numeric: tabular-nums;
   }
-  .sd-poll-option:hover {
+  .sd-poll-option:where(:not(:disabled)):hover {
     border-color: var(--sd-fg-faint);
     color: var(--sd-fg);
   }
-  .sd-poll-option[aria-pressed="true"] {
+  .sd-poll-option:is([aria-pressed="true"], [data-chosen]) {
     border-color: var(--sd-fg);
     color: var(--sd-fg);
+  }
+  .sd-poll:has([data-chosen]) .sd-poll-option[aria-pressed="true"]:not([data-chosen]) {
+    border-color: var(--sd-line-strong);
+    color: var(--sd-fg-muted);
+  }
+  /* Locked options show the result, so they are not dimmed like a disabled button. */
+  .sd-poll-option:disabled {
+    opacity: 1;
+    cursor: default;
+  }
+  .sd-poll-option .sd-icon {
+    margin-inline-start: 0.4em;
+    vertical-align: -0.25cap;
+  }
+  /* Who tapped an option: names in their color, under its text. */
+  .sd-poll-voters {
+    display: block;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-xs);
+  }
+  .sd-poll-voters > b {
+    color: color-mix(in srgb, var(--who, var(--sd-extra)) 70%, var(--sd-fg));
+    font-weight: var(--font-weight-semibold);
   }
   .sd-poll-meta {
     color: var(--sd-fg-subtle);

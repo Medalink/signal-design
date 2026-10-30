@@ -358,6 +358,9 @@
   .sd-message-body :is(.sd-file, .sd-poll):hover {
     border-color: var(--sd-line-strong);
   }
+  .sd-message-body .sd-poll[data-tone] {
+    border-inline-start-color: var(--tone);
+  }
   .sd-file-dl {
     display: grid;
     place-items: center;

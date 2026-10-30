@@ -547,7 +547,8 @@ Generic pieces for chat, comments, feeds and inboxes. See `showcase/chat.html`.
 | `sd-composer` (+ `-row`, `-add`, `-send`, `-reply`, `-status`, `-chips`, `-hint`) | The message box: one + for every content type, the textarea, and a send that stays quiet until there is text. `-status` holds the typing line above it. In an `sd-shell-dock` they share one box. `data-sd-autogrow`, `data-sd-enter-submit`, and `data-sd-suggest="id"` for an `@` list. |
 | `sd-roster` (+ `-group`, `-head`, `-label`, `-count`, `-row`, `-avatar`, `-name`, `-more`) | People in a large conversation: a section per role with a sticky, collapsible head, rows by `data-presence` (`online`, `offline`, `unresolved`), and a Show more row. An `sd-badge` after `-name` (Agent) takes the row's end. |
 | `sd-banner` | A full-width notice with actions. |
-| `sd-file`, `sd-link-card`, `sd-poll` | Attachment, link preview, poll (`--share` per option). |
+| `sd-file`, `sd-link-card`, `sd-poll` | Attachment, link preview, poll (`--share` per option: its share of the voters, 0 to 100). |
+| `sd-poll-head`, `-foot`, `-voters`, `data-chosen` | A decision: a poll one person decides, such as an agent asking to approve or deny. `-head` holds its state badge and the time left, `data-tone` lights its edge while it waits, `data-chosen` marks the pick, `-voters` names who tapped an option in their `--who`. `-foot` is a meta row under the options. |
 | `sd-link-card-hero`, `-compact`, `-type`, `-note` | Link preview variants: image on top, one tight block, a document with its type, and a reason line. `data-blocked` and `aria-busy="true"` are states. |
 | `sd-tiles`, `sd-tile` | Call grid; `data-speaking`, `data-muted`, `data-hand`. |
 | `sd-grid-picker` | An emoji or icon grid (`--cols`). |
