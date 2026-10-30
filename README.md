@@ -500,7 +500,9 @@ under it and its bottom border go, and its bridges still tie it to the content.
 surface, for a page that reads as one column, such as a conversation: no gap
 and no bridges, a hairline under the bar in line with the sidebar and aside
 heads, and the dock's contents inset 16px (8px on phones). A composer in a
-joined dock keeps its own edge, with the typing line over it.
+joined dock keeps its own edge, with the typing line over it. A split
+`sd-shell-header` joins the same way: its crumbs and actions lose their boxes
+and sit in one bar.
 
 A count in `sd-icon-btn` sits after the icon, so it never covers the glyph.
 

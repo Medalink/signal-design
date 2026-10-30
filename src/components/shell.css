@@ -705,6 +705,23 @@
     padding: 0 16px 16px;
     background: none;
   }
+  /* A split header joins as one bar: the crumbs and the actions lose their
+     boxes, and the actions their fade, so they take no more room than in
+     the bar. The crumbs keep theirs for a trail that runs out of room. */
+  .sd-shell-main[data-joined] > .sd-shell-header {
+    min-height: var(--shell-head, 4rem);
+    padding-inline: 10px 2px;
+    border-block-end: 1px solid var(--sd-line);
+  }
+  .sd-shell-main[data-joined] > .sd-shell-header > :is(.sd-shell-crumbs, .sd-shell-header-end) {
+    border: 0;
+    background: none;
+  }
+  .sd-shell-main[data-joined] > .sd-shell-header > .sd-shell-header-end {
+    padding-inline-start: 6px;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
   .sd-shell-main[data-joined] > :is(.sd-shell-header, .sd-shell-bar, .sd-shell-dock)::before,
   .sd-shell-main[data-joined] > :is(.sd-shell-header, .sd-shell-bar, .sd-shell-dock)::after {
     content: none;
