@@ -59,6 +59,8 @@ let started = false;
  *   theme: restore the saved theme (default true)
  *   font: restore the saved text font (default true)
  *   scrollbars: "auto" hides them 2s after scrolling stops (default)
+ *   themeKey: the shortcut that steps the theme on every page (default
+ *     "shift+t"); pass "" to turn it off
  */
 export function init({ theme = true, font = true, scrollbars = "auto", themeKey = "shift+t" } = {}) {
   if (theme) restoreTheme(document.documentElement.dataset.theme || "ink");
