@@ -1,0 +1,2 @@
+### Added
+- `sd-md`: styles for Markdown in a message. `.sd-message-text` styles inline `code`; `sd-md` wraps the blocks of a Markdown message (paragraphs, `blockquote`, `ul`, `ol`, `pre`, `table`), starts under the author and sets its own `white-space`. A fence's language rides on the existing `sd-code` and `sd-code-head`; a table sits in `sd-table-wrap`. Plain element selectors, so any Markdown renderer's output styles without classes.

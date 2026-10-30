@@ -76,6 +76,36 @@
       <p class="demo-usage"><code>sd-message</code> + <code>-time|-body|-text|-author|-tag|-meta|-timer|-actions|-status</code> · <code>--who</code> (name color) · <code>data-grouped|mention|own|pending|failed|reply</code> · <code>sd-message-ref</code> + <code>sd-message-ref-mark</code> · <code>sd-mention</code> · <code>sd-feed-day</code> · <code>sd-event</code> · <code>sd-reactions</code> + <code>data-sd-reaction</code> + <code>sd-reactions-add</code> · <code>sd-receipts</code> · <code>sd-typing</code> · <code>sd-message-menu</code> · <code>data-sd-contextmenu</code></p>
     </div>
 
+    <div class="demo-block" id="conversation-message-markdown">
+      <h2 class="sd-label">Message markdown</h2>
+      <div class="border border-line pb-3" style="--sd-feed-bg: var(--sd-surface); background: var(--sd-surface)">
+        <article class="sd-message" style="--who: var(--sd-extra)">
+          <time class="sd-message-time" datetime="11:02">11:02</time>
+          <div class="sd-message-body">
+            <div class="sd-message-text"><b class="sd-message-author">Alex</b>Inline marks stay in the line: <b>bold</b>, <i>italic</i>, <s>strikethrough</s>, <code>pnpm run build</code> and <a href="#conversation-message-markdown">a link</a>.</div>
+          </div>
+        </article>
+        <article class="sd-message" style="--who: var(--sd-accent)">
+          <time class="sd-message-time" datetime="11:03">11:03</time>
+          <div class="sd-message-body">
+            <div class="sd-message-text"><b class="sd-message-author">Taylor</b>
+              <div class="sd-md">
+                <p><b>Release steps</b></p>
+                <ol><li>Bump the version in <code>package.json</code>.</li><li>Run the build.</li><li>Tag the commit.</li></ol>
+                <blockquote><p>Never tag from a dirty tree.</p></blockquote>
+                <div class="sd-code"><div class="sd-code-head">rust</div><pre><code>fn main() {
+    println!("ship it");
+}</code></pre></div>
+                <ul><li>Small steps</li><li>One change per commit</li></ul>
+                <div class="sd-table-wrap"><table><thead><tr><th>Step</th><th style="text-align: right">Time</th></tr></thead><tbody><tr><td>Build</td><td style="text-align: right">42s</td></tr><tr><td>Deploy</td><td style="text-align: right">9s</td></tr></tbody></table></div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+      <p class="demo-usage"><code>sd-md</code> wraps the blocks of a Markdown message and starts under the author · inline code, bold, italic, strike and links need no wrapper · <code>sd-code</code> + <code>sd-code-head</code> carries a fence's language · <code>sd-table-wrap</code> scrolls a wide table</p>
+    </div>
+
     <div class="demo-block" id="conversation-message-edges-and-selection">
       <h2 class="sd-label">Message edges and selection</h2>
       <div class="border border-line py-3" style="background: var(--sd-surface)">
