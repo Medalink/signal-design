@@ -19,7 +19,8 @@ export default async function checkMessageMarkdown(page, where, fail) {
       quoteEdge: quote.borderInlineStartWidth === "2px" && quote.fontSize === text(md).fontSize,
       orderedPlain: text(md.querySelector("ol")).listStyleType === "decimal",
       fenceLines: pre.whiteSpace === "pre" && md.querySelector("pre").scrollWidth >= md.querySelector("pre").clientWidth,
-      headNotCaps: th.textTransform === "none" && th.whiteSpace !== "nowrap",
+      headNotCaps: th.textTransform === "none" && th.whiteSpace === "normal",
+      listsTight: text(md.querySelector("li")).whiteSpace === "normal" && text(md.querySelector("ul")).listStyleType === "square",
       tableFits: wrap.getBoundingClientRect().right <= md.getBoundingClientRect().right + 1,
     };
   });

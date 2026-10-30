@@ -84,7 +84,7 @@
    * bold, italic, strike, code and links needs no wrapper); anything with a
    * block in it goes in `.sd-md`, which starts on its own line under the
    * author and sets its own white-space, so the markup's line breaks are not
-   * doubled by the text's pre-wrap.
+   * doubled by the text's pre-wrap. A soft line break in it is a `<br>`.
    *   <div class="sd-message-text"><b class="sd-message-author">Maya</b>
    *     <div class="sd-md">
    *       <p>Run <code>pnpm test</code> first.</p>
@@ -114,9 +114,6 @@
   .sd-md > :where(* + *) {
     margin-block-start: 0.5em;
   }
-  .sd-md :is(p, li, th, td) {
-    white-space: pre-wrap;
-  }
   .sd-md pre {
     margin: 0;
     padding: 8px 12px;
@@ -144,6 +141,9 @@
     margin-block: 0;
     padding-inline-start: 1.5em;
   }
+  .sd-md ul {
+    list-style: square;
+  }
   .sd-md ol {
     list-style: decimal;
   }
@@ -169,7 +169,7 @@
     font-weight: var(--font-weight-semibold);
     letter-spacing: normal;
     text-transform: none;
-    white-space: pre-wrap;
+    white-space: normal;
   }
   .sd-md td {
     padding: 6px 12px;
