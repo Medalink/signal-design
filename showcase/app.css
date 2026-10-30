@@ -259,6 +259,13 @@
   .has-vp-bar .sd-shell {
     height: calc(100dvh - var(--vp-bar-h));
   }
+  /* With the phone keyboard up, the bar moves with the shell under it. */
+  .has-vp-bar[data-sd-keyboard] .sd-shell {
+    height: calc(var(--sd-view-height) - var(--vp-bar-h));
+  }
+  .has-vp-bar[data-sd-keyboard] .vp-bar {
+    translate: 0 var(--sd-view-top);
+  }
   .vp-dialog {
     width: 100vw;
     max-width: none;

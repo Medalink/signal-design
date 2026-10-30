@@ -80,7 +80,8 @@
   </aside>
 
   <!-- Main -->
-  <main class="sd-shell-main" id="main" tabindex="-1">
+  <!-- Joined: the channel header, the feed and the composer are one surface. -->
+  <main class="sd-shell-main" id="main" tabindex="-1" data-joined>
     <h1 class="sd-sr-only">Garden Club: plans</h1>
     <!-- Channel header. On phones this is the only bar under the showcase bar: it carries the drawer button. -->
     <header class="sd-shell-bar">
@@ -98,21 +99,22 @@
     </header>
 
     <div class="sd-shell-content chat-content">
-      <div class="chat-feed" data-feed aria-label="Messages" role="log">
+      <!-- data-sd-follow keeps the newest message in view and runs the jump bar under the feed. -->
+      <div class="chat-feed" data-feed data-sd-follow aria-label="Messages" role="log">
         <div class="sd-divider sd-feed-day">Yesterday</div>
 
-        <article class="sd-message" data-sd-contextmenu="msg-menu" style="--who: var(--sd-extra)">
+        <article class="sd-message" id="m-plan" data-sd-contextmenu="msg-menu" style="--who: var(--sd-extra)">
           <time class="sd-message-time" datetime="16:02">16:02</time>
           <div class="sd-message-body">
             <div class="sd-message-text"><b class="sd-message-author">Ines</b><span class="sd-message-tag">Owner</span>Here is the planting plan for the east beds. The third row still needs a crop.</div>
             <div class="sd-file"><span class="sd-file-type">pdf</span><span class="sd-file-body"><span class="sd-file-name">east-beds-plan.pdf</span><span class="sd-file-meta">1.8 MB</span></span><button class="sd-file-dl sd-btn-ghost" aria-label="Download file" data-sd-tip="Download file"><i data-ic="download"></i></button></div>
             <div class="sd-reactions"><button data-sd-reaction aria-pressed="true"><span>👍</span><b>3</b></button><button data-sd-reaction aria-pressed="false"><span>👀</span><b>1</b></button><button class="sd-reactions-add" aria-label="Add reaction" data-sd-tip="Add reaction" popovertarget="emoji"><i data-ic="plus"></i></button></div>
           </div>
-          <div class="sd-message-actions" role="toolbar" aria-label="Message actions"><button data-emoji aria-label="React 👍">👍</button><button data-emoji aria-label="React 😂">😂</button><button data-emoji aria-label="React 🔥">🔥</button><hr><button aria-label="Add reaction" data-sd-tip="Add reaction (E)" data-key="E" popovertarget="emoji"><i data-ic="plus"></i></button><button aria-label="Reply" data-sd-tip="Reply (R)" data-key="R" data-reply><i data-ic="undo"></i></button><hr><button aria-label="More" data-sd-tip="More" aria-haspopup="menu" popovertarget="msg-menu"><i data-ic="more"></i></button></div>
+          <div class="sd-message-actions" role="toolbar" aria-label="Message actions"><button data-emoji aria-label="React 👍">👍</button><button data-emoji aria-label="React 😂">😂</button><button data-emoji aria-label="React 🔥">🔥</button><hr><button aria-label="Add reaction" data-sd-tip="Add reaction (E)" data-key="E" popovertarget="emoji"><i data-ic="plus"></i></button><button aria-label="Reply" data-sd-tip="Reply (R)" data-key="R" data-reply><i data-ic="reply"></i></button><hr><button aria-label="More" data-sd-tip="More" aria-haspopup="menu" popovertarget="msg-menu"><i data-ic="more"></i></button></div>
         </article>
-        <article class="sd-message" data-grouped data-sd-contextmenu="msg-menu" title="16:03" style="--who: var(--sd-extra)">
+        <article class="sd-message" id="m-seeds" data-grouped data-sd-contextmenu="msg-menu" title="16:03" style="--who: var(--sd-extra)">
           <div class="sd-message-body"><div class="sd-message-text">Also, the seed list is pinned.<span class="sd-message-meta"><span>edited</span></span></div></div>
-          <div class="sd-message-actions" role="toolbar" aria-label="Message actions"><button data-emoji aria-label="React 👍">👍</button><button data-emoji aria-label="React 😂">😂</button><button data-emoji aria-label="React 🔥">🔥</button><hr><button aria-label="Add reaction" data-sd-tip="Add reaction (E)" data-key="E" popovertarget="emoji"><i data-ic="plus"></i></button><button aria-label="Reply" data-sd-tip="Reply (R)" data-key="R" data-reply><i data-ic="undo"></i></button><hr><button aria-label="More" data-sd-tip="More" aria-haspopup="menu" popovertarget="msg-menu"><i data-ic="more"></i></button></div>
+          <div class="sd-message-actions" role="toolbar" aria-label="Message actions"><button data-emoji aria-label="React 👍">👍</button><button data-emoji aria-label="React 😂">😂</button><button data-emoji aria-label="React 🔥">🔥</button><hr><button aria-label="Add reaction" data-sd-tip="Add reaction (E)" data-key="E" popovertarget="emoji"><i data-ic="plus"></i></button><button aria-label="Reply" data-sd-tip="Reply (R)" data-key="R" data-reply><i data-ic="reply"></i></button><hr><button aria-label="More" data-sd-tip="More" aria-haspopup="menu" popovertarget="msg-menu"><i data-ic="more"></i></button></div>
         </article>
 
         <div class="sd-event"><i data-ic="person"></i><span><b style="--who: var(--sd-accent)">Felix</b> joined the channel<time>16:20</time></span></div>
@@ -125,7 +127,7 @@
             <div class="sd-message-text"><b class="sd-message-author">Rosa</b>Found a good write-up on starting tomatoes indoors:</div>
             <a class="sd-link-card" href="#"><span class="sd-link-card-site">garden.example</span><span class="sd-link-card-title">Starting tomatoes indoors, week by week</span><span class="sd-link-card-desc">When to sow, when to pot up, and when they can go outside.</span><span class="sd-link-card-thumb"></span></a>
           </div>
-          <div class="sd-message-actions" role="toolbar" aria-label="Message actions"><button data-emoji aria-label="React 👍">👍</button><button data-emoji aria-label="React 😂">😂</button><button data-emoji aria-label="React 🔥">🔥</button><hr><button aria-label="Add reaction" data-sd-tip="Add reaction (E)" data-key="E" popovertarget="emoji"><i data-ic="plus"></i></button><button aria-label="Reply" data-sd-tip="Reply (R)" data-key="R" data-reply><i data-ic="undo"></i></button><hr><button aria-label="More" data-sd-tip="More" aria-haspopup="menu" popovertarget="msg-menu"><i data-ic="more"></i></button></div>
+          <div class="sd-message-actions" role="toolbar" aria-label="Message actions"><button data-emoji aria-label="React 👍">👍</button><button data-emoji aria-label="React 😂">😂</button><button data-emoji aria-label="React 🔥">🔥</button><hr><button aria-label="Add reaction" data-sd-tip="Add reaction (E)" data-key="E" popovertarget="emoji"><i data-ic="plus"></i></button><button aria-label="Reply" data-sd-tip="Reply (R)" data-key="R" data-reply><i data-ic="reply"></i></button><hr><button aria-label="More" data-sd-tip="More" aria-haspopup="menu" popovertarget="msg-menu"><i data-ic="more"></i></button></div>
         </article>
 
         <article class="sd-message" data-sd-contextmenu="msg-menu" style="--who: var(--sd-accent)">
@@ -140,17 +142,17 @@
               <span class="sd-poll-meta">8 votes · closes in 2 days</span>
             </div>
           </div>
-          <div class="sd-message-actions" role="toolbar" aria-label="Message actions"><button data-emoji aria-label="React 👍">👍</button><button data-emoji aria-label="React 😂">😂</button><button data-emoji aria-label="React 🔥">🔥</button><hr><button aria-label="Add reaction" data-sd-tip="Add reaction (E)" data-key="E" popovertarget="emoji"><i data-ic="plus"></i></button><button aria-label="Reply" data-sd-tip="Reply (R)" data-key="R" data-reply><i data-ic="undo"></i></button><hr><button aria-label="More" data-sd-tip="More" aria-haspopup="menu" popovertarget="msg-menu"><i data-ic="more"></i></button></div>
+          <div class="sd-message-actions" role="toolbar" aria-label="Message actions"><button data-emoji aria-label="React 👍">👍</button><button data-emoji aria-label="React 😂">😂</button><button data-emoji aria-label="React 🔥">🔥</button><hr><button aria-label="Add reaction" data-sd-tip="Add reaction (E)" data-key="E" popovertarget="emoji"><i data-ic="plus"></i></button><button aria-label="Reply" data-sd-tip="Reply (R)" data-key="R" data-reply><i data-ic="reply"></i></button><hr><button aria-label="More" data-sd-tip="More" aria-haspopup="menu" popovertarget="msg-menu"><i data-ic="more"></i></button></div>
         </article>
 
         <div class="sd-marker" data-tone="danger"><span>New</span></div>
 
         <article class="sd-message" data-mention data-reply data-sd-contextmenu="msg-menu" style="--who: var(--sd-pending)">
           <span class="sd-message-ref-mark"><i data-ic="reply"></i></span>
-          <button class="sd-message-ref"><b style="--who: var(--sd-extra)">Ines</b><span>Here is the planting plan for the east beds. The third row still needs a crop.</span></button>
+          <button class="sd-message-ref" data-to="m-plan"><b style="--who: var(--sd-extra)">Ines</b><span>Here is the planting plan for the east beds. The third row still needs a crop.</span></button>
           <time class="sd-message-time">10:05</time>
           <div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Mara</b><span class="sd-mention" style="--who: var(--sd-success)">@Dana</span> can you take the third row? I can bring seedlings on Saturday.</div></div>
-          <div class="sd-message-actions" role="toolbar" aria-label="Message actions"><button data-emoji aria-label="React 👍">👍</button><button data-emoji aria-label="React 😂">😂</button><button data-emoji aria-label="React 🔥">🔥</button><hr><button aria-label="Add reaction" data-sd-tip="Add reaction (E)" data-key="E" popovertarget="emoji"><i data-ic="plus"></i></button><button aria-label="Reply" data-sd-tip="Reply (R)" data-key="R" data-reply><i data-ic="undo"></i></button><hr><button aria-label="More" data-sd-tip="More" aria-haspopup="menu" popovertarget="msg-menu"><i data-ic="more"></i></button></div>
+          <div class="sd-message-actions" role="toolbar" aria-label="Message actions"><button data-emoji aria-label="React 👍">👍</button><button data-emoji aria-label="React 😂">😂</button><button data-emoji aria-label="React 🔥">🔥</button><hr><button aria-label="Add reaction" data-sd-tip="Add reaction (E)" data-key="E" popovertarget="emoji"><i data-ic="plus"></i></button><button aria-label="Reply" data-sd-tip="Reply (R)" data-key="R" data-reply><i data-ic="reply"></i></button><hr><button aria-label="More" data-sd-tip="More" aria-haspopup="menu" popovertarget="msg-menu"><i data-ic="more"></i></button></div>
         </article>
 
         <article class="sd-message" data-own data-failed data-sd-contextmenu="msg-menu" style="--who: var(--sd-success)">
@@ -164,13 +166,13 @@
       <div class="sd-feed-jump" hidden data-jump><span>Viewing older messages</span><button class="sd-btn sd-btn-sm sd-btn-ghost">Jump to present <i data-ic="chevron-down"></i></button></div>
     </div>
 
-    <!-- Dock: the typing line and the composer in one box, flush with the bottom of the window -->
-    <div class="sd-shell-dock" data-flush>
+    <!-- Dock: the typing line over the composer, inset in the surface -->
+    <div class="sd-shell-dock">
       <div class="sd-composer-status" aria-live="polite"><span class="sd-typing"><i><b></b></i><span><b style="--who: var(--sd-warning)">Rosa</b> is typing</span></span></div>
       <form class="sd-composer" data-composer>
         <div class="sd-composer-row">
           <button type="button" class="sd-btn sd-btn-ghost sd-btn-icon sd-composer-add" aria-label="Add" data-sd-tip="Add" aria-haspopup="menu" popovertarget="add-menu" data-sd-side="top"><i data-ic="plus"></i></button>
-          <textarea rows="1" data-sd-autogrow data-sd-enter-submit data-sd-suggest="mentions" placeholder="Message #plans" aria-label="Message"></textarea>
+          <textarea rows="1" data-sd-autogrow data-sd-enter-submit enterkeyhint="send" data-sd-suggest="mentions" placeholder="Message #plans" aria-label="Message"></textarea>
           <button type="button" class="sd-btn sd-btn-ghost sd-btn-icon" aria-label="Emoji" data-sd-tip="Emoji" aria-haspopup="dialog" popovertarget="emoji" data-composer-emoji><i data-ic="smile"></i></button>
           <button class="sd-btn sd-btn-primary sd-btn-icon sd-composer-send" aria-label="Send" data-sd-tip="Send"><i data-ic="send"></i></button>
         </div>
@@ -257,12 +259,13 @@
 <!-- Message menu (right-click, or More in the action bar) -->
 <div popover id="msg-menu" class="sd-popover sd-message-menu">
   <div class="sd-menu" role="menu" aria-label="Message">
-    <button role="menuitem" data-menu-reply><i data-ic="reply"></i>Reply<kbd>R</kbd></button>
-    <button role="menuitem"><i data-ic="plus"></i>Add reaction<kbd>E</kbd></button>
-    <button role="menuitem"><i data-ic="copy"></i>Copy text<kbd>C</kbd></button>
-    <button role="menuitem"><i data-ic="pin"></i>Pin<kbd>P</kbd></button>
-    <hr class="sd-menu-sep">
-    <button role="menuitem" data-tone="danger"><i data-ic="delete"></i>Delete</button>
+    <button role="menuitem" data-menu="reply"><i data-ic="reply"></i>Reply<kbd>R</kbd></button>
+    <button role="menuitem" data-menu="react"><i data-ic="plus"></i>Add reaction<kbd>E</kbd></button>
+    <button role="menuitem" data-menu="edit" data-own-only><i data-ic="edit"></i>Edit<kbd>↑</kbd></button>
+    <button role="menuitem" data-menu="copy"><i data-ic="copy"></i>Copy text<kbd>C</kbd></button>
+    <button role="menuitem" data-menu="pin"><i data-ic="pin"></i><span>Pin</span><kbd>P</kbd></button>
+    <hr class="sd-menu-sep" data-own-only>
+    <button role="menuitem" data-menu="delete" data-own-only data-tone="danger"><i data-ic="delete"></i>Delete</button>
   </div>
 </div>
 
@@ -278,9 +281,9 @@
 <!-- Pinned messages, from the header -->
 <div popover id="pinned" class="sd-popover sd-popover-panel" data-sd-align="end">
   <div class="sd-popover-head">Pinned <button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" popovertarget="pinned" popovertargetaction="hide" aria-label="Close" data-sd-tip="Close"><i data-ic="close"></i></button></div>
-  <div class="sd-popover-body">
-    <a class="sd-item" href="#"><i data-ic="pin"></i><span class="sd-item-body"><span class="sd-item-title">Seed list</span><span class="sd-item-sub">Ines · yesterday</span></span></a>
-    <a class="sd-item" href="#"><i data-ic="pin"></i><span class="sd-item-body"><span class="sd-item-title">east-beds-plan.pdf</span><span class="sd-item-sub">Ines · yesterday</span></span></a>
+  <div class="sd-popover-body" data-pins>
+    <a class="sd-item" href="#m-seeds" data-to="m-seeds"><i data-ic="pin"></i><span class="sd-item-body"><span class="sd-item-title">Seed list</span><span class="sd-item-sub">Ines · yesterday</span></span></a>
+    <a class="sd-item" href="#m-plan" data-to="m-plan"><i data-ic="pin"></i><span class="sd-item-body"><span class="sd-item-title">east-beds-plan.pdf</span><span class="sd-item-sub">Ines · yesterday</span></span></a>
   </div>
 </div>
 
