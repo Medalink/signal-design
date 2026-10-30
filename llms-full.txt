@@ -2413,6 +2413,42 @@ JS: init() from signal-design/js wires data-sd-contextmenu · data-sd-reaction �
 <div popover="" id="demo-msg-menu" class="sd-popover sd-message-menu"><div class="sd-menu" role="menu" aria-label="Message"><button role="menuitem"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6.5 4 2.5 8l4 4M3 8h7a3.5 3.5 0 0 1 3.5 3.5V13"></path></svg>Reply<kbd>R</kbd></button><button role="menuitem"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><rect x="5.5" y="5.5" width="8" height="8"></rect><path d="M10.5 5.5v-3h-8v8h3"></path></svg>Copy text<kbd>C</kbd></button><hr class="sd-menu-sep"><button role="menuitem" data-tone="danger"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M2.5 4.5h11M6 4.5v-2h4v2M4 4.5l.5 9h7l.5-9M6.75 7v4M9.25 7v4"></path></svg>Delete</button></div></div>
 ```
 
+## Conversation / Message markdown
+
+sd-md wraps the blocks of a Markdown message and starts under the author · inline code, bold, italic, strike and links need no wrapper · sd-code + sd-code-head carries a fence's language · sd-table-wrap scrolls a wide table
+
+Classes: sd-code, sd-code-head, sd-md, sd-message, sd-message-author, sd-message-body, sd-message-text, sd-message-time, sd-table-wrap
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="border border-line pb-3" style="--sd-feed-bg: var(--sd-surface); background: var(--sd-surface)">
+        <article class="sd-message" style="--who: var(--sd-extra)">
+          <time class="sd-message-time" datetime="11:02">11:02</time>
+          <div class="sd-message-body">
+            <div class="sd-message-text"><b class="sd-message-author">Alex</b>Inline marks stay in the line: <b>bold</b>, <i>italic</i>, <s>strikethrough</s>, <code>pnpm run build</code> and <a href="#conversation-message-markdown">a link</a>.</div>
+          </div>
+        </article>
+        <article class="sd-message" style="--who: var(--sd-accent)">
+          <time class="sd-message-time" datetime="11:03">11:03</time>
+          <div class="sd-message-body">
+            <div class="sd-message-text"><b class="sd-message-author">Taylor</b>
+              <div class="sd-md">
+                <p><b>Release steps</b></p>
+                <ol><li>Bump the version in <code>package.json</code>.</li><li>Run the build.</li><li>Tag the commit.</li></ol>
+                <blockquote><p>Never tag from a dirty tree.</p></blockquote>
+                <div class="sd-code"><div class="sd-code-head">rust</div><pre><code>fn main() {
+    println!("ship it");
+}</code></pre></div>
+                <ul><li>Small steps</li><li>One change per commit</li></ul>
+                <div class="sd-table-wrap"><table><thead><tr><th>Step</th><th style="text-align: right">Time</th></tr></thead><tbody><tr><td>Build</td><td style="text-align: right">42s</td></tr><tr><td>Deploy</td><td style="text-align: right">9s</td></tr></tbody></table></div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+```
+
 ## Conversation / Message edges and selection
 
 --edge (author or role color, user data) · data-own (grey edge) · data-selected + a real checkbox · data-editing + sd-message-edit · fills --sd-mention-fill and --sd-current-fill · edge order: data-failed > aria-current > data-selected > data-mention > data-own > --edge
