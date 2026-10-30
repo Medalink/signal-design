@@ -21,10 +21,11 @@ import { initFps } from "./fps.js";
 import { initOrnaments } from "./ornaments.js";
 import { initScrollbars } from "./scrollbars.js";
 import { initScrollTabs } from "./scrolltabs.js";
+import { initKeyboard } from "./keyboard.js";
 import { onWindowClick, onWindowDblClick, initWindow } from "./window.js";
 import { onListboxInput, onListboxKeydown, onListboxClick, initPalettes } from "./listbox.js";
 import { onInputsKeydown, onInputsClick, onInputsInput, onShortcutsKey, initInputs } from "./inputs.js";
-import { onConversationClick, onConversationInput, onConversationKeydown, onSuggestClick, onContextMenu, onContextMenuKey, initConversation } from "./conversation.js";
+import { onConversationClick, onConversationInput, onConversationKeydown, onSuggestClick, onContextMenu, onContextMenuKey, onPressDown, onPressMove, onPressUp, onPressTouchEnd, initConversation } from "./conversation.js";
 
 export { openDialog, closeDialog } from "./dialog.js";
 export { selectTab } from "./tabs.js";
@@ -46,6 +47,7 @@ export { fps } from "./fps.js";
 export { paintOrnaments, ornamentShapes, ORNAMENT_STYLES } from "./ornaments.js";
 export { ornamentArt, ORNAMENT_ART } from "./ornament-art.js";
 export { setScrollbars, initScrollbars } from "./scrollbars.js";
+export { initKeyboard } from "./keyboard.js";
 export { setOptions, filterList } from "./listbox.js";
 export { drawSpark } from "./inputs.js";
 export { windowAction } from "./window.js";
@@ -62,6 +64,7 @@ export function init({ theme = true, font = true, scrollbars = "auto", themeKey 
   if (theme) restoreTheme(document.documentElement.dataset.theme || "ink");
   if (font) restoreFont(document.documentElement.dataset.font);
   initScrollbars(scrollbars);
+  initKeyboard();
   initTabs();
   initShell();
   initRain();
@@ -125,6 +128,10 @@ export function init({ theme = true, font = true, scrollbars = "auto", themeKey 
     onInputsInput(event);
   });
   document.addEventListener("pointerdown", onShellPointerdown);
+  document.addEventListener("pointerdown", onPressDown, { passive: true });
+  document.addEventListener("pointermove", onPressMove, { passive: true });
+  for (const type of ["pointerup", "pointercancel"]) document.addEventListener(type, onPressUp);
+  document.addEventListener("touchend", onPressTouchEnd, { passive: false });
   document.addEventListener("contextmenu", onContextMenu);
   document.addEventListener("dblclick", onWindowDblClick);
 }

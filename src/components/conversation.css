@@ -43,7 +43,8 @@
   }
   .sd-message:hover,
   .sd-message:focus-within,
-  .sd-message[data-hover] {
+  .sd-message[data-hover],
+  .sd-message[data-sd-held] {
     background: var(--sd-raised);
   }
   .sd-message-time {
@@ -991,6 +992,16 @@
   }
   .sd-shell-dock > .sd-composer-status {
     border-bottom: 1px solid var(--sd-line);
+  }
+  /* In a joined main the dock is part of the surface: the composer keeps its
+     own edge and the typing line sits over it, unboxed, its squares still on
+     the + icon's left edge (the dock's 16px inset plus the composer's 1px). */
+  .sd-shell-main[data-joined] > .sd-shell-dock > .sd-composer {
+    border: 1px solid var(--sd-line-control);
+  }
+  .sd-shell-main[data-joined] > .sd-shell-dock > .sd-composer-status {
+    padding-inline-start: 18px;
+    border-bottom: 0;
   }
   .sd-composer-hint {
     display: flex;
