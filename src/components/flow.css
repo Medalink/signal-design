@@ -303,21 +303,22 @@
     border-color: color-mix(in srgb, var(--status) 55%, transparent);
   }
 
-  /* Status: one role per word. mono keeps done and running in greys (the
-     running one brightest) and colors only what needs a person. */
-  .sd-flow [data-status="done"] {
+  /* Status: one role per word, shared with the checklist. mono keeps done
+     and running in greys (the running one brightest) and colors only what
+     needs a person. */
+  :is(.sd-flow, .sd-checklist) [data-status="done"] {
     --status: var(--sd-chart-2);
   }
-  .sd-flow [data-status="running"] {
+  :is(.sd-flow, .sd-checklist) [data-status="running"] {
     --status: var(--sd-chart-accent);
   }
-  .sd-flow [data-status="waiting"] {
+  :is(.sd-flow, .sd-checklist) [data-status="waiting"] {
     --status: var(--sd-chart-warning);
   }
-  .sd-flow [data-status="failed"] {
+  :is(.sd-flow, .sd-checklist) [data-status="failed"] {
     --status: var(--sd-chart-critical);
   }
-  .sd-flow :is([data-status="queued"], [data-status="skipped"]) {
+  :is(.sd-flow, .sd-checklist) :is([data-status="queued"], [data-status="skipped"]) {
     --status: var(--sd-fg-faint);
   }
 
@@ -340,22 +341,22 @@
   /* The status mark: an 8px square. Solid when settled (done, failed),
      hollow before it starts, dashed while it waits or was skipped, and
      turning while it runs. */
-  :is(.sd-flow-stage-head, .sd-flow-job, .sd-flow-legend > span) > i {
+  :is(.sd-flow-stage-head, .sd-flow-job, .sd-flow-legend > span, .sd-checklist > ul > li) > i {
     flex-shrink: 0;
     box-sizing: border-box;
     width: 8px;
     height: 8px;
     border: 1px solid var(--status, var(--sd-fg-faint));
   }
-  :is(.sd-flow-job, .sd-flow-legend > span):is([data-status="done"], [data-status="failed"]) > i,
+  :is(.sd-flow-job, .sd-flow-legend > span, .sd-checklist > ul > li):is([data-status="done"], [data-status="failed"]) > i,
   .sd-flow-stage:is([data-status="done"], [data-status="failed"]) > .sd-flow-stage-head > i {
     background: var(--status);
   }
-  :is(.sd-flow-job, .sd-flow-legend > span):is([data-status="waiting"], [data-status="skipped"]) > i,
+  :is(.sd-flow-job, .sd-flow-legend > span, .sd-checklist > ul > li):is([data-status="waiting"], [data-status="skipped"]) > i,
   .sd-flow-stage:is([data-status="waiting"], [data-status="skipped"]) > .sd-flow-stage-head > i {
     border-style: dashed;
   }
-  :is(.sd-flow-job, .sd-flow-legend > span)[data-status="running"] > i,
+  :is(.sd-flow-job, .sd-flow-legend > span, .sd-checklist > ul > li)[data-status="running"] > i,
   .sd-flow-stage[data-status="running"] > .sd-flow-stage-head > i {
     animation: sd-flow-turn 1.4s var(--ease-out) infinite;
   }
@@ -378,5 +379,100 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
+  }
+
+  /*
+   * Checklist: named checks, each with a status mark, its result and, while
+   * it runs, its progress. It takes the flow's data-status words and marks,
+   * so a run's flow and its checks read as one, and data-chart-theme on a
+   * shared ancestor switches both.
+   *
+   *   <section class="sd-checklist" aria-labelledby="checks-h">
+   *     <div class="sd-checklist-head">
+   *       <span class="sd-label sd-label-strong" id="checks-h">Checks</span>
+   *       <span class="sd-meta"><span>4 passed</span><span>2 running</span></span>
+   *     </div>
+   *     <ul>
+   *       <li data-status="done"><i></i><b>Type check</b><span>0 errors</span><span class="sd-sr-only">Passed</span></li>
+   *       <li data-status="running" style="--value: 43"><i></i><b>End to end</b><span>18 / 42</span><span class="sd-sr-only">Running</span></li>
+   *     </ul>
+   *   </section>
+   *
+   * The result is in the check's status color; data-tone on it names an
+   * exception, such as warnings on a check that passed.
+   */
+  .sd-checklist {
+    display: grid;
+    align-content: start;
+    min-width: 0;
+    margin: 0;
+    border: 1px solid var(--sd-line);
+    background: var(--sd-canvas);
+  }
+  .sd-checklist-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px 16px;
+    min-height: 44px;
+    padding: 10px 16px;
+    border-block-end: 1px solid var(--sd-line);
+  }
+  .sd-checklist > ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .sd-checklist > ul > li {
+    --status: var(--sd-fg-faint);
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 10px 16px;
+    font-size: var(--text-sm);
+    line-height: 1.4;
+  }
+  .sd-checklist > ul > li + li {
+    border-block-start: 1px solid var(--sd-line);
+  }
+  .sd-checklist > ul > li > b {
+    flex: 1;
+    min-width: 0;
+    color: var(--sd-fg);
+    font-weight: 400;
+    overflow-wrap: anywhere;
+  }
+  .sd-checklist > ul > li > span:not(.sd-sr-only) {
+    flex-shrink: 0;
+    margin-inline-start: auto;
+    color: var(--tone, color-mix(in srgb, var(--status) 75%, var(--sd-fg)));
+    font-family: var(--font-mono);
+    font-size: var(--text-3xs);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .sd-checklist > ul > li:is([data-status="queued"], [data-status="skipped"]) > b {
+    color: var(--sd-fg-muted);
+  }
+  .sd-checklist > ul > li:is([data-status="queued"], [data-status="skipped"]) > span:not(.sd-sr-only) {
+    color: var(--sd-fg-faint);
+  }
+  /* A running check: the same 2px line as a stage head, under its words. */
+  .sd-checklist > ul > li[data-status="running"] {
+    padding-block-end: 18px;
+  }
+  .sd-checklist > ul > li[data-status="running"]::after {
+    content: "";
+    position: absolute;
+    inset: auto 16px 8px;
+    height: 2px;
+    background: linear-gradient(
+      to right,
+      var(--status) calc(var(--value, 0) * 1%),
+      var(--sd-line) 0
+    );
   }
 }

@@ -1566,6 +1566,33 @@ job would move the line every bus is drawn on. Set `--stage-w` (default
 `12.5rem`) for longer names; the board scrolls horizontally when the stages
 do not fit.
 
+### Checklists: `sd-checklist`
+
+Named checks, each with a status mark, its result and, while it runs, its
+progress. It takes the flow's `data-status` words and marks, so a run's flow
+and its checks read as one. CSS only.
+
+```html
+<section class="sd-checklist" aria-labelledby="checks-h">
+  <div class="sd-checklist-head">
+    <span class="sd-label sd-label-strong" id="checks-h">Checks</span>
+    <span class="sd-meta"><span>2 passed</span><span>1 running</span></span>
+  </div>
+  <ul>
+    <li data-status="done"><i></i><b>Type check</b><span>0 errors</span><span class="sd-sr-only">Passed</span></li>
+    <li data-status="done"><i></i><b>Lint</b><span data-tone="pending">2 warnings</span><span class="sd-sr-only">Passed</span></li>
+    <li data-status="running" style="--value: 43"><i></i><b>End to end</b><span>18 / 42</span><span class="sd-sr-only">Running</span></li>
+  </ul>
+</section>
+```
+
+The result takes the check's status color; `data-tone` on it names an
+exception, such as warnings on a check that passed. A running check takes
+`--value` (0–100) and draws the stage head's 2px line under its words.
+`data-chart-theme="spectrum"` on the checklist, or on an ancestor it shares
+with a flow, recolors it. `sd-checks` stays the plain inline list of
+outcomes.
+
 ### Live charts: `createChart`
 
 Time-series charts for bandwidth and latency, on Chart.js. Chart.js is an

@@ -65,7 +65,7 @@ const library = [
         { id: "charts", title: "Charts", summary: "Live time series, chart types, square CSS charts, sparklines and diffs." },
         { id: "timeline", title: "Timeline", summary: "Ranges over one time axis." },
         { id: "schedule", title: "Schedule", summary: "An hour roster of status blocks in mono or spectrum." },
-        { id: "flow", title: "Flow", summary: "A pipeline of stages and jobs on a dot grid, in mono or spectrum." },
+        { id: "flow", title: "Flow", summary: "A pipeline of stages and jobs on a dot grid, and its checklist, in mono or spectrum." },
       ]),
     ],
   },

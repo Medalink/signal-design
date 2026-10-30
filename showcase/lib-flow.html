@@ -145,5 +145,42 @@
       </figure>
       <p class="demo-usage"><code>sd-flow</code> + <code>-head|-legend|-board|-canvas|-stage|-stage-head|-jobs|-job</code> · <code>data-status="done|running|queued|waiting|failed|skipped"</code> on stages, jobs and legend entries · <code>--value</code> (0–100) fills a stage head and a running job · edges leave a stage in its status · <code>aria-current</code> marks the open job · <code>data-chart-theme="mono|spectrum"</code> · CSS only</p>
     </div>
+
+    <div class="demo-block" id="charts-checklist">
+      <h2 class="sd-label">Checklist</h2>
+      <div class="grid gap-6 lg:grid-cols-2">
+        <section class="sd-checklist" aria-labelledby="checklist-mono-h">
+          <div class="sd-checklist-head">
+            <span class="sd-label sd-label-strong" id="checklist-mono-h">Checks</span>
+            <span class="sd-meta"><span>4 passed</span><span>2 running</span><span>1 queued</span></span>
+          </div>
+          <ul>
+            <li data-status="done"><i></i><b>Type check</b><span>0 errors</span><span class="sd-sr-only">Passed</span></li>
+            <li data-status="done"><i></i><b>Lint</b><span data-tone="pending">2 warnings</span><span class="sd-sr-only">Passed</span></li>
+            <li data-status="done"><i></i><b>Accessibility</b><span>0 violations</span><span class="sd-sr-only">Passed</span></li>
+            <li data-status="done"><i></i><b>Bundle size</b><span>84 kB · −3%</span><span class="sd-sr-only">Passed</span></li>
+            <li data-status="running" style="--value: 43"><i></i><b>End to end · Chromium</b><span>18 / 42</span><span class="sd-sr-only">Running</span></li>
+            <li data-status="running" style="--value: 70"><i></i><b>End to end · WebKit</b><span>70%</span><span class="sd-sr-only">Running</span></li>
+            <li data-status="queued"><i></i><b>Visual diff</b><span>queued</span></li>
+          </ul>
+        </section>
+
+        <section class="sd-checklist" data-chart-theme="spectrum" aria-labelledby="checklist-spectrum-h">
+          <div class="sd-checklist-head">
+            <span class="sd-label sd-label-strong" id="checklist-spectrum-h">Checks · spectrum</span>
+            <span class="sd-meta"><span>3 passed</span><span>1 failed</span><span>1 waiting</span></span>
+          </div>
+          <ul>
+            <li data-status="done"><i></i><b>Type check</b><span>0 errors</span><span class="sd-sr-only">Passed</span></li>
+            <li data-status="done"><i></i><b>Lint</b><span data-tone="pending">2 warnings</span><span class="sd-sr-only">Passed</span></li>
+            <li data-status="done"><i></i><b>Accessibility</b><span>0 violations</span><span class="sd-sr-only">Passed</span></li>
+            <li data-status="failed"><i></i><b>End to end · WebKit</b><span>3 of 42 failed</span><span class="sd-sr-only">Failed</span></li>
+            <li data-status="waiting"><i></i><b>Release approval</b><span>1 of 2</span><span class="sd-sr-only">Waiting</span></li>
+            <li data-status="skipped"><i></i><b>Deploy preview</b><span>skipped</span></li>
+          </ul>
+        </section>
+      </div>
+      <p class="demo-usage"><code>sd-checklist</code> + <code>-head</code> · <code>&lt;li data-status="done|running|queued|waiting|failed|skipped"&gt;</code> with <code>&lt;i&gt;</code> mark, <code>&lt;b&gt;</code> name and <code>&lt;span&gt;</code> result · <code>--value</code> (0–100) on a running check · <code>data-tone</code> on a result for an exception · <code>data-chart-theme="mono|spectrum"</code> · CSS only</p>
+    </div>
 </body>
 </html>
