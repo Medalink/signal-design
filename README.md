@@ -1507,6 +1507,65 @@ horizontally when `--min-w` requires it. Its scroll viewport can also clip
 very tall labels at its edges, so leave enough vertical room for your label
 lengths or provide a separate detail view for unusually long descriptions.
 
+### Flows: `sd-flow`
+
+A pipeline: stages left to right, each a column of jobs, on a dot grid. Each
+stage's jobs sit centered on one line, so neighboring stages are joined by
+one bus that both draw a half of. CSS only.
+
+```html
+<figure class="sd-flow" aria-labelledby="flow-h">
+  <div class="sd-flow-head">
+    <span class="sd-label sd-label-strong" id="flow-h">Stages</span>
+    <div class="sd-flow-legend">
+      <span data-status="done"><i></i>Done</span>
+      <span data-status="running"><i></i>Running</span>
+      <span data-status="queued"><i></i>Queued</span>
+    </div>
+  </div>
+  <div class="sd-flow-board">
+    <div class="sd-flow-canvas">
+      <div class="sd-flow-stage" role="group" aria-labelledby="flow-build" data-status="done">
+        <div class="sd-flow-stage-head" style="--value: 100">
+          <i></i><b id="flow-build">Build</b><span>2m 10s</span><span>2/2</span>
+        </div>
+        <div class="sd-flow-jobs">
+          <button class="sd-flow-job" type="button" data-status="done"><i></i><b>build-web</b><span>1m 48s</span><span class="sd-sr-only">Done</span></button>
+          <button class="sd-flow-job" type="button" data-status="done"><i></i><b>build-desktop</b><span>2m 10s</span><span class="sd-sr-only">Done</span></button>
+        </div>
+      </div>
+      <div class="sd-flow-stage" role="group" aria-labelledby="flow-verify" data-status="running">
+        <div class="sd-flow-stage-head" style="--value: 33">
+          <i></i><b id="flow-verify">Verify</b><span>3m 12s</span><span>1/3</span>
+        </div>
+        <div class="sd-flow-jobs">
+          <button class="sd-flow-job" type="button" data-status="running" style="--value: 43" aria-current="true"><i></i><b>e2e-chromium</b><span>3m 12s · 18/42</span><span class="sd-sr-only">Running</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <figcaption class="sd-meta"><span>main</span><span>6m 12s</span></figcaption>
+</figure>
+```
+
+`data-status` is `done`, `running`, `queued`, `waiting` (on a person),
+`failed` or `skipped`, on a stage, a job and a legend entry; the empty `<i>`
+is its square mark. The edges out of a stage follow the stage's status:
+solid once it is done, dashed while it runs, grey before and after a
+failure. `--value` (0–100) fills a stage head's line and a running job's
+underline. `aria-current` marks the job whose detail is open.
+
+Colors come from the chart tokens: `data-chart-theme="spectrum"` (on the
+flow or any ancestor) recolors it; mono keeps done and running in greys and
+colors only waiting and failed. A job is a `button` or a link when it opens
+something, or a `div` when it does not. The mark is not spoken, so put the
+status in words inside the job (`sd-sr-only` when it is not shown).
+
+A job has a fixed height and its name ends in an ellipsis, since a wrapped
+job would move the line every bus is drawn on. Set `--stage-w` (default
+`12.5rem`) for longer names; the board scrolls horizontally when the stages
+do not fit.
+
 ### Live charts: `createChart`
 
 Time-series charts for bandwidth and latency, on Chart.js. Chart.js is an

@@ -1,0 +1,382 @@
+@layer components {
+  /*
+   * Flow: a pipeline of stages, left to right, each a column of jobs.
+   *
+   *   <figure class="sd-flow" aria-labelledby="flow-h">
+   *     <div class="sd-flow-head">
+   *       <span class="sd-label sd-label-strong" id="flow-h">Stages</span>
+   *       <div class="sd-flow-legend"><span data-status="done"><i></i>Done</span>…</div>
+   *     </div>
+   *     <div class="sd-flow-board">
+   *       <div class="sd-flow-canvas">
+   *         <div class="sd-flow-stage" role="group" aria-labelledby="flow-build" data-status="done">
+   *           <div class="sd-flow-stage-head" style="--value: 100">
+   *             <i></i><b id="flow-build">Build</b><span>2m 10s</span><span>2/2</span>
+   *           </div>
+   *           <div class="sd-flow-jobs">
+   *             <button class="sd-flow-job" type="button" data-status="done"><i></i><b>build-web</b><span>1m 48s</span><span class="sd-sr-only">Done</span></button>
+   *           </div>
+   *         </div>
+   *       </div>
+   *     </div>
+   *   </figure>
+   *
+   * Every stage's jobs sit centered on one line, so each pair of stages is
+   * joined by one bus: the left stage draws its half, the right stage the
+   * other, and the two meet. A job is fixed height for the same reason; a
+   * long name ends in an ellipsis instead of wrapping.
+   *
+   * data-status is done, running, queued, waiting (on a person), failed or
+   * skipped, on a stage, a job and a legend entry. The edges out of a stage
+   * follow its status: solid once it is done, dashed while it runs, grey
+   * before. --value (0–100) fills a stage head's line and a running job's
+   * underline. Colors come from the chart tokens, so data-chart-theme
+   * ("mono" default, "spectrum") switches the whole flow to greys or the full
+   * palette, on this element or any ancestor. CSS only.
+   */
+  .sd-flow {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+    margin: 0;
+    --stage-w: 12.5rem;
+    --head-h: 44px;
+    --job-h: 52px;
+    --job-gap: 12px;
+    /* Space before and after the jobs in a stage, and where the bus runs:
+       --bus in from the stage's end, inside the stage the edges leave. */
+    --pad-start: 12px;
+    --pad-end: 32px;
+    --bus: 16px;
+    --dot: 2px;
+    --dot-gap: 20px;
+    --flow-dots: color-mix(in srgb, var(--sd-fg) 16%, transparent);
+  }
+  .sd-flow-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px 16px;
+    min-height: 28px;
+  }
+  .sd-flow-board {
+    min-width: 0;
+    overflow-x: auto;
+    border: 1px solid var(--sd-line);
+  }
+
+  /* The canvas: one row of stage columns on a dot grid. The dots start
+     under the stage heads. */
+  .sd-flow-canvas {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(var(--stage-w), 1fr);
+    min-width: min-content;
+  }
+  .sd-flow-canvas::before {
+    content: "";
+    position: absolute;
+    inset: var(--head-h) 0 0;
+    z-index: -1;
+    background: conic-gradient(at var(--dot) var(--dot), transparent 75%, var(--flow-dots) 0) 10px 10px /
+      var(--dot-gap) var(--dot-gap);
+    pointer-events: none;
+  }
+
+  /* A stage: its head, then its jobs centered in the space below. A dashed
+     hairline divides it from the stage before, drawn as a background so it
+     takes no width and every bus stays where the stage before expects it. */
+  .sd-flow-stage {
+    --status: var(--sd-fg-faint);
+    --out: var(--sd-line-strong);
+    --out-gap: 0%;
+    --in: var(--sd-line-strong);
+    --in-gap: 0%;
+    display: grid;
+    grid-template-rows: var(--head-h) 1fr;
+    min-width: 0;
+    transition: background-color 160ms var(--ease-out);
+  }
+  .sd-flow-stage + .sd-flow-stage {
+    background-image: linear-gradient(var(--sd-line-strong) 50%, transparent 0);
+    background-size: 1px 6px;
+    background-repeat: repeat-y;
+  }
+  .sd-flow-stage[data-status="running"] {
+    background-color: color-mix(in srgb, var(--status) 5%, transparent);
+  }
+
+  .sd-flow-stage-head {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    padding-inline: var(--pad-start) 14px;
+    overflow: hidden;
+    color: var(--sd-fg-faint);
+    font-family: var(--font-mono);
+    font-size: var(--text-3xs);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .sd-flow-stage-head > b {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--sd-fg);
+    font-family: var(--sd-font-sans);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-overflow: ellipsis;
+  }
+  /* The second word after the name is the count, at the end of the head. */
+  .sd-flow-stage-head > b + span + span {
+    margin-inline-start: auto;
+  }
+  /* The stage's progress, a 2px line along the bottom of its head. */
+  .sd-flow-stage-head::after {
+    content: "";
+    position: absolute;
+    inset: auto 14px 0 var(--pad-start);
+    height: 2px;
+    background: linear-gradient(
+      to right,
+      var(--status) calc(var(--value, 0) * 1%),
+      var(--sd-line) 0
+    );
+  }
+  /* Waiting and failed say so in their own color; the head's other words stay grey. */
+  .sd-flow-stage:is([data-status="waiting"], [data-status="failed"]) > .sd-flow-stage-head > span {
+    color: color-mix(in srgb, var(--status) 75%, var(--sd-fg));
+  }
+
+  /* The jobs, and the two buses: the one coming in on the left and the one
+     going out on the right. Each spans the centers of this stage's first and
+     last job; the neighbor's bus covers the rest of the pair's span. */
+  .sd-flow-jobs {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--job-gap);
+    align-self: center;
+    min-width: 0;
+    margin: 24px var(--pad-end) 24px var(--pad-start);
+  }
+  .sd-flow-jobs::before,
+  .sd-flow-jobs::after {
+    content: "";
+    position: absolute;
+    top: calc(var(--job-h) / 2);
+    bottom: calc(var(--job-h) / 2 - 1px);
+    width: 1px;
+    pointer-events: none;
+  }
+  .sd-flow-jobs::before {
+    left: calc(-1 * (var(--pad-start) + var(--bus)));
+    background: linear-gradient(var(--in) calc(100% - var(--in-gap)), transparent 0) 0 50% / 1px 6px repeat-y;
+  }
+  .sd-flow-jobs::after {
+    left: calc(100% + var(--pad-end) - var(--bus));
+    background: linear-gradient(var(--out) calc(100% - var(--out-gap)), transparent 0) 0 50% / 1px 6px repeat-y;
+  }
+  .sd-flow-stage:first-child > .sd-flow-jobs::before,
+  .sd-flow-stage:last-child > .sd-flow-jobs::after {
+    content: none;
+  }
+
+  /* A job. Its two stubs run from its edges to the buses. */
+  .sd-flow-job {
+    --status: var(--sd-fg-faint);
+    position: relative;
+    display: grid;
+    grid-template-columns: 8px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-content: center;
+    gap: 3px 10px;
+    box-sizing: border-box;
+    width: 100%;
+    height: var(--job-h);
+    margin: 0;
+    padding: 0 12px;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-surface);
+    color: var(--sd-fg);
+    font: inherit;
+    text-align: start;
+    text-decoration: none;
+    transition:
+      background-color 160ms var(--ease-out),
+      border-color 160ms var(--ease-out);
+  }
+  .sd-flow-job::before,
+  .sd-flow-job::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    height: 1px;
+    pointer-events: none;
+  }
+  .sd-flow-job::before {
+    right: calc(100% + 1px);
+    width: calc(var(--pad-start) + var(--bus));
+    background: linear-gradient(to right, var(--in) calc(100% - var(--in-gap)), transparent 0) 100% 0 / 6px 1px repeat-x;
+  }
+  .sd-flow-job::after {
+    left: calc(100% + 1px);
+    width: calc(var(--pad-end) - var(--bus) + 1px);
+    background: linear-gradient(to right, var(--out) calc(100% - var(--out-gap)), transparent 0) 0 0 / 6px 1px repeat-x;
+  }
+  .sd-flow-stage:first-child .sd-flow-job::before,
+  .sd-flow-stage:last-child .sd-flow-job::after {
+    content: none;
+  }
+  .sd-flow-job > i {
+    grid-row: 1;
+    align-self: center;
+  }
+  .sd-flow-job > b {
+    grid-column: 2;
+    min-width: 0;
+    overflow: hidden;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 400;
+    line-height: 1.3;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sd-flow-job > span:not(.sd-sr-only) {
+    grid-column: 2;
+    min-width: 0;
+    overflow: hidden;
+    color: var(--sd-fg-faint);
+    font-family: var(--font-mono);
+    font-size: var(--text-3xs);
+    line-height: 1.3;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  :is(a, button).sd-flow-job {
+    cursor: pointer;
+  }
+  :is(a, button).sd-flow-job:hover {
+    border-color: var(--sd-fg-faint);
+    background-color: var(--sd-raised);
+  }
+  .sd-flow-job:focus-visible {
+    outline: 1px solid var(--sd-fg);
+    outline-offset: 2px;
+  }
+  .sd-flow-job:is([aria-current]:not([aria-current="false"]), [aria-selected="true"]) {
+    border-color: var(--sd-fg);
+    background-color: var(--sd-raised);
+  }
+
+  /* A running job: a status edge and its progress along the bottom. */
+  .sd-flow-job[data-status="running"] {
+    border-color: color-mix(in srgb, var(--status) 55%, transparent);
+    background-image: linear-gradient(var(--status) 0 0);
+    background-position: 0 100%;
+    background-size: calc(var(--value, 0) * 1%) 2px;
+    background-repeat: no-repeat;
+  }
+  .sd-flow-job:is([data-status="running"], [data-status="waiting"], [data-status="failed"]) > span:not(.sd-sr-only) {
+    color: color-mix(in srgb, var(--status) 75%, var(--sd-fg));
+  }
+  .sd-flow-job:is([data-status="queued"], [data-status="skipped"]) {
+    background-color: var(--sd-canvas);
+  }
+  .sd-flow-job:is([data-status="queued"], [data-status="skipped"]) > b {
+    color: var(--sd-fg-muted);
+  }
+  .sd-flow-job:is([data-status="waiting"], [data-status="skipped"]) {
+    border-style: dashed;
+  }
+  .sd-flow-job[data-status="waiting"] {
+    border-color: color-mix(in srgb, var(--status) 55%, transparent);
+  }
+  .sd-flow-job[data-status="failed"] {
+    border-color: color-mix(in srgb, var(--status) 55%, transparent);
+  }
+
+  /* Status: one role per word. mono keeps done and running in greys (the
+     running one brightest) and colors only what needs a person. */
+  .sd-flow [data-status="done"] {
+    --status: var(--sd-chart-2);
+  }
+  .sd-flow [data-status="running"] {
+    --status: var(--sd-chart-accent);
+  }
+  .sd-flow [data-status="waiting"] {
+    --status: var(--sd-chart-warning);
+  }
+  .sd-flow [data-status="failed"] {
+    --status: var(--sd-chart-critical);
+  }
+  .sd-flow :is([data-status="queued"], [data-status="skipped"]) {
+    --status: var(--sd-fg-faint);
+  }
+
+  /* Edges leave a stage in its status and arrive at the next in the same. */
+  .sd-flow-stage[data-status="done"] {
+    --out: var(--sd-chart-2);
+  }
+  .sd-flow-stage[data-status="running"] {
+    --out: var(--sd-chart-accent);
+    --out-gap: 50%;
+  }
+  .sd-flow-stage[data-status="done"] + .sd-flow-stage {
+    --in: var(--sd-chart-2);
+  }
+  .sd-flow-stage[data-status="running"] + .sd-flow-stage {
+    --in: var(--sd-chart-accent);
+    --in-gap: 50%;
+  }
+
+  /* The status mark: an 8px square. Solid when settled (done, failed),
+     hollow before it starts, dashed while it waits or was skipped, and
+     turning while it runs. */
+  :is(.sd-flow-stage-head, .sd-flow-job, .sd-flow-legend > span) > i {
+    flex-shrink: 0;
+    box-sizing: border-box;
+    width: 8px;
+    height: 8px;
+    border: 1px solid var(--status, var(--sd-fg-faint));
+  }
+  :is(.sd-flow-job, .sd-flow-legend > span):is([data-status="done"], [data-status="failed"]) > i,
+  .sd-flow-stage:is([data-status="done"], [data-status="failed"]) > .sd-flow-stage-head > i {
+    background: var(--status);
+  }
+  :is(.sd-flow-job, .sd-flow-legend > span):is([data-status="waiting"], [data-status="skipped"]) > i,
+  .sd-flow-stage:is([data-status="waiting"], [data-status="skipped"]) > .sd-flow-stage-head > i {
+    border-style: dashed;
+  }
+  :is(.sd-flow-job, .sd-flow-legend > span)[data-status="running"] > i,
+  .sd-flow-stage[data-status="running"] > .sd-flow-stage-head > i {
+    animation: sd-flow-turn 1.4s var(--ease-out) infinite;
+  }
+  @keyframes sd-flow-turn {
+    to {
+      rotate: 90deg;
+    }
+  }
+
+  /* Legend: the same data-status, the same mark. */
+  .sd-flow-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-2xs);
+    line-height: 1.4;
+  }
+  .sd-flow-legend > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}

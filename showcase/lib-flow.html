@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+    <div class="demo-block" id="charts-flow">
+      <h2 class="sd-label">Flow</h2>
+      <figure class="sd-flow" aria-labelledby="flow-mono-h">
+        <div class="sd-flow-head">
+          <span class="sd-label sd-label-strong" id="flow-mono-h">Stages · run 4821</span>
+          <div class="sd-flow-legend">
+            <span data-status="done"><i></i>Done</span>
+            <span data-status="running"><i></i>Running</span>
+            <span data-status="queued"><i></i>Queued</span>
+            <span data-status="waiting"><i></i>Needs approval</span>
+          </div>
+        </div>
+        <div class="sd-flow-board">
+          <div class="sd-flow-canvas">
+            <div class="sd-flow-stage" role="group" aria-labelledby="flow-mono-lint" data-status="done">
+              <div class="sd-flow-stage-head" style="--value: 100"><i></i><b id="flow-mono-lint">Lint</b><span>42s</span><span>1/1</span></div>
+              <div class="sd-flow-jobs">
+                <button class="sd-flow-job" type="button" data-status="done"><i></i><b>lint</b><span>42s</span><span class="sd-sr-only">Done</span></button>
+              </div>
+            </div>
+            <div class="sd-flow-stage" role="group" aria-labelledby="flow-mono-build" data-status="done">
+              <div class="sd-flow-stage-head" style="--value: 100"><i></i><b id="flow-mono-build">Build</b><span>2m 10s</span><span>2/2</span></div>
+              <div class="sd-flow-jobs">
+                <button class="sd-flow-job" type="button" data-status="done"><i></i><b>build-web</b><span>1m 48s</span><span class="sd-sr-only">Done</span></button>
+                <button class="sd-flow-job" type="button" data-status="done"><i></i><b>build-desktop</b><span>2m 10s</span><span class="sd-sr-only">Done</span></button>
+              </div>
+            </div>
+            <div class="sd-flow-stage" role="group" aria-labelledby="flow-mono-verify" data-status="running">
+              <div class="sd-flow-stage-head" style="--value: 33"><i></i><b id="flow-mono-verify">Verify</b><span>3m 12s</span><span>1/3</span></div>
+              <div class="sd-flow-jobs">
+                <button class="sd-flow-job" type="button" data-status="done"><i></i><b>a11y</b><span>1m 04s</span><span class="sd-sr-only">Done</span></button>
+                <button class="sd-flow-job" type="button" data-status="running" style="--value: 43" aria-current="true" data-sd-tip="18 of 42 specs · retried once · 4 workers"><i></i><b>e2e-chromium</b><span>3m 12s · 18/42</span><span class="sd-sr-only">Running</span></button>
+                <button class="sd-flow-job" type="button" data-status="running" style="--value: 70"><i></i><b>e2e-webkit</b><span>2m 51s · 70%</span><span class="sd-sr-only">Running</span></button>
+              </div>
+            </div>
+            <div class="sd-flow-stage" role="group" aria-labelledby="flow-mono-package" data-status="queued">
+              <div class="sd-flow-stage-head"><i></i><b id="flow-mono-package">Package</b><span>queued</span><span>0/2</span></div>
+              <div class="sd-flow-jobs">
+                <button class="sd-flow-job" type="button" data-status="queued"><i></i><b>image</b><span>queued</span></button>
+                <button class="sd-flow-job" type="button" data-status="queued"><i></i><b>installers</b><span>queued</span></button>
+              </div>
+            </div>
+            <div class="sd-flow-stage" role="group" aria-labelledby="flow-mono-deploy" data-status="waiting">
+              <div class="sd-flow-stage-head"><i></i><b id="flow-mono-deploy">Deploy</b><span>1 approval</span><span>0/2</span></div>
+              <div class="sd-flow-jobs">
+                <button class="sd-flow-job" type="button" data-status="queued"><i></i><b>preview</b><span>queued</span></button>
+                <button class="sd-flow-job" type="button" data-status="waiting"><i></i><b>production</b><span>needs approval</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <figcaption class="sd-meta"><span>main</span><span>4f2a1c0</span><span>6m 12s</span></figcaption>
+      </figure>
+
+      <figure class="sd-flow" data-chart-theme="spectrum" aria-labelledby="flow-spectrum-h">
+        <div class="sd-flow-head">
+          <span class="sd-label sd-label-strong" id="flow-spectrum-h">Stages · spectrum</span>
+          <div class="sd-flow-legend">
+            <span data-status="done"><i></i>Done</span>
+            <span data-status="running"><i></i>Running</span>
+            <span data-status="queued"><i></i>Queued</span>
+            <span data-status="waiting"><i></i>Needs approval</span>
+          </div>
+        </div>
+        <div class="sd-flow-board">
+          <div class="sd-flow-canvas">
+            <div class="sd-flow-stage" role="group" aria-labelledby="flow-spectrum-lint" data-status="done">
+              <div class="sd-flow-stage-head" style="--value: 100"><i></i><b id="flow-spectrum-lint">Lint</b><span>42s</span><span>1/1</span></div>
+              <div class="sd-flow-jobs">
+                <button class="sd-flow-job" type="button" data-status="done"><i></i><b>lint</b><span>42s</span><span class="sd-sr-only">Done</span></button>
+              </div>
+            </div>
+            <div class="sd-flow-stage" role="group" aria-labelledby="flow-spectrum-build" data-status="done">
+              <div class="sd-flow-stage-head" style="--value: 100"><i></i><b id="flow-spectrum-build">Build</b><span>2m 10s</span><span>2/2</span></div>
+              <div class="sd-flow-jobs">
+                <button class="sd-flow-job" type="button" data-status="done"><i></i><b>build-web</b><span>1m 48s</span><span class="sd-sr-only">Done</span></button>
+                <button class="sd-flow-job" type="button" data-status="done"><i></i><b>build-desktop</b><span>2m 10s</span><span class="sd-sr-only">Done</span></button>
+              </div>
+            </div>
+            <div class="sd-flow-stage" role="group" aria-labelledby="flow-spectrum-verify" data-status="running">
+              <div class="sd-flow-stage-head" style="--value: 33"><i></i><b id="flow-spectrum-verify">Verify</b><span>3m 12s</span><span>1/3</span></div>
+              <div class="sd-flow-jobs">
+                <button class="sd-flow-job" type="button" data-status="done"><i></i><b>a11y</b><span>1m 04s</span><span class="sd-sr-only">Done</span></button>
+                <button class="sd-flow-job" type="button" data-status="running" style="--value: 43" aria-current="true" data-sd-tip="18 of 42 specs · retried once · 4 workers"><i></i><b>e2e-chromium</b><span>3m 12s · 18/42</span><span class="sd-sr-only">Running</span></button>
+                <button class="sd-flow-job" type="button" data-status="running" style="--value: 70"><i></i><b>e2e-webkit</b><span>2m 51s · 70%</span><span class="sd-sr-only">Running</span></button>
+              </div>
+            </div>
+            <div class="sd-flow-stage" role="group" aria-labelledby="flow-spectrum-package" data-status="queued">
+              <div class="sd-flow-stage-head"><i></i><b id="flow-spectrum-package">Package</b><span>queued</span><span>0/2</span></div>
+              <div class="sd-flow-jobs">
+                <button class="sd-flow-job" type="button" data-status="queued"><i></i><b>image</b><span>queued</span></button>
+                <button class="sd-flow-job" type="button" data-status="queued"><i></i><b>installers</b><span>queued</span></button>
+              </div>
+            </div>
+            <div class="sd-flow-stage" role="group" aria-labelledby="flow-spectrum-deploy" data-status="waiting">
+              <div class="sd-flow-stage-head"><i></i><b id="flow-spectrum-deploy">Deploy</b><span>1 approval</span><span>0/2</span></div>
+              <div class="sd-flow-jobs">
+                <button class="sd-flow-job" type="button" data-status="queued"><i></i><b>preview</b><span>queued</span></button>
+                <button class="sd-flow-job" type="button" data-status="waiting"><i></i><b>production</b><span>needs approval</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <figcaption class="sd-meta"><span>main</span><span>4f2a1c0</span><span>6m 12s</span></figcaption>
+      </figure>
+
+      <figure class="sd-flow" aria-labelledby="flow-failed-h">
+        <div class="sd-flow-head">
+          <span class="sd-label sd-label-strong" id="flow-failed-h">Stages · run 4818</span>
+          <div class="sd-flow-legend">
+            <span data-status="done"><i></i>Done</span>
+            <span data-status="failed"><i></i>Failed</span>
+            <span data-status="skipped"><i></i>Skipped</span>
+          </div>
+        </div>
+        <div class="sd-flow-board">
+          <div class="sd-flow-canvas">
+            <div class="sd-flow-stage" role="group" aria-labelledby="flow-failed-build" data-status="done">
+              <div class="sd-flow-stage-head" style="--value: 100"><i></i><b id="flow-failed-build">Build</b><span>2m 02s</span><span>2/2</span></div>
+              <div class="sd-flow-jobs">
+                <button class="sd-flow-job" type="button" data-status="done"><i></i><b>build-web</b><span>1m 51s</span><span class="sd-sr-only">Done</span></button>
+                <button class="sd-flow-job" type="button" data-status="done"><i></i><b>build-desktop</b><span>2m 02s</span><span class="sd-sr-only">Done</span></button>
+              </div>
+            </div>
+            <div class="sd-flow-stage" role="group" aria-labelledby="flow-failed-verify" data-status="failed">
+              <div class="sd-flow-stage-head" style="--value: 50"><i></i><b id="flow-failed-verify">Verify</b><span>1 failed</span><span>1/2</span></div>
+              <div class="sd-flow-jobs">
+                <button class="sd-flow-job" type="button" data-status="done"><i></i><b>a11y</b><span>1m 02s</span><span class="sd-sr-only">Done</span></button>
+                <button class="sd-flow-job" type="button" data-status="failed" aria-current="true"><i></i><b>e2e-webkit</b><span>3 of 42 failed</span><span class="sd-sr-only">Failed</span></button>
+              </div>
+            </div>
+            <div class="sd-flow-stage" role="group" aria-labelledby="flow-failed-deploy" data-status="skipped">
+              <div class="sd-flow-stage-head"><i></i><b id="flow-failed-deploy">Deploy</b><span>skipped</span><span>0/1</span></div>
+              <div class="sd-flow-jobs">
+                <button class="sd-flow-job" type="button" data-status="skipped"><i></i><b>preview</b><span>skipped</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <figcaption class="sd-meta"><span>fix/login-redirect</span><span>9c03e7d</span><span>4m 40s</span></figcaption>
+      </figure>
+      <p class="demo-usage"><code>sd-flow</code> + <code>-head|-legend|-board|-canvas|-stage|-stage-head|-jobs|-job</code> · <code>data-status="done|running|queued|waiting|failed|skipped"</code> on stages, jobs and legend entries · <code>--value</code> (0–100) fills a stage head and a running job · edges leave a stage in its status · <code>aria-current</code> marks the open job · <code>data-chart-theme="mono|spectrum"</code> · CSS only</p>
+    </div>
+</body>
+</html>

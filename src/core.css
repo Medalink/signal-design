@@ -35,6 +35,7 @@
 @import "./components/charts.css";
 @import "./components/timeline.css";
 @import "./components/schedule.css";
+@import "./components/flow.css";
 @import "./components/ascii.css";
 @import "./components/broadcast.css";
 @import "./components/motion.css";
