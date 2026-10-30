@@ -2,6 +2,178 @@
 
 ## Unreleased
 
+## 1.4.1 (2026-10-30)
+
+### Changed
+- A count in `sd-icon-btn` sits after the icon instead of over its corner,
+  so it no longer covers the glyph.
+- The chat example is one joined surface and behaves like a live room: the
+  feed follows new messages, Rosa's typing ends in a message, your first two
+  messages get an answer, R, E, C and P act on the hovered or focused
+  message, Up in an empty composer edits your last message, Escape drops a
+  reply, a quoted line jumps to its message, the message menu offers Edit and
+  Delete on your own messages and Pin or Unpin on any, Delete folds the row
+  out with Undo, and Retry resends in place. Reply uses the reply icon
+  everywhere. On a phone, a long press opens the message menu with the quick
+  reactions over the message, and the keyboard's return key reads Send
+  (`enterkeyhint`).
+- Gradients are allowed. `signal-design check` no longer fails a CSS gradient,
+  as a background or as a mask, and the shell's crumb and action bars fade out
+  at their ends again.
+- Loops are allowed, decoration included. Rule 6 now asks only that transitions
+  run 120–200ms.
+- `signal-design check` now fails text in a weight other than 400 and 500 (600
+  in the reading face), or in a font family that is not `--sd-font-sans`,
+  `--sd-font-mono` or `--sd-font-reading` on that element. The rule is `type`.
+- `signal-design check` now fails a color that is the same in the ink and paper
+  themes and is not the value of any `--sd-*` token in ink, in paper or in the
+  theme the page is in, on a text, background, border or outline. The rule is `color`. Every element with
+  `data-theme` flips along with `<html>`, so a themed subtree or an app root is
+  checked too. Tints of a token and a person's `--who` and `--edge` pass. A hex
+  copied from a token's value passes; the rule cannot tell it from the token.
+- `signal-design check` now fails navigation and headings (`h1`-`h6`, `nav a`,
+  sidebar links, rail items, tabs, breadcrumb links, and an icon in one) whose
+  text color is a signal role. The rule is `nav-color`. Status inside a
+  `data-tone`, badge, count, dot or status, and a person's `--who`, pass.
+- `signal-design check` now fails a view with more than one visible
+  `sd-btn-primary`. The view is the page, or the open dialog or popover the
+  button is in. The rule is `primary`; a gallery that shows variants takes
+  `data-sd-check-ignore="primary"`.
+- `signal-design check` now fails a visible text field or textarea whose only
+  name is its placeholder: it has a placeholder and no `<label>`, `aria-label`,
+  `aria-labelledby` or `title`. The rule is `label`. axe accepts a placeholder
+  as a name; WCAG 3.3.2 does not, because it disappears when the user types.
+  The two size demos on the Fields page now have labels.
+- The gate is stricter. A project that passed `signal-design check` before can
+  fail now on `type`, `color`, `nav-color`, `primary` or `label`. `--skip <rule>`
+  or `data-sd-check-ignore="<rule>"` is the way out while the project fixes it.
+- Every finding starts with its rule, so the text changed: `console error:` is
+  now `console:`, `horizontal overflow Npx` is `overflow: Npx wider than the
+  window`, `font not loaded` is `fonts: not loaded`, and `a11y <id>` is
+  `a11y: <id>`. A script that matches the old text needs the new.
+- The time axis date adapter reads the locale from the chart's options. With no locale set, ticks and tooltips are the same strings as before.
+- The five example apps are real app screens instead of ACME demos.
+  `shell.html` is a container dashboard: rows open to Restart, Follow logs
+  and a Remove that asks first. `chat.html` is a group channel in the full
+  app frame: group rail, resizable channel sidebar, a poll, replies, and
+  members by role. `form.html` is AI settings: connected servers, a found server,
+  command-line agents, and an add-a-server form that validates on blur and
+  says why Detect and Connect are off. `charts.html` is a usage stats screen:
+  range, tiles, CPU and memory plots with a limit line, and a per-container
+  table. `landing.html` is a one-screen download page for a desktop app.
+- The chart gallery and the formatting table moved from `charts.html` to the
+  charts library page.
+- `AGENTS.md` and the README point at `showcase/chat.html` for the whole app
+  frame, and at `showcase/shell.html` for a shell with no sidebar.
+- The docs now say what `accent` does in the CSS: selected, active, now.
+  Focus rings and the current item (`aria-current`) have always used `fg`,
+  but `AGENTS.md`, the README, the Cursor rule, the token descriptions and
+  the color page said accent was for focus. Hard rule 3 now reads "status and
+  selection".
+- The accent demos in the showcase read "Select" and "Active" instead of
+  "Focus" and "Current".
+- On phones `sd-breadcrumb` keeps only the current crumb, with no chevron,
+  instead of cutting every crumb to its first letter. A trail with no
+  current crumb stays whole.
+- On touch screens a key hint goes away: a `kbd` inside `sd-btn`, `sd-pill`,
+  `sd-marker-end` or a menu item, and a status bar cluster that is only a
+  hint. A `kbd` in a sentence or in `sd-shortcuts` stays.
+- On phones `sd-row-title` wraps to two lines before it is cut.
+- A field's control keeps `5rem` of scroll margin, so focusing it from a
+  failed submit leaves its label and message in view.
+- The Cursor rule states the type rule as it is: two weights, 400 and 500,
+  and families through `font-sans`, `font-mono` and `font-reading`.
+
+### Added
+- `data-sd-follow` on a feed scroller keeps the newest row in view while the
+  reader is at the bottom: rows arriving, images loading, a composer or reply
+  bar growing under it. Scrolled up, it holds still and shows the
+  `sd-feed-jump` bar placed after the scroller; the bar's button rides back
+  down in 200ms (at once under reduced motion). A framework that renders the
+  jump bar leaves the attribute out.
+- `data-joined` on `sd-shell-main` makes the header bar, the content and the
+  dock one surface: no gap, no bridges, a hairline under the bar in line with
+  the sidebar and aside heads, and the dock inset 16px (8px on phones). A
+  composer in a joined dock keeps its own edge, with the typing line over it.
+- `initKeyboard()` (called by `init()`): while a phone's on-screen keyboard
+  is up it sets `data-sd-keyboard`, `--sd-view-height` and `--sd-view-top`
+  on `<html>`, and `sd-shell` fits the screen above the keyboard and moves
+  with the page the browser slid up, so the header stays and the composer
+  sits on the keyboard. The status bar steps aside while you type. Before,
+  iOS slid the whole shell up and the header left the screen. Framework apps
+  can call it alone.
+- `data-sd-contextmenu` opens its menu on a long press on a touch screen,
+  where the finger lifts (iOS sends no right click). The held row carries
+  `data-sd-held` and lights like a hover; on a coarse pointer the row starts
+  no text selection or system callout.
+- `sd-md`: styles for Markdown in a message. `.sd-message-text` styles inline `code`; `sd-md` wraps the blocks of a Markdown message (paragraphs, `blockquote`, `ul`, `ol`, `pre`, `table`), starts under the author and sets its own `white-space`. A fence's language rides on the existing `sd-code` and `sd-code-head`; a table sits in `sd-table-wrap`. Plain element selectors, so any Markdown renderer's output styles without classes.
+- `signal-design check` names the rule in every finding: `corners`, `shadows`,
+  `type`, `color`, `nav-color`, `primary`, `label`, `overflow`, `fonts`,
+  `console`, `a11y`. `--skip <rule,...>` (or `--skip=<rule,...>`, repeats add
+  up) turns rules off for a run, and an unknown name exits 2 with the list. An
+  element with `data-sd-check-ignore="<rule> ..."` is exempt from those rules,
+  itself and what it holds.
+- `setLabels`, `getLabel` and `DEFAULT_LABELS` in `signal-design/js`: one table for the words the JS writes into the page (copy toasts, tag remove, sparkline trend, fps, table resize, sidebar toggle, window controls, countdown value text, stream alert defaults). English stays the default; `data-sd-empty` and an `aria-label` on the element still win. README "Translating labels" lists the keys.
+- React: `busyText` on `Combobox` and `CommandPalette` (the Loading row), `pinLabel` and `collapseLabel` on `ShellToggle`, and `title` on a `TreeAction`.
+- Charts: `locale` (a BCP-47 tag, default `"en"`) and `text` options on `createChart`, `setChartDefaults({ locale, text })`, `DEFAULT_CHART_TEXT`, and an optional `locale` argument on `formatTime`. Month names, am/pm and the 12 or 24 hour clock follow the locale.
+- CSS: `--sd-tile-muted-label` replaces the `muted` mark a call tile draws (`sd-tile[data-muted]`).
+- `play` and `pause` in the icon set: a right-pointing triangle outline and two vertical bars, on the same 24 grid inside the 4-unit inset, with the same 1.5 stroke, square caps and mitered corners as the rest. `IconName` lists them, and the icon page draws them with every other name.
+- Icons: `hash`, `lock`, `reply`, `send`, `pin`, `people`, `settings`,
+  `bell`, `smile`, `download`, `minimize`, `maximize`, `restore`,
+  `container`, `chart`, `database`, `sliders`, `logs`, `theme` and `rain`.
+- `.sd-rail-item:disabled` (and `aria-disabled="true"`) dims a rail section
+  that is not available, like a disabled button.
+- Checks: `shell-no-sidebar`, `shell-phone-label`, `table-sort-num`,
+  and `chart-teardown`.
+- `PRODUCT.md` and `DESIGN.md`: the product record and the visual system
+  (tokens in front matter, named rules, components) for design agents, with
+  `.impeccable/design.json` as its sidecar.
+- Checks: `muted-rows` (contrast of muted rows in every theme),
+  `form-errors` (a failed submit, in its own tab) and `phone-chrome`
+  (breadcrumb, key hints and row titles on a touch phone).
+
+### Fixed
+- In the chat example, clicking anywhere on a message that is itself a reply
+  started a reply to it: the action bar's Reply button and the reply state
+  both used `data-reply`.
+- On a touch screen the rail's search item no longer shows "Ctrl K". The
+  coarse-pointer rule that hides a shortcut hint now covers a `kbd` directly in
+  `.sd-rail-item`, and a rail label that holds only a hint is hidden whole. The
+  library pages label that item "Go to a page" and add `aria-keyshortcuts` where
+  the rail's search owns Ctrl K (a page with its own command palette keeps the
+  key for it). The rule moved from `navigation.css` to `touch.css`.
+- The form example's found-server and found-agent rows show a "Model" label over
+  their model control. The agent's label says "optional" beside it, as the
+  command form's does, instead of a placeholder.
+- An `sd-shell` with no `sd-sidebar` kept four grid tracks on phones and
+  squeezed `sd-shell-main` to about 96px. It now gets the full width.
+- A sortable header with `sd-num` or `data-num` now aligns to the end like
+  its cells. `th[data-sort]` used to reset it to the start.
+- On phones the page name showed twice: in the top bar label and in the
+  crumb chip under it. The chip and its bridge now hide when the top bar
+  has a label.
+- A chart destroyed before its font loaded threw an unhandled rejection
+  when the font arrived.
+- A split `sd-shell-header` in a joined `sd-shell-main` now joins as one bar,
+  as `sd-shell-bar` does: as tall as the sidebar head with a hairline under
+  it, the crumbs and the actions without their boxes, and the actions
+  without their fade and its 4rem of padding. Before, the two boxes floated
+  apart over the surface and the actions could run off a phone screen.
+- Muted sidebar links and muted item avatars fell to 2.6:1 and 3.9:1. Both
+  are now muted by color (`--sd-fg-faint`) instead of opacity and a filter,
+  and read at 4.5:1 or better in every theme; a muted link returns to `fg`
+  on hover and when current. A muted avatar photo is still shown in grey.
+- A checkbox or radio with `aria-invalid="true"` now gets the danger border,
+  as `:user-invalid` already did.
+- The form example lands a failed submit on the first bad field with its
+  label in view, keeps a danger banner with a live count at the top, and
+  ties every error to its control with `aria-describedby`.
+- The shell, chat and landing examples fit a phone: no stacked window
+  chrome on chat, a header menu on the landing, a shorter header on shell.
+- The `init()` doc comment lists `themeKey`, the shortcut that steps the theme
+  (default `"shift+t"`, `""` turns it off), as the README already does. Before,
+  the comment named only `theme`, `font` and `scrollbars`.
+
 ## 1.4.0 (2026-10-27)
 
 ### Changed
