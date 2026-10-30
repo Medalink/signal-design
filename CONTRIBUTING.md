@@ -1,20 +1,36 @@
 # Contributing to Signal
 
 `AGENTS.md` is the contract for building with Signal. This file is for
-changing Signal itself. Most of it exists so that parallel pull requests,
-usually one component each, merge without conflicts.
+changing Signal itself. A change ships with `ship`, straight to `main`, and
+no pull request opens. Most of this file exists so that parallel changes,
+usually one component each, land without conflicts.
 
-## Files a pull request does not edit
+## How a change ships
+
+1. Commit the change with its fragment in `changes/` (below).
+2. Run `ship`. It reads the flow from roster, runs the gate on what the change
+   touches, and pushes to `main`. `.github/` changes wait for the owner's
+   approval.
+3. A change to what consumers install (`package.json` or a path its `files`
+   field lists) gets a release. Once `ai-files` has finished on the pushed
+   commit, the flow folds the fragments into `CHANGELOG.md`, bumps the patch
+   version, regenerates the AI files, ships `Release v<version>` and tags it.
+   `release.yml` builds the GitHub release from the tag. A docs-only change
+   makes no release.
+
+For a minor or major version, change `version` in `package.json` in your
+change. The flow releases that version as it is. No release branch is made.
+
+## Files a change does not edit
 
 | File | Instead |
 |---|---|
-| `CHANGELOG.md` | Add `changes/<branch-name>.md` with a `### Added` / `Changed` / `Fixed` / `Removed` heading and bullets. See `changes/README.md`. |
-| `ai/components.json`, `ai/tokens.json`, `llms-full.txt`, `vscode/html-data.json`, `vscode/css-data.json` | Nothing. The `ai-files` workflow rebuilds them on `main` after every merge and commits them as `github-actions[bot]`. |
+| `CHANGELOG.md` | Add `changes/<name>.md` with a `### Added` / `Changed` / `Fixed` / `Removed` heading and bullets. See `changes/README.md`. |
+| `ai/components.json`, `ai/tokens.json`, `llms-full.txt`, `vscode/html-data.json`, `vscode/css-data.json` | Nothing. The `ai-files` workflow rebuilds them on `main` after every push and commits them as `github-actions[bot]`. |
 
-CI fails a pull request that changes any of them. You can still run
-`pnpm build:ai` locally to look at the output; drop it before you commit with
-`git checkout origin/main -- ai vscode llms-full.txt`. A `release/*` branch is
-exempt so it can fold the fragments into `CHANGELOG.md`.
+You can still run `pnpm build:ai` locally to look at the output; drop it before
+you commit with `git checkout origin/main -- ai vscode llms-full.txt`. Only the
+release commit changes `CHANGELOG.md` and these files.
 
 ## Where new things go
 
@@ -36,7 +52,7 @@ exempt so it can fold the fragments into `CHANGELOG.md`.
   vite inputs and the check scripts all read it). A new component that fits an
   existing page gets its own `<div class="demo-block">` there, placed next to
   the closest related block, not at the end of the page. The end is where
-  every other pull request adds its block too. Do not add page chrome to a
+  every other change adds its block too. Do not add page chrome to a
   page file: the rail, sidebar, page title, pager and palette come from
   `showcase/layout.html`, `showcase/layout-plugin.js` and the registry.
 - **Adding a library page:** an entry (`id`, `title`, `summary`) in its group
@@ -53,22 +69,14 @@ exempt so it can fold the fragments into `CHANGELOG.md`.
 - **`AGENTS.md` and `README.md` tables:** a new component family gets its own
   row next to related rows. When it belongs in a shared row (Status, Chat and
   feeds), add it at the end of that row, and expect a one-line conflict if
-  another open pull request edits the same row.
-- One component per pull request. A second component that does not depend on
-  the first gets its own branch from `main`.
+  another change edits the same row.
 
-## Merging
+## Landing
 
-- Merge with a merge commit, not squash or rebase. Merge commits keep the
-  ancestry, so an updated branch that already contains another pull request
-  still merges cleanly after that pull request lands.
-- Merge green pull requests promptly, oldest first. A pull request that waits
-  while others land is the one that conflicts.
-- When several open pull requests conflict, resolve them as a chain instead of
-  one by one against `main`: merge `main` into the oldest branch, then merge
-  that result into the next branch, and so on. Push each result to its own
-  branch (a fast-forward, no force push), then merge them in the same order.
-  Each step is then conflict-free.
+- `ship` rebases onto `main` and pushes, so history stays linear. Land small
+  changes often: a change that waits is the one that conflicts.
+- One component per change. A second component that does not depend on the
+  first is its own commit and its own `ship`.
 - `git config rerere.enabled true` makes git reuse a conflict resolution it
   has already seen.
 
@@ -103,12 +111,18 @@ node scripts/changelog.mjs --check              # changelog fragments
 
 ## Releasing
 
-1. On a `release/<version>` branch, run `node scripts/changelog.mjs`. It moves
-   every fragment under `## Unreleased` in `CHANGELOG.md` and deletes them.
-2. Rename `## Unreleased` to `## <version> (<date>)`, add an empty
-   `## Unreleased` above it, and bump `version` in `package.json`.
-3. Merge, wait for the `ai-files` commit on `main` (it stamps the new
-   version), then tag that commit `v<version>`.
+The flow releases; nobody runs these steps by hand. For each change to the
+package it takes the newest `main` after `ai-files` has finished and runs
+`node scripts/changelog.mjs`, which moves every fragment under `## Unreleased`
+in `CHANGELOG.md` and deletes them. When no fragment came with the changes, it
+lists their commit subjects instead. It renames `## Unreleased` to
+`## <version> (<date>)`, adds an empty `## Unreleased` above it, sets `version`
+in `package.json` and runs `pnpm build:ai` so the AI files carry it. It ships
+that as `Release v<version>`, then tags the shipped commit `v<version>`.
+
+The version is `package.json`'s own when it has no tag yet, so a change that sets
+a new minor or major version releases it. Otherwise the patch number goes up by
+one. Changes that land while a release runs go out in the next release.
 
 ## Coding agents and Agent Traffic Control
 
