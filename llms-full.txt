@@ -138,7 +138,7 @@ by `title` or `classes`) rather than inventing markup.
 | Settings groups | `sd-panel` (560px), `sd-panel-wide` (1024px), `sd-panel-fluid` (no cap) |
 | Status | `sd-badge`, `sd-status`, `sd-dot`, `sd-count`, `sd-progress` (`data-state="indeterminate"` when the amount is unknown), `sd-checks`, `sd-level` (live level from `--level`, 0–1) |
 | People | `sd-avatar` (`-sm` `-md` `-lg` `-xl`, or `--sd-avatar-size`) with `data-status`; on your own panel set `--sd-ring` to its background so the presence ring matches |
-| Chat and feeds | `sd-message` (time column, inline `sd-message-author`; `--who` name color, `--edge` role color, `data-grouped`, `data-own`, `data-reply` + `sd-message-ref`, `data-editing`, `data-selected`), `sd-message-actions`, `sd-message-menu`, `sd-emoji-picker`, `sd-feed-day`, `sd-event`, `sd-feed-jump`, `sd-composer` (`-add`, `-reply`, `-status`; `sd-add-menu`) in an `sd-shell-dock` (`data-flush`), `data-sd-follow` on the feed (stays at the newest row, runs the jump bar), `data-joined` on `sd-shell-main` (bar, feed and composer as one surface), `sd-reactions`, `sd-roster`, `sd-banner`, `sd-file`, `sd-link-card` (`-hero`, `-compact`, `-type`, `data-blocked`, `aria-busy`) |
+| Chat and feeds | `sd-message` (time column, inline `sd-message-author` and an `sd-badge` after it for Agent; `--who` name color, `--edge` role color, `data-grouped`, `data-own`, `data-reply` + `sd-message-ref`, `data-editing`, `data-selected`), `sd-message-actions`, `sd-message-menu`, `sd-emoji-picker`, `sd-feed-day`, `sd-event`, `sd-feed-jump`, `sd-composer` (`-add`, `-reply`, `-status`; `sd-add-menu`) in an `sd-shell-dock` (`data-flush`), `data-sd-follow` on the feed (stays at the newest row, runs the jump bar), `data-joined` on `sd-shell-main` (bar, feed and composer as one surface), `sd-reactions`, `sd-roster`, `sd-banner`, `sd-file`, `sd-link-card` (`-hero`, `-compact`, `-type`, `data-blocked`, `aria-busy`) |
 | Data | `sd-stat`, `sd-stat-box`, `createChart(canvas, { type })`, `sd-plot`, `sd-heatmap`, `sd-uptime`, `sd-meter`, `sd-timeline` (`--from`/`--to` ranges over one axis), `sd-schedule` (hour roster, `data-status` blocks, mono/spectrum), `sd-flow` (pipeline of stages and jobs on a dot grid, `data-status`, mono/spectrum), `sd-checklist` (named checks with a result and progress, the flow's `data-status`), `sd-weighted` (segments sized by `--weight` toward a goal) |
 | ASCII art | `mountAscii(el, piece)` from `signal-design/ascii` draws an `ascii-magic-art` piece as greys in `sd-ascii`; still until `aria-busy="true"` (`pnpm add ascii-magic-art`); `data-tone` colors the brightest level |
 | Stream overlays (OBS) | `sd-scene` (1920×1080 units in `--sd-u`; `data-full`, `data-clear`) with `sd-scene-copy`, `sd-scene-bar`, `sd-scene-label`, `sd-cam`, `sd-scene-goal`, `sd-credits`, `sd-stream-alert`; `mountStream(scene).alert({ kind, name })` |
@@ -2563,9 +2563,9 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Conversation / Messages
 
-sd-message + -time|-body|-text|-author|-tag|-meta|-timer|-actions|-status · --who (name color) · data-grouped|mention|own|pending|failed|reply · sd-message-ref + sd-message-ref-mark · sd-mention · sd-feed-day · sd-event · sd-reactions + data-sd-reaction + sd-reactions-add · sd-receipts · sd-typing · sd-message-menu · data-sd-contextmenu
+sd-message + -time|-body|-text|-author|-tag|-meta|-timer|-actions|-status · sd-badge after the author (Agent) · --who (name color) · data-grouped|mention|own|pending|failed|reply · sd-message-ref + sd-message-ref-mark · sd-mention · sd-feed-day · sd-event · sd-reactions + data-sd-reaction + sd-reactions-add · sd-receipts · sd-typing · sd-message-menu · data-sd-contextmenu
 
-Classes: sd-avatar, sd-btn, sd-btn-link, sd-composer-status, sd-divider, sd-event, sd-feed-day, sd-mention, sd-menu, sd-menu-sep, sd-message, sd-message-actions, sd-message-author, sd-message-body, sd-message-menu, sd-message-meta, sd-message-ref, sd-message-ref-mark, sd-message-status, sd-message-tag, sd-message-text, sd-message-time, sd-message-timer, sd-popover, sd-reactions, sd-reactions-add, sd-receipts, sd-typing
+Classes: sd-avatar, sd-badge, sd-btn, sd-btn-link, sd-composer-status, sd-divider, sd-event, sd-feed-day, sd-mention, sd-menu, sd-menu-sep, sd-message, sd-message-actions, sd-message-author, sd-message-body, sd-message-menu, sd-message-meta, sd-message-ref, sd-message-ref-mark, sd-message-status, sd-message-tag, sd-message-text, sd-message-time, sd-message-timer, sd-popover, sd-reactions, sd-reactions-add, sd-receipts, sd-typing
 
 JS: init() from signal-design/js wires data-sd-contextmenu · data-sd-reaction · popovertarget (placement, menu keys).
 
@@ -2582,6 +2582,10 @@ JS: init() from signal-design/js wires data-sd-contextmenu · data-sd-reaction �
   </article>
   <article class="sd-message" data-grouped="" title="09:43" style="--who: var(--sd-extra)">
     <div class="sd-message-body"><div class="sd-message-text">A follow-up within five minutes is grouped: no time, no name, the same rhythm.<span class="sd-message-meta"><span>edited</span></span></div></div>
+  </article>
+  <article class="sd-message" style="--who: var(--sd-pending)">
+    <time class="sd-message-time" datetime="09:46">09:46</time>
+    <div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Scout</b><span class="sd-badge">Agent</span>A badge after the author says what they are. It rides with the name, so a grouped follow-up does not repeat it.</div></div>
   </article>
   <div class="sd-event"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M2 8h8M7 5l3 3-3 3M10.5 2.5h3v11h-3"></path></svg><span><b>Taylor</b> joined<time>09:50</time></span></div>
   <article class="sd-message" data-mention="" data-reply="" style="--who: var(--sd-accent)">
@@ -2857,9 +2861,9 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Conversation / Roster
 
-sd-roster > sd-roster-group (one per role) · sd-roster-head (sticky, aria-expanded) + -label|-count · sd-roster-row + data-presence="online|offline|unresolved" + --who · sd-roster-avatar (data-unresolved) · sd-roster-more pages in the next 25 · set --sd-ring to the panel color
+sd-roster > sd-roster-group (one per role) · sd-roster-head (sticky, aria-expanded) + -label|-count · sd-roster-row + data-presence="online|offline|unresolved" + --who · sd-badge at the row end (Agent) · sd-roster-avatar (data-unresolved) · sd-roster-more pages in the next 25 · set --sd-ring to the panel color
 
-Classes: sd-avatar, sd-avatar-sm, sd-roster, sd-roster-avatar, sd-roster-count, sd-roster-group, sd-roster-head, sd-roster-label, sd-roster-more, sd-roster-name, sd-roster-row
+Classes: sd-avatar, sd-avatar-sm, sd-badge, sd-roster, sd-roster-avatar, sd-roster-count, sd-roster-group, sd-roster-head, sd-roster-label, sd-roster-more, sd-roster-name, sd-roster-row
 
 No JS needed: the HTML works with the CSS alone.
 
@@ -2878,6 +2882,7 @@ No JS needed: the HTML works with the CSS alone.
       <ul>
         <li><button class="sd-roster-row" data-presence="online" style="--who: var(--sd-success)"><span class="sd-roster-avatar"><span class="sd-avatar sd-avatar-sm" data-tone="success">JD</span></span><span class="sd-roster-name">Jane</span></button></li>
         <li><button class="sd-roster-row" data-presence="online" style="--who: var(--sd-warning)"><span class="sd-roster-avatar"><span class="sd-avatar sd-avatar-sm" data-tone="warning">SK</span></span><span class="sd-roster-name">Sam</span></button></li>
+        <li><button class="sd-roster-row" data-presence="online" style="--who: var(--sd-pending)"><span class="sd-roster-avatar"><span class="sd-avatar sd-avatar-sm" data-tone="pending">SC</span></span><span class="sd-roster-name">Scout</span><span class="sd-badge">Agent</span></button></li>
         <li><button class="sd-roster-row" data-presence="unresolved"><span class="sd-roster-avatar" data-unresolved="">7f</span><span class="sd-roster-name">7f3a…c21e</span></button></li>
       </ul>
       <button class="sd-roster-more">Show 25 more<span>785 hidden</span></button>
