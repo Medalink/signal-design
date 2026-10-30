@@ -71,6 +71,7 @@ const ATTRIBUTES = {
   "data-sd-suggest": "Id of an .sd-suggest list opened by the trigger character (mentions).",
   "data-sd-trigger": "Character that opens the suggestion list (default @).",
   "data-sd-contextmenu": "Id of a menu opened at the pointer on right click, Shift+F10 or the menu key.",
+  "data-sd-follow": "On a feed scroller: keeps the newest row in view while the reader is at the bottom and runs the .sd-feed-jump bar after it.",
   "data-sd-reaction": "Reaction toggle with a count; fires sd:reaction.",
   "data-sd-poll": "Poll: choosing an option marks it and reveals the shares.",
   "data-sd-chart": "On a <figure>: init a chart from its JSON <script> (initCharts from signal-design/charts).",

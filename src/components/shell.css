@@ -48,6 +48,18 @@
   .sd-shell[data-sidebar="collapsed"] {
     grid-template-columns: var(--shell-rail) 0 minmax(0, 1fr) auto;
   }
+  /* While the phone keyboard is up (data-sd-keyboard, from initKeyboard),
+     the shell fits the part of the screen above it and moves with the page
+     the browser slid up, so the header stays and the dock sits on the
+     keyboard. The status bar steps aside while you type. */
+  [data-sd-keyboard] .sd-shell {
+    --shell-status: 0px;
+    height: var(--sd-view-height);
+    translate: 0 var(--sd-view-top);
+  }
+  [data-sd-keyboard] .sd-shell-status {
+    display: none;
+  }
   /* An app with no sidebar at all gets the collapsed track too: the reserved
      18rem column would otherwise sit beside the rail as an empty hole. */
   .sd-shell:not(:has(> .sd-sidebar)) {
@@ -672,6 +684,32 @@
     border-bottom: 0;
   }
 
+  /* Joined: the header bar, the content and the dock become one surface,
+     for a page that reads as one column, like a conversation. No gap and no
+     bridges; hairlines divide the parts, and the bar's line runs on from the
+     sidebar and aside heads. The dock insets its contents in the surface, so
+     data-flush changes nothing here. <main class="sd-shell-main" data-joined> */
+  .sd-shell-main[data-joined] {
+    gap: 0;
+    padding: 0;
+    background: var(--sd-container);
+  }
+  .sd-shell-main[data-joined] > :is(.sd-shell-bar, .sd-shell-content, .sd-shell-dock) {
+    border: 0;
+  }
+  .sd-shell-main[data-joined] > .sd-shell-bar {
+    min-height: var(--shell-head, 4rem);
+    border-block-end: 1px solid var(--sd-line);
+  }
+  .sd-shell-main[data-joined] > .sd-shell-dock {
+    padding: 0 16px 16px;
+    background: none;
+  }
+  .sd-shell-main[data-joined] > :is(.sd-shell-header, .sd-shell-bar, .sd-shell-dock)::before,
+  .sd-shell-main[data-joined] > :is(.sd-shell-header, .sd-shell-bar, .sd-shell-dock)::after {
+    content: none;
+  }
+
   /* Rain backdrop: covers only the page area (the rail, sidebar and panel
      are opaque), and the JS skips the boxes on top of it. */
   .sd-shell > .sd-rain {
@@ -855,6 +893,9 @@
     }
     .sd-shell-content {
       padding: 24px 16px 40px;
+    }
+    .sd-shell-main[data-joined] > .sd-shell-dock {
+      padding: 0 8px 8px;
     }
     /* Phones keep only the live status line. */
     .sd-shell-status > :not(.sd-status) {
@@ -1118,14 +1159,18 @@
     height: 20px;
     max-width: none;
   }
+  /* A count follows the icon, so it never covers the glyph. */
+  .sd-icon-btn:has(> .sd-badge-count:not([data-corner])) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: auto;
+    padding-inline: 8px;
+  }
   .sd-icon-btn > .sd-badge-count {
-    position: absolute;
-    top: 2px;
-    right: 0;
     min-width: 16px;
     height: 16px;
     font-size: var(--text-3xs);
-    outline: 2px solid var(--sd-container);
   }
 
   /* Panel popover: a popover with a titled head, for lists like pinned items. */

@@ -14,7 +14,14 @@
  *             Typing the trigger shows options filtered by what follows it;
  *             arrows move, Enter or Tab inserts, Escape closes.
  * Context     <div data-sd-contextmenu="row-menu"> opens <div popover id="row-menu" class="sd-popover">
- *             at the pointer on right-click (or Shift+F10 / the menu key).
+ *             at the pointer on right-click (or Shift+F10 / the menu key), and
+ *             on a touch screen where a long press lifts.
+ * Follow      <div class="…" data-sd-follow>…rows…</div> <div class="sd-feed-jump" hidden>…<button>…
+ *             keeps the newest row in view while the reader is at the bottom:
+ *             rows arriving, images loading, the scroller shrinking under a
+ *             growing composer. Scrolled away, it holds still and shows the
+ *             jump bar placed right after it; the bar's button goes back down.
+ *             Wired by init(); call init() again for a feed added later.
  */
 
 /* ---- Reactions and polls ------------------------------------------------ */
@@ -161,7 +168,72 @@ export function onContextMenu(event) {
   const target = event.target.closest?.("[data-sd-contextmenu]");
   if (!target) return;
   event.preventDefault();
+  /* Android's long press sends contextmenu too; the held press opens the menu on the lift. */
+  if (held?.target === target) return;
   openContextMenu(target, event.clientX, event.clientY);
+}
+
+/*
+ * Long press: on a touch screen, holding a [data-sd-contextmenu] row opens its
+ * menu where the finger lifts. iOS sends no contextmenu for a long press, and
+ * a menu opened under a held finger closes again on the lift. Past the hold
+ * the row carries data-sd-held, so it lights before the menu shows. A press
+ * that starts on a control inside the row stays that control's.
+ */
+const HOLD = 450;
+const SLOP = 10;
+const CONTROLS = "button, a[href], input, textarea, select, [contenteditable]";
+let held = null;
+
+function release() {
+  if (!held) return;
+  clearTimeout(held.timer);
+  held.target.removeAttribute("data-sd-held");
+  held = null;
+}
+
+export function onPressDown(event) {
+  release();
+  if (event.pointerType !== "touch" || !event.isPrimary) return;
+  const target = event.target.closest?.("[data-sd-contextmenu]");
+  if (!target || target.contains(event.target.closest(CONTROLS))) return;
+  const press = { target, x: event.clientX, y: event.clientY, ready: false };
+  press.timer = setTimeout(() => {
+    press.ready = true;
+    target.setAttribute("data-sd-held", "");
+  }, HOLD);
+  held = press;
+}
+
+export function onPressMove(event) {
+  if (held && Math.hypot(event.clientX - held.x, event.clientY - held.y) > SLOP) release();
+}
+
+/* iOS turns a lift into mouse events and a click after the menu shows, and
+   those dismiss it; cancelling the lift's touchend keeps them from coming. */
+let lifted = false;
+export function onPressTouchEnd(event) {
+  if (!lifted && !held?.ready) return;
+  lifted = false;
+  event.preventDefault();
+}
+
+export function onPressUp(event) {
+  if (!held || event.type === "pointercancel" || !held.ready) return release();
+  const { target, x, y } = held;
+  release();
+  lifted = true;
+  /* The click that follows the lift can come after the menu shows, on its
+     first item. Until the next press starts, a pointer's click is the long
+     press's; a key's click (detail 0) still works the menu. */
+  const swallow = (click) => {
+    if (!click.detail) return;
+    click.preventDefault();
+    click.stopPropagation();
+  };
+  addEventListener("click", swallow, true);
+  addEventListener("pointerdown", () => removeEventListener("click", swallow, true), { capture: true, once: true });
+  setTimeout(() => openContextMenu(target, x, y));
 }
 
 export function onContextMenuKey(event) {
@@ -173,6 +245,83 @@ export function onContextMenuKey(event) {
   openContextMenu(target, r.left + 12, r.top + r.height / 2);
 }
 
+/* ---- Follow ------------------------------------------------------------- */
+
+const followed = new WeakSet();
+/* Within this many pixels of the bottom still counts as at the bottom. */
+const AT_END = 8;
+
+function follow(feed) {
+  if (followed.has(feed)) return;
+  followed.add(feed);
+  const next = feed.nextElementSibling;
+  const jump = next?.classList.contains("sd-feed-jump") ? next : null;
+  const gap = () => feed.scrollHeight - feed.scrollTop - feed.clientHeight;
+  let pinned = true;
+  let frame = 0;
+  /* scrollTop when last seen, to catch code that scrolled up before its scroll event. */
+  let top = 0;
+
+  function sync() {
+    top = feed.scrollTop;
+    if (!jump) return;
+    const away = gap() > Math.max(120, feed.clientHeight / 5);
+    if (away === !jump.hidden) return;
+    jump.hidden = !away;
+    if (away) jump.setAttribute("data-new", "");
+  }
+  function settle() {
+    if (frame) return sync();
+    if (pinned && feed.scrollTop < top - AT_END && gap() > AT_END) pinned = false;
+    if (pinned) feed.scrollTop = feed.scrollHeight;
+    sync();
+  }
+  /* Down to the newest row over 200ms, aiming at the bottom as it moves. */
+  function toEnd() {
+    pinned = true;
+    cancelAnimationFrame(frame);
+    frame = 0;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return settle();
+    const start = feed.scrollTop;
+    const began = performance.now();
+    const step = (now) => {
+      const t = Math.min(1, (now - began) / 200);
+      feed.scrollTop = start + (feed.scrollHeight - feed.clientHeight - start) * (1 - (1 - t) ** 3);
+      frame = t < 1 ? requestAnimationFrame(step) : 0;
+      if (!frame) settle();
+    };
+    frame = requestAnimationFrame(step);
+  }
+
+  feed.addEventListener("scroll", () => {
+    if (!frame) pinned = gap() <= AT_END;
+    sync();
+  }, { passive: true });
+  /* The reader takes over: stop the ride down and keep wherever they are. */
+  for (const type of ["wheel", "touchstart", "pointerdown", "keydown"]) {
+    feed.addEventListener(type, () => {
+      if (!frame) return;
+      cancelAnimationFrame(frame);
+      frame = 0;
+      pinned = gap() <= AT_END;
+    }, { passive: true });
+  }
+  jump?.querySelector("button")?.addEventListener("click", toEnd);
+  jump?.addEventListener("animationend", () => jump.removeAttribute("data-new"));
+
+  const sizes = new ResizeObserver(settle);
+  sizes.observe(feed);
+  for (const row of feed.children) sizes.observe(row);
+  new MutationObserver((records) => {
+    for (const record of records) {
+      for (const node of record.addedNodes) if (node.parentElement === feed) sizes.observe(node);
+    }
+    settle();
+  }).observe(feed, { childList: true, subtree: true });
+  settle();
+}
+
 export function initConversation(root = document) {
   for (const t of root.querySelectorAll("textarea[data-sd-autogrow]")) grow(t);
+  for (const feed of root.querySelectorAll("[data-sd-follow]")) follow(feed);
 }

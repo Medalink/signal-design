@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "showcase/chat.html"
+        ],
+        "createdAt": "2026-10-29T22:28:42.121Z",
+        "reason": "Claude: app screen; the only h1 is sd-sr-only and the h2s are roster and emoji-picker section labels; finding predates this session (detector run before any edit)"
+      }
+    ]
+  }
+}

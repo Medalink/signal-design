@@ -496,6 +496,14 @@ the rain skips them.
 `data-flush` on the dock rests it on the bottom of the window: the shell gap
 under it and its bottom border go, and its bridges still tie it to the content.
 
+`data-joined` on `sd-shell-main` makes the bar, the content and the dock one
+surface, for a page that reads as one column, such as a conversation: no gap
+and no bridges, a hairline under the bar in line with the sidebar and aside
+heads, and the dock's contents inset 16px (8px on phones). A composer in a
+joined dock keeps its own edge, with the typing line over it.
+
+A count in `sd-icon-btn` sits after the icon, so it never covers the glyph.
+
 `sd-popover-panel` with `sd-popover-head` and `sd-popover-body` makes a larger
 popover for an inbox or a pinned list.
 
@@ -531,7 +539,7 @@ Generic pieces for chat, comments, feeds and inboxes. See `showcase/chat.html`.
 | `sd-message-menu`, `sd-add-menu`, `sd-emoji-picker` | The More menu (icon, label, key), the composer's + menu, and the emoji picker (search, categories, grid, a footer naming the emoji). |
 | `sd-message-ref` (+ `sd-message-ref-mark`) | The quoted line above a reply; its mark sits in the time column. |
 | `sd-reply`, `sd-mention`, `sd-event` | Quoted reply in a body or chip, inline mention (name color, no fill), system line with its icon in the time column. |
-| `sd-feed-day`, `sd-feed-jump` | A day line that sticks to the top of the scroller (`--sd-feed-bg` is the pane color), and the Jump to present bar after the scroller. |
+| `sd-feed-day`, `sd-feed-jump` | A day line that sticks to the top of the scroller (`--sd-feed-bg` is the pane color), and the Jump to present bar after the scroller. `data-sd-follow` on the scroller keeps the newest row in view while the reader is at the bottom (rows arriving, images loading, a composer growing under it), holds still once they scroll up, and runs the jump bar: `hidden` while at the bottom, its button goes back down. |
 | `sd-reactions` (+ `-add`) | Emoji-first toggle buttons with a small count; fires `sd:reaction`. |
 | `sd-receipts`, `sd-typing` | Read receipts and the typing line (its squares step while someone types). |
 | `sd-composer` (+ `-row`, `-add`, `-send`, `-reply`, `-status`, `-chips`, `-hint`) | The message box: one + for every content type, the textarea, and a send that stays quiet until there is text. `-status` holds the typing line above it. In an `sd-shell-dock` they share one box. `data-sd-autogrow`, `data-sd-enter-submit`, and `data-sd-suggest="id"` for an `@` list. |
@@ -610,7 +618,13 @@ unbroken name cannot push a row off-screen. `data-selected` is only the look: ex
 choice with a real control, such as a labelled checkbox in the message.
 
 `data-sd-contextmenu="menu-id"` opens a menu at the pointer on right click,
-Shift+F10 or the menu key, and fires `sd:contextmenu` with the target.
+Shift+F10 or the menu key, and fires `sd:contextmenu` with the target. On a
+touch screen a long press opens it where the finger lifts (iOS sends no right
+click); past the hold the row carries `data-sd-held`, and on a coarse pointer
+the row does not start a text selection, so put Copy in the menu.
+
+On phones give the composer's textarea `enterkeyhint="send"`, so the keyboard's
+return key reads Send when `data-sd-enter-submit` sends on Enter.
 
 ## Inputs
 
@@ -1056,6 +1070,7 @@ These classes work with CSS alone once you render their state:
 | `sd-poll` | `aria-pressed` on options, `--share` on each | `data-sd-poll` | Single or multiple choice. |
 | `dialog.sd-dialog` | `showModal()` and `close()` from your code | `data-sd-open`, `data-sd-close` | Focus return in WebKit (`openDialog` does it). |
 | `sd-composer` | your textarea height, `hidden` on `.sd-suggest`, `aria-selected` on its options | `data-sd-autogrow`, `data-sd-enter-submit`, `data-sd-suggest` | Growing, Enter to send, mentions. |
+| `sd-feed-jump` | `hidden` on the jump bar, the feed's scroll position | `data-sd-follow` | Staying at the newest row, the jump back down. |
 | `sd-combobox`, `sd-tags`, `sd-number`, `sd-command` | `aria-expanded`, `aria-selected`, `hidden` on options, chips, the value | `data-sd-combobox`, `data-sd-tags`, `data-sd-number`, `data-sd-palette` | Filtering, keys, values. |
 | `sd-progress`, `sd-table th[data-sort]`, `data-tone` | `--value`, `aria-sort`, `data-tone` | (none) | Nothing: these have no JS. |
 
@@ -1270,7 +1285,11 @@ The helpers that write only their own nodes stay safe beside React:
 For the auto-hiding scrollbars, call `initScrollbars()` from `signal-design/js`
 once at startup (`initScrollbars("always")` keeps them visible): it sets
 `data-sd-scrollbars` on `<html>`, marks whatever scrolls with
-`data-sd-scrolling`, and touches nothing else.
+`data-sd-scrolling`, and touches nothing else. For a shell on a phone, call
+`initKeyboard()` too: while the on-screen keyboard is up it sets
+`data-sd-keyboard`, `--sd-view-height` and `--sd-view-top` on `<html>`, and
+`sd-shell` fits the screen above the keyboard instead of sliding its header
+off the top. `init()` calls both.
 `react.html` and `react-shell.html` in the showcase use every component above, and `react-editor.html` the editor parts below.
 
 ### Editor parts

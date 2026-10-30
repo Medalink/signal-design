@@ -285,6 +285,16 @@ export function setScrollbars(mode?: "auto" | "always"): void;
  */
 export function initScrollbars(mode?: "auto" | "always"): void;
 
+/* On-screen keyboard */
+/**
+ * Keeps a full-height app in view while the phone keyboard is up: sets
+ * `data-sd-keyboard`, `--sd-view-height` and `--sd-view-top` on `<html>`, and
+ * `sd-shell` fits the part of the screen above the keyboard. `init()` calls
+ * it; a framework app can call it on its own, since it writes only those.
+ * Does nothing without `visualViewport`.
+ */
+export function initKeyboard(): void;
+
 /* Listboxes: palette and combobox */
 export interface PaletteOption {
   label: string;
