@@ -259,6 +259,10 @@
   .sd-message-tag[data-tone] {
     color: var(--tone);
   }
+  /* A badge after the author says what they are, such as Agent. */
+  .sd-message-text > .sd-badge {
+    margin-inline-end: 8px;
+  }
   .sd-message-meta {
     display: inline;
     margin-inline-start: 8px;
@@ -1197,6 +1201,8 @@
    *       <button class="sd-roster-more">Show 25 more<span>763 hidden</span></button>
    *     </section>
    *   </div>
+   * A badge after the name (Agent) takes the row's end, so a long name
+   * truncates before it does.
    */
   .sd-roster {
     padding: 0 0 16px;

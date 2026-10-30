@@ -536,7 +536,7 @@ Generic pieces for chat, comments, feeds and inboxes. See `showcase/chat.html`.
 | `sd-avatar` (+ `-sm`, `-md`, `-lg`, `-xl`) | 22, 28, 34 and 48px squares (24px without a size class). `--sd-avatar-size` sets any other size, such as a profile preview; the initials and the presence square grow with it. |
 | `sd-avatar[data-status]` | `online`, `away` (or `afk`), `busy`, `offline` square on the corner. |
 | `sd-badge-count` | A count on an icon, rail item, rail tile or avatar. |
-| `sd-message` (+ `-time`, `-body`, `-text`, `-author`, `-tag`, `-meta`, `-timer`, `-head`, `-status`, `-edit`) | A 64px time column, then the text; the author's name opens the first line in their color (`--who`). `data-grouped` (no time or name), `data-mention`, `data-pending`, `data-failed`, `data-own` (grey edge), `data-selected`, `data-reply`, `data-editing`, `data-hover`, and `--edge` for an author or role color. |
+| `sd-message` (+ `-time`, `-body`, `-text`, `-author`, `-tag`, `-meta`, `-timer`, `-head`, `-status`, `-edit`) | A 64px time column, then the text; the author's name opens the first line in their color (`--who`). `data-grouped` (no time or name), `data-mention`, `data-pending`, `data-failed`, `data-own` (grey edge), `data-selected`, `data-reply`, `data-editing`, `data-hover`, and `--edge` for an author or role color. An `sd-badge` after the author says what they are (Agent). |
 | `sd-message-actions` | The hover bar: quick reactions, then actions with `data-key` tips, then More. Revealed by opacity, so Tab reaches it. |
 | `sd-message-menu`, `sd-add-menu`, `sd-emoji-picker` | The More menu (icon, label, key), the composer's + menu, and the emoji picker (search, categories, grid, a footer naming the emoji). |
 | `sd-message-ref` (+ `sd-message-ref-mark`) | The quoted line above a reply; its mark sits in the time column. |
@@ -545,7 +545,7 @@ Generic pieces for chat, comments, feeds and inboxes. See `showcase/chat.html`.
 | `sd-reactions` (+ `-add`) | Emoji-first toggle buttons with a small count; fires `sd:reaction`. |
 | `sd-receipts`, `sd-typing` | Read receipts and the typing line (its squares step while someone types). |
 | `sd-composer` (+ `-row`, `-add`, `-send`, `-reply`, `-status`, `-chips`, `-hint`) | The message box: one + for every content type, the textarea, and a send that stays quiet until there is text. `-status` holds the typing line above it. In an `sd-shell-dock` they share one box. `data-sd-autogrow`, `data-sd-enter-submit`, and `data-sd-suggest="id"` for an `@` list. |
-| `sd-roster` (+ `-group`, `-head`, `-label`, `-count`, `-row`, `-avatar`, `-name`, `-more`) | People in a large conversation: a section per role with a sticky, collapsible head, rows by `data-presence` (`online`, `offline`, `unresolved`), and a Show more row. |
+| `sd-roster` (+ `-group`, `-head`, `-label`, `-count`, `-row`, `-avatar`, `-name`, `-more`) | People in a large conversation: a section per role with a sticky, collapsible head, rows by `data-presence` (`online`, `offline`, `unresolved`), and a Show more row. An `sd-badge` after `-name` (Agent) takes the row's end. |
 | `sd-banner` | A full-width notice with actions. |
 | `sd-file`, `sd-link-card`, `sd-poll` | Attachment, link preview, poll (`--share` per option). |
 | `sd-link-card-hero`, `-compact`, `-type`, `-note` | Link preview variants: image on top, one tight block, a document with its type, and a reason line. `data-blocked` and `aria-busy="true"` are states. |
