@@ -306,10 +306,17 @@
     flex-basis: 100%;
   }
 
-  /* Link card: a preview of a URL. */
+  /*
+   * Link card: a preview of a URL, or an embed shaped like one (an invite).
+   * sd-link-card-actions holds buttons under the text; a card with them is a
+   * div, not a link.
+   *   <div class="sd-link-card"><span class="sd-link-card-site">Group invite</span>
+   *     <span class="sd-link-card-title">…</span><span class="sd-link-card-desc">…</span>
+   *     <div class="sd-link-card-actions"><button class="sd-btn sd-btn-sm">Join</button></div></div>
+   */
   .sd-link-card {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 6px 14px;
     max-width: 32rem;
     padding: 12px 14px;
@@ -318,6 +325,7 @@
     background: var(--sd-surface);
     color: inherit;
     text-decoration: none;
+    overflow-wrap: anywhere;
   }
   .sd-link-card-site {
     grid-column: 1;
@@ -413,6 +421,14 @@
     grid-column: 1;
     color: var(--tone, var(--sd-fg-subtle));
     font-size: var(--text-sm);
+  }
+  .sd-link-card-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    margin-block-start: 4px;
   }
   /* Loading: static placeholder bars in the text slots, no shimmer. */
   .sd-link-card[aria-busy="true"] > :is(.sd-link-card-site, .sd-link-card-title, .sd-link-card-desc) {

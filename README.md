@@ -549,7 +549,7 @@ Generic pieces for chat, comments, feeds and inboxes. See `showcase/chat.html`.
 | `sd-banner` | A full-width notice with actions. |
 | `sd-file`, `sd-link-card`, `sd-poll` | Attachment, link preview, poll (`--share` per option: its share of the voters, 0 to 100). |
 | `sd-poll-head`, `-foot`, `-voters`, `data-chosen` | A decision: a poll one person decides, such as an agent asking to approve or deny. `-head` holds its state badge and the time left, `data-tone` lights its edge while it waits, `data-chosen` marks the pick, `-voters` names who tapped an option in their `--who`. `-foot` is a meta row under the options. |
-| `sd-link-card-hero`, `-compact`, `-type`, `-note` | Link preview variants: image on top, one tight block, a document with its type, and a reason line. `data-blocked` and `aria-busy="true"` are states. |
+| `sd-link-card-hero`, `-compact`, `-type`, `-note`, `-actions` | Link preview variants: image on top, one tight block, a document with its type, a reason line, and buttons under the text (Join on an invite). `data-blocked` and `aria-busy="true"` are states. |
 | `sd-tiles`, `sd-tile` | Call grid; `data-speaking`, `data-muted`, `data-hand`. |
 | `sd-grid-picker` | An emoji or icon grid (`--cols`). |
 | `sd-level` | A live level meter, such as a microphone input: 2 to 8 `<i>` bars that light up to `--level` (`0`–`1`). |
@@ -588,6 +588,9 @@ Link cards come in a few shapes for one URL preview:
 - `aria-busy="true"` turns the site, title and description slots into static
   placeholder bars while the preview loads. Add `role="status"` and a
   `sd-sr-only` line so screen readers hear it.
+- `sd-link-card-actions` holds buttons under the text. An embed shaped like a
+  link card, such as a group invite, uses it for Join. A card with actions is a
+  `<div>`.
 
 ```html
 <div class="sd-link-card" data-blocked>
