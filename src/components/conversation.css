@@ -79,6 +79,107 @@
   .sd-message-text > :where(p, ul, ol, pre, blockquote):not(:last-child) {
     margin-block-end: 0.5em;
   }
+  /*
+   * Markdown in message text. Inline code sits in the text line (a run of
+   * bold, italic, strike, code and links needs no wrapper); anything with a
+   * block in it goes in `.sd-md`, which starts on its own line under the
+   * author and sets its own white-space, so the markup's line breaks are not
+   * doubled by the text's pre-wrap. A soft line break in it is a `<br>`.
+   *   <div class="sd-message-text"><b class="sd-message-author">Maya</b>
+   *     <div class="sd-md">
+   *       <p>Run <code>pnpm test</code> first.</p>
+   *       <blockquote><p>Quoted</p></blockquote>
+   *       <ul><li>One</li><li>Two</li></ul>
+   *       <div class="sd-code"><div class="sd-code-head">rust</div><pre><code>fn main() {}</code></pre></div>
+   *       <div class="sd-table-wrap"><table>…</table></div>
+   *     </div>
+   *   </div>
+   * A fence without a language is a bare `<pre>`. Plain element selectors
+   * (code, pre, blockquote, ul, ol, table) so the output of any Markdown
+   * renderer styles without classes.
+   */
+  .sd-message-text code {
+    padding: 0.05em 0.35em;
+    color: var(--sd-fg);
+    overflow-wrap: anywhere;
+  }
+  .sd-md {
+    display: block;
+    min-width: 0;
+    white-space: normal;
+  }
+  .sd-md > :where(*) {
+    margin-block: 0;
+  }
+  .sd-md > :where(* + *) {
+    margin-block-start: 0.5em;
+  }
+  .sd-md pre {
+    margin: 0;
+    padding: 8px 12px;
+    color: var(--sd-fg);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    white-space: pre;
+  }
+  .sd-md .sd-code > pre {
+    padding: 8px 12px;
+  }
+  .sd-md blockquote {
+    padding-block: 0;
+    padding-inline-start: 12px;
+    border-inline-start: 2px solid var(--sd-line-strong);
+    color: var(--sd-fg-muted);
+    font-size: inherit;
+    line-height: inherit;
+    letter-spacing: normal;
+  }
+  .sd-md blockquote > :where(* + *) {
+    margin-block-start: 0.5em;
+  }
+  .sd-md :is(ul, ol) {
+    margin-block: 0;
+    padding-inline-start: 1.5em;
+  }
+  .sd-md ul {
+    list-style: square;
+  }
+  .sd-md ol {
+    list-style: decimal;
+  }
+  .sd-md :is(ul, ol) > li + li {
+    margin-block-start: 0.15em;
+  }
+  .sd-md li > :is(p, ul, ol) {
+    margin-block: 0;
+  }
+  .sd-md .sd-table-wrap {
+    width: fit-content;
+    max-width: 100%;
+  }
+  .sd-md table {
+    width: auto;
+    font-size: var(--text-sm);
+    line-height: 1.4;
+  }
+  .sd-md th {
+    padding: 6px 12px;
+    color: var(--sd-fg);
+    font-size: inherit;
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: normal;
+    text-transform: none;
+    white-space: normal;
+  }
+  .sd-md td {
+    padding: 6px 12px;
+  }
+  .sd-md :is(th, td):first-child {
+    padding-inline-start: 0;
+  }
+  .sd-md :is(th, td):last-child {
+    padding-inline-end: 0;
+  }
   /* The author leads the first line in the name color. A clickable author is
      a button or a link inside it. */
   .sd-message-author {
