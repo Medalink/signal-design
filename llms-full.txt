@@ -48,7 +48,8 @@ init(); // once, after the DOM exists; every listener is delegated, so later mar
 **React 19** (optional): `import { Button, Dialog, Tabs } from "signal-design/react"` gives
 typed components that render the `sd-` classes with React as the only writer.
 They need no `init()`; do not call it on those pages. For auto-hiding
-scrollbars there, call `initScrollbars()` from `signal-design/js` instead.
+scrollbars there, call `initScrollbars()` from `signal-design/js` instead, and
+`initKeyboard()` so a shell stays above the phone keyboard.
 
 ## Hard rules (do not break these)
 
@@ -79,7 +80,7 @@ scrollbars there, call `initScrollbars()` from `signal-design/js` instead.
 8. **One writer per state.** When React, Vue or Svelte renders a piece's state,
    leave out its `data-sd-*` behavior attribute (`data-sd-seg`, `data-sd-toggle`,
    `data-sd-shell`, `data-sd-section`, `data-sd-reaction`, `data-sd-poll`,
-   `data-sd-open`, `data-sd-combobox`…) and render the ARIA and `data-*` state
+   `data-sd-open`, `data-sd-combobox`, `data-sd-follow`…) and render the ARIA and `data-*` state
    yourself. `init()` also wires `role="tab"` and `.sd-shell` without an
    attribute; see README "Framework-owned state" before calling it there.
 
@@ -137,7 +138,7 @@ by `title` or `classes`) rather than inventing markup.
 | Settings groups | `sd-panel` (560px), `sd-panel-wide` (1024px), `sd-panel-fluid` (no cap) |
 | Status | `sd-badge`, `sd-status`, `sd-dot`, `sd-count`, `sd-progress` (`data-state="indeterminate"` when the amount is unknown), `sd-checks`, `sd-level` (live level from `--level`, 0–1) |
 | People | `sd-avatar` (`-sm` `-md` `-lg` `-xl`, or `--sd-avatar-size`) with `data-status`; on your own panel set `--sd-ring` to its background so the presence ring matches |
-| Chat and feeds | `sd-message` (time column, inline `sd-message-author`; `--who` name color, `--edge` role color, `data-grouped`, `data-own`, `data-reply` + `sd-message-ref`, `data-editing`, `data-selected`), `sd-message-actions`, `sd-message-menu`, `sd-emoji-picker`, `sd-feed-day`, `sd-event`, `sd-feed-jump`, `sd-composer` (`-add`, `-reply`, `-status`; `sd-add-menu`) in an `sd-shell-dock` (`data-flush`), `sd-reactions`, `sd-roster`, `sd-banner`, `sd-file`, `sd-link-card` (`-hero`, `-compact`, `-type`, `data-blocked`, `aria-busy`) |
+| Chat and feeds | `sd-message` (time column, inline `sd-message-author`; `--who` name color, `--edge` role color, `data-grouped`, `data-own`, `data-reply` + `sd-message-ref`, `data-editing`, `data-selected`), `sd-message-actions`, `sd-message-menu`, `sd-emoji-picker`, `sd-feed-day`, `sd-event`, `sd-feed-jump`, `sd-composer` (`-add`, `-reply`, `-status`; `sd-add-menu`) in an `sd-shell-dock` (`data-flush`), `data-sd-follow` on the feed (stays at the newest row, runs the jump bar), `data-joined` on `sd-shell-main` (bar, feed and composer as one surface), `sd-reactions`, `sd-roster`, `sd-banner`, `sd-file`, `sd-link-card` (`-hero`, `-compact`, `-type`, `data-blocked`, `aria-busy`) |
 | Data | `sd-stat`, `sd-stat-box`, `createChart(canvas, { type })`, `sd-plot`, `sd-heatmap`, `sd-uptime`, `sd-meter`, `sd-timeline` (`--from`/`--to` ranges over one axis), `sd-schedule` (hour roster, `data-status` blocks, mono/spectrum), `sd-weighted` (segments sized by `--weight` toward a goal) |
 | ASCII art | `mountAscii(el, piece)` from `signal-design/ascii` draws an `ascii-magic-art` piece as greys in `sd-ascii`; still until `aria-busy="true"` (`pnpm add ascii-magic-art`); `data-tone` colors the brightest level |
 | Stream overlays (OBS) | `sd-scene` (1920×1080 units in `--sd-u`; `data-full`, `data-clear`) with `sd-scene-copy`, `sd-scene-bar`, `sd-scene-label`, `sd-cam`, `sd-scene-goal`, `sd-credits`, `sd-stream-alert`; `mountStream(scene).alert({ kind, name })` |
