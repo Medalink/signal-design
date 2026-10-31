@@ -3026,6 +3026,21 @@ JS: init() from signal-design/js wires role="tab".
 </section>
 ```
 
+## Conversation / Saved with a reminder
+
+No new class: an sd-item with an sd-item-mark bookmark, the message preview in sd-item-title and sd-item-sub "group › #channel", and a sd-badge data-tone="pending" holding a clock icon and the <time> in sd-item-end when a reminder is set. Without a reminder, sd-item-end shows the saved date. Reuses the sd-activity row spacing.
+
+Classes: sd-activity, sd-badge, sd-icon, sd-item, sd-item-body, sd-item-end, sd-item-mark, sd-item-sub, sd-item-title, sd-message-author
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="border border-line max-w-[26rem] sd-activity" style="background: var(--sd-surface)" aria-label="Saved">
+  <a class="sd-item" href="#conversation"><span class="sd-item-mark" aria-hidden="true"><svg class="sd-icon" data-icon="bookmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M7 4.5h10v15l-5-4-5 4z"></path></svg></span><span class="sd-item-body"><span class="sd-item-title"><b class="sd-message-author" style="--who: var(--sd-accent)">Maya</b>Bring the long tent stakes</span><span class="sd-item-sub">Weekend Crew › #general</span></span><span class="sd-item-end"><span class="sd-badge" data-tone="pending"><svg class="sd-icon" data-icon="clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M9 4.5h6l4.5 4.5v6L15 19.5H9L4.5 15V9zM12 8v4.5h3.5"></path></svg><time>8:00 PM</time></span></span></a>
+  <a class="sd-item" href="#conversation"><span class="sd-item-mark" aria-hidden="true"><svg class="sd-icon" data-icon="bookmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M7 4.5h10v15l-5-4-5 4z"></path></svg></span><span class="sd-item-body"><span class="sd-item-title"><b class="sd-message-author" style="--who: var(--sd-success)">Leo</b>Ramen on 5th is open till 11</span><span class="sd-item-sub">Weekend Crew › #food-recs</span></span><span class="sd-item-end"><time>Oct 29</time></span></a>
+</div>
+```
+
 ## Conversation / Roster
 
 sd-roster > sd-roster-group (one per role) · sd-roster-head (sticky, aria-expanded) + -label|-count · sd-roster-row + data-presence="online|offline|unresolved" + --who · sd-badge at the row end (Agent) · sd-roster-avatar (data-unresolved) · sd-roster-more pages in the next 25 · set --sd-ring to the panel color
