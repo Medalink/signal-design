@@ -122,6 +122,72 @@
   .sd-item-group > :last-child:not(:first-child) {
     margin-inline-start: auto;
   }
+  /* A leading box for a glyph or icon where the row has no person: 24px, one
+     hairline, grey. <span class="sd-item-mark">@</span> */
+  .sd-item-mark {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--sd-line-strong);
+    color: var(--sd-fg-muted);
+    font-family: var(--sd-font-mono);
+    font-size: var(--text-sm);
+    line-height: 1;
+  }
+  .sd-item-mark > svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /*
+   * Activity: an inbox of what happened to you. Tabs over a flush list of
+   * items; each row is a mark, "<name> <action>" on the first line (the name
+   * in its --who color, the action muted), "<group> › #channel" under it and
+   * the time at the end in mono. data-unread puts a pending-tone square on
+   * the row's left edge and leaves the text alone.
+   *   <section class="sd-activity" aria-label="Activity">
+   *     <div class="sd-tabs" role="tablist">…</div>
+   *     <div class="sd-tabpanel" role="tabpanel">
+   *       <a class="sd-item" href="…" data-unread><span class="sd-item-mark">@</span>
+   *         <span class="sd-item-body"><span class="sd-item-title"><b class="sd-message-author">Maya</b>mentioned you</span>
+   *           <span class="sd-item-sub">Weekend Crew › #general</span></span>
+   *         <span class="sd-item-end"><time>2m</time></span></a>…
+   */
+  .sd-activity > .sd-tabs {
+    padding-inline: 16px;
+  }
+  .sd-activity > .sd-tabpanel {
+    padding-block-start: 0;
+  }
+  .sd-activity .sd-item {
+    padding: 9px 16px 9px 14px;
+  }
+  .sd-activity .sd-item + .sd-item {
+    border-block-start: 1px solid var(--sd-line);
+  }
+  .sd-activity .sd-item[data-unread]::before {
+    left: 4px;
+    width: 5px;
+    height: 5px;
+    margin-top: -2.5px;
+    background: var(--sd-pending);
+  }
+  .sd-activity .sd-item .sd-item-title,
+  .sd-activity .sd-item[data-unread] .sd-item-title {
+    color: var(--sd-fg-muted);
+    font-weight: inherit;
+  }
+  .sd-activity .sd-item-sub {
+    color: var(--sd-fg-faint);
+    font-size: var(--text-3xs);
+  }
+  .sd-activity .sd-item-end {
+    color: var(--sd-fg-faint);
+    font-family: var(--sd-font-mono);
+    font-size: var(--text-3xs);
+  }
 
   /* Presence: a square on the avatar's corner. It grows with the avatar
      (8px up to an 80px avatar, at most 20px).
