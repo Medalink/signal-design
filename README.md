@@ -288,14 +288,20 @@ label do the same. Icon-only controls still need an `aria-label`.
 Signal draws a set of line icons for what an editor and its app need: history
 (`undo`, `redo`), text (`bold`, `italic`, `underline`, `strike`, `list-bullet`,
 `list-number`, `align-left`, `align-center`, `align-right`, `align-justify`),
-margin and review (`comment`, `sparkle`, `history`, `bookmark`, `view`, `link`,
-`unlink`), things (`person`, `people`, `account`, `object`, `place`, `write`,
-`edit`, `delete`, `copy`, `external`, `publish`, `download`, `sync`, `warning`,
-`check`), chat (`hash`, `lock`, `reply`, `send`, `pin`, `smile`, `bell`),
-app screens (`container`, `chart`, `database`, `sliders`, `settings`, `logs`,
-`theme`, `rain`), window controls (`minimize`, `maximize`, `restore`) and
-interface (`close`, `play`, `pause`, `plus`, `minus`, `search`, `menu`, `more`,
-the four `chevron-*`, `chevrons-left`, `chevrons-right`, `expand`, `contract`).
+margin and review (`comment`, `sparkle`, `history`, `bookmark`, `view`, `view-off`,
+`link`, `unlink`), things (`person`, `person-remove`, `people`, `account`, `object`,
+`place`, `write`, `edit`, `delete`, `copy`, `external`, `publish`, `download`, `sync`,
+`warning`, `check`), status (`check-double`, `info`, `help`, `clock`, `timer`,
+`block`, `shield-check`, `shield-alert`), chat (`hash`, `lock`, `reply`, `send`,
+`pin`, `smile`, `select`, `image`, `file`, `join`, `leave`, `bell`, `bell-off`,
+`megaphone`, `speaker`, `speaker-off`, `mic`, `phone`, `phone-off`), pictures for a
+channel, a place or a group (`archive`, `bag`, `beaker`, `bolt`, `book`,
+`building`, `bulb`, `calendar`, `desktop`, `fire`, `flag`, `gift`, `globe`, `home`,
+`key`, `puzzle`, `rocket`, `tag`, `terminal`, `trophy`, `wrench`), app screens
+(`container`, `chart`, `database`, `sliders`, `settings`, `logs`, `theme`, `rain`),
+window controls (`minimize`, `maximize`, `restore`) and interface (`close`, `play`,
+`pause`, `plus`, `minus`, `search`, `menu`, `more`, `arrow-right`, the four
+`chevron-*`, `chevrons-left`, `chevrons-right`, `expand`, `contract`).
 They follow the rest of the kit: straight lines and right angles, a 1.5 stroke
 with square caps and mitered corners, `currentColor`, drawn inside the 4-unit
 inset of the 24 grid so they size like any `sd-icon`. The component page lists
