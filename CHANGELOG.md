@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 1.4.27 (2026-10-31)
+
+### Added
+- `sd-cw`: an image or attachment (`sd-shot` or `sd-file`) behind a solid cover, with a chip such as `CW · spiders` and a Show button, until the reader opens it. Shown, a strip above the media keeps the chip and a Hide button. `aria-expanded` on `sd-cw-toggle` is the state, closed media is out of sight, tab order and assistive tech, and `data-sd-cw` wires the click and fires `sd:cw`. React gets `ContentWarning` (`label`, `open`, `defaultOpen`, `onOpenChange`, `showLabel`, `hideLabel`).
+
 ## 1.4.26 (2026-10-31)
 
 ### Added
