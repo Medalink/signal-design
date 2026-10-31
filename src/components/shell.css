@@ -1065,6 +1065,12 @@
     stroke: currentColor;
     stroke-width: 1.5;
   }
+  /* Signal's own icons draw inside a 4-unit inset, so their box is larger
+     for a glyph of about the same size. */
+  .sd-window-controls .sd-icon {
+    width: 20px;
+    height: 20px;
+  }
   /* Maximize shows one square; restore shows two. */
   .sd-window-controls .sd-icon-restore,
   .sd-titlebar[data-maximized] .sd-icon-maximize {
