@@ -272,6 +272,14 @@
     border: 1px solid var(--sd-line-strong);
     background: var(--sd-surface);
   }
+  /* A row with no preview under it can be one button that opens the file. */
+  .sd-file:is(button, a) {
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+  }
   .sd-file-type {
     display: grid;
     place-items: center;
