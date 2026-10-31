@@ -550,6 +550,7 @@ Generic pieces for chat, comments, feeds and inboxes. See `showcase/chat.html`.
 | `sd-file`, `sd-link-card`, `sd-poll` | Attachment, link preview, poll (`--share` per option: its share of the voters, 0 to 100). |
 | `sd-poll-head`, `-foot`, `-voters`, `data-chosen` | A decision: a poll one person decides, such as an agent asking to approve or deny. `-head` holds its state badge and the time left, `data-tone` lights its edge while it waits, `data-chosen` marks the pick, `-voters` names who tapped an option in their `--who`. `-foot` is a meta row under the options. |
 | `sd-link-card-hero`, `-compact`, `-type`, `-note`, `-actions` | Link preview variants: image on top, one tight block, a document with its type, a reason line, and buttons under the text (Join on an invite). `data-blocked` and `aria-busy="true"` are states. |
+| `sd-link-card-media`, `-dismiss`, `-thumb-label`, `-thumb-action` | A card that is only an image or GIF, shown whole; a dismiss button; a label and an action over the media. `role="link"` on a `<div>` card hovers like a link. |
 | `sd-tiles`, `sd-tile` | Call grid; `data-speaking`, `data-muted`, `data-hand`. |
 | `sd-grid-picker` | An emoji or icon grid (`--cols`). |
 | `sd-level` | A live level meter, such as a microphone input: 2 to 8 `<i>` bars that light up to `--level` (`0`–`1`). |
@@ -591,6 +592,23 @@ Link cards come in a few shapes for one URL preview:
 - `sd-link-card-actions` holds buttons under the text. An embed shaped like a
   link card, such as a group invite, uses it for Join. A card with actions is a
   `<div>`.
+- A card the app opens itself is a `<div role="link" tabindex="0">`; it takes
+  the pointer cursor and the same hover edge as an `<a>` card.
+- `sd-link-card-dismiss` goes on an `sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm`
+  that removes the preview. It holds the top of the end column; in a hero or
+  media card it floats over the image's corner. Put it right after the site
+  line, and stop its click from opening the card. Do not use it on a card with
+  a side thumb or `-type` page: they hold the same column.
+- `sd-link-card-media` is a card that is only an image, GIF or `<video>`. It
+  needs no `-hero` and no padding classes: the thumb (`sd-link-card-thumb`, an
+  `<img>`, or a `<div>` holding the `<img>` or `<canvas>`) shows whole, never
+  cropped, up to 20rem tall. Set `--sd-media-max` for another height, or add
+  `sd-link-card-compact` for 6rem. `sd-link-card-thumb-label` (Paused) and
+  `sd-link-card-thumb-action` (an `sd-btn sd-btn-sm`, Play) go inside a
+  `<div>` thumb, over its corners.
+- Width: a card fills its column up to 32rem; as a direct child of
+  `sd-message-body` it takes the full body width up to 30rem, like a file or a
+  poll. Do not set `max-width` on a card.
 
 ```html
 <div class="sd-link-card" data-blocked>

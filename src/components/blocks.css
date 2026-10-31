@@ -313,8 +313,13 @@
    *   <div class="sd-link-card"><span class="sd-link-card-site">Group invite</span>
    *     <span class="sd-link-card-title">…</span><span class="sd-link-card-desc">…</span>
    *     <div class="sd-link-card-actions"><button class="sd-btn sd-btn-sm">Join</button></div></div>
+   * A card the app opens itself is a div with role="link" and tabindex="0"; it
+   * hovers like a link. sd-link-card-dismiss sits in the end column (over the
+   * media in a hero card); sd-link-card-media is a card that is only an image
+   * or GIF, shown whole, with sd-link-card-thumb-label and -action over it.
    */
   .sd-link-card {
+    position: relative;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 6px 14px;
@@ -352,8 +357,11 @@
     background: var(--sd-raised);
     object-fit: cover;
   }
-  a.sd-link-card:hover {
+  :is(a, [role="link"]).sd-link-card:hover {
     border-inline-start-color: var(--sd-fg);
+  }
+  [role="link"].sd-link-card {
+    cursor: pointer;
   }
   /* Hero: the thumb (an og:image, a GIF or a <video>) spans the card above the text. */
   .sd-link-card-hero {
@@ -388,6 +396,70 @@
   }
   .sd-link-card-compact > .sd-link-card-desc {
     display: none;
+  }
+  /* Dismiss: a button that removes the preview, at the top of the end column. */
+  .sd-link-card-dismiss {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: start;
+    justify-self: end;
+  }
+  .sd-link-card-media {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0;
+  }
+  /* Media: a card that is only an image, GIF or <video>. It shows whole (never cropped to 1.91:1) up to --sd-media-max, 20rem tall. */
+  .sd-link-card-media > .sd-link-card-thumb {
+    position: relative;
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    max-height: var(--sd-media-max, 20rem);
+    aspect-ratio: auto;
+    margin: 0;
+    border: 0;
+    object-fit: contain;
+  }
+  .sd-link-card-media > .sd-link-card-thumb > :where(img, video, canvas) {
+    display: block;
+    width: 100%;
+    max-height: inherit;
+    object-fit: contain;
+  }
+  .sd-link-card-media.sd-link-card-compact {
+    --sd-media-max: 6rem;
+  }
+  /* The dismiss button floats over the media in the corner. */
+  :is(.sd-link-card-hero, .sd-link-card-media) > .sd-link-card-dismiss {
+    position: absolute;
+    grid-area: auto;
+    inset-block-start: 4px;
+    inset-inline-end: 4px;
+    z-index: 1;
+  }
+  /* A label (Paused) and an action (Play) sit over the media. */
+  .sd-link-card-thumb-label,
+  .sd-link-card-thumb-action {
+    position: absolute;
+  }
+  :is(:is(.sd-link-card-hero, .sd-link-card-media) > .sd-link-card-dismiss, .sd-link-card-thumb-action):not(:hover) {
+    --btn-bg: var(--sd-canvas);
+  }
+  .sd-link-card-thumb-label {
+    background: var(--sd-canvas);
+    inset-block-start: 4px;
+    inset-inline-start: 4px;
+    padding: 2px 4px;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+  }
+  .sd-link-card-thumb-action {
+    inset-block-end: 4px;
+    inset-inline-end: 4px;
   }
   /* Document: a page with its type label (PDF, DOCX) in place of the thumb. */
   .sd-link-card-type {
