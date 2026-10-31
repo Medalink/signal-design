@@ -3130,9 +3130,9 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Conversation / Roster
 
-sd-roster > sd-roster-group (one per role) · sd-roster-head (sticky, aria-expanded) + -label|-count · sd-roster-row + data-presence="online|offline|unresolved" + --who · sd-badge at the row end (Agent) · sd-roster-avatar (data-unresolved) · sd-roster-more pages in the next 25 · set --sd-ring to the panel color
+sd-roster > sd-roster-group (one per role) · sd-roster-head (sticky, aria-expanded) + -label|-count · sd-roster-row + data-presence="online|offline|unresolved" + --who · sd-badge at the row end (Agent) · sd-roster-avatar (data-unresolved) · sd-roster-sub inside -name is a mono second line (the ghost id under a private name) and makes the row 48px · sd-roster-more pages in the next 25 · set --sd-ring to the panel color
 
-Classes: sd-avatar, sd-avatar-sm, sd-badge, sd-roster, sd-roster-avatar, sd-roster-count, sd-roster-group, sd-roster-head, sd-roster-label, sd-roster-more, sd-roster-name, sd-roster-row
+Classes: sd-avatar, sd-avatar-sm, sd-badge, sd-roster, sd-roster-avatar, sd-roster-count, sd-roster-group, sd-roster-head, sd-roster-label, sd-roster-more, sd-roster-name, sd-roster-row, sd-roster-sub
 
 No JS needed: the HTML works with the CSS alone.
 
@@ -3150,6 +3150,7 @@ No JS needed: the HTML works with the CSS alone.
       <h3 class="sd-roster-head"><button aria-expanded="true"><span class="sd-roster-label">Members</span><span class="sd-roster-count"><b>212</b> / 788</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><path d="M4 6l4 4 4-4"></path></svg></button></h3>
       <ul>
         <li><button class="sd-roster-row" data-presence="online" style="--who: var(--sd-success)"><span class="sd-roster-avatar"><span class="sd-avatar sd-avatar-sm" data-tone="success">JD</span></span><span class="sd-roster-name">Jane</span></button></li>
+        <li><button class="sd-roster-row" data-presence="online" style="--who: var(--sd-extra)"><span class="sd-roster-avatar"><span class="sd-avatar sd-avatar-sm" data-tone="extra">BE</span></span><span class="sd-roster-name">Ben (climbing)<span class="sd-roster-sub">Bv6yLr8S</span></span></button></li>
         <li><button class="sd-roster-row" data-presence="online" style="--who: var(--sd-warning)"><span class="sd-roster-avatar"><span class="sd-avatar sd-avatar-sm" data-tone="warning">SK</span></span><span class="sd-roster-name">Sam</span></button></li>
         <li><button class="sd-roster-row" data-presence="online" style="--who: var(--sd-pending)"><span class="sd-roster-avatar"><span class="sd-avatar sd-avatar-sm" data-tone="pending">SC</span></span><span class="sd-roster-name">Scout</span><span class="sd-badge">Agent</span></button></li>
         <li><button class="sd-roster-row" data-presence="unresolved"><span class="sd-roster-avatar" data-unresolved="">7f</span><span class="sd-roster-name">7f3a…c21e</span></button></li>
