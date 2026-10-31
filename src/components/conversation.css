@@ -426,18 +426,18 @@
     color: var(--sd-danger);
   }
   /* Embeds in a message share one width and sit 3px under the text. */
-  .sd-message-body > :is(.sd-file, .sd-link-card, .sd-reactions, .sd-poll, .sd-thread-chip, .sd-event-card, .sd-cw) {
+  .sd-message-body > :is(.sd-file, .sd-link-card, .sd-reactions, .sd-poll, .sd-thread-chip, .sd-event-card, .sd-cw, .sd-tasklist) {
     margin-top: 3px;
   }
-  .sd-message-body > :is(.sd-file, .sd-link-card, .sd-poll, .sd-event-card) {
+  .sd-message-body > :is(.sd-file, .sd-link-card, .sd-poll, .sd-event-card, .sd-tasklist) {
     width: 100%;
     max-width: 30rem;
   }
   /* Cards in the feed take the soft hairline; hover restores the strong one. */
-  .sd-message-body :is(.sd-file, .sd-file-type, .sd-poll, .sd-event-card) {
+  .sd-message-body :is(.sd-file, .sd-file-type, .sd-poll, .sd-event-card, .sd-tasklist) {
     border-color: var(--sd-line);
   }
-  .sd-message-body :is(.sd-file, .sd-poll, .sd-event-card):hover {
+  .sd-message-body :is(.sd-file, .sd-poll, .sd-event-card, .sd-tasklist):hover {
     border-color: var(--sd-line-strong);
   }
   .sd-message-body .sd-poll[data-tone] {

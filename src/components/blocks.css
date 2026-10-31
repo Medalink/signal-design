@@ -222,7 +222,7 @@
      outside them it is the page canvas. On a panel of your own, set
      --sd-ring to its background. Hover and current rows come last. */
   :where(.sd-rail, .sd-sidebar, .sd-shell-aside, .sd-shell-topbar, .sd-titlebar, .sd-statusbar,
-    .sd-banner, .sd-file, .sd-link-card, .sd-poll, .sd-event-card, .sd-tile, .sd-composer, .sd-message[data-mention],
+    .sd-banner, .sd-file, .sd-link-card, .sd-poll, .sd-event-card, .sd-tasklist, .sd-tile, .sd-composer, .sd-message[data-mention],
     .sd-callout, .sd-chip, .sd-tags, .sd-code, .sd-sidenav :is(a, button):hover, .sd-table-hover tbody tr:hover) {
     --sd-ring: var(--sd-surface);
   }
@@ -740,14 +740,14 @@
    * marks the viewer's answer; it is drawn in success, the color of your own
    * position, with a check icon in its text. The app writes the state.
    *   <article class="sd-event-card" aria-labelledby="ev-t">
-   *     <div class="sd-event-card-head"><svg class="sd-icon">…</svg>Event</div>
+   *     <div class="sd-event-card-head"><svg class="sd-icon">â€¦</svg>Event</div>
    *     <h3 class="sd-event-card-title" id="ev-t">Saturday brunch</h3>
-   *     <p class="sd-event-card-line"><svg class="sd-icon">…</svg>Sat, Nov 1 · 10:30 AM</p>
-   *     <div class="sd-event-card-who"><span class="sd-avatar-stack">…</span>
-   *       <span class="sd-event-card-count">5 going · 2 maybe</span></div>
+   *     <p class="sd-event-card-line"><svg class="sd-icon">â€¦</svg>Sat, Nov 1 Â· 10:30 AM</p>
+   *     <div class="sd-event-card-who"><span class="sd-avatar-stack">â€¦</span>
+   *       <span class="sd-event-card-count">5 going Â· 2 maybe</span></div>
    *     <div class="sd-event-card-rsvp" role="group" aria-label="Your answer">
-   *       <button class="sd-btn sd-btn-sm" aria-pressed="true">…Going</button>…</div>
-   *     <a class="sd-btn sd-btn-link sd-event-card-add" href="…">Add to calendar</a></article>
+   *       <button class="sd-btn sd-btn-sm" aria-pressed="true">â€¦Going</button>â€¦</div>
+   *     <a class="sd-btn sd-btn-link sd-event-card-add" href="â€¦">Add to calendar</a></article>
    */
   .sd-event-card {
     display: grid;
@@ -814,6 +814,116 @@
   .sd-event-card-add {
     margin-top: 6px;
     font-size: var(--text-sm);
+  }
+
+  /*
+   * Task list: a checklist the whole conversation ticks, posted in a message.
+   * A caps head with the list icon and the done/total count (mono) at the end,
+   * the title, a success progress bar (sd-progress), one row per item (a
+   * square checkbox, its text, and the name of whoever ticked it in their
+   * --who) and an Add item row. A ticked item is faint and struck through.
+   * The checkbox is the state: the app sets checked and the name.
+   *   <section class="sd-tasklist" aria-labelledby="tl-t">
+   *     <header class="sd-tasklist-head"><span class="sd-tasklist-label"><svg class="sd-icon">â€¦</svg>Checklist</span>
+   *       <span class="sd-tasklist-count">3/6</span></header>
+   *     <h3 class="sd-tasklist-title" id="tl-t">Cabin packing</h3>
+   *     <div class="sd-progress" data-tone="success" style="--value: 50" role="progressbar" aria-labelledby="tl-t"
+   *       aria-valuemin="0" aria-valuemax="6" aria-valuenow="3"></div>
+   *     <ul class="sd-tasklist-items">
+   *       <li><label><input type="checkbox" checked><span>Firewood</span></label><b style="--who: â€¦">Leo</b></li>â€¦</ul>
+   *     <button class="sd-tasklist-add" type="button"><svg class="sd-icon">â€¦</svg>Add item</button></section>
+   */
+  .sd-tasklist {
+    display: grid;
+    gap: 4px;
+    max-width: 28rem;
+    padding: 12px 14px;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-surface);
+  }
+  .sd-tasklist-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+  .sd-tasklist-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .sd-tasklist-count {
+    font-family: var(--font-mono);
+    font-size: var(--text-3xs);
+    letter-spacing: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .sd-tasklist-title {
+    margin: 2px 0 0;
+    color: var(--sd-fg);
+    font-size: var(--text-md);
+    font-weight: var(--font-weight-semibold);
+    overflow-wrap: anywhere;
+  }
+  .sd-tasklist > .sd-progress {
+    margin-block: 6px 4px;
+  }
+  .sd-tasklist-items {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .sd-tasklist-items > li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 30px;
+    font-size: var(--text-sm);
+  }
+  .sd-tasklist-items label {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    min-height: 30px;
+    color: var(--sd-fg);
+    cursor: pointer;
+  }
+  .sd-tasklist-items label > span {
+    overflow-wrap: anywhere;
+  }
+  .sd-tasklist-items > li:has(:checked) label > span {
+    color: var(--sd-fg-subtle);
+    text-decoration: line-through;
+  }
+  .sd-tasklist-items > li > b {
+    flex: none;
+    color: color-mix(in srgb, var(--who, var(--sd-extra)) 70%, var(--sd-fg));
+    font-size: var(--text-3xs);
+    font-weight: var(--font-weight-semibold);
+  }
+  .sd-tasklist-add {
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    gap: 10px;
+    min-height: 30px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--sd-fg-subtle);
+    font: inherit;
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition: color 120ms var(--ease-out);
+  }
+  .sd-tasklist-add:hover {
+    color: var(--sd-fg);
   }
 
   /*

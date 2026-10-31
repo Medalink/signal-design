@@ -124,6 +124,57 @@ export function EventCard({ label, title, when, where, going = [], count, answer
   );
 }
 
+/**
+ * A checklist posted in a message (`sd-tasklist`). Each of `items` is
+ * `{ id, label, checked, by }`; `by` is `{ name, who }` for whoever ticked it
+ * (`who` is a CSS color, the person's `--who`). `onCheckedChange(id, checked)`
+ * makes the checkboxes live; without it they are read-only. The bar and the
+ * done/total count follow `items`. The words are props.
+ */
+export function TaskList({ label, title, items, onCheckedChange, progressLabel, count, addLabel, onAdd, className, ...props }) {
+  const titleId = useId();
+  const done = items.filter((item) => item.checked).length;
+  return h(
+    "section",
+    { className: cx("sd-tasklist", className), "aria-labelledby": titleId, ...props },
+    h(
+      "header",
+      { className: "sd-tasklist-head" },
+      h("span", { className: "sd-tasklist-label" }, h(Icon, { name: "list-bullet" }), label),
+      h("span", { className: "sd-tasklist-count" }, count ?? `${done}/${items.length}`),
+    ),
+    h("h3", { className: "sd-tasklist-title", id: titleId }, title),
+    h("div", {
+      className: "sd-progress",
+      "data-tone": "success",
+      style: { "--value": items.length === 0 ? 0 : Math.round((done * 100) / items.length) },
+      role: "progressbar",
+      "aria-label": progressLabel,
+      "aria-valuemin": 0,
+      "aria-valuemax": items.length,
+      "aria-valuenow": done,
+    }),
+    h(
+      "ul",
+      { className: "sd-tasklist-items" },
+      items.map(({ id, label: text, checked, by }) =>
+        h(
+          "li",
+          { key: id },
+          h(
+            "label",
+            null,
+            h("input", { type: "checkbox", checked: !!checked, disabled: onCheckedChange === undefined, onChange: (event) => onCheckedChange?.(id, event.currentTarget.checked) }),
+            h("span", null, text),
+          ),
+          by && h("b", { style: { "--who": by.who } }, by.name),
+        ),
+      ),
+    ),
+    addLabel !== undefined && h("button", { type: "button", className: "sd-tasklist-add", onClick: onAdd }, h(Icon, { name: "plus" }), addLabel),
+  );
+}
+
 /** A card. With `href` the whole card is a link. */
 export function Card({ tone, href, className, ...props }) {
   return h(href ? "a" : "article", { href, className: cx("sd-card", className), "data-tone": tone, ...props });

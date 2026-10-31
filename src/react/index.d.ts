@@ -195,6 +195,64 @@ export interface VoiceNoteProps extends Omit<HTMLAttributes<HTMLDivElement>, "ch
 export function VoiceNote(props: VoiceNoteProps): ReactElement;
 /** An event posted in a conversation, with the viewer's answer (`sd-event-card`). */
 
+export interface EventCardAnswer {
+  /** What `answer` and `onAnswerChange` carry. */
+  value: string;
+  label: ReactNode;
+}
+export interface EventCardProps extends Omit<ComponentProps<"article">, "title" | "children"> {
+  /** The caps word in the head, such as "Event". Translate it in the app. */
+  label: ReactNode;
+  title: ReactNode;
+  /** The date line, formatted by the app. */
+  when?: ReactNode | undefined;
+  /** The place line. */
+  where?: ReactNode | undefined;
+  /** Who is coming; the first four show as avatars. Decoration: they are hidden from assistive tech. */
+  going?: AvatarProps[] | undefined;
+  /** The mono count line, such as "5 going · 2 maybe". */
+  count: ReactNode;
+  /** The choices in order, such as Going, Maybe and Can't. */
+  answers: EventCardAnswer[];
+  /** The viewer's answer: its button is pressed, in success, with a check. */
+  answer?: string | undefined;
+  onAnswerChange?: ((value: string) => void) | undefined;
+  /** The accessible name of the group of answers. */
+  answerLabel: string;
+  /** The words of "Add to calendar". Leave out to hide the action. */
+  calendarLabel?: ReactNode | undefined;
+  /** Makes the action a link (a download URL); else it is a button that calls `onCalendar`. */
+  calendarHref?: string | undefined;
+  onCalendar?: MouseEventHandler<HTMLElement> | undefined;
+}
+/** An event posted in a conversation, with the viewer's answer (`sd-event-card`). */
+export function EventCard(props: EventCardProps): ReactElement;
+
+export interface TaskListItem {
+  id: string;
+  label: ReactNode;
+  checked?: boolean | undefined;
+  /** Who ticked it: the name, and `who` as a CSS color (the person's `--who`). */
+  by?: { name: string; who?: string | undefined } | undefined;
+}
+export interface TaskListProps extends Omit<ComponentProps<"section">, "title" | "children"> {
+  /** The caps word in the head, such as "Checklist". Translate it in the app. */
+  label: ReactNode;
+  title: ReactNode;
+  items: TaskListItem[];
+  /** Called when a checkbox changes. Without it the boxes are read-only. */
+  onCheckedChange?: ((id: string, checked: boolean) => void) | undefined;
+  /** The accessible name of the progress bar, such as "Done". */
+  progressLabel: string;
+  /** Replaces the mono "done/total" count. */
+  count?: ReactNode | undefined;
+  /** The words of the Add item row. Leave out to hide it. */
+  addLabel?: ReactNode | undefined;
+  onAdd?: MouseEventHandler<HTMLButtonElement> | undefined;
+}
+/** A checklist posted in a message, with its progress and who ticked each item (`sd-tasklist`). */
+export function TaskList(props: TaskListProps): ReactElement;
+
 export interface CardProps extends Omit<ComponentProps<"article">, "ref"> {
   tone?: Tone | undefined;
   /** Makes the whole card a link. */

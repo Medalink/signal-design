@@ -25,7 +25,7 @@ export function checkReactTypes() {
   writeFileSync(
     fixture,
     `import { useRef, useState, type ComponentProps } from "react";
-import { AppShell, AvatarGrid, Button, Dialog, DialogBody, Menu, MenuContent, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, Spoiler, ContentWarning, ThreadChip, EventCard, VoiceNote, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
+import { AppShell, AvatarGrid, Button, Dialog, DialogBody, Menu, MenuContent, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, Spoiler, ContentWarning, ThreadChip, EventCard, TaskList, VoiceNote, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 import { initScrollbars } from "signal-design/js";
 import { Checkbox, Switch, Tooltip, type BareCheckboxProps, type BareSwitchProps, type CheckboxProps, type SwitchProps } from "signal-design/react";
 
@@ -175,6 +175,8 @@ export function Consumer() {
       <VoiceNote peaks={[0.2, 0.8, 0.5]} duration={23} position={8} playing speed={1.5} onPlayingChange={(next) => next} onSeek={(seconds) => seconds.toFixed()} onSpeedChange={(next) => next.toFixed(1)} label="Voice message from Maya" />
       {/* @ts-expect-error speed must be one of the three the chip cycles */}
       <VoiceNote peaks={[]} duration={1} speed={3} />
+      <EventCard label="Event" title="Brunch" when="Sat, Nov 1" where="Kin Khao" going={[{ name: "Maya Lee", tone: "extra" }]} count="5 going" answers={[{ value: "going", label: "Going" }]} answer="going" onAnswerChange={(value) => value.length} answerLabel="Your answer" calendarLabel="Add to calendar" calendarHref="/e.ics" />
+      <TaskList label="Checklist" title="Packing" progressLabel="Done" items={[{ id: "a", label: "Firewood", checked: true, by: { name: "Leo", who: "var(--sd-warning)" } }, { id: "b", label: "Speaker" }]} onCheckedChange={(id, checked) => id.length + Number(checked)} addLabel="Add item" onAdd={(event) => event.currentTarget.blur()} />
       <StatusSegment tone="success" pressed onClick={(event) => event.currentTarget.blur()}>Saved</StatusSegment>
       {/* @ts-expect-error variant must be one of the button variants */}
       <Button variant="huge" />
@@ -308,6 +310,8 @@ export async function checkReactSsr() {
           h(sd.AvatarGrid, { members: [{ name: "Maya Lee", tone: "extra" }, { name: "Kai", src: "/k.png" }], size: "sm" }),
           h(sd.ThreadChip, { participants: [{ name: "Maya Lee", tone: "extra" }], label: "4 replies", time: "12:41 PM", dateTime: "12:41", open: true, controls: "thread" }),
           h(sd.VoiceNote, { peaks: [0.2, 0.8, 0.5], duration: 23, position: 8, playing: true, speed: 1.5 }),
+          h(sd.EventCard, { label: "Event", title: "Brunch", when: "Sat", where: "Kin Khao", going: [{ name: "Maya Lee", tone: "extra" }], count: "5 going", answers: [{ value: "going", label: "Going" }, { value: "no", label: "Can't" }], answer: "going", answerLabel: "Your answer", calendarLabel: "Add to calendar" }),
+          h(sd.TaskList, { label: "Checklist", title: "Packing", progressLabel: "Done", items: [{ id: "a", label: "Firewood", checked: true, by: { name: "Leo", who: "var(--sd-warning)" } }, { id: "b", label: "Speaker" }], addLabel: "Add item" }),
           h(sd.Card, { tone: "danger" }, h(sd.CardHeader, null, "h"), h(sd.CardBody, null, "b"), h(sd.CardFooter, null, "f")),
           h(sd.Panel, { width: "wide" }, h(sd.PanelTitle, null, "t"), h(sd.PanelDescription, null, "d")),
           h(sd.EmptyState, { title: "None", action: h(sd.Button, null, "Add") }, "Nothing"),
