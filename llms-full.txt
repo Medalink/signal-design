@@ -138,13 +138,13 @@ by `title` or `classes`) rather than inventing markup.
 | Settings groups | `sd-panel` (560px), `sd-panel-wide` (1024px), `sd-panel-fluid` (no cap) |
 | Status | `sd-badge`, `sd-status`, `sd-dot`, `sd-count`, `sd-progress` (`data-state="indeterminate"` when the amount is unknown), `sd-checks`, `sd-level` (live level from `--level`, 0–1) |
 | People | `sd-avatar` (`-sm` `-md` `-lg` `-xl`, or `--sd-avatar-size`) with `data-status`; on your own panel set `--sd-ring` to its background so the presence ring matches |
-| Chat and feeds | `sd-message` (time column, inline `sd-message-author` and an `sd-badge` after it for Agent; `--who` name color, `--edge` role color, `data-grouped`, `data-own`, `data-reply` + `sd-message-ref`, `data-editing`, `data-selected`), `sd-message-actions`, `sd-message-menu`, `sd-emoji-picker`, `sd-feed-day`, `sd-event`, `sd-feed-jump`, `sd-composer` (`-add`, `-reply`, `-status`; `sd-add-menu`) in an `sd-shell-dock` (`data-flush`), `data-sd-follow` on the feed (stays at the newest row, runs the jump bar), `data-joined` on `sd-shell-main` (bar, feed and composer as one surface), `sd-reactions`, `sd-roster`, `sd-banner`, `sd-file` (`-preview`: a text file's first 7 lines), `sd-link-card` (`-hero`, `-media` for an image-only card, `-compact`, `-type`, `-actions`, `-dismiss`, `-thumb-label`, `-thumb-action`, `data-blocked`, `aria-busy`; a `<div role="link">` hovers like a link), `sd-poll` (a decision: `-head`, `data-tone` while it waits, `data-chosen`, `-voters`), `button.sd-shot` (an image attachment: `-hint` icon on hover, `aria-busy` + `-status`, `data-failed` + `-note`) |
+| Chat and feeds | `sd-message` (time column, inline `sd-message-author` and an `sd-badge` after it for Agent; `--who` name color, `--edge` role color, `data-grouped`, `data-own`, `data-reply` + `sd-message-ref`, `data-editing`, `data-selected`), `sd-message-actions`, `sd-message-menu`, `sd-emoji-picker`, `sd-feed-day`, `sd-event`, `sd-feed-jump`, `sd-composer` (`-add`, `-reply`, `-status`; `sd-add-menu`) in an `sd-shell-dock` (`data-flush`), `data-sd-follow` on the feed (stays at the newest row, runs the jump bar), `data-joined` on `sd-shell-main` (bar, feed and composer as one surface), `sd-reactions`, `sd-roster`, `sd-banner`, `sd-file` (`-preview`: a text file's first 7 lines), `sd-link-card` (`-hero`, `-media` for an image-only card, `-compact`, `-type`, `-actions`, `-dismiss`, `-thumb-label`, `-thumb-action`, `data-blocked`, `aria-busy`; a `<div role="link">` hovers like a link), `sd-poll` (a decision: `-head`, `data-tone` while it waits, `data-chosen`, `-voters`), `button.sd-shot` (an image attachment: `-hint` icon on hover, `aria-busy` + `-status`, `data-failed` + `-note`), `sd-spoiler` (inline text behind a solid block: `role="button"` with `aria-expanded`, one inner `span`, `data-sd-spoiler`; React `Spoiler`) |
 | Data | `sd-stat`, `sd-stat-box`, `createChart(canvas, { type })`, `sd-plot`, `sd-heatmap`, `sd-uptime`, `sd-meter`, `sd-timeline` (`--from`/`--to` ranges over one axis), `sd-schedule` (hour roster, `data-status` blocks, mono/spectrum), `sd-flow` (pipeline of stages and jobs on a dot grid, `data-status`, mono/spectrum), `sd-checklist` (named checks with a result and progress, the flow's `data-status`), `sd-weighted` (segments sized by `--weight` toward a goal) |
 | ASCII art | `mountAscii(el, piece)` from `signal-design/ascii` draws an `ascii-magic-art` piece as greys in `sd-ascii`; still until `aria-busy="true"` (`pnpm add ascii-magic-art`); `data-tone` colors the brightest level |
 | Stream overlays (OBS) | `sd-scene` (1920×1080 units in `--sd-u`; `data-full`, `data-clear`) with `sd-scene-copy`, `sd-scene-bar`, `sd-scene-label`, `sd-cam`, `sd-scene-goal`, `sd-credits`, `sd-stream-alert`; `mountStream(scene).alert({ kind, name })` |
 | Empty | `sd-empty` (gets a center ornament automatically) |
 | Ornaments | `data-sd-ornaments="<placement> <style>"`: dust by default; a style word draws art instead: `contours` (fiction), `lattice` (research), `waveform` (blogs, notes), `dashed` (empty, planned), `book` (the hero), `stack` (manuscripts). Placements `tl tr bl br top bottom center`, `data-sd-ornaments-size`, `data-sd-ornaments-seed`. Faint, behind content |
-| React app | `signal-design/react`: `Button`, `Field` + `Input`, `Dialog`, `Menu`, `Tabs`, `ToastProvider`, `Table`, `AppShell` with `Rail`, `Sidebar` and `ShellMain`; editor parts `Toolbar`, `ToolbarButton`, `Manuscript`, `StatusSegment`, `Mark`, `HoverCard`, `Tree`, `Combobox`, `CommandPalette`, `RadioGroup`, `SegmentedControl`, `MenuItemCheckbox`; props are the state (`open`/`onOpenChange`, `value`/`onValueChange`, `pressed`/`onPressedChange`); also `Icon`, `GutterBlock` (a margin marker for a block), `HoverCardHost` (a hover card for a trigger React does not render), `ResizablePanel`, `WeightedBar`, `Tree` row `actions` (keys, not buttons inside the treeitem), `Sheet side="bottom"` |
+| React app | `signal-design/react`: `Button`, `Field` + `Input`, `Dialog`, `Menu`, `Tabs`, `ToastProvider`, `Table`, `AppShell` with `Rail`, `Sidebar` and `ShellMain`; editor parts `Toolbar`, `ToolbarButton`, `Manuscript`, `StatusSegment`, `Mark`, `Spoiler`, `HoverCard`, `Tree`, `Combobox`, `CommandPalette`, `RadioGroup`, `SegmentedControl`, `MenuItemCheckbox`; props are the state (`open`/`onOpenChange`, `value`/`onValueChange`, `pressed`/`onPressedChange`); also `Icon`, `GutterBlock` (a margin marker for a block), `HoverCardHost` (a hover card for a trigger React does not render), `ResizablePanel`, `WeightedBar`, `Tree` row `actions` (keys, not buttons inside the treeitem), `Sheet side="bottom"` |
 
 Tone anything with `data-tone`. Mark the current location with `aria-current`.
 Use `sd-desktop-only` / `sd-phone-only` (split at 768px) for chrome that changes on phones.
@@ -1317,15 +1317,16 @@ JS: init() from signal-design/js wires data-sd-open · data-sd-tip · data-sd-cl
 
 ## Navigation / Command palette and shortcuts
 
-dialog.sd-command[data-sd-palette] + setOptions() · dialog[data-sd-shortcuts] opens on ? · sd-shortcuts
+dialog.sd-command[data-sd-palette] + setOptions() · sd-command-search holds an icon, the input and a kbd · sd-menu-lead before an option's label · dialog[data-sd-shortcuts] opens on ? · sd-shortcuts
 
-Classes: sd-actions, sd-btn, sd-btn-ghost, sd-btn-icon, sd-btn-sm, sd-command, sd-command-foot, sd-dialog, sd-dialog-body, sd-dialog-head, sd-menu, sd-menu-hint, sd-menu-label, sd-shortcuts, sd-shortcuts-group
+Classes: sd-actions, sd-avatar, sd-avatar-sm, sd-btn, sd-btn-ghost, sd-btn-icon, sd-btn-sm, sd-command, sd-command-foot, sd-command-list, sd-command-search, sd-dialog, sd-dialog-body, sd-dialog-head, sd-kbd, sd-menu, sd-menu-hint, sd-menu-label, sd-menu-lead, sd-shortcuts, sd-shortcuts-group
 
 JS: init() from signal-design/js wires data-sd-open · data-sd-key · data-sd-palette · data-sd-theme-cycle · data-sd-toast · data-sd-shortcuts · data-sd-close.
 
 ```html
 <div class="sd-actions">
   <button class="sd-btn" data-sd-open="demo-palette" data-sd-key="mod+k">Open palette <kbd>Ctrl K</kbd></button>
+  <button class="sd-btn" data-sd-open="demo-switcher">Quick switcher</button>
   <button class="sd-btn" data-sd-open="demo-shortcuts">Shortcuts <kbd>?</kbd></button>
 </div>
 
@@ -1341,6 +1342,19 @@ JS: init() from signal-design/js wires data-sd-open · data-sd-key · data-sd-pa
     <button type="button" role="option" data-sd-toast="Copied link">Copy link</button>
   </div>
   <p class="sd-command-foot">↑↓ move · ↵ open · Esc close</p>
+</dialog>
+
+<dialog class="sd-command" id="demo-switcher" aria-label="Quick switcher">
+  <div class="sd-command-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><path d="M4 4h11v11H4zM15 15l5.5 5.5"></path></svg>
+    <input type="text" role="combobox" aria-label="Quick switcher" aria-expanded="true" aria-controls="demo-switcher-list" value="cab" autocomplete="off">
+    <kbd class="sd-kbd">Ctrl K</kbd>
+  </div>
+  <div class="sd-menu sd-command-list" role="listbox" id="demo-switcher-list" aria-label="Results">
+    <button type="button" role="option" aria-selected="true" data-active=""><span class="sd-menu-lead"><span class="sd-avatar sd-avatar-sm">#</span></span>cabin-trip<span class="sd-menu-hint">Weekend Crew</span></button>
+    <button type="button" role="option"><span class="sd-menu-lead"><span class="sd-avatar sd-avatar-sm">#</span></span>cabins-and-camping<span class="sd-menu-hint">Pine Pals</span></button>
+    <button type="button" role="option"><span class="sd-menu-lead"><span class="sd-avatar sd-avatar-sm" data-tone="extra">C</span></span>Caleb<span class="sd-menu-hint">Direct</span></button>
+  </div>
 </dialog>
 
 <dialog class="sd-dialog" id="demo-shortcuts" data-sd-shortcuts="" aria-labelledby="demo-shortcuts-h">
@@ -2644,6 +2658,31 @@ No JS needed: the HTML works with the CSS alone.
           </div>
         </article>
       </div>
+```
+
+## Conversation / Spoilers
+
+sd-spoiler around one inner span · role="button" tabindex="0" aria-roledescription="spoiler" · aria-expanded (state) · aria-label="Spoiler" while closed · data-sd-spoiler · fires sd:spoiler · closed text is out of selection, find and screen readers · plain inline content only
+
+Classes: sd-message, sd-message-author, sd-message-body, sd-message-text, sd-message-time, sd-spoiler
+
+JS: init() from signal-design/js wires data-sd-spoiler.
+
+```html
+<div class="border border-line pb-3" style="--sd-feed-bg: var(--sd-surface); background: var(--sd-surface)">
+  <article class="sd-message" style="--who: var(--sd-extra)">
+    <time class="sd-message-time" datetime="11:20">11:20</time>
+    <div class="sd-message-body">
+      <div class="sd-message-text"><b class="sd-message-author">Alex</b>Finished the season last night and the ending is <span class="sd-spoiler" role="button" tabindex="0" aria-roledescription="spoiler" aria-expanded="false" aria-label="Spoiler" data-sd-spoiler=""><span>the lighthouse burns down 🔥 and nobody is surprised</span></span>, so read on at your own risk.</div>
+    </div>
+  </article>
+  <article class="sd-message" style="--who: var(--sd-accent)">
+    <time class="sd-message-time" datetime="11:21">11:21</time>
+    <div class="sd-message-body">
+      <div class="sd-message-text"><b class="sd-message-author">Taylor</b>Open, it reads as plain text on a faint fill, so you can still see what was hidden: <span class="sd-spoiler" role="button" tabindex="0" aria-roledescription="spoiler" aria-expanded="true" data-sd-spoiler=""><span>the butler did it</span></span>.</div>
+    </div>
+  </article>
+</div>
 ```
 
 ## Conversation / Message edges and selection

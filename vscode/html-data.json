@@ -186,6 +186,10 @@
    "description": "Poll: choosing an option marks it and reveals the shares."
   },
   {
+   "name": "data-sd-spoiler",
+   "description": "On an .sd-spoiler: click, Enter or Space toggles aria-expanded to reveal or hide its text; fires sd:spoiler."
+  },
+  {
    "name": "data-sd-chart",
    "description": "On a <figure>: init a chart from its JSON <script> (initCharts from signal-design/charts)."
   },

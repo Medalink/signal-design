@@ -596,18 +596,24 @@
    "title": "Command palette and shortcuts",
    "classes": [
     "sd-actions",
+    "sd-avatar",
+    "sd-avatar-sm",
     "sd-btn",
     "sd-btn-ghost",
     "sd-btn-icon",
     "sd-btn-sm",
     "sd-command",
     "sd-command-foot",
+    "sd-command-list",
+    "sd-command-search",
     "sd-dialog",
     "sd-dialog-body",
     "sd-dialog-head",
+    "sd-kbd",
     "sd-menu",
     "sd-menu-hint",
     "sd-menu-label",
+    "sd-menu-lead",
     "sd-shortcuts",
     "sd-shortcuts-group"
    ],
@@ -620,9 +626,9 @@
     "data-sd-theme-cycle",
     "data-sd-toast"
    ],
-   "usage": "dialog.sd-command[data-sd-palette] + setOptions() · dialog[data-sd-shortcuts] opens on ? · sd-shortcuts",
+   "usage": "dialog.sd-command[data-sd-palette] + setOptions() · sd-command-search holds an icon, the input and a kbd · sd-menu-lead before an option's label · dialog[data-sd-shortcuts] opens on ? · sd-shortcuts",
    "js": "JS: init() from signal-design/js wires data-sd-open · data-sd-key · data-sd-palette · data-sd-theme-cycle · data-sd-toast · data-sd-shortcuts · data-sd-close.",
-   "html": "<div class=\"sd-actions\">\n  <button class=\"sd-btn\" data-sd-open=\"demo-palette\" data-sd-key=\"mod+k\">Open palette <kbd>Ctrl K</kbd></button>\n  <button class=\"sd-btn\" data-sd-open=\"demo-shortcuts\">Shortcuts <kbd>?</kbd></button>\n</div>\n\n<dialog class=\"sd-command\" id=\"demo-palette\" aria-label=\"Search\" data-sd-palette=\"\">\n  <input type=\"search\" placeholder=\"Search pages and actions\" aria-label=\"Search\">\n  <div class=\"sd-menu\" role=\"listbox\" aria-label=\"Results\">\n    <div class=\"sd-menu-label\" role=\"presentation\">Pages</div>\n    <a role=\"option\" href=\"./shell.html\">App shell <span class=\"sd-menu-hint\">page</span></a>\n    <a role=\"option\" href=\"./chat.html\">Chat <span class=\"sd-menu-hint\">page</span></a>\n    <a role=\"option\" href=\"./form.html\">Form <span class=\"sd-menu-hint\">page</span></a>\n    <div class=\"sd-menu-label\" role=\"presentation\">Actions</div>\n    <button type=\"button\" role=\"option\" data-sd-theme-cycle=\"\" data-keywords=\"dark light paper\">Next theme <span class=\"sd-menu-hint\">Shift T</span></button>\n    <button type=\"button\" role=\"option\" data-sd-toast=\"Copied link\">Copy link</button>\n  </div>\n  <p class=\"sd-command-foot\">↑↓ move · ↵ open · Esc close</p>\n</dialog>\n\n<dialog class=\"sd-dialog\" id=\"demo-shortcuts\" data-sd-shortcuts=\"\" aria-labelledby=\"demo-shortcuts-h\">\n  <header class=\"sd-dialog-head\"><span id=\"demo-shortcuts-h\">Keyboard shortcuts</span><button class=\"sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost\" data-sd-close=\"\" aria-label=\"Close\">×</button></header>\n  <div class=\"sd-dialog-body\">\n    <p class=\"sd-shortcuts-group\">Navigation</p>\n    <dl class=\"sd-shortcuts\">\n      <dt><kbd>Ctrl</kbd><kbd>K</kbd></dt><dd>Search</dd>\n      <dt><kbd>j</kbd> <kbd>k</kbd></dt><dd>Next, previous item</dd>\n      <dt><kbd>[</kbd></dt><dd>Toggle sidebar</dd>\n    </dl>\n    <p class=\"sd-shortcuts-group\">Actions</p>\n    <dl class=\"sd-shortcuts\">\n      <dt><kbd>a</kbd></dt><dd>Approve</dd>\n      <dt><kbd>?</kbd></dt><dd>This list</dd>\n    </dl>\n  </div>\n</dialog>"
+   "html": "<div class=\"sd-actions\">\n  <button class=\"sd-btn\" data-sd-open=\"demo-palette\" data-sd-key=\"mod+k\">Open palette <kbd>Ctrl K</kbd></button>\n  <button class=\"sd-btn\" data-sd-open=\"demo-switcher\">Quick switcher</button>\n  <button class=\"sd-btn\" data-sd-open=\"demo-shortcuts\">Shortcuts <kbd>?</kbd></button>\n</div>\n\n<dialog class=\"sd-command\" id=\"demo-palette\" aria-label=\"Search\" data-sd-palette=\"\">\n  <input type=\"search\" placeholder=\"Search pages and actions\" aria-label=\"Search\">\n  <div class=\"sd-menu\" role=\"listbox\" aria-label=\"Results\">\n    <div class=\"sd-menu-label\" role=\"presentation\">Pages</div>\n    <a role=\"option\" href=\"./shell.html\">App shell <span class=\"sd-menu-hint\">page</span></a>\n    <a role=\"option\" href=\"./chat.html\">Chat <span class=\"sd-menu-hint\">page</span></a>\n    <a role=\"option\" href=\"./form.html\">Form <span class=\"sd-menu-hint\">page</span></a>\n    <div class=\"sd-menu-label\" role=\"presentation\">Actions</div>\n    <button type=\"button\" role=\"option\" data-sd-theme-cycle=\"\" data-keywords=\"dark light paper\">Next theme <span class=\"sd-menu-hint\">Shift T</span></button>\n    <button type=\"button\" role=\"option\" data-sd-toast=\"Copied link\">Copy link</button>\n  </div>\n  <p class=\"sd-command-foot\">↑↓ move · ↵ open · Esc close</p>\n</dialog>\n\n<dialog class=\"sd-command\" id=\"demo-switcher\" aria-label=\"Quick switcher\">\n  <div class=\"sd-command-search\">\n    <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"square\" aria-hidden=\"true\"><path d=\"M4 4h11v11H4zM15 15l5.5 5.5\"></path></svg>\n    <input type=\"text\" role=\"combobox\" aria-label=\"Quick switcher\" aria-expanded=\"true\" aria-controls=\"demo-switcher-list\" value=\"cab\" autocomplete=\"off\">\n    <kbd class=\"sd-kbd\">Ctrl K</kbd>\n  </div>\n  <div class=\"sd-menu sd-command-list\" role=\"listbox\" id=\"demo-switcher-list\" aria-label=\"Results\">\n    <button type=\"button\" role=\"option\" aria-selected=\"true\" data-active=\"\"><span class=\"sd-menu-lead\"><span class=\"sd-avatar sd-avatar-sm\">#</span></span>cabin-trip<span class=\"sd-menu-hint\">Weekend Crew</span></button>\n    <button type=\"button\" role=\"option\"><span class=\"sd-menu-lead\"><span class=\"sd-avatar sd-avatar-sm\">#</span></span>cabins-and-camping<span class=\"sd-menu-hint\">Pine Pals</span></button>\n    <button type=\"button\" role=\"option\"><span class=\"sd-menu-lead\"><span class=\"sd-avatar sd-avatar-sm\" data-tone=\"extra\">C</span></span>Caleb<span class=\"sd-menu-hint\">Direct</span></button>\n  </div>\n</dialog>\n\n<dialog class=\"sd-dialog\" id=\"demo-shortcuts\" data-sd-shortcuts=\"\" aria-labelledby=\"demo-shortcuts-h\">\n  <header class=\"sd-dialog-head\"><span id=\"demo-shortcuts-h\">Keyboard shortcuts</span><button class=\"sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost\" data-sd-close=\"\" aria-label=\"Close\">×</button></header>\n  <div class=\"sd-dialog-body\">\n    <p class=\"sd-shortcuts-group\">Navigation</p>\n    <dl class=\"sd-shortcuts\">\n      <dt><kbd>Ctrl</kbd><kbd>K</kbd></dt><dd>Search</dd>\n      <dt><kbd>j</kbd> <kbd>k</kbd></dt><dd>Next, previous item</dd>\n      <dt><kbd>[</kbd></dt><dd>Toggle sidebar</dd>\n    </dl>\n    <p class=\"sd-shortcuts-group\">Actions</p>\n    <dl class=\"sd-shortcuts\">\n      <dt><kbd>a</kbd></dt><dd>Approve</dd>\n      <dt><kbd>?</kbd></dt><dd>This list</dd>\n    </dl>\n  </div>\n</dialog>"
   },
   {
    "id": "components-markers-badges-chips-pill",
@@ -1177,6 +1183,25 @@
    "usage": "sd-md wraps the blocks of a Markdown message and starts under the author · inline code, bold, italic, strike and links need no wrapper · sd-code + sd-code-head carries a fence's language · sd-table-wrap scrolls a wide table",
    "js": "No JS needed: the HTML works with the CSS alone.",
    "html": "<div class=\"border border-line pb-3\" style=\"--sd-feed-bg: var(--sd-surface); background: var(--sd-surface)\">\n        <article class=\"sd-message\" style=\"--who: var(--sd-extra)\">\n          <time class=\"sd-message-time\" datetime=\"11:02\">11:02</time>\n          <div class=\"sd-message-body\">\n            <div class=\"sd-message-text\"><b class=\"sd-message-author\">Alex</b>Inline marks stay in the line: <b>bold</b>, <i>italic</i>, <s>strikethrough</s>, <code>pnpm run build</code> and <a href=\"#conversation-message-markdown\">a link</a>.</div>\n          </div>\n        </article>\n        <article class=\"sd-message\" style=\"--who: var(--sd-accent)\">\n          <time class=\"sd-message-time\" datetime=\"11:03\">11:03</time>\n          <div class=\"sd-message-body\">\n            <div class=\"sd-message-text\"><b class=\"sd-message-author\">Taylor</b>\n              <div class=\"sd-md\">\n                <p><b>Release steps</b></p>\n                <ol><li>Bump the version in <code>package.json</code>.</li><li>Run the build.</li><li>Tag the commit.</li></ol>\n                <blockquote><p>Never tag from a dirty tree.</p></blockquote>\n                <div class=\"sd-code\"><div class=\"sd-code-head\">rust</div><pre><code>fn main() {\n    println!(\"ship it\");\n}</code></pre></div>\n                <ul><li>Small steps</li><li>One change per commit</li></ul>\n                <div class=\"sd-table-wrap\"><table><thead><tr><th>Step</th><th style=\"text-align: right\">Time</th></tr></thead><tbody><tr><td>Build</td><td style=\"text-align: right\">42s</td></tr><tr><td>Deploy</td><td style=\"text-align: right\">9s</td></tr></tbody></table></div>\n              </div>\n            </div>\n          </div>\n        </article>\n      </div>"
+  },
+  {
+   "id": "conversation-message-spoilers",
+   "section": "Conversation",
+   "title": "Spoilers",
+   "classes": [
+    "sd-message",
+    "sd-message-author",
+    "sd-message-body",
+    "sd-message-text",
+    "sd-message-time",
+    "sd-spoiler"
+   ],
+   "attributes": [
+    "data-sd-spoiler"
+   ],
+   "usage": "sd-spoiler around one inner span · role=\"button\" tabindex=\"0\" aria-roledescription=\"spoiler\" · aria-expanded (state) · aria-label=\"Spoiler\" while closed · data-sd-spoiler · fires sd:spoiler · closed text is out of selection, find and screen readers · plain inline content only",
+   "js": "JS: init() from signal-design/js wires data-sd-spoiler.",
+   "html": "<div class=\"border border-line pb-3\" style=\"--sd-feed-bg: var(--sd-surface); background: var(--sd-surface)\">\n  <article class=\"sd-message\" style=\"--who: var(--sd-extra)\">\n    <time class=\"sd-message-time\" datetime=\"11:20\">11:20</time>\n    <div class=\"sd-message-body\">\n      <div class=\"sd-message-text\"><b class=\"sd-message-author\">Alex</b>Finished the season last night and the ending is <span class=\"sd-spoiler\" role=\"button\" tabindex=\"0\" aria-roledescription=\"spoiler\" aria-expanded=\"false\" aria-label=\"Spoiler\" data-sd-spoiler=\"\"><span>the lighthouse burns down 🔥 and nobody is surprised</span></span>, so read on at your own risk.</div>\n    </div>\n  </article>\n  <article class=\"sd-message\" style=\"--who: var(--sd-accent)\">\n    <time class=\"sd-message-time\" datetime=\"11:21\">11:21</time>\n    <div class=\"sd-message-body\">\n      <div class=\"sd-message-text\"><b class=\"sd-message-author\">Taylor</b>Open, it reads as plain text on a faint fill, so you can still see what was hidden: <span class=\"sd-spoiler\" role=\"button\" tabindex=\"0\" aria-roledescription=\"spoiler\" aria-expanded=\"true\" data-sd-spoiler=\"\"><span>the butler did it</span></span>.</div>\n    </div>\n  </article>\n</div>"
   },
   {
    "id": "conversation-message-edges-and-selection",
