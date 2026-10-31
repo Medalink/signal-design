@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## 1.4.12 (2026-10-31)
+
+### Added
+- `sd-command-search`: the palette's search field holds an optional icon at the start and a key hint (`sd-kbd`) at the end of the input. `CommandPalette` takes `icon` and `kbd` for them and always renders the input inside this wrapper.
+- `sd-menu-lead`: an element before an option's label, centred on the row. `ListItem.leading` sets it in `Combobox` and `CommandPalette`, and `setOptions()` takes `leading` as text or a node. The lib page's command block gains a quick-switcher example.
+- `sd-spoiler`: inline text in a message behind a solid block until the reader opens it. `aria-expanded` is the state, closed text is out of selection, find and screen readers, and a faint fill marks it once open. `data-sd-spoiler` wires click, Enter and Space and fires `sd:spoiler`; React gets `Spoiler` (`open`, `defaultOpen`, `onOpenChange`, `label`). New label `spoiler.label`.
+
+### Fixed
+- A toned `sd-avatar` inside an `sd-menu` row keeps its own text color instead of taking its fill as the text color, which hid the initials.
+
 ## 1.4.11 (2026-10-31)
 
 ### Changed
