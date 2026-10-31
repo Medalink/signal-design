@@ -273,6 +273,8 @@ export interface AckBarProps extends Omit<ComponentProps<"div">, "children"> {
   waiting?: { name: string; who?: string | undefined }[] | undefined;
   /** The words before the names, such as "Waiting on". */
   waitingLabel?: string | undefined;
+  /** Set `false` for the announcer: no button, only the squares, the count and `waiting`. Defaults to `true`. */
+  showAction?: boolean | undefined;
 }
 /** The "Got it" row under an announced message: a button, a square per member and the n/m count (`sd-ack`). */
 export function AckBar(props: AckBarProps): ReactElement;

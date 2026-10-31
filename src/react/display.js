@@ -182,16 +182,18 @@ export function TaskList({ label, title, items, onCheckedChange, progressLabel, 
  * answered; `onAcknowledge` makes the button live, and once answered it reads
  * as done and cannot be pressed. `waiting` is `{ name, who }` for whoever has
  * not answered; pass it only to the person who sent the announce, and leave it
- * out for everyone else. The words are props.
+ * out for everyone else. The announcer sees no button on their own announce:
+ * pass `showAction={false}`. The words are props.
  */
-export function AckBar({ members, acknowledged, onAcknowledge, label, doneLabel, summaryLabel, waiting, waitingLabel, className, ...props }) {
+export function AckBar({ members, acknowledged, onAcknowledge, label, doneLabel, summaryLabel, waiting, waitingLabel, showAction = true, className, ...props }) {
   const done = members.filter((member) => member.acknowledged).length;
   return h(
     "div",
     { className: cx("sd-ack", className), ...props },
-    acknowledged
-      ? h("button", { type: "button", className: "sd-btn sd-btn-sm", "data-tone": "success", disabled: true }, h(Icon, { name: "check" }), doneLabel ?? label)
-      : h("button", { type: "button", className: "sd-btn sd-btn-primary sd-btn-sm", onClick: onAcknowledge }, h(Icon, { name: "check" }), label),
+    showAction &&
+      (acknowledged
+        ? h("button", { type: "button", className: "sd-btn sd-btn-sm", "data-tone": "success", disabled: true }, h(Icon, { name: "check" }), doneLabel ?? label)
+        : h("button", { type: "button", className: "sd-btn sd-btn-primary sd-btn-sm", onClick: onAcknowledge }, h(Icon, { name: "check" }), label)),
     h(
       "span",
       { className: "sd-cells sd-ack-cells", role: "img", "aria-label": `${summaryLabel} ${done}/${members.length}` },

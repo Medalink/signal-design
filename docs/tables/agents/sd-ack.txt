@@ -1,4 +1,4 @@
 order: 630
 row: Chat and feeds
 
-`sd-ack` (the "Got it" row under an announce: primary `sd-btn`, `sd-cells sd-ack-cells` with `i[data-on]` per member who answered, `-count` as n/m in mono, `-waiting` with `b` names in `--who` for the announcer only; once answered the button is `data-tone="success"` + `disabled`; React `AckBar`)
+`sd-ack` (the "Got it" row under an announce: primary `sd-btn`, `sd-cells sd-ack-cells` with `i[data-on]` per member who answered, `-count` as n/m in mono, `-waiting` with `b` names in `--who` for the announcer only; once answered the button is `data-tone="success"` + `disabled`; the announcer gets no button; React `AckBar`, `showAction={false}` for the announcer)
