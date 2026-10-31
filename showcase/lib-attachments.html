@@ -31,6 +31,28 @@
       <p class="demo-usage"><code>sd-banner</code> · <code>sd-file</code> · <code>sd-link-card</code> · <code>sd-poll</code> + <code>data-sd-poll</code> · <code>sd-tiles</code> + <code>sd-tile[data-speaking|muted|hand]</code> · <code>sd-grid-picker</code></p>
     </div>
 
+    <div class="demo-block" id="conversation-file-preview">
+      <h2 class="sd-label">File preview</h2>
+      <div class="grid gap-4 sm:grid-cols-2 items-start">
+        <div class="sd-file"><span class="sd-file-type">txt</span><span class="sd-file-body"><span class="sd-file-name">notes.txt</span><span class="sd-file-meta">214 B</span></span><pre class="sd-file-preview">Standup
+- Ship the onboarding flow
+- Review the empty states</pre></div>
+        <div class="sd-file"><span class="sd-file-type">log</span><span class="sd-file-body"><span class="sd-file-name">sync-2026-03.log</span><span class="sd-file-meta">18 KB</span></span><pre class="sd-file-preview">01  2026-03-02  INFO  worker-1  synced 14 records
+02  2026-03-03  INFO  worker-2  synced 24 records
+03  2026-03-04  INFO  worker-0  synced 34 records
+04  2026-03-05  INFO  worker-1  synced 44 records
+05  2026-03-06  INFO  worker-2  synced 54 records
+06  2026-03-07  INFO  worker-0  synced 64 records
+07  2026-03-08  INFO  worker-1  synced 74 records
+08  2026-03-09  INFO  worker-2  synced 84 records
+09  2026-03-01  INFO  worker-0  synced 94 records
+10  2026-03-02  INFO  worker-1  synced 104 records
+11  2026-03-03  INFO  worker-2  synced 114 records
+12  2026-03-04  INFO  worker-0  synced 124 records</pre></div>
+      </div>
+      <p class="demo-usage"><code>sd-file-preview</code> (a <code>&lt;pre&gt;</code> as the last child of a <code>&lt;div class="sd-file"&gt;</code>, never inside a button: full width under the row, mono, muted, clipped to 7 lines with an ellipsis)</p>
+    </div>
+
     <div class="demo-block" id="conversation-image-buttons">
       <h2 class="sd-label">Image attachments</h2>
       <div class="flex flex-wrap items-start gap-4">

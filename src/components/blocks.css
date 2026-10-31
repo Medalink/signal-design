@@ -305,6 +305,29 @@
   .sd-file > .sd-progress {
     flex-basis: 100%;
   }
+  /* A text file's first lines, full width under the row, clipped to 7 lines.
+     The inset is a transparent border and the hairline an inset outline, so
+     the clip edge sits at the text and an 8th line cannot show in padding. */
+  .sd-file-preview {
+    flex-basis: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 8px solid transparent;
+    outline: 1px solid var(--sd-line);
+    outline-offset: -1px;
+    background: var(--sd-canvas);
+    color: var(--sd-fg-muted);
+    font-family: var(--sd-font-mono);
+    font-size: var(--text-sm);
+    text-align: start;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 7;
+  }
 
   /*
    * Link card: a preview of a URL, or an embed shaped like one (an invite).
