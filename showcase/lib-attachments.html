@@ -65,6 +65,37 @@
       <p class="demo-usage"><code>button.sd-shot</code> (an image that opens a viewer: the border strengthens on hover and focus) · <code>sd-shot-hint</code> (a decorative icon, shown on hover and focus) · <code>aria-busy="true"</code> + <code>sd-shot-status</code> (a chip while it downloads) · <code>data-failed</code> + <code>sd-shot-note</code> (a danger reason in place of the media) · set <code>--ratio</code> and a width to keep the image's own shape</p>
     </div>
 
+    <div class="demo-block" id="conversation-voice-notes">
+      <h2 class="sd-label">Voice notes</h2>
+      <div class="border border-line py-3" style="--sd-feed-bg: var(--sd-surface); background: var(--sd-surface); max-width: 36rem">
+        <article class="sd-message" style="--who: var(--sd-accent)">
+          <time class="sd-message-time" datetime="20:42">8:42 PM</time>
+          <div class="sd-message-body">
+            <div class="sd-message-text"><b class="sd-message-author">Maya</b></div>
+            <div class="sd-voice" role="group" aria-label="Voice message from Maya" data-playing>
+                <button type="button" class="sd-btn sd-btn-icon sd-voice-play" aria-label="Pause"><svg class="sd-icon" data-icon="pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M9 5v14M15 5v14"/></svg></button>
+                <div class="sd-voice-wave" role="slider" tabindex="0" dir="ltr" aria-label="Seek" aria-valuemin="0" aria-valuemax="23" aria-valuenow="8" aria-valuetext="0:08 / 0:23" style="--progress: 0.3478"><i style="--h: 0.54; --at: 0.016"></i><i style="--h: 0.75; --at: 0.047"></i><i style="--h: 0.91; --at: 0.078"></i><i style="--h: 0.76; --at: 0.109"></i><i style="--h: 0.46; --at: 0.141"></i><i style="--h: 0.43; --at: 0.172"></i><i style="--h: 0.38; --at: 0.203"></i><i style="--h: 0.46; --at: 0.234"></i><i style="--h: 0.41; --at: 0.266"></i><i style="--h: 0.84; --at: 0.297"></i><i style="--h: 0.54; --at: 0.328"></i><i style="--h: 0.82; --at: 0.359"></i><i style="--h: 0.59; --at: 0.391"></i><i style="--h: 0.5; --at: 0.422"></i><i style="--h: 0.29; --at: 0.453"></i><i style="--h: 0.56; --at: 0.484"></i><i style="--h: 0.43; --at: 0.516"></i><i style="--h: 0.6; --at: 0.547"></i><i style="--h: 0.6; --at: 0.578"></i><i style="--h: 0.6; --at: 0.609"></i><i style="--h: 0.67; --at: 0.641"></i><i style="--h: 0.4; --at: 0.672"></i><i style="--h: 0.31; --at: 0.703"></i><i style="--h: 0.34; --at: 0.734"></i><i style="--h: 0.45; --at: 0.766"></i><i style="--h: 0.68; --at: 0.797"></i><i style="--h: 0.86; --at: 0.828"></i><i style="--h: 0.95; --at: 0.859"></i><i style="--h: 0.87; --at: 0.891"></i><i style="--h: 0.78; --at: 0.922"></i><i style="--h: 0.29; --at: 0.953"></i><i style="--h: 0.26; --at: 0.984"></i></div>
+                <time class="sd-voice-time" datetime="PT8S">0:08</time>
+                <button type="button" class="sd-voice-speed" aria-label="Playback speed 1.5×">1.5×</button>
+              </div>
+          </div>
+        </article>
+        <article class="sd-message" style="--who: var(--sd-warning)">
+          <time class="sd-message-time" datetime="20:44">8:44 PM</time>
+          <div class="sd-message-body">
+            <div class="sd-message-text"><b class="sd-message-author">Kai</b></div>
+            <div class="sd-voice" role="group" aria-label="Voice message from Kai">
+                <button type="button" class="sd-btn sd-btn-icon sd-voice-play" aria-label="Play"><svg class="sd-icon" data-icon="play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M8 5v14l10-7z"/></svg></button>
+                <div class="sd-voice-wave" role="slider" tabindex="0" dir="ltr" aria-label="Seek" aria-valuemin="0" aria-valuemax="23" aria-valuenow="0" aria-valuetext="0:00 / 0:23" style="--progress: 0"><i style="--h: 0.51; --at: 0.016"></i><i style="--h: 0.59; --at: 0.047"></i><i style="--h: 0.64; --at: 0.078"></i><i style="--h: 0.46; --at: 0.109"></i><i style="--h: 0.66; --at: 0.141"></i><i style="--h: 0.53; --at: 0.172"></i><i style="--h: 0.18; --at: 0.203"></i><i style="--h: 0.5; --at: 0.234"></i><i style="--h: 0.4; --at: 0.266"></i><i style="--h: 0.53; --at: 0.297"></i><i style="--h: 0.88; --at: 0.328"></i><i style="--h: 0.58; --at: 0.359"></i><i style="--h: 0.56; --at: 0.391"></i><i style="--h: 0.44; --at: 0.422"></i><i style="--h: 0.34; --at: 0.453"></i><i style="--h: 0.38; --at: 0.484"></i><i style="--h: 0.46; --at: 0.516"></i><i style="--h: 0.62; --at: 0.547"></i><i style="--h: 0.8; --at: 0.578"></i><i style="--h: 0.67; --at: 0.609"></i><i style="--h: 0.48; --at: 0.641"></i><i style="--h: 0.67; --at: 0.672"></i><i style="--h: 0.5; --at: 0.703"></i><i style="--h: 0.17; --at: 0.734"></i><i style="--h: 0.37; --at: 0.766"></i><i style="--h: 0.41; --at: 0.797"></i><i style="--h: 0.72; --at: 0.828"></i><i style="--h: 0.48; --at: 0.859"></i><i style="--h: 0.63; --at: 0.891"></i><i style="--h: 0.83; --at: 0.922"></i><i style="--h: 0.61; --at: 0.953"></i><i style="--h: 0.39; --at: 0.984"></i></div>
+                <time class="sd-voice-time" datetime="PT23S">0:23</time>
+                <button type="button" class="sd-voice-speed" aria-label="Playback speed 1×">1×</button>
+              </div>
+          </div>
+        </article>
+      </div>
+      <p class="demo-usage"><code>sd-voice</code> (<code>role="group"</code>; <code>data-playing</code> while it plays) in an <code>sd-message-body</code> · <code>sd-voice-play</code> (a square filled button; <code>aria-label</code> flips Play and Pause) · <code>sd-voice-wave</code> (<code>role="slider"</code>, <code>tabindex="0"</code>, <code>aria-valuenow</code> in seconds; one <code>&lt;i&gt;</code> per bar with <code>--h</code> the 0 to 1 peak and <code>--at</code> its place in the note; <code>--progress</code> 0 to 1 lights the bars up to it) · <code>sd-voice-time</code> (mono; elapsed once started, else the length) · <code>sd-voice-speed</code> (1×, 1.5×, 2×) · the app owns the audio and writes the state; React: <code>VoiceNote</code> (<code>peaks</code>, <code>duration</code>, <code>position</code>, <code>playing</code>, <code>speed</code>, <code>onPlayingChange</code>, <code>onSeek</code>, <code>onSpeedChange</code>)</p>
+    </div>
+
     <div class="demo-block" id="conversation-decisions">
       <h2 class="sd-label">Decisions</h2>
       <div class="grid gap-4 sm:grid-cols-2 items-start">

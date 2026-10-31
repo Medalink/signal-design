@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { mountBar } from "./viewport.js";
 import { Demo } from "./react-demo.jsx";
@@ -52,6 +52,7 @@ import {
   Textarea,
   ToastProvider,
   Tooltip,
+  VoiceNote,
   buttonClass,
   useToast,
 } from "../src/react/index.js";
@@ -201,6 +202,46 @@ function Status() {
           <Avatar name="Tess Park" tone="accent" />
         </AvatarStack>
       </div>
+    </Demo>
+  );
+}
+
+const VOICE_PEAKS = [0.54, 0.75, 0.91, 0.76, 0.46, 0.43, 0.38, 0.46, 0.41, 0.84, 0.54, 0.82, 0.59, 0.5, 0.29, 0.56, 0.43, 0.6, 0.6, 0.6, 0.67, 0.4, 0.31, 0.34, 0.45, 0.68, 0.86, 0.95, 0.87, 0.78, 0.29, 0.26];
+
+function Voice() {
+  const [position, setPosition] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const [speed, setSpeed] = useState(1);
+  const duration = 23;
+  const at = useRef(0);
+  at.current = position;
+  useEffect(() => {
+    if (!playing) return undefined;
+    const timer = setInterval(() => {
+      const next = at.current + 0.1 * speed;
+      if (next >= duration) {
+        setPlaying(false);
+        setPosition(0);
+      } else setPosition(next);
+    }, 100);
+    return () => clearInterval(timer);
+  }, [playing, speed]);
+  return (
+    <Demo
+      id="react-voice"
+      title="Voice note"
+      code={`<VoiceNote
+  peaks={peaks}
+  duration={23}
+  position={position}
+  playing={playing}
+  speed={speed}
+  onPlayingChange={setPlaying}
+  onSeek={setPosition}
+  onSpeedChange={setSpeed}
+/>`}
+    >
+      <VoiceNote peaks={VOICE_PEAKS} duration={duration} position={position} playing={playing} speed={speed} onPlayingChange={setPlaying} onSeek={setPosition} onSpeedChange={setSpeed} />
     </Demo>
   );
 }
@@ -885,6 +926,7 @@ function App() {
       <Buttons />
       <Forms />
       <Status />
+      <Voice />
       <Surfaces />
       <Tables />
       <Empty />

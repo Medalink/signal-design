@@ -25,7 +25,7 @@ export function checkReactTypes() {
   writeFileSync(
     fixture,
     `import { useRef, useState, type ComponentProps } from "react";
-import { AppShell, AvatarGrid, Button, Dialog, DialogBody, Menu, MenuContent, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, Spoiler, ThreadChip, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
+import { AppShell, AvatarGrid, Button, Dialog, DialogBody, Menu, MenuContent, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, Spoiler, ThreadChip, VoiceNote, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 import { initScrollbars } from "signal-design/js";
 import { Checkbox, Switch, Tooltip, type BareCheckboxProps, type BareSwitchProps, type CheckboxProps, type SwitchProps } from "signal-design/react";
 
@@ -171,6 +171,9 @@ export function Consumer() {
       <Spoiler defaultOpen onOpenChange={(next) => next} label="Hidden">text</Spoiler>
       <AvatarGrid members={[{ name: "Maya Lee", tone: "extra" }, { name: "Kai" }]} label="Maya, Kai" size="sm" />
       <ThreadChip participants={[{ name: "Maya Lee", tone: "extra" }]} label="4 replies" time="12:41 PM" dateTime="12:41" open controls="thread" onClick={(event) => event.currentTarget.blur()} />
+      <VoiceNote peaks={[0.2, 0.8, 0.5]} duration={23} position={8} playing speed={1.5} onPlayingChange={(next) => next} onSeek={(seconds) => seconds.toFixed()} onSpeedChange={(next) => next.toFixed(1)} label="Voice message from Maya" />
+      {/* @ts-expect-error speed must be one of the three the chip cycles */}
+      <VoiceNote peaks={[]} duration={1} speed={3} />
       <StatusSegment tone="success" pressed onClick={(event) => event.currentTarget.blur()}>Saved</StatusSegment>
       {/* @ts-expect-error variant must be one of the button variants */}
       <Button variant="huge" />
@@ -303,6 +306,7 @@ export async function checkReactSsr() {
           h(sd.AvatarStack, null, h(sd.Avatar, { name: "B C", src: "/a.png" })),
           h(sd.AvatarGrid, { members: [{ name: "Maya Lee", tone: "extra" }, { name: "Kai", src: "/k.png" }], size: "sm" }),
           h(sd.ThreadChip, { participants: [{ name: "Maya Lee", tone: "extra" }], label: "4 replies", time: "12:41 PM", dateTime: "12:41", open: true, controls: "thread" }),
+          h(sd.VoiceNote, { peaks: [0.2, 0.8, 0.5], duration: 23, position: 8, playing: true, speed: 1.5 }),
           h(sd.Card, { tone: "danger" }, h(sd.CardHeader, null, "h"), h(sd.CardBody, null, "b"), h(sd.CardFooter, null, "f")),
           h(sd.Panel, { width: "wide" }, h(sd.PanelTitle, null, "t"), h(sd.PanelDescription, null, "d")),
           h(sd.EmptyState, { title: "None", action: h(sd.Button, null, "Add") }, "Nothing"),

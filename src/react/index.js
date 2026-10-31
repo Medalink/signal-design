@@ -44,6 +44,7 @@ export { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarButton, ToolbarMore } f
 export { Manuscript, StatusSegment } from "./editor.js";
 export { Mark, GutterMarker, GutterBlock, Spoiler } from "./marks.js";
 export { HoverCard, HoverCardHost } from "./hovercard.js";
+export { VoiceNote } from "./voice.js";
 export { Tree, TreeItem } from "./tree.js";
 export { Combobox } from "./combobox.js";
 export { CommandPalette } from "./command.js";

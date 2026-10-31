@@ -161,6 +161,39 @@ export interface ThreadChipProps extends Omit<ComponentProps<"button">, "childre
 /** The summary under a root message that opens its thread (`sd-thread-chip`). */
 export function ThreadChip(props: ThreadChipProps): ReactElement;
 
+export interface VoiceNoteProps extends Omit<HTMLAttributes<HTMLDivElement>, "children"> {
+  /** One 0 to 1 peak per bar, in time order. About 24 to 48 reads well. */
+  peaks: readonly number[];
+  /** The length of the note in seconds. */
+  duration: number;
+  /** Where playback is, in seconds. Default 0. The time shows elapsed once this is above 0 or while playing, else the duration. */
+  position?: number | undefined;
+  /** Whether the note is playing. Default false. */
+  playing?: boolean | undefined;
+  /** Playback speed. Default 1. The chip cycles 1, 1.5, 2. */
+  speed?: 1 | 1.5 | 2 | undefined;
+  /** The play or pause button was pressed, or Space on the waveform: the playing state to move to. */
+  onPlayingChange?: ((playing: boolean) => void) | undefined;
+  /** A click, drag, or arrow key on the waveform: the position to move to, in seconds. */
+  onSeek?: ((position: number) => void) | undefined;
+  /** The speed chip was pressed: the next speed. */
+  onSpeedChange?: ((speed: 1 | 1.5 | 2) => void) | undefined;
+  /** What an arrow key moves by, in seconds. Default 5. */
+  seekStep?: number | undefined;
+  /** The group's name. Default "Voice message". Translate the words in the app. */
+  label?: string | undefined;
+  /** The button's name while paused. Default "Play". */
+  playLabel?: string | undefined;
+  /** The button's name while playing. Default "Pause". */
+  pauseLabel?: string | undefined;
+  /** The waveform slider's name. Default "Seek". */
+  seekLabel?: string | undefined;
+  /** The speed chip's name, before the speed. Default "Playback speed". */
+  speedLabel?: string | undefined;
+}
+/** A voice note in a message (`sd-voice`): play and pause, waveform, time and speed. Controlled; the app owns the audio. */
+export function VoiceNote(props: VoiceNoteProps): ReactElement;
+
 export interface CardProps extends Omit<ComponentProps<"article">, "ref"> {
   tone?: Tone | undefined;
   /** Makes the whole card a link. */

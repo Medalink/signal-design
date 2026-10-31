@@ -1083,6 +1083,132 @@
     white-space: nowrap;
   }
 
+  /*
+   * Voice note: a recording inside a message. A square play button, the
+   * waveform, the time and the speed. The app owns the audio and writes the
+   * state: --progress (0 to 1) on the waveform lights the bars up to it,
+   * --h (0 to 1) is a bar's peak and --at (0 to 1) where it sits in the
+   * note. The waveform is a slider: click or drag to seek, arrows move,
+   * Space plays. Time is elapsed once the note has started, else its length.
+   *   <div class="sd-voice" role="group" aria-label="Voice message" data-playing>
+   *     <button class="sd-btn sd-btn-icon sd-voice-play" aria-label="Pause"><svg class="sd-icon">…</svg></button>
+   *     <div class="sd-voice-wave" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0"
+   *       aria-valuemax="23" aria-valuenow="8" aria-valuetext="0:08 / 0:23" style="--progress: 0.36">
+   *       <i style="--h: 0.54; --at: 0.016"></i>…
+   *     </div>
+   *     <time class="sd-voice-time" datetime="PT8S">0:08</time>
+   *     <button class="sd-voice-speed" aria-label="Playback speed 1.5×">1.5×</button>
+   *   </div>
+   */
+  .sd-message-body > .sd-voice {
+    margin-top: 3px;
+  }
+  .sd-voice {
+    --voice-wave: 10rem;
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    gap: 10px;
+    max-width: 100%;
+    padding: 5px 10px 5px 5px;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-surface);
+  }
+  .sd-voice-play {
+    --btn-fg: var(--sd-on-primary);
+    --btn-bg: var(--sd-primary);
+    --btn-border: transparent;
+    width: 28px;
+    min-width: 28px;
+    min-height: 28px;
+    height: 28px;
+    padding: 0;
+  }
+  .sd-voice-play:hover {
+    opacity: 0.88;
+  }
+  .sd-voice-play .sd-icon {
+    inline-size: 14px;
+    block-size: 14px;
+    stroke-width: 2.5;
+  }
+  .sd-voice-play .sd-icon[data-icon="play"] {
+    fill: currentColor;
+  }
+  .sd-voice-wave {
+    --progress: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 0 1 auto;
+    width: var(--voice-wave);
+    min-width: 4rem;
+    height: 28px;
+    cursor: pointer;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .sd-voice-wave:focus-visible {
+    outline: 1px solid var(--sd-fg);
+    outline-offset: 2px;
+  }
+  .sd-voice-wave > i {
+    --h: 0.3;
+    --at: 0;
+    position: relative;
+    flex: 0 1 2px;
+    min-width: 1px;
+    height: max(2px, calc(var(--h) * 100%));
+    background: var(--sd-line-control);
+  }
+  /* The played bars: the foreground over the faint one, once the progress
+     passes the bar's place. Nothing moves while the progress holds. */
+  .sd-voice-wave > i::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--sd-fg);
+    opacity: clamp(0, (var(--progress) - var(--at)) * 1000, 1);
+    transition: opacity 120ms var(--ease-out);
+  }
+  .sd-voice-time {
+    min-inline-size: 4ch;
+    color: var(--sd-fg-muted);
+    font-family: var(--sd-font-mono);
+    font-size: var(--text-3xs);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .sd-voice[data-playing] .sd-voice-time {
+    color: var(--sd-fg);
+  }
+  .sd-voice-speed {
+    padding: 1px 5px;
+    border: 1px solid var(--sd-line-strong);
+    background: transparent;
+    color: var(--sd-fg-muted);
+    font-family: var(--sd-font-mono);
+    font-size: var(--text-3xs);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 120ms var(--ease-out), color 120ms var(--ease-out);
+  }
+  .sd-voice-speed:hover {
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+  .sd-voice-speed:focus-visible {
+    outline: 1px solid var(--sd-fg);
+    outline-offset: 1px;
+  }
+  @media (pointer: coarse) {
+    .sd-voice-play {
+      min-width: var(--sd-touch);
+      min-height: var(--sd-touch);
+    }
+  }
+
   /* A compact message has no time column: its text starts at the row's edge.
      For a narrow panel; the time goes in the row's title. */
   .sd-message[data-compact] {
