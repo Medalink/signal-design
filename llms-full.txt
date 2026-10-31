@@ -138,7 +138,7 @@ by `title` or `classes`) rather than inventing markup.
 | Settings groups | `sd-panel` (560px), `sd-panel-wide` (1024px), `sd-panel-fluid` (no cap) |
 | Status | `sd-badge`, `sd-status`, `sd-dot`, `sd-count`, `sd-progress` (`data-state="indeterminate"` when the amount is unknown), `sd-checks`, `sd-level` (live level from `--level`, 0–1) |
 | People | `sd-avatar` (`-sm` `-md` `-lg` `-xl`, or `--sd-avatar-size`) with `data-status`; on your own panel set `--sd-ring` to its background so the presence ring matches |
-| Chat and feeds | `sd-message` (time column, inline `sd-message-author` and an `sd-badge` after it for Agent; `--who` name color, `--edge` role color, `data-grouped`, `data-own`, `data-reply` + `sd-message-ref`, `data-editing`, `data-selected`), `sd-message-actions`, `sd-message-menu`, `sd-emoji-picker`, `sd-feed-day`, `sd-event`, `sd-feed-jump`, `sd-composer` (`-add`, `-reply`, `-status`; `sd-add-menu`) in an `sd-shell-dock` (`data-flush`), `data-sd-follow` on the feed (stays at the newest row, runs the jump bar), `data-joined` on `sd-shell-main` (bar, feed and composer as one surface), `sd-reactions`, `sd-roster`, `sd-banner`, `sd-file`, `sd-link-card` (`-hero`, `-media` for an image-only card, `-compact`, `-type`, `-actions`, `-dismiss`, `-thumb-label`, `-thumb-action`, `data-blocked`, `aria-busy`; a `<div role="link">` hovers like a link), `sd-poll` (a decision: `-head`, `data-tone` while it waits, `data-chosen`, `-voters`), `button.sd-shot` (an image attachment: `-hint` icon on hover, `aria-busy` + `-status`, `data-failed` + `-note`) |
+| Chat and feeds | `sd-message` (time column, inline `sd-message-author` and an `sd-badge` after it for Agent; `--who` name color, `--edge` role color, `data-grouped`, `data-own`, `data-reply` + `sd-message-ref`, `data-editing`, `data-selected`), `sd-message-actions`, `sd-message-menu`, `sd-emoji-picker`, `sd-feed-day`, `sd-event`, `sd-feed-jump`, `sd-composer` (`-add`, `-reply`, `-status`; `sd-add-menu`) in an `sd-shell-dock` (`data-flush`), `data-sd-follow` on the feed (stays at the newest row, runs the jump bar), `data-joined` on `sd-shell-main` (bar, feed and composer as one surface), `sd-reactions`, `sd-roster`, `sd-banner`, `sd-file` (`-preview`: a text file's first 7 lines), `sd-link-card` (`-hero`, `-media` for an image-only card, `-compact`, `-type`, `-actions`, `-dismiss`, `-thumb-label`, `-thumb-action`, `data-blocked`, `aria-busy`; a `<div role="link">` hovers like a link), `sd-poll` (a decision: `-head`, `data-tone` while it waits, `data-chosen`, `-voters`), `button.sd-shot` (an image attachment: `-hint` icon on hover, `aria-busy` + `-status`, `data-failed` + `-note`) |
 | Data | `sd-stat`, `sd-stat-box`, `createChart(canvas, { type })`, `sd-plot`, `sd-heatmap`, `sd-uptime`, `sd-meter`, `sd-timeline` (`--from`/`--to` ranges over one axis), `sd-schedule` (hour roster, `data-status` blocks, mono/spectrum), `sd-flow` (pipeline of stages and jobs on a dot grid, `data-status`, mono/spectrum), `sd-checklist` (named checks with a result and progress, the flow's `data-status`), `sd-weighted` (segments sized by `--weight` toward a goal) |
 | ASCII art | `mountAscii(el, piece)` from `signal-design/ascii` draws an `ascii-magic-art` piece as greys in `sd-ascii`; still until `aria-busy="true"` (`pnpm add ascii-magic-art`); `data-tone` colors the brightest level |
 | Stream overlays (OBS) | `sd-scene` (1920×1080 units in `--sd-u`; `data-full`, `data-clear`) with `sd-scene-copy`, `sd-scene-bar`, `sd-scene-label`, `sd-cam`, `sd-scene-goal`, `sd-credits`, `sd-stream-alert`; `mountStream(scene).alert({ kind, name })` |
@@ -2932,6 +2932,34 @@ JS: init() from signal-design/js wires data-sd-poll · popovertarget (placement,
 <div class="sd-actions"><button class="sd-btn" popovertarget="demo-emoji">Grid picker</button></div>
 
 <div popover="" id="demo-emoji" class="sd-popover sd-popover-pad"><div class="sd-grid-picker" role="listbox" aria-label="Emoji" style="--cols:6"><button role="option">👍</button><button role="option">👀</button><button role="option">🎉</button><button role="option">✅</button><button role="option">❤️</button><button role="option">🔥</button><button role="option">😂</button><button role="option">🙏</button><button role="option">🚀</button><button role="option">🤔</button><button role="option">👏</button><button role="option">💯</button></div></div>
+```
+
+## Conversation / File preview
+
+sd-file-preview (a <pre> as the last child of a <div class="sd-file">, never inside a button: full width under the row, mono, muted, clipped to 7 lines with an ellipsis)
+
+Classes: sd-file, sd-file-body, sd-file-meta, sd-file-name, sd-file-preview, sd-file-type
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="grid gap-4 sm:grid-cols-2 items-start">
+        <div class="sd-file"><span class="sd-file-type">txt</span><span class="sd-file-body"><span class="sd-file-name">notes.txt</span><span class="sd-file-meta">214 B</span></span><pre class="sd-file-preview">Standup
+- Ship the onboarding flow
+- Review the empty states</pre></div>
+        <div class="sd-file"><span class="sd-file-type">log</span><span class="sd-file-body"><span class="sd-file-name">sync-2026-03.log</span><span class="sd-file-meta">18 KB</span></span><pre class="sd-file-preview">01  2026-03-02  INFO  worker-1  synced 14 records
+02  2026-03-03  INFO  worker-2  synced 24 records
+03  2026-03-04  INFO  worker-0  synced 34 records
+04  2026-03-05  INFO  worker-1  synced 44 records
+05  2026-03-06  INFO  worker-2  synced 54 records
+06  2026-03-07  INFO  worker-0  synced 64 records
+07  2026-03-08  INFO  worker-1  synced 74 records
+08  2026-03-09  INFO  worker-2  synced 84 records
+09  2026-03-01  INFO  worker-0  synced 94 records
+10  2026-03-02  INFO  worker-1  synced 104 records
+11  2026-03-03  INFO  worker-2  synced 114 records
+12  2026-03-04  INFO  worker-0  synced 124 records</pre></div>
+      </div>
 ```
 
 ## Conversation / Image attachments
