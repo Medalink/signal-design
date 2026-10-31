@@ -2,6 +2,37 @@
 
 ## Unreleased
 
+## 1.4.2 (2026-10-31)
+
+### Added
+- An `sd-badge` right after `sd-message-author` says what the author is, such
+  as Agent, and keeps 8px from the text. In `sd-roster`, a badge after
+  `sd-roster-name` takes the row's end, so a long name truncates first.
+- `sd-checklist`: named checks with a square status mark, a result in the
+  status color (`data-tone` for an exception) and, on a running check, a
+  2px progress line from `--value`. It takes `sd-flow`'s `data-status`
+  words and follows `data-chart-theme` (mono or spectrum). CSS only.
+- Decision polls: `sd-poll-head` holds the state badge and the time left,
+  `data-tone` on `sd-poll` lights its start edge while it waits,
+  `data-chosen` marks the picked option (the only one drawn as selected once
+  it is set), and `sd-poll-voters` names who tapped an option, each name in
+  its `--who`. `sd-poll-foot` is a meta row under the options. A check icon
+  (`sd-icon`) in an option's text is spaced and aligned.
+- `sd-flow`: a pipeline chart of stages and jobs on a dot grid, joined by
+  CSS-drawn edges. `data-status` (`done`, `running`, `queued`, `waiting`,
+  `failed`, `skipped`) sets each stage, job and legend mark; edges leave a
+  stage solid, dashed or grey by its status; `--value` fills a stage head
+  and a running job. Mono or spectrum through `data-chart-theme`. CSS only.
+- `sd-link-card-actions`: a row of buttons under a link card's text, for an
+  embed shaped like a link card, such as a group invite with Join.
+
+### Fixed
+- A disabled `sd-poll-option` (a closed or decided poll) keeps full contrast
+  and no hover instead of the 35% disabled-button dim. Long questions and
+  option text wrap instead of overflowing, and the count keeps its width.
+- A link card's text wraps a long unbroken word instead of widening the card
+  past its column.
+
 ## 1.4.1 (2026-10-30)
 
 ### Changed
