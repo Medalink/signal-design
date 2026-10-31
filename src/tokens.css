@@ -251,7 +251,7 @@
   --sd-danger: #ff4775; /* the signal pink, a touch lighter: 4.7:1 on raised rows */
   --sd-warning: var(--color-orange);
   --sd-pending: var(--color-amber);
-  --sd-extra: var(--color-violet);
+  --sd-extra: #9d73ff; /* the people violet, a touch lighter: 4.7:1 on every graphite surface */
   --sd-backdrop: rgb(0 0 0 / 0.6);
   --sd-shell-bg: #0f0f0f;
   --sd-container: var(--sd-surface);
