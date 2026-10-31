@@ -193,6 +193,7 @@ export interface VoiceNoteProps extends Omit<HTMLAttributes<HTMLDivElement>, "ch
 }
 /** A voice note in a message (`sd-voice`): play and pause, waveform, time and speed. Controlled; the app owns the audio. */
 export function VoiceNote(props: VoiceNoteProps): ReactElement;
+/** An event posted in a conversation, with the viewer's answer (`sd-event-card`). */
 
 export interface CardProps extends Omit<ComponentProps<"article">, "ref"> {
   tone?: Tone | undefined;

@@ -222,7 +222,7 @@
      outside them it is the page canvas. On a panel of your own, set
      --sd-ring to its background. Hover and current rows come last. */
   :where(.sd-rail, .sd-sidebar, .sd-shell-aside, .sd-shell-topbar, .sd-titlebar, .sd-statusbar,
-    .sd-banner, .sd-file, .sd-link-card, .sd-poll, .sd-tile, .sd-composer, .sd-message[data-mention],
+    .sd-banner, .sd-file, .sd-link-card, .sd-poll, .sd-event-card, .sd-tile, .sd-composer, .sd-message[data-mention],
     .sd-callout, .sd-chip, .sd-tags, .sd-code, .sd-sidenav :is(a, button):hover, .sd-table-hover tbody tr:hover) {
     --sd-ring: var(--sd-surface);
   }
@@ -731,6 +731,89 @@
     letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
     font-variant-numeric: tabular-nums;
+  }
+
+  /*
+   * Event card: an event posted in a conversation, with the viewer's answer.
+   * A caps head with the calendar icon, the title, when and where lines, who
+   * is coming (avatars and a mono count) and the three answers. aria-pressed
+   * marks the viewer's answer; it is drawn in success, the color of your own
+   * position, with a check icon in its text. The app writes the state.
+   *   <article class="sd-event-card" aria-labelledby="ev-t">
+   *     <div class="sd-event-card-head"><svg class="sd-icon">…</svg>Event</div>
+   *     <h3 class="sd-event-card-title" id="ev-t">Saturday brunch</h3>
+   *     <p class="sd-event-card-line"><svg class="sd-icon">…</svg>Sat, Nov 1 · 10:30 AM</p>
+   *     <div class="sd-event-card-who"><span class="sd-avatar-stack">…</span>
+   *       <span class="sd-event-card-count">5 going · 2 maybe</span></div>
+   *     <div class="sd-event-card-rsvp" role="group" aria-label="Your answer">
+   *       <button class="sd-btn sd-btn-sm" aria-pressed="true">…Going</button>…</div>
+   *     <a class="sd-btn sd-btn-link sd-event-card-add" href="…">Add to calendar</a></article>
+   */
+  .sd-event-card {
+    display: grid;
+    justify-items: start;
+    gap: 4px;
+    max-width: 28rem;
+    padding: 12px 14px;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-surface);
+  }
+  .sd-event-card-head {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+  .sd-event-card-title {
+    margin: 2px 0 0;
+    color: var(--sd-fg);
+    font-size: var(--text-md);
+    font-weight: var(--font-weight-semibold);
+    overflow-wrap: anywhere;
+  }
+  .sd-event-card-line {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 0;
+    color: var(--sd-fg-muted);
+    font-size: var(--text-sm);
+    overflow-wrap: anywhere;
+  }
+  .sd-event-card-line > .sd-icon {
+    translate: 0 0.25cap;
+  }
+  .sd-event-card-who {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 10px;
+    margin-block: 6px;
+  }
+  .sd-event-card-count {
+    color: var(--sd-fg-subtle);
+    font-family: var(--font-mono);
+    font-size: var(--text-3xs);
+    font-variant-numeric: tabular-nums;
+  }
+  .sd-event-card-rsvp {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .sd-event-card-rsvp > .sd-btn[aria-pressed="true"] {
+    --btn-fg: var(--sd-success);
+    --btn-border: var(--sd-success);
+  }
+  .sd-event-card-rsvp .sd-icon {
+    margin-inline-start: -0.2em;
+  }
+  .sd-event-card-add {
+    margin-top: 6px;
+    font-size: var(--text-sm);
   }
 
   /*

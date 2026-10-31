@@ -121,6 +121,43 @@
       <p class="demo-usage"><code>sd-poll</code> + <code>data-tone</code> (lights the edge while it waits) · <code>sd-poll-head</code> (state badge, time) · options with no <code>--share</code> · <code>data-chosen</code> + a check icon labelled for screen readers · <code>sd-poll-voters</code> &gt; <code>b</code> + <code>--who</code> · <code>disabled</code> once decided or closed · <code>sd-poll-foot</code> for a meta row under the options</p>
     </div>
 
+    <div class="demo-block" id="conversation-event-card">
+      <h2 class="sd-label">Event card</h2>
+      <div class="grid gap-4 sm:grid-cols-2 items-start">
+        <div class="border border-line py-2" style="background: var(--sd-surface)">
+        <article class="sd-message" style="--who: var(--sd-extra)">
+          <time class="sd-message-time" datetime="12:25">12:25 PM</time>
+          <div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Alex</b>Brunch this Saturday?</div>
+            <article class="sd-event-card" aria-labelledby="event-card-a">
+              <div class="sd-event-card-head"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4.5 6.5h15v13h-15zM4.5 10.5h15M8.5 4.5v3M15.5 4.5v3M8.5 14.5v.01M12 14.5v.01M15.5 14.5v.01"/></svg>Event</div>
+              <h3 class="sd-event-card-title" id="event-card-a">Saturday brunch</h3>
+              <p class="sd-event-card-line"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4.5 6.5h15v13h-15zM4.5 10.5h15M8.5 4.5v3M15.5 4.5v3M8.5 14.5v.01M12 14.5v.01M15.5 14.5v.01"/></svg>Sat, Nov 1 · 10:30 AM</p>
+              <p class="sd-event-card-line"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M5.5 4.5h13V11L12 20 5.5 11zM11.25 7.75h1.5v1.5h-1.5z"/></svg>Kin Khao, 4th St</p>
+              <div class="sd-event-card-who"><span class="sd-avatar-stack"><span class="sd-avatar sd-avatar-sm" data-tone="extra" aria-hidden="true">M</span><span class="sd-avatar sd-avatar-sm" data-tone="warning" aria-hidden="true">K</span><span class="sd-avatar sd-avatar-sm" data-tone="success" aria-hidden="true">L</span><span class="sd-avatar sd-avatar-sm" data-tone="accent" aria-hidden="true">P</span></span><span class="sd-event-card-count">5 going · 2 maybe</span></div>
+              <div class="sd-event-card-rsvp" role="group" aria-label="Your answer"><button class="sd-btn sd-btn-sm" aria-pressed="true"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>Going</button><button class="sd-btn sd-btn-sm" aria-pressed="false">Maybe</button><button class="sd-btn sd-btn-sm" aria-pressed="false">Can’t</button></div>
+              <a class="sd-btn sd-btn-link sd-event-card-add" href="#conversation-event-card">Add to calendar</a>
+            </article></div>
+        </article>
+        </div>
+        <div class="border border-line py-2" style="background: var(--sd-surface)">
+        <article class="sd-message" style="--who: var(--sd-extra)">
+          <time class="sd-message-time" datetime="12:25">12:25 PM</time>
+          <div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Alex</b>Brunch this Saturday?</div>
+            <article class="sd-event-card" aria-labelledby="event-card-b">
+              <div class="sd-event-card-head"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4.5 6.5h15v13h-15zM4.5 10.5h15M8.5 4.5v3M15.5 4.5v3M8.5 14.5v.01M12 14.5v.01M15.5 14.5v.01"/></svg>Event</div>
+              <h3 class="sd-event-card-title" id="event-card-b">Saturday brunch</h3>
+              <p class="sd-event-card-line"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4.5 6.5h15v13h-15zM4.5 10.5h15M8.5 4.5v3M15.5 4.5v3M8.5 14.5v.01M12 14.5v.01M15.5 14.5v.01"/></svg>Sat, Nov 1 · 10:30 AM</p>
+              <p class="sd-event-card-line"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M5.5 4.5h13V11L12 20 5.5 11zM11.25 7.75h1.5v1.5h-1.5z"/></svg>Kin Khao, 4th St</p>
+              <div class="sd-event-card-who"><span class="sd-avatar-stack"><span class="sd-avatar sd-avatar-sm" data-tone="extra" aria-hidden="true">M</span><span class="sd-avatar sd-avatar-sm" data-tone="warning" aria-hidden="true">K</span><span class="sd-avatar sd-avatar-sm" data-tone="success" aria-hidden="true">L</span><span class="sd-avatar sd-avatar-sm" data-tone="accent" aria-hidden="true">P</span></span><span class="sd-event-card-count">0 going</span></div>
+              <div class="sd-event-card-rsvp" role="group" aria-label="Your answer"><button class="sd-btn sd-btn-sm" aria-pressed="false">Going</button><button class="sd-btn sd-btn-sm" aria-pressed="false">Maybe</button><button class="sd-btn sd-btn-sm" aria-pressed="false">Can’t</button></div>
+              <a class="sd-btn sd-btn-link sd-event-card-add" href="#conversation-event-card">Add to calendar</a>
+            </article></div>
+        </article>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-event-card</code> (+ <code>-head|-title|-line|-who|-count|-rsvp|-add</code>) in a message body · <code>sd-event-card-rsvp</code> &gt; <code>sd-btn</code> + <code>aria-pressed</code>: the viewer's answer is drawn in success with a check icon · <code>sd-avatar-stack</code> for who is coming · <code>sd-event-card-count</code> is the mono count line · React <code>EventCard</code></p>
+    </div>
+
     <div class="demo-block" id="conversation-link-cards">
       <h2 class="sd-label">Link cards</h2>
       <div class="grid gap-4 sm:grid-cols-2 items-start">

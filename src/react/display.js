@@ -1,5 +1,6 @@
 /** Static parts: badges, avatars, cards, panels, empty states and tables. State is props; there is no behavior. */
-import { createElement as h } from "react";
+import { createElement as h, useId } from "react";
+import { Icon } from "./icons.js";
 import { cx } from "./util.js";
 
 export function Badge({ tone, solid, className, ...props }) {
@@ -78,6 +79,48 @@ export function ThreadChip({ participants = [], label, time, dateTime, open, con
       ),
     h("b", null, label),
     time !== undefined && h("time", { dateTime }, time),
+  );
+}
+
+/**
+ * An event posted in a conversation (`sd-event-card`). `answers` are the
+ * choices in order; `answer` is the viewer's `value` among them and draws as
+ * pressed, in success, with a check. Pressing the chosen one again sends the
+ * same value. The words are props, so the app translates them. `going` are the
+ * avatars of who is coming (decoration: `count` carries the meaning). The
+ * calendar action is a link with `calendarHref`, else a button.
+ */
+export function EventCard({ label, title, when, where, going = [], count, answers, answer, onAnswerChange, answerLabel, calendarLabel, calendarHref, onCalendar, className, ...props }) {
+  const titleId = useId();
+  const action = calendarHref === undefined ? { type: "button" } : { href: calendarHref };
+  return h(
+    "article",
+    { className: cx("sd-event-card", className), "aria-labelledby": titleId, ...props },
+    h("div", { className: "sd-event-card-head" }, h(Icon, { name: "calendar" }), label),
+    h("h3", { className: "sd-event-card-title", id: titleId }, title),
+    when !== undefined && h("p", { className: "sd-event-card-line" }, h(Icon, { name: "calendar" }), when),
+    where !== undefined && h("p", { className: "sd-event-card-line" }, h(Icon, { name: "place" }), where),
+    h(
+      "div",
+      { className: "sd-event-card-who" },
+      going.length > 0 &&
+        h("span", { className: "sd-avatar-stack", "aria-hidden": true }, going.slice(0, 4).map(({ name, ...avatar }) => h(Avatar, { key: name, name, size: "sm", ...avatar }))),
+      h("span", { className: "sd-event-card-count" }, count),
+    ),
+    h(
+      "div",
+      { className: "sd-event-card-rsvp", role: "group", "aria-label": answerLabel },
+      answers.map(({ value, label: text }) =>
+        h(
+          "button",
+          { key: value, type: "button", className: "sd-btn sd-btn-sm", "aria-pressed": answer === value, onClick: () => onAnswerChange?.(value) },
+          answer === value && h(Icon, { name: "check" }),
+          text,
+        ),
+      ),
+    ),
+    calendarLabel !== undefined &&
+      h(calendarHref === undefined ? "button" : "a", { className: "sd-btn sd-btn-link sd-event-card-add", onClick: onCalendar, ...action }, calendarLabel),
   );
 }
 

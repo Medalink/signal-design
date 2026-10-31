@@ -16,6 +16,7 @@ export {
   AvatarStack,
   AvatarGrid,
   ThreadChip,
+  EventCard,
   Card,
   CardHeader,
   CardBody,
