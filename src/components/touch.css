@@ -54,7 +54,15 @@
       inset-block: min(0px, calc((100% - var(--sd-hit)) / 2));
       inset-inline: min(0px, calc((100% - var(--sd-hit)) / 2));
     }
-    /* A square button stays square. */
+    /* A square button stays square. Nine of them are wider than a phone, so
+       the bar keeps inside its message and scrolls. No hover tip clips: a
+       finger has none. */
+    .sd-message-actions {
+      max-width: calc(100% - 32px);
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+    }
     .sd-message-actions > button {
       min-width: var(--sd-touch);
     }
