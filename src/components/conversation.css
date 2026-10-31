@@ -632,6 +632,8 @@
    *     <div class="sd-emoji-scroll"><h4>Smileys</h4><div class="sd-emoji-grid"><button>😀</button>…</div></div>
    *     <div class="sd-emoji-foot"><span>👍</span><span>thumbs up</span><code>:+1:</code></div>
    *   </div>
+   * A virtualized list may wrap each heading and grid in its own row
+   * element; the heading keeps its style there.
    */
   .sd-emoji-picker {
     display: grid;
@@ -695,7 +697,7 @@
     overflow-y: auto;
     scrollbar-width: thin;
   }
-  .sd-emoji-scroll > :is(h2, h3, h4) {
+  .sd-emoji-scroll :is(h2, h3, h4) {
     position: sticky;
     top: 0;
     z-index: 1;
