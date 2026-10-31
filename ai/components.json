@@ -1311,6 +1311,36 @@
    "script": "const feed = document.getElementById(\"demo-feed\");\nconst jump = document.getElementById(\"demo-jump\");\nfeed.scrollTop = feed.scrollHeight;\nfeed.addEventListener(\"scroll\", () => {\n  const away = feed.scrollHeight - feed.scrollTop - feed.clientHeight > 80;\n  if (away === jump.hidden) jump.hidden = !away;\n});\njump.querySelector(\"button\").addEventListener(\"click\", () => feed.scrollTo({ top: feed.scrollHeight, behavior: \"smooth\" }));"
   },
   {
+   "id": "conversation-catch-up-card",
+   "section": "Conversation",
+   "title": "Catch-up card",
+   "classes": [
+    "sd-btn",
+    "sd-btn-primary",
+    "sd-btn-sm",
+    "sd-catchup",
+    "sd-catchup-actions",
+    "sd-catchup-count",
+    "sd-catchup-head",
+    "sd-catchup-list",
+    "sd-catchup-mark",
+    "sd-catchup-stat",
+    "sd-catchup-text",
+    "sd-catchup-title",
+    "sd-icon",
+    "sd-marker",
+    "sd-message",
+    "sd-message-author",
+    "sd-message-body",
+    "sd-message-text",
+    "sd-message-time"
+   ],
+   "attributes": [],
+   "usage": "sd-catchup (+ -head|-title|-stat|-list|-mark|-text|-count|-actions) in the feed above the first unread row · up to three lines, each led by sd-catchup-mark (@ for a mention, an icon for polls, the emoji of the most-reacted message) · the existing sd-marker with data-tone=\"pending\" sits under it as the new-messages line",
+   "js": "No JS needed: the HTML works with the CSS alone.",
+   "html": "<div class=\"border border-line py-2\" style=\"--sd-feed-bg: var(--sd-surface); background: var(--sd-surface)\">\n  <article class=\"sd-message\" style=\"--who: var(--sd-extra)\">\n    <time class=\"sd-message-time\" datetime=\"09:42\">09:42 AM</time>\n    <div class=\"sd-message-body\"><div class=\"sd-message-text\"><b class=\"sd-message-author\">Alex</b>Everything above this card you have already read.</div></div>\n  </article>\n  <section class=\"sd-catchup\" aria-label=\"While you were away\">\n    <header class=\"sd-catchup-head\"><h3 class=\"sd-catchup-title\">While you were away</h3><span class=\"sd-catchup-stat\">142 · 6h</span></header>\n    <ul class=\"sd-catchup-list\">\n      <li><span class=\"sd-catchup-mark\" aria-hidden=\"true\">@</span><span class=\"sd-catchup-text\"><b class=\"sd-message-author\" style=\"--who: var(--sd-accent)\">Maya</b>@Alex can you book the cabin?</span></li>\n      <li><span class=\"sd-catchup-mark\"><svg class=\"sd-icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"square\" stroke-linejoin=\"miter\" aria-hidden=\"true\"><path d=\"M4.5 4.5v15h15M8 15v-4M12 15V8M16 15v-6\"></path></svg></span><span class=\"sd-catchup-text\">2 open polls: Brunch spot, Cabin dates</span></li>\n      <li><span class=\"sd-catchup-mark\" aria-hidden=\"true\">🔥</span><span class=\"sd-catchup-text\"><b class=\"sd-message-author\" style=\"--who: var(--sd-warning)\">Kai</b>sunset-trail.png</span><span class=\"sd-catchup-count\" aria-label=\"9 reactions\">9</span></li>\n    </ul>\n    <div class=\"sd-catchup-actions\"><button class=\"sd-btn sd-btn-primary sd-btn-sm\">Jump to first unread</button><button class=\"sd-btn sd-btn-sm\">Mark read</button></div>\n  </section>\n  <div class=\"sd-marker\" data-tone=\"pending\"><span>New</span></div>\n  <article class=\"sd-message\" style=\"--who: var(--sd-success)\">\n    <time class=\"sd-message-time\" datetime=\"15:02\">03:02 PM</time>\n    <div class=\"sd-message-body\"><div class=\"sd-message-text\"><b class=\"sd-message-author\">Priya</b>Booked brunch for 6</div></div>\n  </article>\n</div>"
+  },
+  {
    "id": "conversation-composer",
    "section": "Conversation",
    "title": "Composer",
