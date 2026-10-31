@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 1.4.37 (2026-10-31)
+
+### Fixed
+- `sd-message-menu`: on a coarse pointer each row is at least `--sd-touch`
+  (44px) tall. They stayed at 34px because the menu's own row rule outranked
+  the touch rule.
+
 ## 1.4.36 (2026-10-31)
 
 ### Fixed
