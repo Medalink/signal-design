@@ -137,7 +137,7 @@ by `title` or `classes`) rather than inventing markup.
 | Lists and rows | `sd-item`, `sd-row`, `sd-table`, `sd-kv` (`sd-kv-plain` for sentence-case, truncating keys) |
 | Settings groups | `sd-panel` (560px), `sd-panel-wide` (1024px), `sd-panel-fluid` (no cap) |
 | Status | `sd-badge`, `sd-status`, `sd-dot`, `sd-count`, `sd-progress` (`data-state="indeterminate"` when the amount is unknown), `sd-checks`, `sd-level` (live level from `--level`, 0–1) |
-| People | `sd-avatar` (`-sm` `-md` `-lg` `-xl`, or `--sd-avatar-size`) with `data-status`; on your own panel set `--sd-ring` to its background so the presence ring matches |
+| People | `sd-avatar` (`-sm` `-md` `-lg` `-xl`, or `--sd-avatar-size`) with `data-status`; on your own panel set `--sd-ring` to its background so the presence ring matches; `sd-avatar-grid` (a group chat: four `sd-avatar` two by two in one square, `role="img"` + `aria-label`; React `AvatarGrid`) |
 | Chat and feeds | `sd-message` (time column, inline `sd-message-author` and an `sd-badge` after it for Agent; `--who` name color, `--edge` role color, `data-grouped`, `data-own`, `data-reply` + `sd-message-ref`, `data-editing`, `data-selected`), `sd-message-actions`, `sd-message-menu`, `sd-emoji-picker`, `sd-feed-day`, `sd-event`, `sd-feed-jump`, `sd-composer` (`-add`, `-reply`, `-status`; `sd-add-menu`) in an `sd-shell-dock` (`data-flush`), `data-sd-follow` on the feed (stays at the newest row, runs the jump bar), `data-joined` on `sd-shell-main` (bar, feed and composer as one surface), `sd-reactions`, `sd-roster`, `sd-banner`, `sd-file` (`-preview`: a text file's first 7 lines), `sd-link-card` (`-hero`, `-media` for an image-only card, `-compact`, `-type`, `-actions`, `-dismiss`, `-thumb-label`, `-thumb-action`, `data-blocked`, `aria-busy`; a `<div role="link">` hovers like a link), `sd-poll` (a decision: `-head`, `data-tone` while it waits, `data-chosen`, `-voters`), `button.sd-shot` (an image attachment: `-hint` icon on hover, `aria-busy` + `-status`, `data-failed` + `-note`), `sd-spoiler` (inline text behind a solid block: `role="button"` with `aria-expanded`, one inner `span`, `data-sd-spoiler`; React `Spoiler`), `sd-thread-chip` (under a root message: avatars, "N replies", last reply time; a button, `aria-expanded` while its thread is open, the root row takes `aria-current`; React `ThreadChip`), `sd-thread` (thread panel for `sd-shell-aside`: `-head`, `-title`, `-body`, `-root`, `-replies`, `-foot`; replies are `sd-message` with `data-compact`), `sd-catchup` (the "While you were away" card above the first unread row: `-head`, `-title`, `-stat`, `-list` with `-mark`, `-text`, `-count`, `-actions`; `sd-marker data-tone="pending"` under it is the new-messages line), `sd-activity` (an inbox: `sd-tabs` over `sd-tabpanel`s of `sd-item` rows with an `sd-item-mark` box, `<b class="sd-message-author">` + action, `sd-item-sub`, a mono `sd-item-end` time; `data-unread` puts a pending-tone square on the left edge), `sd-suggest-command` (a slash-command option in `sd-suggest`: mono command, faint `sd-menu-hint` arguments; `data-sd-trigger-start="/"` on the textarea, `data-trigger="/"` on the option) |
 | Data | `sd-stat`, `sd-stat-box`, `createChart(canvas, { type })`, `sd-plot`, `sd-heatmap`, `sd-uptime`, `sd-meter`, `sd-timeline` (`--from`/`--to` ranges over one axis), `sd-schedule` (hour roster, `data-status` blocks, mono/spectrum), `sd-flow` (pipeline of stages and jobs on a dot grid, `data-status`, mono/spectrum), `sd-checklist` (named checks with a result and progress, the flow's `data-status`), `sd-weighted` (segments sized by `--weight` toward a goal) |
 | ASCII art | `mountAscii(el, piece)` from `signal-design/ascii` draws an `ascii-magic-art` piece as greys in `sd-ascii`; still until `aria-busy="true"` (`pnpm add ascii-magic-art`); `data-tone` colors the brightest level |
@@ -1437,6 +1437,35 @@ JS: init() from signal-design/js wires data-sd-fps.
   <span>Saved <span class="sd-count">3</span></span>
   <span>High risk <span class="sd-count" data-tone="danger">6</span></span>
   <span class="sd-fps" data-sd-fps=""><b>--</b> fps</span>
+</div>
+```
+
+## Status / Group chat avatar
+
+Up to four members as one square, two by two, the size of one avatar: --sd-avatar-size or a size class sets it, and each cell takes one letter or a picture. A missing member leaves its cell empty; a fifth person is a +N cell in place of the fourth. Name the whole grid with role="img" and aria-label. sd-avatar-grid + -sm|md|lg|xl or --sd-avatar-size · four sd-avatar children, one letter or an img each · React AvatarGrid
+
+Classes: sd-avatar, sd-avatar-grid, sd-avatar-lg, sd-avatar-md, sd-avatar-sm, sd-avatar-xl, sd-cluster, sd-item, sd-item-body, sd-item-end, sd-item-sub, sd-item-title, sd-meta
+
+No JS needed: the HTML works with the CSS alone.
+
+```html
+<div class="sd-cluster" style="--gap: 24px; align-items: end">
+  <span class="grid justify-items-center gap-2"><span class="sd-avatar-grid sd-avatar-sm" role="img" aria-label="Maya, Kai, Leo, Priya"><span class="sd-avatar" data-tone="extra">M</span><span class="sd-avatar" data-tone="success">K</span><span class="sd-avatar" data-tone="warning">L</span><span class="sd-avatar" data-tone="accent">P</span></span><span class="sd-meta">sm 22</span></span>
+  <span class="grid justify-items-center gap-2"><span class="sd-avatar-grid" role="img" aria-label="Maya, Kai, Leo"><span class="sd-avatar" data-tone="extra">M</span><span class="sd-avatar" data-tone="success">K</span><span class="sd-avatar" data-tone="warning">L</span></span><span class="sd-meta">24, three</span></span>
+  <span class="grid justify-items-center gap-2"><span class="sd-avatar-grid sd-avatar-md" role="img" aria-label="Maya, Kai"><span class="sd-avatar" data-tone="extra">M</span><span class="sd-avatar" data-tone="success">K</span></span><span class="sd-meta">md 28, two</span></span>
+  <span class="grid justify-items-center gap-2"><span class="sd-avatar-grid sd-avatar-lg" role="img" aria-label="Maya, Kai, Leo, 4 more"><span class="sd-avatar"><img alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' fill='%23111113'/%3E%3Crect x='8' y='8' width='14' height='14' fill='%2300D4FF' fill-opacity='.55'/%3E%3Crect x='26' y='26' width='14' height='14' fill='%23F4F4F5' fill-opacity='.8'/%3E%3C/svg%3E"></span><span class="sd-avatar">K</span><span class="sd-avatar" data-tone="warning">L</span><span class="sd-avatar">+4</span></span><span class="sd-meta">lg 34, picture and +N</span></span>
+  <span class="grid justify-items-center gap-2"><span class="sd-avatar-grid sd-avatar-xl" role="img" aria-label="Maya, Kai, Leo, Priya"><span class="sd-avatar" data-tone="extra">M</span><span class="sd-avatar" data-tone="success">K</span><span class="sd-avatar" data-tone="warning">L</span><span class="sd-avatar" data-tone="accent">P</span></span><span class="sd-meta">xl 48</span></span>
+</div>
+
+<div class="grid gap-4 sm:grid-cols-2 items-start">
+  <div class="grid gap-3"><span class="sd-meta">In a conversation list</span>
+    <a class="sd-item" href="#components"><span class="sd-avatar sd-avatar-md" data-tone="extra" data-status="online">MA</span><span class="sd-item-body"><span class="sd-item-title">Maya</span><span class="sd-item-sub">See you at 7</span></span><span class="sd-item-end">2m</span></a>
+    <a class="sd-item" href="#components" aria-current="true"><span class="sd-avatar-grid sd-avatar-md" role="img" aria-label="Maya, Kai, Leo"><span class="sd-avatar" data-tone="extra">M</span><span class="sd-avatar" data-tone="success">K</span><span class="sd-avatar" data-tone="warning">L</span></span><span class="sd-item-body"><span class="sd-item-title">Maya, Kai, Leo</span><span class="sd-item-sub">Kai: Bowling Friday?</span></span><span class="sd-item-end">5m</span></a>
+    <a class="sd-item" href="#components" data-unread=""><span class="sd-avatar sd-avatar-md" data-tone="warning">PR</span><span class="sd-item-body"><span class="sd-item-title">Priya</span><span class="sd-item-sub">Sent a photo</span></span><span class="sd-item-end">1h</span></a>
+  </div>
+  <div class="grid gap-3"><span class="sd-meta">In a conversation header</span>
+    <div class="flex items-center gap-3 px-3 py-2.5 border border-line"><span class="sd-avatar-grid sd-avatar-md" role="img" aria-label="Maya, Kai, Leo"><span class="sd-avatar" data-tone="extra">M</span><span class="sd-avatar" data-tone="success">K</span><span class="sd-avatar" data-tone="warning">L</span></span><span class="grid min-w-0"><span class="sd-item-title">Maya, Kai, Leo</span><span class="sd-meta">3 people</span></span></div>
+  </div>
 </div>
 ```
 
