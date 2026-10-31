@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 1.4.6 (2026-10-31)
+
+### Added
+- Icons for a chat app's rows, calls and channel pictures, 44 in all, drawn on the same grid with the same 1.5 square-cap stroke: status (`check-double`, `info`, `help`, `clock`, `timer`, `block`, `shield-check`, `shield-alert`); chat (`select`, `image`, `file`, `join`, `leave`, `bell-off`, `megaphone`, `speaker`, `speaker-off`, `mic`, `phone`, `phone-off`); people and review (`person-remove`, `view-off`); interface (`arrow-right`); and pictures for a channel, a place or a group (`archive`, `bag`, `beaker`, `bolt`, `book`, `building`, `bulb`, `calendar`, `desktop`, `fire`, `flag`, `gift`, `globe`, `home`, `key`, `puzzle`, `rocket`, `tag`, `terminal`, `trophy`, `wrench`). `IconName` lists them, so `<Icon name>` types them.
+
 ## 1.4.5 (2026-10-31)
 
 ### Added
