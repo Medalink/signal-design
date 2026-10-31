@@ -1,2 +1,0 @@
-### Added
-- Silent mark and send menu, built from what is there. An icon-only `bell-off` item in `sd-message-meta` (`role="img"`, `aria-label="Sent silently"`) marks a message sent without a notification, and `data-sd-contextmenu` on `sd-composer-send` opens an `sd-message-menu` of `sd-menu` rows (Send silently, Send when a person is online, Schedule) on right-click or long press. Showcase block on Composer; no new class.
