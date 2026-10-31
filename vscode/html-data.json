@@ -167,7 +167,11 @@
   },
   {
    "name": "data-sd-trigger",
-   "description": "Character that opens the suggestion list (default @)."
+   "description": "Character that opens the suggestion list (default @). Several characters may be given (\"@#\")."
+  },
+  {
+   "name": "data-sd-trigger-start",
+   "description": "On the textarea: a character that opens the suggestion list only as the first character of the text (\"/\" for slash commands)."
   },
   {
    "name": "data-sd-contextmenu",
