@@ -1,0 +1,4 @@
+order: 560
+row: Chat and feeds
+
+`sd-activity` (an inbox: `sd-tabs` over `sd-tabpanel`s of `sd-item` rows with an `sd-item-mark` box, `<b class="sd-message-author">` + action, `sd-item-sub`, a mono `sd-item-end` time; `data-unread` puts a pending-tone square on the left edge)

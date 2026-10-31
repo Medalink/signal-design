@@ -1,0 +1,4 @@
+order: 410
+row: Chat and feeds
+
+`sd-feed-jump`

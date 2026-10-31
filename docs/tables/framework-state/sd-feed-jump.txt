@@ -1,0 +1,3 @@
+order: 120
+
+| `sd-feed-jump` | `hidden` on the jump bar, the feed's scroll position | `data-sd-follow` | Staying at the newest row, the jump back down. |

@@ -1,0 +1,4 @@
+order: 200
+row: Settings groups
+
+`sd-panel` (560px)

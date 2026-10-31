@@ -1,0 +1,3 @@
+order: 60
+
+| `sd-shortcuts` | `dialog[data-sd-shortcuts]` | Shortcut sheet; `?` opens it. |

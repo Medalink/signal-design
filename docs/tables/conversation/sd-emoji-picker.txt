@@ -1,0 +1,3 @@
+order: 90
+
+| `sd-emoji-picker` group emoji (`data-group`, `data-add`) and `sd-emoji` | A group's own image emoji. Its category button takes `data-group` and the group's initials (or an `img`), its `h3` is the group's name, and its `sd-emoji-grid` holds a `button` with an `img` each (`1.2em`, square). `aria-current="true"` marks the one the footer names; `button[data-add]` is the empty slot at the end that adds one; the footer is the image and its `:name:` in mono. In text, `img.sd-emoji` is sized to the line (`1.25em`) and carries `alt=":name:"`. |

@@ -1,0 +1,4 @@
+order: 610
+row: Chat and feeds
+
+`sd-cw` (media behind a solid cover: `-media` holding an `sd-shot` or `sd-file`, `-cover` with an `sd-badge` chip and `button.sd-cw-toggle` whose `aria-expanded` is the state, `-show`/`-hide` labels, `data-sd-cw`; React `ContentWarning`)

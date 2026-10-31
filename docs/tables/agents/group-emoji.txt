@@ -1,0 +1,4 @@
+order: 320
+row: Group emoji
+
+A group's image emoji in `sd-emoji-picker`: a `data-group` category button (initials or an `img`), `img` buttons in `sd-emoji-grid` (`aria-current="true"` for the one the footer names), a `button[data-add]` slot, a footer of image and `:name:`; in text, `img.sd-emoji` (1.25em) with `alt=":name:"`

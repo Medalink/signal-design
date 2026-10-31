@@ -1,0 +1,4 @@
+order: 420
+row: Chat and feeds
+
+`sd-composer` (`-add`, `-reply`, `-status`, `-mic`; `data-recording` swaps the row for `-discard` and `-rec` with a pending dot, time and level wave; `sd-add-menu`) in an `sd-shell-dock` (`data-flush`)

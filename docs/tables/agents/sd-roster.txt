@@ -1,0 +1,4 @@
+order: 460
+row: Chat and feeds
+
+`sd-roster`

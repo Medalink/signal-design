@@ -1,0 +1,3 @@
+order: 30
+
+| `sd-tags` | `data-sd-tags`, `data-name` | Tag entry with hidden inputs per tag. |

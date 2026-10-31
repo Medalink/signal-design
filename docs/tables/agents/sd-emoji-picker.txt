@@ -1,0 +1,4 @@
+order: 380
+row: Chat and feeds
+
+`sd-emoji-picker`

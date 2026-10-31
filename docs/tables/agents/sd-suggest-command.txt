@@ -1,0 +1,4 @@
+order: 570
+row: Chat and feeds
+
+`sd-suggest-command` (a slash-command option in `sd-suggest`: mono command, faint `sd-menu-hint` arguments; `data-sd-trigger-start="/"` on the textarea, `data-trigger="/"` on the option)

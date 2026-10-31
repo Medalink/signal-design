@@ -1,0 +1,3 @@
+order: 50
+
+| `sd-sidebar-panel` | `hidden` on the panels that are not shown | `data-sd-section` | Which panel shows. |

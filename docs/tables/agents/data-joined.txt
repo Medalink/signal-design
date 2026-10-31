@@ -1,0 +1,4 @@
+order: 440
+row: Chat and feeds
+
+`data-joined` on `sd-shell-main` (bar, feed and composer as one surface)

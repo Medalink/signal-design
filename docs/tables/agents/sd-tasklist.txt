@@ -1,0 +1,4 @@
+order: 620
+row: Chat and feeds
+
+`sd-tasklist` (a shared checklist in a message: `-head`, `-label`, `-count`, `-title`, `-items` of `li` > `label` > checkbox + `span`, then `b` for who ticked it in `--who`, `-add`; the bar is `sd-progress` + `data-tone="success"`; React `TaskList`)

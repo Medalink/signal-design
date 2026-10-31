@@ -1,0 +1,4 @@
+order: 550
+row: Chat and feeds
+
+`sd-catchup` (the "While you were away" card above the first unread row: `-head`, `-title`, `-stat`, `-list` with `-mark`, `-text`, `-count`, `-actions`; `sd-marker data-tone="pending"` under it is the new-messages line)

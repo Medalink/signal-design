@@ -1,0 +1,4 @@
+order: 500
+row: Chat and feeds
+
+`sd-poll` (a decision: `-head`, `data-tone` while it waits, `data-chosen`, `-voters`)

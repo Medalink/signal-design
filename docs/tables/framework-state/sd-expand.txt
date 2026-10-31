@@ -1,0 +1,3 @@
+order: 20
+
+| `sd-expand` + its trigger | `data-open` on the panel, `aria-expanded` and `aria-controls` on the trigger | `data-sd-toggle` | Clicks. |

@@ -1,0 +1,3 @@
+order: 240
+
+| `sd-poll-head`, `-foot`, `-voters`, `data-chosen` | A decision: a poll one person decides, such as an agent asking to approve or deny. `-head` holds its state badge and the time left, `data-tone` lights its edge while it waits, `data-chosen` marks the pick, `-voters` names who tapped an option in their `--who`. `-foot` is a meta row under the options. |

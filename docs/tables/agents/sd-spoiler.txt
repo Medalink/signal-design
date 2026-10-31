@@ -1,0 +1,4 @@
+order: 520
+row: Chat and feeds
+
+`sd-spoiler` (inline text behind a solid block: `role="button"` with `aria-expanded`, one inner `span`, `data-sd-spoiler`; React `Spoiler`)

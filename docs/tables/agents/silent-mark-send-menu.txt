@@ -1,0 +1,4 @@
+order: 580
+row: Chat and feeds
+
+silent mark (an icon-only `bell-off` `<span role="img" aria-label="Sent silently">` in `sd-message-meta`) and send menu (`data-sd-contextmenu="id"` on `sd-composer-send` opening an `sd-message-menu`; no class of its own)

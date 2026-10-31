@@ -1,0 +1,3 @@
+order: 350
+
+| `sd-ack` (+ `-cells`, `-count`, `-waiting`) | The "Got it" row under an announced message: a primary small `sd-btn` with a check, `sd-cells sd-ack-cells` with one `i` per member (`data-on` once they answered, success; waiting is a pending outline), the n/m count in mono, and a muted `-waiting` line (`b` names in `--who`) that the app shows only to whoever sent the announce. After the reader answers, the button is `data-tone="success"` and `disabled`, and reads as done. React: `AckBar` (`members` as `{ id, acknowledged }`, `acknowledged`, `onAcknowledge`, `label`, `doneLabel`, `summaryLabel`, `waiting` as `{ name, who }`, `waitingLabel`; the words are props). |

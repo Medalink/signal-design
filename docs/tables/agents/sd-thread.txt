@@ -1,0 +1,4 @@
+order: 540
+row: Chat and feeds
+
+`sd-thread` (thread panel for `sd-shell-aside`: `-head`, `-title`, `-body`, `-root`, `-replies`, `-foot`; replies are `sd-message` with `data-compact`)

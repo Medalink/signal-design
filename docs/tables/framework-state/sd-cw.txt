@@ -1,0 +1,3 @@
+order: 80
+
+| `sd-cw` | `aria-expanded` on `.sd-cw-toggle` (plus `aria-controls`, `aria-describedby`) | `data-sd-cw` | Clicks; `sd:cw` is gone (`ContentWarning` does it). |

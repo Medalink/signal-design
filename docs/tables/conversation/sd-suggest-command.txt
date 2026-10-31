@@ -1,0 +1,3 @@
+order: 160
+
+| `sd-suggest-command` | A slash-command row in the composer's `sd-suggest` list: the command in mono, its arguments faint on the right in `sd-menu-hint`; the active row has `aria-selected="true"`. `data-sd-trigger-start="/"` on the textarea opens the list only when the text starts with `/`; `data-trigger="/"` on an option shows it after that character only. |

@@ -1,0 +1,3 @@
+order: 140
+
+| `sd-progress`, `sd-table th[data-sort]`, `data-tone` | `--value`, `aria-sort`, `data-tone` | (none) | Nothing: these have no JS. |

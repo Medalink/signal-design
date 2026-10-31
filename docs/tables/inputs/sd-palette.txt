@@ -1,0 +1,3 @@
+order: 20
+
+| `dialog[data-sd-palette]` | `setOptions(dialog, items)` | Command palette; arrows, Enter, groups. |

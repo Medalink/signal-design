@@ -1,0 +1,4 @@
+order: 230
+row: Profile card
+
+`sd-profile` (a person's card in an `sd-hovercard` or `sd-dialog-body`, no frame of its own: `-head` with `sd-avatar-xl`, `-name` in `--who`, `-status`; `-section` + `-label` over `-about` or `-groups`; `-actions` for Message and Call)

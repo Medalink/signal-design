@@ -1,0 +1,4 @@
+order: 90
+row: Choices
+
+`sd-seg` (segmented; `sd-seg-wrap` in a narrow container)

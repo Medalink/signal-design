@@ -1,0 +1,3 @@
+order: 270
+
+| `sd-spoiler` | Inline text in a message behind a solid block until opened. A `span` with `role="button"`, `tabindex="0"`, `aria-roledescription="spoiler"` and `aria-expanded`, holding one inner `span`; `aria-label="Spoiler"` names it while closed. `data-sd-spoiler` toggles it on click, Enter or Space and fires `sd:spoiler`. Closed text is out of selection, find and screen readers; plain inline content only. React: `Spoiler` (`open` / `defaultOpen` / `onOpenChange`, `label`). |

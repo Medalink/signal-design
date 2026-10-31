@@ -1,0 +1,3 @@
+order: 60
+
+| `sd-message` (+ `-time`, `-body`, `-text`, `-author`, `-tag`, `-meta`, `-timer`, `-head`, `-status`, `-edit`) | A 64px time column, then the text; the author's name opens the first line in their color (`--who`). `data-grouped` (no time or name), `data-mention`, `data-pending`, `data-failed`, `data-own` (grey edge), `data-selected`, `data-reply`, `data-editing`, `data-hover`, and `--edge` for an author or role color. An `sd-badge` after the author says what they are (Agent). |

@@ -1,0 +1,3 @@
+order: 260
+
+| `sd-link-card-media`, `-dismiss`, `-thumb-label`, `-thumb-action` | A card that is only an image or GIF, shown whole; a dismiss button; a label and an action over the media. `role="link"` on a `<div>` card hovers like a link. |

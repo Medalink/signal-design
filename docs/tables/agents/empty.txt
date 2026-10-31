@@ -1,0 +1,4 @@
+order: 780
+row: Empty
+
+`sd-empty` (gets a center ornament automatically)

@@ -1,0 +1,4 @@
+order: 10
+row: Reading page
+
+`<main class="sd-page">` (720px column) or `sd-page sd-page-wide`

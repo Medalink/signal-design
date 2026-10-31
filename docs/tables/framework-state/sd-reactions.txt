@@ -1,0 +1,3 @@
+order: 60
+
+| `sd-reactions` | `aria-pressed` and the count in `<b>` | `data-sd-reaction` | Counting; `sd:reaction` is gone. |

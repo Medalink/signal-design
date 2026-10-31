@@ -1,0 +1,4 @@
+order: 450
+row: Chat and feeds
+
+`sd-reactions`

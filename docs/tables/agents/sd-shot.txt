@@ -1,0 +1,4 @@
+order: 510
+row: Chat and feeds
+
+`button.sd-shot` (an image attachment: `-hint` icon on hover, `aria-busy` + `-status`, `data-failed` + `-note`)

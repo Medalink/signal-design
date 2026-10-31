@@ -1,0 +1,4 @@
+order: 370
+row: Chat and feeds
+
+`sd-message-menu`

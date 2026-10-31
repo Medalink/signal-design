@@ -1,0 +1,3 @@
+order: 90
+
+| `sd-options`, `sd-option` | `data-sd-seg` (buttons only) | Option cards in a wrapping grid: title, description, optional preview. |

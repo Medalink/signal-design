@@ -1,0 +1,3 @@
+order: 210
+
+| `sd-banner` | A full-width notice with actions. |

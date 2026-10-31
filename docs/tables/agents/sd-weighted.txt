@@ -1,0 +1,4 @@
+order: 750
+row: Data
+
+`sd-weighted` (segments sized by `--weight` toward a goal)

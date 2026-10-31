@@ -1,0 +1,4 @@
+order: 100
+row: Choices
+
+`sd-options` > `sd-option` (cards with a description or preview)

@@ -1,0 +1,4 @@
+order: 30
+row: A rail of places (groups, servers)
+
+`sd-rail-tile` (picture, initials or icon) in a 72px rail (`--shell-rail: 4.5rem`); `aria-current`, `data-unread`, `data-pending`, corner `sd-badge-count`

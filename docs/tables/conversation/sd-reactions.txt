@@ -1,0 +1,3 @@
+order: 130
+
+| `sd-reactions` (+ `-add`) | Emoji-first toggle buttons with a small count; fires `sd:reaction`. |

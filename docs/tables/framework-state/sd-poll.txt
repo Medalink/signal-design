@@ -1,0 +1,3 @@
+order: 90
+
+| `sd-poll` | `aria-pressed` on options, `--share` on each | `data-sd-poll` | Single or multiple choice. |

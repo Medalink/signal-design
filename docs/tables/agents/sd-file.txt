@@ -1,0 +1,4 @@
+order: 480
+row: Chat and feeds
+
+`sd-file` (`-preview`: a text file's first 7 lines)

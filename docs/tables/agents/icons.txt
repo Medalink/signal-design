@@ -1,0 +1,4 @@
+order: 70
+row: Icons
+
+`sd-icon-text` > `sd-icon` + text; icons are sized to the text's cap height (`1.5cap`) and scale with it; the set of line icons is `icon(name)` from `signal-design/js/icons` (React `<Icon name>`), never a hand-copied path or another icon library

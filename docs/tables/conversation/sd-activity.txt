@@ -1,0 +1,3 @@
+order: 310
+
+| `sd-activity`, `sd-item-mark` | An inbox of what happened to you: `sd-tabs` (All, Mentions, Replies, Reactions) over `sd-tabpanel`s of `sd-item` rows. Each row has an `sd-item-mark` (a 24px bordered box for `@`, an icon or an emoji), a title of the actor's name (`<b class="sd-message-author">`, `--who`) and a muted action, an `sd-item-sub` such as "Weekend Crew › #general", and a mono `sd-item-end` `<time>`. `data-unread` shows a pending-tone square on the row's left edge and keeps the text weight; add an `sd-sr-only` "Unread" for assistive tech. |

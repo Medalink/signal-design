@@ -1,0 +1,4 @@
+order: 280
+row: Status
+
+`sd-progress` (`data-state="indeterminate"` when the amount is unknown)

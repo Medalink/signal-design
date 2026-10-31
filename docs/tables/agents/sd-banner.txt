@@ -1,0 +1,4 @@
+order: 470
+row: Chat and feeds
+
+`sd-banner`

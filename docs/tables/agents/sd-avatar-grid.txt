@@ -1,0 +1,4 @@
+order: 340
+row: People
+
+`sd-avatar-grid` (a group chat: four `sd-avatar` two by two in one square, `role="img"` + `aria-label`; React `AvatarGrid`)

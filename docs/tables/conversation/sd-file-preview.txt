@@ -1,0 +1,3 @@
+order: 230
+
+| `sd-file-preview` | A `<pre>` as the last child of a `<div class="sd-file">`: a text file's first lines, full width under the row, mono and muted, clipped to 7 lines with an ellipsis. Keep the file's actions in buttons inside it (`sd-file-dl`), never the whole card in one `<button>`: a `<pre>` cannot sit in a button, and its lines would become the button's name. |

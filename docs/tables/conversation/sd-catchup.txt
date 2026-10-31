@@ -1,0 +1,3 @@
+order: 300
+
+| `sd-catchup` (+ `-head`, `-title`, `-stat`, `-list`, `-mark`, `-text`, `-count`, `-actions`) | The card in the feed above the first unread row: a caps title with the message count and span (mono, faint) at the end, up to three lines led by a glyph (`@` for a mention, an icon for open polls, the emoji of the most-reacted message, with its count in `-count`), and a primary and a secondary button. Put an `sd-marker` with `data-tone="pending"` under it for the new-messages line. |

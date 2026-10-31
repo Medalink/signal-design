@@ -1,0 +1,3 @@
+order: 390
+
+| `sd-level` | A live level meter, such as a microphone input: 2 to 8 `<i>` bars that light up to `--level` (`0`–`1`). |

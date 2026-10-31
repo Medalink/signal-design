@@ -1,0 +1,4 @@
+order: 330
+row: People
+
+`sd-avatar` (`-sm` `-md` `-lg` `-xl`, or `--sd-avatar-size`) with `data-status`; on your own panel set `--sd-ring` to its background so the presence ring matches

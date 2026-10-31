@@ -1,0 +1,3 @@
+order: 250
+
+| `sd-link-card-hero`, `-compact`, `-type`, `-note`, `-actions` | Link preview variants: image on top, one tight block, a document with its type, a reason line, and buttons under the text (Join on an invite). `data-blocked` and `aria-busy="true"` are states. |

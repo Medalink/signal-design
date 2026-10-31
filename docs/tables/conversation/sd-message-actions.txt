@@ -1,0 +1,3 @@
+order: 70
+
+| `sd-message-actions` | The hover bar: quick reactions, then actions with `data-key` tips, then More. Revealed by opacity, so Tab reaches it. |

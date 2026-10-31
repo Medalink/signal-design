@@ -1,0 +1,3 @@
+order: 200
+
+| `sd-profile` (+ `-head`, `-name`, `-status`, `-section`, `-label`, `-about`, `-groups`, `-actions`) | A person's card for an `sd-hovercard` or `sd-dialog-body`: a large avatar with the name (in `--who`) and status line, a caps About label over a plain-text bio, Groups you share as small tiles with names, and Message and Call. It has no frame of its own; leave out a section with nothing in it. |

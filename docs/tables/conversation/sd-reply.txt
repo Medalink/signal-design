@@ -1,0 +1,3 @@
+order: 110
+
+| `sd-reply`, `sd-mention`, `sd-event` | Quoted reply in a body or chip, inline mention (name color, no fill), system line with its icon in the time column. |

@@ -1,0 +1,4 @@
+order: 490
+row: Chat and feeds
+
+`sd-link-card` (`-hero`, `-media` for an image-only card, `-compact`, `-type`, `-actions`, `-dismiss`, `-thumb-label`, `-thumb-action`, `data-blocked`, `aria-busy`; a `<div role="link">` hovers like a link)

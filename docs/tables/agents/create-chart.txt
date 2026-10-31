@@ -1,0 +1,4 @@
+order: 660
+row: Data
+
+`createChart(canvas, { type })`

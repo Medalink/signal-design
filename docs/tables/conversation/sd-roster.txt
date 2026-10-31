@@ -1,0 +1,3 @@
+order: 180
+
+| `sd-roster` (+ `-group`, `-head`, `-label`, `-count`, `-row`, `-avatar`, `-name`, `-sub`, `-more`) | People in a large conversation: a section per role with a sticky, collapsible head, rows by `data-presence` (`online`, `offline`, `unresolved`), and a Show more row. An `sd-badge` after `-name` (Agent) takes the row's end. `-sub` inside `-name` is a second mono line, such as the ghost id under a private name. |

@@ -1,0 +1,3 @@
+order: 30
+
+| `sd-avatar[data-status]` | `online`, `away` (or `afk`), `busy`, `offline` square on the corner. |

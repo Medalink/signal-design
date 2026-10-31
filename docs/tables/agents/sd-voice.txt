@@ -1,0 +1,4 @@
+order: 590
+row: Chat and feeds
+
+`sd-voice` (a voice note in a message: `-play`, `-wave` as a slider of `<i>` bars with `--h` and `--at`, `--progress` to light them, `-time`, `-speed`; `data-playing`; the app owns the audio; React `VoiceNote`)

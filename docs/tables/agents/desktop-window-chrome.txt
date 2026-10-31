@@ -1,0 +1,4 @@
+order: 50
+row: Desktop window chrome
+
+`sd-titlebar` with `sd-window-controls` (`data-sd-window`)

@@ -1,0 +1,3 @@
+order: 140
+
+| `sd-receipts`, `sd-typing` | Read receipts and the typing line (its squares step while someone types). |

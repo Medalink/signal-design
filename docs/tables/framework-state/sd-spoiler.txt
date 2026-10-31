@@ -1,0 +1,3 @@
+order: 70
+
+| `sd-spoiler` | `aria-expanded`, and `aria-label` only while closed | `data-sd-spoiler` | Clicks and Enter or Space; `sd:spoiler` is gone (`Spoiler` does it). |

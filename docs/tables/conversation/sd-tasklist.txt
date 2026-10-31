@@ -1,0 +1,3 @@
+order: 340
+
+| `sd-tasklist` (+ `-head`, `-label`, `-count`, `-title`, `-items`, `-add`) | A checklist the conversation ticks, posted in a message: a caps head with the `list-bullet` icon and the done/total count (mono) at the end, the title, a success `sd-progress` bar, one row per item (a square checkbox, the text, and in `b` the name of whoever ticked it in their `--who`) and an Add item button. A ticked item is faint and struck through. Not the flow's `sd-checklist`, which lists named checks with a result. React: `TaskList` (`label`, `title`, `items` as `{ id, label, checked, by }`, `onCheckedChange`, `progressLabel`, `count`, `addLabel`, `onAdd`; the words are props). |

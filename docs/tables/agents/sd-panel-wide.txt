@@ -1,0 +1,4 @@
+order: 210
+row: Settings groups
+
+`sd-panel-wide` (1024px)

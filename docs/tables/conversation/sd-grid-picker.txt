@@ -1,0 +1,3 @@
+order: 380
+
+| `sd-grid-picker` | An emoji or icon grid (`--cols`). |

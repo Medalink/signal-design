@@ -1,0 +1,4 @@
+order: 720
+row: Data
+
+`sd-schedule` (hour roster, `data-status` blocks, mono/spectrum)

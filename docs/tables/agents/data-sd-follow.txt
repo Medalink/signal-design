@@ -1,0 +1,4 @@
+order: 430
+row: Chat and feeds
+
+`data-sd-follow` on the feed (stays at the newest row, runs the jump bar)

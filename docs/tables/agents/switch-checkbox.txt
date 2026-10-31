@@ -1,0 +1,4 @@
+order: 110
+row: Choices
+
+`role="switch"` checkbox

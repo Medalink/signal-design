@@ -107,6 +107,9 @@
     "score": "node scripts/score.mjs",
     "build:ai": "node scripts/build-ai.mjs",
     "check:ai": "node scripts/build-ai.mjs --validate",
+    "build:docs": "node scripts/doc-tables.mjs",
+    "check:docs": "node scripts/doc-tables.mjs --check",
+    "check:utf8": "node scripts/check-utf8.mjs",
     "prepare": "node scripts/build-css.mjs && node scripts/build-js.mjs"
   },
   "devDependencies": {

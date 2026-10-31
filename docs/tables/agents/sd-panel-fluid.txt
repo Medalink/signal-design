@@ -1,0 +1,4 @@
+order: 220
+row: Settings groups
+
+`sd-panel-fluid` (no cap)

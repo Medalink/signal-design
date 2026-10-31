@@ -1,0 +1,4 @@
+order: 530
+row: Chat and feeds
+
+`sd-thread-chip` (under a root message: avatars, "N replies", last reply time; a button, `aria-expanded` while its thread is open, the root row takes `aria-current`; React `ThreadChip`)

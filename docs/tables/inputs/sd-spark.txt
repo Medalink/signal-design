@@ -1,0 +1,3 @@
+order: 70
+
+| `sd-spark`, `sd-bars` | `data-values` | Sparkline and bar chart, no library. |

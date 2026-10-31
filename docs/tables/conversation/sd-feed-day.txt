@@ -1,0 +1,3 @@
+order: 120
+
+| `sd-feed-day`, `sd-feed-jump` | A day line that sticks to the top of the scroller (`--sd-feed-bg` is the pane color), and the Jump to present bar after the scroller. `data-sd-follow` on the scroller keeps the newest row in view while the reader is at the bottom (rows arriving, images loading, a composer growing under it), holds still once they scroll up, and runs the jump bar: `hidden` while at the bottom, its button goes back down. |

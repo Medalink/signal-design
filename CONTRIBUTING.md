@@ -7,7 +7,8 @@ usually one component each, land without conflicts.
 
 ## How a change ships
 
-1. Commit the change with its fragment in `changes/` (below).
+1. Commit the change with its fragment in `changes/` and, for a component, its
+   doc entries in `docs/tables/` (below).
 2. Run `ship`. It reads the flow from roster, runs the gate on what the change
    touches, and pushes to `main`. `.github/` changes wait for the owner's
    approval.
@@ -26,6 +27,7 @@ change. The flow releases that version as it is. No release branch is made.
 | File | Instead |
 |---|---|
 | `CHANGELOG.md` | Add `changes/<name>.md` with a `### Added` / `Changed` / `Fixed` / `Removed` heading and bullets. See `changes/README.md`. |
+| The rows of the generated tables in `AGENTS.md` and `README.md` | Add or edit `docs/tables/<table>/<name>.txt`, then run `pnpm build:docs`. See "Component docs". |
 | `ai/components.json`, `ai/tokens.json`, `llms-full.txt`, `vscode/html-data.json`, `vscode/css-data.json` | Nothing. The `ai-files` workflow rebuilds them on `main` after every push and commits them as `github-actions[bot]`. |
 
 `pnpm check:ai` runs that build without writing, and fails on a `data-sd-*` attribute
@@ -68,10 +70,43 @@ release commit changes `CHANGELOG.md` and these files.
   icon is missing. A new example app is an entry in a group of `examples` and
   a page of its own that carries `data-page="<key>"` on `<html>` and calls
   `mountBar()` from its script.
-- **`AGENTS.md` and `README.md` tables:** a new component family gets its own
-  row next to related rows. When it belongs in a shared row (Status, Chat and
-  feeds), add it at the end of that row, and expect a one-line conflict if
-  another change edits the same row.
+- **`AGENTS.md` and `README.md` tables:** a component's entry is a file of its
+  own in `docs/tables/`, never a line in a table, so two components never edit
+  the same file. See "Component docs" below.
+
+## Component docs
+
+The component tables in `AGENTS.md` ("Building pages") and `README.md`
+("Conversation and lists", "Inputs", "Framework-owned state") sit between
+`<!-- doc-table:… -->` markers and are generated. Each entry is one file,
+`docs/tables/<table>/<name>.txt`, with `<table>` one of `agents`,
+`conversation`, `inputs` or `framework-state`, and `<name>` the component
+(`sd-ack`). A component with an entry in two tables has a file in each.
+
+```
+order: 640
+row: Chat and feeds
+
+`sd-ack` (the "Got it" row under an announce: …)
+```
+
+- **The body** (after the blank line) is one line of Markdown. In the three
+  `README.md` tables it is the whole table row, `| a | b |`, with a pipe inside
+  a cell written `\|`. In `agents` it is one piece of a row, and the pieces of
+  a row join with `, `. `row:` names that row; a new label makes a new row.
+- **`order`** is a number and is optional. Leave it out and the entry goes to
+  the end of its table (entries without one sort by name). To sit next to a
+  related entry, give a number between its neighbours'. They step by 10, and
+  decimals are fine. `node scripts/doc-tables.mjs --list <table>` prints the
+  entries with their numbers. Order depends only on these numbers, never on
+  which change landed first.
+- **Run `pnpm build:docs`** and commit the regenerated tables with your files.
+  `pnpm check:docs` fails when a table differs from its files, so a table row
+  edited by hand, or a file added without the rebuild, does not ship.
+- **Name a React part in your own entry**, not in the shared `React app` row.
+
+`pnpm check:utf8` fails on a tracked text file that is not valid UTF-8. Save
+files as UTF-8, whatever tool resolves a conflict.
 
 ## Landing
 
@@ -81,6 +116,12 @@ release commit changes `CHANGELOG.md` and these files.
   first is its own commit and its own `ship`.
 - `git config rerere.enabled true` makes git reuse a conflict resolution it
   has already seen.
+- The generated tables are committed, so when another change lands first and
+  `ship` stops on a conflict inside one of them (between the `doc-table`
+  markers), do not merge the rows by hand. Run `git rebase origin/main`, then at each stop
+  `pnpm build:docs && git add AGENTS.md README.md && git rebase --continue`, then
+  `ship` again. `pnpm build:docs` rebuilds the whole table from the files, so
+  it drops the conflict markers and keeps both entries.
 
 ## Writing checks that do not flake
 
@@ -109,6 +150,9 @@ pnpm score -- --md docs/scorecard.md            # score and rank every block and
 node scripts/check-showcase-build.mjs           # production build under /signal-design/, every page
 node e2e/check.mjs                              # the check CLI on a sample page per rule (after build:css)
 node scripts/changelog.mjs --check              # changelog fragments
+pnpm build:docs                                 # regenerate the AGENTS.md and README.md tables from docs/tables/
+pnpm check:docs                                 # fail when those tables are out of date
+pnpm check:utf8                                 # fail on a tracked text file that is not valid UTF-8
 pnpm check:ai                                   # the AI-files build with nothing written (after build:css)
 ```
 

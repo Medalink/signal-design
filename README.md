@@ -563,6 +563,7 @@ without a `value` stays an empty track.
 
 Generic pieces for chat, comments, feeds and inboxes. See `showcase/chat.html`.
 
+<!-- doc-table:conversation (generated from docs/tables/conversation/ by scripts/doc-tables.mjs: add or edit a file there, then run pnpm build:docs; do not edit these rows) -->
 | Class | What |
 |---|---|
 | `sd-item` (+ `-body`, `-title`, `-sub`, `-end`) | A list row with avatar, text and meta; `data-unread`, `data-muted`. |
@@ -604,6 +605,7 @@ Generic pieces for chat, comments, feeds and inboxes. See `showcase/chat.html`.
 | `sd-tiles`, `sd-tile` | Call grid; `data-speaking`, `data-muted`, `data-hand`. |
 | `sd-grid-picker` | An emoji or icon grid (`--cols`). |
 | `sd-level` | A live level meter, such as a microphone input: 2 to 8 `<i>` bars that light up to `--level` (`0`–`1`). |
+<!-- /doc-table:conversation -->
 
 `sd-level` moves only when your level changes. Write `--level` and
 `aria-valuenow` from the same value, for example each audio analyser frame; a
@@ -702,6 +704,7 @@ return key reads Send when `data-sd-enter-submit` sends on Enter.
 
 ## Inputs
 
+<!-- doc-table:inputs (generated from docs/tables/inputs/ by scripts/doc-tables.mjs: add or edit a file there, then run pnpm build:docs; do not edit these rows) -->
 | Class | JS hook | What |
 |---|---|---|
 | `sd-combobox` | `data-sd-combobox` | Text field with a filtered list. |
@@ -713,6 +716,7 @@ return key reads Send when `data-sd-enter-submit` sends on Enter.
 | `sd-spark`, `sd-bars` | `data-values` | Sparkline and bar chart, no library. |
 | `sd-diff` | | Diff lines with `data-line="+"`, `"-"`, `"@"`. |
 | `sd-options`, `sd-option` | `data-sd-seg` (buttons only) | Option cards in a wrapping grid: title, description, optional preview. |
+<!-- /doc-table:inputs -->
 
 Option cards are for a choice that needs more than a word: a theme with a
 preview, an audio profile with a sentence about it. Put radios (one choice) or
@@ -1133,6 +1137,7 @@ click.
 
 These classes work with CSS alone once you render their state:
 
+<!-- doc-table:framework-state (generated from docs/tables/framework-state/ by scripts/doc-tables.mjs: add or edit a file there, then run pnpm build:docs; do not edit these rows) -->
 | Class | Render this | Leave out | You handle |
 |---|---|---|---|
 | `sd-seg` | `aria-pressed` on each button | `data-sd-seg` | Clicks; the `change` event is gone. |
@@ -1149,6 +1154,7 @@ These classes work with CSS alone once you render their state:
 | `sd-feed-jump` | `hidden` on the jump bar, the feed's scroll position | `data-sd-follow` | Staying at the newest row, the jump back down. |
 | `sd-combobox`, `sd-tags`, `sd-number`, `sd-command` | `aria-expanded`, `aria-selected`, `hidden` on options, chips, the value | `data-sd-combobox`, `data-sd-tags`, `data-sd-number`, `data-sd-palette` | Filtering, keys, values. |
 | `sd-progress`, `sd-table th[data-sort]`, `data-tone` | `--value`, `aria-sort`, `data-tone` | (none) | Nothing: these have no JS. |
+<!-- /doc-table:framework-state -->
 
 Safe to keep in framework apps, because they write only nodes and attributes
 Signal creates: `toast()`, `hotkeys()`, `data-sd-key`, `data-sd-copy`,

@@ -1,0 +1,4 @@
+order: 390
+row: Chat and feeds
+
+`sd-feed-day`

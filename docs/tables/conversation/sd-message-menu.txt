@@ -1,0 +1,3 @@
+order: 80
+
+| `sd-message-menu`, `sd-add-menu`, `sd-emoji-picker` | The More menu (icon, label, key), the composer's + menu, and the emoji picker (search, categories, grid, a footer naming the emoji). |

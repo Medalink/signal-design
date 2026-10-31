@@ -1,0 +1,4 @@
+order: 300
+row: Status
+
+`sd-level` (live level from `--level`, 0–1)

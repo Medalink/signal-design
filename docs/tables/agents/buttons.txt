@@ -1,0 +1,4 @@
+order: 60
+row: Buttons
+
+`sd-btn` + `sd-btn-primary` (one per view) / `sd-btn-ghost` / `sd-btn-link`, sizes `-sm` `-lg` `-icon` `-block`

@@ -1,0 +1,4 @@
+order: 310
+row: Group welcome
+
+`sd-welcome` (+ `-head`, `-name`, `-count`, `-rules`, `-labels`): a frameless block for the conversation area or an `sd-dialog-body`: `sd-rail-tile` tile, name and mono member count, caps `sd-label` over numbered rules, caps label over `sd-chip` toggles (`aria-pressed`, check `svg` shows when pressed, success tone), one `sd-btn-primary sd-btn-block`

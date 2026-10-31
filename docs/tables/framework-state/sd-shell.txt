@@ -1,0 +1,3 @@
+order: 30
+
+| `sd-shell` | `data-sidebar="collapsed"`, `data-aside="open"`, `data-drawer`, `data-peek`, `--shell-sidebar` | `data-sd-shell`, `data-sd-section` | Toggles, Escape, `inert` on `.sd-shell-main` while the drawer is open, focus. |

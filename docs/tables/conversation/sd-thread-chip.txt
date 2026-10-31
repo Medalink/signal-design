@@ -1,0 +1,3 @@
+order: 280
+
+| `sd-thread-chip` | The summary under a root message: up to three avatars in `sd-avatar-stack`, a `<b>` count ("4 replies") and a mono `<time>` of the last reply. A `<button>`: `aria-expanded` and `aria-controls` while its thread panel is open; the root row takes `aria-current`. React: `ThreadChip` (`participants`, `label`, `time`, `dateTime`, `open`, `controls`; the words are props). |

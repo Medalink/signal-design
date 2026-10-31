@@ -1,0 +1,4 @@
+order: 350
+row: Chat and feeds
+
+`sd-message` (time column, inline `sd-message-author` and an `sd-badge` after it for Agent; `--who` name color, `--edge` role color, `data-grouped`, `data-own`, `data-reply` + `sd-message-ref`, `data-editing`, `data-selected`)

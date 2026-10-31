@@ -1,0 +1,4 @@
+order: 600
+row: Chat and feeds
+
+`sd-event-card` (an event in a message: `-head`, `-title`, `-line`, `-who` with `sd-avatar-stack` and `-count`, `-rsvp` buttons with `aria-pressed` for the viewer's answer in success, `-add`; React `EventCard`)

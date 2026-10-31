@@ -1,0 +1,3 @@
+order: 330
+
+| `sd-event-card` (+ `-head`, `-title`, `-line`, `-who`, `-count`, `-rsvp`, `-add`) | An event posted in a message: a caps head with the calendar icon, the title, a when line and a where line (icons `calendar`, `place`), who is coming (`sd-avatar-stack` and a mono `-count` such as "5 going · 2 maybe"), three answer buttons in `-rsvp` and a link-style `-add` ("Add to calendar"). `aria-pressed="true"` marks the viewer's answer: success, with a check icon in its text, because success is your position. The app writes the state. React: `EventCard` (`label`, `title`, `when`, `where`, `going`, `count`, `answers`, `answer`, `onAnswerChange`, `answerLabel`, `calendarLabel`, `calendarHref`, `onCalendar`; the words are props). |
