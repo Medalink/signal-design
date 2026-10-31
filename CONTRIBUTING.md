@@ -28,7 +28,9 @@ change. The flow releases that version as it is. No release branch is made.
 | `CHANGELOG.md` | Add `changes/<name>.md` with a `### Added` / `Changed` / `Fixed` / `Removed` heading and bullets. See `changes/README.md`. |
 | `ai/components.json`, `ai/tokens.json`, `llms-full.txt`, `vscode/html-data.json`, `vscode/css-data.json` | Nothing. The `ai-files` workflow rebuilds them on `main` after every push and commits them as `github-actions[bot]`. |
 
-You can still run `pnpm build:ai` locally to look at the output; drop it before
+`pnpm check:ai` runs that build without writing, and fails on a `data-sd-*` attribute
+missing from the `ATTRIBUTES` table in `scripts/build-ai.mjs`: add a one-line description
+there with the new attribute. You can still run `pnpm build:ai` locally to look at the output; drop it before
 you commit with `git checkout origin/main -- ai vscode llms-full.txt`. Only the
 release commit changes `CHANGELOG.md` and these files.
 
@@ -107,6 +109,7 @@ pnpm score -- --md docs/scorecard.md            # score and rank every block and
 node scripts/check-showcase-build.mjs           # production build under /signal-design/, every page
 node e2e/check.mjs                              # the check CLI on a sample page per rule (after build:css)
 node scripts/changelog.mjs --check              # changelog fragments
+pnpm check:ai                                   # the AI-files build with nothing written (after build:css)
 ```
 
 ## Releasing

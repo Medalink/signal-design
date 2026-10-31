@@ -106,6 +106,7 @@
     "a11y": "node scripts/a11y.mjs",
     "score": "node scripts/score.mjs",
     "build:ai": "node scripts/build-ai.mjs",
+    "check:ai": "node scripts/build-ai.mjs --validate",
     "prepare": "node scripts/build-css.mjs && node scripts/build-js.mjs"
   },
   "devDependencies": {
