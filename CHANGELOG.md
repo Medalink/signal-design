@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 1.4.17 (2026-10-31)
+
+### Added
+- `sd-avatar-grid`: a group chat's avatar, up to four members (one letter or picture each) as one two-by-two square the size of one avatar, for a conversation row and its header. React: `AvatarGrid`.
+
 ## 1.4.16 (2026-10-31)
 
 ### Changed
