@@ -138,7 +138,7 @@ by `title` or `classes`) rather than inventing markup.
 | Settings groups | `sd-panel` (560px), `sd-panel-wide` (1024px), `sd-panel-fluid` (no cap) |
 | Status | `sd-badge`, `sd-status`, `sd-dot`, `sd-count`, `sd-progress` (`data-state="indeterminate"` when the amount is unknown), `sd-checks`, `sd-level` (live level from `--level`, 0–1) |
 | People | `sd-avatar` (`-sm` `-md` `-lg` `-xl`, or `--sd-avatar-size`) with `data-status`; on your own panel set `--sd-ring` to its background so the presence ring matches |
-| Chat and feeds | `sd-message` (time column, inline `sd-message-author` and an `sd-badge` after it for Agent; `--who` name color, `--edge` role color, `data-grouped`, `data-own`, `data-reply` + `sd-message-ref`, `data-editing`, `data-selected`), `sd-message-actions`, `sd-message-menu`, `sd-emoji-picker`, `sd-feed-day`, `sd-event`, `sd-feed-jump`, `sd-composer` (`-add`, `-reply`, `-status`; `sd-add-menu`) in an `sd-shell-dock` (`data-flush`), `data-sd-follow` on the feed (stays at the newest row, runs the jump bar), `data-joined` on `sd-shell-main` (bar, feed and composer as one surface), `sd-reactions`, `sd-roster`, `sd-banner`, `sd-file`, `sd-link-card` (`-hero`, `-compact`, `-type`, `data-blocked`, `aria-busy`) |
+| Chat and feeds | `sd-message` (time column, inline `sd-message-author` and an `sd-badge` after it for Agent; `--who` name color, `--edge` role color, `data-grouped`, `data-own`, `data-reply` + `sd-message-ref`, `data-editing`, `data-selected`), `sd-message-actions`, `sd-message-menu`, `sd-emoji-picker`, `sd-feed-day`, `sd-event`, `sd-feed-jump`, `sd-composer` (`-add`, `-reply`, `-status`; `sd-add-menu`) in an `sd-shell-dock` (`data-flush`), `data-sd-follow` on the feed (stays at the newest row, runs the jump bar), `data-joined` on `sd-shell-main` (bar, feed and composer as one surface), `sd-reactions`, `sd-roster`, `sd-banner`, `sd-file`, `sd-link-card` (`-hero`, `-compact`, `-type`, `data-blocked`, `aria-busy`), `sd-poll` (a decision: `-head`, `data-tone` while it waits, `data-chosen`, `-voters`) |
 | Data | `sd-stat`, `sd-stat-box`, `createChart(canvas, { type })`, `sd-plot`, `sd-heatmap`, `sd-uptime`, `sd-meter`, `sd-timeline` (`--from`/`--to` ranges over one axis), `sd-schedule` (hour roster, `data-status` blocks, mono/spectrum), `sd-flow` (pipeline of stages and jobs on a dot grid, `data-status`, mono/spectrum), `sd-checklist` (named checks with a result and progress, the flow's `data-status`), `sd-weighted` (segments sized by `--weight` toward a goal) |
 | ASCII art | `mountAscii(el, piece)` from `signal-design/ascii` draws an `ascii-magic-art` piece as greys in `sd-ascii`; still until `aria-busy="true"` (`pnpm add ascii-magic-art`); `data-tone` colors the brightest level |
 | Stream overlays (OBS) | `sd-scene` (1920×1080 units in `--sd-u`; `data-full`, `data-clear`) with `sd-scene-copy`, `sd-scene-bar`, `sd-scene-label`, `sd-cam`, `sd-scene-goal`, `sd-credits`, `sd-stream-alert`; `mountStream(scene).alert({ kind, name })` |
@@ -2898,7 +2898,7 @@ No JS needed: the HTML works with the CSS alone.
 
 sd-banner · sd-file · sd-link-card · sd-poll + data-sd-poll · sd-tiles + sd-tile[data-speaking|muted|hand] · sd-grid-picker
 
-Classes: sd-actions, sd-avatar, sd-banner, sd-banner-actions, sd-btn, sd-btn-sm, sd-file, sd-file-body, sd-file-meta, sd-file-name, sd-file-type, sd-grid-picker, sd-link-card, sd-link-card-desc, sd-link-card-site, sd-link-card-thumb, sd-link-card-title, sd-poll, sd-poll-meta, sd-poll-option, sd-poll-q, sd-popover, sd-popover-pad, sd-progress, sd-tile, sd-tile-name, sd-tiles
+Classes: sd-actions, sd-avatar, sd-banner, sd-banner-actions, sd-btn, sd-btn-sm, sd-file, sd-file-body, sd-file-meta, sd-file-name, sd-file-type, sd-grid-picker, sd-link-card, sd-link-card-desc, sd-link-card-site, sd-link-card-thumb, sd-link-card-title, sd-poll, sd-poll-foot, sd-poll-meta, sd-poll-option, sd-poll-q, sd-popover, sd-popover-pad, sd-progress, sd-tile, sd-tile-name, sd-tiles
 
 JS: init() from signal-design/js wires data-sd-poll · popovertarget (placement, menu keys).
 
@@ -2918,7 +2918,7 @@ JS: init() from signal-design/js wires data-sd-poll · popovertarget (placement,
     <button class="sd-poll-option" style="--share:62" aria-pressed="true">Three short steps <span>62%</span></button>
     <button class="sd-poll-option" style="--share:25" aria-pressed="false">One long page <span>25%</span></button>
     <button class="sd-poll-option" style="--share:13" aria-pressed="false">Skip it <span>13%</span></button>
-    <span class="sd-poll-meta">8 votes · closes in 2 days</span>
+    <div class="sd-poll-foot"><span class="sd-poll-meta">8 votes · closes in 2 days</span><span class="sd-poll-meta">Votes are public</span></div>
   </div>
 </div>
 
@@ -2932,6 +2932,37 @@ JS: init() from signal-design/js wires data-sd-poll · popovertarget (placement,
 <div class="sd-actions"><button class="sd-btn" popovertarget="demo-emoji">Grid picker</button></div>
 
 <div popover="" id="demo-emoji" class="sd-popover sd-popover-pad"><div class="sd-grid-picker" role="listbox" aria-label="Emoji" style="--cols:6"><button role="option">👍</button><button role="option">👀</button><button role="option">🎉</button><button role="option">✅</button><button role="option">❤️</button><button role="option">🔥</button><button role="option">😂</button><button role="option">🙏</button><button role="option">🚀</button><button role="option">🤔</button><button role="option">👏</button><button role="option">💯</button></div></div>
+```
+
+## Conversation / Decisions
+
+sd-poll + data-tone (lights the edge while it waits) · sd-poll-head (state badge, time) · options with no --share · data-chosen + a check icon labelled for screen readers · sd-poll-voters > b + --who · disabled once decided or closed · sd-poll-foot for a meta row under the options
+
+Classes: sd-badge, sd-icon, sd-poll, sd-poll-head, sd-poll-meta, sd-poll-option, sd-poll-q, sd-poll-voters
+
+JS: init() from signal-design/js wires data-sd-poll.
+
+```html
+<div class="grid gap-4 sm:grid-cols-2 items-start">
+  <div class="sd-poll" data-sd-poll="" data-tone="pending">
+    <div class="sd-poll-head"><span class="sd-badge" data-tone="pending">Waiting on you</span><span class="sd-poll-meta">Closes in 9 min</span></div>
+    <p class="sd-poll-q">Publish the March newsletter to every subscriber?</p>
+    <button class="sd-poll-option" aria-pressed="false"><span>Approve</span><span>0</span></button>
+    <button class="sd-poll-option" aria-pressed="false"><span>Deny</span><span>0</span></button>
+  </div>
+  <div class="sd-poll" data-sd-poll="" data-tone="extra">
+    <div class="sd-poll-head"><span class="sd-badge" data-tone="extra">Waiting on Jane</span><span class="sd-poll-meta">Closes in 2 hr</span></div>
+    <p class="sd-poll-q">Archive the inactive projects?</p>
+    <button class="sd-poll-option" aria-pressed="false"><span>Archive</span><span>0</span></button>
+    <button class="sd-poll-option" aria-pressed="true"><span>Keep<span class="sd-poll-voters"><b style="--who: var(--sd-extra)">Alex</b></span></span><span>1</span></button>
+  </div>
+  <div class="sd-poll">
+    <div class="sd-poll-head"><span class="sd-badge" data-tone="neutral">Jane chose Deny</span></div>
+    <p class="sd-poll-q">Send the renewal reminders tonight?</p>
+    <button class="sd-poll-option" aria-pressed="false" disabled=""><span>Approve<span class="sd-poll-voters"><b style="--who: var(--sd-warning)">Sam</b>, <b style="--who: var(--sd-accent)">Taylor</b></span></span><span>2</span></button>
+    <button class="sd-poll-option" aria-pressed="false" data-chosen="" disabled=""><span>Deny<svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" role="img" aria-label="Chosen"><path d="M4.5 12.5l5 5 10-11"></path></svg><span class="sd-poll-voters"><b style="--who: var(--sd-success)">Jane</b></span></span><span>1</span></button>
+  </div>
+</div>
 ```
 
 ## Conversation / Link cards
