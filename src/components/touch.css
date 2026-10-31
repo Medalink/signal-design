@@ -5,10 +5,12 @@
  * line. Left out: checkboxes, radios and switches (their label is the
  * target), and parts whose size is the data (a schedule block, a mark,
  * a gutter marker), a hairline (a resize handle), and window controls, which
- * fill a title bar of fixed height.
+ * fill a title bar of fixed height. An icon-only button is a small square
+ * the finger must find alone, so it reaches --sd-hit (44px) both ways.
  */
 :root {
   --sd-touch: 40px;
+  --sd-hit: 44px;
 }
 
 @layer components {
@@ -27,6 +29,24 @@
       [role="treeitem"]
     ):not(:where(.sd-mark, .sd-gutter-marker, .sd-schedule-block, .sd-sidebar-resize, .sd-resize-handle, .sd-skip, .sd-window-controls > button, [role="switch"])) {
       min-height: var(--sd-touch);
+    }
+    /* An icon-only button: 44 by 44, its icon centered. min-width wins over the
+       width a size modifier sets. The button prefix matches the specificity of
+       the min-height rule above. */
+    button:is(.sd-icon-btn, .sd-btn-icon, .sd-voice-speed) {
+      min-width: var(--sd-hit);
+      min-height: var(--sd-hit);
+    }
+    /* A chip's dismiss sits inside the chip, so its hit area reaches past the
+       glyph with a transparent box and the chip keeps its size. */
+    .sd-chip > button {
+      position: relative;
+    }
+    .sd-chip > button::after {
+      content: "";
+      position: absolute;
+      inset-block: min(0px, calc((100% - var(--sd-hit)) / 2));
+      inset-inline: min(0px, calc((100% - var(--sd-hit)) / 2));
     }
     /* A square button stays square. */
     .sd-message-actions > button {

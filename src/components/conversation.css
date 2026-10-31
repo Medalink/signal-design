@@ -1547,6 +1547,12 @@
     min-width: 34px;
     margin-inline-start: 6px;
   }
+  /* The doubled class matches the specificity of the row's width rules above. */
+  @media (pointer: coarse) {
+    .sd-composer-row > .sd-btn-icon.sd-btn-icon {
+      min-width: var(--sd-hit);
+    }
+  }
   .sd-composer-row > :is(.sd-composer-discard, .sd-composer-rec) {
     display: none;
   }
