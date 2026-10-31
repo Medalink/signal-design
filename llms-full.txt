@@ -137,7 +137,7 @@ by `title` or `classes`) rather than inventing markup.
 | Forms | `sd-field` > `sd-field-label` + control + `sd-field-hint`; inputs are styled unclassed |
 | Choices | `sd-seg` (segmented; `sd-seg-wrap` in a narrow container), `sd-options` > `sd-option` (cards with a description or preview), `role="switch"` checkbox, `sd-combobox`, `sd-tags`, `sd-number` |
 | Overlays | `<dialog class="sd-dialog">` + `data-sd-open`; `popover` + `.sd-popover`; `data-sd-tip`; `toast()` |
-| Lists and rows | `sd-item`, `sd-row`, `sd-table`, `sd-kv` (`sd-kv-plain` for sentence-case, truncating keys) |
+| Lists and rows | `sd-item`, `sd-item-row` (a box around an `sd-item` link and an `sd-item-actions` cell with a trailing button such as Mark read or Remove; hover, focus and `aria-current` cover both), `sd-row`, `sd-table`, `sd-kv` (`sd-kv-plain` for sentence-case, truncating keys) |
 | Settings groups | `sd-panel` (560px), `sd-panel-wide` (1024px), `sd-panel-fluid` (no cap) |
 | Profile card | `sd-profile` (a person's card in an `sd-hovercard` or `sd-dialog-body`, no frame of its own: `-head` with `sd-avatar-xl`, `-name` in `--who`, `-status`; `-section` + `-label` over `-about` or `-groups`; `-actions` for Message and Call) |
 | Status | `sd-badge`, `sd-status`, `sd-dot`, `sd-count`, `sd-progress` (`data-state="indeterminate"` when the amount is unknown), `sd-checks`, `sd-level` (live level from `--level`, 0–1) |
@@ -3176,6 +3176,28 @@ JS: init() from signal-design/js wires role="tab".
       <a class="sd-item" href="#conversation"><span class="sd-item-mark" aria-hidden="true">🔥</span><span class="sd-item-body"><span class="sd-item-title"><b class="sd-message-author" style="--who: var(--sd-warning)">Kai</b>and 3 others reacted</span><span class="sd-item-sub">Pine Pals › #general</span></span><span class="sd-item-end"><time>1h</time></span></a>
     </div>
 </section>
+```
+
+## Conversation / Row actions
+
+sd-item-row = a box around the sd-item link and an sd-item-actions cell, as siblings, because a link cannot hold a button · the box carries hover, keyboard focus and aria-current (set on the link) for both · the cell shows on hover and keyboard focus, always on touch (hover: none), and Tab reaches the link, then the action · the cell keeps its width on every row, empty when a row has nothing to do (the read row above), so the time column holds and long text ends before the button
+
+Classes: sd-activity, sd-icon, sd-icon-btn, sd-item, sd-item-actions, sd-item-body, sd-item-end, sd-item-mark, sd-item-row, sd-item-sub, sd-item-title, sd-message-author, sd-sr-only
+
+JS: init() from signal-design/js wires data-sd-tip.
+
+```html
+<div class="flex flex-wrap gap-6">
+  <section class="sd-activity border border-line max-w-[26rem] w-full" style="background: var(--sd-surface)" aria-label="Inbox">
+    <div class="sd-item-row"><a class="sd-item" href="#conversation" data-unread=""><span class="sd-item-mark" aria-hidden="true">@</span><span class="sd-item-body"><span class="sd-item-title"><span class="sd-sr-only">Unread: </span><b class="sd-message-author" style="--who: var(--sd-accent)">Maya</b>mentioned you in a thread with a very long title that has to end before the button</span><span class="sd-item-sub">Weekend Crew › #general</span></span><span class="sd-item-end"><time>2m</time></span></a><div class="sd-item-actions"><button class="sd-icon-btn" type="button" aria-label="Mark read" data-sd-tip="Mark read"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"></path></svg></button></div></div>
+    <div class="sd-item-row"><a class="sd-item" href="#conversation" data-unread=""><span class="sd-item-mark" aria-hidden="true"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M10 4.5L4.5 10l5.5 5.5M4.5 10h15v9.5"></path></svg></span><span class="sd-item-body"><span class="sd-item-title"><span class="sd-sr-only">Unread: </span><b class="sd-message-author" style="--who: var(--sd-success)">Leo</b>replied to you</span><span class="sd-item-sub">Weekend Crew › #food-recs</span></span><span class="sd-item-end"><time>40m</time></span></a><div class="sd-item-actions"><button class="sd-icon-btn" type="button" aria-label="Mark read" data-sd-tip="Mark read"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"></path></svg></button></div></div>
+    <div class="sd-item-row"><a class="sd-item" href="#conversation"><span class="sd-item-mark" aria-hidden="true">🔥</span><span class="sd-item-body"><span class="sd-item-title"><b class="sd-message-author" style="--who: var(--sd-warning)">Kai</b>and 3 others reacted</span><span class="sd-item-sub">Pine Pals › #general</span></span><span class="sd-item-end"><time>1h</time></span></a><div class="sd-item-actions"></div></div>
+  </section>
+  <section class="sd-activity border border-line max-w-[26rem] w-full" style="background: var(--sd-surface)" aria-label="Saved">
+    <div class="sd-item-row"><a class="sd-item" href="#conversation"><span class="sd-item-mark" aria-hidden="true"><svg class="sd-icon" data-icon="bookmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M7 4.5h10v15l-5-4-5 4z"></path></svg></span><span class="sd-item-body"><span class="sd-item-title"><b class="sd-message-author" style="--who: var(--sd-accent)">Maya</b>Bring the long tent stakes</span><span class="sd-item-sub">Weekend Crew › #general</span></span><span class="sd-item-end"><time>Oct 29</time></span></a><div class="sd-item-actions"><button class="sd-icon-btn" type="button" aria-label="Remove" data-sd-tip="Remove"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div></div>
+    <div class="sd-item-row"><a class="sd-item" href="#conversation" data-muted=""><span class="sd-item-mark" aria-hidden="true"><svg class="sd-icon" data-icon="bookmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M7 4.5h10v15l-5-4-5 4z"></path></svg></span><span class="sd-item-body"><span class="sd-item-title">This message is gone</span><span class="sd-item-sub">Pine Pals › #general</span></span><span class="sd-item-end"><time>Oct 27</time></span></a><div class="sd-item-actions"><button class="sd-icon-btn" type="button" aria-label="Remove" data-sd-tip="Remove"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div></div>
+  </section>
+</div>
 ```
 
 ## Conversation / Saved with a reminder
