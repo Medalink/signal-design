@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 1.4.20 (2026-10-31)
+
+### Added
+- `sd-voice` (+ `-play`, `-wave`, `-time`, `-speed`): a voice note inside a message, with a square play and pause button, a waveform of thin bars lit up to `--progress`, the time in mono and a speed chip. The app owns the audio. React `VoiceNote` (`peaks`, `duration`, `position`, `playing`, `speed`, `onPlayingChange`, `onSeek`, `onSpeedChange`): click or drag the waveform to seek, arrow keys seek, Space plays.
+
 ## 1.4.19 (2026-10-31)
 
 ### Added
