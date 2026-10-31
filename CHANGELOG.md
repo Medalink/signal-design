@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 1.4.33 (2026-10-31)
+
+### Added
+- React `AckBar`: `showAction={false}` drops the "Got it" button for the
+  announcer, who sees the squares, the n/m count and the `waiting` names only.
+  The default is unchanged.
+
 ## 1.4.32 (2026-10-31)
 
 ### Added
