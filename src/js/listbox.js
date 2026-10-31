@@ -88,7 +88,7 @@ const activeOption = (list) => list.querySelector('[role="option"][data-active]'
 
 /* ---- Command palette ---------------------------------------------------- */
 
-/** Replace a palette's options: [{ label, hint, group, href, keywords, run }]. */
+/** Replace a palette's options: [{ label, hint, leading, group, href, keywords, run }]. `leading` is text or a node shown before the label. */
 export function setOptions(dialog, items) {
   const list = dialog.querySelector('[role="listbox"]');
   list.replaceChildren();
@@ -106,7 +106,13 @@ export function setOptions(dialog, items) {
     el.setAttribute("role", "option");
     if (item.href) el.href = item.href;
     else el.type = "button";
-    el.textContent = item.label;
+    if (item.leading !== undefined) {
+      const lead = document.createElement("span");
+      lead.className = "sd-menu-lead";
+      lead.append(item.leading);
+      el.append(lead);
+    }
+    el.append(item.label);
     if (item.keywords) el.dataset.keywords = item.keywords;
     if (item.hint) {
       const hint = document.createElement("span");

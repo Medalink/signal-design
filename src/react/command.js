@@ -27,6 +27,8 @@ export function CommandPalette({
   busyText = "Loading",
   label = "Search",
   placeholder,
+  icon,
+  kbd,
   listLabel = "Results",
   foot,
   className,
@@ -55,32 +57,38 @@ export function CommandPalette({
   return h(
     Dialog,
     { ...props, open: isOpen, onOpenChange: changeOpen, className: cx("sd-command", className), "aria-label": label },
-    h("input", {
-      type: "text",
-      enterKeyHint: "go",
-      role: "combobox",
-      autoComplete: "off",
-      "aria-label": label,
-      "aria-expanded": true,
-      "aria-controls": `${base}-list`,
-      "aria-autocomplete": "list",
-      "aria-activedescendant": activeId,
-      placeholder,
-      value: text,
-      onChange: (event) => {
-        setText(event.target.value);
-        setActive(null);
-      },
-      onKeyDown: (event) => {
-        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-          event.preventDefault();
-          move(event.key === "ArrowDown" ? 1 : -1);
-        } else if (event.key === "Enter" && activeId) {
-          event.preventDefault();
-          document.getElementById(activeId).click();
-        }
-      },
-    }),
+    h(
+      "div",
+      { className: "sd-command-search" },
+      icon,
+      h("input", {
+        type: "text",
+        enterKeyHint: "go",
+        role: "combobox",
+        autoComplete: "off",
+        "aria-label": label,
+        "aria-expanded": true,
+        "aria-controls": `${base}-list`,
+        "aria-autocomplete": "list",
+        "aria-activedescendant": activeId,
+        placeholder,
+        value: text,
+        onChange: (event) => {
+          setText(event.target.value);
+          setActive(null);
+        },
+        onKeyDown: (event) => {
+          if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+            event.preventDefault();
+            move(event.key === "ArrowDown" ? 1 : -1);
+          } else if (event.key === "Enter" && activeId) {
+            event.preventDefault();
+            document.getElementById(activeId).click();
+          }
+        },
+      }),
+      kbd && h("kbd", { className: "sd-kbd" }, kbd),
+    ),
     h(
       "div",
       {

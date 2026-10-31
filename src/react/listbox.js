@@ -52,7 +52,11 @@ export function Options({ base, matches, active, chosen, emptyText, busy, busyTe
       onClick: (event) => !item.disabled && onPick(item, event),
       onPointerMove: () => !item.disabled && item !== active && onActive(item.value),
     };
-    const content = [item.label, item.hint && h("span", { key: "hint", className: "sd-menu-hint" }, item.hint)];
+    const content = [
+      item.leading && h("span", { key: "leading", className: "sd-menu-lead" }, item.leading),
+      item.label,
+      item.hint && h("span", { key: "hint", className: "sd-menu-hint" }, item.hint),
+    ];
     const option = item.href !== undefined ? h("a", { ...props, href: item.href }, content) : h("button", { ...props, type: "button" }, content);
     return heading ? [heading, option] : [option];
   });

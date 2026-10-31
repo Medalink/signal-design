@@ -6,6 +6,7 @@
       <h2 class="sd-label">Command palette and shortcuts</h2>
       <div class="sd-actions">
         <button class="sd-btn" data-sd-open="demo-palette" data-sd-key="mod+k">Open palette <kbd>Ctrl K</kbd></button>
+        <button class="sd-btn" data-sd-open="demo-switcher">Quick switcher</button>
         <button class="sd-btn" data-sd-open="demo-shortcuts">Shortcuts <kbd>?</kbd></button>
       </div>
       <dialog class="sd-command" id="demo-palette" aria-label="Search" data-sd-palette>
@@ -20,6 +21,18 @@
           <button type="button" role="option" data-sd-toast="Copied link">Copy link</button>
         </div>
         <p class="sd-command-foot">↑↓ move · ↵ open · Esc close</p>
+      </dialog>
+      <dialog class="sd-command" id="demo-switcher" aria-label="Quick switcher">
+        <div class="sd-command-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><path d="M4 4h11v11H4zM15 15l5.5 5.5"/></svg>
+          <input type="text" role="combobox" aria-label="Quick switcher" aria-expanded="true" aria-controls="demo-switcher-list" value="cab" autocomplete="off">
+          <kbd class="sd-kbd">Ctrl K</kbd>
+        </div>
+        <div class="sd-menu sd-command-list" role="listbox" id="demo-switcher-list" aria-label="Results">
+          <button type="button" role="option" aria-selected="true" data-active><span class="sd-menu-lead"><span class="sd-avatar sd-avatar-sm">#</span></span>cabin-trip<span class="sd-menu-hint">Weekend Crew</span></button>
+          <button type="button" role="option"><span class="sd-menu-lead"><span class="sd-avatar sd-avatar-sm">#</span></span>cabins-and-camping<span class="sd-menu-hint">Pine Pals</span></button>
+          <button type="button" role="option"><span class="sd-menu-lead"><span class="sd-avatar sd-avatar-sm" data-tone="extra">C</span></span>Caleb<span class="sd-menu-hint">Direct</span></button>
+        </div>
       </dialog>
       <dialog class="sd-dialog" id="demo-shortcuts" data-sd-shortcuts aria-labelledby="demo-shortcuts-h">
         <header class="sd-dialog-head"><span id="demo-shortcuts-h">Keyboard shortcuts</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">×</button></header>
@@ -37,7 +50,7 @@
           </dl>
         </div>
       </dialog>
-      <p class="demo-usage"><code>dialog.sd-command[data-sd-palette]</code> + <code>setOptions()</code> · <code>dialog[data-sd-shortcuts]</code> opens on <kbd>?</kbd> · <code>sd-shortcuts</code></p>
+      <p class="demo-usage"><code>dialog.sd-command[data-sd-palette]</code> + <code>setOptions()</code> · <code>sd-command-search</code> holds an icon, the input and a <code>kbd</code> · <code>sd-menu-lead</code> before an option's label · <code>dialog[data-sd-shortcuts]</code> opens on <kbd>?</kbd> · <code>sd-shortcuts</code></p>
     </div>
 </body>
 </html>

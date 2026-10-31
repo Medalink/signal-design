@@ -815,6 +815,8 @@ export interface ListItem {
   group?: string | undefined;
   /** Text at the end of the row, such as a shortcut. */
   hint?: string | undefined;
+  /** An element before the label, such as an avatar or a mark. The default filter does not read it. */
+  leading?: ReactNode | undefined;
   /** Renders the option as a link. */
   href?: string | undefined;
   disabled?: boolean | undefined;
@@ -872,6 +874,10 @@ export interface CommandPaletteProps extends Omit<DialogProps, "open" | "default
   /** The palette's name and its search box's. Default "Search". */
   label?: string | undefined;
   placeholder?: string | undefined;
+  /** At the start of the search box, such as `<Icon name="search" />`. */
+  icon?: ReactNode | undefined;
+  /** A key hint at the end of the search box, such as "Ctrl K". */
+  kbd?: ReactNode | undefined;
   /** The list's accessible name. Default "Results". */
   listLabel?: string | undefined;
   /** A line under the list, such as the keys. */

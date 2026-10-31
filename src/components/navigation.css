@@ -257,8 +257,17 @@
     opacity: 0.4;
     pointer-events: none;
   }
-  .sd-menu :where([data-tone]) {
+  .sd-menu :where([data-tone]:not(.sd-avatar)) {
     color: var(--tone);
+  }
+  .sd-menu-lead {
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    min-width: 22px;
+    height: 22px;
+    color: var(--sd-fg-muted);
+    font-size: var(--text-sm);
   }
   .sd-menu-hint {
     margin-inline-start: auto;

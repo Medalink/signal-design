@@ -181,6 +181,36 @@
     font-weight: 400;
     color: var(--sd-fg);
   }
+  /*
+   * The search field of a palette: the input with an optional icon at the
+   * start and a key hint at the end.
+   *   <div class="sd-command-search"><svg/><input type="text"><kbd class="sd-kbd">Ctrl K</kbd></div>
+   */
+  .sd-command-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .sd-command-search > svg {
+    position: absolute;
+    inset-inline-start: 10px;
+    width: 15px;
+    height: 15px;
+    color: var(--sd-fg-faint);
+    pointer-events: none;
+  }
+  .sd-command-search > input:not(:first-child) {
+    padding-inline-start: 34px;
+  }
+  .sd-command-search > .sd-kbd {
+    position: absolute;
+    inset-inline-end: 7px;
+    line-height: 18px;
+    pointer-events: none;
+  }
+  .sd-command-search > input:not(:last-child) {
+    padding-inline-end: 72px;
+  }
   .sd-command-foot {
     margin-block-start: 10px;
     font-size: var(--text-2xs);

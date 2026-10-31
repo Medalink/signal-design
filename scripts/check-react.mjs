@@ -166,7 +166,7 @@ export function Consumer() {
       <MenuRadioGroup label="Spacing" defaultValue="a"><MenuItemRadio value="a" onSelect={(event) => event.preventDefault()}>A</MenuItemRadio></MenuRadioGroup>
       <MenuItemCheckbox checked onCheckedChange={(checked) => console.log(checked)}>Words</MenuItemCheckbox>
       <Combobox items={[{ value: "a", label: "A", group: "G", hint: "h" } satisfies ListItem]} value="a" onValueChange={(value) => value.length} filter={(item, query) => item.label.startsWith(query)} name="who" placeholder="Pick" />
-      <CommandPalette items={[{ value: "go", label: "Go", href: "/go" }]} open={open} onOpenChange={setOpen} onSelect={(item, event) => { event.preventDefault(); console.log(item.value); }} onQueryChange={(query) => query.length} />
+      <CommandPalette items={[{ value: "go", label: "Go", href: "/go", leading: <Icon name="search" /> }]} icon={<Icon name="search" />} kbd="Ctrl K" open={open} onOpenChange={setOpen} onSelect={(item, event) => { event.preventDefault(); console.log(item.value); }} onQueryChange={(query) => query.length} />
       <Mark kind="comment" active onClick={(event) => event.currentTarget.focus()}>Comment</Mark>
       <Spoiler defaultOpen onOpenChange={(next) => next} label="Hidden">text</Spoiler>
       <StatusSegment tone="success" pressed onClick={(event) => event.currentTarget.blur()}>Saved</StatusSegment>
@@ -346,7 +346,7 @@ export async function checkReactSsr() {
             h(sd.MenuContent, { label: "View" }, h(sd.MenuItemCheckbox, { checked: true }, "Words"),
               h(sd.MenuRadioGroup, { label: "Spacing", defaultValue: "a" }, h(sd.MenuItemRadio, { value: "a" }, "A"), h(sd.MenuItemRadio, { value: "b" }, "B")))),
           h(sd.Field, { label: "Who" }, h(sd.Combobox, { items: [{ value: "a", label: "Ada", group: "G" }, { value: "b", label: "Bo", disabled: true }], defaultValue: "a", name: "who", placeholder: "Pick" })),
-          h(sd.CommandPalette, { items: [{ value: "go", label: "Go", hint: "g" }], foot: "Esc" }),
+          h(sd.CommandPalette, { items: [{ value: "go", label: "Go", hint: "g", leading: h("span", { className: "sd-avatar sd-avatar-sm" }, "G") }], icon: h(sd.Icon, { name: "search" }), kbd: "Ctrl K", foot: "Esc" }),
           h(sd.Tree, { label: "Outline", defaultSelected: "b", defaultExpanded: ["a"], onMove() {} },
             h(sd.TreeItem, { id: "a", label: "A", meta: 2 }, h(sd.TreeItem, { id: "b", label: "B" }), h(sd.TreeItem, { id: "c", label: "C", disabled: true }))))),
       h(sd.ShellDock, null, "dock"),
