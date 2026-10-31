@@ -26,5 +26,42 @@
       </div>
       <p class="demo-usage"><code>sd-rail-tile</code> (<code>a</code>, <code>button</code>, or a <code>span</code> for a tile that is not a control) with an <code>img</code>, initials or an <code>svg</code> · <code>aria-current</code> · <code>data-unread</code> · <code>data-pending</code> · <code>sd-badge-count</code> + <code>data-corner</code> · <code>--tile</code> (48px) · <code>--shell-rail: 4.5rem</code></p>
     </div>
+    <div class="demo-block" id="effects-group-welcome">
+      <h2 class="sd-label">Group welcome</h2>
+      <div class="sd-actions"><button class="sd-btn" data-sd-open="demo-welcome">Welcome in a dialog</button></div>
+      <div class="p-6 border border-line">
+        <section class="sd-welcome" aria-labelledby="welcome-name-a">
+          <header class="sd-welcome-head">
+            <span class="sd-rail-tile" role="img" aria-label="Weekend Crew">WC</span>
+            <div><h2 class="sd-welcome-name" id="welcome-name-a">Weekend Crew</h2><p class="sd-welcome-count">12 members</p></div>
+          </header>
+          <h3 class="sd-label">Rules</h3>
+          <ol class="sd-welcome-rules"><li>Be kind.</li><li>No selling.</li><li>Plans go in #plans.</li></ol>
+          <h3 class="sd-label" id="welcome-labels-a">Your labels</h3>
+          <div class="sd-welcome-labels" role="group" aria-labelledby="welcome-labels-a">
+            <button class="sd-chip" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>Hiker</button><button class="sd-chip" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>Foodie</button><button class="sd-chip" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>Gamer</button><button class="sd-chip" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>Night owl</button>
+          </div>
+          <button class="sd-btn sd-btn-primary sd-btn-block">Agree and enter</button>
+        </section>
+      </div>
+      <dialog class="sd-dialog sd-dialog-sm" id="demo-welcome" aria-label="Welcome">
+        <div class="sd-dialog-body">
+        <section class="sd-welcome" aria-labelledby="welcome-name-b">
+          <header class="sd-welcome-head">
+            <span class="sd-rail-tile" role="img" aria-label="Weekend Crew">WC</span>
+            <div><h2 class="sd-welcome-name" id="welcome-name-b">Weekend Crew</h2><p class="sd-welcome-count">12 members</p></div>
+          </header>
+          <h3 class="sd-label">Rules</h3>
+          <ol class="sd-welcome-rules"><li>Be kind.</li><li>No selling.</li><li>Plans go in #plans.</li></ol>
+          <h3 class="sd-label" id="welcome-labels-b">Your labels</h3>
+          <div class="sd-welcome-labels" role="group" aria-labelledby="welcome-labels-b">
+            <button class="sd-chip" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>Hiker</button><button class="sd-chip" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>Foodie</button><button class="sd-chip" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>Gamer</button><button class="sd-chip" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>Night owl</button>
+          </div>
+          <button class="sd-btn sd-btn-primary sd-btn-block">Agree and enter</button>
+        </section>
+        </div>
+      </dialog>
+      <p class="demo-usage">What a new member sees once on entering a group: the group tile (<code>sd-rail-tile</code>, initials or picture), name and a mono member count, a caps <code>sd-label</code> over a numbered <code>sd-welcome-rules</code>, a caps label over <code>sd-welcome-labels</code> of <code>sd-chip</code> toggles (<code>aria-pressed</code>; a picked one is success with its check), and one primary button. The block has no frame, so it fills the conversation area or sits in a <code>sd-dialog-body</code> · <code>sd-welcome</code> + <code>-head|-name|-count|-rules|-labels</code></p>
+    </div>
 </body>
 </html>

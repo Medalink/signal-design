@@ -452,6 +452,33 @@ the square; the edge follows `--shell-rail`. `sd-rail-item > .sd-avatar` still
 fits a single avatar in a 96px icon-and-label rail; a tile is for rails that
 are mostly places.
 
+### Group welcome
+
+What a new member sees once on entering a group. `sd-welcome` has no frame, so
+it fills the conversation area or sits in an `sd-dialog-body`.
+
+```html
+<section class="sd-welcome" aria-labelledby="w-name">
+  <header class="sd-welcome-head">
+    <span class="sd-rail-tile" role="img" aria-label="Weekend Crew">WC</span>
+    <div><h2 class="sd-welcome-name" id="w-name">Weekend Crew</h2><p class="sd-welcome-count">12 members</p></div>
+  </header>
+  <h3 class="sd-label">Rules</h3>
+  <ol class="sd-welcome-rules"><li>Be kind.</li><li>No selling.</li></ol>
+  <h3 class="sd-label" id="w-labels">Your labels</h3>
+  <div class="sd-welcome-labels" role="group" aria-labelledby="w-labels">
+    <button class="sd-chip" aria-pressed="true"><svg>…</svg>Hiker</button>
+    <button class="sd-chip" aria-pressed="false"><svg>…</svg>Gamer</button>
+  </div>
+  <button class="sd-btn sd-btn-primary sd-btn-block">Agree and enter</button>
+</section>
+```
+
+The tile is an `sd-rail-tile` (initials or an `img`). Rules are numbered in
+mono, faint. A label chip is `sd-chip` with `aria-pressed`; its `svg` check shows
+only while it is pressed, and a pressed chip takes the success tone (a position
+you hold). The app keeps the state and the "seen once" flag.
+
 ### Title bar and window controls
 
 For frameless desktop windows (Tauri with `decorations: false`). Put it first in

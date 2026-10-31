@@ -281,6 +281,101 @@
     height: calc(var(--tile) - 8px);
   }
 
+  /*
+   * Welcome: what a new member sees once on entering a group. A block with no
+   * frame of its own, so it fills the conversation area or sits in a
+   * dialog body: the group tile, name and member count, the rules, interest
+   * labels as toggle chips (a picked one is success and shows a check) and one
+   * primary button.
+   *   <section class="sd-welcome" aria-labelledby="w-name">
+   *     <header class="sd-welcome-head">
+   *       <span class="sd-rail-tile" role="img" aria-label="Weekend Crew">WC</span>
+   *       <div><h2 class="sd-welcome-name" id="w-name">Weekend Crew</h2><p class="sd-welcome-count">12 members</p></div>
+   *     </header>
+   *     <h3 class="sd-label">Rules</h3>
+   *     <ol class="sd-welcome-rules"><li>Be kind.</li>…</ol>
+   *     <h3 class="sd-label" id="w-labels">Your labels</h3>
+   *     <div class="sd-welcome-labels" role="group" aria-labelledby="w-labels">
+   *       <button class="sd-chip" aria-pressed="true"><svg/>Hiker</button>…
+   *     </div>
+   *     <button class="sd-btn sd-btn-primary sd-btn-block">Agree and enter</button>
+   *   </section>
+   */
+  .sd-welcome {
+    display: grid;
+    gap: 6px;
+    width: 100%;
+    max-width: 30rem;
+    margin-inline: auto;
+  }
+  .sd-welcome-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+  .sd-welcome-head > .sd-rail-tile {
+    --tile: 56px;
+    margin: 0;
+  }
+  .sd-welcome-name,
+  .sd-welcome-count {
+    margin: 0;
+  }
+  .sd-welcome-name {
+    font-size: var(--text-lg);
+    font-weight: 400;
+    letter-spacing: var(--tracking-tight);
+    color: var(--sd-fg);
+  }
+  .sd-welcome-count {
+    font-family: var(--sd-font-mono);
+    font-size: var(--text-sm);
+    color: var(--sd-fg-faint);
+  }
+  .sd-welcome > .sd-label {
+    margin: 12px 0 0;
+  }
+  .sd-welcome-rules {
+    display: grid;
+    gap: 4px;
+    margin: 0;
+    padding-inline-start: 24px;
+    color: var(--sd-fg);
+  }
+  .sd-welcome-rules > li {
+    padding-inline-start: 10px;
+  }
+  .sd-welcome-rules > li::marker {
+    content: counter(list-item);
+    color: var(--sd-fg-faint);
+    font-family: var(--sd-font-mono);
+    font-size: var(--text-sm);
+  }
+  .sd-welcome-labels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .sd-welcome-labels > .sd-chip {
+    gap: 6px;
+  }
+  .sd-welcome-labels > .sd-chip > svg {
+    display: none;
+    width: 12px;
+    height: 12px;
+  }
+  .sd-welcome-labels > .sd-chip[aria-pressed="true"] {
+    border-color: var(--sd-success);
+    color: var(--sd-success);
+  }
+  .sd-welcome-labels > .sd-chip[aria-pressed="true"] > svg {
+    display: block;
+  }
+  .sd-welcome > .sd-btn:last-child {
+    margin-top: 12px;
+  }
+
   /* ---- Sidebar ---------------------------------------------------- */
 
   .sd-sidebar {
