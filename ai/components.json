@@ -1577,6 +1577,42 @@
    "html": "<div class=\"border border-line\" style=\"width: 18rem; max-width: 100%; max-height: 22rem; overflow-y: auto; --sd-ring: var(--sd-surface); background: var(--sd-surface)\">\n  <div class=\"sd-roster\">\n    <section class=\"sd-roster-group\">\n      <h3 class=\"sd-roster-head\"><button aria-expanded=\"true\"><span class=\"sd-roster-label\">Admins</span><span class=\"sd-roster-count\"><b>1</b> / 2</span><svg viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"square\"><path d=\"M4 6l4 4 4-4\"></path></svg></button></h3>\n      <ul>\n        <li><button class=\"sd-roster-row\" data-presence=\"online\" style=\"--who: var(--sd-extra)\"><span class=\"sd-roster-avatar\"><span class=\"sd-avatar sd-avatar-sm\" data-tone=\"extra\">AL</span></span><span class=\"sd-roster-name\">Alex</span></button></li>\n        <li><button class=\"sd-roster-row\" data-presence=\"offline\"><span class=\"sd-roster-avatar\"><span class=\"sd-avatar sd-avatar-sm\" data-tone=\"accent\">TP</span></span><span class=\"sd-roster-name\">Taylor</span></button></li>\n      </ul>\n    </section>\n    <section class=\"sd-roster-group\">\n      <h3 class=\"sd-roster-head\"><button aria-expanded=\"true\"><span class=\"sd-roster-label\">Members</span><span class=\"sd-roster-count\"><b>212</b> / 788</span><svg viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"square\"><path d=\"M4 6l4 4 4-4\"></path></svg></button></h3>\n      <ul>\n        <li><button class=\"sd-roster-row\" data-presence=\"online\" style=\"--who: var(--sd-success)\"><span class=\"sd-roster-avatar\"><span class=\"sd-avatar sd-avatar-sm\" data-tone=\"success\">JD</span></span><span class=\"sd-roster-name\">Jane</span></button></li>\n        <li><button class=\"sd-roster-row\" data-presence=\"online\" style=\"--who: var(--sd-warning)\"><span class=\"sd-roster-avatar\"><span class=\"sd-avatar sd-avatar-sm\" data-tone=\"warning\">SK</span></span><span class=\"sd-roster-name\">Sam</span></button></li>\n        <li><button class=\"sd-roster-row\" data-presence=\"online\" style=\"--who: var(--sd-pending)\"><span class=\"sd-roster-avatar\"><span class=\"sd-avatar sd-avatar-sm\" data-tone=\"pending\">SC</span></span><span class=\"sd-roster-name\">Scout</span><span class=\"sd-badge\">Agent</span></button></li>\n        <li><button class=\"sd-roster-row\" data-presence=\"unresolved\"><span class=\"sd-roster-avatar\" data-unresolved=\"\">7f</span><span class=\"sd-roster-name\">7f3a…c21e</span></button></li>\n      </ul>\n      <button class=\"sd-roster-more\">Show 25 more<span>785 hidden</span></button>\n    </section>\n    <section class=\"sd-roster-group\">\n      <h3 class=\"sd-roster-head\"><button aria-expanded=\"false\"><span class=\"sd-roster-label\">Guests</span><span class=\"sd-roster-count\"><b>3</b> / 40</span><svg viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"square\"><path d=\"M4 6l4 4 4-4\"></path></svg></button></h3>\n    </section>\n  </div>\n</div>"
   },
   {
+   "id": "conversation-profile-card",
+   "section": "Conversation",
+   "title": "Profile card",
+   "classes": [
+    "sd-avatar",
+    "sd-avatar-sm",
+    "sd-avatar-xl",
+    "sd-btn",
+    "sd-btn-ghost",
+    "sd-btn-icon",
+    "sd-btn-primary",
+    "sd-btn-sm",
+    "sd-dialog",
+    "sd-dialog-body",
+    "sd-dialog-head",
+    "sd-dialog-sm",
+    "sd-hovercard",
+    "sd-profile",
+    "sd-profile-about",
+    "sd-profile-actions",
+    "sd-profile-groups",
+    "sd-profile-head",
+    "sd-profile-label",
+    "sd-profile-name",
+    "sd-profile-section",
+    "sd-profile-status"
+   ],
+   "attributes": [
+    "data-sd-close",
+    "data-sd-open"
+   ],
+   "usage": "sd-profile has no frame: it sits in an sd-hovercard (React HoverCard content) or an sd-dialog-body · -head (sd-avatar-xl, -name in the person's --who, -status emoji then text) · -section + -label (caps) over -about (plain text, wraps) or -groups (sd-avatar-sm + name) · -actions (Message primary, Call) · leave out a section that has nothing in it",
+   "js": "JS: init() from signal-design/js wires data-sd-open · data-sd-close.",
+   "html": "<div class=\"grid gap-6 sm:grid-cols-2 items-start\">\n  <div class=\"sd-hovercard\" role=\"group\" aria-label=\"Maya\" style=\"position: static; animation: none\">\n    <div class=\"sd-profile\" style=\"--who: var(--sd-extra)\">\n      <header class=\"sd-profile-head\">\n        <span class=\"sd-avatar sd-avatar-xl\" data-tone=\"extra\">MA</span>\n        <div><h3 class=\"sd-profile-name\">Maya</h3><p class=\"sd-profile-status\"><span aria-hidden=\"true\">🌮</span> planning brunch</p></div>\n      </header>\n      <section class=\"sd-profile-section\">\n        <h4 class=\"sd-profile-label\">About</h4>\n        <p class=\"sd-profile-about\">Climber, bad cook, good eater. Ask me about Thai food.</p>\n      </section>\n      <section class=\"sd-profile-section\">\n        <h4 class=\"sd-profile-label\">Groups you share</h4>\n        <ul class=\"sd-profile-groups\">\n          <li><span class=\"sd-avatar sd-avatar-sm\">WC</span><span>Weekend Crew</span></li>\n          <li><span class=\"sd-avatar sd-avatar-sm\">TC</span><span>Town Council</span></li>\n        </ul>\n      </section>\n      <div class=\"sd-profile-actions\"><button class=\"sd-btn sd-btn-primary sd-btn-sm\">Message</button><button class=\"sd-btn sd-btn-sm\">Call</button></div>\n    </div>\n  </div>\n  <div class=\"grid gap-3 content-start\">\n    <button class=\"sd-btn\" data-sd-open=\"demo-profile\">Open profile dialog</button>\n    <dialog class=\"sd-dialog sd-dialog-sm\" id=\"demo-profile\" aria-labelledby=\"demo-profile-h\">\n      <header class=\"sd-dialog-head\"><span id=\"demo-profile-h\">Profile</span><button class=\"sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost\" data-sd-close=\"\" aria-label=\"Close\">×</button></header>\n      <div class=\"sd-dialog-body\">\n        <div class=\"sd-profile\" style=\"--who: var(--sd-extra)\">\n          <header class=\"sd-profile-head\">\n            <span class=\"sd-avatar sd-avatar-xl\" data-tone=\"extra\">MA</span>\n            <div><h3 class=\"sd-profile-name\">Maya</h3><p class=\"sd-profile-status\"><span aria-hidden=\"true\">🌮</span> planning brunch</p></div>\n          </header>\n          <section class=\"sd-profile-section\">\n            <h4 class=\"sd-profile-label\">About</h4>\n            <p class=\"sd-profile-about\">Climber, bad cook, good eater. Ask me about Thai food.</p>\n          </section>\n          <section class=\"sd-profile-section\">\n            <h4 class=\"sd-profile-label\">Groups you share</h4>\n            <ul class=\"sd-profile-groups\">\n              <li><span class=\"sd-avatar sd-avatar-sm\">WC</span><span>Weekend Crew</span></li>\n              <li><span class=\"sd-avatar sd-avatar-sm\">TC</span><span>Town Council</span></li>\n            </ul>\n          </section>\n          <div class=\"sd-profile-actions\"><button class=\"sd-btn sd-btn-primary\">Message</button><button class=\"sd-btn\">Call</button></div>\n        </div>\n      </div>\n    </dialog>\n  </div>\n</div>"
+  },
+  {
    "id": "conversation-blocks",
    "section": "Conversation",
    "title": "Blocks",
