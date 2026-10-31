@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 1.4.8 (2026-10-31)
+
+### Fixed
+- `sd-window-controls` gives Signal's own icons (`svg.sd-icon`) a 20px box, so `<Icon name="close">` in a window control is no longer shrunk to an 8px glyph. Hand-drawn SVGs keep their 12px box.
+
 ## 1.4.7 (2026-10-31)
 
 ### Changed
