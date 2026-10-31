@@ -50,6 +50,15 @@
       <p class="demo-usage"><code>sd-activity</code> = <code>sd-tabs</code> + <code>sd-tabpanel</code>s of <code>sd-item</code> rows · <code>sd-item-mark</code> (24px box: <code>@</code>, an icon or an emoji) · title is <code>&lt;b class="sd-message-author"&gt;</code> in <code>--who</code> + the action · <code>sd-item-sub</code> "group › #channel" · <code>sd-item-end</code> <code>&lt;time&gt;</code> in mono · <code>data-unread</code> = pending-tone square at the left edge (add an <code>sd-sr-only</code> "Unread" for assistive tech)</p>
     </div>
 
+    <div class="demo-block" id="conversation-saved-reminder">
+      <h2 class="sd-label">Saved with a reminder</h2>
+      <div class="border border-line max-w-[26rem] sd-activity" style="background: var(--sd-surface)" aria-label="Saved">
+        <a class="sd-item" href="#conversation"><span class="sd-item-mark" aria-hidden="true"><svg class="sd-icon" data-icon="bookmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M7 4.5h10v15l-5-4-5 4z"/></svg></span><span class="sd-item-body"><span class="sd-item-title"><b class="sd-message-author" style="--who: var(--sd-accent)">Maya</b>Bring the long tent stakes</span><span class="sd-item-sub">Weekend Crew › #general</span></span><span class="sd-item-end"><span class="sd-badge" data-tone="pending"><svg class="sd-icon" data-icon="clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M9 4.5h6l4.5 4.5v6L15 19.5H9L4.5 15V9zM12 8v4.5h3.5"/></svg><time>8:00 PM</time></span></span></a>
+        <a class="sd-item" href="#conversation"><span class="sd-item-mark" aria-hidden="true"><svg class="sd-icon" data-icon="bookmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M7 4.5h10v15l-5-4-5 4z"/></svg></span><span class="sd-item-body"><span class="sd-item-title"><b class="sd-message-author" style="--who: var(--sd-success)">Leo</b>Ramen on 5th is open till 11</span><span class="sd-item-sub">Weekend Crew › #food-recs</span></span><span class="sd-item-end"><time>Oct 29</time></span></a>
+      </div>
+      <p class="demo-usage">No new class: an <code>sd-item</code> with an <code>sd-item-mark</code> bookmark, the message preview in <code>sd-item-title</code> and <code>sd-item-sub</code> "group › #channel", and a <code>sd-badge data-tone="pending"</code> holding a clock icon and the <code>&lt;time&gt;</code> in <code>sd-item-end</code> when a reminder is set. Without a reminder, <code>sd-item-end</code> shows the saved date. Reuses the <code>sd-activity</code> row spacing.</p>
+    </div>
+
     <div class="demo-block" id="conversation-roster">
       <h2 class="sd-label">Roster</h2>
       <div class="border border-line" style="width: 18rem; max-width: 100%; max-height: 22rem; overflow-y: auto; --sd-ring: var(--sd-surface); background: var(--sd-surface)">
