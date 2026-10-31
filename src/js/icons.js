@@ -32,7 +32,7 @@ export const ICONS = {
   calendar: "M4.5 6.5h15v13h-15zM4.5 10.5h15M8.5 4.5v3M15.5 4.5v3M8.5 14.5v.01M12 14.5v.01M15.5 14.5v.01",
   chart: "M4.5 4.5v15h15M8 15v-4M12 15V8M16 15v-6",
   check: "M4.5 12.5l5 5 10-11",
-  "check-double": "M4.5 12.5l4.5 4.5 10-10.5M11.5 15l2 2 6.5-7",
+  "check-double": "M2.5 12.5l4.5 4.5 10-10.5M11.5 15l2 2 9-9.5",
   "chevron-down": "M6 9l6 6 6-6",
   "chevron-left": "M15 6l-6 6 6 6",
   "chevron-right": "M9 6l6 6-6 6",
