@@ -1406,6 +1406,14 @@
   .sd-suggest[hidden] {
     display: none;
   }
+  /* A command row: the command in mono, its arguments faint on the right
+     (the hint a row already takes). The active row shows the menu's marker. */
+  .sd-suggest .sd-suggest-command {
+    font-family: var(--sd-font-mono);
+  }
+  .sd-suggest .sd-suggest-command .sd-menu-hint {
+    color: var(--sd-fg-faint);
+  }
 
   /* Editing in place: the field keeps the text column (inset by its border
      and padding) and a one-line hint names the keys. */

@@ -15,7 +15,12 @@
  *             <div class="sd-suggest" id="mentions" hidden><div class="sd-menu" role="listbox">
  *               <button role="option" data-value="alex">Alex</button>…
  *             Typing the trigger shows options filtered by what follows it;
- *             arrows move, Enter or Tab inserts, Escape closes.
+ *             arrows move (aria-selected marks the active option), Enter or Tab
+ *             inserts, Escape closes. data-sd-trigger takes several characters
+ *             ("@#"); data-sd-trigger-start="/" is a trigger that only counts as
+ *             the first character of the text (slash commands). An option with
+ *             data-trigger="/" shows only after that character, and class
+ *             sd-suggest-command lays it out as a command row.
  * Context     <div data-sd-contextmenu="row-menu"> opens <div popover id="row-menu" class="sd-popover">
  *             at the pointer on right-click (or Shift+F10 / the menu key), and
  *             on a touch screen where a long press lifts.
@@ -84,10 +89,35 @@ function grow(textarea) {
 function suggestState(textarea) {
   const list = document.getElementById(textarea.dataset.sdSuggest);
   if (!list) return null;
-  const triggers = textarea.dataset.sdTrigger || "@";
+  const starts = textarea.dataset.sdTriggerStart || "";
+  const triggers = textarea.dataset.sdTrigger || (starts ? "" : "@");
   const before = textarea.value.slice(0, textarea.selectionStart);
-  const match = before.match(new RegExp(`(^|\\s)([${triggers.replace(/[\]\\^-]/g, "\\$&")}])([^\\s]*)$`));
+  const chars = (set) => set.replace(/[\]\\^-]/g, "\\$&");
+  /* A start trigger (a slash command) only counts as the first character of the text. */
+  const match =
+    (triggers && before.match(new RegExp(`(^|\\s)([${chars(triggers)}])([^\\s]*)$`))) ||
+    (starts && before.match(new RegExp(`^()([${chars(starts)}])([^\\s]*)$`))) ||
+    null;
   return { list, match, options: [...list.querySelectorAll('[role="option"]')] };
+}
+
+/* What a query matches: the value and the label; a command row leaves out its argument hint. */
+function optionText(option) {
+  const skip = option.classList.contains("sd-suggest-command") ? "sd-menu-hint" : "";
+  const label = [...option.childNodes].filter((n) => !(skip && n.nodeType === 1 && n.classList.contains(skip)));
+  return `${option.dataset.value || ""} ${label.map((n) => n.textContent).join("")}`.toLowerCase();
+}
+
+function setActive(options, active) {
+  for (const o of options) {
+    if (o === active) {
+      o.dataset.active = "";
+      o.setAttribute("aria-selected", "true");
+    } else {
+      delete o.dataset.active;
+      o.removeAttribute("aria-selected");
+    }
+  }
 }
 
 function showSuggestions(textarea) {
@@ -101,12 +131,11 @@ function showSuggestions(textarea) {
   const query = match[3].toLowerCase();
   let first = null;
   for (const o of options) {
-    const text = `${o.dataset.value || ""} ${o.textContent}`.toLowerCase();
-    o.hidden = !text.includes(query);
-    delete o.dataset.active;
+    /* An option with data-trigger belongs to that character only. */
+    o.hidden = Boolean(o.dataset.trigger && o.dataset.trigger !== match[2]) || !optionText(o).includes(query);
     if (!o.hidden && !first) first = o;
   }
-  if (first) first.dataset.active = "";
+  setActive(options, first);
   list.hidden = !first;
 }
 
@@ -147,8 +176,7 @@ export function onConversationKeydown(event) {
     if (event.key === "ArrowDown" || event.key === "ArrowUp") {
       event.preventDefault();
       const next = visible[(i + (event.key === "ArrowDown" ? 1 : -1) + visible.length) % visible.length];
-      for (const o of visible) delete o.dataset.active;
-      next.dataset.active = "";
+      setActive(visible, next);
       return;
     }
     if (event.key === "Enter" || event.key === "Tab") {

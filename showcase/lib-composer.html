@@ -27,6 +27,30 @@
       <p class="demo-usage"><code>sd-composer</code> + <code>-row|-add|-send|-reply|-status|-chips|-hint</code> · send stays quiet until there is text · <code>sd-add-menu</code> (the + opens every content type) · in an <code>sd-shell-dock</code> (<code>data-flush</code> to rest on the window bottom) the status line and composer share one box · <code>data-sd-autogrow</code> · <code>data-sd-enter-submit</code> · <code>data-sd-suggest</code> + <code>data-sd-trigger</code> · <code>sd-suggest</code></p>
     </div>
 
+    <div class="demo-block" id="conversation-slash-commands">
+      <h2 class="sd-label">Slash commands</h2>
+      <div class="max-w-column sd-shell-dock" style="padding-top: 17rem">
+        <form class="sd-composer" onsubmit="event.preventDefault(); this.querySelector('textarea').value=''">
+          <div class="sd-composer-row">
+            <button type="button" class="sd-btn sd-btn-ghost sd-btn-icon sd-composer-add" aria-label="Add"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 3v10M3 8h10"/></svg></button>
+            <textarea rows="1" data-sd-autogrow data-sd-enter-submit data-sd-suggest="demo-commands" data-sd-trigger="@" data-sd-trigger-start="/" placeholder="Type / for commands" aria-label="Message">/</textarea>
+            <button class="sd-btn sd-btn-primary sd-btn-icon sd-composer-send" aria-label="Send"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2.5l12 5.5-12 5.5 2-5.5z"/></svg></button>
+          </div>
+          <div class="sd-suggest" id="demo-commands">
+            <div class="sd-menu" role="listbox" aria-label="Commands">
+              <button type="button" role="option" class="sd-suggest-command" data-trigger="/" data-value="event" data-active aria-selected="true">/event<span class="sd-menu-hint">title time</span></button>
+              <button type="button" role="option" class="sd-suggest-command" data-trigger="/" data-value="poll">/poll<span class="sd-menu-hint">question</span></button>
+              <button type="button" role="option" class="sd-suggest-command" data-trigger="/" data-value="remind">/remind<span class="sd-menu-hint">when</span></button>
+              <button type="button" role="option" class="sd-suggest-command" data-trigger="/" data-value="schedule">/schedule<span class="sd-menu-hint">when</span></button>
+              <button type="button" role="option" class="sd-suggest-command" data-trigger="/" data-value="spoiler">/spoiler<span class="sd-menu-hint">text</span></button>
+              <button type="button" role="option" class="sd-suggest-command" data-trigger="/" data-value="shrug">/shrug<span class="sd-menu-hint">¯&#92;_(ツ)_/¯</span></button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <p class="demo-usage"><code>sd-suggest-command</code> on an option: the command in mono and its arguments in <code>sd-menu-hint</code>, faint on the right · the active option carries <code>aria-selected="true"</code> and the menu's marker · <code>data-sd-trigger-start="/"</code> opens the list only when the text starts with <code>/</code> (<code>data-sd-trigger="@"</code> keeps mentions on the same textarea) · <code>data-trigger="/"</code> on an option keeps it out of the mentions list · the query filters by name, not by arguments · the list opens above the composer</p>
+    </div>
+
     <div class="demo-block" id="conversation-emoji-picker">
       <h2 class="sd-label">Emoji picker</h2>
       <div class="sd-actions"><button class="sd-btn" popovertarget="demo-emoji-picker">Emoji picker</button></div>
