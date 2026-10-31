@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 1.4.11 (2026-10-31)
+
+### Changed
+- Lift graphite's extra violet over 4.5:1
+
 ## 1.4.10 (2026-10-31)
 
 ### Changed
