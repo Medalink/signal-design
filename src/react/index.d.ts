@@ -134,6 +134,23 @@ export interface AvatarProps extends Omit<ComponentProps<"span">, "children"> {
 export function Avatar(props: AvatarProps): ReactElement;
 export function AvatarStack(props: ComponentProps<"span">): ReactElement;
 
+export interface ThreadChipProps extends Omit<ComponentProps<"button">, "children"> {
+  /** Who replied; the first three show as avatars. Decoration: they are hidden from assistive tech. */
+  participants?: AvatarProps[] | undefined;
+  /** The count in words, such as "4 replies". Translate it in the app. */
+  label: ReactNode;
+  /** When the last reply came, such as "12:41 PM". */
+  time?: ReactNode | undefined;
+  /** The machine form of `time`. */
+  dateTime?: string | undefined;
+  /** The thread panel is open: sets `aria-expanded`. Leave undefined for a chip that is not a disclosure. */
+  open?: boolean | undefined;
+  /** The id of the thread panel, for `aria-controls`. */
+  controls?: string | undefined;
+}
+/** The summary under a root message that opens its thread (`sd-thread-chip`). */
+export function ThreadChip(props: ThreadChipProps): ReactElement;
+
 export interface CardProps extends Omit<ComponentProps<"article">, "ref"> {
   tone?: Tone | undefined;
   /** Makes the whole card a link. */

@@ -372,7 +372,7 @@
     color: var(--sd-danger);
   }
   /* Embeds in a message share one width and sit 3px under the text. */
-  .sd-message-body > :is(.sd-file, .sd-link-card, .sd-reactions, .sd-poll) {
+  .sd-message-body > :is(.sd-file, .sd-link-card, .sd-reactions, .sd-poll, .sd-thread-chip) {
     margin-top: 3px;
   }
   .sd-message-body > :is(.sd-file, .sd-link-card, .sd-poll) {
@@ -929,6 +929,149 @@
     opacity: 1;
   }
 
+  /*
+   * Thread chip: under a root message, who replied, how many and when the last
+   * reply came. A button that opens the thread panel; aria-expanded is its
+   * state while that panel is open, and the root row takes aria-current.
+   *   <button class="sd-thread-chip" aria-expanded="false" aria-controls="thread">
+   *     <span class="sd-avatar-stack"><span class="sd-avatar" data-tone="extra">M</span>…</span>
+   *     <b>4 replies</b><time datetime="12:41">12:41 PM</time>
+   *   </button>
+   */
+  .sd-thread-chip {
+    --sd-ring: var(--sd-surface);
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    gap: 8px;
+    max-width: 100%;
+    min-height: 28px;
+    padding: 3px 8px 3px 4px;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-surface);
+    color: var(--sd-fg-muted);
+    font: inherit;
+    font-size: 13px;
+    text-align: start;
+    cursor: pointer;
+    transition: border-color 120ms var(--ease-out), background-color 120ms var(--ease-out), color 120ms var(--ease-out);
+  }
+  .sd-thread-chip:hover {
+    --sd-ring: var(--sd-raised);
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+  .sd-thread-chip[aria-expanded="true"] {
+    border-color: var(--sd-fg-subtle);
+  }
+  .sd-thread-chip:focus-visible {
+    outline: 1px solid var(--sd-fg-subtle);
+    outline-offset: 1px;
+  }
+  .sd-thread-chip .sd-avatar {
+    --sd-avatar-size: 20px;
+    font-size: var(--text-3xs);
+  }
+  .sd-thread-chip .sd-avatar-stack > .sd-avatar + .sd-avatar {
+    margin-inline-start: -4px;
+  }
+  .sd-thread-chip > b {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--sd-fg);
+    font-weight: var(--font-weight-semibold);
+  }
+  .sd-thread-chip > time {
+    color: var(--sd-fg-faint);
+    font-family: var(--sd-font-mono);
+    font-size: var(--text-3xs);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* A compact message has no time column: its text starts at the row's edge.
+     For a narrow panel; the time goes in the row's title. */
+  .sd-message[data-compact] {
+    grid-template-columns: minmax(0, 1fr);
+    padding-inline: 16px;
+  }
+  .sd-message[data-compact] > .sd-message-time {
+    display: none;
+  }
+  .sd-message[data-compact] > .sd-message-body {
+    grid-column: 1;
+  }
+
+  /*
+   * Thread panel: one thread beside the feed, in the shell's aside or on its
+   * own. A caps title with Close, the root message over a hairline, the
+   * replies as compact rows, and a composer at the bottom. The head and the
+   * composer stay put while the thread scrolls.
+   *   <section class="sd-thread" aria-label="Thread" id="thread">
+   *     <header class="sd-thread-head"><h2 class="sd-thread-title">Thread</h2>
+   *       <button class="sd-btn sd-btn-ghost sd-btn-icon" aria-label="Close thread"><svg/></button></header>
+   *     <div class="sd-thread-body">
+   *       <div class="sd-thread-root"><article class="sd-message" data-compact>…</article></div>
+   *       <div class="sd-thread-replies" role="log" aria-label="Replies"><article class="sd-message" data-compact>…</article>…</div>
+   *     </div>
+   *     <div class="sd-thread-foot"><form class="sd-composer">…</form></div>
+   *   </section>
+   */
+  .sd-thread {
+    --sd-feed-bg: var(--sd-surface);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    border-inline-start: 1px solid var(--sd-line);
+    background: var(--sd-surface);
+  }
+  .sd-thread[hidden] {
+    display: none;
+  }
+  .sd-shell-aside > .sd-thread {
+    flex: 1;
+    border-inline-start: 0;
+  }
+  .sd-thread-head {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    height: var(--shell-head, 48px);
+    padding: 0 8px 0 16px;
+    border-block-end: 1px solid var(--sd-line);
+  }
+  .sd-thread-title {
+    margin: 0;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-3xs);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+  .sd-thread-body {
+    flex: 1;
+    min-height: 0;
+    padding-block: 8px;
+    overflow-y: auto;
+  }
+  .sd-thread-root {
+    padding-block-end: 8px;
+    border-block-end: 1px solid var(--sd-line);
+  }
+  .sd-thread-replies {
+    padding-block-start: 8px;
+  }
+  .sd-thread-foot {
+    flex-shrink: 0;
+    padding: 8px;
+    border-block-start: 1px solid var(--sd-line);
+  }
+
   /* Read receipts: tiny avatars at the end of a message. */
   .sd-receipts {
     display: flex;
@@ -1413,7 +1556,7 @@
   /* Paper: conversation hairlines are lighter (7% and 14% black instead of
      10% and 22%), so cards, chips and dividers stop outlining everything.
      The composer and form fields keep the strong line for a 3:1 input edge. */
-  :is([data-theme="paper"], [data-theme="light"]) :is(.sd-message, .sd-event, .sd-feed-day, .sd-feed-jump, .sd-composer-status, .sd-composer-reply, .sd-message-menu, .sd-emoji-picker, .sd-roster) {
+  :is([data-theme="paper"], [data-theme="light"]) :is(.sd-message, .sd-event, .sd-feed-day, .sd-feed-jump, .sd-composer-status, .sd-composer-reply, .sd-message-menu, .sd-emoji-picker, .sd-roster, .sd-thread) {
     --sd-line: rgb(0 0 0 / 0.07);
     --sd-line-strong: rgb(0 0 0 / 0.14);
   }
@@ -1421,7 +1564,7 @@
     --sd-line-strong: rgb(0 0 0 / 0.22);
   }
   @media (prefers-color-scheme: light) {
-    [data-theme="auto"] :is(.sd-message, .sd-event, .sd-feed-day, .sd-feed-jump, .sd-composer-status, .sd-composer-reply, .sd-message-menu, .sd-emoji-picker, .sd-roster) {
+    [data-theme="auto"] :is(.sd-message, .sd-event, .sd-feed-day, .sd-feed-jump, .sd-composer-status, .sd-composer-reply, .sd-message-menu, .sd-emoji-picker, .sd-roster, .sd-thread) {
       --sd-line: rgb(0 0 0 / 0.07);
       --sd-line-strong: rgb(0 0 0 / 0.14);
     }

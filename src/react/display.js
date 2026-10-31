@@ -43,6 +43,28 @@ export function AvatarStack({ className, ...props }) {
   return h("span", { role: "group", className: cx("sd-avatar-stack", className), ...props });
 }
 
+/**
+ * The summary under a root message: up to three participants' avatars, `label`
+ * ("4 replies", translated by the app) and the `time` of the last reply
+ * (`dateTime` is its machine form). A button that opens the thread panel:
+ * `open` is `aria-expanded` and `controls` the panel's id. The avatars are
+ * decoration; `label` and `time` name the button.
+ */
+export function ThreadChip({ participants = [], label, time, dateTime, open, controls, type = "button", className, ...props }) {
+  return h(
+    "button",
+    { type, className: cx("sd-thread-chip", className), "aria-expanded": open, "aria-controls": controls, ...props },
+    participants.length > 0 &&
+      h(
+        "span",
+        { className: "sd-avatar-stack", "aria-hidden": true },
+        participants.slice(0, 3).map(({ name, ...avatar }) => h(Avatar, { key: name, name, ...avatar })),
+      ),
+    h("b", null, label),
+    time !== undefined && h("time", { dateTime }, time),
+  );
+}
+
 /** A card. With `href` the whole card is a link. */
 export function Card({ tone, href, className, ...props }) {
   return h(href ? "a" : "article", { href, className: cx("sd-card", className), "data-tone": tone, ...props });

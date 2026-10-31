@@ -14,6 +14,7 @@ export {
   CountBadge,
   Avatar,
   AvatarStack,
+  ThreadChip,
   Card,
   CardHeader,
   CardBody,

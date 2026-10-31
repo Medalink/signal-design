@@ -176,6 +176,68 @@
       <p class="demo-usage"><code>--edge</code> (author or role color, user data) · <code>data-own</code> (grey edge) · <code>data-selected</code> + a real checkbox · <code>data-editing</code> + <code>sd-message-edit</code> · fills <code>--sd-mention-fill</code> and <code>--sd-current-fill</code> · edge order: <code>data-failed</code> &gt; <code>aria-current</code> &gt; <code>data-selected</code> &gt; <code>data-mention</code> &gt; <code>data-own</code> &gt; <code>--edge</code></p>
     </div>
 
+    <div class="demo-block" id="conversation-threads">
+      <h2 class="sd-label">Threads</h2>
+      <div class="grid items-stretch border border-line sm:grid-cols-[minmax(0,1fr)_auto]" style="background: var(--sd-surface)">
+        <div class="py-3" style="--sd-feed-bg: var(--sd-surface)">
+          <article class="sd-message" aria-current="true" style="--who: var(--sd-extra)">
+            <time class="sd-message-time" datetime="10:40">10:40 AM</time>
+            <div class="sd-message-body">
+              <div class="sd-message-text"><b class="sd-message-author">Alex</b>Cabin trip next month. Who's in?</div>
+              <button class="sd-thread-chip" aria-expanded="true" aria-controls="demo-thread">
+                <span class="sd-avatar-stack" aria-hidden="true"><span class="sd-avatar" data-tone="accent">M</span><span class="sd-avatar" data-tone="success">L</span><span class="sd-avatar" data-tone="warning">K</span></span>
+                <b>4 replies</b><time datetime="12:41">12:41 PM</time>
+              </button>
+            </div>
+          </article>
+          <article class="sd-message" style="--who: var(--sd-warning)">
+            <time class="sd-message-time" datetime="11:40">11:40 AM</time>
+            <div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Kai</b>Check out this sunset from my hike last weekend</div></div>
+          </article>
+          <article class="sd-message" style="--who: var(--sd-accent)">
+            <time class="sd-message-time" datetime="11:55">11:55 AM</time>
+            <div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Maya</b>Oh wow, where was that?</div></div>
+          </article>
+          <article class="sd-message" style="--who: var(--sd-extra)">
+            <time class="sd-message-time" datetime="12:25">12:25 PM</time>
+            <div class="sd-message-body">
+              <div class="sd-message-text"><b class="sd-message-author">Alex</b>Saturday brunch first though. Who's coming?</div>
+              <button class="sd-thread-chip" aria-expanded="false" aria-controls="demo-thread">
+                <span class="sd-avatar-stack" aria-hidden="true"><span class="sd-avatar" data-tone="accent">M</span></span>
+                <b>1 reply</b><time datetime="12:31">12:31 PM</time>
+              </button>
+            </div>
+          </article>
+        </div>
+        <section class="sd-thread w-full sm:w-72 max-sm:border-s-0 max-sm:border-t max-sm:border-line" id="demo-thread" aria-label="Thread" style="--shell-head: 3rem">
+          <header class="sd-thread-head">
+            <h2 class="sd-thread-title">Thread</h2>
+            <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" aria-label="Close thread"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+          </header>
+          <div class="sd-thread-body">
+            <div class="sd-thread-root">
+              <article class="sd-message" data-compact style="--who: var(--sd-extra)" title="10:40 AM"><div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Alex</b>Cabin trip next month. Who's in?</div></div></article>
+            </div>
+            <div class="sd-thread-replies" role="log" aria-label="Replies">
+              <article class="sd-message" data-compact style="--who: var(--sd-accent)" title="10:52 AM"><div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Maya</b>In, if it's after the 15th</div></div></article>
+              <article class="sd-message" data-compact style="--who: var(--sd-success)" title="11:03 AM"><div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Leo</b>Count me in. Bringing board games 🎲</div></div></article>
+              <article class="sd-message" data-compact style="--who: var(--sd-warning)" title="11:10 AM"><div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Kai</b>Same</div></div></article>
+              <article class="sd-message" data-compact style="--who: var(--sd-accent)" title="12:41 PM"><div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Maya</b><span class="sd-mention" style="--who: var(--sd-extra)">@Alex</span> can you book it?</div></div></article>
+            </div>
+          </div>
+          <div class="sd-thread-foot">
+            <form class="sd-composer" onsubmit="event.preventDefault(); this.querySelector('textarea').value=''">
+              <div class="sd-composer-row">
+                <textarea rows="1" data-sd-autogrow data-sd-enter-submit placeholder="Reply in thread" aria-label="Reply in thread"></textarea>
+                <button class="sd-btn sd-btn-primary sd-btn-icon sd-composer-send" aria-label="Send reply"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2.5l12 5.5-12 5.5 2-5.5z"/></svg></button>
+              </div>
+            </form>
+          </div>
+        </section>
+      </div>
+      <p class="demo-usage"><code>sd-thread-chip</code> under the root message (a button: avatars in <code>sd-avatar-stack</code>, <code>&lt;b&gt;</code> count, <code>&lt;time&gt;</code>) · <code>aria-expanded</code> + <code>aria-controls</code> while the panel is open, and the root row takes <code>aria-current</code> · <code>sd-thread</code> (+ <code>-head|-title|-body|-root|-replies|-foot</code>) in the shell's <code>sd-shell-aside</code> or on its own · replies are <code>sd-message</code> with <code>data-compact</code> (no time column; the time goes in the title)</p>
+    </div>
+
     <div class="demo-block" id="conversation-message-in-a-narrow-column">
       <h2 class="sd-label">Message in a narrow column</h2>
       <div class="border border-line py-3" style="width: 20rem; max-width: 100%; background: var(--sd-surface)">
