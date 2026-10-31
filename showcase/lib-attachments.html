@@ -208,6 +208,36 @@
       <p class="demo-usage"><code>sd-tasklist</code> (+ <code>-head|-label|-count|-title|-items|-add</code>) in a message body · a real checkbox per item, ticked items go faint and struck through · <code>b</code> after the label names who ticked it, in <code>--who</code> · <code>sd-progress</code> + <code>data-tone="success"</code> + <code>--value</code> for the bar · React <code>TaskList</code></p>
     </div>
 
+    <div class="demo-block" id="conversation-ack-bar">
+      <h2 class="sd-label">Announce acknowledgement</h2>
+      <div class="grid gap-4 sm:grid-cols-2 items-start">
+        <div class="border border-line py-2" style="background: var(--sd-surface)">
+        <article class="sd-message" data-mention style="--who: var(--sd-warning)">
+          <time class="sd-message-time" datetime="09:00">09:00</time>
+          <div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Alex</b>Ferry leaves at 7:30 sharp. Bags at the dock by 7:00.</div>
+            <div class="sd-ack">
+              <button class="sd-btn sd-btn-primary sd-btn-sm" type="button"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>Got it</button>
+              <span class="sd-cells sd-ack-cells" role="img" aria-label="Acknowledged 5/8"><i data-on></i><i data-on></i><i data-on></i><i data-on></i><i data-on></i><i></i><i></i><i></i></span>
+              <span class="sd-ack-count">5/8</span>
+            </div></div>
+        </article>
+        </div>
+        <div class="border border-line py-2" style="background: var(--sd-surface)">
+        <article class="sd-message" data-mention style="--who: var(--sd-warning)">
+          <time class="sd-message-time" datetime="09:00">09:00</time>
+          <div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Alex</b>Ferry leaves at 7:30 sharp. Bags at the dock by 7:00.</div>
+            <div class="sd-ack">
+              <button class="sd-btn sd-btn-sm" type="button" data-tone="success" disabled><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>Got it</button>
+              <span class="sd-cells sd-ack-cells" role="img" aria-label="Acknowledged 5/8"><i data-on></i><i data-on></i><i data-on></i><i data-on></i><i data-on></i><i></i><i></i><i></i></span>
+              <span class="sd-ack-count">5/8</span>
+              <p class="sd-ack-waiting">Waiting on <b style="--who: var(--sd-extra)">Leo</b>, <b style="--who: var(--sd-success)">Maya</b>, <b style="--who: var(--sd-info)">Sam</b></p>
+            </div></div>
+        </article>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-ack</code> (+ <code>-cells|-count|-waiting</code>) under the text of an announced message (<code>data-mention</code>) · <code>sd-cells</code> + <code>sd-ack-cells</code> with one <code>i</code> per member, <code>data-on</code> once they answered · after the reader answers the button is <code>data-tone="success"</code> + <code>disabled</code> and reads as done · <code>sd-ack-waiting</code> names who has not answered: show it only to whoever sent the announce (left: a member who has not answered; right: the announcer, who has) · React <code>AckBar</code></p>
+    </div>
+
     <div class="demo-block" id="conversation-link-cards">
       <h2 class="sd-label">Link cards</h2>
       <div class="grid gap-4 sm:grid-cols-2 items-start">

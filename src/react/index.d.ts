@@ -253,6 +253,30 @@ export interface TaskListProps extends Omit<ComponentProps<"section">, "title" |
 /** A checklist posted in a message, with its progress and who ticked each item (`sd-tasklist`). */
 export function TaskList(props: TaskListProps): ReactElement;
 
+export interface AckBarMember {
+  id: string;
+  acknowledged?: boolean | undefined;
+}
+export interface AckBarProps extends Omit<ComponentProps<"div">, "children"> {
+  /** Everyone the announce reached. One square each; the n/m count follows. */
+  members: AckBarMember[];
+  /** Whether the reader has answered. The button then reads as done and cannot be pressed. */
+  acknowledged?: boolean | undefined;
+  onAcknowledge?: MouseEventHandler<HTMLButtonElement> | undefined;
+  /** The button's words, such as "Got it". Translate it in the app. */
+  label: ReactNode;
+  /** The button's words once answered. Defaults to `label`. */
+  doneLabel?: ReactNode | undefined;
+  /** The accessible name of the squares, such as "Acknowledged". The count is appended. */
+  summaryLabel: string;
+  /** Whoever has not answered, with `who` as a CSS color. Pass it only to the announcer. */
+  waiting?: { name: string; who?: string | undefined }[] | undefined;
+  /** The words before the names, such as "Waiting on". */
+  waitingLabel?: string | undefined;
+}
+/** The "Got it" row under an announced message: a button, a square per member and the n/m count (`sd-ack`). */
+export function AckBar(props: AckBarProps): ReactElement;
+
 export interface CardProps extends Omit<ComponentProps<"article">, "ref"> {
   tone?: Tone | undefined;
   /** Makes the whole card a link. */

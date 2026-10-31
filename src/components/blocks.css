@@ -927,6 +927,58 @@
   }
 
   /*
+   * Ack bar: the "Got it" row under an announced message. A primary button, one
+   * small square per member (acknowledged = success, waiting = a pending
+   * outline), the n/m count in mono, and optionally a muted "Waiting on" line
+   * for whoever sent the announce. After the reader acknowledges, the button is
+   * data-tone="success" and disabled: it reads as done, not as a dead control.
+   *   <div class="sd-ack">
+   *     <button class="sd-btn sd-btn-primary sd-btn-sm" type="button"><svg class="sd-icon">…</svg>Got it</button>
+   *     <span class="sd-cells sd-ack-cells" role="img" aria-label="2 of 4 acknowledged"><i data-on></i><i data-on></i><i></i><i></i></span>
+   *     <span class="sd-ack-count">2/4</span>
+   *     <p class="sd-ack-waiting">Waiting on <b style="--who: …">Leo</b>, <b>Maya</b></p></div>
+   */
+  .sd-ack {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+  }
+  .sd-ack > .sd-btn:disabled {
+    opacity: 1;
+  }
+  .sd-ack-cells {
+    gap: 3px;
+  }
+  .sd-ack-cells > i {
+    box-sizing: border-box;
+    width: 10px;
+    height: 10px;
+    background: transparent;
+    border: 1px solid var(--sd-pending);
+  }
+  .sd-ack-cells > i[data-on] {
+    background: var(--sd-success);
+    border-color: var(--sd-success);
+  }
+  .sd-ack-count {
+    color: var(--sd-fg-subtle);
+    font-family: var(--font-mono);
+    font-size: var(--text-3xs);
+    font-variant-numeric: tabular-nums;
+  }
+  .sd-ack-waiting {
+    flex-basis: 100%;
+    margin: 0;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-sm);
+  }
+  .sd-ack-waiting > b {
+    color: color-mix(in srgb, var(--who, var(--sd-extra)) 70%, var(--sd-fg));
+    font-weight: var(--font-weight-semibold);
+  }
+
+  /*
    * Tiles: a grid of people or media, e.g. a call. data-speaking lights the
    * edge (green: someone is talking), data-muted shows a muted mark.
    *   <div class="sd-tiles"><div class="sd-tile" data-speaking>…</div></div>

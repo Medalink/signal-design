@@ -175,6 +175,40 @@ export function TaskList({ label, title, items, onCheckedChange, progressLabel, 
   );
 }
 
+/**
+ * The "Got it" row under an announced message (`sd-ack`). `members` is
+ * `{ id, acknowledged }` for everyone the announce reached: one square each,
+ * and the n/m count follows it. `acknowledged` is whether the reader has
+ * answered; `onAcknowledge` makes the button live, and once answered it reads
+ * as done and cannot be pressed. `waiting` is `{ name, who }` for whoever has
+ * not answered; pass it only to the person who sent the announce, and leave it
+ * out for everyone else. The words are props.
+ */
+export function AckBar({ members, acknowledged, onAcknowledge, label, doneLabel, summaryLabel, waiting, waitingLabel, className, ...props }) {
+  const done = members.filter((member) => member.acknowledged).length;
+  return h(
+    "div",
+    { className: cx("sd-ack", className), ...props },
+    acknowledged
+      ? h("button", { type: "button", className: "sd-btn sd-btn-sm", "data-tone": "success", disabled: true }, h(Icon, { name: "check" }), doneLabel ?? label)
+      : h("button", { type: "button", className: "sd-btn sd-btn-primary sd-btn-sm", onClick: onAcknowledge }, h(Icon, { name: "check" }), label),
+    h(
+      "span",
+      { className: "sd-cells sd-ack-cells", role: "img", "aria-label": `${summaryLabel} ${done}/${members.length}` },
+      members.map(({ id, acknowledged: on }) => h("i", { key: id, "data-on": on ? "" : undefined })),
+    ),
+    h("span", { className: "sd-ack-count" }, `${done}/${members.length}`),
+    waiting !== undefined &&
+      waiting.length > 0 &&
+      h(
+        "p",
+        { className: "sd-ack-waiting" },
+        `${waitingLabel} `,
+        waiting.map(({ name, who }, index) => [index > 0 && ", ", h("b", { key: name, style: { "--who": who } }, name)]),
+      ),
+  );
+}
+
 /** A card. With `href` the whole card is a link. */
 export function Card({ tone, href, className, ...props }) {
   return h(href ? "a" : "article", { href, className: cx("sd-card", className), "data-tone": tone, ...props });

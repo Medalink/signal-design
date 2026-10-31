@@ -426,7 +426,7 @@
     color: var(--sd-danger);
   }
   /* Embeds in a message share one width and sit 3px under the text. */
-  .sd-message-body > :is(.sd-file, .sd-link-card, .sd-reactions, .sd-poll, .sd-thread-chip, .sd-event-card, .sd-cw, .sd-tasklist) {
+  .sd-message-body > :is(.sd-file, .sd-link-card, .sd-reactions, .sd-poll, .sd-thread-chip, .sd-event-card, .sd-cw, .sd-tasklist, .sd-ack) {
     margin-top: 3px;
   }
   .sd-message-body > :is(.sd-file, .sd-link-card, .sd-poll, .sd-event-card, .sd-tasklist) {
