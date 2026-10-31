@@ -87,5 +87,58 @@
       </div>
       <p class="demo-usage"><code>sd-roster</code> &gt; <code>sd-roster-group</code> (one per role) · <code>sd-roster-head</code> (sticky, <code>aria-expanded</code>) + <code>-label|-count</code> · <code>sd-roster-row</code> + <code>data-presence="online|offline|unresolved"</code> + <code>--who</code> · <code>sd-badge</code> at the row end (Agent) · <code>sd-roster-avatar</code> (<code>data-unresolved</code>) · <code>sd-roster-more</code> pages in the next 25 · set <code>--sd-ring</code> to the panel color</p>
     </div>
+
+    <div class="demo-block" id="conversation-profile-card">
+      <h2 class="sd-label">Profile card</h2>
+      <div class="grid gap-6 sm:grid-cols-2 items-start">
+        <div class="sd-hovercard" role="group" aria-label="Maya" style="position: static; animation: none">
+          <div class="sd-profile" style="--who: var(--sd-extra)">
+            <header class="sd-profile-head">
+              <span class="sd-avatar sd-avatar-xl" data-tone="extra">MA</span>
+              <div><h3 class="sd-profile-name">Maya</h3><p class="sd-profile-status"><span aria-hidden="true">🌮</span> planning brunch</p></div>
+            </header>
+            <section class="sd-profile-section">
+              <h4 class="sd-profile-label">About</h4>
+              <p class="sd-profile-about">Climber, bad cook, good eater. Ask me about Thai food.</p>
+            </section>
+            <section class="sd-profile-section">
+              <h4 class="sd-profile-label">Groups you share</h4>
+              <ul class="sd-profile-groups">
+                <li><span class="sd-avatar sd-avatar-sm">WC</span><span>Weekend Crew</span></li>
+                <li><span class="sd-avatar sd-avatar-sm">TC</span><span>Town Council</span></li>
+              </ul>
+            </section>
+            <div class="sd-profile-actions"><button class="sd-btn sd-btn-primary sd-btn-sm">Message</button><button class="sd-btn sd-btn-sm">Call</button></div>
+          </div>
+        </div>
+        <div class="grid gap-3 content-start">
+          <button class="sd-btn" data-sd-open="demo-profile">Open profile dialog</button>
+          <dialog class="sd-dialog sd-dialog-sm" id="demo-profile" aria-labelledby="demo-profile-h">
+            <header class="sd-dialog-head"><span id="demo-profile-h">Profile</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">×</button></header>
+            <div class="sd-dialog-body">
+              <div class="sd-profile" style="--who: var(--sd-extra)">
+                <header class="sd-profile-head">
+                  <span class="sd-avatar sd-avatar-xl" data-tone="extra">MA</span>
+                  <div><h3 class="sd-profile-name">Maya</h3><p class="sd-profile-status"><span aria-hidden="true">🌮</span> planning brunch</p></div>
+                </header>
+                <section class="sd-profile-section">
+                  <h4 class="sd-profile-label">About</h4>
+                  <p class="sd-profile-about">Climber, bad cook, good eater. Ask me about Thai food.</p>
+                </section>
+                <section class="sd-profile-section">
+                  <h4 class="sd-profile-label">Groups you share</h4>
+                  <ul class="sd-profile-groups">
+                    <li><span class="sd-avatar sd-avatar-sm">WC</span><span>Weekend Crew</span></li>
+                    <li><span class="sd-avatar sd-avatar-sm">TC</span><span>Town Council</span></li>
+                  </ul>
+                </section>
+                <div class="sd-profile-actions"><button class="sd-btn sd-btn-primary">Message</button><button class="sd-btn">Call</button></div>
+              </div>
+            </div>
+          </dialog>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-profile</code> has no frame: it sits in an <code>sd-hovercard</code> (React <code>HoverCard</code> content) or an <code>sd-dialog-body</code> · <code>-head</code> (<code>sd-avatar-xl</code>, <code>-name</code> in the person's <code>--who</code>, <code>-status</code> emoji then text) · <code>-section</code> + <code>-label</code> (caps) over <code>-about</code> (plain text, wraps) or <code>-groups</code> (<code>sd-avatar-sm</code> + name) · <code>-actions</code> (Message primary, Call) · leave out a section that has nothing in it</p>
+    </div>
 </body>
 </html>

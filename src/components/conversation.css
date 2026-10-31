@@ -1653,6 +1653,100 @@
     font-size: 14px;
   }
 
+  /*
+   * Profile card: who someone is, in a hover card or a dialog body. A large
+   * avatar with the name and a status line (emoji, then text), a caps About
+   * label over a plain-text bio, a caps "Groups you share" label over small
+   * group tiles, and two actions. It has no frame of its own: the hover card
+   * or dialog around it is the surface. The name takes the person's color
+   * through --who, like every name in a conversation.
+   *   <div class="sd-profile" style="--who: var(--sd-extra)">
+   *     <header class="sd-profile-head"><span class="sd-avatar sd-avatar-xl">MA</span>
+   *       <div><h3 class="sd-profile-name">Maya</h3><p class="sd-profile-status"><span aria-hidden="true">🌮</span> planning brunch</p></div></header>
+   *     <section class="sd-profile-section"><h4 class="sd-profile-label">About</h4><p class="sd-profile-about">…</p></section>
+   *     <section class="sd-profile-section"><h4 class="sd-profile-label">Groups you share</h4>
+   *       <ul class="sd-profile-groups"><li><span class="sd-avatar sd-avatar-sm">WC</span><span>Weekend Crew</span></li></ul></section>
+   *     <div class="sd-profile-actions"><button class="sd-btn sd-btn-primary">Message</button><button class="sd-btn">Call</button></div>
+   *   </div>
+   */
+  .sd-profile {
+    display: grid;
+    gap: 14px;
+    min-width: 0;
+    color: var(--sd-fg-muted);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+  }
+  .sd-profile-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  .sd-profile-head > div {
+    min-width: 0;
+  }
+  .sd-profile-name {
+    margin: 0;
+    color: color-mix(in srgb, var(--who, var(--sd-fg)) 70%, var(--sd-fg));
+    font: inherit;
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: normal;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+    text-transform: none;
+  }
+  .sd-profile-status {
+    margin: 0;
+    color: var(--sd-fg-muted);
+    overflow-wrap: anywhere;
+  }
+  .sd-profile-section {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+  }
+  .sd-profile-label {
+    margin: 0;
+    color: var(--sd-fg-subtle);
+    font: inherit;
+    font-size: var(--text-3xs);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+  .sd-profile-about {
+    margin: 0;
+    color: var(--sd-fg);
+    overflow-wrap: anywhere;
+    text-wrap: pretty;
+  }
+  .sd-profile-groups {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .sd-profile-groups > li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-block: 3px;
+    color: var(--sd-fg);
+  }
+  .sd-profile-groups > li > span:last-child {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sd-profile-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-block-start: 2px;
+  }
+
   /* Paper: conversation hairlines are lighter (7% and 14% black instead of
      10% and 22%), so cards, chips and dividers stop outlining everything.
      The composer and form fields keep the strong line for a 3:1 input edge. */
