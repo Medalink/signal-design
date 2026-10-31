@@ -74,6 +74,7 @@ const ATTRIBUTES = {
   "data-sd-follow": "On a feed scroller: keeps the newest row in view while the reader is at the bottom and runs the .sd-feed-jump bar after it.",
   "data-sd-reaction": "Reaction toggle with a count; fires sd:reaction.",
   "data-sd-poll": "Poll: choosing an option marks it and reveals the shares.",
+  "data-sd-spoiler": "On an .sd-spoiler: click, Enter or Space toggles aria-expanded to reveal or hide its text; fires sd:spoiler.",
   "data-sd-chart": "On a <figure>: init a chart from its JSON <script> (initCharts from signal-design/charts).",
   "data-sd-chart-scale": "Container of buttons (data-value clamp|p95|p90|linear|log) that switch a chart's scale mode.",
   "data-sd-scroll-tab": "Give this scroll box a tab stop while it scrolls (tables and code get one automatically).",
