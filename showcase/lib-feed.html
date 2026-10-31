@@ -29,5 +29,30 @@ feed.addEventListener("scroll", () => {
 jump.querySelector("button").addEventListener("click", () => feed.scrollTo({ top: feed.scrollHeight, behavior: "smooth" }));
       </script>
     </div>
+
+    <div class="demo-block" id="conversation-catch-up-card">
+      <h2 class="sd-label">Catch-up card</h2>
+      <div class="border border-line py-2" style="--sd-feed-bg: var(--sd-surface); background: var(--sd-surface)">
+        <article class="sd-message" style="--who: var(--sd-extra)">
+          <time class="sd-message-time" datetime="09:42">09:42 AM</time>
+          <div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Alex</b>Everything above this card you have already read.</div></div>
+        </article>
+        <section class="sd-catchup" aria-label="While you were away">
+          <header class="sd-catchup-head"><h3 class="sd-catchup-title">While you were away</h3><span class="sd-catchup-stat">142 · 6h</span></header>
+          <ul class="sd-catchup-list">
+            <li><span class="sd-catchup-mark" aria-hidden="true">@</span><span class="sd-catchup-text"><b class="sd-message-author" style="--who: var(--sd-accent)">Maya</b>@Alex can you book the cabin?</span></li>
+            <li><span class="sd-catchup-mark"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4.5 4.5v15h15M8 15v-4M12 15V8M16 15v-6"/></svg></span><span class="sd-catchup-text">2 open polls: Brunch spot, Cabin dates</span></li>
+            <li><span class="sd-catchup-mark" aria-hidden="true">🔥</span><span class="sd-catchup-text"><b class="sd-message-author" style="--who: var(--sd-warning)">Kai</b>sunset-trail.png</span><span class="sd-catchup-count" aria-label="9 reactions">9</span></li>
+          </ul>
+          <div class="sd-catchup-actions"><button class="sd-btn sd-btn-primary sd-btn-sm">Jump to first unread</button><button class="sd-btn sd-btn-sm">Mark read</button></div>
+        </section>
+        <div class="sd-marker" data-tone="pending"><span>New</span></div>
+        <article class="sd-message" style="--who: var(--sd-success)">
+          <time class="sd-message-time" datetime="15:02">03:02 PM</time>
+          <div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Priya</b>Booked brunch for 6</div></div>
+        </article>
+      </div>
+      <p class="demo-usage"><code>sd-catchup</code> (+ <code>-head|-title|-stat|-list|-mark|-text|-count|-actions</code>) in the feed above the first unread row · up to three lines, each led by <code>sd-catchup-mark</code> (<code>@</code> for a mention, an icon for polls, the emoji of the most-reacted message) · the existing <code>sd-marker</code> with <code>data-tone="pending"</code> sits under it as the new-messages line</p>
+    </div>
 </body>
 </html>

@@ -873,6 +873,98 @@
   }
 
   /*
+   * Catch-up card: what happened while the reader was away, in the feed above
+   * the first unread row. A caps label with the message count and span at the
+   * end, up to three lines (a mention, open polls, the most-reacted message)
+   * each led by a glyph, and two buttons. The new-messages line goes under it:
+   * `sd-marker` with `data-tone="pending"`.
+   *   <section class="sd-catchup" aria-label="While you were away">
+   *     <header class="sd-catchup-head"><h3 class="sd-catchup-title">While you were away</h3>
+   *       <span class="sd-catchup-stat">142 · 6h</span></header>
+   *     <ul class="sd-catchup-list">
+   *       <li><span class="sd-catchup-mark">@</span><span class="sd-catchup-text"><b class="sd-message-author">Maya</b>@Alex can you book…</span></li>
+   *       <li><span class="sd-catchup-mark">🔥</span><span class="sd-catchup-text">…</span><span class="sd-catchup-count">9</span></li>
+   *     </ul>
+   *     <div class="sd-catchup-actions"><button class="sd-btn sd-btn-primary sd-btn-sm">Jump to first unread</button>
+   *       <button class="sd-btn sd-btn-sm">Mark read</button></div>
+   *   </section>
+   *   <div class="sd-marker" data-tone="pending"><span>New</span></div>
+   */
+  .sd-catchup {
+    margin: 8px 16px;
+    padding: 10px 12px;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-surface);
+  }
+  .sd-catchup-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-block-end: 6px;
+  }
+  .sd-catchup-title {
+    margin: 0;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-3xs);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+  .sd-catchup-stat {
+    flex-shrink: 0;
+    color: var(--sd-fg-faint);
+    font-family: var(--sd-font-mono);
+    font-size: var(--text-3xs);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .sd-catchup-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .sd-catchup-list > li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-block: 3px;
+    color: var(--sd-fg);
+    font-size: var(--text-sm);
+  }
+  .sd-catchup-mark {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 18px;
+    color: var(--sd-fg-muted);
+    font-family: var(--sd-font-mono);
+  }
+  .sd-catchup-text {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sd-catchup-text > .sd-message-author {
+    margin-inline-end: 6px;
+  }
+  .sd-catchup-count {
+    flex: none;
+    color: var(--sd-fg-muted);
+    font-family: var(--sd-font-mono);
+    font-size: var(--text-3xs);
+    font-variant-numeric: tabular-nums;
+  }
+  .sd-catchup-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-block-start: 10px;
+  }
+
+  /*
    * Reactions: the emoji leads, the count is small and quiet, the borders are
    * dark hairlines and pressed (the viewer reacted) is a fill. The JS keeps
    * the count in sync when toggled.
@@ -1556,7 +1648,7 @@
   /* Paper: conversation hairlines are lighter (7% and 14% black instead of
      10% and 22%), so cards, chips and dividers stop outlining everything.
      The composer and form fields keep the strong line for a 3:1 input edge. */
-  :is([data-theme="paper"], [data-theme="light"]) :is(.sd-message, .sd-event, .sd-feed-day, .sd-feed-jump, .sd-composer-status, .sd-composer-reply, .sd-message-menu, .sd-emoji-picker, .sd-roster, .sd-thread) {
+  :is([data-theme="paper"], [data-theme="light"]) :is(.sd-message, .sd-event, .sd-feed-day, .sd-feed-jump, .sd-composer-status, .sd-composer-reply, .sd-message-menu, .sd-emoji-picker, .sd-roster, .sd-thread, .sd-catchup) {
     --sd-line: rgb(0 0 0 / 0.07);
     --sd-line-strong: rgb(0 0 0 / 0.14);
   }
@@ -1564,7 +1656,7 @@
     --sd-line-strong: rgb(0 0 0 / 0.22);
   }
   @media (prefers-color-scheme: light) {
-    [data-theme="auto"] :is(.sd-message, .sd-event, .sd-feed-day, .sd-feed-jump, .sd-composer-status, .sd-composer-reply, .sd-message-menu, .sd-emoji-picker, .sd-roster, .sd-thread) {
+    [data-theme="auto"] :is(.sd-message, .sd-event, .sd-feed-day, .sd-feed-jump, .sd-composer-status, .sd-composer-reply, .sd-message-menu, .sd-emoji-picker, .sd-roster, .sd-thread, .sd-catchup) {
       --sd-line: rgb(0 0 0 / 0.07);
       --sd-line-strong: rgb(0 0 0 / 0.14);
     }
