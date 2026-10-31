@@ -660,6 +660,11 @@
    *     <div class="sd-emoji-scroll"><h4>Smileys</h4><div class="sd-emoji-grid"><button>😀</button>…</div></div>
    *     <div class="sd-emoji-foot"><span>👍</span><span>thumbs up</span><code>:+1:</code></div>
    *   </div>
+   * A group's own emoji are images. Its category tab shows the group's
+   * initials (or an img) with data-group, its grid holds <button><img alt=""></button>
+   * for each, the one the footer names takes aria-current, a last
+   * <button data-add aria-label="Add emoji"> is the empty slot to add one, and
+   * the footer holds the image and its :name: with no word between.
    * A virtualized list may wrap each heading and grid in its own row
    * element; the heading keeps its style there.
    */
@@ -715,6 +720,19 @@
   .sd-emoji-cats > button:hover {
     opacity: 1;
   }
+  .sd-emoji-cats > button[data-group] {
+    color: var(--sd-fg);
+    font-size: var(--text-2xs);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+  .sd-emoji-cats > button > img {
+    width: 18px;
+    height: 18px;
+    object-fit: cover;
+    vertical-align: middle;
+  }
   .sd-emoji-cats > button[aria-pressed="true"] {
     border-bottom-color: var(--sd-fg);
     filter: none;
@@ -753,9 +771,32 @@
     line-height: 1;
     cursor: pointer;
   }
+  .sd-emoji-grid > button > img {
+    width: 1.2em;
+    height: 1.2em;
+    object-fit: contain;
+  }
   .sd-emoji-grid > button:is(:hover, :focus-visible) {
     background: var(--sd-raised);
     outline: none;
+  }
+  .sd-emoji-grid > button[aria-current="true"] {
+    background: var(--sd-raised);
+    outline: 1px solid var(--sd-fg);
+    outline-offset: -1px;
+  }
+  .sd-emoji-grid > button[data-add] {
+    margin: 4px;
+    border: 1px dashed var(--sd-line-strong);
+    color: var(--sd-fg-faint);
+  }
+  .sd-emoji-grid > button[data-add]:is(:hover, :focus-visible) {
+    border-color: var(--sd-fg-subtle);
+    color: var(--sd-fg);
+  }
+  .sd-emoji-grid > button[data-add] > svg {
+    width: 14px;
+    height: 14px;
   }
   .sd-emoji-grid > button[aria-pressed="true"] {
     outline: 1px solid var(--sd-line-strong);
@@ -781,6 +822,12 @@
     font-size: 24px;
     line-height: 1;
   }
+  .sd-emoji-foot > span:first-child > img {
+    width: 1em;
+    height: 1em;
+    object-fit: contain;
+    vertical-align: top;
+  }
   .sd-emoji-foot > code {
     margin-inline-start: auto;
     padding: 0;
@@ -789,6 +836,21 @@
     color: var(--sd-fg-faint);
     font-family: var(--sd-font-mono);
     font-size: 12px;
+  }
+  .sd-emoji-foot > span:first-child + code {
+    margin-inline-start: 0;
+    color: var(--sd-fg-muted);
+  }
+
+  /* A group's emoji inside text: an img sized to the line. alt is its :name:,
+     so a broken image and a copy of the text still read.
+       Booked it <img class="sd-emoji" src="..." alt=":cabin:"> */
+  .sd-emoji {
+    display: inline-block;
+    width: 1.25em;
+    height: 1.25em;
+    object-fit: contain;
+    vertical-align: -0.3em;
   }
 
   /* Day and event lines. The day sticks to the top of the scroller over
