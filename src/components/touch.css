@@ -66,6 +66,11 @@
     .sd-message-actions > button {
       min-width: var(--sd-touch);
     }
+    /* The message menu sets its own 34px row height, which wins over the
+       rule above by specificity. A finger needs the full row. */
+    .sd-message-menu .sd-menu [role="menuitem"] {
+      min-height: var(--sd-touch);
+    }
     input[type="color"] {
       min-width: var(--sd-touch);
     }
