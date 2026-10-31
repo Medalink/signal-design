@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 1.4.36 (2026-10-31)
+
+### Fixed
+- `sd-message-actions` on a coarse pointer stays inside its message and scrolls
+  sideways. With its full nine buttons it was wider than a phone and its first
+  buttons hung off the left edge.
+
 ## 1.4.35 (2026-10-31)
 
 ### Changed
