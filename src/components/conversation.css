@@ -1359,6 +1359,20 @@
    *       <button class="sd-btn sd-btn-primary sd-btn-icon sd-composer-send" aria-label="Send">…</button>
    *     </div>
    *   </form>
+   *
+   * Voice: an empty composer shows a mic (sd-composer-mic) where send sits.
+   * data-recording on the form swaps the row for the recording bar:
+   *   <form class="sd-composer" data-recording>
+   *     <div class="sd-composer-row">
+   *       <button class="sd-btn sd-btn-ghost sd-btn-icon sd-composer-discard" aria-label="Discard recording">…</button>
+   *       <div class="sd-composer-rec" role="group" aria-label="Recording">
+   *         <span class="sd-dot sd-dot-lg" data-tone="pending"></span>
+   *         <time class="sd-composer-rec-time" role="timer" datetime="PT7S">0:07</time>
+   *         <span class="sd-composer-rec-wave" aria-hidden="true"><i style="--h: 0.4"></i>…</span>
+   *       </div>
+   *       <button class="sd-btn sd-btn-primary sd-btn-icon sd-composer-send" aria-label="Send">…</button>
+   *     </div>
+   *   </form>
    */
   .sd-composer {
     position: relative;
@@ -1399,14 +1413,72 @@
     margin-inline-start: 6px;
     transition: background-color 120ms, color 120ms, border-color 120ms;
   }
-  .sd-composer:has(textarea:placeholder-shown) .sd-composer-send {
+  .sd-composer:not([data-recording]):has(textarea:placeholder-shown) .sd-composer-send {
     border-color: transparent;
     background: transparent;
     color: var(--sd-fg-faint);
   }
-  .sd-composer:has(textarea:placeholder-shown) .sd-composer-send:hover {
+  .sd-composer:not([data-recording]):has(textarea:placeholder-shown) .sd-composer-send:hover {
     background: var(--sd-raised);
     color: var(--sd-fg-muted);
+  }
+  /* Voice: while the box is empty the mic takes the send's place (the app
+     swaps it for send once there is text). data-recording on the composer
+     swaps the row for the recording bar: discard, a pending square with the
+     elapsed time, the live level, and send, in its primary look. */
+  .sd-composer-row > .sd-btn-icon.sd-composer-mic {
+    width: 34px;
+    min-width: 34px;
+    margin-inline-start: 6px;
+  }
+  .sd-composer-row > :is(.sd-composer-discard, .sd-composer-rec) {
+    display: none;
+  }
+  .sd-composer[data-recording] .sd-composer-row > :is(textarea, .sd-composer-add, .sd-composer-mic) {
+    display: none;
+  }
+  .sd-composer[data-recording] .sd-composer-row > :is(.sd-composer-discard, .sd-composer-rec) {
+    display: flex;
+  }
+  .sd-composer-rec {
+    flex: 1;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    min-height: 34px;
+    padding-inline: 8px 4px;
+  }
+  .sd-composer-rec > .sd-dot {
+    animation: sd-rec-blink 1.2s steps(1, end) infinite;
+  }
+  @keyframes sd-rec-blink {
+    50% { opacity: 0.2; }
+  }
+  .sd-composer-rec-time {
+    color: var(--sd-pending);
+    font-family: var(--sd-font-mono);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  /* The level so far, newest on the right: the app pushes one bar per
+     sample (--h, 0 to 1) and drops the oldest. What overflows is cut. */
+  .sd-composer-rec-wave {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1;
+    gap: 2px;
+    min-width: 0;
+    height: 24px;
+    overflow: hidden;
+  }
+  .sd-composer-rec-wave > i {
+    --h: 0.2;
+    flex: none;
+    width: 2px;
+    height: max(2px, calc(var(--h) * 100%));
+    background: var(--sd-fg-muted);
   }
   .sd-composer textarea {
     flex: 1;
