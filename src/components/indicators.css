@@ -159,6 +159,33 @@
     margin-inline-start: -2px;
   }
 
+  /* A group chat's avatar: up to four members as one square, two by two. It
+     is the size of one avatar (--sd-avatar-size, or -sm|md|lg|xl) and takes
+     one letter each; a missing member leaves its cell empty.
+       <span class="sd-avatar-grid sd-avatar-sm" role="img" aria-label="Maya, Kai, Leo">
+         <span class="sd-avatar" data-tone="extra">M</span>…
+       </span> */
+  .sd-avatar-grid {
+    --cell: var(--sd-avatar-size, 24px);
+    display: inline-grid;
+    grid-template: 1fr 1fr / 1fr 1fr;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    width: var(--sd-avatar-size, 24px);
+    height: var(--sd-avatar-size, 24px);
+    gap: 1px;
+    overflow: hidden;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-surface);
+  }
+  .sd-avatar-grid > .sd-avatar {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    font-size: calc(var(--cell) * 0.3);
+    line-height: 1;
+  }
+
   /* Inline status: a dot and a word. */
   .sd-status {
     display: inline-flex;

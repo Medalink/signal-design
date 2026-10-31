@@ -25,7 +25,7 @@ export function checkReactTypes() {
   writeFileSync(
     fixture,
     `import { useRef, useState, type ComponentProps } from "react";
-import { AppShell, Button, Dialog, DialogBody, Menu, MenuContent, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, Spoiler, ThreadChip, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
+import { AppShell, AvatarGrid, Button, Dialog, DialogBody, Menu, MenuContent, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, Spoiler, ThreadChip, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 import { initScrollbars } from "signal-design/js";
 import { Checkbox, Switch, Tooltip, type BareCheckboxProps, type BareSwitchProps, type CheckboxProps, type SwitchProps } from "signal-design/react";
 
@@ -169,6 +169,7 @@ export function Consumer() {
       <CommandPalette items={[{ value: "go", label: "Go", href: "/go", leading: <Icon name="search" /> }]} icon={<Icon name="search" />} kbd="Ctrl K" open={open} onOpenChange={setOpen} onSelect={(item, event) => { event.preventDefault(); console.log(item.value); }} onQueryChange={(query) => query.length} />
       <Mark kind="comment" active onClick={(event) => event.currentTarget.focus()}>Comment</Mark>
       <Spoiler defaultOpen onOpenChange={(next) => next} label="Hidden">text</Spoiler>
+      <AvatarGrid members={[{ name: "Maya Lee", tone: "extra" }, { name: "Kai" }]} label="Maya, Kai" size="sm" />
       <ThreadChip participants={[{ name: "Maya Lee", tone: "extra" }]} label="4 replies" time="12:41 PM" dateTime="12:41" open controls="thread" onClick={(event) => event.currentTarget.blur()} />
       <StatusSegment tone="success" pressed onClick={(event) => event.currentTarget.blur()}>Saved</StatusSegment>
       {/* @ts-expect-error variant must be one of the button variants */}
@@ -300,6 +301,7 @@ export async function checkReactSsr() {
           h(sd.GutterMarker, { label: "1 suggestion", kind: "suggestion", resolved: true }, "s"),
           h(sd.WeightedBar, { label: "3 of 6 words", goal: 6, segments: [{ weight: 2, state: "drafted", label: "One" }, { weight: 1, state: "current" }] }),
           h(sd.AvatarStack, null, h(sd.Avatar, { name: "B C", src: "/a.png" })),
+          h(sd.AvatarGrid, { members: [{ name: "Maya Lee", tone: "extra" }, { name: "Kai", src: "/k.png" }], size: "sm" }),
           h(sd.ThreadChip, { participants: [{ name: "Maya Lee", tone: "extra" }], label: "4 replies", time: "12:41 PM", dateTime: "12:41", open: true, controls: "thread" }),
           h(sd.Card, { tone: "danger" }, h(sd.CardHeader, null, "h"), h(sd.CardBody, null, "b"), h(sd.CardFooter, null, "f")),
           h(sd.Panel, { width: "wide" }, h(sd.PanelTitle, null, "t"), h(sd.PanelDescription, null, "d")),

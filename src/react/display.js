@@ -44,6 +44,22 @@ export function AvatarStack({ className, ...props }) {
 }
 
 /**
+ * A group chat's avatar: the first four `members` as a two-by-two square, one
+ * letter or picture each. `size` is the avatar's. The grid is one picture named
+ * by `label` (default: the members' names); the cells are decoration.
+ */
+export function AvatarGrid({ members, label, size, className, ...props }) {
+  const shown = members.slice(0, 4);
+  return h(
+    "span",
+    { role: "img", "aria-label": label ?? shown.map(({ name }) => name).join(", "), className: cx("sd-avatar-grid", size && `sd-avatar-${size}`, className), ...props },
+    shown.map(({ name, src, tone }, index) =>
+      h("span", { key: index, className: "sd-avatar", "data-tone": tone, "aria-hidden": true }, src ? h("img", { src, alt: "" }) : initials(name).charAt(0)),
+    ),
+  );
+}
+
+/**
  * The summary under a root message: up to three participants' avatars, `label`
  * ("4 replies", translated by the app) and the `time` of the last reply
  * (`dateTime` is its machine form). A button that opens the thread panel:

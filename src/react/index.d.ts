@@ -134,6 +134,16 @@ export interface AvatarProps extends Omit<ComponentProps<"span">, "children"> {
 export function Avatar(props: AvatarProps): ReactElement;
 export function AvatarStack(props: ComponentProps<"span">): ReactElement;
 
+export interface AvatarGridProps extends Omit<ComponentProps<"span">, "children"> {
+  /** Who is in the chat; the first four show, one letter or picture each. */
+  members: Pick<AvatarProps, "name" | "src" | "tone">[];
+  /** The accessible name of the whole grid. Default: the shown members' names joined by commas. */
+  label?: string | undefined;
+  size?: "sm" | "md" | "lg" | "xl" | undefined;
+}
+/** A group chat's avatar, up to four members two by two (`sd-avatar-grid`). */
+export function AvatarGrid(props: AvatarGridProps): ReactElement;
+
 export interface ThreadChipProps extends Omit<ComponentProps<"button">, "children"> {
   /** Who replied; the first three show as avatars. Decoration: they are hidden from assistive tech. */
   participants?: AvatarProps[] | undefined;
