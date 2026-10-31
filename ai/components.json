@@ -1,6 +1,6 @@
 {
  "name": "signal-design",
- "version": "1.4.3",
+ "version": "1.4.4",
  "generatedBy": "scripts/build-ai.mjs",
  "about": "Every block from the library pages: classes, attributes, copyable HTML, the JS it needs, and a usage note.",
  "components": [
