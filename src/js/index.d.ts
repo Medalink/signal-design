@@ -36,6 +36,7 @@ export type LabelKey =
   | "shell.collapse"
   | "window.maximize"
   | "window.restore"
+  | "spoiler.label"
   | "countdown.remaining"
   | "countdown.running"
   | "countdown.paused"
@@ -327,6 +328,7 @@ declare global {
     "sd:shell": CustomEvent<{ sidebar: "pinned" | "collapsed"; aside: "open" | "closed"; drawer: boolean; section?: string; width?: number }>;
     "sd:window": CustomEvent<{ action: "minimize" | "maximize" | "close" }>;
     "sd:reaction": CustomEvent<{ on: boolean }>;
+    "sd:spoiler": CustomEvent<{ open: boolean }>;
     "sd:contextmenu": CustomEvent<{ target: HTMLElement }>;
     "sd:tab": CustomEvent<{ tab: HTMLElement }>;
   }

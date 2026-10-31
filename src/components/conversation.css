@@ -295,6 +295,34 @@
     color: color-mix(in srgb, var(--who, var(--sd-extra)) 70%, var(--sd-fg));
     font-weight: var(--font-weight-semibold);
   }
+  /*
+   * Spoiler: text in a message kept behind a solid block until the reader
+   * opens it. aria-expanded is the state. The child span is what hides
+   * (visibility), so closed text is out of selection, find and the
+   * accessibility tree, and an emoji is covered too. Open, a faint fill keeps
+   * it recognisable. The text is plain inline: the whole span is one button.
+   *   <span class="sd-spoiler" role="button" tabindex="0" aria-roledescription="spoiler"
+   *     aria-expanded="false" aria-label="Spoiler" data-sd-spoiler><span>text</span></span>
+   */
+  .sd-spoiler {
+    padding: 0 0.25em;
+    background: var(--sd-line);
+    cursor: pointer;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    transition: background-color 120ms var(--ease-out);
+  }
+  .sd-spoiler[aria-expanded="false"] {
+    background: var(--sd-line-strong);
+  }
+  .sd-spoiler[aria-expanded="false"] > * {
+    visibility: hidden;
+  }
+  @media (forced-colors: active) {
+    .sd-spoiler[aria-expanded="false"] {
+      background: CanvasText;
+    }
+  }
   .sd-message-edited {
     color: var(--sd-fg-faint);
     font-size: 13px;

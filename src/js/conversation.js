@@ -6,6 +6,9 @@
  *             toggles aria-pressed and the count; fires "sd:reaction".
  * Poll        <div class="sd-poll" data-sd-poll [data-multiple]> <button class="sd-poll-option">…
  *             marks the choice; fires "change" with detail.selected (indexes).
+ * Spoiler     <span class="sd-spoiler" role="button" tabindex="0" aria-expanded="false" aria-label="Spoiler" data-sd-spoiler><span>text</span></span>
+ *             click, Enter or Space toggles aria-expanded (and the aria-label, which
+ *             names it while closed); fires "sd:spoiler" with detail.open.
  * Autogrow    <textarea data-sd-autogrow> grows with its content.
  * Enter       <textarea data-sd-enter-submit> Enter submits the form, Shift+Enter adds a line.
  * Suggest     <textarea data-sd-suggest="mentions" data-sd-trigger="@">
@@ -24,9 +27,28 @@
  *             Wired by init(); call init() again for a feed added later.
  */
 
-/* ---- Reactions and polls ------------------------------------------------ */
+import { getLabel } from "./labels.js";
+
+/* ---- Reactions, polls and spoilers -------------------------------------- */
+
+function toggleSpoiler(spoiler) {
+  const open = spoiler.getAttribute("aria-expanded") !== "true";
+  spoiler.setAttribute("aria-expanded", String(open));
+  if (open) spoiler.removeAttribute("aria-label");
+  else spoiler.setAttribute("aria-label", getLabel("spoiler.label"));
+  spoiler.dispatchEvent(new CustomEvent("sd:spoiler", { bubbles: true, detail: { open } }));
+}
 
 export function onConversationClick(event) {
+  const spoiler = event.target.closest("[data-sd-spoiler]");
+  if (spoiler) {
+    /* A drag across revealed text ends in a click; it selects, it does not hide. */
+    const selection = getSelection();
+    const selecting = spoiler.getAttribute("aria-expanded") === "true" && selection && !selection.isCollapsed && spoiler.contains(selection.anchorNode);
+    if (!selecting) toggleSpoiler(spoiler);
+    return;
+  }
+
   const reaction = event.target.closest("[data-sd-reaction]");
   if (reaction) {
     const on = reaction.getAttribute("aria-pressed") !== "true";
@@ -108,6 +130,13 @@ export function onConversationInput(event) {
 }
 
 export function onConversationKeydown(event) {
+  const spoiler = event.target.closest?.("[data-sd-spoiler]");
+  if (spoiler && event.target === spoiler && (event.key === "Enter" || event.key === " ")) {
+    event.preventDefault();
+    toggleSpoiler(spoiler);
+    return;
+  }
+
   const textarea = event.target;
   if (!(textarea instanceof HTMLTextAreaElement)) return;
 

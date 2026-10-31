@@ -24,6 +24,7 @@ export const DEFAULT_LABELS = Object.freeze({
   "shell.collapse": "Collapse sidebar",
   "window.maximize": "Maximize",
   "window.restore": "Restore",
+  "spoiler.label": "Spoiler",
   "countdown.remaining": ({ count, state }) => `${count} ${Number(count) === 1 ? "second" : "seconds"} remaining, ${state}`,
   "countdown.running": "running",
   "countdown.paused": "paused",

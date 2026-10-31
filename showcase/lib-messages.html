@@ -110,6 +110,25 @@
       <p class="demo-usage"><code>sd-md</code> wraps the blocks of a Markdown message and starts under the author · inline code, bold, italic, strike and links need no wrapper · <code>sd-code</code> + <code>sd-code-head</code> carries a fence's language · <code>sd-table-wrap</code> scrolls a wide table</p>
     </div>
 
+    <div class="demo-block" id="conversation-message-spoilers">
+      <h2 class="sd-label">Spoilers</h2>
+      <div class="border border-line pb-3" style="--sd-feed-bg: var(--sd-surface); background: var(--sd-surface)">
+        <article class="sd-message" style="--who: var(--sd-extra)">
+          <time class="sd-message-time" datetime="11:20">11:20</time>
+          <div class="sd-message-body">
+            <div class="sd-message-text"><b class="sd-message-author">Alex</b>Finished the season last night and the ending is <span class="sd-spoiler" role="button" tabindex="0" aria-roledescription="spoiler" aria-expanded="false" aria-label="Spoiler" data-sd-spoiler><span>the lighthouse burns down 🔥 and nobody is surprised</span></span>, so read on at your own risk.</div>
+          </div>
+        </article>
+        <article class="sd-message" style="--who: var(--sd-accent)">
+          <time class="sd-message-time" datetime="11:21">11:21</time>
+          <div class="sd-message-body">
+            <div class="sd-message-text"><b class="sd-message-author">Taylor</b>Open, it reads as plain text on a faint fill, so you can still see what was hidden: <span class="sd-spoiler" role="button" tabindex="0" aria-roledescription="spoiler" aria-expanded="true" data-sd-spoiler><span>the butler did it</span></span>.</div>
+          </div>
+        </article>
+      </div>
+      <p class="demo-usage"><code>sd-spoiler</code> around one inner <code>span</code> · <code>role="button"</code> <code>tabindex="0"</code> <code>aria-roledescription="spoiler"</code> · <code>aria-expanded</code> (state) · <code>aria-label="Spoiler"</code> while closed · <code>data-sd-spoiler</code> · fires <code>sd:spoiler</code> · closed text is out of selection, find and screen readers · plain inline content only</p>
+    </div>
+
     <div class="demo-block" id="conversation-message-edges-and-selection">
       <h2 class="sd-label">Message edges and selection</h2>
       <div class="border border-line py-3" style="background: var(--sd-surface)">

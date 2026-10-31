@@ -610,6 +610,18 @@ export interface MarkProps extends ComponentProps<"span"> {
 /** A span of text something is attached to. `onClick` without `href` makes it a button. */
 export function Mark(props: MarkProps): ReactElement;
 
+export interface SpoilerProps extends Omit<ComponentProps<"span">, "aria-label" | "aria-expanded"> {
+  /** Controlled: whether the text shows. */
+  open?: boolean | undefined;
+  /** Uncontrolled start state. Default false. */
+  defaultOpen?: boolean | undefined;
+  onOpenChange?: ((open: boolean) => void) | undefined;
+  /** The button's name while closed. Default "Spoiler". */
+  label?: string | undefined;
+}
+/** Inline text behind a solid block until clicked, or Enter or Space. Plain inline children only. */
+export function Spoiler(props: SpoilerProps): ReactElement;
+
 export interface GutterMarkerProps extends Omit<ComponentProps<"button">, "aria-label"> {
   /** A suggestion draws a dashed edge. Default "comment". */
   kind?: "comment" | "suggestion" | undefined;

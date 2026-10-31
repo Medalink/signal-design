@@ -1,6 +1,6 @@
 /** Marks: the spans of a document that a comment, a suggestion, a mention or a detected entity is attached to. */
 import { createElement as h } from "react";
-import { cx } from "./util.js";
+import { cx, useControllable } from "./util.js";
 
 const ELEMENT = { comment: "mark", find: "mark", insert: "ins", delete: "del" };
 
@@ -63,4 +63,42 @@ export function GutterMarker({ kind = "comment", count, active, resolved, label,
  */
 export function GutterBlock({ as = "div", side, marker, className, children, ...props }) {
   return h(as, { className: cx("sd-gutter-block", className), "data-side": side === "start" ? "start" : undefined, ...props }, children, marker && h(GutterMarker, marker));
+}
+
+/**
+ * Inline text kept behind a solid block until the reader opens it (`sd-spoiler`).
+ * `open` / `defaultOpen` / `onOpenChange` drive it, and `aria-expanded` is the
+ * state. Closed, the children are hidden from sight, selection, find and
+ * assistive tech, and `label` (default "Spoiler") names the button; open, the
+ * text names it. Children are plain inline content: the span is one button, so
+ * a link inside would not be reachable.
+ */
+export function Spoiler({ open, defaultOpen = false, onOpenChange, label = "Spoiler", className, onClick, onKeyDown, children, ...props }) {
+  const [shown, setShown] = useControllable(open, defaultOpen, onOpenChange);
+  return h(
+    "span",
+    {
+      className: cx("sd-spoiler", className),
+      role: "button",
+      tabIndex: 0,
+      "aria-roledescription": "spoiler",
+      "aria-expanded": shown,
+      "aria-label": shown ? undefined : label,
+      onClick: (event) => {
+        onClick?.(event);
+        if (event.defaultPrevented) return;
+        const selection = window.getSelection();
+        if (shown && selection && !selection.isCollapsed && event.currentTarget.contains(selection.anchorNode)) return;
+        setShown(!shown);
+      },
+      onKeyDown: (event) => {
+        onKeyDown?.(event);
+        if (event.defaultPrevented || event.target !== event.currentTarget || (event.key !== "Enter" && event.key !== " ")) return;
+        event.preventDefault();
+        setShown(!shown);
+      },
+      ...props,
+    },
+    h("span", null, children),
+  );
 }

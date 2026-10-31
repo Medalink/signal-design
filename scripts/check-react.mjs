@@ -25,7 +25,7 @@ export function checkReactTypes() {
   writeFileSync(
     fixture,
     `import { useRef, useState, type ComponentProps } from "react";
-import { AppShell, Button, Dialog, DialogBody, Menu, MenuContent, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
+import { AppShell, Button, Dialog, DialogBody, Menu, MenuContent, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, Spoiler, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 import { initScrollbars } from "signal-design/js";
 import { Checkbox, Switch, Tooltip, type BareCheckboxProps, type BareSwitchProps, type CheckboxProps, type SwitchProps } from "signal-design/react";
 
@@ -168,6 +168,7 @@ export function Consumer() {
       <Combobox items={[{ value: "a", label: "A", group: "G", hint: "h" } satisfies ListItem]} value="a" onValueChange={(value) => value.length} filter={(item, query) => item.label.startsWith(query)} name="who" placeholder="Pick" />
       <CommandPalette items={[{ value: "go", label: "Go", href: "/go" }]} open={open} onOpenChange={setOpen} onSelect={(item, event) => { event.preventDefault(); console.log(item.value); }} onQueryChange={(query) => query.length} />
       <Mark kind="comment" active onClick={(event) => event.currentTarget.focus()}>Comment</Mark>
+      <Spoiler defaultOpen onOpenChange={(next) => next} label="Hidden">text</Spoiler>
       <StatusSegment tone="success" pressed onClick={(event) => event.currentTarget.blur()}>Saved</StatusSegment>
       {/* @ts-expect-error variant must be one of the button variants */}
       <Button variant="huge" />
@@ -338,7 +339,7 @@ export async function checkReactSsr() {
             h(sd.ToolbarSeparator),
             h(sd.ToolbarButton, null, "Heading"),
             h(sd.ToolbarMore, null, h(sd.MenuItem, null, "Clear"))),
-          h(sd.Manuscript, { measure: "30rem", face: "mono" }, h("p", null, "Text", h(sd.Mark, { kind: "comment", active: true, onClick() {} }, "c"), h(sd.Mark, { kind: "insert" }, "i"), h(sd.Mark, { kind: "find", active: true }, "f"), h(sd.HoverCard, { content: "card", defaultOpen: true }, h(sd.Mark, { kind: "entity", tabIndex: 0 }, "e")))),
+          h(sd.Manuscript, { measure: "30rem", face: "mono" }, h("p", null, "Text", h(sd.Mark, { kind: "comment", active: true, onClick() {} }, "c"), h(sd.Mark, { kind: "insert" }, "i"), h(sd.Mark, { kind: "find", active: true }, "f"), h(sd.Spoiler, { label: "Hidden" }, "s"), h(sd.HoverCard, { content: "card", defaultOpen: true }, h(sd.Mark, { kind: "entity", tabIndex: 0 }, "e")))),
           h(sd.RadioGroup, { label: "Cycle", defaultValue: "m", name: "cycle" }, h(sd.Radio, { value: "m", label: "Monthly", description: "d" }), h(sd.Radio, { value: "y", label: "Yearly", disabled: true }), h(sd.Radio, { value: "z", label: "Zero", description: 0 }), h(sd.Radio, { value: "e", label: "Empty", description: [false, ""] }), h(sd.Radio, { value: "f", label: "Fragment", description: h(Fragment, null, [null, false]) })),
           h(sd.SegmentedControl, { label: "View", defaultValue: "a", inline: true }, h(sd.Segment, { value: "a" }, "A"), h(sd.Segment, { value: "b" }, "B")),
           h(sd.Menu, null, h(sd.MenuTrigger, null, h(sd.Button, null, "v")),

@@ -558,6 +558,7 @@ Generic pieces for chat, comments, feeds and inboxes. See `showcase/chat.html`.
 | `sd-poll-head`, `-foot`, `-voters`, `data-chosen` | A decision: a poll one person decides, such as an agent asking to approve or deny. `-head` holds its state badge and the time left, `data-tone` lights its edge while it waits, `data-chosen` marks the pick, `-voters` names who tapped an option in their `--who`. `-foot` is a meta row under the options. |
 | `sd-link-card-hero`, `-compact`, `-type`, `-note`, `-actions` | Link preview variants: image on top, one tight block, a document with its type, a reason line, and buttons under the text (Join on an invite). `data-blocked` and `aria-busy="true"` are states. |
 | `sd-link-card-media`, `-dismiss`, `-thumb-label`, `-thumb-action` | A card that is only an image or GIF, shown whole; a dismiss button; a label and an action over the media. `role="link"` on a `<div>` card hovers like a link. |
+| `sd-spoiler` | Inline text in a message behind a solid block until opened. A `span` with `role="button"`, `tabindex="0"`, `aria-roledescription="spoiler"` and `aria-expanded`, holding one inner `span`; `aria-label="Spoiler"` names it while closed. `data-sd-spoiler` toggles it on click, Enter or Space and fires `sd:spoiler`. Closed text is out of selection, find and screen readers; plain inline content only. React: `Spoiler` (`open` / `defaultOpen` / `onOpenChange`, `label`). |
 | `sd-shot` (+ `-caption`, `-hint`, `-status`, `-note`) | A media frame at `--ratio`. As a `<button>` it is an image attachment that opens a viewer: the border strengthens on hover and focus and `-hint` (a decorative icon, `expand`) shows then. `aria-busy="true"` shows `-status` (Downloading); `data-failed` shows `-note` (a danger reason) in place of the media. |
 | `sd-tiles`, `sd-tile` | Call grid; `data-speaking`, `data-muted`, `data-hand`. |
 | `sd-grid-picker` | An emoji or icon grid (`--cols`). |
@@ -1054,7 +1055,7 @@ gets the same answer:
 | `data-tone="success\|pending\|danger\|accent\|warning\|extra\|neutral"` | Tones a subtree: cards, chips, items, stat boxes, checks, progress. Resolves to `--tone`. |
 | `aria-selected="true"` | Selection in `sd-tabs`, `sd-item`, `sd-table` rows, `sd-seg`, `sd-grid-picker`, `sd-menu`. |
 | `aria-pressed="true"` | Toggle state in `sd-chip`, `sd-seg`, `sd-option`, `sd-poll-option`, `sd-reactions`, `sd-icon-btn`. |
-| `aria-expanded="true"` | `sd-icon-btn` (popover/menu triggers), `sd-rail-item`; `aria-controls` points at the panel. |
+| `aria-expanded="true"` | `sd-icon-btn` (popover/menu triggers), `sd-rail-item`, `sd-spoiler` (open); `aria-controls` points at the panel. |
 | `data-own`, `data-selected`, `--edge`, `--who` on `.sd-message` | Own-message grey edge, bulk selection, author or role edge color, name color. |
 | `aria-current` (any value but `"false"`) | Current location in `sd-nav`, `sd-sidenav`, `sd-sidebar-link`, `sd-breadcrumb`, `sd-pagination`, `sd-rail-item`, `sd-rail-tile`, `sd-message`; `sd-steps` uses `aria-current="step"`. |
 | `aria-sort="ascending\|descending"` | Sort direction of a `th[data-sort]` in `sd-table`. |
@@ -1068,7 +1069,7 @@ gets the same answer:
 | `data-sd-scrolling` on `<html>` | Present while the page is scrolling; drives the auto-hiding scrollbars. |
 
 Events bubble on `document`: `sd:tab`, `sd:theme`, `sd:font`, `sd:shell`, `sd:window`,
-`sd:contextmenu`, `sd:reaction` — with `detail` payloads typed in
+`sd:contextmenu`, `sd:reaction`, `sd:spoiler` — with `detail` payloads typed in
 `src/js/index.d.ts`.
 
 ### Framework-owned state
@@ -1099,6 +1100,7 @@ These classes work with CSS alone once you render their state:
 | `sd-rail-item`, `sd-sidebar-link`, `sd-nav`, `sd-sidenav`, `sd-breadcrumb`, `sd-pagination`, `sd-item`, `sd-message` | `aria-current`, `aria-selected`, `aria-expanded` | `data-sd-section` | Routing. |
 | `sd-sidebar-panel` | `hidden` on the panels that are not shown | `data-sd-section` | Which panel shows. |
 | `sd-reactions` | `aria-pressed` and the count in `<b>` | `data-sd-reaction` | Counting; `sd:reaction` is gone. |
+| `sd-spoiler` | `aria-expanded`, and `aria-label` only while closed | `data-sd-spoiler` | Clicks and Enter or Space; `sd:spoiler` is gone (`Spoiler` does it). |
 | `sd-poll` | `aria-pressed` on options, `--share` on each | `data-sd-poll` | Single or multiple choice. |
 | `dialog.sd-dialog` | `showModal()` and `close()` from your code | `data-sd-open`, `data-sd-close` | Focus return in WebKit (`openDialog` does it). |
 | `sd-composer` | your textarea height, `hidden` on `.sd-suggest`, `aria-selected` on its options | `data-sd-autogrow`, `data-sd-enter-submit`, `data-sd-suggest` | Growing, Enter to send, mentions. |
@@ -1742,6 +1744,7 @@ setLabels({ "copy.done": "Kopiert", "tags.remove": "{value} entfernen" });
 | `table.resize`, `table.width` | `value` | `Resize table width`, `{value} pixels wide` |
 | `shell.pin`, `shell.collapse` | | `Pin sidebar open`, `Collapse sidebar` |
 | `window.maximize`, `window.restore` | | `Maximize`, `Restore` |
+| `spoiler.label` | | `Spoiler` |
 | `countdown.remaining` | `count`, `state` | `{count} second(s) remaining, {state}` |
 | `countdown.running`, `.paused`, `.complete` | | `running`, `paused`, `complete` |
 | `stream.<kind>.label`, `.detail` | | `New follower`, `Welcome to the stream`, … for `follow`, `sub`, `raid`, `bits` |
