@@ -814,6 +814,13 @@
     display: grid;
     grid-template-columns: repeat(8, 1fr);
   }
+  /* A cell is square and reaches --sd-hit tall, so on a finger the columns
+     are as many 44px cells as fit, not a fixed eight that would overflow. */
+  @media (pointer: coarse) {
+    .sd-emoji-grid {
+      grid-template-columns: repeat(auto-fill, minmax(var(--sd-hit), 1fr));
+    }
+  }
   .sd-emoji-grid > button {
     display: grid;
     place-items: center;

@@ -1,6 +1,7 @@
 /*
  * Touch. On a coarse pointer (a phone, a tablet) every control is at least
- * --sd-touch tall, so a finger lands on it; a mouse keeps the desktop density.
+ * --sd-touch tall, and --sd-touch is --sd-hit (44px) there, so a finger lands
+ * on it; a mouse keeps the desktop density (--sd-touch is 40px).
  * min-height does nothing to an inline link, so links in a sentence keep the
  * line. Left out: checkboxes, radios and switches (their label is the
  * target), and parts whose size is the data (a schedule block, a mark,
@@ -11,6 +12,11 @@
 :root {
   --sd-touch: 40px;
   --sd-hit: 44px;
+}
+@media (pointer: coarse) {
+  :root {
+    --sd-touch: var(--sd-hit);
+  }
 }
 
 @layer components {
