@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 1.4.24 (2026-10-31)
+
+### Changed
+- Add a no-write AI-files check to run before the push
+
 ## 1.4.23 (2026-10-31)
 
 ### Added
