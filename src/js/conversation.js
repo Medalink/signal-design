@@ -9,6 +9,9 @@
  * Spoiler     <span class="sd-spoiler" role="button" tabindex="0" aria-expanded="false" aria-label="Spoiler" data-sd-spoiler><span>text</span></span>
  *             click, Enter or Space toggles aria-expanded (and the aria-label, which
  *             names it while closed); fires "sd:spoiler" with detail.open.
+ * Content warning <button class="sd-cw-toggle" aria-expanded="false" aria-controls="media" data-sd-cw>
+ *             click flips aria-expanded, which shows or hides the media in its
+ *             sd-cw wrapper (CSS keys on it); fires "sd:cw" with detail.open.
  * Autogrow    <textarea data-sd-autogrow> grows with its content.
  * Enter       <textarea data-sd-enter-submit> Enter submits the form, Shift+Enter adds a line.
  * Suggest     <textarea data-sd-suggest="mentions" data-sd-trigger="@">
@@ -45,6 +48,14 @@ function toggleSpoiler(spoiler) {
 }
 
 export function onConversationClick(event) {
+  const cw = event.target.closest("[data-sd-cw]");
+  if (cw) {
+    const open = cw.getAttribute("aria-expanded") !== "true";
+    cw.setAttribute("aria-expanded", String(open));
+    cw.dispatchEvent(new CustomEvent("sd:cw", { bubbles: true, detail: { open } }));
+    return;
+  }
+
   const spoiler = event.target.closest("[data-sd-spoiler]");
   if (spoiler) {
     /* A drag across revealed text ends in a click; it selects, it does not hide. */

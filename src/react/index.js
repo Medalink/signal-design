@@ -44,6 +44,7 @@ export { Tabs, TabList, Tab, TabPanel } from "./tabs.js";
 export { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarButton, ToolbarMore } from "./toolbar.js";
 export { Manuscript, StatusSegment } from "./editor.js";
 export { Mark, GutterMarker, GutterBlock, Spoiler } from "./marks.js";
+export { ContentWarning } from "./contentwarning.js";
 export { HoverCard, HoverCardHost } from "./hovercard.js";
 export { VoiceNote } from "./voice.js";
 export { Tree, TreeItem } from "./tree.js";

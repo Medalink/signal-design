@@ -25,7 +25,7 @@ export function checkReactTypes() {
   writeFileSync(
     fixture,
     `import { useRef, useState, type ComponentProps } from "react";
-import { AppShell, AvatarGrid, Button, Dialog, DialogBody, Menu, MenuContent, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, Spoiler, ThreadChip, EventCard, VoiceNote, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
+import { AppShell, AvatarGrid, Button, Dialog, DialogBody, Menu, MenuContent, DialogHeader, Field, Icon, IconButton, Input, MenuItem, HoverCard, Manuscript, Mark, Spoiler, ContentWarning, ThreadChip, EventCard, VoiceNote, HoverCardHost, type HoverCardHandle, GutterBlock, GutterMarker, WeightedBar, RailItem, StatusSegment, Tab, TabList, TabPanel, Tabs, TableHeader, Toolbar, ToolbarButton, ToolbarMore, Combobox, CommandPalette, MenuItemCheckbox, MenuItemRadio, MenuRadioGroup, Radio, RadioGroup, ResizablePanel, Segment, SegmentedControl, Tree, TreeItem, type ListItem, type TreeMove, useToast, buttonClass, type ButtonProps } from "signal-design/react";
 import { initScrollbars } from "signal-design/js";
 import { Checkbox, Switch, Tooltip, type BareCheckboxProps, type BareSwitchProps, type CheckboxProps, type SwitchProps } from "signal-design/react";
 
@@ -169,6 +169,7 @@ export function Consumer() {
       <CommandPalette items={[{ value: "go", label: "Go", href: "/go", leading: <Icon name="search" /> }]} icon={<Icon name="search" />} kbd="Ctrl K" open={open} onOpenChange={setOpen} onSelect={(item, event) => { event.preventDefault(); console.log(item.value); }} onQueryChange={(query) => query.length} />
       <Mark kind="comment" active onClick={(event) => event.currentTarget.focus()}>Comment</Mark>
       <Spoiler defaultOpen onOpenChange={(next) => next} label="Hidden">text</Spoiler>
+      <ContentWarning label="CW · spiders" defaultOpen onOpenChange={(next) => next} showLabel="Show" hideLabel="Hide"><button className="sd-shot" type="button" /></ContentWarning>
       <AvatarGrid members={[{ name: "Maya Lee", tone: "extra" }, { name: "Kai" }]} label="Maya, Kai" size="sm" />
       <ThreadChip participants={[{ name: "Maya Lee", tone: "extra" }]} label="4 replies" time="12:41 PM" dateTime="12:41" open controls="thread" onClick={(event) => event.currentTarget.blur()} />
       <VoiceNote peaks={[0.2, 0.8, 0.5]} duration={23} position={8} playing speed={1.5} onPlayingChange={(next) => next} onSeek={(seconds) => seconds.toFixed()} onSpeedChange={(next) => next.toFixed(1)} label="Voice message from Maya" />
@@ -348,6 +349,7 @@ export async function checkReactSsr() {
             h(sd.ToolbarButton, null, "Heading"),
             h(sd.ToolbarMore, null, h(sd.MenuItem, null, "Clear"))),
           h(sd.Manuscript, { measure: "30rem", face: "mono" }, h("p", null, "Text", h(sd.Mark, { kind: "comment", active: true, onClick() {} }, "c"), h(sd.Mark, { kind: "insert" }, "i"), h(sd.Mark, { kind: "find", active: true }, "f"), h(sd.Spoiler, { label: "Hidden" }, "s"), h(sd.HoverCard, { content: "card", defaultOpen: true }, h(sd.Mark, { kind: "entity", tabIndex: 0 }, "e")))),
+          h(sd.ContentWarning, { label: "CW · spiders", defaultOpen: true }, h("div", { className: "sd-file" }, "f")),
           h(sd.RadioGroup, { label: "Cycle", defaultValue: "m", name: "cycle" }, h(sd.Radio, { value: "m", label: "Monthly", description: "d" }), h(sd.Radio, { value: "y", label: "Yearly", disabled: true }), h(sd.Radio, { value: "z", label: "Zero", description: 0 }), h(sd.Radio, { value: "e", label: "Empty", description: [false, ""] }), h(sd.Radio, { value: "f", label: "Fragment", description: h(Fragment, null, [null, false]) })),
           h(sd.SegmentedControl, { label: "View", defaultValue: "a", inline: true }, h(sd.Segment, { value: "a" }, "A"), h(sd.Segment, { value: "b" }, "B")),
           h(sd.Menu, null, h(sd.MenuTrigger, null, h(sd.Button, null, "v")),

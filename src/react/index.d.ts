@@ -683,6 +683,22 @@ export interface SpoilerProps extends Omit<ComponentProps<"span">, "aria-label" 
 /** Inline text behind a solid block until clicked, or Enter or Space. Plain inline children only. */
 export function Spoiler(props: SpoilerProps): ReactElement;
 
+export interface ContentWarningProps extends ComponentProps<"div"> {
+  /** The chip on the cover, such as "CW · spiders". */
+  label: ReactNode;
+  /** Controlled: whether the media shows. */
+  open?: boolean | undefined;
+  /** Uncontrolled start state. Default false. */
+  defaultOpen?: boolean | undefined;
+  onOpenChange?: ((open: boolean) => void) | undefined;
+  /** The toggle's name while closed. Default "Show". */
+  showLabel?: ReactNode | undefined;
+  /** The toggle's name while open. Default "Hide". */
+  hideLabel?: ReactNode | undefined;
+}
+/** An image or attachment (an `sd-shot` or `sd-file`) behind a solid cover until the reader opens it, with a way to hide it again. */
+export function ContentWarning(props: ContentWarningProps): ReactElement;
+
 export interface GutterMarkerProps extends Omit<ComponentProps<"button">, "aria-label"> {
   /** A suggestion draws a dashed edge. Default "comment". */
   kind?: "comment" | "suggestion" | undefined;

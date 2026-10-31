@@ -329,6 +329,7 @@ declare global {
     "sd:window": CustomEvent<{ action: "minimize" | "maximize" | "close" }>;
     "sd:reaction": CustomEvent<{ on: boolean }>;
     "sd:spoiler": CustomEvent<{ open: boolean }>;
+    "sd:cw": CustomEvent<{ open: boolean }>;
     "sd:contextmenu": CustomEvent<{ target: HTMLElement }>;
     "sd:tab": CustomEvent<{ tab: HTMLElement }>;
   }

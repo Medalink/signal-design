@@ -323,6 +323,60 @@
       background: CanvasText;
     }
   }
+  /*
+   * Content warning: an image or an attachment kept behind a solid surface
+   * until the reader opens it. The toggle's aria-expanded is the state; closed,
+   * the media is hidden from sight, tab order and the accessibility tree and
+   * the cover shows a chip (the warning) and the toggle (Show). Open, the
+   * cover shrinks to a strip above the media with the chip and the toggle
+   * (Hide). The toggle holds both labels; the state shows one.
+   *   <div class="sd-cw" style="width: 240px">
+   *     <div class="sd-cw-media" id="cw1"><button class="sd-shot">…</button></div>
+   *     <div class="sd-cw-cover"><span class="sd-badge" id="cw1-warning">CW · spiders</span>
+   *       <button type="button" class="sd-btn sd-btn-sm sd-cw-toggle" aria-expanded="false"
+   *         aria-controls="cw1" aria-describedby="cw1-warning" data-sd-cw>
+   *         <span class="sd-cw-show">Show</span><span class="sd-cw-hide">Hide</span></button></div></div>
+   */
+  .sd-cw {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 30rem;
+  }
+  .sd-cw-media {
+    grid-area: 2 / 1;
+    min-width: 0;
+  }
+  .sd-cw-media > .sd-file {
+    max-width: none;
+  }
+  .sd-cw-cover {
+    grid-area: 1 / 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding-block-end: 6px;
+  }
+  .sd-cw-cover > .sd-badge {
+    vertical-align: baseline;
+  }
+  .sd-cw-toggle[aria-expanded="false"] > .sd-cw-hide,
+  .sd-cw-toggle[aria-expanded="true"] > .sd-cw-show {
+    display: none;
+  }
+  .sd-cw:has(.sd-cw-toggle[aria-expanded="false"]) > .sd-cw-media {
+    visibility: hidden;
+  }
+  .sd-cw:has(.sd-cw-toggle[aria-expanded="false"]) > .sd-cw-cover {
+    grid-area: 1 / 1 / 3;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 7rem;
+    padding: 12px;
+    gap: 10px;
+    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-raised);
+  }
   .sd-message-edited {
     color: var(--sd-fg-faint);
     font-size: 13px;
@@ -372,7 +426,7 @@
     color: var(--sd-danger);
   }
   /* Embeds in a message share one width and sit 3px under the text. */
-  .sd-message-body > :is(.sd-file, .sd-link-card, .sd-reactions, .sd-poll, .sd-thread-chip, .sd-event-card) {
+  .sd-message-body > :is(.sd-file, .sd-link-card, .sd-reactions, .sd-poll, .sd-thread-chip, .sd-event-card, .sd-cw) {
     margin-top: 3px;
   }
   .sd-message-body > :is(.sd-file, .sd-link-card, .sd-poll, .sd-event-card) {

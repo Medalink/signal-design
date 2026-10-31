@@ -94,6 +94,23 @@
         </article>
       </div>
       <p class="demo-usage"><code>sd-voice</code> (<code>role="group"</code>; <code>data-playing</code> while it plays) in an <code>sd-message-body</code> · <code>sd-voice-play</code> (a square filled button; <code>aria-label</code> flips Play and Pause) · <code>sd-voice-wave</code> (<code>role="slider"</code>, <code>tabindex="0"</code>, <code>aria-valuenow</code> in seconds; one <code>&lt;i&gt;</code> per bar with <code>--h</code> the 0 to 1 peak and <code>--at</code> its place in the note; <code>--progress</code> 0 to 1 lights the bars up to it) · <code>sd-voice-time</code> (mono; elapsed once started, else the length) · <code>sd-voice-speed</code> (1×, 1.5×, 2×) · the app owns the audio and writes the state; React: <code>VoiceNote</code> (<code>peaks</code>, <code>duration</code>, <code>position</code>, <code>playing</code>, <code>speed</code>, <code>onPlayingChange</code>, <code>onSeek</code>, <code>onSpeedChange</code>)</p>
+    <div class="demo-block" id="conversation-content-warnings">
+      <h2 class="sd-label">Content warnings</h2>
+      <div class="flex flex-wrap items-start gap-4">
+        <div class="sd-cw" style="width: 240px">
+          <div class="sd-cw-media" id="cw-image"><button class="sd-shot" type="button" style="--ratio: 3 / 2"><img alt="A line drawing of hills" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 480 320'%3E%3Crect width='480' height='320' fill='%230A0A0B'/%3E%3Crect x='24' y='24' width='432' height='272' fill='none' stroke='%232A2A2F'/%3E%3Cpath d='M24 260l130-110 90 70 70-50 142 90' fill='none' stroke='%232A2A2F'/%3E%3Ccircle cx='350' cy='96' r='24' fill='%2300D4FF' fill-opacity='.35'/%3E%3C/svg%3E"></button></div>
+          <div class="sd-cw-cover"><span class="sd-badge" id="cw-image-warning">CW · spiders</span><button type="button" class="sd-btn sd-btn-sm sd-cw-toggle" aria-expanded="false" aria-controls="cw-image" aria-describedby="cw-image-warning" data-sd-cw><span class="sd-cw-show">Show</span><span class="sd-cw-hide">Hide</span></button></div>
+        </div>
+        <div class="sd-cw" style="width: 240px">
+          <div class="sd-cw-media" id="cw-image-open"><button class="sd-shot" type="button" style="--ratio: 3 / 2"><img alt="A line drawing of hills" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 480 320'%3E%3Crect width='480' height='320' fill='%230A0A0B'/%3E%3Crect x='24' y='24' width='432' height='272' fill='none' stroke='%232A2A2F'/%3E%3Cpath d='M24 260l130-110 90 70 70-50 142 90' fill='none' stroke='%232A2A2F'/%3E%3Ccircle cx='350' cy='96' r='24' fill='%2300D4FF' fill-opacity='.35'/%3E%3C/svg%3E"></button></div>
+          <div class="sd-cw-cover"><span class="sd-badge" id="cw-image-open-warning">CW · spiders</span><button type="button" class="sd-btn sd-btn-sm sd-cw-toggle" aria-expanded="true" aria-controls="cw-image-open" aria-describedby="cw-image-open-warning" data-sd-cw><span class="sd-cw-show">Show</span><span class="sd-cw-hide">Hide</span></button></div>
+        </div>
+        <div class="sd-cw" style="width: 26rem">
+          <div class="sd-cw-media" id="cw-file"><button class="sd-file" type="button"><span class="sd-file-type">jpg</span><span class="sd-file-body"><span class="sd-file-name">cabin-shed.jpg</span><span class="sd-file-meta">2.4 MB</span></span></button></div>
+          <div class="sd-cw-cover"><span class="sd-badge" id="cw-file-warning">CW · spiders</span><button type="button" class="sd-btn sd-btn-sm sd-cw-toggle" aria-expanded="false" aria-controls="cw-file" aria-describedby="cw-file-warning" data-sd-cw><span class="sd-cw-show">Show</span><span class="sd-cw-hide">Hide</span></button></div>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-cw</code> around <code>sd-cw-media</code> (an <code>sd-shot</code> or an <code>sd-file</code>) and <code>sd-cw-cover</code> (an <code>sd-badge</code> with the warning and the <code>sd-cw-toggle</code> button) · <code>aria-expanded</code> on the toggle is the state, with <code>aria-controls</code> the media and <code>aria-describedby</code> the chip · <code>data-sd-cw</code> flips it and fires <code>sd:cw</code> · the toggle holds <code>sd-cw-show</code> and <code>sd-cw-hide</code>, the state shows one · closed, a solid surface (no blur) and the media is out of sight, tab order and assistive tech · set the width on <code>sd-cw</code> · React: <code>ContentWarning</code> (<code>label</code>, <code>open</code> / <code>defaultOpen</code> / <code>onOpenChange</code>, <code>showLabel</code>, <code>hideLabel</code>)</p>
     </div>
 
     <div class="demo-block" id="conversation-decisions">

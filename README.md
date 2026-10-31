@@ -556,6 +556,7 @@ Generic pieces for chat, comments, feeds and inboxes. See `showcase/chat.html`.
 | `sd-suggest-command` | A slash-command row in the composer's `sd-suggest` list: the command in mono, its arguments faint on the right in `sd-menu-hint`; the active row has `aria-selected="true"`. `data-sd-trigger-start="/"` on the textarea opens the list only when the text starts with `/`; `data-trigger="/"` on an option shows it after that character only. |
 | Silent mark, send menu | A message sent without a notification carries an icon-only `bell-off` item in `sd-message-meta` with `role="img"` and `aria-label="Sent silently"`. The send button's menu is `data-sd-contextmenu="id"` on `sd-composer-send` and an `sd-popover sd-message-menu` of `sd-menu` rows (Send silently, Send when a person is online, Schedule…); right-click or long press opens it, a click still sends. No class of its own. |
 | `sd-roster` (+ `-group`, `-head`, `-label`, `-count`, `-row`, `-avatar`, `-name`, `-sub`, `-more`) | People in a large conversation: a section per role with a sticky, collapsible head, rows by `data-presence` (`online`, `offline`, `unresolved`), and a Show more row. An `sd-badge` after `-name` (Agent) takes the row's end. `-sub` inside `-name` is a second mono line, such as the ghost id under a private name. |
+| `sd-cw` (+ `-media`, `-cover`, `-toggle`, `-show`, `-hide`) | A content warning over media: an `sd-shot` or `sd-file` in `-media` stays behind a solid `--sd-raised` cover (no blur) with an `sd-badge` chip (`CW · spiders`) and the toggle until the reader opens it. `aria-expanded` on `-toggle` is the state (`aria-controls` the media, `aria-describedby` the chip); closed, the media is out of sight, tab order and the accessibility tree. Open, the cover is a strip above the media with the chip and the toggle, so the reader can hide it again. The toggle holds `-show` and `-hide` and the state shows one. `data-sd-cw` flips it and fires `sd:cw`. Set the width on `sd-cw`. React: `ContentWarning` (`label`, `open` / `defaultOpen` / `onOpenChange`, `showLabel`, `hideLabel`). |
 | `sd-profile` (+ `-head`, `-name`, `-status`, `-section`, `-label`, `-about`, `-groups`, `-actions`) | A person's card for an `sd-hovercard` or `sd-dialog-body`: a large avatar with the name (in `--who`) and status line, a caps About label over a plain-text bio, Groups you share as small tiles with names, and Message and Call. It has no frame of its own; leave out a section with nothing in it. |
 | `sd-banner` | A full-width notice with actions. |
 | `sd-file`, `sd-link-card`, `sd-poll` | Attachment, link preview, poll (`--share` per option: its share of the voters, 0 to 100). A file row with no preview under it can be one `<button class="sd-file">` that opens the file. |
@@ -1066,7 +1067,7 @@ gets the same answer:
 | `data-tone="success\|pending\|danger\|accent\|warning\|extra\|neutral"` | Tones a subtree: cards, chips, items, stat boxes, checks, progress. Resolves to `--tone`. |
 | `aria-selected="true"` | Selection in `sd-tabs`, `sd-item`, `sd-table` rows, `sd-seg`, `sd-grid-picker`, `sd-menu`. |
 | `aria-pressed="true"` | Toggle state in `sd-chip`, `sd-seg`, `sd-option`, `sd-poll-option`, `sd-reactions`, `sd-icon-btn`. |
-| `aria-expanded="true"` | `sd-icon-btn` (popover/menu triggers), `sd-rail-item`, `sd-spoiler` (open); `aria-controls` points at the panel. |
+| `aria-expanded="true"` | `sd-icon-btn` (popover/menu triggers), `sd-rail-item`, `sd-spoiler` (open), `sd-cw-toggle` (media shown); `aria-controls` points at the panel. |
 | `data-own`, `data-selected`, `--edge`, `--who` on `.sd-message` | Own-message grey edge, bulk selection, author or role edge color, name color. |
 | `aria-current` (any value but `"false"`) | Current location in `sd-nav`, `sd-sidenav`, `sd-sidebar-link`, `sd-breadcrumb`, `sd-pagination`, `sd-rail-item`, `sd-rail-tile`, `sd-message`; `sd-steps` uses `aria-current="step"`. |
 | `aria-sort="ascending\|descending"` | Sort direction of a `th[data-sort]` in `sd-table`. |
@@ -1080,7 +1081,7 @@ gets the same answer:
 | `data-sd-scrolling` on `<html>` | Present while the page is scrolling; drives the auto-hiding scrollbars. |
 
 Events bubble on `document`: `sd:tab`, `sd:theme`, `sd:font`, `sd:shell`, `sd:window`,
-`sd:contextmenu`, `sd:reaction`, `sd:spoiler` — with `detail` payloads typed in
+`sd:contextmenu`, `sd:reaction`, `sd:spoiler`, `sd:cw` — with `detail` payloads typed in
 `src/js/index.d.ts`.
 
 ### Framework-owned state
@@ -1112,6 +1113,7 @@ These classes work with CSS alone once you render their state:
 | `sd-sidebar-panel` | `hidden` on the panels that are not shown | `data-sd-section` | Which panel shows. |
 | `sd-reactions` | `aria-pressed` and the count in `<b>` | `data-sd-reaction` | Counting; `sd:reaction` is gone. |
 | `sd-spoiler` | `aria-expanded`, and `aria-label` only while closed | `data-sd-spoiler` | Clicks and Enter or Space; `sd:spoiler` is gone (`Spoiler` does it). |
+| `sd-cw` | `aria-expanded` on `.sd-cw-toggle` (plus `aria-controls`, `aria-describedby`) | `data-sd-cw` | Clicks; `sd:cw` is gone (`ContentWarning` does it). |
 | `sd-poll` | `aria-pressed` on options, `--share` on each | `data-sd-poll` | Single or multiple choice. |
 | `dialog.sd-dialog` | `showModal()` and `close()` from your code | `data-sd-open`, `data-sd-close` | Focus return in WebKit (`openDialog` does it). |
 | `sd-composer` | your textarea height, `hidden` on `.sd-suggest`, `aria-selected` on its options | `data-sd-autogrow`, `data-sd-enter-submit`, `data-sd-suggest` | Growing, Enter to send, mentions. |
