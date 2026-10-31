@@ -137,7 +137,7 @@ by `title` or `classes`) rather than inventing markup.
 | Forms | `sd-field` > `sd-field-label` + control + `sd-field-hint`; inputs are styled unclassed |
 | Choices | `sd-seg` (segmented; `sd-seg-wrap` in a narrow container), `sd-options` > `sd-option` (cards with a description or preview), `role="switch"` checkbox, `sd-combobox`, `sd-tags`, `sd-number` |
 | Overlays | `<dialog class="sd-dialog">` + `data-sd-open`; `popover` + `.sd-popover`; `data-sd-tip`; `toast()` |
-| Lists and rows | `sd-item`, `sd-row`, `sd-table`, `sd-kv` (`sd-kv-plain` for sentence-case, truncating keys) |
+| Lists and rows | `sd-item`, `sd-item-row` (a box around an `sd-item` link and an `sd-item-actions` cell with a trailing button such as Mark read or Remove; hover, focus and `aria-current` cover both), `sd-row`, `sd-table`, `sd-kv` (`sd-kv-plain` for sentence-case, truncating keys) |
 | Settings groups | `sd-panel` (560px), `sd-panel-wide` (1024px), `sd-panel-fluid` (no cap) |
 | Profile card | `sd-profile` (a person's card in an `sd-hovercard` or `sd-dialog-body`, no frame of its own: `-head` with `sd-avatar-xl`, `-name` in `--who`, `-status`; `-section` + `-label` over `-about` or `-groups`; `-actions` for Message and Call) |
 | Status | `sd-badge`, `sd-status`, `sd-dot`, `sd-count`, `sd-progress` (`data-state="indeterminate"` when the amount is unknown), `sd-checks`, `sd-level` (live level from `--level`, 0–1) |

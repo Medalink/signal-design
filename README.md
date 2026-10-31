@@ -567,6 +567,7 @@ Generic pieces for chat, comments, feeds and inboxes. See `showcase/chat.html`.
 | Class | What |
 |---|---|
 | `sd-item` (+ `-body`, `-title`, `-sub`, `-end`) | A list row with avatar, text and meta; `data-unread`, `data-muted`. |
+| `sd-item-row`, `sd-item-actions` | A row with a trailing action: a `div.sd-item-row` holding the `a.sd-item` link and an `sd-item-actions` cell with `sd-icon-btn`s (Mark read, Remove), as siblings because a link cannot hold a button. The box carries hover, keyboard focus and `aria-current` (set on the link) for both; the cell shows on hover and focus, always on touch, keeps its width so text never runs under it, and comes after the link in Tab order. |
 | `sd-avatar` (+ `-sm`, `-md`, `-lg`, `-xl`) | 22, 28, 34 and 48px squares (24px without a size class). `--sd-avatar-size` sets any other size, such as a profile preview; the initials and the presence square grow with it. |
 | `sd-avatar[data-status]` | `online`, `away` (or `afk`), `busy`, `offline` square on the corner. |
 | `sd-avatar-grid` | A group chat's avatar: up to four members as one square, two by two, the size of one avatar (`--sd-avatar-size`, or `sd-avatar-sm`, `-md`, `-lg`, `-xl` on the grid). Its children are four `sd-avatar` with one letter or an `img` each; a missing member leaves its cell empty, a fifth person is a `+N` cell. Name the whole grid with `role="img"` and `aria-label`. For a conversation row (in `sd-item`) and its header. React: `AvatarGrid` (`members`, `label`, `size`). |

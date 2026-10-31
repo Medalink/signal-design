@@ -1,0 +1,4 @@
+order: 165
+row: Lists and rows
+
+`sd-item-row` (a box around an `sd-item` link and an `sd-item-actions` cell with a trailing button such as Mark read or Remove; hover, focus and `aria-current` cover both)

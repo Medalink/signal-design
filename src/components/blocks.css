@@ -142,6 +142,57 @@
   }
 
   /*
+   * Row actions: a link cannot hold a button, so a row with an action is a box
+   * around the link and an actions cell, side by side. The box carries hover,
+   * keyboard focus and the current state for both, so the row reads as one.
+   * The cell keeps its width, so long text ends before it and never runs under
+   * it. It shows on hover and keyboard focus, and always on touch; it is
+   * hidden by opacity, so Tab still reaches it, link first, then the action.
+   * Put aria-current, data-unread and data-muted on the link as before.
+   *   <div class="sd-item-row">
+   *     <a class="sd-item" href="…">…</a>
+   *     <div class="sd-item-actions"><button class="sd-icon-btn" aria-label="Mark read">…</button></div>
+   *   </div>
+   */
+  .sd-item-row {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    transition: background-color 120ms var(--ease-out), color 120ms var(--ease-out);
+  }
+  .sd-item-row > .sd-item {
+    flex: 1;
+    min-width: 0;
+  }
+  .sd-item-row:is(:hover, :has(:focus-visible)),
+  .sd-item-row:has(> .sd-item:is([aria-current]:not([aria-current="false"]), [aria-selected="true"])) {
+    background: var(--sd-raised);
+    color: var(--sd-fg);
+  }
+  .sd-item-row > .sd-item:is(:hover, [aria-current]:not([aria-current="false"]), [aria-selected="true"]) {
+    background: transparent;
+  }
+  .sd-item-actions {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 2px;
+    min-inline-size: 42px;
+    padding-inline-end: 6px;
+    opacity: 0;
+    transition: opacity 120ms var(--ease-out);
+  }
+  .sd-item-row:is(:hover, :has(:focus-visible)) > .sd-item-actions,
+  .sd-item-actions:has([aria-expanded="true"]) {
+    opacity: 1;
+  }
+  @media (hover: none) {
+    .sd-item-actions {
+      opacity: 1;
+    }
+  }
+
+  /*
    * Activity: an inbox of what happened to you. Tabs over a flush list of
    * items; each row is a mark, "<name> <action>" on the first line (the name
    * in its --who color, the action muted), "<group> › #channel" under it and
@@ -164,8 +215,11 @@
   .sd-activity .sd-item {
     padding: 9px 16px 9px 14px;
   }
-  .sd-activity .sd-item + .sd-item {
+  .sd-activity :is(.sd-item, .sd-item-row) + :is(.sd-item, .sd-item-row) {
     border-block-start: 1px solid var(--sd-line);
+  }
+  .sd-activity .sd-item-row > .sd-item {
+    padding-inline-end: 8px;
   }
   .sd-activity .sd-item[data-unread]::before {
     left: 4px;
@@ -238,6 +292,7 @@
   :where(
     :is(a, button, label).sd-item:hover,
     .sd-item:is([aria-current]:not([aria-current="false"]), [aria-selected="true"]),
+    .sd-item-row:is(:hover, :has(:focus-visible), :has(> .sd-item:is([aria-current]:not([aria-current="false"]), [aria-selected="true"]))),
     .sd-message:not([data-mention]):is(:hover, :focus-within, [aria-current]:not([aria-current="false"])),
     .sd-rail-item:is(:hover, [aria-current]:not([aria-current="false"]), [aria-pressed="true"], [aria-expanded="true"]),
     .sd-sidebar-link:is(:hover, [aria-current]:not([aria-current="false"])),

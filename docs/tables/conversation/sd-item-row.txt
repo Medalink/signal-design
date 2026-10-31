@@ -1,0 +1,3 @@
+order: 15
+
+| `sd-item-row`, `sd-item-actions` | A row with a trailing action: a `div.sd-item-row` holding the `a.sd-item` link and an `sd-item-actions` cell with `sd-icon-btn`s (Mark read, Remove), as siblings because a link cannot hold a button. The box carries hover, keyboard focus and `aria-current` (set on the link) for both; the cell shows on hover and focus, always on touch, keeps its width so text never runs under it, and comes after the link in Tab order. |
