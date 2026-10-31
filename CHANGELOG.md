@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 1.4.10 (2026-10-31)
+
+### Changed
+- Reapply "Draw check-double inside the icon inset"
+- Revert "Draw check-double inside the icon inset"
+
 ## 1.4.9 (2026-10-31)
 
 ### Added
