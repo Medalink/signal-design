@@ -273,11 +273,22 @@
     background: transparent;
   }
 
-  /* Media frame: screenshot or video proof. */
+  /*
+   * Media frame: screenshot or video proof. As a button (or a link) it is an
+   * image attachment that opens a viewer: the border strengthens on hover
+   * and focus, and sd-shot-hint (a decorative icon, such as a magnifier)
+   * shows then. aria-busy="true" shows sd-shot-status over it (Downloading).
+   * data-failed shows sd-shot-note (a reason) in place of the media.
+   *   <button class="sd-shot" aria-busy="false"><img alt="…">
+   *     <span class="sd-shot-hint"><svg class="sd-icon" aria-hidden="true">…</svg></span>
+   *     <span class="sd-shot-status">Downloading</span></button>
+   *   <div class="sd-shot" data-failed><span class="sd-shot-note">Could not load</span></div>
+   */
   .sd-shot {
     position: relative;
     display: block;
     overflow: hidden;
+    max-width: 100%;
     border: 1px solid var(--sd-line);
     background: var(--sd-surface);
     aspect-ratio: var(--ratio, 16 / 9);
@@ -288,6 +299,75 @@
     border: 0;
     object-fit: cover;
     display: block;
+  }
+  .sd-shot:is(button, a, [role="button"]) {
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    text-align: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color 120ms;
+  }
+  .sd-shot:is(button, a, [role="button"]):is(:hover, :focus-visible) {
+    border-color: var(--sd-fg-faint);
+  }
+  .sd-shot-hint {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: color-mix(in srgb, var(--sd-canvas) 30%, transparent);
+    color: var(--sd-fg);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 120ms;
+  }
+  .sd-shot-hint > .sd-icon {
+    inline-size: 2rem;
+    block-size: 2rem;
+  }
+  .sd-shot:is(:hover, :focus-visible) > .sd-shot-hint {
+    opacity: 1;
+  }
+  .sd-shot-status,
+  .sd-shot-note {
+    font-size: var(--text-sm);
+  }
+  .sd-shot-status {
+    position: absolute;
+    inset: 0;
+    display: none;
+    width: fit-content;
+    height: fit-content;
+    margin: auto;
+    padding: 4px 10px;
+    border: 1px solid var(--sd-line);
+    background: var(--sd-canvas);
+    color: var(--sd-fg);
+  }
+  .sd-shot[aria-busy="true"] {
+    cursor: progress;
+  }
+  .sd-shot[aria-busy="true"] > .sd-shot-status {
+    display: block;
+  }
+  .sd-shot[aria-busy="true"] > .sd-shot-hint {
+    display: none;
+  }
+  .sd-shot[data-failed] {
+    display: grid;
+    place-items: center;
+    border-style: dashed;
+    border-color: var(--sd-line-strong);
+  }
+  .sd-shot[data-failed] > :where(img, video, iframe, canvas, .sd-shot-hint, .sd-shot-status) {
+    display: none;
+  }
+  .sd-shot-note {
+    padding: 8px 12px;
+    color: var(--sd-danger);
+    text-align: center;
   }
   .sd-shot-caption {
     position: absolute;

@@ -551,6 +551,7 @@ Generic pieces for chat, comments, feeds and inboxes. See `showcase/chat.html`.
 | `sd-poll-head`, `-foot`, `-voters`, `data-chosen` | A decision: a poll one person decides, such as an agent asking to approve or deny. `-head` holds its state badge and the time left, `data-tone` lights its edge while it waits, `data-chosen` marks the pick, `-voters` names who tapped an option in their `--who`. `-foot` is a meta row under the options. |
 | `sd-link-card-hero`, `-compact`, `-type`, `-note`, `-actions` | Link preview variants: image on top, one tight block, a document with its type, a reason line, and buttons under the text (Join on an invite). `data-blocked` and `aria-busy="true"` are states. |
 | `sd-link-card-media`, `-dismiss`, `-thumb-label`, `-thumb-action` | A card that is only an image or GIF, shown whole; a dismiss button; a label and an action over the media. `role="link"` on a `<div>` card hovers like a link. |
+| `sd-shot` (+ `-caption`, `-hint`, `-status`, `-note`) | A media frame at `--ratio`. As a `<button>` it is an image attachment that opens a viewer: the border strengthens on hover and focus and `-hint` (a decorative icon, `expand`) shows then. `aria-busy="true"` shows `-status` (Downloading); `data-failed` shows `-note` (a danger reason) in place of the media. |
 | `sd-tiles`, `sd-tile` | Call grid; `data-speaking`, `data-muted`, `data-hand`. |
 | `sd-grid-picker` | An emoji or icon grid (`--cols`). |
 | `sd-level` | A live level meter, such as a microphone input: 2 to 8 `<i>` bars that light up to `--level` (`0`–`1`). |

@@ -31,6 +31,17 @@
       <p class="demo-usage"><code>sd-banner</code> · <code>sd-file</code> · <code>sd-link-card</code> · <code>sd-poll</code> + <code>data-sd-poll</code> · <code>sd-tiles</code> + <code>sd-tile[data-speaking|muted|hand]</code> · <code>sd-grid-picker</code></p>
     </div>
 
+    <div class="demo-block" id="conversation-image-buttons">
+      <h2 class="sd-label">Image attachments</h2>
+      <div class="flex flex-wrap items-start gap-4">
+        <button class="sd-shot" type="button" style="width: 240px; --ratio: 3 / 2"><img alt="A line drawing of hills" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 480 320'%3E%3Crect width='480' height='320' fill='%230A0A0B'/%3E%3Crect x='24' y='24' width='432' height='272' fill='none' stroke='%232A2A2F'/%3E%3Cpath d='M24 260l130-110 90 70 70-50 142 90' fill='none' stroke='%232A2A2F'/%3E%3Ccircle cx='350' cy='96' r='24' fill='%2300D4FF' fill-opacity='.35'/%3E%3C/svg%3E"><span class="sd-shot-hint"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M14 4.5h5.5V10M19.5 4.5l-6 6M10 19.5H4.5V14M4.5 19.5l6-6"/></svg></span><span class="sd-shot-status">Downloading</span></button>
+        <button class="sd-shot" type="button" aria-busy="true" style="width: 240px; --ratio: 3 / 2"><img alt="A line drawing of hills" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 480 320'%3E%3Crect width='480' height='320' fill='%230A0A0B'/%3E%3Crect x='24' y='24' width='432' height='272' fill='none' stroke='%232A2A2F'/%3E%3Cpath d='M24 260l130-110 90 70 70-50 142 90' fill='none' stroke='%232A2A2F'/%3E%3Ccircle cx='350' cy='96' r='24' fill='%2300D4FF' fill-opacity='.35'/%3E%3C/svg%3E"><span class="sd-shot-hint"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M14 4.5h5.5V10M19.5 4.5l-6 6M10 19.5H4.5V14M4.5 19.5l6-6"/></svg></span><span class="sd-shot-status">Downloading</span></button>
+        <div class="sd-shot" data-failed style="width: 240px; --ratio: 3 / 2"><span class="sd-shot-note">Could not load the image</span></div>
+        <button class="sd-shot" type="button" data-failed style="width: 240px; --ratio: 3 / 2"><span class="sd-shot-note">Could not load. Tap to retry.</span></button>
+      </div>
+      <p class="demo-usage"><code>button.sd-shot</code> (an image that opens a viewer: the border strengthens on hover and focus) · <code>sd-shot-hint</code> (a decorative icon, shown on hover and focus) · <code>aria-busy="true"</code> + <code>sd-shot-status</code> (a chip while it downloads) · <code>data-failed</code> + <code>sd-shot-note</code> (a danger reason in place of the media) · set <code>--ratio</code> and a width to keep the image's own shape</p>
+    </div>
+
     <div class="demo-block" id="conversation-decisions">
       <h2 class="sd-label">Decisions</h2>
       <div class="grid gap-4 sm:grid-cols-2 items-start">
