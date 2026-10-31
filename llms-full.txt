@@ -2936,7 +2936,7 @@ JS: init() from signal-design/js wires data-sd-poll · popovertarget (placement,
 
 ## Conversation / File preview
 
-sd-file-preview (a <pre> as the last child of a <div class="sd-file">, never inside a button: full width under the row, mono, muted, clipped to 7 lines with an ellipsis)
+sd-file-preview (a <pre> as the last child of a <div class="sd-file">, never inside a button: full width under the row, mono, muted, clipped to 7 lines with an ellipsis) · button.sd-file (a row with no preview that opens the file on click)
 
 Classes: sd-file, sd-file-body, sd-file-meta, sd-file-name, sd-file-preview, sd-file-type
 
@@ -2959,6 +2959,7 @@ No JS needed: the HTML works with the CSS alone.
 10  2026-03-02  INFO  worker-1  synced 104 records
 11  2026-03-03  INFO  worker-2  synced 114 records
 12  2026-03-04  INFO  worker-0  synced 124 records</pre></div>
+        <button class="sd-file" type="button"><span class="sd-file-type">csv</span><span class="sd-file-body"><span class="sd-file-name">budget-2026.csv</span><span class="sd-file-meta">8 KB</span></span></button>
       </div>
 ```
 
