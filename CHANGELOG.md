@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 1.4.21 (2026-10-31)
+
+### Changed
+- Remove the rows my last AGENTS.md merge duplicated
+
 ## 1.4.20 (2026-10-31)
 
 ### Added
