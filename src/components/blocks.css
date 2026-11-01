@@ -793,7 +793,9 @@
    * A caps head with the calendar icon, the title, when and where lines, who
    * is coming (avatars and a mono count) and the three answers. aria-pressed
    * marks the viewer's answer; it is drawn in success, the color of your own
-   * position, with a check icon in its text. The app writes the state.
+   * position, with a check icon at its start. The check sits in room every
+   * answer keeps, so pressing one never resizes it or moves the others. The app
+   * writes the state.
    *   <article class="sd-event-card" aria-labelledby="ev-t">
    *     <div class="sd-event-card-head"><svg class="sd-icon">…</svg>Event</div>
    *     <h3 class="sd-event-card-title" id="ev-t">Saturday brunch</h3>
@@ -858,13 +860,24 @@
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
+    width: min(100%, 22rem);
+  }
+  .sd-event-card-rsvp > .sd-btn {
+    position: relative;
+    flex: 1 1 auto;
+    padding-inline: 18px;
+  }
+  .sd-event-card-rsvp > .sd-btn > .sd-icon {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 4px;
+    width: 14px;
+    height: 14px;
+    margin-block: auto;
   }
   .sd-event-card-rsvp > .sd-btn[aria-pressed="true"] {
     --btn-fg: var(--sd-success);
     --btn-border: var(--sd-success);
-  }
-  .sd-event-card-rsvp .sd-icon {
-    margin-inline-start: -0.2em;
   }
   .sd-event-card-add {
     margin-top: 6px;
