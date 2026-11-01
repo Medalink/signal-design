@@ -74,6 +74,11 @@
     input[type="color"] {
       min-width: var(--sd-touch);
     }
+    /* A checklist row is its label, which min-height skips with the checkbox
+       (above), so the row itself reaches the touch size. */
+    .sd-tasklist-items {
+      --row: var(--sd-touch);
+    }
     /* A row with a menu opens it on a long press, so the press does not
        start a text selection or the system callout. Copy goes in the menu. */
     [data-sd-contextmenu] {

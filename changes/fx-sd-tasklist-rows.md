@@ -1,0 +1,2 @@
+### Fixed
+- `sd-tasklist`: on a phone every item row is `--sd-touch` tall (44px) and the whole label is the target; on a desktop pointer it stays 30px. The checkbox sits on the first line of a long item instead of its middle. A long name of whoever ticked an item drops under the item (still right-aligned) or is cut with an ellipsis, so it no longer squeezes the item text into mid-word breaks. No markup or React change.

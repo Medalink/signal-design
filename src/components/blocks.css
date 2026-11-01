@@ -890,7 +890,10 @@
    * the title, a success progress bar (sd-progress), one row per item (a
    * square checkbox, its text, and the name of whoever ticked it in their
    * --who) and an Add item row. A ticked item is faint and struck through.
-   * The checkbox is the state: the app sets checked and the name.
+   * The checkbox is the state: the app sets checked and the name. A row is
+   * 30px (--sd-touch on a phone) and the checkbox sits on the first line of a
+   * long item. The name stays at the end of the row, and drops under the item when
+   * the row is too narrow for both, so it never squeezes the item's words.
    *   <section class="sd-tasklist" aria-labelledby="tl-t">
    *     <header class="sd-tasklist-head"><span class="sd-tasklist-label"><svg class="sd-icon">…</svg>Checklist</span>
    *       <span class="sd-tasklist-count">3/6</span></header>
@@ -941,28 +944,34 @@
     margin-block: 6px 4px;
   }
   .sd-tasklist-items {
+    --row: 30px;
     margin: 0;
     padding: 0;
     list-style: none;
   }
   .sd-tasklist-items > li {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    min-height: 30px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0 10px;
+    min-height: var(--row);
     font-size: var(--text-sm);
   }
   .sd-tasklist-items label {
     display: flex;
-    flex: 1;
-    align-items: center;
+    flex: 1 1 9rem;
+    align-items: flex-start;
     gap: 10px;
     min-width: 0;
-    min-height: 30px;
+    min-height: var(--row);
     color: var(--sd-fg);
     cursor: pointer;
   }
+  .sd-tasklist-items input {
+    margin-block: calc((var(--row) - 16px) / 2);
+  }
   .sd-tasklist-items label > span {
+    padding-block: calc((var(--row) - 1lh) / 2);
     overflow-wrap: anywhere;
   }
   .sd-tasklist-items > li:has(:checked) label > span {
@@ -971,9 +980,14 @@
   }
   .sd-tasklist-items > li > b {
     flex: none;
+    max-width: 100%;
+    margin: calc((var(--row) - 1lh) / 2) 0 calc((var(--row) - 1lh) / 2) auto;
+    overflow: hidden;
     color: color-mix(in srgb, var(--who, var(--sd-extra)) 70%, var(--sd-fg));
     font-size: var(--text-3xs);
     font-weight: var(--font-weight-semibold);
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .sd-tasklist-add {
     display: inline-flex;
