@@ -41,11 +41,17 @@
   .sd-message[data-own]:not([data-mention], [data-selected], [data-failed], [data-editing], [aria-current]:not([aria-current="false"])) {
     border-inline-start-color: var(--sd-line-strong);
   }
-  .sd-message:hover,
   .sd-message:focus-within,
   .sd-message[data-hover],
   .sd-message[data-sd-held] {
     background: var(--sd-raised);
+  }
+  /* A touch screen has no hover. WebKit still fakes one on a tap and holds it until the next tap, which
+     tints the row, shows its bar and swallows the first tap on anything inside it. */
+  @media (hover: hover) {
+    .sd-message:hover {
+      background: var(--sd-raised);
+    }
   }
   .sd-message-time {
     grid-column: 1;
@@ -552,8 +558,9 @@
   /*
    * Action bar: quick reactions first, then the likeliest actions, then More.
    * 32px targets on a 3px inset; rules split reactions, actions and the
-   * overflow. Revealed by opacity, so Tab still reaches it. A button with
-   * data-key shows its action and key in a tip.
+   * overflow. Revealed by opacity, so Tab still reaches it. Hover reveals it
+   * only where the pointer hovers; a touch screen opens it with data-hover on
+   * the message. A button with data-key shows its action and key in a tip.
    *   <div class="sd-message-actions" role="toolbar" aria-label="Message actions">
    *     <button data-emoji aria-label="React 👍">👍</button>…<hr>
    *     <button aria-label="Add reaction" data-key="E"><svg/></button>
@@ -577,10 +584,17 @@
     transform: translateY(2px);
     transition: opacity 120ms var(--ease-out), transform 120ms var(--ease-out);
   }
-  .sd-message:is(:hover, :focus-within, [data-hover]) > .sd-message-actions {
+  .sd-message:is(:focus-within, [data-hover]) > .sd-message-actions {
     opacity: 1;
     pointer-events: auto;
     transform: none;
+  }
+  @media (hover: hover) {
+    .sd-message:hover > .sd-message-actions {
+      opacity: 1;
+      pointer-events: auto;
+      transform: none;
+    }
   }
   .sd-message-actions > button {
     position: relative;
@@ -1139,9 +1153,19 @@
     width: 15px;
     height: 15px;
   }
-  .sd-message:is(:hover, :focus-within, [data-hover]) .sd-reactions-add,
+  .sd-message:is(:focus-within, [data-hover]) .sd-reactions-add,
   .sd-reactions-add:focus-visible {
     opacity: 1;
+  }
+  @media (hover: hover) {
+    .sd-message:hover .sd-reactions-add {
+      opacity: 1;
+    }
+  }
+  @media (hover: none) {
+    .sd-reactions-add {
+      opacity: 1;
+    }
   }
 
   /*
