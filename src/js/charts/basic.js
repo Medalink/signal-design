@@ -238,8 +238,11 @@ export function createBasicChart(canvas, opts) {
     },
   });
 
-  const refresh = () =>
-    requestAnimationFrame(() => {
+  // A theme change repaints a frame later; a chart destroyed in between cancels it.
+  let themeQueued = 0;
+  const refresh = () => {
+    cancelAnimationFrame(themeQueued);
+    themeQueued = requestAnimationFrame(() => {
       state.theme = readTheme(frame);
       chart.data.datasets = datasets();
       chart.options.scales = scales();
@@ -247,6 +250,7 @@ export function createBasicChart(canvas, opts) {
       chart.options.plugins.tooltip = tooltip();
       chart.update("none");
     });
+  };
   document.addEventListener("sd:theme", refresh);
   const scheme = matchMedia("(prefers-color-scheme: light)");
   scheme.addEventListener("change", refresh);
@@ -265,6 +269,7 @@ export function createBasicChart(canvas, opts) {
       chart.update("none");
     },
     destroy() {
+      cancelAnimationFrame(themeQueued);
       document.removeEventListener("sd:theme", refresh);
       scheme.removeEventListener("change", refresh);
       chart.$sd = null;

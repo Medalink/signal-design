@@ -475,12 +475,16 @@ export function createChart(canvas, options = {}) {
     sets.forEach((ds, i) => hidden.has(ds.label) && chart.setDatasetVisibility(i, false));
     if (hidden.size) chart.update("none");
   }
-  const onTheme = () =>
-    requestAnimationFrame(() => {
+  // A theme change repaints a frame later; a chart destroyed in between cancels it.
+  let themeQueued = 0;
+  const onTheme = () => {
+    cancelAnimationFrame(themeQueued);
+    themeQueued = requestAnimationFrame(() => {
       theme = readTheme(frame);
       state.theme = theme;
       refresh();
     });
+  };
   document.addEventListener("sd:theme", onTheme);
   const scheme = matchMedia("(prefers-color-scheme: light)");
   scheme.addEventListener("change", onTheme);
@@ -707,6 +711,7 @@ export function createChart(canvas, options = {}) {
     destroy() {
       clearInterval(scroll);
       cancelAnimationFrame(geomQueued);
+      cancelAnimationFrame(themeQueued);
       toolbar?.removeEventListener("click", onToolbar);
       canvas.removeEventListener("pointerdown", onDown);
       removeEventListener("pointermove", onMove);

@@ -42,9 +42,12 @@ export const ART = {};
 export const ART_SETS = { tech: Object.keys(TECH), nature: Object.keys(NATURE) };
 for (const [name, rows] of Object.entries({ ...TECH, ...NATURE })) ART[name] = piece({ body: rows });
 
-/** Rects for one grid at an offset; runs of the same cell merge. `only` maps listed characters to ink. */
-function cells(rows, dx = 0, dy = 0, only = null) {
-  let out = "";
+/**
+ * The rects of one grid at an offset: runs of the same cell in a row merge into one. `only` maps
+ * listed characters to ink. A rect is { x, y, width, signal, opacity }; `signal` cells take the tone.
+ */
+function runs(rows, dx = 0, dy = 0, only = null) {
+  const out = [];
   rows.forEach((row, y) => {
     const at = (x) => (only ? (only.includes(row[x]) ? "#" : ".") : row[x]);
     for (let x = 0; x < row.length; ) {
@@ -55,12 +58,30 @@ function cells(rows, dx = 0, dy = 0, only = null) {
       }
       let run = 1;
       while (x + run < row.length && at(x + run) === ch) run++;
-      const fill = ch === "o" ? ' class="sd-art-signal"' : OPACITY[ch] < 1 ? ` fill-opacity="${OPACITY[ch]}"` : "";
-      out += `<rect x="${x + dx}" y="${y + dy}" width="${run}" height="1"${fill}/>`;
+      out.push({ x: x + dx, y: y + dy, width: run, signal: ch === "o", opacity: OPACITY[ch] });
       x += run;
     }
   });
   return out;
+}
+
+function cells(rows, dx = 0, dy = 0, only = null) {
+  return runs(rows, dx, dy, only)
+    .map(({ x, y, width, signal, opacity }) => {
+      const fill = signal ? ' class="sd-art-signal"' : opacity < 1 ? ` fill-opacity="${opacity}"` : "";
+      return `<rect x="${x}" y="${y}" width="${width}" height="1"${fill}/>`;
+    })
+    .join("");
+}
+
+/**
+ * A piece as data, for frameworks that render their own elements: its size and, per layer, the
+ * rects artSVG draws. Null for an unknown name.
+ */
+export function artRects(name) {
+  const p = typeof name === "string" ? ART[name] : name;
+  if (!p) return null;
+  return { w: p.w, h: p.h, layers: Object.entries(p.layers).map(([layer, rows]) => ({ layer, rects: runs(rows) })) };
 }
 
 /** Rects for a list of [x, y] cells. */

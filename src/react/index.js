@@ -8,6 +8,7 @@
  */
 export { Button, IconButton, buttonClass } from "./button.js";
 export { Icon } from "./icons.js";
+export { Art } from "./art.js";
 export { Field, Input, Textarea, Select, Checkbox, Switch } from "./form.js";
 export {
   Badge,

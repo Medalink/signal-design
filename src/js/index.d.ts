@@ -311,6 +311,16 @@ export const IRIS_MOODS: MascotMood[];
 /** Draws every [data-sd-art] and [data-sd-mascot] under root (init() does this). */
 export function initArt(root?: ParentNode): void;
 export function artSVG(piece: string | ArtPiece): string;
+/** One merged run of cells: `signal` cells take the tone, the rest are ink at `opacity`. */
+export interface ArtRect {
+  x: number;
+  y: number;
+  width: number;
+  signal: boolean;
+  opacity: number;
+}
+/** A piece as data, for frameworks that render their own elements: the rects artSVG draws, per layer. Null for an unknown name. */
+export function artRects(piece: string | ArtPiece): { w: number; h: number; layers: { layer: string; rects: ArtRect[] }[] } | null;
 /** Register a piece for data-sd-art="name": an array of rows, or named layers. */
 export function defineArt(name: string, rows: string[] | Record<string, string[]>): ArtPiece;
 /** Register a mascot for data-sd-mascot="name". */

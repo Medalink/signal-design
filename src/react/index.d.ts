@@ -56,6 +56,21 @@ export interface IconProps extends Omit<ComponentProps<"svg">, "children"> {
 /** An icon of the set as an inline SVG sized to the text beside it. Pass `label` only when no text or control names it. */
 export function Icon(props: IconProps): ReactElement;
 
+/* ---- Art ----------------------------------------------------------------- */
+
+export interface ArtProps extends Omit<ComponentProps<"span">, "children"> {
+  /** A built-in piece (`ART_SETS` lists them) or one added with `defineArt()`. Unknown names throw. */
+  name: string;
+  /** Colours the signal cells ("o"); the rest stays in the text colour. */
+  tone?: Tone | undefined;
+  /** Draws the piece in the subtle text colour. */
+  muted?: boolean | undefined;
+  flip?: boolean | undefined;
+  /** Makes it an image with this name; without it the art is decorative. */
+  label?: string | undefined;
+}
+export function Art(props: ArtProps): ReactElement;
+
 /* ---- Fields and controls ----------------------------------------------- */
 
 export interface FieldProps extends Omit<ComponentProps<"div">, "children"> {
