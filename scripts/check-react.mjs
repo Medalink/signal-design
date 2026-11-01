@@ -302,6 +302,8 @@ export async function checkReactSsr() {
           h(sd.Badge, { tone: "success" }, "ok"),
           h(sd.Avatar, { name: "Ada Lovelace" }),
           h(sd.Icon, { name: "undo" }),
+          h(sd.Art, { name: "router", label: "Router", tone: "success" }),
+          h(sd.Art, { name: "signal" }),
           h(sd.HoverCardHost, { closeDelay: 100 }),
           h(sd.ResizablePanel, { edge: "start", size: 300, minSize: 200, label: "Resize inspector" }, "panel"),
           h(sd.Icon, { name: "warning", label: "Not saved", className: "extra" }),
@@ -396,6 +398,9 @@ export async function checkReactSsr() {
     ['role="separator"', "its handle"],
     ['aria-valuenow="300"', "the handle's value"],
     ['role="img" aria-label="Not saved"', "a labeled icon"],
+    ['<span class="sd-art" data-tone="success" role="img" aria-label="Router"', "a labeled Art"],
+    ['<span class="sd-art" aria-hidden="true"', "a decorative Art hidden from the tree"],
+    ['shape-rendering="crispEdges"', "the Art svg drawn with crisp edges"],
   ]) assert.ok(html.includes(needle), `server output is missing ${what}`);
   // The id is whatever useId made, so the header's span has to carry the same one.
   for (const [title, what] of [["T", "a closed dialog"], ["S", "a closed sheet"], ["Named header", "an open dialog"], ["Fragment header", "a header inside a fragment"]]) {
