@@ -985,7 +985,8 @@
    * Ack bar: the "Got it" row under an announced message. A primary button, one
    * small square per member (acknowledged = success, waiting = a pending
    * outline), the n/m count in mono, and optionally a muted "Waiting on" line
-   * for whoever sent the announce. After the reader acknowledges, the button is
+   * for whoever sent the announce. The count is drawn before the squares (order,
+   * not markup) so it stays beside the button when the strip wraps to its own row. After the reader acknowledges, the button is
    * data-tone="success" and disabled: it reads as done, not as a dead control.
    *   <div class="sd-ack">
    *     <button class="sd-btn sd-btn-primary sd-btn-sm" type="button"><svg class="sd-icon">…</svg>Got it</button>
@@ -1003,6 +1004,7 @@
     opacity: 1;
   }
   .sd-ack-cells {
+    order: 2;
     gap: 3px;
   }
   .sd-ack-cells > i {
@@ -1017,12 +1019,15 @@
     border-color: var(--sd-success);
   }
   .sd-ack-count {
+    order: 1;
     color: var(--sd-fg-subtle);
     font-family: var(--font-mono);
     font-size: var(--text-3xs);
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
   .sd-ack-waiting {
+    order: 3;
     flex-basis: 100%;
     margin: 0;
     color: var(--sd-fg-subtle);
