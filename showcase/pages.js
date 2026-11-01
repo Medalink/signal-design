@@ -88,6 +88,7 @@ const library = [
         { id: "rain", title: "Rain", summary: "The digital rain backdrop, and a job that speeds it up." },
         { id: "ornaments", title: "Ornaments", summary: "Corner ornaments, border glow, art ornaments and edge dust." },
         { id: "surfaces", title: "Shimmer and scrollbars", summary: "The hover shimmer and the scrollbar styles." },
+        { id: "art", title: "Art", summary: "Pixel pieces in the theme's ink, mascots, scenes and circuit ornaments, drawn from attributes." },
         { id: "ascii", title: "ASCII", summary: "Animated ASCII art in greys, still until the work behind it is running." },
       ]),
     ],

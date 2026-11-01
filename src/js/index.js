@@ -19,6 +19,7 @@ import { onShellClick, onShellKeydown, onShellPointerdown, initShell } from "./s
 import { onRainClick, initRain } from "./rain.js";
 import { initFps } from "./fps.js";
 import { initOrnaments } from "./ornaments.js";
+import { initArt, onMascotClick } from "./art.js";
 import { initScrollbars } from "./scrollbars.js";
 import { initScrollTabs } from "./scrolltabs.js";
 import { initKeyboard } from "./keyboard.js";
@@ -46,6 +47,7 @@ export { rain, mountRain } from "./rain.js";
 export { fps } from "./fps.js";
 export { paintOrnaments, ornamentShapes, ORNAMENT_STYLES } from "./ornaments.js";
 export { ornamentArt, ORNAMENT_ART } from "./ornament-art.js";
+export { initArt, ART, ART_SETS, MASCOTS, MASCOT_MOODS, IRIS_MOODS, artSVG, defineArt, defineMascot, mascotSVG, irisSVG, setMood, setMascot, lookAt } from "./art.js";
 export { setScrollbars, initScrollbars } from "./scrollbars.js";
 export { initKeyboard } from "./keyboard.js";
 export { setOptions, filterList } from "./listbox.js";
@@ -72,6 +74,7 @@ export function init({ theme = true, font = true, scrollbars = "auto", themeKey 
   initRain();
   initFps();
   initOrnaments();
+  initArt();
   initConversation();
   initPalettes();
   initInputs();
@@ -95,6 +98,7 @@ export function init({ theme = true, font = true, scrollbars = "auto", themeKey 
     onWindowClick(event);
     onInputsClick(event);
     onSuggestClick(event);
+    onMascotClick(event);
   });
   document.addEventListener("keydown", (event) => {
     onListboxKeydown(event);

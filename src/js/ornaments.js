@@ -7,11 +7,16 @@
  *   <div data-sd-ornaments data-sd-ornaments-size="420">…</div>       reach in px (default 340)
  *   <nav data-sd-ornaments="bottom" data-sd-ornaments-size="240">     full width, rising from the bottom
  *   <div data-sd-edges>…</div>   border bright at the corners, faint along the sides, sharp at each center
+ *   <div data-sd-ornaments="br" data-sd-ornaments-style="circuit">…</div>   circuit traces instead of dust
  *
  * The first corner gets "blocks" (large squares, mostly outlines and dotted
  * outlines, spreading along a straight diagonal); the second gets "dust"
  * (small filled squares and dots, spreading in a curve), so the two read as
  * separate pieces rather than a mirror image.
+ *
+ * The "circuit" style grows traces instead: square-cornered runs that leave
+ * the box's edges near the corner, turn on the grid, and end in pads, with a
+ * via at some turns. Same seed, same thinning, same sparkle (on the pads).
  *
  * Squares use the theme's text color only (white on dark, black on light).
  * The pattern is seeded, so it is the same on every load, and it is drawn as
@@ -32,6 +37,8 @@ const DEFAULT_SIZE = 340;
 export const ORNAMENT_STYLES = {
   blocks: { cell: 12, metric: "diagonal", falloff: 1.15, merge: 0.18, mix: [0.18, 0.42, 0.3, 0.1] },
   dust: { cell: 8, metric: "radial", falloff: 1.6, merge: 0.05, mix: [0.42, 0.12, 0.12, 0.34] },
+  // Traces: the mix is the pad kinds (outline, filled, dotted) and the share of turns with a via.
+  circuit: { cell: 12, metric: "diagonal", falloff: 1.3, merge: 0, mix: [0.5, 0.3, 0.2, 0.25] },
 };
 
 /**
@@ -48,6 +55,7 @@ export const ORNAMENT_STYLES = {
  * animation on the compositor) instead of animating inside the SVG.
  */
 export function ornamentShapes({ size = DEFAULT_SIZE, width = size, edge = false, center = false, color = "#fff", seed = 7, strength = 1, style = "blocks", sparkle = 0, glints = null } = {}) {
+  if (style === "circuit") return circuitShapes({ size, width, edge, color, seed, strength, sparkle, glints });
   const preset = ORNAMENT_STYLES[style] ?? ORNAMENT_STYLES.blocks;
   const { cell, falloff, merge, mix } = preset;
   const metric = edge ? "edge" : center ? "center" : preset.metric;
@@ -125,6 +133,115 @@ function seedOf(value) {
   if (!value) return null;
   if (/^\d+$/.test(value)) return Number(value);
   return Array.from(value).reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) >>> 0, 0);
+}
+
+/**
+ * Circuit traces, origin at the top-left like ornamentShapes. In a corner,
+ * traces enter from the top and left edges close to the corner and run right
+ * and down; from an edge (edge: true) they drop from the whole top edge and
+ * jog left or right. Each one stops at its own reach, or where it would cross
+ * another, and ends in a pad.
+ */
+function circuitShapes({ size, width, edge, color, seed, strength, sparkle, glints }) {
+  const { cell, falloff, mix } = ORNAMENT_STYLES.circuit;
+  const [outline, filled, , via] = mix;
+  const random = seeded(seed * 7 + 3);
+  const rows = Math.floor(size / cell);
+  const cols = edge ? Math.floor(width / cell) : rows;
+  const taken = new Set();
+  const shapes = [];
+  // Grid points sit mid-cell, on a half pixel so 1px lines stay crisp after a flip.
+  const at = (n) => n * cell + cell / 2 + 0.5;
+  const reachOf = (c, r) => (edge ? (r + 1) / rows : (c + r + 1) / rows);
+  const alphaAt = (d, lift = 0) => Math.min(1, (0.05 + (0.5 + lift) * Math.pow(Math.max(0, 1 - d), falloff)) * strength);
+  const DOWN = [0, 1];
+  const RIGHT = [1, 0];
+  const count = edge ? Math.max(3, Math.round(cols * 0.55)) : Math.max(4, Math.round(rows * 0.75));
+
+  const pad = (c, r, d) => {
+    const pick = random();
+    const kind = pick < outline ? "line" : pick < outline + filled ? "fill" : "dots";
+    const w = kind === "fill" ? 4 : 7;
+    const x = c * cell + (cell - w) / 2;
+    const y = r * cell + (cell - w) / 2;
+    const alpha = alphaAt(d, 0.15);
+    const a = alpha.toFixed(3);
+    if (kind === "fill") shapes.push(`<rect x="${x}" y="${y}" width="${w}" height="${w}" fill="${color}" fill-opacity="${a}"/>`);
+    else shapes.push(`<rect x="${x + 0.5}" y="${y + 0.5}" width="${w - 1}" height="${w - 1}" fill="none" stroke="${color}" stroke-opacity="${a}"${kind === "dots" ? ' stroke-dasharray="1 2"' : ""}/>`);
+    if (sparkle > 0 && glints && random() < sparkle * 2.5) {
+      glints.push({ x: kind === "fill" ? x : x + 0.5, y: kind === "fill" ? y : y + 0.5, w: kind === "fill" ? w : w - 1, kind, lift: +Math.min(1 - alpha, alpha * 1.6 + 0.1 * strength).toFixed(3), dur: 6, begin: +(random() * 14).toFixed(1) });
+    }
+  };
+
+  for (let t = 0; t < count; t++) {
+    let c, r, dir, from;
+    if (edge) {
+      c = 1 + Math.floor(random() * Math.max(1, cols - 2));
+      r = 0;
+      dir = DOWN;
+      from = [at(c), 0];
+    } else {
+      // Dense near the corner: starts bunch up close to it.
+      const u = Math.floor(Math.pow(random(), 1.5) * rows * 0.6);
+      if (random() < 0.5) [c, r, dir, from] = [0, u, RIGHT, [0, at(u)]];
+      else [c, r, dir, from] = [u, 0, DOWN, [at(u), 0]];
+    }
+    if (taken.has(`${c},${r}`)) continue;
+    const reach = 0.25 + Math.pow(random(), 0.8) * 0.75;
+    const points = [from, [at(c), at(r)]];
+    taken.add(`${c},${r}`);
+    let run = 0;
+    let leg = 2 + Math.floor(random() * 4);
+    let blocked = false;
+    for (let step = 0; step < 60; step++) {
+      if (run >= leg) {
+        // Turn on the grid: corners alternate right and down; edges jog sideways and drop again.
+        const turn = random() < 0.6;
+        if (turn) {
+          const next = edge ? (dir === DOWN ? [random() < 0.5 ? -1 : 1, 0] : DOWN) : dir === DOWN ? RIGHT : DOWN;
+          dir = next;
+        }
+        run = 0;
+        leg = 2 + Math.floor(random() * 4);
+      }
+      const nc = c + dir[0];
+      const nr = r + dir[1];
+      if (nc < 0 || nr < 0 || nc >= cols || nr >= rows || reachOf(nc, nr) >= reach) break;
+      if (taken.has(`${nc},${nr}`)) {
+        blocked = true;
+        break;
+      }
+      c = nc;
+      r = nr;
+      taken.add(`${c},${r}`);
+      points.push([at(c), at(r)]);
+      run++;
+    }
+    // Collapse to corner points, then draw each leg at the alpha of its middle.
+    const path = [];
+    points.forEach((p) => {
+      if (path.length < 2) path.push(p);
+      else {
+        const [a, b] = [path[path.length - 2], path[path.length - 1]];
+        const straight = (a[0] === b[0] && b[0] === p[0]) || (a[1] === b[1] && b[1] === p[1]);
+        if (straight) path[path.length - 1] = p;
+        else path.push(p);
+      }
+    });
+    for (let i = 1; i < path.length; i++) {
+      const [x1, y1] = path[i - 1];
+      const [x2, y2] = path[i];
+      if (x1 === x2 && y1 === y2) continue;
+      const d = reachOf(((x1 + x2) / 2 - 6.5) / cell, ((y1 + y2) / 2 - 6.5) / cell);
+      shapes.push(`<path d="M${x1} ${y1}${x1 === x2 ? `V${y2}` : `H${x2}`}" stroke="${color}" stroke-opacity="${alphaAt(d).toFixed(3)}" fill="none"/>`);
+      // A via on some turns: a small filled square on the bend.
+      if (i < path.length - 1 && random() < via) {
+        shapes.push(`<rect x="${x2 - 2}" y="${y2 - 2}" width="3" height="3" fill="${color}" fill-opacity="${alphaAt(reachOf(c, r), 0.1).toFixed(3)}"/>`);
+      }
+    }
+    if (path.length > 2 || !blocked) pad(c, r, reachOf(c, r));
+  }
+  return shapes.join("");
 }
 
 const POSITION = { tl: "left top", tr: "right top", bl: "left bottom", br: "right bottom", top: "left top", bottom: "left bottom", center: "center center" };
@@ -225,7 +342,9 @@ export function paintOrnaments(el) {
   // the element opts out with data-sd-ornaments-still.
   const sparkle = matchMedia("(prefers-reduced-motion: reduce)").matches || "sdOrnamentsStill" in el.dataset ? 0 : 0.12;
   // One corner gets "dust"; a second corner, when asked for, gets "blocks".
-  const styles = corners.filter((c) => !EDGES.has(c)).length > 1 ? ["blocks", "dust"] : ["dust"];
+  // data-sd-ornaments-style="circuit" swaps every corner and edge for traces.
+  const look = el.dataset.sdOrnamentsStyle === "circuit" ? "circuit" : null;
+  const styles = look ? [look] : corners.filter((c) => !EDGES.has(c)).length > 1 ? ["blocks", "dust"] : ["dust"];
   const images = [];
   const positions = [];
   const sizes = [];
@@ -284,11 +403,11 @@ export function paintOrnaments(el) {
         width,
         color,
         // Blocks sit behind headings, so they stay quieter than the dust.
-        strength: edge ? strength * 0.5 : styles[i % styles.length] === "blocks" ? strength * 0.5 : strength,
+        strength: look ? strength * (edge ? 0.9 : 1.25) : edge ? strength * 0.5 : styles[i % styles.length] === "blocks" ? strength * 0.5 : strength,
         seed: 11 + i * 97 + (edge ? width : 0),
         sparkle,
         glints: list,
-        style: edge ? "dust" : styles[i % styles.length],
+        style: look ?? (edge ? "dust" : styles[i % styles.length]),
       }),
     );
     collect(corner, list, size);

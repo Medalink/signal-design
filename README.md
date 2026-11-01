@@ -880,6 +880,11 @@ Empty states (`.sd-empty`) get a center ornament on their own: a small dust
 field behind the message, sparkling the same way. `data-sd-ornaments="none"`
 turns it off, and `data-sd-ornaments="center"` puts one on any box.
 
+Add `data-sd-ornaments-style="circuit"` and the same corners and edges grow
+circuit traces instead of dust: square-cornered runs that leave the box's
+edges near the corner, turn on the grid and end in pads, with a via on some
+turns. They thin out the same way, and the pads sparkle.
+
 ### Art ornaments
 
 ```html
@@ -930,6 +935,93 @@ check measures it in Chromium and WebKit and fails below the budget column.
 
 That is the worst case, at the strongest pixel. Keep small labels
 (`--sd-fg-subtle`) off the corner the art grows from.
+
+## Art, mascots and scenes
+
+```html
+<span class="sd-art" data-sd-art="router" data-tone="success" role="img" aria-label="Router"></span>
+<button class="sd-mascot" data-sd-mascot="eagle" data-mood="idle" aria-label="Eagle"></button>
+```
+
+Pixel pieces drawn from the same square cells as the ornaments, in the
+theme's text color: ink, a mid grey and a faint grey of it. Only the signal
+cells (a router's port light, a mascot's status light) take a `data-tone`.
+`init()` draws every `data-sd-art` and `data-sd-mascot`, including ones
+added later.
+
+**Pieces**, 4px per cell (`--sd-art-cell`); `data-flip` mirrors one.
+
+| Set | Pieces |
+|---|---|
+| Tech | `router` `switch` `server` `database` `chip` `signal` `wifi` `mast` `battery` `globe` `packet` `terminal` `laptop` `shield` `gear` |
+| Nature | `pine` `oak` `sprout` `mountain` `sun` `moon` `cloud` `birds` `rock` `grass` `flower` `mushroom` `acorn` `leaf` `waves` `signpost` |
+
+Add your own as rows of characters, one per cell (`#` ink, `+` mid, `:`
+faint, `o` signal, `.` empty). `ART_SETS` lists the names.
+
+```js
+import { defineArt } from "signal-design/js";
+defineArt("switch", ["#########", "#o.+.+.+#", "#########"]);
+```
+
+**Mascots** share one set of moods and one behavior, so swapping the
+character changes the face, not the meaning. `data-sd-mascot` picks the
+character; writing a new one keeps the mood.
+
+| Mascot | For |
+|---|---|
+| `iris` | the watcher: a square screen for a head, an antenna for its status light. Front view. |
+| `eagle` | a bald eagle on a branch, in profile |
+| `squirrel` | a squirrel sitting up, tail curled behind, in profile |
+| `elephant` | an elephant, ear out and trunk down, in profile |
+
+The animals wear a sprout as their status light. `data-mood` picks the face:
+
+| Mood | For |
+|---|---|
+| `idle` | watching, nothing to report |
+| `calm` | all good |
+| `happy` | something finished |
+| `curious` | discovering, first run |
+| `focused` | working |
+| `sleepy` | quiet, low activity |
+| `alert` | an incident |
+| `offline` | unreachable (the figure drops to faint grey) |
+
+Eyes turn one cell toward the pointer and look back out after a quiet spell.
+As a `<button>` (or with `data-sd-mascot-press`) a press makes the mascot hop
+and smile for a moment, then return to its mood. `aria-busy="true"` is the
+only loop: the status light blinks, IRIS scans its screen, the eagle beats
+its wings, the squirrel swishes its tail and the elephant flaps its ears. A
+blink every few seconds is the one idle motion; it pauses while the page
+scrolls, and `prefers-reduced-motion` or `data-sd-mascot-still` stops it.
+`setMascot(el, name)`, `setMood(el, mood)` and `lookAt(el, x, y)` drive it
+from code, and it fires `sd:mascot` with `{ mascot, mood, reason }`.
+`<span class="sd-iris" data-sd-iris>` is shorthand for IRIS.
+
+Sizes are whole multiples of the 15-cell grid: `sd-mascot-sm` 30px, 60px by
+default, `sd-mascot-lg` 120px, `sd-mascot-xl` 180px, or `--sd-mascot-size`.
+A framework that owns the state can render `mascotSVG(name, mood)` itself,
+leave out `data-sd-mascot`, and set `--sd-mascot-x` and `--sd-mascot-y`
+(-1, 0 or 1). `defineMascot()` adds a character.
+
+**Scenes** place pieces and a mascot on one grid:
+
+```html
+<div class="sd-art-scene" style="--cols: 64; --rows: 24" role="img" aria-label="A meadow with an oak and the sun">
+  <span class="sd-art" data-sd-art="oak" style="--x: 2; --y: 10"></span>
+  <span class="sd-art" data-sd-art="sun" data-tone="warning" style="--x: 52; --y: 2"></span>
+  <span class="sd-mascot" data-sd-mascot="squirrel" data-mood="happy" style="--x: 22; --y: 8"></span>
+  <i class="sd-art-horizon" style="--y: 22"></i>
+</div>
+```
+
+The scene picks the largest whole-pixel cell that fits its box and centres
+the grid, so it scales without blurring. `--x` and `--y` are cells from the
+top left; a mascot is 15 cells tall, so `--y: 8` stands it on a horizon at
+row 22. Inside a scene a mascot drops its own ground line.
+
+Pair a mascot with words: the face sets the tone, the text says what happened.
 
 ## Scrollbars
 

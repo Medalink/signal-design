@@ -1,0 +1,199 @@
+@layer components {
+  /*
+   * Art: pixel pieces, mascots and scenes, drawn by signal-design/js from
+   * square cells in the theme's text color. Only the signal cells ("o") take
+   * a tone.
+   *
+   *   <span class="sd-art" data-sd-art="pine" role="img" aria-label="Pine"></span>
+   *   <span class="sd-mascot" data-sd-mascot="eagle" data-mood="calm" data-tone="success" role="img" aria-label="Eagle, calm"></span>
+   *   <span class="sd-iris" data-sd-iris data-mood="calm"></span>   IRIS shorthand
+   *
+   * Sizes are whole multiples of the grid so every cell lands on whole pixels:
+   * a piece is --sd-art-cell px per cell (default 4px); a mascot is 15 cells,
+   * sd-mascot-sm 30px, default 60px, sd-mascot-lg 120px, sd-mascot-xl 180px,
+   * or any --sd-mascot-size.
+   */
+  .sd-art,
+  :is(.sd-mascot, .sd-iris) {
+    display: inline-block;
+    flex: none;
+    line-height: 0;
+    color: var(--sd-fg);
+    vertical-align: middle;
+  }
+  .sd-art > svg {
+    width: auto;
+    height: calc(var(--sd-art-cell, 4px) * var(--sd-art-rows, 10));
+    max-width: none;
+  }
+  .sd-art[data-flip] > svg {
+    transform: scaleX(-1);
+  }
+  .sd-art > svg,
+  :is(.sd-mascot, .sd-iris) > svg {
+    display: block;
+    overflow: visible;
+  }
+  .sd-art-signal {
+    fill: var(--tone, currentColor);
+  }
+  :is(.sd-art, .sd-mascot, .sd-iris)[data-muted] {
+    color: var(--sd-fg-subtle);
+  }
+
+  /* ---- Mascots ------------------------------------------------------------ */
+
+  :is(.sd-mascot, .sd-iris) {
+    --sd-mascot-size: 60px;
+    inline-size: var(--sd-mascot-size);
+    block-size: var(--sd-mascot-size);
+    padding: 0;
+    border: 0;
+    background: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  :is(.sd-mascot-sm, .sd-iris-sm) { --sd-mascot-size: 30px; }
+  :is(.sd-mascot-lg, .sd-iris-lg) { --sd-mascot-size: 120px; }
+  :is(.sd-mascot-xl, .sd-iris-xl) { --sd-mascot-size: 180px; }
+  :is(.sd-mascot, .sd-iris) > svg {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+  :is(button, a):is(.sd-mascot, .sd-iris) {
+    cursor: pointer;
+  }
+  :is(button, a):is(.sd-mascot, .sd-iris):focus-visible {
+    outline: 1px solid var(--sd-focus, var(--sd-accent));
+    outline-offset: 4px;
+  }
+
+  /* SVG transforms in CSS px are grid cells here: the viewBox is one unit per cell. */
+  .sd-mascot-look,
+  .sd-mascot-mouth,
+  .sd-mascot-eyes {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .sd-mascot-look {
+    transform: translate(calc(var(--sd-mascot-x, 0) * 1px), calc(var(--sd-mascot-y, 0) * 1px));
+    transition: transform 160ms steps(1, end);
+  }
+  .sd-mascot-mouth {
+    transform: translateX(calc(var(--sd-mascot-x, 0) * 1px));
+    transition: transform 160ms steps(1, end);
+  }
+
+  /* A blink now and then: rare, like the ornament sparkle. */
+  :is(.sd-mascot, .sd-iris):not([data-closed], [data-sd-mascot-still], [data-sd-iris-still]) .sd-mascot-eyes {
+    animation: sd-mascot-blink var(--sd-mascot-blink, 7s) step-end infinite;
+    animation-delay: var(--sd-mascot-blink-at, 0s);
+  }
+  :root[data-sd-scrolling-page] .sd-mascot-eyes {
+    animation-play-state: paused;
+  }
+  @keyframes sd-mascot-blink {
+    0%,
+    96% {
+      transform: scaleY(1);
+    }
+    97% {
+      transform: scaleY(0.5);
+    }
+  }
+
+  /* Busy: the only loop. The status light blinks; IRIS scans, the animals move. */
+  .sd-mascot-scan,
+  .sd-mascot-alt {
+    opacity: 0;
+  }
+  [aria-busy="true"] > svg .sd-mascot-scan {
+    opacity: 1;
+    animation: sd-mascot-scan 1.4s steps(7, jump-none) infinite;
+  }
+  [aria-busy="true"] > svg .sd-mascot-alt {
+    animation: sd-mascot-flap 0.6s step-end infinite;
+  }
+  [aria-busy="true"] > svg .sd-mascot-body > .sd-art-signal,
+  [aria-busy="true"] > svg .sd-mascot-body > rect.sd-art-signal {
+    animation: sd-mascot-beacon 1s step-end infinite;
+  }
+  @keyframes sd-mascot-scan {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(6px);
+    }
+  }
+  @keyframes sd-mascot-flap {
+    50% {
+      opacity: 1;
+    }
+  }
+  @keyframes sd-mascot-beacon {
+    50% {
+      opacity: 0.28;
+    }
+  }
+
+  /* Offline: the figure drops to the faint grey; the status light keeps its tone. */
+  :is(.sd-mascot, .sd-iris)[data-mood="offline"] {
+    color: var(--sd-fg-subtle);
+  }
+
+  /* ---- Scenes --------------------------------------------------------------
+   * Pieces and a mascot placed on one grid. The scene picks the largest whole
+   * pixel cell that fits its width, so a scene scales without blurring.
+   *
+   *   <div class="sd-art-scene" style="--cols: 64; --rows: 24" role="img" aria-label="A meadow">
+   *     <span class="sd-art" data-sd-art="sun" style="--x: 50; --y: 2"></span>
+   *     <span class="sd-mascot" data-sd-mascot="squirrel" style="--x: 24; --y: 8"></span>
+   *     <i class="sd-art-horizon" style="--y: 22"></i>
+   *   </div>
+   */
+  .sd-art-scene {
+    position: relative;
+    container-type: size;
+    inline-size: 100%;
+    max-inline-size: calc(var(--cols, 64) * var(--sd-art-scene-max, 8px));
+    aspect-ratio: var(--cols, 64) / var(--rows, 24);
+    overflow: hidden;
+  }
+  .sd-art-scene > * {
+    /* The largest whole-pixel cell that fits, and the grid centred in the box. */
+    --sd-art-cell: max(2px, round(down, min(100cqi / var(--cols, 64), 100cqb / var(--rows, 24)), 1px));
+    --sd-art-left: round(down, (100cqi - var(--cols, 64) * var(--sd-art-cell)) / 2, 1px);
+    --sd-art-top: round(down, (100cqb - var(--rows, 24) * var(--sd-art-cell)) / 2, 1px);
+    position: absolute;
+    left: calc(var(--sd-art-left) + var(--x, 0) * var(--sd-art-cell));
+    top: calc(var(--sd-art-top) + var(--y, 0) * var(--sd-art-cell));
+  }
+  .sd-art-scene > :is(.sd-mascot, .sd-iris) {
+    --sd-mascot-size: calc(15 * var(--sd-art-cell));
+  }
+  .sd-art-scene .sd-mascot-ground {
+    display: none;
+  }
+  .sd-art-horizon {
+    inset-inline: 0;
+    block-size: 0;
+    border-top: 1px solid var(--sd-line-strong, var(--sd-line));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sd-mascot-eyes,
+    [aria-busy="true"] > svg :is(.sd-mascot-scan, .sd-mascot-alt, .sd-art-signal) {
+      animation: none;
+    }
+    [aria-busy="true"] > svg .sd-mascot-scan {
+      transform: translateY(3px);
+    }
+    [aria-busy="true"] > svg .sd-mascot-alt {
+      opacity: 1;
+    }
+    .sd-mascot-look,
+    .sd-mascot-mouth {
+      transition: none;
+    }
+  }
+}

@@ -1,0 +1,4 @@
+order: 765
+row: Art, mascots and scenes
+
+`sd-art` + `data-sd-art` (15 tech pieces: router, switch, server, database, chip, signal, wifi, mast, battery, globe, packet, terminal, laptop, shield, gear; 16 nature pieces: pine, oak, sprout, mountain, sun, moon, cloud, birds, rock, grass, flower, mushroom, acorn, leaf, waves, signpost; `defineArt()` adds more); `sd-mascot` + `data-sd-mascot` (iris, eagle, squirrel, elephant) with `data-mood` (idle, calm, happy, curious, focused, sleepy, alert, offline), `data-tone` on its status light, `aria-busy` to work; `sd-art-scene` (`--cols`, `--rows`) with children at `--x`/`--y` cells and an `sd-art-horizon`; `data-sd-ornaments-style="circuit"` for tech corners

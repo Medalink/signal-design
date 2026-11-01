@@ -249,7 +249,7 @@ export const fps: {
 };
 
 /* Ornaments */
-export const ORNAMENT_STYLES: Record<"blocks" | "dust", { cell: number; metric: string; falloff: number; merge: number; mix: number[] }>;
+export const ORNAMENT_STYLES: Record<"blocks" | "dust" | "circuit", { cell: number; metric: string; falloff: number; merge: number; mix: number[] }>;
 export function ornamentShapes(options?: {
   size?: number;
   width?: number;
@@ -257,7 +257,7 @@ export function ornamentShapes(options?: {
   color?: string;
   seed?: number;
   strength?: number;
-  style?: "blocks" | "dust";
+  style?: "blocks" | "dust" | "circuit";
 }): string;
 export type OrnamentArtStyle = "contours" | "lattice" | "waveform" | "dashed" | "book" | "stack";
 export const ORNAMENT_ART: Record<OrnamentArtStyle, { crisp: boolean; figure: boolean; gain: number }>;
@@ -274,6 +274,57 @@ export function ornamentArt(options?: {
   strength?: number;
 }): string;
 export function paintOrnaments(element: HTMLElement): void;
+
+/* Art, mascots and scenes */
+/** A pixel piece: each layer is rows of cells ("#" ink, "+" mid, ":" faint, "o" signal/tone, "." empty). */
+export interface ArtPiece {
+  w: number;
+  h: number;
+  layers: Record<string, string[]>;
+}
+export type MascotMood = "idle" | "calm" | "happy" | "curious" | "focused" | "sleepy" | "alert" | "offline";
+/** @deprecated use MascotMood */
+export type IrisMood = MascotMood;
+export type MascotName = "iris" | "eagle" | "squirrel" | "elephant" | (string & {});
+/** A character on the 15 by 15 grid. See src/js/art-mascots.js for the cell format. */
+export interface Mascot {
+  label: string;
+  body: string[];
+  ground?: string[];
+  busy?: "scan" | "alt";
+  alt?: string[];
+  /** Full faces (11 by 7, "e" eyes, "m" mouth) placed at `face`, as IRIS has. */
+  face?: [number, number];
+  faces?: Partial<Record<MascotMood, string[]>>;
+  /** Eye centres: two for a front view, one for a profile facing right. */
+  eyes?: [number, number][];
+  mouth?: [number, number] | null;
+  flipMarks?: boolean;
+}
+export const ART: Record<string, ArtPiece>;
+export const ART_SETS: { tech: string[]; nature: string[] };
+export const MASCOTS: Record<string, Mascot>;
+export const MASCOT_MOODS: MascotMood[];
+/** @deprecated use MASCOT_MOODS */
+export const IRIS_MOODS: MascotMood[];
+/** SVG markup for a piece, by name or as a piece. */
+/** Draws every [data-sd-art] and [data-sd-mascot] under root (init() does this). */
+export function initArt(root?: ParentNode): void;
+export function artSVG(piece: string | ArtPiece): string;
+/** Register a piece for data-sd-art="name": an array of rows, or named layers. */
+export function defineArt(name: string, rows: string[] | Record<string, string[]>): ArtPiece;
+/** Register a mascot for data-sd-mascot="name". */
+export function defineMascot(name: string, mascot: Mascot): Mascot;
+/** A mascot as SVG markup, for frameworks that render it themselves. */
+export function mascotSVG(name?: MascotName, mood?: MascotMood): string;
+/** IRIS as SVG markup. */
+export function irisSVG(mood?: MascotMood): string;
+/** Set a mascot's mood (writes data-mood, redraws the face, fires sd:mascot). */
+export function setMood(element: HTMLElement, mood: MascotMood): void;
+/** Swap the character; the mood stays (writes data-sd-mascot, fires sd:mascot). */
+export function setMascot(element: HTMLElement, name: MascotName): void;
+/** Turn a mascot's eyes by -1, 0 or 1 cells (sets --sd-mascot-x and --sd-mascot-y). */
+export function lookAt(element: HTMLElement, x?: number, y?: number): void;
 
 /* Scrollbars */
 export function setScrollbars(mode?: "auto" | "always"): void;
