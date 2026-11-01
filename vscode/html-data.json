@@ -110,6 +110,34 @@
    "description": "Turns off the ornament sparkle on this element."
   },
   {
+   "name": "data-sd-ornaments-style",
+   "description": "Ornament style: circuit draws grid traces ending in pads instead of square dust."
+  },
+  {
+   "name": "data-sd-art",
+   "description": "Draws a pixel art piece by name in the theme's ink: tech (router, switch, server, database, chip, signal, wifi, mast, battery, globe, packet, terminal, laptop, shield, gear), nature (pine, oak, sprout, mountain, sun, moon, cloud, birds, rock, grass, flower, mushroom, acorn, leaf, waves, signpost) or one added with defineArt(); data-tone colors its signal cells, data-flip mirrors it."
+  },
+  {
+   "name": "data-sd-mascot",
+   "description": "Draws a mascot: iris, eagle, squirrel or elephant (or one added with defineMascot). Reads data-mood (idle, calm, happy, curious, focused, sleepy, alert, offline); writing a new name swaps the character and keeps the mood. Eyes turn toward the pointer; as a button it hops and smiles when pressed. aria-busy=\"true\" runs its loop (IRIS scans, the animals move); data-tone colors its status light."
+  },
+  {
+   "name": "data-sd-mascot-press",
+   "description": "Makes a mascot that is not a button hop and smile when pressed."
+  },
+  {
+   "name": "data-sd-mascot-still",
+   "description": "Keeps this mascot from following the pointer and blinking."
+  },
+  {
+   "name": "data-sd-iris",
+   "description": "Shorthand for data-sd-mascot=\"iris\"."
+  },
+  {
+   "name": "data-sd-iris-still",
+   "description": "Same as data-sd-mascot-still."
+  },
+  {
    "name": "data-sd-edges",
    "description": "Replaces the border with the glowing edge (bright corners, faint sides)."
   },

@@ -2308,6 +2308,149 @@
    "html": "<div class=\"h-40 overflow-y-auto border border-line p-4 max-w-narrow\" tabindex=\"0\" aria-label=\"Scrollable demo\">\n  <ol class=\"grid gap-2\" style=\"list-style: decimal-leading-zero; padding-inline-start: 2.2em\">\n    <li>Scroll this box.</li><li>The thumb appears.</li><li>Stop for 2 seconds.</li><li>It hides again.</li><li>Nothing moves.</li><li>Row six.</li><li>Row seven.</li><li>Row eight.</li><li>Row nine.</li><li>Row ten.</li><li>Row eleven.</li><li>Row twelve.</li>\n  </ol>\n</div>"
   },
   {
+   "id": "art-mascots",
+   "section": "Effects",
+   "title": "Mascots",
+   "classes": [
+    "sd-actions",
+    "sd-btn",
+    "sd-btn-sm",
+    "sd-mascot",
+    "sd-mascot-xl",
+    "sd-seg",
+    "sd-seg-sm",
+    "sd-seg-wrap"
+   ],
+   "attributes": [
+    "data-sd-mascot",
+    "data-sd-ornaments",
+    "data-sd-ornaments-size",
+    "data-sd-seg"
+   ],
+   "usage": "Four characters, one behavior. Eyes turn toward the pointer, a press makes the mascot hop and smile, and aria-busy sets it working: IRIS scans, the eagle beats its wings, the squirrel swishes its tail, the elephant flaps its ears. <button class=\"sd-mascot\" data-sd-mascot=\"eagle\" data-mood=\"idle\" aria-label=\"Eagle\"> · data-sd-mascot=\"iris | eagle | squirrel | elephant\" · data-mood · data-tone · aria-busy=\"true\" · setMascot(el, name) · setMood(el, mood) · sd:mascot event · sd-iris + data-sd-iris is IRIS shorthand",
+   "js": "JS: init() from signal-design/js wires data-sd-ornaments · data-sd-mascot · data-sd-seg.",
+   "html": "<div class=\"grid justify-items-center gap-6 border border-line bg-surface p-8\" id=\"mascot-stage\" data-sd-ornaments=\"br\" data-sd-ornaments-size=\"240\">\n  <button class=\"sd-mascot sd-mascot-xl\" id=\"mascot-demo\" type=\"button\" data-sd-mascot=\"iris\" data-mood=\"idle\" aria-label=\"IRIS, idle. Press to say hello.\"></button>\n  <div class=\"grid justify-items-center gap-3 w-full\">\n    <div class=\"sd-seg\" data-sd-seg=\"\" aria-label=\"Mascot\" id=\"mascot-pick\">\n      <button type=\"button\" value=\"iris\" aria-pressed=\"true\">IRIS</button>\n      <button type=\"button\" value=\"eagle\" aria-pressed=\"false\">Eagle</button>\n      <button type=\"button\" value=\"squirrel\" aria-pressed=\"false\">Squirrel</button>\n      <button type=\"button\" value=\"elephant\" aria-pressed=\"false\">Elephant</button>\n    </div>\n    <div class=\"sd-seg sd-seg-wrap\" data-sd-seg=\"\" aria-label=\"Mood\" id=\"mascot-moods\">\n      <button type=\"button\" value=\"idle\" aria-pressed=\"true\">Idle</button>\n      <button type=\"button\" value=\"calm\" aria-pressed=\"false\">Calm</button>\n      <button type=\"button\" value=\"happy\" aria-pressed=\"false\">Happy</button>\n      <button type=\"button\" value=\"curious\" aria-pressed=\"false\">Curious</button>\n      <button type=\"button\" value=\"focused\" aria-pressed=\"false\">Focused</button>\n      <button type=\"button\" value=\"sleepy\" aria-pressed=\"false\">Sleepy</button>\n      <button type=\"button\" value=\"alert\" aria-pressed=\"false\">Alert</button>\n      <button type=\"button\" value=\"offline\" aria-pressed=\"false\">Offline</button>\n    </div>\n    <div class=\"sd-actions justify-center\">\n      <div class=\"sd-seg sd-seg-sm\" data-sd-seg=\"\" aria-label=\"Status light\" id=\"mascot-tones\">\n        <button type=\"button\" value=\"\" aria-pressed=\"true\">None</button>\n        <button type=\"button\" value=\"success\" aria-pressed=\"false\">Success</button>\n        <button type=\"button\" value=\"pending\" aria-pressed=\"false\">Pending</button>\n        <button type=\"button\" value=\"warning\" aria-pressed=\"false\">Warning</button>\n        <button type=\"button\" value=\"danger\" aria-pressed=\"false\">Danger</button>\n      </div>\n      <button class=\"sd-btn sd-btn-sm\" type=\"button\" aria-pressed=\"false\" id=\"mascot-busy\">Work for 5s</button>\n    </div>\n  </div>\n</div>"
+  },
+  {
+   "id": "art-moods",
+   "section": "Effects",
+   "title": "Moods",
+   "classes": [
+    "sd-mascot"
+   ],
+   "attributes": [
+    "data-sd-mascot"
+   ],
+   "usage": "Eight faces for what the system is doing, shared by every mascot. Pick a mascot above and this grid follows. data-mood=\"idle | calm | happy | curious | focused | sleepy | alert | offline\"",
+   "js": "JS: init() from signal-design/js wires data-sd-mascot.",
+   "html": "<div class=\"grid gap-px border border-line bg-line grid-cols-2 sm:grid-cols-4\" id=\"mood-grid\">\n  <figure class=\"grid justify-items-center gap-3 bg-surface p-5 m-0\"><span class=\"sd-mascot\" data-sd-mascot=\"iris\" data-mood=\"idle\" role=\"img\" aria-label=\"Idle: watching\"></span><figcaption class=\"text-sm\">Idle</figcaption></figure>\n  <figure class=\"grid justify-items-center gap-3 bg-surface p-5 m-0\"><span class=\"sd-mascot\" data-sd-mascot=\"iris\" data-mood=\"calm\" data-tone=\"success\" role=\"img\" aria-label=\"Calm: all good\"></span><figcaption class=\"text-sm\">Calm</figcaption></figure>\n  <figure class=\"grid justify-items-center gap-3 bg-surface p-5 m-0\"><span class=\"sd-mascot\" data-sd-mascot=\"iris\" data-mood=\"happy\" data-tone=\"success\" role=\"img\" aria-label=\"Happy: done\"></span><figcaption class=\"text-sm\">Happy</figcaption></figure>\n  <figure class=\"grid justify-items-center gap-3 bg-surface p-5 m-0\"><span class=\"sd-mascot\" data-sd-mascot=\"iris\" data-mood=\"curious\" data-tone=\"accent\" role=\"img\" aria-label=\"Curious: discovering\"></span><figcaption class=\"text-sm\">Curious</figcaption></figure>\n  <figure class=\"grid justify-items-center gap-3 bg-surface p-5 m-0\"><span class=\"sd-mascot\" data-sd-mascot=\"iris\" data-mood=\"focused\" aria-busy=\"true\" role=\"img\" aria-label=\"Focused: working\"></span><figcaption class=\"text-sm\">Focused</figcaption></figure>\n  <figure class=\"grid justify-items-center gap-3 bg-surface p-5 m-0\"><span class=\"sd-mascot\" data-sd-mascot=\"iris\" data-mood=\"sleepy\" role=\"img\" aria-label=\"Sleepy: quiet\"></span><figcaption class=\"text-sm\">Sleepy</figcaption></figure>\n  <figure class=\"grid justify-items-center gap-3 bg-surface p-5 m-0\"><span class=\"sd-mascot\" data-sd-mascot=\"iris\" data-mood=\"alert\" data-tone=\"danger\" role=\"img\" aria-label=\"Alert: incident\"></span><figcaption class=\"text-sm\">Alert</figcaption></figure>\n  <figure class=\"grid justify-items-center gap-3 bg-surface p-5 m-0\"><span class=\"sd-mascot\" data-sd-mascot=\"iris\" data-mood=\"offline\" data-tone=\"danger\" role=\"img\" aria-label=\"Offline: unreachable\"></span><figcaption class=\"text-sm\">Offline</figcaption></figure>\n</div>"
+  },
+  {
+   "id": "art-sizes",
+   "section": "Effects",
+   "title": "Sizes",
+   "classes": [
+    "sd-cluster",
+    "sd-mascot",
+    "sd-mascot-lg",
+    "sd-mascot-sm"
+   ],
+   "attributes": [
+    "data-sd-mascot"
+   ],
+   "usage": "Whole multiples of the 15-cell grid, so every cell lands on whole pixels. --sd-mascot-size sets any other. sd-mascot-sm 30px · default 60px · sd-mascot-lg 120px · sd-mascot-xl 180px",
+   "js": "JS: init() from signal-design/js wires data-sd-mascot.",
+   "html": "<div class=\"sd-cluster items-end\" style=\"--gap: 24px\">\n  <span class=\"sd-mascot sd-mascot-sm\" data-sd-mascot=\"elephant\" data-mood=\"happy\" role=\"img\" aria-label=\"Elephant, small\"></span>\n  <span class=\"sd-mascot\" data-sd-mascot=\"squirrel\" data-mood=\"happy\" role=\"img\" aria-label=\"Squirrel\"></span>\n  <span class=\"sd-mascot sd-mascot-lg\" data-sd-mascot=\"eagle\" data-mood=\"happy\" role=\"img\" aria-label=\"Eagle, large\"></span>\n</div>"
+  },
+  {
+   "id": "art-tech",
+   "section": "Effects",
+   "title": "Tech pieces",
+   "classes": [
+    "sd-art",
+    "sd-muted"
+   ],
+   "attributes": [
+    "data-sd-art"
+   ],
+   "usage": "Fifteen pieces for devices, data and the network, 4px per cell by default (--sd-art-cell). The signal cells take a tone. <span class=\"sd-art\" data-sd-art=\"router\" role=\"img\" aria-label=\"Router\"> · data-flip mirrors a piece · defineArt(name, rows) adds your own",
+   "js": "JS: init() from signal-design/js wires data-sd-art.",
+   "html": "<div class=\"grid gap-px border border-line bg-line grid-cols-3 sm:grid-cols-5\">\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"router\" data-tone=\"success\" role=\"img\" aria-label=\"Router\"></span><figcaption class=\"text-sm sd-muted\">router</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"switch\" data-tone=\"success\" role=\"img\" aria-label=\"Switch\"></span><figcaption class=\"text-sm sd-muted\">switch</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"server\" data-tone=\"success\" role=\"img\" aria-label=\"Server\"></span><figcaption class=\"text-sm sd-muted\">server</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"database\" role=\"img\" aria-label=\"Database\"></span><figcaption class=\"text-sm sd-muted\">database</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"chip\" role=\"img\" aria-label=\"Chip\"></span><figcaption class=\"text-sm sd-muted\">chip</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"signal\" data-tone=\"success\" role=\"img\" aria-label=\"Signal\"></span><figcaption class=\"text-sm sd-muted\">signal</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"wifi\" role=\"img\" aria-label=\"Wi-Fi\"></span><figcaption class=\"text-sm sd-muted\">wifi</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"mast\" data-tone=\"accent\" role=\"img\" aria-label=\"Mast\"></span><figcaption class=\"text-sm sd-muted\">mast</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"battery\" data-tone=\"warning\" role=\"img\" aria-label=\"Battery\"></span><figcaption class=\"text-sm sd-muted\">battery</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"globe\" role=\"img\" aria-label=\"Globe\"></span><figcaption class=\"text-sm sd-muted\">globe</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"packet\" role=\"img\" aria-label=\"Packet\"></span><figcaption class=\"text-sm sd-muted\">packet</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"terminal\" data-tone=\"accent\" role=\"img\" aria-label=\"Terminal\"></span><figcaption class=\"text-sm sd-muted\">terminal</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"laptop\" data-tone=\"accent\" role=\"img\" aria-label=\"Laptop\"></span><figcaption class=\"text-sm sd-muted\">laptop</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"shield\" data-tone=\"success\" role=\"img\" aria-label=\"Shield\"></span><figcaption class=\"text-sm sd-muted\">shield</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"gear\" role=\"img\" aria-label=\"Gear\"></span><figcaption class=\"text-sm sd-muted\">gear</figcaption></figure>\n</div>"
+  },
+  {
+   "id": "art-nature",
+   "section": "Effects",
+   "title": "Nature pieces",
+   "classes": [
+    "sd-art",
+    "sd-muted"
+   ],
+   "attributes": [
+    "data-sd-art"
+   ],
+   "usage": "Sixteen pieces for the outdoors: trees, sky, ground and water. Sun, flowers, sprouts and mushrooms carry the signal cells. ART_SETS.tech · ART_SETS.nature list the names",
+   "js": "JS: init() from signal-design/js wires data-sd-art.",
+   "html": "<div class=\"grid gap-px border border-line bg-line grid-cols-3 sm:grid-cols-4\">\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"pine\" role=\"img\" aria-label=\"Pine\"></span><figcaption class=\"text-sm sd-muted\">pine</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"oak\" role=\"img\" aria-label=\"Oak\"></span><figcaption class=\"text-sm sd-muted\">oak</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"sprout\" data-tone=\"success\" role=\"img\" aria-label=\"Sprout\"></span><figcaption class=\"text-sm sd-muted\">sprout</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"mountain\" role=\"img\" aria-label=\"Mountain\"></span><figcaption class=\"text-sm sd-muted\">mountain</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"sun\" data-tone=\"warning\" role=\"img\" aria-label=\"Sun\"></span><figcaption class=\"text-sm sd-muted\">sun</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"moon\" role=\"img\" aria-label=\"Moon\"></span><figcaption class=\"text-sm sd-muted\">moon</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"cloud\" role=\"img\" aria-label=\"Cloud\"></span><figcaption class=\"text-sm sd-muted\">cloud</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"birds\" role=\"img\" aria-label=\"Birds\"></span><figcaption class=\"text-sm sd-muted\">birds</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"rock\" role=\"img\" aria-label=\"Rock\"></span><figcaption class=\"text-sm sd-muted\">rock</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"grass\" role=\"img\" aria-label=\"Grass\"></span><figcaption class=\"text-sm sd-muted\">grass</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"flower\" data-tone=\"danger\" role=\"img\" aria-label=\"Flower\"></span><figcaption class=\"text-sm sd-muted\">flower</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"mushroom\" data-tone=\"danger\" role=\"img\" aria-label=\"Mushroom\"></span><figcaption class=\"text-sm sd-muted\">mushroom</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"acorn\" role=\"img\" aria-label=\"Acorn\"></span><figcaption class=\"text-sm sd-muted\">acorn</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"leaf\" role=\"img\" aria-label=\"Leaf\"></span><figcaption class=\"text-sm sd-muted\">leaf</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"waves\" role=\"img\" aria-label=\"Waves\"></span><figcaption class=\"text-sm sd-muted\">waves</figcaption></figure>\n  <figure class=\"grid justify-items-center content-end gap-3 bg-surface p-4 m-0\"><span class=\"sd-art\" data-sd-art=\"signpost\" role=\"img\" aria-label=\"Signpost\"></span><figcaption class=\"text-sm sd-muted\">signpost</figcaption></figure>\n</div>"
+  },
+  {
+   "id": "art-scenes",
+   "section": "Effects",
+   "title": "Scenes",
+   "classes": [
+    "sd-art",
+    "sd-art-horizon",
+    "sd-art-scene",
+    "sd-mascot",
+    "sd-muted",
+    "sd-seg"
+   ],
+   "attributes": [
+    "data-sd-art",
+    "data-sd-mascot",
+    "data-sd-ornaments",
+    "data-sd-ornaments-size",
+    "data-sd-ornaments-style",
+    "data-sd-seg"
+   ],
+   "usage": "Pieces and a mascot placed on one grid. The scene picks the largest whole-pixel cell that fits its width, so it scales without blurring. Swap the mascot in every scene at once. <div class=\"sd-art-scene\" style=\"--cols: 64; --rows: 24\"> with children placed by --x and --y in cells · sd-art-horizon draws the ground line",
+   "js": "JS: init() from signal-design/js wires data-sd-seg · data-sd-ornaments · data-sd-art · data-sd-mascot.",
+   "html": "<div class=\"sd-seg\" data-sd-seg=\"\" aria-label=\"Mascot in the scenes\" id=\"scene-pick\">\n  <button type=\"button\" value=\"\" aria-pressed=\"true\">As drawn</button>\n  <button type=\"button\" value=\"iris\" aria-pressed=\"false\">IRIS</button>\n  <button type=\"button\" value=\"eagle\" aria-pressed=\"false\">Eagle</button>\n  <button type=\"button\" value=\"squirrel\" aria-pressed=\"false\">Squirrel</button>\n  <button type=\"button\" value=\"elephant\" aria-pressed=\"false\">Elephant</button>\n</div>\n\n<div class=\"grid gap-4 lg:grid-cols-2\" id=\"scenes\">\n<figure class=\"grid gap-3 m-0 border border-line bg-surface p-3\">\n  <div class=\"sd-art-scene\" style=\"--cols: 64; --rows: 24\" data-sd-ornaments=\"tr\" data-sd-ornaments-style=\"circuit\" data-sd-ornaments-size=\"200\" role=\"img\" aria-label=\"IRIS in a server room with two racks, a database, a laptop and Wi-Fi\" data-scene=\"server-room\">\n    <span class=\"sd-art\" data-sd-art=\"server\" style=\"--x: 2; --y: 12\" data-tone=\"success\"></span>\n    <span class=\"sd-art\" data-sd-art=\"server\" style=\"--x: 11; --y: 12\" data-tone=\"success\"></span>\n    <span class=\"sd-art\" data-sd-art=\"database\" style=\"--x: 20; --y: 11\"></span>\n    <span class=\"sd-art\" data-sd-art=\"packet\" style=\"--x: 24; --y: 2\"></span>\n    <span class=\"sd-art\" data-sd-art=\"laptop\" style=\"--x: 49; --y: 13\" data-tone=\"accent\"></span>\n    <span class=\"sd-art\" data-sd-art=\"wifi\" style=\"--x: 51; --y: 2\"></span>\n    <span class=\"sd-art\" data-sd-art=\"signal\" style=\"--x: 4; --y: 1\" data-tone=\"success\"></span>\n    <span class=\"sd-mascot\" data-sd-mascot=\"iris\" data-mood=\"focused\" aria-busy=\"true\" style=\"--x: 33; --y: 8\"></span>\n    <i class=\"sd-art-horizon\" style=\"--y: 22\"></i>\n  </div>\n  <figcaption class=\"text-sm sd-muted\">Server room</figcaption>\n</figure>\n<figure class=\"grid gap-3 m-0 border border-line bg-surface p-3\">\n  <div class=\"sd-art-scene\" style=\"--cols: 64; --rows: 24\" data-sd-ornaments=\"tr\" role=\"img\" aria-label=\"A meadow with an oak, flowers, grass, a mountain, the sun, a cloud and birds\" data-scene=\"meadow\">\n    <span class=\"sd-art\" data-sd-art=\"sun\" style=\"--x: 52; --y: 2\" data-tone=\"warning\"></span>\n    <span class=\"sd-art\" data-sd-art=\"cloud\" style=\"--x: 6; --y: 3\"></span>\n    <span class=\"sd-art\" data-sd-art=\"birds\" style=\"--x: 26; --y: 4\"></span>\n    <span class=\"sd-art\" data-sd-art=\"oak\" style=\"--x: 2; --y: 10\"></span>\n    <span class=\"sd-art\" data-sd-art=\"flower\" style=\"--x: 16; --y: 15\" data-tone=\"danger\"></span>\n    <span class=\"sd-art\" data-sd-art=\"grass\" style=\"--x: 37; --y: 18\"></span>\n    <span class=\"sd-art\" data-sd-art=\"mountain\" style=\"--x: 47; --y: 14\"></span>\n    <span class=\"sd-mascot\" data-sd-mascot=\"squirrel\" data-mood=\"happy\" data-tone=\"success\" style=\"--x: 22; --y: 8\"></span>\n    <i class=\"sd-art-horizon\" style=\"--y: 22\"></i>\n  </div>\n  <figcaption class=\"text-sm sd-muted\">Meadow</figcaption>\n</figure>\n<figure class=\"grid gap-3 m-0 border border-line bg-surface p-3\">\n  <div class=\"sd-art-scene\" style=\"--cols: 64; --rows: 24\" data-sd-ornaments=\"tl\" data-sd-ornaments-style=\"circuit\" data-sd-ornaments-size=\"200\" role=\"img\" aria-label=\"IRIS at the network edge beside a radio mast, a switch, a router and a globe\" data-scene=\"network-edge\">\n    <span class=\"sd-art\" data-sd-art=\"mast\" style=\"--x: 2; --y: 10\" data-tone=\"accent\"></span>\n    <span class=\"sd-art\" data-sd-art=\"switch\" style=\"--x: 15; --y: 16\" data-tone=\"success\"></span>\n    <span class=\"sd-art\" data-sd-art=\"globe\" style=\"--x: 24; --y: 2\"></span>\n    <span class=\"sd-art\" data-sd-art=\"router\" style=\"--x: 49; --y: 14\" data-tone=\"success\"></span>\n    <span class=\"sd-art\" data-sd-art=\"cloud\" style=\"--x: 46; --y: 2\"></span>\n    <span class=\"sd-mascot\" data-sd-mascot=\"iris\" data-mood=\"curious\" style=\"--x: 31; --y: 8\"></span>\n    <i class=\"sd-art-horizon\" style=\"--y: 22\"></i>\n  </div>\n  <figcaption class=\"text-sm sd-muted\">Network edge</figcaption>\n</figure>\n<figure class=\"grid gap-3 m-0 border border-line bg-surface p-3\">\n  <div class=\"sd-art-scene\" style=\"--cols: 64; --rows: 24\" data-sd-ornaments=\"tl\" role=\"img\" aria-label=\"A forest at night with pines, a mushroom, a falling leaf, a sprout, an acorn and the moon\" data-scene=\"forest\">\n    <span class=\"sd-art\" data-sd-art=\"moon\" style=\"--x: 30; --y: 1\"></span>\n    <span class=\"sd-art\" data-sd-art=\"pine\" style=\"--x: 2; --y: 10\"></span>\n    <span class=\"sd-art\" data-sd-art=\"pine\" style=\"--x: 10; --y: 10\"></span>\n    <span class=\"sd-art\" data-sd-art=\"acorn\" style=\"--x: 21; --y: 15\"></span>\n    <span class=\"sd-art\" data-sd-art=\"mushroom\" style=\"--x: 44; --y: 15\" data-tone=\"danger\"></span>\n    <span class=\"sd-art\" data-sd-art=\"pine\" style=\"--x: 53; --y: 10\"></span>\n    <span class=\"sd-art\" data-sd-art=\"leaf\" style=\"--x: 46; --y: 3\"></span>\n    <span class=\"sd-art\" data-sd-art=\"birds\" style=\"--x: 8; --y: 3\"></span>\n    <span class=\"sd-mascot\" data-sd-mascot=\"elephant\" data-mood=\"sleepy\" style=\"--x: 29; --y: 8\"></span>\n    <i class=\"sd-art-horizon\" style=\"--y: 22\"></i>\n  </div>\n  <figcaption class=\"text-sm sd-muted\">Forest at night</figcaption>\n</figure>\n<figure class=\"grid gap-3 m-0 border border-line bg-surface p-3\">\n  <div class=\"sd-art-scene\" style=\"--cols: 64; --rows: 24\" data-sd-ornaments=\"br\" data-sd-ornaments-style=\"circuit\" data-sd-ornaments-size=\"200\" role=\"img\" aria-label=\"IRIS at a security desk with a shield, a gear, a chip, a battery and a terminal\" data-scene=\"security-desk\">\n    <span class=\"sd-art\" data-sd-art=\"shield\" style=\"--x: 2; --y: 11\" data-tone=\"danger\"></span>\n    <span class=\"sd-art\" data-sd-art=\"gear\" style=\"--x: 15; --y: 11\"></span>\n    <span class=\"sd-art\" data-sd-art=\"terminal\" style=\"--x: 44; --y: 1\" data-tone=\"danger\"></span>\n    <span class=\"sd-art\" data-sd-art=\"chip\" style=\"--x: 42; --y: 13\"></span>\n    <span class=\"sd-art\" data-sd-art=\"battery\" style=\"--x: 53; --y: 16\" data-tone=\"warning\"></span>\n    <span class=\"sd-mascot\" data-sd-mascot=\"iris\" data-mood=\"alert\" data-tone=\"danger\" style=\"--x: 28; --y: 8\"></span>\n    <i class=\"sd-art-horizon\" style=\"--y: 22\"></i>\n  </div>\n  <figcaption class=\"text-sm sd-muted\">Security desk</figcaption>\n</figure>\n<figure class=\"grid gap-3 m-0 border border-line bg-surface p-3\">\n  <div class=\"sd-art-scene\" style=\"--cols: 64; --rows: 24\" data-sd-ornaments=\"br\" role=\"img\" aria-label=\"A trail with a mountain, a signpost, a river, a rock, the sun, a cloud and birds\" data-scene=\"trail\">\n    <span class=\"sd-art\" data-sd-art=\"mountain\" style=\"--x: 1; --y: 14\"></span>\n    <span class=\"sd-art\" data-sd-art=\"rock\" style=\"--x: 33; --y: 17\"></span>\n    <span class=\"sd-art\" data-sd-art=\"signpost\" style=\"--x: 41; --y: 11\"></span>\n    <span class=\"sd-art\" data-sd-art=\"waves\" style=\"--x: 49; --y: 17\"></span>\n    <span class=\"sd-art\" data-sd-art=\"sun\" style=\"--x: 53; --y: 2\" data-tone=\"warning\"></span>\n    <span class=\"sd-art\" data-sd-art=\"cloud\" style=\"--x: 24; --y: 2\"></span>\n    <span class=\"sd-art\" data-sd-art=\"birds\" style=\"--x: 6; --y: 4\"></span>\n    <span class=\"sd-mascot\" data-sd-mascot=\"eagle\" data-mood=\"calm\" data-tone=\"success\" style=\"--x: 19; --y: 8\"></span>\n    <i class=\"sd-art-horizon\" style=\"--y: 22\"></i>\n  </div>\n  <figcaption class=\"text-sm sd-muted\">Trail</figcaption>\n</figure>\n</div>"
+  },
+  {
+   "id": "art-circuit",
+   "section": "Effects",
+   "title": "Circuit ornaments",
+   "classes": [],
+   "attributes": [
+    "data-sd-ornaments",
+    "data-sd-ornaments-size",
+    "data-sd-ornaments-style"
+   ],
+   "usage": "The ornaments' tech style: traces leave the edges near a corner, turn on the grid and end in pads, thinning as they spread. The pads sparkle like the dust. data-sd-ornaments-style=\"circuit\" with any corner, \"top\" or \"bottom\"",
+   "js": "JS: init() from signal-design/js wires data-sd-ornaments.",
+   "html": "<div class=\"grid gap-4 sm:grid-cols-[1fr_16rem]\">\n  <div class=\"h-72 bg-surface border border-line\" data-sd-ornaments=\"tl br\" data-sd-ornaments-style=\"circuit\" data-sd-ornaments-size=\"300\"></div>\n  <div class=\"h-72 bg-surface border border-line-strong\" data-sd-ornaments=\"bottom\" data-sd-ornaments-style=\"circuit\" data-sd-ornaments-size=\"220\"></div>\n</div>"
+  },
+  {
+   "id": "art-empty",
+   "section": "Effects",
+   "title": "In an empty state",
+   "classes": [
+    "sd-btn",
+    "sd-btn-primary",
+    "sd-btn-sm",
+    "sd-empty",
+    "sd-empty-title",
+    "sd-mascot"
+   ],
+   "attributes": [
+    "data-sd-mascot",
+    "data-sd-ornaments"
+   ],
+   "usage": "A mascot in place of the empty-state ornament: a face for the first run, with the words doing the work.",
+   "js": "JS: init() from signal-design/js wires data-sd-ornaments · data-sd-mascot.",
+   "html": "<div class=\"sd-empty border border-line\" data-sd-ornaments=\"none\">\n  <span class=\"sd-mascot\" data-sd-mascot=\"iris\" data-mood=\"curious\" data-tone=\"accent\" role=\"img\" aria-label=\"IRIS, curious\"></span>\n  <p class=\"sd-empty-title\">No devices yet.</p>\n  <p>Run discovery and IRIS will map every switch and port it can reach.</p>\n  <button class=\"sd-btn sd-btn-sm sd-btn-primary\">Run discovery</button>\n</div>"
+  },
+  {
    "id": "ascii-looks",
    "section": "Effects",
    "title": "Looks",
