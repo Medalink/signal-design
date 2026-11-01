@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 1.4.38 (2026-11-01)
+
+### Fixed
+- `sd-ack-count`: the n/m count no longer drops onto a row of its own when the squares wrap on a narrow message. It is drawn before the squares, so it stays beside the Got it button and the strip wraps under it. No markup or React change.
+
 ## 1.4.37 (2026-10-31)
 
 ### Fixed
