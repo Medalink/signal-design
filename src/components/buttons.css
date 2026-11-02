@@ -160,12 +160,16 @@
     z-index: 1;
   }
 
-  /* A row of actions. */
+  /* A row of actions. Icon buttons stretch so a glyph-only button matches
+     the height its text neighbors take from their content. */
   .sd-actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 10px;
+  }
+  .sd-actions > .sd-btn-icon {
+    align-self: stretch;
   }
   .sd-actions-end {
     justify-content: flex-end;
