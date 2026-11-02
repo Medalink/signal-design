@@ -1055,7 +1055,7 @@ custom properties tune it on any element or on an ancestor:
 <a href="/docs" style="--sd-sweep-easing: linear(0, 0.2 50%, 1)">Docs</a>
 ```
 
-Text links (a plain `<a>` outside navigation, and `sd-btn-link`) play the whole
+Links (every `<a href>` that shimmers, navigation included, and `sd-btn-link`) play the whole
 sweep once the pointer touches them, even if it leaves at once. The JS sets
 `data-sd-sweeping` on pointerover and clears it when the sweep ends.
 `data-sd-sweep="hold"` gives anything the same, `data-sd-sweep="hover"` makes a
@@ -1492,7 +1492,7 @@ once at startup (`initScrollbars("always")` keeps them visible): it sets
 `initKeyboard()` too: while the on-screen keyboard is up it sets
 `data-sd-keyboard`, `--sd-view-height` and `--sd-view-top` on `<html>`, and
 `sd-shell` fits the screen above the keyboard instead of sliding its header
-off the top. Call `initSweep()` so text links play their hover shimmer
+off the top. Call `initSweep()` so links play their hover shimmer
 through; it writes only `data-sd-sweeping`. `init()` calls all three.
 `react.html` and `react-shell.html` in the showcase use every component above, and `react-editor.html` the editor parts below.
 

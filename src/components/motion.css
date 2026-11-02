@@ -17,10 +17,10 @@
    * The band's place is the progress --sd-sweep: 0 has it just past the right
    * edge with all the text dim, 1 has it gone past the left with all the text
    * settled. Tune it on any element or ancestor:
-   *   --sd-sweep-duration  how long one sweep takes (1s; 1.4s on text links)
+   *   --sd-sweep-duration  how long one sweep takes (1s; 1.4s on links)
    *   --sd-sweep-easing    progress over time: linear(0, 0.7 30%, 1) runs the
    *                        first 70% in 30% of the time, then slows
-   * Text links (and data-sd-sweep="hold") keep sweeping after the pointer
+   * Links (and data-sd-sweep="hold") keep sweeping after the pointer
    * leaves: the JS sets data-sd-sweeping on pointerover and clears it when the
    * sweep ends. data-sd-sweep="hover" stops a link's sweep when the pointer
    * leaves. data-sd-sweep="progress" draws the band where the page sets
@@ -35,8 +35,8 @@
     to { --sd-sweep: 1; }
   }
 
-  /* Text links: plain anchors outside navigation, and link buttons. */
-  :where(a:not([class], [role]):not(:where(.sd-nav, .sd-tabs, .sd-breadcrumb, .sd-sidenav, .sd-pagination, .sd-menu) *), .sd-btn-link) {
+  /* Links, navigation included, and link buttons. */
+  :where(a[href], .sd-btn-link) {
     --_sd-sweep-base: 1.4s;
   }
 
