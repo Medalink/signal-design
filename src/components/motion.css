@@ -8,9 +8,11 @@
 
 @layer components {
   /*
-   * Hover shimmer: the text dims, a bright band (white on dark themes, black
-   * on light) sweeps across it from left to right, and the text settles on
-   * its hover color behind the band. Once per hover. The band is clipped to the glyphs, so
+   * Hover shimmer: the text dims, a band of its own color pushed toward
+   * --sd-flash (lighter on dark themes, darker on light) sweeps across it
+   * from left to right, and the text settles on its hover color behind the
+   * band. Every color comes from the text's own, so a toned button sweeps in
+   * its tone. Once per hover. The band is clipped to the glyphs, so
    * icons, borders and hover backgrounds stay as they are. Off with
    * prefers-reduced-motion (base layer).
    *
@@ -20,10 +22,10 @@
    *   --sd-sweep-duration  how long one sweep takes (1s; 1.4s on links)
    *   --sd-sweep-easing    progress over time: linear(0, 0.7 30%, 1) runs the
    *                        first 70% in 30% of the time, then slows
-   * Links (and data-sd-sweep="hold") keep sweeping after the pointer
-   * leaves: the JS sets data-sd-sweeping on pointerover and clears it when the
-   * sweep ends. data-sd-sweep="hover" stops a link's sweep when the pointer
-   * leaves. data-sd-sweep="progress" draws the band where the page sets
+   * A sweep plays to the end after the pointer leaves: the JS sets
+   * data-sd-sweeping on whatever started one and clears it when the sweep
+   * ends. data-sd-sweep="hold" gives any element the sweep;
+   * data-sd-sweep="hover" stops it when the pointer leaves. data-sd-sweep="progress" draws the band where the page sets
    * --sd-sweep, with no hover animation, so the app's own time series runs it.
    */
   @keyframes sd-sweep {
@@ -59,12 +61,17 @@
   [data-sd-sweeping],
   [data-sd-sweep="progress"] {
     /* Layer 1, clipped to the text: settled hover color behind the band,
-       the bright band, then the dimmer pre-hover grey ahead of it.
+       the band, then the same color dimmed ahead of it.
        Layer 2 is empty; its border-box clip keeps the background color.
        90% puts the band's front edge on the right edge, 10% its back edge
        on the left, so every step of progress moves something. */
     background-image:
-      linear-gradient(90deg, currentColor 0 40%, var(--sd-flash) 50%, var(--sd-fg-subtle) 60% 100%),
+      linear-gradient(
+        90deg,
+        currentColor 0 40%,
+        color-mix(in oklab, currentColor 50%, var(--sd-flash)) 50%,
+        color-mix(in oklab, currentColor 55%, transparent) 60% 100%
+      ),
       linear-gradient(transparent, transparent);
     background-size: 300% 100%, auto;
     background-position: calc(90% - 80% * var(--sd-sweep)) 0, 0 0;

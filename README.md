@@ -1038,13 +1038,14 @@ client entry that server rendering also evaluates does not throw.
 
 ## Hover shimmer
 
-Hovering a link, a nav item, a tab or a non-primary button sweeps a bright band
-across its text once. The band's place is a progress value, `--sd-sweep`, from 0
+Hovering a link, a nav item, a tab or a non-primary button sweeps a band across
+its text once. The band is the text's own color pushed toward `--sd-flash`
+(lighter on dark themes, darker on light), and the text ahead of it is the same
+color dimmed, so a toned button sweeps in its tone with nothing to set. The band's place is a progress value, `--sd-sweep`, from 0
 (all the text dim, the band at the right edge) to 1 (all of it settled). Two
 custom properties tune it on any element or on an ancestor:
 
-- `--sd-sweep-duration`: how long one sweep takes. 1s by default, 1.4s on text
-  links.
+- `--sd-sweep-duration`: how long one sweep takes. 1s by default, 1.4s on links.
 - `--sd-sweep-easing`: progress over time, any CSS timing function. A
   `linear()` list is a series of progress points, so
   `linear(0, 0.7 30%, 1)` runs the first 70% of the sweep in 30% of the time
@@ -1055,11 +1056,10 @@ custom properties tune it on any element or on an ancestor:
 <a href="/docs" style="--sd-sweep-easing: linear(0, 0.2 50%, 1)">Docs</a>
 ```
 
-Links (every `<a href>` that shimmers, navigation included, and `sd-btn-link`) play the whole
-sweep once the pointer touches them, even if it leaves at once. The JS sets
-`data-sd-sweeping` on pointerover and clears it when the sweep ends.
-`data-sd-sweep="hold"` gives anything the same, `data-sd-sweep="hover"` makes a
-link stop when the pointer leaves, and `data-sd-sweep="progress"` turns off the
+Every sweep plays to the end once the pointer touches its element, even if it
+leaves at once. The JS sets `data-sd-sweeping` on whatever started a sweep and
+clears it when the sweep ends. `data-sd-sweep="hold"` gives any element the
+sweep, `data-sd-sweep="hover"` makes one stop when the pointer leaves, and `data-sd-sweep="progress"` turns off the
 hover animation and draws the band where the page sets `--sd-sweep`, so your own
 time series drives it. Pages that skip `init()` call `initSweep()` from
 `signal-design/js`. Reduced motion and forced colors show no sweep.
@@ -1492,7 +1492,7 @@ once at startup (`initScrollbars("always")` keeps them visible): it sets
 `initKeyboard()` too: while the on-screen keyboard is up it sets
 `data-sd-keyboard`, `--sd-view-height` and `--sd-view-top` on `<html>`, and
 `sd-shell` fits the screen above the keyboard instead of sliding its header
-off the top. Call `initSweep()` so links play their hover shimmer
+off the top. Call `initSweep()` so hover shimmers play
 through; it writes only `data-sd-sweeping`. `init()` calls all three.
 `react.html` and `react-shell.html` in the showcase use every component above, and `react-editor.html` the editor parts below.
 

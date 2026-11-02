@@ -52,7 +52,7 @@ typed components that render the `sd-` classes with React as the only writer.
 They need no `init()`; do not call it on those pages. For auto-hiding
 scrollbars there, call `initScrollbars()` from `signal-design/js` instead, and
 `initKeyboard()` so a shell stays above the phone keyboard, and `initSweep()` so
-links play their hover shimmer through.
+hover shimmers play through to the end.
 
 ## Hard rules (do not break these)
 
