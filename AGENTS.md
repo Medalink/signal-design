@@ -51,7 +51,8 @@ init(); // once, after the DOM exists; every listener is delegated, so later mar
 typed components that render the `sd-` classes with React as the only writer.
 They need no `init()`; do not call it on those pages. For auto-hiding
 scrollbars there, call `initScrollbars()` from `signal-design/js` instead, and
-`initKeyboard()` so a shell stays above the phone keyboard.
+`initKeyboard()` so a shell stays above the phone keyboard, and `initSweep()` so
+text links play their hover shimmer through.
 
 ## Hard rules (do not break these)
 

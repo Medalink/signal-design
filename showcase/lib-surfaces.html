@@ -4,12 +4,16 @@
 <body>
     <div class="demo-block" id="effects-hover-shimmer">
       <h2 class="sd-label">Hover shimmer</h2>
-      <p class="demo-usage">A bright band sweeps across interactive text from left to right (white on dark, black on light), once per hover. Icons, borders and backgrounds stay put. Off with reduced motion.</p>
+      <p class="demo-usage">A bright band sweeps across interactive text from left to right (white on dark, black on light), once per hover. Text links finish the sweep even if the pointer only brushes them. <code>--sd-sweep-duration</code> sets the speed and <code>--sd-sweep-easing</code> the curve of its progress; <code>data-sd-sweep="progress"</code> lets the page set <code>--sd-sweep</code> itself. Off with reduced motion.</p>
       <div class="sd-cluster" style="--gap: 20px">
         <nav class="sd-nav" aria-label="Hover demo"><a href="#effects">Overview</a><a href="#effects">Activity</a><a href="#effects">Settings</a></nav>
         <button class="sd-btn">Hover me</button>
         <a href="#effects">A plain link</a>
+        <button class="sd-btn" style="--sd-sweep-duration: 400ms">Fast</button>
+        <button class="sd-btn" style="--sd-sweep-duration: 2.4s; --sd-sweep-easing: linear(0, 0.7 25%, 0.8 75%, 1)">Rush, linger, finish</button>
+        <span id="sweep-progress" data-sd-sweep="progress" style="--sd-sweep: 0">Uploading 0%</span>
       </div>
+      <input id="sweep-progress-input" type="range" min="0" max="100" value="0" aria-label="Sweep progress" class="max-w-narrow">
     </div>
 
     <div class="demo-block" id="effects-scrollbars">

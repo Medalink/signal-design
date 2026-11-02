@@ -7,7 +7,7 @@ Tauri apps and plain HTML.
 - **Square corners everywhere**, avatars and checkboxes included.
 - **Flat surfaces.** No glass, glow or shadow.
 - **Color is for important things:** risk, status, success and selection. Everything else, navigation included, is black, white and grey; focus rings and the current item are too.
-- **Motion:** 120–200ms transitions and a one-pass hover shimmer. Loops are allowed: the ornament sparkle, and the rain while work runs. `prefers-reduced-motion` turns motion off.
+- **Motion:** 120–200ms transitions and a one-pass hover shimmer whose speed and curve you set per element. Loops are allowed: the ornament sparkle, and the rain while work runs. `prefers-reduced-motion` turns motion off.
 
 ## Install
 
@@ -1036,6 +1036,34 @@ nothing else. Call it again to change the mode, as in `initScrollbars("always")`
 It does nothing without a `document`, and `signal-design/js` imports in Node, so a
 client entry that server rendering also evaluates does not throw.
 
+## Hover shimmer
+
+Hovering a link, a nav item, a tab or a non-primary button sweeps a bright band
+across its text once. The band's place is a progress value, `--sd-sweep`, from 0
+(all the text dim, the band at the right edge) to 1 (all of it settled). Two
+custom properties tune it on any element or on an ancestor:
+
+- `--sd-sweep-duration`: how long one sweep takes. 1s by default, 1.4s on text
+  links.
+- `--sd-sweep-easing`: progress over time, any CSS timing function. A
+  `linear()` list is a series of progress points, so
+  `linear(0, 0.7 30%, 1)` runs the first 70% of the sweep in 30% of the time
+  and then slows.
+
+```html
+<nav class="sd-nav" style="--sd-sweep-duration: 600ms">…</nav>
+<a href="/docs" style="--sd-sweep-easing: linear(0, 0.2 50%, 1)">Docs</a>
+```
+
+Text links (a plain `<a>` outside navigation, and `sd-btn-link`) play the whole
+sweep once the pointer touches them, even if it leaves at once. The JS sets
+`data-sd-sweeping` on pointerover and clears it when the sweep ends.
+`data-sd-sweep="hold"` gives anything the same, `data-sd-sweep="hover"` makes a
+link stop when the pointer leaves, and `data-sd-sweep="progress"` turns off the
+hover animation and draws the band where the page sets `--sd-sweep`, so your own
+time series drives it. Pages that skip `init()` call `initSweep()` from
+`signal-design/js`. Reduced motion and forced colors show no sweep.
+
 ## FPS counter
 
 ```html
@@ -1464,7 +1492,8 @@ once at startup (`initScrollbars("always")` keeps them visible): it sets
 `initKeyboard()` too: while the on-screen keyboard is up it sets
 `data-sd-keyboard`, `--sd-view-height` and `--sd-view-top` on `<html>`, and
 `sd-shell` fits the screen above the keyboard instead of sliding its header
-off the top. `init()` calls both.
+off the top. Call `initSweep()` so text links play their hover shimmer
+through; it writes only `data-sd-sweeping`. `init()` calls all three.
 `react.html` and `react-shell.html` in the showcase use every component above, and `react-editor.html` the editor parts below.
 
 ### Editor parts

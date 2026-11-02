@@ -357,6 +357,14 @@ export function initScrollbars(mode?: "auto" | "always"): void;
  */
 export function initKeyboard(): void;
 
+/**
+ * Let the hover shimmer play through on text links and on anything with
+ * `data-sd-sweep="hold"`: it sets `data-sd-sweeping` on pointerover and
+ * clears it when the sweep ends. `init()` calls it; a framework app can call
+ * it on its own, since it writes only that attribute.
+ */
+export function initSweep(): void;
+
 /* Listboxes: palette and combobox */
 export interface PaletteOption {
   label: string;

@@ -1,3 +1,11 @@
+/* How far the hover shimmer has swept, 0 to 1. At rest it is 1 (settled), so
+   the text never sits dim once the sweep ends or motion is reduced. */
+@property --sd-sweep {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
+
 @layer components {
   /*
    * Hover shimmer: the text dims, a bright band (white on dark themes, black
@@ -5,10 +13,31 @@
    * its hover color behind the band. Once per hover. The band is clipped to the glyphs, so
    * icons, borders and hover backgrounds stay as they are. Off with
    * prefers-reduced-motion (base layer).
+   *
+   * The band's place is the progress --sd-sweep: 0 has it just past the right
+   * edge with all the text dim, 1 has it gone past the left with all the text
+   * settled. Tune it on any element or ancestor:
+   *   --sd-sweep-duration  how long one sweep takes (1s; 1.4s on text links)
+   *   --sd-sweep-easing    progress over time: linear(0, 0.7 30%, 1) runs the
+   *                        first 70% in 30% of the time, then slows
+   * Text links (and data-sd-sweep="hold") keep sweeping after the pointer
+   * leaves: the JS sets data-sd-sweeping on pointerover and clears it when the
+   * sweep ends. data-sd-sweep="hover" stops a link's sweep when the pointer
+   * leaves. data-sd-sweep="progress" draws the band where the page sets
+   * --sd-sweep, with no hover animation, so the app's own time series runs it.
    */
   @keyframes sd-sweep {
     from { background-position: 100% 0, 0 0; }
     to { background-position: 0% 0, 0 0; }
+  }
+  @keyframes sd-sweep-progress {
+    from { --sd-sweep: 0; }
+    to { --sd-sweep: 1; }
+  }
+
+  /* Text links: plain anchors outside navigation, and link buttons. */
+  :where(a:not([class], [role]):not(:where(.sd-nav, .sd-tabs, .sd-breadcrumb, .sd-sidenav, .sd-pagination, .sd-menu) *), .sd-btn-link) {
+    --_sd-sweep-base: 1.4s;
   }
 
   :is(
@@ -26,20 +55,43 @@
       .sd-seg > :where(button, label),
       .sd-sidebar-group > summary,
       a:not([class])
-    ):hover {
+    ):hover,
+  [data-sd-sweeping],
+  [data-sd-sweep="progress"] {
     /* Layer 1, clipped to the text: settled hover color behind the band,
        the bright band, then the dimmer pre-hover grey ahead of it.
-       Layer 2 is empty; its border-box clip keeps the background color. */
+       Layer 2 is empty; its border-box clip keeps the background color.
+       90% puts the band's front edge on the right edge, 10% its back edge
+       on the left, so every step of progress moves something. */
     background-image:
       linear-gradient(90deg, currentColor 0 40%, var(--sd-flash) 50%, var(--sd-fg-subtle) 60% 100%),
       linear-gradient(transparent, transparent);
     background-size: 300% 100%, auto;
-    background-position: 0% 0, 0 0;
+    background-position: calc(90% - 80% * var(--sd-sweep)) 0, 0 0;
     background-repeat: no-repeat;
     -webkit-background-clip: text, border-box;
     background-clip: text, border-box;
     -webkit-text-fill-color: transparent;
-    animation: sd-sweep 700ms linear 1;
+  }
+
+  :is(
+      .sd-nav :where(a, button),
+      .sd-tabs > :where(a, button),
+      .sd-breadcrumb > li > :where(a, button),
+      .sd-sidebar-link,
+      .sd-sidenav :where(a, button),
+      .sd-rail-item,
+      .sd-menu :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item),
+      .sd-pagination :where(a, button),
+      .sd-btn:not(.sd-btn-primary),
+      .sd-chip:is(button, a),
+      .sd-pill:is(button, a),
+      .sd-seg > :where(button, label),
+      .sd-sidebar-group > summary,
+      a:not([class])
+    ):not([data-sd-sweep="progress"]):hover,
+  [data-sd-sweeping] {
+    animation: sd-sweep-progress var(--sd-sweep-duration, var(--_sd-sweep-base, 1s)) var(--sd-sweep-easing, linear) 1;
   }
 
   /* Pieces with their own colors keep them while their parent shimmers. */
@@ -58,7 +110,8 @@
       .sd-seg > :where(button, label),
       .sd-sidebar-group > summary,
       a:not([class])
-    ):hover :is(.sd-avatar, .sd-badge, .sd-badge-count, .sd-dot, .sd-count, [data-tone], kbd, .sd-kbd) {
+    ):hover :is(.sd-avatar, .sd-badge, .sd-badge-count, .sd-dot, .sd-count, [data-tone], kbd, .sd-kbd),
+  :is([data-sd-sweeping], [data-sd-sweep="progress"]) :is(.sd-avatar, .sd-badge, .sd-badge-count, .sd-dot, .sd-count, [data-tone], kbd, .sd-kbd) {
     -webkit-text-fill-color: currentColor;
   }
 
@@ -79,7 +132,9 @@
         .sd-seg > :where(button, label),
         .sd-sidebar-group > summary,
         a:not([class])
-      ):hover {
+      ):hover,
+    [data-sd-sweeping],
+    [data-sd-sweep="progress"] {
       background-image: none;
       -webkit-text-fill-color: currentColor;
       animation: none;
