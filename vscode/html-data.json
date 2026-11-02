@@ -250,6 +250,14 @@
    "description": "Set by the JS on <html> while anything scrolls (idle motion pauses)."
   },
   {
+   "name": "data-sd-sweep",
+   "description": "Hover shimmer mode: hold keeps sweeping after the pointer leaves (text links do by default), hover stops when it leaves, progress draws the band at the --sd-sweep (0 to 1) the page sets."
+  },
+  {
+   "name": "data-sd-sweeping",
+   "description": "Set by the JS while a held hover shimmer plays; cleared when the sweep ends."
+  },
+  {
    "name": "data-sd-check-ignore",
    "description": "Space-separated rule names (\"color\", \"primary\", ...) that signal-design check skips for this element and what it holds. For what is right on purpose, such as a palette swatch."
   }
