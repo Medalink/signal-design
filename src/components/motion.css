@@ -57,7 +57,7 @@
       .sd-seg > :where(button, label),
       .sd-sidebar-group > summary,
       a:not([class])
-    ):hover,
+    ):is(:hover, [data-sd-sweeping]),
   [data-sd-sweeping],
   [data-sd-sweep="progress"] {
     /* Layer 1, clipped to the text: settled hover color behind the band,
@@ -96,7 +96,7 @@
       .sd-seg > :where(button, label),
       .sd-sidebar-group > summary,
       a:not([class])
-    ):not([data-sd-sweep="progress"]):hover,
+    ):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]),
   [data-sd-sweeping] {
     animation: sd-sweep-progress var(--sd-sweep-duration, var(--_sd-sweep-base, 1s)) var(--sd-sweep-easing, linear) 1;
   }
@@ -117,7 +117,7 @@
       .sd-seg > :where(button, label),
       .sd-sidebar-group > summary,
       a:not([class])
-    ):hover :is(.sd-avatar, .sd-badge, .sd-badge-count, .sd-dot, .sd-count, [data-tone], kbd, .sd-kbd),
+    ):is(:hover, [data-sd-sweeping]) :is(.sd-avatar, .sd-badge, .sd-badge-count, .sd-dot, .sd-count, [data-tone], kbd, .sd-kbd),
   :is([data-sd-sweeping], [data-sd-sweep="progress"]) :is(.sd-avatar, .sd-badge, .sd-badge-count, .sd-dot, .sd-count, [data-tone], kbd, .sd-kbd) {
     -webkit-text-fill-color: currentColor;
   }
@@ -139,7 +139,7 @@
         .sd-seg > :where(button, label),
         .sd-sidebar-group > summary,
         a:not([class])
-      ):hover,
+      ):is(:hover, [data-sd-sweeping]),
     [data-sd-sweeping],
     [data-sd-sweep="progress"] {
       background-image: none;
