@@ -251,7 +251,7 @@
   },
   {
    "name": "data-sd-sweep",
-   "description": "Hover shimmer mode: hold keeps sweeping after the pointer leaves (shimmering links do by default), hover stops when it leaves, progress draws the band at the --sd-sweep (0 to 1) the page sets."
+   "description": "Hover shimmer mode: hold gives any element the sweep (every sweep plays to the end by default), hover stops it when the pointer leaves, progress draws the band at the --sd-sweep (0 to 1) the page sets."
   },
   {
    "name": "data-sd-sweeping",
