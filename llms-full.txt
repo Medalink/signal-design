@@ -52,7 +52,7 @@ typed components that render the `sd-` classes with React as the only writer.
 They need no `init()`; do not call it on those pages. For auto-hiding
 scrollbars there, call `initScrollbars()` from `signal-design/js` instead, and
 `initKeyboard()` so a shell stays above the phone keyboard, and `initSweep()` so
-text links play their hover shimmer through.
+links play their hover shimmer through.
 
 ## Hard rules (do not break these)
 
@@ -4126,7 +4126,7 @@ JS: init() from signal-design/js wires data-sd-ornaments.
 
 ## Effects / Hover shimmer
 
-A bright band sweeps across interactive text from left to right (white on dark, black on light), once per hover. Text links finish the sweep even if the pointer only brushes them. --sd-sweep-duration sets the speed and --sd-sweep-easing the curve of its progress; data-sd-sweep="progress" lets the page set --sd-sweep itself. Off with reduced motion.
+A bright band sweeps across interactive text from left to right (white on dark, black on light), once per hover. Links finish the sweep even if the pointer only brushes them. --sd-sweep-duration sets the speed and --sd-sweep-easing the curve of its progress; data-sd-sweep="progress" lets the page set --sd-sweep itself. Off with reduced motion.
 
 Classes: sd-btn, sd-cluster, sd-nav
 

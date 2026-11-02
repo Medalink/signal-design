@@ -2295,7 +2295,7 @@
    "attributes": [
     "data-sd-sweep"
    ],
-   "usage": "A bright band sweeps across interactive text from left to right (white on dark, black on light), once per hover. Text links finish the sweep even if the pointer only brushes them. --sd-sweep-duration sets the speed and --sd-sweep-easing the curve of its progress; data-sd-sweep=\"progress\" lets the page set --sd-sweep itself. Off with reduced motion.",
+   "usage": "A bright band sweeps across interactive text from left to right (white on dark, black on light), once per hover. Links finish the sweep even if the pointer only brushes them. --sd-sweep-duration sets the speed and --sd-sweep-easing the curve of its progress; data-sd-sweep=\"progress\" lets the page set --sd-sweep itself. Off with reduced motion.",
    "js": "JS: init() from signal-design/js wires data-sd-sweep.",
    "html": "<div class=\"sd-cluster\" style=\"--gap: 20px\">\n  <nav class=\"sd-nav\" aria-label=\"Hover demo\"><a href=\"#effects\">Overview</a><a href=\"#effects\">Activity</a><a href=\"#effects\">Settings</a></nav>\n  <button class=\"sd-btn\">Hover me</button>\n  <a href=\"#effects\">A plain link</a>\n  <button class=\"sd-btn\" style=\"--sd-sweep-duration: 400ms\">Fast</button>\n  <button class=\"sd-btn\" style=\"--sd-sweep-duration: 2.4s; --sd-sweep-easing: linear(0, 0.7 25%, 0.8 75%, 1)\">Rush, linger, finish</button>\n  <span id=\"sweep-progress\" data-sd-sweep=\"progress\" style=\"--sd-sweep: 0\">Uploading 0%</span>\n</div>\n\n<input id=\"sweep-progress-input\" type=\"range\" min=\"0\" max=\"100\" value=\"0\" aria-label=\"Sweep progress\" class=\"max-w-narrow\">"
   },
