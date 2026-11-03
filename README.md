@@ -363,6 +363,10 @@ On phones the top bar can end with `sd-shell-topbar-end` (a status or actions,
 after `sd-shell-topbar-label`). Mark the header's `sd-shell-header-end`
 `sd-desktop-only` and the header drops out on phones, with its gap.
 
+For a shell with no sidebar, `data-phone-nav="bottom"` on `sd-shell` keeps the
+rail on phones as a tab bar under the page, in thumb reach, and hides the top
+bar's menu button.
+
 | Control | Does |
 |---|---|
 | `data-sd-shell="sidebar"` | Pin or collapse the sidebar; the choice is remembered. |

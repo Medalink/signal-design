@@ -22,6 +22,9 @@
    *   data-peek                  sidebar shown over the page
    *   data-aside="open"          right panel shown
    *   data-drawer                phone drawer open
+   * Set by the app:
+   *   data-phone-nav="bottom"    phones: the rail becomes a tab bar under the
+   *                              page (a shell with no sidebar)
    */
   .sd-shell {
     --shell-rail: 6rem;
@@ -1043,6 +1046,72 @@
     }
     .sd-shell:has(> .sd-shell-topbar > .sd-shell-topbar-label) .sd-shell-header:not(:has(> .sd-shell-header-end:not(.sd-desktop-only))) {
       display: none;
+    }
+  }
+  /* data-phone-nav="bottom": on phones a shell with no sidebar keeps its rail
+     as a tab bar under the page, in thumb reach, instead of behind the
+     top bar's menu button. The rail's home link and separator drop out; its
+     tools stay at the end. Phones with the keyboard up hide the bar. */
+  @media (max-width: 47.99rem) {
+    .sd-shell[data-phone-nav="bottom"]:not(:has(> .sd-sidebar)) {
+      grid-template-rows: auto auto minmax(0, 1fr) auto var(--shell-status);
+      grid-template-areas:
+        "title"
+        "top"
+        "main"
+        "rail"
+        "status";
+    }
+    .sd-shell[data-phone-nav="bottom"]:not(:has(> .sd-sidebar)) > .sd-rail {
+      display: flex;
+      flex-direction: row;
+      border-inline-end: 0;
+      border-block-start: 1px solid var(--sd-line-strong);
+      padding-block-end: env(safe-area-inset-bottom);
+    }
+    [data-sd-keyboard] .sd-shell[data-phone-nav="bottom"] > .sd-rail {
+      display: none;
+    }
+    .sd-shell[data-phone-nav="bottom"]:not(:has(> .sd-sidebar)) > .sd-rail :is(.sd-rail-home, .sd-rail-sep) {
+      display: none;
+    }
+    .sd-shell[data-phone-nav="bottom"]:not(:has(> .sd-sidebar)) .sd-shell-topbar [data-sd-shell="drawer"] {
+      display: none;
+    }
+    .sd-shell[data-phone-nav="bottom"] > .sd-rail :is(.sd-rail-list, .sd-rail-tools) {
+      flex-direction: row;
+      gap: 0;
+      padding-block: 0;
+      border-block-start: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+    .sd-shell[data-phone-nav="bottom"] > .sd-rail .sd-rail-list {
+      flex: 1;
+      min-width: 0;
+    }
+    .sd-shell[data-phone-nav="bottom"] > .sd-rail .sd-rail-item {
+      flex: 1 0 3rem;
+      min-width: 0;
+      min-height: 3.5rem;
+      margin-inline: 0;
+      gap: 4px;
+      justify-content: center;
+      padding: 6px 2px;
+      font-size: 11px;
+    }
+    .sd-shell[data-phone-nav="bottom"] > .sd-rail .sd-rail-item > svg {
+      width: 22px;
+      height: 22px;
+    }
+    .sd-shell[data-phone-nav="bottom"] > .sd-rail .sd-rail-item[aria-current]:not([aria-current="false"])::before {
+      inset: 0 8px auto;
+      width: auto;
+      height: 2px;
+    }
+    .sd-shell[data-phone-nav="bottom"] > .sd-rail .sd-rail-item > .sd-dot {
+      top: 8px;
+      right: calc(50% - 20px);
     }
   }
   @keyframes sd-aside-in {
