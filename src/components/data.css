@@ -475,6 +475,8 @@
    * Colors come from the chart tokens (charts.css), so a plot follows
    * data-chart-theme like a full chart. data-series picks the series color
    * (down, up, in, out, rtt, ghost, baseline); data-tone still wins.
+   * data-readout="stack" puts the readout in a strip above the plot on phones
+   * (40rem and narrower) instead of over the line; --h stays the chart's height.
    */
   .sd-plot {
     --sd-plot-line: var(--sd-chart-fallback);
@@ -557,6 +559,13 @@
     color: var(--sd-chart-tooltip-title);
     font-weight: var(--font-weight-semibold);
     font-variant-numeric: tabular-nums;
+  }
+  @media (max-width: 40rem) {
+    .sd-plot[data-readout="stack"] {
+      box-sizing: border-box;
+      height: calc(var(--h, 230px) + 2rem);
+      padding-block-start: 2rem;
+    }
   }
   .sd-plot-inline {
     --h: 30px;
