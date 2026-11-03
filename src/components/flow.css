@@ -73,7 +73,7 @@
     isolation: isolate;
     display: grid;
     grid-auto-flow: column;
-    grid-auto-columns: minmax(var(--stage-w), 1fr);
+    grid-auto-columns: minmax(max(var(--stage-w), var(--stage-w-min, 0px)), 1fr);
     min-width: min-content;
   }
   .sd-flow-canvas::before {
@@ -123,8 +123,17 @@
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
   }
+  /* On phones no stage is narrower than --stage-w-min, whatever --stage-w an
+     app sets, so a head keeps room for its name, meta and count. */
+  @media (max-width: 40rem) {
+    .sd-flow {
+      --stage-w-min: 15rem;
+    }
+  }
+  /* The name stays whole; the meta and count give way first. */
   .sd-flow-stage-head > b {
-    min-width: 0;
+    flex-shrink: 0;
+    max-width: 100%;
     overflow: hidden;
     color: var(--sd-fg);
     font-family: var(--sd-font-sans);
@@ -134,7 +143,13 @@
   }
   /* The second word after the name is the count, at the end of the head. */
   .sd-flow-stage-head > b + span + span {
+    flex-shrink: 0;
     margin-inline-start: auto;
+  }
+  .sd-flow-stage-head > b + span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   /* The stage's progress, a 2px line along the bottom of its head. */
   .sd-flow-stage-head::after {
