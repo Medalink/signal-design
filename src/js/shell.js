@@ -267,6 +267,10 @@ export function onShellClick(event) {
   if (event.target.closest(".sd-sidebar-link") && ("peek" in shell.dataset || "drawer" in shell.dataset)) {
     closeOverlays(shell);
   }
+  // So does a rail link that goes to a page (a section button only opens its panel).
+  if ("drawer" in shell.dataset && event.target.closest('a[href]:not([href="#"]):is(.sd-rail-item, .sd-rail-home)')) {
+    closeOverlays(shell);
+  }
 }
 
 export function onShellKeydown(event) {

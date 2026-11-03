@@ -131,7 +131,17 @@ export function ShellToggle({ target, pinLabel = "Pin sidebar open", collapseLab
 export const ShellTopbar = ({ className, ...props }) => h("header", { className: cx("sd-shell-topbar", className), ...props });
 
 export const Rail = ({ className, ...props }) => h("nav", { className: cx("sd-rail", className), ...props });
-export const RailHome = ({ className, ...props }) => h("a", { className: cx("sd-rail-home", className), ...props });
+export function RailHome({ className, onClick, ...props }) {
+  const shell = useShell();
+  return h("a", {
+    className: cx("sd-rail-home", className),
+    ...props,
+    onClick: (event) => {
+      onClick?.(event);
+      if (!event.defaultPrevented && shell?.drawerOpen && props.href !== undefined && props.href !== "#") shell.closeOverlays();
+    },
+  });
+}
 export const RailList = ({ className, ...props }) => h("div", { className: cx("sd-rail-list", className), ...props });
 export const RailTools = ({ className, ...props }) => h("div", { className: cx("sd-rail-tools", className), ...props });
 export const RailSeparator = ({ className, ...props }) => h("div", { className: cx("sd-rail-sep", className), ...props });
@@ -152,6 +162,7 @@ function RailEntry({ kind, section, current, unread, pending, href, onClick, cla
       if (event.defaultPrevented) return;
       if (href === "#") event.preventDefault();
       if (section !== undefined) shell.selectSection(section);
+      else if (href !== undefined && href !== "#" && shell.drawerOpen) shell.closeOverlays();
     },
   });
 }
