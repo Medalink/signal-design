@@ -359,6 +359,10 @@ for one with no sidebar.
 </div>
 ```
 
+On phones the top bar can end with `sd-shell-topbar-end` (a status or actions,
+after `sd-shell-topbar-label`). Mark the header's `sd-shell-header-end`
+`sd-desktop-only` and the header drops out on phones, with its gap.
+
 | Control | Does |
 |---|---|
 | `data-sd-shell="sidebar"` | Pin or collapse the sidebar; the choice is remembered. |

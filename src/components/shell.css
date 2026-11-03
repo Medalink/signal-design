@@ -928,6 +928,25 @@
     width: 44px;
     min-height: 44px;
   }
+  .sd-shell-topbar .sd-wordmark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+  }
+  /* Status or actions at the end of the top bar, after the label. Mark the
+     header's own .sd-shell-header-end .sd-desktop-only to show them in one
+     place per width: on phones the header then drops out and takes its gap. */
+  .sd-shell-topbar-end {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 8px;
+    padding-inline-end: 8px;
+    font-size: var(--text-sm);
+    white-space: nowrap;
+  }
 
   /* Below 75rem the right panel floats over the content instead of taking a
      column, so the page keeps its width; a click outside or Esc closes it. */
@@ -1022,7 +1041,7 @@
     .sd-shell:has(> .sd-shell-topbar > .sd-shell-topbar-label) .sd-shell-header {
       justify-content: flex-end;
     }
-    .sd-shell:has(> .sd-shell-topbar > .sd-shell-topbar-label) .sd-shell-header:not(:has(> .sd-shell-header-end)) {
+    .sd-shell:has(> .sd-shell-topbar > .sd-shell-topbar-label) .sd-shell-header:not(:has(> .sd-shell-header-end:not(.sd-desktop-only))) {
       display: none;
     }
   }
