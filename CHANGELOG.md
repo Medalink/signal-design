@@ -2,6 +2,60 @@
 
 ## Unreleased
 
+## 1.4.44 (2026-11-04)
+
+### Changed
+- `sd-flow` on phones (40rem and narrower): no stage is narrower than
+  `--stage-w-min` (15rem), whatever `--stage-w` an app sets inline, so a stage
+  head has room for its name, meta and count.
+- A stage head keeps its name whole and shortens the meta and count first,
+  instead of cutting the name to "A…".
+- On phones, the shell header drops out when its `sd-shell-header-end` is
+  marked `sd-desktop-only`, instead of leaving an empty bar and gap. Put the
+  same status in `sd-shell-topbar-end`.
+- The top bar's `sd-wordmark` is at least 44px square, a touch target.
+- Every hover shimmer plays to the end after the pointer leaves: buttons,
+  tabs, menu items, chips and segmented choices too, not only links.
+- The shimmer's band is the text's own color pushed toward `--sd-flash`
+  (lighter on dark themes, darker on light) instead of `--sd-flash` itself,
+  and the text ahead of it is the same color dimmed instead of
+  `--sd-fg-subtle`. A toned button now sweeps in its tone.
+- Every link that shimmers now finishes its sweep after the pointer leaves,
+  and takes 1.4s: sidebar, rail, nav, breadcrumb and menu links too, not only
+  plain text links. Buttons, tabs that are buttons, and other controls still
+  stop when the pointer leaves. Links that never shimmered, such as
+  `sd-link-card`, still don't.
+- The hover shimmer is slower: 1s on controls and 1.4s on text links, up from
+  700ms. `@keyframes sd-sweep` stays for code that uses it.
+
+### Added
+- `data-phone-nav="bottom"` on `sd-shell`: on phones a shell with no sidebar
+  keeps its rail as a tab bar under the page, in thumb reach, instead of
+  behind the top bar's menu button. The rail's home link and separator drop
+  out, its tools stay at the end, and the bar hides while the keyboard is up.
+- `sd-plot` takes `data-readout="stack"`: on phones (40rem and narrower) the
+  `sd-plot-readout` sits in a strip above the plot instead of over the line,
+  and `--h` stays the chart's height. Wider screens are unchanged.
+- `sd-shell-topbar-end`: a slot at the end of the phone top bar, after
+  `sd-shell-topbar-label`, for a status or actions.
+- Hover shimmer: `--sd-sweep-duration` and `--sd-sweep-easing` set its speed
+  and the curve of its progress on any element or ancestor. Its place is the
+  registered `--sd-sweep` (0 to 1); `data-sd-sweep="progress"` draws the band
+  where the page sets it. `initSweep()` from `signal-design/js` (called by
+  `init()`) lets text links and `data-sd-sweep="hold"` finish the sweep after
+  the pointer leaves; `data-sd-sweep="hover"` opts a link out.
+
+### Fixed
+- On phones, choosing a page link in the drawer's rail (`sd-rail-item` or
+  `sd-rail-home` with an `href`) now closes the drawer, in `init()` and in the
+  React `RailItem` and `RailHome`. A rail item with `data-sd-section` still
+  only opens its sidebar panel. Apps no longer need `data-sd-shell="close"` on
+  every rail link.
+- Hover shimmer: text no longer disappears while a sweep plays on after the
+  pointer leaves. Segmented buttons, breadcrumb links and the current sidebar
+  and rail items reset their own `background`, which dropped the sweep's
+  gradient but kept its transparent text fill.
+
 ## 1.4.43 (2026-11-01)
 
 ### Added
