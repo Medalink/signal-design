@@ -39,7 +39,7 @@
   },
   {
    "name": "--sd-fg-faint",
-   "description": "The quietest readable text (still 4.5:1): hints, timestamps. ink #828282 · graphite #8b8b8b · paper #6a6a72"
+   "description": "The quietest readable text (still 4.5:1): hints, timestamps. ink #8a8a8a · graphite #959595 · paper #646470"
   },
   {
    "name": "--sd-primary",
@@ -83,7 +83,7 @@
   },
   {
    "name": "--sd-container",
-   "description": "The app shell's main content box. ink #0a0a0a · graphite #1a1a1a · paper #f6f6f7"
+   "description": "The app shell's main content box. ink #131416 · graphite #1c1c1c · paper #ffffff"
   },
   {
    "name": "--sd-flash",
