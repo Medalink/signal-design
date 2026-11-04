@@ -69,7 +69,7 @@
     --plot: calc(100% - var(--label-w) - var(--label-gap));
     position: relative;
     min-width: var(--min-w, 0);
-    border-block-end: 1px solid var(--sd-line);
+    background: var(--sd-tone-3);
   }
 
   .sd-schedule-grid {
@@ -120,11 +120,16 @@
     grid-template-columns: var(--label-w) minmax(0, 1fr);
     column-gap: var(--label-gap);
     min-height: var(--row-h);
-    border-block-start: 1px solid var(--sd-line);
     transition: background-color 160ms var(--ease-out);
   }
+  /* Rows alternate by a faint band instead of a rule. The canvas holds the
+     grid and the axis first, so the rows are its odd children and the even
+     ones are the banded rows. */
+  .sd-schedule-row:nth-child(even) {
+    background: color-mix(in srgb, var(--sd-fg) 3%, transparent);
+  }
   .sd-schedule-row:is(:hover, :focus-within) {
-    background: var(--sd-raised);
+    background: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-tone-3));
   }
   .sd-schedule-row[aria-selected="true"],
   .sd-schedule-row[data-selected] {
@@ -231,8 +236,8 @@
     overflow: visible;
     padding-inline: var(--label-pad);
     border-color: var(--block);
-    background: var(--sd-canvas);
-    background: rgb(from color-mix(in srgb, var(--block) 16%, var(--sd-canvas)) r g b / 1);
+    background: var(--sd-tone-3);
+    background: rgb(from color-mix(in srgb, var(--block) 16%, var(--sd-tone-3)) r g b / 1);
     white-space: normal;
     overflow-wrap: anywhere;
   }
@@ -283,7 +288,7 @@
     top: 0;
     left: 3px;
     padding: 1px 4px;
-    background: var(--sd-canvas);
+    background: var(--sd-tone-3);
     color: var(--sd-chart-accent);
     font-family: var(--font-mono);
     font-size: var(--text-3xs);

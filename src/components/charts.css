@@ -236,10 +236,7 @@
   }
   .sd-waffle > i {
     aspect-ratio: 1;
-    border: 1px solid var(--sd-line);
-  }
-  .sd-waffle > i[data-s] {
-    border: 0;
+    background: color-mix(in srgb, var(--sd-fg) 8%, transparent);
   }
   :is(.sd-waffle, .sd-key) [data-s="1"] { background: var(--sd-chart-1); }
   :is(.sd-waffle, .sd-key) [data-s="2"] { background: var(--sd-chart-2); }

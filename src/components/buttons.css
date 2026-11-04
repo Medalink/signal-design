@@ -1,12 +1,13 @@
 @layer components {
   /*
-   * Buttons. The default is a 1px hairline. One solid button per view:
-   * sd-btn-primary (solid fg, e.g. Approve). Meaning comes from data-tone.
+   * Buttons. The default is a --sd-tone-3 fill (one notch up on a raised
+   * box) and lifts on hover. One solid button per view: sd-btn-primary
+   * (solid fg, e.g. Approve). Meaning comes from data-tone.
    */
   .sd-btn {
     --btn-fg: var(--sd-fg);
-    --btn-bg: transparent;
-    --btn-border: var(--sd-line-strong);
+    --btn-bg: var(--sd-field-fill);
+    --btn-border: transparent;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -31,8 +32,7 @@
       opacity 120ms var(--ease-out);
   }
   .sd-btn:hover {
-    --btn-bg: var(--sd-raised);
-    --btn-border: var(--sd-fg-faint);
+    --btn-bg: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-field-fill));
   }
   .sd-btn:active {
     transform: translateY(1px);
@@ -53,6 +53,7 @@
   /* Toned hairline: danger = Reject, success = Approve in a green-first app. */
   .sd-btn[data-tone] {
     --btn-fg: var(--tone);
+    --btn-bg: transparent;
     --btn-border: color-mix(in srgb, var(--tone) 40%, transparent);
   }
   .sd-btn[data-tone]:hover {
@@ -70,14 +71,17 @@
   }
 
   .sd-btn-ghost {
+    --btn-bg: transparent;
     --btn-border: transparent;
   }
   .sd-btn-ghost:hover {
+    --btn-bg: var(--sd-raised);
     --btn-border: transparent;
   }
 
   /* Text-only action, e.g. "Reset to defaults". */
   .sd-btn-link {
+    --btn-bg: transparent;
     --btn-border: transparent;
     min-height: 0;
     padding: 0;
@@ -150,9 +154,7 @@
   /* Joined buttons. */
   .sd-btn-group {
     display: inline-flex;
-  }
-  .sd-btn-group > .sd-btn + .sd-btn {
-    margin-inline-start: -1px;
+    gap: 1px;
   }
   .sd-btn-group > .sd-btn:hover,
   .sd-btn-group > .sd-btn:focus-visible {

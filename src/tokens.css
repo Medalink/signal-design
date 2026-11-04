@@ -164,6 +164,10 @@
   --color-overlay: var(--sd-overlay); /* toasts, menus, dialogs */
   --color-container: var(--sd-container); /* app content box */
   --color-shell: var(--sd-shell-bg); /* behind the app content box */
+  --color-tone-0: var(--sd-tone-0); /* chrome: rail, titlebar, status bar */
+  --color-tone-1: var(--sd-tone-1); /* side panels */
+  --color-tone-2: var(--sd-tone-2); /* content */
+  --color-tone-3: var(--sd-tone-3); /* raised on content: fields, cards */
   --color-line: var(--sd-line); /* hairlines */
   --color-line-strong: var(--sd-line-strong); /* strong hairlines */
   --color-line-control: var(--sd-line-control); /* the edge of a field: 3:1 */
@@ -206,7 +210,7 @@
   --sd-fg: #fafafa;
   --sd-fg-muted: #a3a3a3;
   --sd-fg-subtle: #949494;
-  --sd-fg-faint: #828282; /* 4.5:1 on every ink surface, raised included */
+  --sd-fg-faint: #8a8a8a; /* 4.5:1 on every ink surface, a field in a card included */
   --sd-primary: #fafafa;
   --sd-on-primary: var(--color-ink-1000);
   --sd-accent: var(--color-cyan);
@@ -217,7 +221,25 @@
   --sd-extra: var(--color-violet);
   --sd-backdrop: rgb(0 0 0 / 0.64);
   --sd-shell-bg: var(--sd-canvas); /* behind the app container, where the rain shows */
-  --sd-container: var(--sd-surface); /* the app's main content box: same as the rail */
+  --sd-container: var(--sd-tone-2); /* the app's main content box */
+  /* Tone ladder: regions are told apart by these steps, not by lines. */
+  --sd-tone-0: #070708; /* chrome: rail, titlebar, status bar, the strip under the rail */
+  --sd-tone-1: #0e0f10; /* side panels: sidebar, aside */
+  --sd-tone-2: #131416; /* content: the main box */
+  --sd-tone-3: var(--sd-raised); /* raised on content: fields, cards, wells, chips */
+  --sd-edge: rgb(0 0 0 / 0.55); /* the dark line where a bar or panel meets what it sits on */
+  --sd-edge-soft: rgb(0 0 0 / 0.4); /* and its short falloff */
+  /* Edge shadows, one per side a bar or panel meets its neighbour on, and the lift a floating layer takes.
+     The falloff's negative spread keeps it inside the box's own length, so two edges meet square at a corner.
+     Set in each theme so a subtree with its own data-theme takes its own. */
+  --sd-edge-below: 0 1px 0 var(--sd-edge), 0 7px 6px -6px var(--sd-edge-soft);
+  --sd-edge-above: 0 -1px 0 var(--sd-edge), 0 -7px 6px -6px var(--sd-edge-soft);
+  --sd-edge-right: 1px 0 0 var(--sd-edge), 7px 0 6px -6px var(--sd-edge-soft);
+  --sd-edge-left: -1px 0 0 var(--sd-edge), -7px 0 6px -6px var(--sd-edge-soft);
+  --sd-lift: 0 0 0 1px var(--sd-edge), 0 8px 24px var(--sd-edge-soft);
+  /* A field, chip or plain button: the fg mixed thinly over whatever it sits on, so it always reads one
+     step up from its parent, on content and in a card alike. 4% keeps --sd-fg-faint at 4.5:1 on it. */
+  --sd-field-fill: color-mix(in srgb, var(--sd-fg) 4%, transparent);
   --sd-flash: #ffffff; /* hover shimmer: the brightest ink */
   --sd-icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%23050506' stroke-width='2' stroke-linecap='square'/%3E%3C/svg%3E");
   --sd-icon-dash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='4' y='7' width='8' height='2' fill='%23050506'/%3E%3C/svg%3E");
@@ -243,7 +265,7 @@
   --sd-fg: #f5f5f5;
   --sd-fg-muted: #adadad;
   --sd-fg-subtle: #999999;
-  --sd-fg-faint: #8b8b8b; /* 4.5:1 on every graphite surface */
+  --sd-fg-faint: #959595; /* 4.5:1 on every graphite surface, a field in a card included */
   --sd-primary: #f5f5f5;
   --sd-on-primary: #0f0f0f;
   --sd-accent: var(--color-cyan);
@@ -254,7 +276,25 @@
   --sd-extra: #9d73ff; /* the people violet, a touch lighter: 4.7:1 on every graphite surface */
   --sd-backdrop: rgb(0 0 0 / 0.6);
   --sd-shell-bg: #0f0f0f;
-  --sd-container: var(--sd-surface);
+  --sd-container: var(--sd-tone-2); /* the app's main content box */
+  /* Tone ladder: regions are told apart by these steps, not by lines. */
+  --sd-tone-0: #121212; /* chrome: rail, titlebar, status bar, the strip under the rail */
+  --sd-tone-1: #171717; /* side panels: sidebar, aside */
+  --sd-tone-2: #1c1c1c; /* content: the main box */
+  --sd-tone-3: var(--sd-raised); /* raised on content: fields, cards, wells, chips */
+  --sd-edge: rgb(0 0 0 / 0.55); /* the dark line where a bar or panel meets what it sits on */
+  --sd-edge-soft: rgb(0 0 0 / 0.4); /* and its short falloff */
+  /* Edge shadows, one per side a bar or panel meets its neighbour on, and the lift a floating layer takes.
+     The falloff's negative spread keeps it inside the box's own length, so two edges meet square at a corner.
+     Set in each theme so a subtree with its own data-theme takes its own. */
+  --sd-edge-below: 0 1px 0 var(--sd-edge), 0 7px 6px -6px var(--sd-edge-soft);
+  --sd-edge-above: 0 -1px 0 var(--sd-edge), 0 -7px 6px -6px var(--sd-edge-soft);
+  --sd-edge-right: 1px 0 0 var(--sd-edge), 7px 0 6px -6px var(--sd-edge-soft);
+  --sd-edge-left: -1px 0 0 var(--sd-edge), -7px 0 6px -6px var(--sd-edge-soft);
+  --sd-lift: 0 0 0 1px var(--sd-edge), 0 8px 24px var(--sd-edge-soft);
+  /* A field, chip or plain button: the fg mixed thinly over whatever it sits on, so it always reads one
+     step up from its parent, on content and in a card alike. 4% keeps --sd-fg-faint at 4.5:1 on it. */
+  --sd-field-fill: color-mix(in srgb, var(--sd-fg) 4%, transparent);
   --sd-flash: #ffffff;
   --sd-icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%230F0F0F' stroke-width='2' stroke-linecap='square'/%3E%3C/svg%3E");
   --sd-icon-dash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='4' y='7' width='8' height='2' fill='%230F0F0F'/%3E%3C/svg%3E");
@@ -279,7 +319,7 @@
   --sd-fg: var(--color-ink-1000);
   --sd-fg-muted: #2e2e33;
   --sd-fg-subtle: #5c5c66;
-  --sd-fg-faint: #6a6a72; /* 4.5:1 on every light surface, raised included */
+  --sd-fg-faint: #646470; /* 4.5:1 on every light surface, a field in a card included */
   --sd-primary: var(--color-ink-1000);
   --sd-on-primary: #ffffff;
   --sd-accent: var(--color-cyan-deep);
@@ -290,7 +330,25 @@
   --sd-extra: var(--color-violet-deep);
   --sd-backdrop: rgb(5 5 6 / 0.32);
   --sd-shell-bg: #e9e9ec;
-  --sd-container: var(--sd-surface);
+  --sd-container: var(--sd-tone-2); /* the app's main content box */
+  /* Tone ladder: regions are told apart by these steps, not by lines. */
+  --sd-tone-0: #eeeef0; /* chrome: rail, titlebar, status bar, the strip under the rail */
+  --sd-tone-1: #f6f6f7; /* side panels: sidebar, aside */
+  --sd-tone-2: #ffffff; /* content: the main box */
+  --sd-tone-3: var(--sd-raised); /* raised on content: fields, cards, wells, chips */
+  --sd-edge: rgb(0 0 0 / 0.08); /* the dark line where a bar or panel meets what it sits on */
+  --sd-edge-soft: rgb(0 0 0 / 0.06); /* and its short falloff */
+  /* Edge shadows, one per side a bar or panel meets its neighbour on, and the lift a floating layer takes.
+     The falloff's negative spread keeps it inside the box's own length, so two edges meet square at a corner.
+     Set in each theme so a subtree with its own data-theme takes its own. */
+  --sd-edge-below: 0 1px 0 var(--sd-edge), 0 7px 6px -6px var(--sd-edge-soft);
+  --sd-edge-above: 0 -1px 0 var(--sd-edge), 0 -7px 6px -6px var(--sd-edge-soft);
+  --sd-edge-right: 1px 0 0 var(--sd-edge), 7px 0 6px -6px var(--sd-edge-soft);
+  --sd-edge-left: -1px 0 0 var(--sd-edge), -7px 0 6px -6px var(--sd-edge-soft);
+  --sd-lift: 0 0 0 1px var(--sd-edge), 0 8px 24px var(--sd-edge-soft);
+  /* A field, chip or plain button: the fg mixed thinly over whatever it sits on, so it always reads one
+     step up from its parent, on content and in a card alike. 4% keeps --sd-fg-faint at 4.5:1 on it. */
+  --sd-field-fill: color-mix(in srgb, var(--sd-fg) 4%, transparent);
   --sd-flash: #000000;
   --sd-icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='square'/%3E%3C/svg%3E");
   --sd-icon-dash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='4' y='7' width='8' height='2' fill='%23FFFFFF'/%3E%3C/svg%3E");
@@ -316,7 +374,7 @@
     --sd-fg: var(--color-ink-1000);
     --sd-fg-muted: #2e2e33;
     --sd-fg-subtle: #5c5c66;
-    --sd-fg-faint: #6a6a72; /* 4.5:1 on every light surface, raised included */
+    --sd-fg-faint: #646470; /* 4.5:1 on every light surface, a field in a card included */
     --sd-primary: var(--color-ink-1000);
     --sd-on-primary: #ffffff;
     --sd-accent: var(--color-cyan-deep);
@@ -327,7 +385,25 @@
     --sd-extra: var(--color-violet-deep);
     --sd-backdrop: rgb(5 5 6 / 0.32);
     --sd-shell-bg: #e9e9ec;
-    --sd-container: var(--sd-surface);
+    --sd-container: var(--sd-tone-2); /* the app's main content box */
+    /* Tone ladder: regions are told apart by these steps, not by lines. */
+    --sd-tone-0: #eeeef0; /* chrome: rail, titlebar, status bar, the strip under the rail */
+    --sd-tone-1: #f6f6f7; /* side panels: sidebar, aside */
+    --sd-tone-2: #ffffff; /* content: the main box */
+    --sd-tone-3: var(--sd-raised); /* raised on content: fields, cards, wells, chips */
+    --sd-edge: rgb(0 0 0 / 0.08); /* the dark line where a bar or panel meets what it sits on */
+    --sd-edge-soft: rgb(0 0 0 / 0.06); /* and its short falloff */
+    /* Edge shadows, one per side a bar or panel meets its neighbour on, and the lift a floating layer takes.
+     The falloff's negative spread keeps it inside the box's own length, so two edges meet square at a corner.
+       Set in each theme so a subtree with its own data-theme takes its own. */
+    --sd-edge-below: 0 1px 0 var(--sd-edge), 0 7px 6px -6px var(--sd-edge-soft);
+    --sd-edge-above: 0 -1px 0 var(--sd-edge), 0 -7px 6px -6px var(--sd-edge-soft);
+    --sd-edge-right: 1px 0 0 var(--sd-edge), 7px 0 6px -6px var(--sd-edge-soft);
+    --sd-edge-left: -1px 0 0 var(--sd-edge), -7px 0 6px -6px var(--sd-edge-soft);
+    --sd-lift: 0 0 0 1px var(--sd-edge), 0 8px 24px var(--sd-edge-soft);
+    /* A field, chip or plain button: the fg mixed thinly over whatever it sits on, so it always reads one
+       step up from its parent, on content and in a card alike. 4% keeps --sd-fg-faint at 4.5:1 on it. */
+    --sd-field-fill: color-mix(in srgb, var(--sd-fg) 4%, transparent);
     --sd-flash: #000000;
     --sd-icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='square'/%3E%3C/svg%3E");
     --sd-icon-dash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='4' y='7' width='8' height='2' fill='%23FFFFFF'/%3E%3C/svg%3E");

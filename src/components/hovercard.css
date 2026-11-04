@@ -18,8 +18,9 @@
     width: max-content;
     max-width: min(20rem, calc(100vw - 16px));
     padding: 12px 14px;
-    border: 1px solid var(--sd-line-strong);
+    border: 0;
     background: var(--sd-overlay);
+    box-shadow: var(--sd-lift);
     color: var(--sd-fg-muted);
     font-size: var(--text-sm);
     line-height: 1.5;

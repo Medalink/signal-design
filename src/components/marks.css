@@ -162,8 +162,8 @@
     inline-size: var(--marker);
     block-size: var(--marker);
     padding: 0;
-    border: 1px solid var(--sd-line-strong);
-    background: var(--sd-surface);
+    border: 1px solid transparent;
+    background: var(--sd-tone-3);
     color: var(--sd-fg-muted);
     font: inherit;
     font-size: var(--text-2xs);
@@ -184,9 +184,10 @@
   }
   .sd-gutter-marker[data-kind="suggestion"] {
     border-style: dashed;
+    border-color: var(--sd-line-strong);
   }
   .sd-gutter-marker:hover {
-    border-color: var(--sd-fg);
+    background: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-tone-3));
     color: var(--sd-fg);
   }
   .sd-gutter-marker:focus-visible {
@@ -196,15 +197,16 @@
     border-color: var(--sd-accent);
     border-style: solid;
     border-width: 2px;
-    background: color-mix(in srgb, var(--sd-accent) 14%, var(--sd-surface));
+    background: color-mix(in srgb, var(--sd-accent) 14%, var(--sd-tone-3));
     color: var(--sd-fg);
   }
   .sd-gutter-marker[data-resolved] {
-    border-color: var(--sd-line);
+    border-color: transparent;
+    background: none;
     color: var(--sd-fg-faint);
   }
   .sd-gutter-marker[data-resolved]:hover {
-    border-color: var(--sd-fg-faint);
+    background: color-mix(in srgb, var(--sd-fg) 6%, transparent);
     color: var(--sd-fg-muted);
   }
 }

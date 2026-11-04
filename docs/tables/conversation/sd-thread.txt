@@ -1,3 +1,3 @@
 order: 290
 
-| `sd-thread` (+ `-head`, `-title`, `-body`, `-root`, `-replies`, `-foot`) | A thread panel for `sd-shell-aside` or on its own: a caps title with Close, the root message over a hairline, the replies, and a composer at the bottom. Replies are `sd-message` with `data-compact` (no time column; put the time in the row's title). |
+| `sd-thread` (+ `-head`, `-title`, `-body`, `-root`, `-replies`, `-foot`) | A thread panel for `sd-shell-aside` or on its own: a caps title with Close, the root message, then the replies, and a composer at the bottom. Replies are `sd-message` with `data-compact` (no time column; put the time in the row's title). |

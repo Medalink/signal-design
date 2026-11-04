@@ -57,7 +57,15 @@ hover shimmers play through to the end.
 ## Hard rules (do not break these)
 
 1. **Square corners.** No `rounded-*`, no `border-radius`. Avatars and checkboxes too.
-2. **Flat.** No blurred `box-shadow`, no glow, no glass. Hairlines only.
+2. **Tone, not lines.** Regions and boxes are told apart by background steps
+   (`--sd-tone-0` chrome, `-1` side panels, `-2` content, `-3` raised;
+   `--sd-field-fill` for a field, chip or plain button), not by borders. Where a
+   bar or panel meets what scrolls beside it, it takes an edge shadow
+   (`--sd-edge-below`, `-above`, `-left`, `-right`); a floating layer takes
+   `--sd-lift`. No other blurred shadow, no glow, no glass. Lines stay only where
+   they mean something: focus, a status color, the current or selected item, a
+   dashed pending or drop zone, chart axes, the timeline, and the outline of a
+   checkbox, radio, switch or slider. The main content box keeps its edge.
 3. **Color means something.** Only status and selection are colored, via the roles
    `accent`, `success`, `danger`, `warning`, `pending`, `extra` (`data-tone="danger"`,
    `text-danger`). Everything else, navigation included, is black, white and grey.

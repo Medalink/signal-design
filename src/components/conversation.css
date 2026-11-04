@@ -380,8 +380,7 @@
     min-height: 7rem;
     padding: 12px;
     gap: 10px;
-    border: 1px solid var(--sd-line-strong);
-    background: var(--sd-raised);
+    background: var(--sd-tone-3);
   }
   .sd-message-edited {
     color: var(--sd-fg-faint);
@@ -439,12 +438,15 @@
     width: 100%;
     max-width: 30rem;
   }
-  /* Cards in the feed take the soft hairline; hover restores the strong one. */
-  .sd-message-body :is(.sd-file, .sd-file-type, .sd-poll, .sd-event-card, .sd-tasklist) {
-    border-color: var(--sd-line);
+  /* Cards in the feed are tone, not outlines. A hovered row is filled with the
+     card tone too, so the cards lift one step to stay visible on it. */
+  .sd-message:is(:focus-within, [data-hover], [data-sd-held]) .sd-message-body :is(.sd-file, .sd-link-card, .sd-poll, .sd-event-card, .sd-tasklist, .sd-voice, .sd-thread-chip, .sd-cw-cover, .sd-reactions > button) {
+    background: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-tone-3));
   }
-  .sd-message-body :is(.sd-file, .sd-poll, .sd-event-card, .sd-tasklist):hover {
-    border-color: var(--sd-line-strong);
+  @media (hover: hover) {
+    .sd-message:hover .sd-message-body :is(.sd-file, .sd-link-card, .sd-poll, .sd-event-card, .sd-tasklist, .sd-voice, .sd-thread-chip, .sd-cw-cover, .sd-reactions > button) {
+      background: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-tone-3));
+    }
   }
   .sd-message-body .sd-poll[data-tone] {
     border-inline-start-color: var(--tone);
@@ -460,7 +462,7 @@
     transition: background-color 120ms, color 120ms;
   }
   .sd-file-dl:hover {
-    background: var(--sd-raised);
+    background: color-mix(in srgb, var(--sd-fg) 8%, var(--sd-tone-3));
     color: var(--sd-fg);
   }
 
@@ -577,8 +579,8 @@
     align-items: center;
     gap: 1px;
     padding: 3px;
-    border: 1px solid var(--sd-line-strong);
     background: var(--sd-overlay);
+    box-shadow: var(--sd-lift);
     opacity: 0;
     pointer-events: none;
     transform: translateY(2px);
@@ -611,7 +613,7 @@
   }
   .sd-message-actions > button:is(:hover, :focus-visible),
   .sd-message-actions > button[aria-expanded="true"] {
-    background: var(--sd-raised);
+    background: color-mix(in srgb, var(--sd-fg) 8%, var(--sd-overlay));
     color: var(--sd-fg);
   }
   .sd-message-actions > button:focus-visible {
@@ -645,8 +647,8 @@
     left: 50%;
     translate: -50% 0;
     padding: 4px 8px;
-    border: 1px solid var(--sd-line-strong);
     background: var(--sd-overlay);
+    box-shadow: var(--sd-lift);
     color: var(--sd-fg);
     font-size: 12px;
     white-space: pre;
@@ -749,7 +751,6 @@
   .sd-emoji-search {
     position: relative;
     padding: 8px;
-    border-bottom: 1px solid var(--sd-line);
   }
   .sd-emoji-search > svg {
     position: absolute;
@@ -770,7 +771,6 @@
   .sd-emoji-cats {
     display: flex;
     padding: 4px 8px;
-    border-bottom: 1px solid var(--sd-line);
   }
   .sd-emoji-cats > button {
     flex: 1;
@@ -889,7 +889,7 @@
     gap: 10px;
     height: 44px;
     padding: 0 12px;
-    border-top: 1px solid var(--sd-line);
+    background: color-mix(in srgb, var(--sd-fg) 5%, var(--sd-overlay));
     color: var(--sd-fg-subtle);
     font-size: 13px;
   }
@@ -988,8 +988,8 @@
     height: 40px;
     margin-top: -40px;
     padding: 0 6px 0 16px;
-    border-top: 1px solid var(--sd-line);
     background: var(--sd-overlay);
+    box-shadow: var(--sd-edge-above);
     color: var(--sd-fg-subtle);
     font-size: 13px;
   }
@@ -1030,8 +1030,7 @@
   .sd-catchup {
     margin: 8px 16px;
     padding: 10px 12px;
-    border: 1px solid var(--sd-line-strong);
-    background: var(--sd-surface);
+    background: var(--sd-tone-3);
   }
   .sd-catchup-head {
     display: flex;
@@ -1120,14 +1119,14 @@
     min-height: 28px;
     padding: 0 7px 0 6px;
     overflow: hidden;
-    border: 1px solid var(--sd-line);
-    background: transparent;
+    border: 0;
+    background: var(--sd-tone-3);
     color: var(--sd-fg-faint);
     font: inherit;
     font-size: 19px;
     line-height: 1;
     cursor: pointer;
-    transition: border-color 120ms var(--ease-out), background-color 120ms var(--ease-out);
+    transition: background-color 120ms var(--ease-out);
   }
   .sd-reactions > button > b {
     font-size: 12px;
@@ -1135,13 +1134,11 @@
     font-variant-numeric: tabular-nums;
   }
   .sd-reactions > button:hover {
-    border-color: var(--sd-line-strong);
-    background: var(--sd-raised);
+    background: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-tone-3));
     color: var(--sd-fg-muted);
   }
   .sd-reactions > button[aria-pressed="true"] {
-    border-color: var(--sd-line-strong);
-    background: var(--sd-raised);
+    background: color-mix(in srgb, var(--sd-fg) 10%, var(--sd-tone-3));
     color: var(--sd-fg-muted);
   }
   .sd-reactions > .sd-reactions-add {
@@ -1178,7 +1175,7 @@
    *   </button>
    */
   .sd-thread-chip {
-    --sd-ring: var(--sd-surface);
+    --sd-ring: var(--sd-tone-3);
     display: inline-flex;
     align-items: center;
     justify-self: start;
@@ -1186,8 +1183,8 @@
     max-width: 100%;
     min-height: 28px;
     padding: 3px 8px 3px 4px;
-    border: 1px solid var(--sd-line-strong);
-    background: var(--sd-surface);
+    border: 1px solid transparent;
+    background: var(--sd-tone-3);
     color: var(--sd-fg-muted);
     font: inherit;
     font-size: 13px;
@@ -1196,8 +1193,8 @@
     transition: border-color 120ms var(--ease-out), background-color 120ms var(--ease-out), color 120ms var(--ease-out);
   }
   .sd-thread-chip:hover {
-    --sd-ring: var(--sd-raised);
-    background: var(--sd-raised);
+    --sd-ring: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-tone-3));
+    background: var(--sd-ring);
     color: var(--sd-fg);
   }
   .sd-thread-chip[aria-expanded="true"] {
@@ -1258,8 +1255,7 @@
     gap: 10px;
     max-width: 100%;
     padding: 5px 10px 5px 5px;
-    border: 1px solid var(--sd-line-strong);
-    background: var(--sd-surface);
+    background: var(--sd-tone-3);
   }
   .sd-voice-play {
     --btn-fg: var(--sd-on-primary);
@@ -1331,9 +1327,9 @@
     color: var(--sd-fg);
   }
   .sd-voice-speed {
-    padding: 1px 5px;
-    border: 1px solid var(--sd-line-strong);
-    background: transparent;
+    padding: 2px 6px;
+    border: 0;
+    background: color-mix(in srgb, var(--sd-fg) 10%, var(--sd-tone-3));
     color: var(--sd-fg-muted);
     font-family: var(--sd-font-mono);
     font-size: var(--text-3xs);
@@ -1342,7 +1338,7 @@
     transition: background-color 120ms var(--ease-out), color 120ms var(--ease-out);
   }
   .sd-voice-speed:hover {
-    background: var(--sd-raised);
+    background: color-mix(in srgb, var(--sd-fg) 16%, var(--sd-tone-3));
     color: var(--sd-fg);
   }
   .sd-voice-speed:focus-visible {
@@ -1385,22 +1381,24 @@
    *   </section>
    */
   .sd-thread {
-    --sd-feed-bg: var(--sd-surface);
+    --sd-feed-bg: var(--sd-tone-1);
     display: flex;
     flex-direction: column;
     min-width: 0;
     min-height: 0;
-    border-inline-start: 1px solid var(--sd-line);
-    background: var(--sd-surface);
+    background: var(--sd-tone-1);
+    box-shadow: var(--sd-edge-left);
   }
   .sd-thread[hidden] {
     display: none;
   }
   .sd-shell-aside > .sd-thread {
     flex: 1;
-    border-inline-start: 0;
+    box-shadow: none;
   }
   .sd-thread-head {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-shrink: 0;
     align-items: center;
@@ -1408,7 +1406,7 @@
     gap: 10px;
     height: var(--shell-head, 48px);
     padding: 0 8px 0 16px;
-    border-block-end: 1px solid var(--sd-line);
+    box-shadow: var(--sd-edge-below);
   }
   .sd-thread-title {
     margin: 0;
@@ -1426,15 +1424,13 @@
   }
   .sd-thread-root {
     padding-block-end: 8px;
-    border-block-end: 1px solid var(--sd-line);
   }
   .sd-thread-replies {
-    padding-block-start: 8px;
+    padding-block-start: 12px;
   }
   .sd-thread-foot {
     flex-shrink: 0;
     padding: 8px;
-    border-block-start: 1px solid var(--sd-line);
   }
 
   /* Read receipts: tiny avatars at the end of a message. */
@@ -1527,12 +1523,11 @@
     grid-template-columns: minmax(0, 1fr);
     gap: 8px;
     padding: 8px;
-    border: 1px solid var(--sd-line-control);
-    background: var(--sd-surface);
+    background: var(--sd-tone-3);
   }
-  /* An outline on the border line, so a composer drawn without its own edge
-     (in a dock, or with border: 0) shows focus too. Only the text field
-     lights it: a focused button inside has its own ring. */
+  /* An outline on the box's edge, so a composer drawn without a border shows
+     focus. Only the text field lights it: a focused button inside has its own
+     ring. */
   .sd-composer:has(textarea:focus) {
     outline: 1px solid var(--sd-fg);
     outline-offset: -1px;
@@ -1667,7 +1662,7 @@
     min-height: 34px;
     margin: -8px -8px 0;
     padding: 0 8px 0 16px;
-    border-bottom: 1px solid var(--sd-line);
+    background: color-mix(in srgb, var(--sd-fg) 5%, var(--sd-tone-3));
     color: var(--sd-fg-subtle);
     font-size: 13px;
   }
@@ -1705,27 +1700,20 @@
   .sd-composer-status > .sd-typing {
     font-size: inherit;
   }
-  /* In a dock: one box, the status line over the composer. The dock's edge
-     is the field's edge, so it takes the control line (3:1). */
+  /* In a dock: one box in the composer's tone, the status line over the
+     composer. */
   .sd-shell-dock:has(> .sd-composer) {
     padding: 0;
-    border-color: var(--sd-line-control);
+    background: var(--sd-tone-3);
   }
-  .sd-shell-dock > .sd-composer {
-    border: 0;
-  }
-  .sd-shell-dock > .sd-composer-status {
-    border-bottom: 1px solid var(--sd-line);
-  }
-  /* In a joined main the dock is part of the surface: the composer keeps its
-     own edge and the typing line sits over it, unboxed, its squares still on
-     the + icon's left edge (the dock's 16px inset plus the composer's 1px). */
+  /* In a joined main the dock is part of the surface: the composer is its
+     own tone-3 box and the typing line sits over it, unboxed, its squares
+     still on the + icon's left edge. */
   .sd-shell-main[data-joined] > .sd-shell-dock > .sd-composer {
-    border: 1px solid var(--sd-line-control);
+    background: var(--sd-tone-3);
   }
   .sd-shell-main[data-joined] > .sd-shell-dock > .sd-composer-status {
-    padding-inline-start: 18px;
-    border-bottom: 0;
+    padding-inline-start: 17px;
   }
   .sd-composer-hint {
     display: flex;
@@ -1751,8 +1739,8 @@
     inset: auto 0 calc(100% + 6px);
     z-index: 30;
     padding: 4px;
-    border: 1px solid var(--sd-line-strong);
     background: var(--sd-overlay);
+    box-shadow: var(--sd-lift);
   }
   .sd-suggest[hidden] {
     display: none;
@@ -1777,16 +1765,16 @@
     width: 100%;
     min-height: 0;
     padding: 7px 10px;
-    border: 1px solid var(--sd-line-control);
-    background: var(--sd-surface);
+    border: 1px solid transparent;
+    background: var(--sd-tone-3);
     color: var(--sd-fg);
     font: inherit;
     line-height: 1.5;
     resize: none;
   }
-  /* An edited message wears a lifted fill; the edge steps up to stay 3:1 on it. */
+  /* An edited message wears a lifted fill; the field steps up from it. */
   .sd-message[data-editing] .sd-message-edit textarea:not(:focus) {
-    border-color: var(--sd-fg-faint);
+    background: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-tone-3));
   }
   .sd-message-edit textarea:focus {
     border-color: var(--sd-fg);
@@ -1837,14 +1825,14 @@
     padding: 0 0 16px;
   }
   .sd-roster-group + .sd-roster-group {
-    margin-top: 4px;
+    margin-top: 12px;
   }
   .sd-roster-head {
     position: sticky;
     top: 0;
     z-index: 1;
     margin: 0;
-    background: var(--sd-ring, var(--sd-surface));
+    background: var(--sd-ring, var(--sd-tone-1));
   }
   .sd-roster-head > button {
     display: grid;
@@ -1855,7 +1843,6 @@
     height: 36px;
     padding: 0 12px 0 16px;
     border: 0;
-    border-bottom: 1px solid var(--sd-line);
     background: none;
     color: var(--sd-fg-subtle);
     font: inherit;
@@ -1916,8 +1903,8 @@
     transition: background-color 120ms;
   }
   .sd-roster-row:hover {
-    --sd-ring: var(--sd-raised);
-    background: var(--sd-raised);
+    --sd-ring: var(--sd-tone-3);
+    background: var(--sd-tone-3);
   }
   .sd-roster-avatar {
     position: relative;
@@ -1939,7 +1926,7 @@
     box-sizing: content-box;
     width: 8px;
     height: 8px;
-    border: 2px solid var(--sd-ring, var(--sd-surface));
+    border: 2px solid var(--sd-ring, var(--sd-tone-1));
     background: var(--sd-success);
   }
   .sd-roster-name {
@@ -2006,7 +1993,7 @@
     font-size: 12px;
   }
   .sd-roster-more:hover {
-    background: var(--sd-raised);
+    background: var(--sd-tone-3);
     color: var(--sd-fg);
   }
   :is(.sd-roster-head > button, .sd-roster-row, .sd-roster-more):focus-visible {

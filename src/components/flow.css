@@ -63,7 +63,7 @@
   .sd-flow-board {
     min-width: 0;
     overflow-x: auto;
-    border: 1px solid var(--sd-line);
+    background: var(--sd-tone-3);
   }
 
   /* The canvas: one row of stage columns on a dot grid. The dots start
@@ -205,6 +205,8 @@
   /* A job. Its two stubs run from its edges to the buses. */
   .sd-flow-job {
     --status: var(--sd-fg-faint);
+    /* Opaque, so the board's dots do not show through: the field fill over the board. */
+    --job-fill: color-mix(in srgb, var(--sd-fg) 4%, var(--sd-tone-3));
     position: relative;
     display: grid;
     grid-template-columns: 8px minmax(0, 1fr);
@@ -216,8 +218,8 @@
     height: var(--job-h);
     margin: 0;
     padding: 0 12px;
-    border: 1px solid var(--sd-line-strong);
-    background: var(--sd-surface);
+    border: 1px solid transparent;
+    background: var(--job-fill);
     color: var(--sd-fg);
     font: inherit;
     text-align: start;
@@ -279,8 +281,7 @@
     cursor: pointer;
   }
   :is(a, button).sd-flow-job:hover {
-    border-color: var(--sd-fg-faint);
-    background-color: var(--sd-raised);
+    background-color: color-mix(in srgb, var(--sd-fg) 6%, var(--job-fill));
   }
   .sd-flow-job:focus-visible {
     outline: 1px solid var(--sd-fg);
@@ -288,7 +289,7 @@
   }
   .sd-flow-job:is([aria-current]:not([aria-current="false"]), [aria-selected="true"]) {
     border-color: var(--sd-fg);
-    background-color: var(--sd-raised);
+    background-color: color-mix(in srgb, var(--sd-fg) 10%, var(--job-fill));
   }
 
   /* A running job: a status edge and its progress along the bottom. */
@@ -303,13 +304,17 @@
     color: color-mix(in srgb, var(--status) 75%, var(--sd-fg));
   }
   .sd-flow-job:is([data-status="queued"], [data-status="skipped"]) {
-    background-color: var(--sd-canvas);
+    --job-fill: var(--sd-tone-2);
+    background-color: var(--job-fill);
   }
   .sd-flow-job:is([data-status="queued"], [data-status="skipped"]) > b {
     color: var(--sd-fg-muted);
   }
   .sd-flow-job:is([data-status="waiting"], [data-status="skipped"]) {
     border-style: dashed;
+  }
+  .sd-flow-job[data-status="skipped"] {
+    border-color: var(--sd-line-strong);
   }
   .sd-flow-job[data-status="waiting"] {
     border-color: color-mix(in srgb, var(--status) 55%, transparent);
@@ -421,8 +426,7 @@
     align-content: start;
     min-width: 0;
     margin: 0;
-    border: 1px solid var(--sd-line);
-    background: var(--sd-canvas);
+    background: var(--sd-tone-3);
   }
   .sd-checklist-head {
     display: flex;
@@ -432,7 +436,7 @@
     gap: 4px 16px;
     min-height: 44px;
     padding: 10px 16px;
-    border-block-end: 1px solid var(--sd-line);
+    background: var(--sd-field-fill);
   }
   .sd-checklist > ul {
     margin: 0;
@@ -450,8 +454,10 @@
     font-size: var(--text-sm);
     line-height: 1.4;
   }
-  .sd-checklist > ul > li + li {
-    border-block-start: 1px solid var(--sd-line);
+  /* A faint zebra in place of row rules: the result sits at the far end of
+     the row, so the eye needs a band to follow back to its name. */
+  .sd-checklist > ul > li:nth-child(even) {
+    background: color-mix(in srgb, var(--sd-fg) 3%, transparent);
   }
   .sd-checklist > ul > li > b {
     flex: 1;

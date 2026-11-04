@@ -86,8 +86,8 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
-    border-inline-end: 1px solid var(--sd-line-strong);
-    background: var(--sd-surface);
+    background: var(--sd-tone-0);
+    box-shadow: var(--sd-edge-right);
   }
   /* The named grid areas only apply inside the shell grid; used standalone
      (a rail or titlebar in an app's own layout) they must not create
@@ -100,7 +100,6 @@
     place-items: center;
     flex-shrink: 0;
     height: var(--shell-head, 4rem);
-    border-block-end: 1px solid var(--sd-line-strong);
     color: var(--sd-fg);
     transition: background-color 120ms var(--ease-out);
   }
@@ -132,7 +131,6 @@
     flex-direction: column;
     gap: 4px;
     padding-block: 8px;
-    border-block-start: 1px solid var(--sd-line-strong);
   }
 
   /* A section: icon over a short label. */
@@ -225,8 +223,8 @@
     height: var(--tile);
     margin-block: 2px;
     padding: 0;
-    border: 1px solid var(--sd-line-strong);
-    background: var(--sd-surface);
+    border: 1px solid transparent;
+    background: color-mix(in srgb, var(--sd-fg) 12%, var(--sd-tone-0));
     color: var(--sd-fg-muted);
     font: inherit;
     font-size: 14px;
@@ -252,24 +250,25 @@
     height: calc(var(--tile) / 2);
   }
   .sd-rail-tile:is(a, button):hover {
-    border-color: var(--sd-fg-faint);
+    background: color-mix(in srgb, var(--sd-fg) 18%, var(--sd-tone-0));
     color: var(--sd-fg);
   }
   .sd-rail-tile:is([aria-current]:not([aria-current="false"]), [aria-pressed="true"], [aria-expanded="true"]) {
-    border-color: var(--sd-fg);
-    background: var(--sd-raised);
+    background: color-mix(in srgb, var(--sd-fg) 22%, var(--sd-tone-0));
     color: var(--sd-fg);
   }
   .sd-rail-tile[data-pending] {
     border-style: dashed;
+    border-color: var(--sd-line-strong);
+    background: none;
     color: var(--sd-fg-subtle);
   }
   /* The edge sits on the rail's outer side: half the space beside the tile,
-     plus the rail's 1px border and the tile's own. */
+     plus the tile's 1px border. */
   .sd-rail-tile::before {
     content: "";
     position: absolute;
-    inset-inline-start: calc((var(--tile) - var(--shell-rail, 4.5rem) - 1px) / 2);
+    inset-inline-start: calc((var(--tile) - var(--shell-rail, 4.5rem) - 2px) / 2);
     top: 50%;
     width: 3px;
     height: 0;
@@ -388,8 +387,7 @@
     flex-direction: column;
     width: var(--shell-sidebar);
     min-height: 0;
-    border-inline-end: 1px solid var(--sd-line-strong);
-    background: var(--sd-surface);
+    background: var(--sd-tone-1);
   }
   .sd-shell[data-sidebar="collapsed"] > .sd-sidebar {
     display: none;
@@ -429,13 +427,15 @@
     display: none;
   }
   .sd-sidebar-head {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-shrink: 0;
     align-items: center;
     gap: 10px;
     height: var(--shell-head, 4rem);
     padding: 0 8px 0 16px;
-    border-block-end: 1px solid var(--sd-line-strong);
+    box-shadow: var(--sd-edge-below);
     color: var(--sd-fg);
     font-size: 1.125rem;
     font-weight: var(--font-weight-semibold);
@@ -528,7 +528,8 @@
   .sd-sidebar-foot {
     flex-shrink: 0;
     padding: 12px 16px;
-    border-block-start: 1px solid var(--sd-line-strong);
+    background: var(--sd-tone-0);
+    box-shadow: var(--sd-edge-above);
     color: var(--sd-fg-subtle);
     font-size: var(--text-base);
   }
@@ -711,7 +712,6 @@
     align-items: center;
     gap: 8px;
     min-height: 2.75rem;
-    border: 1px solid var(--sd-line);
     background: var(--sd-container);
   }
   /* Crumb bar: as wide as its crumbs, fading out past the last one. */
@@ -720,7 +720,6 @@
     max-width: 100%;
     padding: 4px 4rem 4px 6px;
     overflow: hidden;
-    border-inline-end: 0;
     -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 4rem), transparent);
     mask-image: linear-gradient(to right, #000 calc(100% - 4rem), transparent);
   }
@@ -744,7 +743,6 @@
   .sd-shell-header-end {
     flex-shrink: 0;
     padding: 4px 6px 4px 4rem;
-    border-inline-start: 0;
     -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 4rem), transparent);
     mask-image: linear-gradient(to left, #000 calc(100% - 4rem), transparent);
   }
@@ -770,16 +768,12 @@
     position: relative;
     flex-shrink: 0;
     padding: 12px;
-    border: 1px solid var(--sd-line);
     background: var(--sd-container);
   }
-  /* A flush dock rests on the bottom of the window: no gap under it and no
-     bottom border against the edge. <div class="sd-shell-dock" data-flush> */
+  /* A flush dock rests on the bottom of the window: no gap under it.
+     <div class="sd-shell-dock" data-flush> */
   .sd-shell-main:has(> .sd-shell-dock[data-flush]) {
     padding-bottom: 0;
-  }
-  .sd-shell-dock[data-flush] {
-    border-bottom: 0;
   }
 
   /* Joined: the header bar, the content and the dock become one surface,
@@ -796,20 +790,25 @@
     border: 0;
   }
   .sd-shell-main[data-joined] > .sd-shell-bar {
+    z-index: 1;
     min-height: var(--shell-head, 4rem);
-    border-block-end: 1px solid var(--sd-line);
+    box-shadow: var(--sd-edge-below);
   }
   .sd-shell-main[data-joined] > .sd-shell-dock {
-    padding: 0 16px 16px;
-    background: none;
+    z-index: 1;
+    padding: 12px 16px;
+    background: var(--sd-container);
+    box-shadow: var(--sd-edge-above);
   }
   /* A split header joins as one bar: the crumbs and the actions lose their
      boxes, and the actions their fade, so they take no more room than in
      the bar. The crumbs keep theirs for a trail that runs out of room. */
   .sd-shell-main[data-joined] > .sd-shell-header {
     min-height: var(--shell-head, 4rem);
+    z-index: 1;
     padding-inline: 10px 2px;
-    border-block-end: 1px solid var(--sd-line);
+    background: var(--sd-container);
+    box-shadow: var(--sd-edge-below);
   }
   .sd-shell-main[data-joined] > .sd-shell-header > :is(.sd-shell-crumbs, .sd-shell-header-end) {
     border: 0;
@@ -846,8 +845,8 @@
     flex-direction: column;
     width: var(--shell-aside);
     min-height: 0;
-    border-inline-start: 1px solid var(--sd-line);
-    background: var(--sd-surface);
+    background: var(--sd-tone-1);
+    box-shadow: var(--sd-edge-left);
     overflow-y: auto;
   }
   .sd-shell[data-aside="open"] .sd-shell-aside {
@@ -859,18 +858,19 @@
     to { transform: none; opacity: 1; }
   }
   .sd-shell-aside-head {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-shrink: 0;
     align-items: center;
     gap: 10px;
     height: var(--shell-head, 4rem);
     padding: 0 8px 0 16px;
-    border-block-end: 1px solid var(--sd-line);
+    box-shadow: var(--sd-edge-below);
     font-weight: var(--font-weight-semibold);
   }
   .sd-shell-aside-section {
     padding: 16px;
-    border-block-end: 1px solid var(--sd-line);
   }
 
   /* ---- Status bar, scrim, phone top bar ----------------------------- */
@@ -913,8 +913,8 @@
     gap: 4px;
     height: 3.5rem;
     padding: 0 8px;
-    border-block-end: 1px solid var(--sd-line);
-    background: var(--sd-surface);
+    background: var(--sd-tone-0);
+    box-shadow: var(--sd-edge-below);
   }
   .sd-shell-topbar-label {
     flex: 1;
@@ -1065,8 +1065,7 @@
     .sd-shell[data-phone-nav="bottom"]:not(:has(> .sd-sidebar)) > .sd-rail {
       display: flex;
       flex-direction: row;
-      border-inline-end: 0;
-      border-block-start: 1px solid var(--sd-line-strong);
+      box-shadow: var(--sd-edge-above);
       padding-block-end: env(safe-area-inset-bottom);
     }
     [data-sd-keyboard] .sd-shell[data-phone-nav="bottom"] > .sd-rail {
@@ -1160,8 +1159,7 @@
     align-items: center;
     height: 2.25rem;
     padding-inline-start: 12px;
-    border-block-end: 1px solid var(--sd-line);
-    background: var(--sd-surface);
+    background: var(--sd-tone-0);
     user-select: none;
     -webkit-user-select: none;
     container-type: inline-size;
@@ -1290,7 +1288,6 @@
     gap: 12px;
     min-height: 3.5rem;
     padding: 0 8px 0 16px;
-    border: 1px solid var(--sd-line);
     background: var(--sd-container);
     container-type: inline-size;
   }
@@ -1393,7 +1390,6 @@
     align-items: center;
     gap: 10px;
     padding: 12px 8px 12px 16px;
-    border-block-end: 1px solid var(--sd-line);
     background: var(--sd-overlay);
     color: var(--sd-fg);
     font-size: var(--text-2xs);

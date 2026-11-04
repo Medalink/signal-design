@@ -40,11 +40,11 @@
     color: var(--sd-fg);
   }
 
-  /* Tabs: a hairline under the list, a 1px fg line under the selected tab. */
+  /* Tabs: a 1px fg line under the selected tab carries the selection; the
+     row itself is separated from its panel by spacing alone. */
   .sd-tabs {
     display: flex;
     gap: 24px;
-    border-block-end: 1px solid var(--sd-line);
     overflow-x: auto;
     scrollbar-width: none;
   }
@@ -146,8 +146,7 @@
     color: var(--sd-fg);
   }
   .sd-breadcrumb [aria-current]:not([aria-current="false"]) {
-    border-color: var(--sd-line-strong);
-    background: var(--sd-raised);
+    background: color-mix(in srgb, var(--sd-fg) 10%, var(--sd-raised));
     color: var(--sd-fg);
   }
   /* An icon-only crumb (home) is a square. */
@@ -177,7 +176,8 @@
     }
   }
 
-  /* Pagination: square cells. */
+  /* Pagination: square cells filled with the raised tone; the current page
+     keeps its fg edge as the selection marker. */
   .sd-pagination {
     display: flex;
     flex-wrap: wrap;
@@ -192,8 +192,8 @@
     min-width: 30px;
     height: 30px;
     padding: 0 8px;
-    border: 1px solid var(--sd-line);
-    background: transparent;
+    border: 1px solid transparent;
+    background: var(--sd-field-fill);
     color: var(--sd-fg-subtle);
     font: inherit;
     font-size: var(--text-sm);
@@ -202,7 +202,7 @@
     cursor: pointer;
   }
   .sd-pagination :where(a, button):hover {
-    border-color: var(--sd-line-strong);
+    background: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-field-fill));
     color: var(--sd-fg);
   }
   .sd-pagination [aria-current] {
@@ -210,6 +210,7 @@
     color: var(--sd-fg);
   }
   .sd-pagination span {
+    background: none;
     border-color: transparent;
     cursor: default;
   }
@@ -233,7 +234,6 @@
     width: 100%;
     padding: 8px 6px;
     border: 0;
-    border-block-end: 1px solid var(--sd-line);
     background: none;
     color: var(--sd-fg);
     font: inherit;
@@ -243,12 +243,8 @@
     cursor: pointer;
     outline: none;
   }
-  .sd-menu > :last-child :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item),
-  .sd-menu > :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item):last-child {
-    border-block-end: 0;
-  }
   .sd-menu :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item):is(:hover, :focus, [data-active]) {
-    background: var(--sd-raised);
+    background: color-mix(in srgb, var(--sd-fg) 6%, transparent);
   }
   .sd-menu :where([aria-checked="true"], [aria-selected="true"]) {
     box-shadow: inset 1px 0 0 var(--sd-fg);
@@ -281,13 +277,11 @@
     text-transform: uppercase;
     color: var(--sd-fg-subtle);
   }
-  .sd-menu :has(+ .sd-menu-sep) {
-    border-block-end: 0;
-  }
+  /* A group break is spacing, not a line. */
   .sd-menu-sep {
-    height: 1px;
-    margin: 4px 0;
-    background: var(--sd-line-strong);
+    height: 6px;
+    margin: 0;
+    background: none;
     border: 0;
   }
 
@@ -318,7 +312,7 @@
   }
   .sd-sidenav :where(a, button):hover {
     color: var(--sd-fg);
-    background: var(--sd-surface);
+    background: color-mix(in srgb, var(--sd-fg) 6%, transparent);
   }
   .sd-sidenav :where(a, button):is([aria-current]:not([aria-current="false"]), [aria-selected="true"]) {
     border-inline-start-color: var(--sd-fg);
@@ -336,15 +330,16 @@
     color: var(--sd-fg-subtle);
   }
 
-  /* Top bar: wordmark left, nav middle, actions right. */
+  /* Top bar: wordmark left, nav middle, actions right. A chrome strip: it
+     takes the darkest tone and an edge shadow instead of a hairline. */
   .sd-topbar {
     display: flex;
     align-items: center;
     gap: 24px;
     min-height: 56px;
     padding: 0 24px;
-    border-block-end: 1px solid var(--sd-line);
-    background: var(--sd-canvas);
+    background: var(--sd-tone-0);
+    box-shadow: var(--sd-edge-below);
   }
   /* The strip scrolls, so it asks for no width of its own: a bar in a narrow
      column shrinks instead of pushing out of it. */
@@ -372,15 +367,16 @@
     }
   }
 
-  /* Status bar: key hints along the bottom. */
+  /* Status bar: key hints along the bottom. It is chrome over content that
+     scrolls under it, so it takes the darkest tone and an edge shadow. */
   .sd-statusbar {
     display: flex;
     align-items: center;
     gap: 18px;
     min-height: 36px;
     padding: 0 16px;
-    border-block-start: 1px solid var(--sd-line);
-    background: var(--sd-surface);
+    background: var(--sd-tone-0);
+    box-shadow: var(--sd-edge-above);
     color: var(--sd-fg-subtle);
     font-size: var(--text-sm);
     white-space: nowrap;

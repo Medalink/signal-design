@@ -17,8 +17,8 @@
     gap: 2px;
     min-height: 40px;
     padding: 0 8px;
-    border-block-end: 1px solid var(--sd-line);
-    background: var(--sd-surface);
+    background: var(--sd-tone-1);
+    box-shadow: var(--sd-edge-below);
     overflow-x: auto;
     scrollbar-width: none;
   }
@@ -34,9 +34,8 @@
   .sd-toolbar-sep {
     flex-shrink: 0;
     align-self: stretch;
-    width: 1px;
-    margin: 8px 6px;
-    background: var(--sd-line-strong);
+    width: 0;
+    margin: 0 8px;
   }
   .sd-toolbar-end {
     margin-inline-start: auto;
@@ -46,7 +45,7 @@
   }
   .sd-btn.sd-toolbar-btn[aria-pressed="true"] {
     --btn-fg: var(--sd-fg);
-    --btn-bg: var(--sd-raised);
+    --btn-bg: color-mix(in srgb, var(--sd-fg) 10%, transparent);
     box-shadow: inset 0 -1px 0 var(--sd-fg);
   }
   .sd-btn.sd-toolbar-btn[aria-pressed="false"] {
@@ -74,7 +73,7 @@
     min-width: 0;
     padding: clamp(12px, 4vw, 40px) clamp(8px, 3vw, 32px);
     overflow: auto;
-    background: var(--sd-canvas);
+    background: var(--sd-tone-2);
   }
   .sd-manuscript-page {
     --measure: 40rem;
@@ -83,8 +82,7 @@
     min-height: 24rem;
     margin-inline: auto;
     padding: clamp(20px, 6vw, 64px) clamp(16px, 6vw, 72px);
-    border: 1px solid var(--sd-line);
-    background: var(--sd-surface);
+    background: var(--sd-tone-3);
     color: var(--sd-fg);
     font-size: var(--text-md);
     line-height: 1.75;
@@ -152,7 +150,7 @@
 
   /*
    * Status bar segments: facts about the document in the status bar, each
-   * between hairlines. A segment that does something is a button. data-tone
+   * set apart by its padding. A segment that does something is a button. data-tone
    * colors the dot a segment can carry, never the text.
    *   <footer class="sd-statusbar">
    *     <span class="sd-statusbar-seg">1,284 words</span>
@@ -165,7 +163,6 @@
     gap: 8px;
     padding: 0 12px;
     border: 0;
-    border-inline-end: 1px solid var(--sd-line);
     background: none;
     color: inherit;
     font: inherit;
@@ -174,23 +171,19 @@
   .sd-statusbar:has(> .sd-statusbar-seg) {
     padding-inline: 0;
   }
-  .sd-statusbar-seg.sd-statusbar-end {
-    border-inline-end: 0;
-    border-inline-start: 1px solid var(--sd-line);
-  }
   :is(button, a).sd-statusbar-seg {
     cursor: pointer;
     transition: background-color 120ms var(--ease-out), color 120ms var(--ease-out);
   }
   :is(button, a).sd-statusbar-seg:hover {
-    background: var(--sd-raised);
+    background: color-mix(in srgb, var(--sd-fg) 6%, transparent);
     color: var(--sd-fg);
   }
   :is(button, a).sd-statusbar-seg:focus-visible {
     outline-offset: -2px;
   }
   .sd-statusbar-seg[aria-pressed="true"] {
-    background: var(--sd-raised);
+    background: color-mix(in srgb, var(--sd-fg) 10%, transparent);
     color: var(--sd-fg);
   }
 }

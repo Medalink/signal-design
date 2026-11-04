@@ -255,8 +255,7 @@
   :is(code) {
     font-size: 0.92em;
     padding: 0.1em 0.35em;
-    border: 1px solid var(--sd-line);
-    background: var(--sd-surface);
+    background: color-mix(in srgb, var(--sd-fg) 8%, transparent);
     color: var(--sd-fg-muted);
   }
   :is(kbd) {
@@ -279,8 +278,7 @@
   :is(pre) {
     overflow-x: auto;
     padding: 12px 16px;
-    border: 1px solid var(--sd-line);
-    background: var(--sd-surface);
+    background: var(--sd-tone-3);
     color: var(--sd-fg-muted);
     font-size: var(--text-sm);
     line-height: 1.7;
@@ -288,7 +286,6 @@
   }
   :is(pre code) {
     padding: 0;
-    border: 0;
     background: none;
     font-size: inherit;
   }
@@ -378,7 +375,7 @@
   }
   :is(th) {
     padding: 8px 12px;
-    border-block-end: 1px solid var(--sd-line-strong);
+    background: var(--sd-tone-3);
     text-align: start;
     font-size: var(--text-2xs);
     font-weight: 400;
@@ -389,38 +386,32 @@
   }
   :is(td) {
     padding: 10px 12px;
-    border-block-end: 1px solid var(--sd-line);
     vertical-align: top;
   }
   :is(tbody th) {
-    border-block-end-color: var(--sd-line);
+    background: none;
     color: var(--sd-fg);
     font-size: inherit;
     letter-spacing: normal;
     text-transform: none;
   }
-  :is(th, td):first-child {
-    padding-inline-start: 0;
-  }
-  :is(th, td):last-child {
-    padding-inline-end: 0;
-  }
   :is(tfoot td, tfoot th) {
-    border-block-end: 0;
-    border-block-start: 1px solid var(--sd-line-strong);
+    background: none;
     color: var(--sd-fg-muted);
   }
 
   /* ---- Forms ------------------------------------------------------ */
 
+  /* A fieldset groups by spacing and its legend, not by an outline. */
   :is(fieldset) {
-    border: 1px solid var(--sd-line);
-    padding: 16px 20px 20px;
+    border: 0;
+    padding: 0;
     min-width: 0;
   }
   :is(legend) {
-    padding-inline: 8px;
-    margin-inline-start: -8px;
+    padding-inline: 0;
+    margin-inline-start: 0;
+    margin-block-end: 10px;
     font-size: var(--text-2xs);
     letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
@@ -441,16 +432,19 @@
     width: 100%;
     min-height: 34px;
     padding: 6px 10px;
-    border: 1px solid var(--sd-line-control);
-    background-color: var(--sd-surface);
+    border: 1px solid transparent;
+    background-color: var(--sd-field-fill);
     color: var(--sd-fg);
     font: inherit;
     font-size: var(--text-base);
     line-height: 20px;
     transition: border-color 120ms var(--ease-out), background-color 120ms var(--ease-out);
   }
-  :is(input, textarea, select):is(:hover:not(:disabled, :focus)) {
-    border-color: var(--sd-fg-faint);
+  /* Text fields are tone, not lines: --sd-field-fill (the fg at 4% over
+     whatever the field sits on) on a 1px transparent edge, so the box keeps
+     its size. Hover lifts the fill; focus, invalid and read-only keep an edge. */
+  :is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"], [type="submit"], [type="button"], [type="reset"], [type="image"], [type="hidden"]), textarea, select):is(:hover:not(:disabled, :focus, input:read-only, textarea:read-only)) {
+    background-color: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-field-fill));
   }
   /* Text-like controls show focus on their own edge. Checkboxes, radios and
      button-like inputs keep the outline: their edge is already that color. */
@@ -464,9 +458,12 @@
   :is(input, textarea, select):is(:disabled) {
     opacity: 0.4;
   }
-  :is(input, textarea):is(:read-only:not(:disabled, [type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"])) {
-    background-color: transparent;
+  /* Read-only is not a field to type in: no fill, a dashed edge. Focus and
+     invalid keep their own edge. */
+  :is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"], [type="submit"], [type="button"], [type="reset"], [type="image"], [type="hidden"]), textarea):is(:read-only:not(:disabled, :focus, :focus-visible, :user-invalid, [aria-invalid="true"])) {
+    border-color: var(--sd-line-control);
     border-style: dashed;
+    background-color: transparent;
   }
   ::placeholder {
     color: var(--sd-fg-faint);
@@ -524,11 +521,11 @@
       appearance: base-select;
       margin-block: 4px;
       padding: 4px;
-      border: 1px solid var(--sd-line-strong);
+      border: 0;
       border-radius: 0;
       background: var(--sd-overlay);
       color: var(--sd-fg);
-      box-shadow: none;
+      box-shadow: 0 0 0 1px var(--sd-edge), 0 8px 24px var(--sd-edge-soft);
     }
     :is(select) :is(option) {
       font-weight: 400;
@@ -679,8 +676,8 @@
     width: 34px;
     height: 34px;
     padding: 3px;
-    border: 1px solid var(--sd-line-strong);
-    background: var(--sd-surface);
+    border: 1px solid transparent;
+    background: var(--sd-field-fill);
     cursor: pointer;
   }
   :is(input[type="color"])::-webkit-color-swatch-wrapper {
@@ -709,15 +706,15 @@
   ::file-selector-button {
     margin-inline-end: 12px;
     padding: 7px 14px;
-    border: 1px solid var(--sd-line-strong);
-    background: transparent;
+    border: 1px solid transparent;
+    background: var(--sd-field-fill);
     color: var(--sd-fg);
     font: inherit;
     font-size: var(--text-base);
     cursor: pointer;
   }
   ::file-selector-button:hover {
-    background: var(--sd-raised);
+    background: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-field-fill));
   }
 
   /* Buttons without a class still look intentional. */
@@ -726,8 +723,8 @@
     align-items: center;
     gap: 9px;
     padding: 7px 16px;
-    border: 1px solid var(--sd-line-strong);
-    background: transparent;
+    border: 1px solid transparent;
+    background: var(--sd-field-fill);
     color: var(--sd-fg);
     font-size: var(--text-base);
     letter-spacing: 0.02em;
@@ -735,8 +732,7 @@
     transition: background-color 120ms var(--ease-out), border-color 120ms var(--ease-out);
   }
   :is(button, input[type="submit"], input[type="button"], input[type="reset"]):is(:not([class])):is(:hover:not(:disabled)) {
-    background: var(--sd-raised);
-    border-color: var(--sd-fg-faint);
+    background: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-field-fill));
   }
   :is(input[type="submit"]):is(:not([class])) {
     border-color: transparent;
@@ -804,15 +800,9 @@
 
   /* ---- Interactive ------------------------------------------------ */
 
-  :is(details) {
-    border-block: 1px solid var(--sd-line);
-  }
-  /* Stacked details read as one accordion. */
+  /* Stacked details read as one accordion, separated by the summary's padding. */
   :is(details:not([class]):has(+ details)) {
     margin-block-end: 0;
-  }
-  :is(details + details) {
-    border-block-start: 0;
   }
   :is(summary) {
     display: flex;
@@ -832,13 +822,13 @@
     place-items: center;
     width: 16px;
     height: 16px;
-    border: 1px solid var(--sd-line-strong);
+    background: var(--sd-field-fill);
     color: var(--sd-fg-subtle);
     font-size: var(--text-xs);
     line-height: 1;
   }
   :is(summary):hover::before {
-    border-color: var(--sd-fg-faint);
+    background: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-field-fill));
     color: var(--sd-fg);
   }
   :is(details[open] > summary)::before {
@@ -857,7 +847,8 @@
     max-height: calc(100dvh - 64px);
     margin: auto;
     padding: 20px 24px;
-    border: 1px solid var(--sd-line-strong);
+    border: 0;
+    box-shadow: 0 0 0 1px var(--sd-edge), 0 8px 24px var(--sd-edge-soft);
     background: var(--sd-overlay);
     color: var(--sd-fg);
     overflow: auto;
@@ -886,7 +877,8 @@
   :is([popover]) {
     margin: auto;
     padding: 12px;
-    border: 1px solid var(--sd-line-strong);
+    border: 0;
+    box-shadow: 0 0 0 1px var(--sd-edge), 0 8px 24px var(--sd-edge-soft);
     background: var(--sd-overlay);
     color: var(--sd-fg);
   }
@@ -910,8 +902,7 @@
     height: auto;
   }
   :is(figure img, figure video, iframe) {
-    border: 1px solid var(--sd-line);
-    background: var(--sd-surface);
+    background: var(--sd-tone-3);
   }
   :is(audio) {
     width: 100%;
@@ -923,7 +914,6 @@
   }
   :is(audio)::-webkit-media-controls-enclosure {
     background: var(--sd-raised);
-    border: 1px solid var(--sd-line);
   }
   :is(iframe) {
     display: block;

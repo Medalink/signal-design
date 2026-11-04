@@ -20,7 +20,6 @@
     gap: 12px;
     min-height: 68px;
     padding: 18px 0 16px 0;
-    border-block-end: 1px solid var(--sd-line);
     color: var(--sd-fg);
     transition: opacity 160ms var(--ease-out), background-color 140ms var(--ease-out);
   }
@@ -126,8 +125,8 @@
   .sd-marker > * {
     position: relative;
     padding: 3px 10px;
-    border: 1px solid var(--sd-line);
-    background: var(--sd-canvas);
+    border: 0;
+    background: var(--sd-tone-3);
     color: var(--sd-fg-subtle);
     font-size: var(--text-2xs);
     letter-spacing: var(--tracking-caps);
@@ -167,7 +166,7 @@
     transition: background-color 120ms var(--ease-out);
   }
   .sd-table-hover tbody tr:hover {
-    background: var(--sd-surface);
+    background: color-mix(in srgb, var(--sd-fg) 6%, transparent);
   }
   .sd-table-compact :where(td) {
     padding-block: 6px;
@@ -246,11 +245,11 @@
     white-space: nowrap;
   }
 
-  /* Code block with a header. */
+  /* Code block with a header: a well one step above its parent, so it reads
+     as a box on the page and inside a card alike. */
   .sd-code {
     min-width: 0; /* long lines scroll inside the block instead of widening a grid or flex parent */
-    border: 1px solid var(--sd-line);
-    background: var(--sd-surface);
+    background: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-tone-3));
   }
   .sd-code-head {
     display: flex;
@@ -258,7 +257,6 @@
     gap: 10px;
     min-height: 34px;
     padding: 0 6px 0 14px;
-    border-block-end: 1px solid var(--sd-line);
     font-size: var(--text-2xs);
     letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
@@ -275,9 +273,9 @@
 
   /*
    * Media frame: screenshot or video proof. As a button (or a link) it is an
-   * image attachment that opens a viewer: the border strengthens on hover
-   * and focus, and sd-shot-hint (a decorative icon, such as a magnifier)
-   * shows then. aria-busy="true" shows sd-shot-status over it (Downloading).
+   * image attachment that opens a viewer: the fill lifts on hover and focus,
+   * and sd-shot-hint (a decorative icon, such as a magnifier) shows then.
+   * aria-busy="true" shows sd-shot-status over it (Downloading).
    * data-failed shows sd-shot-note (a reason) in place of the media.
    *   <button class="sd-shot" aria-busy="false"><img alt="…">
    *     <span class="sd-shot-hint"><svg class="sd-icon" aria-hidden="true">…</svg></span>
@@ -289,8 +287,7 @@
     display: block;
     overflow: hidden;
     max-width: 100%;
-    border: 1px solid var(--sd-line);
-    background: var(--sd-surface);
+    background: var(--sd-tone-3);
     aspect-ratio: var(--ratio, 16 / 9);
   }
   .sd-shot > :where(img, video, iframe, canvas) {
@@ -307,10 +304,10 @@
     text-align: inherit;
     text-decoration: none;
     cursor: pointer;
-    transition: border-color 120ms;
+    transition: background-color 120ms;
   }
   .sd-shot:is(button, a, [role="button"]):is(:hover, :focus-visible) {
-    border-color: var(--sd-fg-faint);
+    background: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-tone-3));
   }
   .sd-shot-hint {
     position: absolute;
@@ -342,8 +339,8 @@
     height: fit-content;
     margin: auto;
     padding: 4px 10px;
-    border: 1px solid var(--sd-line);
-    background: var(--sd-canvas);
+    background: var(--sd-overlay);
+    box-shadow: var(--sd-lift);
     color: var(--sd-fg);
   }
   .sd-shot[aria-busy="true"] {
@@ -358,8 +355,7 @@
   .sd-shot[data-failed] {
     display: grid;
     place-items: center;
-    border-style: dashed;
-    border-color: var(--sd-line-strong);
+    border: 1px dashed var(--sd-line-strong);
   }
   .sd-shot[data-failed] > :where(img, video, iframe, canvas, .sd-shot-hint, .sd-shot-status) {
     display: none;
@@ -373,7 +369,6 @@
     position: absolute;
     inset: auto 0 0;
     padding: 6px 10px;
-    border-block-start: 1px solid var(--sd-line);
     background: var(--sd-canvas);
     font-size: var(--text-2xs);
     letter-spacing: var(--tracking-caps);
@@ -398,9 +393,8 @@
     align-content: start;
     min-width: 0;
     padding: 14px 18px 16px;
-    border: 1px solid var(--sd-line);
-    border-inline-start: 2px solid var(--tone, var(--sd-line-strong));
-    background: var(--sd-canvas);
+    border-inline-start: 2px solid var(--tone, transparent);
+    background: var(--sd-tone-3);
   }
   .sd-stat-box .sd-stat-value {
     font-size: var(--text-2xl);
@@ -546,8 +540,8 @@
     position: absolute;
     top: 0;
     padding: 4px 8px;
-    border: 1px solid var(--sd-chart-tooltip-line);
     background: var(--sd-chart-tooltip-bg);
+    box-shadow: var(--sd-lift);
     color: var(--sd-chart-tooltip-body);
     font-size: var(--text-2xs);
     font-variant-numeric: tabular-nums;

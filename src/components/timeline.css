@@ -136,8 +136,8 @@
     gap: 4px;
     overflow: hidden;
     padding-inline: 2px;
-    border: 1px solid var(--tone, var(--sd-line-strong));
-    background: var(--sd-canvas);
+    border: 1px solid var(--tone, transparent);
+    background: var(--sd-tone-3);
     color: var(--sd-fg-faint);
     font-family: var(--font-mono);
     font-size: var(--text-3xs);

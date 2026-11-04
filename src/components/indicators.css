@@ -47,15 +47,15 @@
     font-weight: var(--font-weight-semibold);
   }
 
-  /* A removable token or filter value. */
+  /* A removable token or filter value: a filled chip, no outline. */
   .sd-chip {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     min-height: 28px;
     padding: 3px 10px;
-    border: 1px solid var(--sd-line-strong);
-    background: var(--sd-surface);
+    border: 1px solid transparent;
+    background: var(--sd-field-fill);
     color: var(--sd-fg);
     font-size: var(--text-sm);
     white-space: nowrap;
@@ -89,15 +89,15 @@
     cursor: pointer;
   }
 
-  /* Counter pill: "↑ 21 NEW ABOVE  ⇧N" */
+  /* Counter pill: "↑ 21 NEW ABOVE  ⇧N". A filled tag; hover lifts the fill. */
   .sd-pill {
     display: inline-flex;
     align-items: center;
     gap: 10px;
     max-width: 100%;
     padding: 5px 12px;
-    border: 1px solid var(--sd-line);
-    background: var(--sd-canvas);
+    border: 1px solid transparent;
+    background: var(--sd-field-fill);
     color: var(--sd-fg-muted);
     font-size: var(--text-xs);
     letter-spacing: 0.12em;
@@ -113,7 +113,7 @@
     cursor: pointer;
   }
   button.sd-pill:hover {
-    border-color: var(--sd-line-strong);
+    background: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-field-fill));
     color: var(--sd-fg);
   }
 
@@ -136,8 +136,8 @@
     user-select: none;
   }
   .sd-avatar:not([data-tone]) {
+    background: color-mix(in srgb, var(--sd-fg) 10%, var(--sd-raised));
     color: var(--sd-fg-muted);
-    border: 1px solid var(--sd-line-strong);
   }
   .sd-avatar img {
     width: 100%;
@@ -175,8 +175,8 @@
     height: var(--sd-avatar-size, 24px);
     gap: 1px;
     overflow: hidden;
-    border: 1px solid var(--sd-line-strong);
-    background: var(--sd-surface);
+    border: 1px solid transparent;
+    background: var(--sd-tone-3);
   }
   .sd-avatar-grid > .sd-avatar {
     width: 100%;
