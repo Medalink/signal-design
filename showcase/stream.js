@@ -6,14 +6,10 @@ const source = document.documentElement.dataset.source;
 if (!source) mountBar();
 init({ theme: !source, scrollbars: savedScrollbars() });
 
-/* ---- URL fields -----------------------------------------------------------
- * Every word on the source is settable: ?scene=brb&socials=X:@me&layer=socials.
- * One table below is the whole contract; it runs before mountStream, which
- * reads the timers and goals at mount. Text from the URL becomes DOM nodes
- * only — never innerHTML — with \n (or a real newline) as a break and *x* as bold.
- */
+// URL params apply before mountStream, which reads the timers and goals at
+// mount. Text from the URL becomes DOM nodes only, never innerHTML:
+// \n (or a real newline) breaks, *x* bolds.
 
-// Text from the URL: newlines break, *asterisks* bold.
 function rich(value) {
   const frag = document.createDocumentFragment();
   value.split(/\n|\\n/).forEach((line, i) => {
@@ -30,8 +26,6 @@ function rich(value) {
   return frag;
 }
 
-// Replace an element's text with rich(value), keeping one child of it
-// (a live square stays before the text; a timer goes after).
 function refill(el, value, { keep = null, after = false } = {}) {
   if (!el) return;
   const child = keep ? el.querySelector(keep) : null;
@@ -41,13 +35,12 @@ function refill(el, value, { keep = null, after = false } = {}) {
 const scene = source ? document.querySelector(`[data-scene="${source}"]`) : null;
 const params = source ? new URLSearchParams(location.search) : null;
 
-// Every layer a scene can hold; the end scene's bar labels are its "stats".
+// The end scene's bar labels are its "stats".
 const LAYERS = ["bg", "title", "latest", "socials", "cam", "goal", "alerts", "credits", "stats"];
 const listed = (value) => value.split(",").map((name) => name.trim()).filter(Boolean);
 let shown = null; // null: every layer renders
 let burst = true; // false once the layer set leaves the alerts out
 
-// The table: one apply per URL field. Applied to the source scene only.
 const FIELDS = {
   socials: {
     apply(value) {

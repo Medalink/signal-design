@@ -1,6 +1,3 @@
-// Stream setup: builds OBS Browser Source URLs for stream.html. The form is
-// the state; every input change rebuilds the URLs below. One URL per layer,
-// so each piece can be its own transparent Browser Source.
 import { mountBar, savedScrollbars } from "./viewport.js";
 import { init } from "../src/js/index.js";
 
@@ -14,7 +11,47 @@ const LAYERS = ["bg", "title", "latest", "socials", "cam", "goal", "alerts", "cr
 const FIELDS = ["kicker", "title", "line", "away", "timer", "follow", "sub", "goal", "goallabel", "name"];
 const base = new URL("stream.html", location.href);
 
-// The form's state. Socials are [label, value] pairs; layers all on by default.
+// What each scene in stream.html has today: its layers, and the default text
+// of every URL field it reads. A field absent from a scene never reaches that
+// scene's URL, and \\n in a placeholder is the break the URL syntax uses.
+const SCENE_TABLE = {
+  start: {
+    layers: ["bg", "title", "latest", "socials", "alerts"],
+    fields: {
+      kicker: "Stream starting",
+      title: "Starting\\nsoon",
+      timer: "300",
+      line: "Tonight: *ranked to Diamond*, then viewer games",
+      follow: "nightowl_42",
+      sub: "pixelmoth",
+      socials: "X:@medalink|YT:/medalink|DC:discord.gg/medalink",
+    },
+  },
+  game: {
+    layers: ["bg", "latest", "cam", "goal", "alerts"],
+    fields: { follow: "nightowl_42", sub: "pixelmoth", goal: "38/50", goallabel: "Sub goal", name: "Medalink" },
+  },
+  brb: {
+    layers: ["bg", "title", "latest", "socials", "alerts"],
+    fields: {
+      kicker: "Grabbing a drink",
+      title: "Be right back",
+      away: "Away",
+      follow: "nightowl_42",
+      sub: "pixelmoth",
+      socials: "X:@medalink|YT:/medalink|DC:discord.gg/medalink",
+    },
+  },
+  end: {
+    layers: ["bg", "title", "credits", "stats"],
+    fields: { kicker: "Stream ending", title: "Thanks for\\nhanging out", line: "Raiding *tidepool* next. Stick around." },
+  },
+};
+
+const sceneLayers = () => SCENE_TABLE[state.scene].layers;
+const sceneFields = () => Object.keys(SCENE_TABLE[state.scene].fields);
+
+// The form's state. Socials are [label, value] pairs.
 const state = {
   scene: "brb",
   fields: Object.fromEntries(FIELDS.map((f) => [f, ""])),
@@ -23,22 +60,49 @@ const state = {
     ["YT", "/medalink"],
     ["DC", "discord.gg/medalink"],
   ],
-  layers: new Set(LAYERS),
+  layers: new Set(SCENE_TABLE.brb.layers),
 };
 
-const layerParam = (layers) => (layers.size === LAYERS.length ? null : [...LAYERS].filter((l) => layers.has(l)).join(","));
+const layerParam = (layers) => (layers.size === sceneLayers().length ? null : [...LAYERS].filter((l) => layers.has(l)).join(","));
 
 function buildUrl(layers) {
   const url = new URL(base);
   url.searchParams.set("scene", state.scene);
-  for (const [key, value] of Object.entries(state.fields)) if (value) url.searchParams.set(key, value);
-  url.searchParams.set("socials", state.socials.map(([label, value]) => `${label}:${value}`).join("|"));
+  const fields = sceneFields();
+  for (const [key, value] of Object.entries(state.fields)) if (value && fields.includes(key)) url.searchParams.set(key, value);
+  if (fields.includes("socials")) url.searchParams.set("socials", state.socials.map(([label, value]) => `${label}:${value}`).join("|"));
   const layer = layerParam(layers ?? state.layers);
   if (layer) url.searchParams.set("layer", layer);
   return url.toString();
 }
 
-/* ---- Build: inputs, socials rows, layer checks --------------------------- */
+const STORAGE_KEY = "sd-stream-setup";
+
+function save() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ scene: state.scene, fields: state.fields, socials: state.socials, layers: [...state.layers] }));
+  } catch {}
+}
+
+function restore() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    if (SCENE_TABLE[saved.scene]) state.scene = saved.scene;
+    if (saved.fields && typeof saved.fields === "object") {
+      for (const field of FIELDS) if (typeof saved.fields[field] === "string") state.fields[field] = saved.fields[field];
+    }
+    if (Array.isArray(saved.socials)) {
+      const socials = saved.socials.filter((pair) => Array.isArray(pair) && pair.length === 2 && pair.every((part) => typeof part === "string"));
+      if (socials.length) state.socials = socials;
+    }
+    if (Array.isArray(saved.layers)) {
+      const layers = saved.layers.filter((l) => sceneLayers().includes(l));
+      if (layers.length) state.layers = new Set(layers);
+    }
+  } catch {}
+}
 
 for (const field of FIELDS) {
   $("#f-" + field).addEventListener("input", (e) => {
@@ -51,6 +115,7 @@ $("#scene-seg").addEventListener("click", (event) => {
   const button = event.target.closest("[data-scene]");
   if (!button) return;
   state.scene = button.dataset.scene;
+  state.layers = new Set(sceneLayers());
   render();
   build();
 });
@@ -82,8 +147,6 @@ $("#layer-checks").addEventListener("change", (event) => {
   build();
 });
 
-/* ---- Read: load from a pasted URL ---- */
-
 $("#load-btn").addEventListener("click", () => {
   let url;
   try {
@@ -102,15 +165,27 @@ $("#load-btn").addEventListener("click", () => {
     return at < 0 ? ["", pair] : [pair.slice(0, at), pair.slice(at + 1)];
   });
   if (q.has("socials")) state.socials = socials;
-  state.layers = new Set(q.get("layer") ? q.get("layer").split(",").map((l) => l.trim()).filter((l) => LAYERS.includes(l)) : LAYERS);
+  const listed = q.get("layer");
+  state.layers = new Set((listed ? listed.split(",").map((l) => l.trim()) : sceneLayers()).filter((l) => sceneLayers().includes(l)));
   render();
   build();
 });
 
-/* ---- Render ---- */
-
 function renderScene() {
   for (const button of $("#scene-seg").querySelectorAll("[data-scene]")) button.setAttribute("aria-pressed", String(button.dataset.scene === state.scene));
+}
+
+// A scene shows only its own fields, with its default as the placeholder.
+function renderFields() {
+  const fields = sceneFields();
+  for (const field of FIELDS) {
+    const input = $(`#f-${field}`);
+    if (!input) continue;
+    const has = fields.includes(field);
+    input.closest(".sd-field").hidden = !has;
+    if (has) input.placeholder = SCENE_TABLE[state.scene].fields[field];
+  }
+  $("#socials-field").hidden = !fields.includes("socials");
 }
 
 function renderSocials() {
@@ -148,7 +223,7 @@ function renderSocials() {
 
 function renderLayers() {
   $("#layer-checks").replaceChildren(
-    ...LAYERS.map((layer) => {
+    ...sceneLayers().map((layer) => {
       const label = document.createElement("label");
       const box = document.createElement("input");
       box.type = "checkbox";
@@ -160,13 +235,17 @@ function renderLayers() {
   );
 }
 
-function render() {
-  renderScene();
-  renderSocials();
-  renderLayers();
+function renderOutputs() {
+  $("#out-layers").replaceChildren(...sceneLayers().map((layer) => urlRow(`out-layer-${layer}`, `Layer: ${layer}`)));
 }
 
-/* ---- URLs out, one full and one per layer ---- */
+function render() {
+  renderScene();
+  renderFields();
+  renderSocials();
+  renderLayers();
+  renderOutputs();
+}
 
 const copyButton = (target) => {
   const button = document.createElement("button");
@@ -177,7 +256,7 @@ const copyButton = (target) => {
   return button;
 };
 
-const urlRow = (id, labelText, hint) => {
+const urlRow = (id, labelText) => {
   const wrap = document.createElement("div");
   wrap.className = "sd-field";
   const label = document.createElement("label");
@@ -191,36 +270,20 @@ const urlRow = (id, labelText, hint) => {
   input.readOnly = true;
   input.id = id;
   input.setAttribute("aria-label", labelText);
-  const button = copyButton(id);
-  row.append(input, button);
+  row.append(input, copyButton(id));
   wrap.append(label, row);
-  if (hint) {
-    const p = document.createElement("p");
-    p.className = "sd-field-hint";
-    p.textContent = hint;
-    wrap.append(p);
-  }
   return wrap;
 };
 
-function renderOutputs() {
-  const list = $("#out-layers");
-  list.replaceChildren(
-    ...LAYERS.map((layer) => urlRow(`out-layer-${layer}`, `Layer: ${layer}`, layer === "alerts" ? "Alerts only: no burst canvas behind the card." : layer === "socials" ? "The socials with their bar, over nothing." : undefined)),
-  );
-}
-
-renderOutputs();
-
 function build() {
   $("#out-full").value = buildUrl();
-  for (const layer of LAYERS) $(`#out-layer-${layer}`).value = buildUrl(new Set([layer]));
+  for (const layer of sceneLayers()) $(`#out-layer-${layer}`).value = buildUrl(new Set([layer]));
+  save();
 }
 
-build();
+restore();
 render();
-
-/* ---- Copy: clipboard first, select the input when OBS refuses it ---- */
+build();
 
 document.body.addEventListener("click", async (event) => {
   const button = event.target.closest("[data-copy]");

@@ -124,7 +124,7 @@ const examples = {
       { file: "landing.html", title: "Landing", summary: "A one-screen download page: a hero, four points and a download block." },
       { file: "charts.html", title: "Charts", summary: "Watcher's Stats screen: range, tiles, CPU and memory plots with a limit line, a per-container table and database facts." },
       { file: "stream.html", title: "Stream", summary: "A Twitch overlay package: starting soon, in game, BRB and ending scenes with live alerts, ready for OBS." },
-      { file: "stream-setup.html", title: "Stream setup", summary: "Builds the OBS Browser Source URLs for Stream: every word and each layer settable from a form, one URL per layer to stack as transparent sources." },
+      { file: "stream-setup.html", title: "Stream setup", summary: "Builds the OBS source URLs for each Stream scene and layer." },
     ]),
     group("React apps", [
       { file: "react.html", title: "React", summary: "Every React binding on one page with no init(): buttons, fields, overlays, menus, tabs, tables and toasts." },
