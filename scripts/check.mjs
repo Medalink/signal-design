@@ -970,7 +970,10 @@ for (const [name, engine] of Object.entries(engines)) {
           } catch (error) {
             // A browser process that dies mid-page is not a finding about Signal;
             // relaunch and run the page once more. A crash that repeats fails.
-            if (!browser.isConnected() && attempt === 1) {
+            // WebKit's renderer can also die while the browser process lives on,
+            // so a "target has been closed" error counts as a crash as well.
+            const crashed = !browser.isConnected() || /has been closed|has crashed|Target closed/i.test(error.message);
+            if (crashed && attempt === 1) {
               console.log(`::warning::${where}: ${name} crashed (${error.message.split("\n")[0]}); relaunched and retrying`);
               continue;
             }
