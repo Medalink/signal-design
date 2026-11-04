@@ -14,7 +14,8 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # The job runs in about 27 seconds.
+    timeout-minutes: 3
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4

@@ -1,8 +1,6 @@
 name: check
 
 on:
-  push:
-    branches: [main]
   pull_request:
 
 permissions:
@@ -12,6 +10,12 @@ permissions:
 concurrency:
   group: check-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# The sweep runs on pull requests only. Every push to main already gets the
+# full sweep (Chromium and WebKit), the accessibility audit and the perf
+# script in the lab ring on medaware, which starts an agent run on a failure,
+# so paying four runners five to eleven minutes per ship to repeat it bought
+# nothing -- and no job here fit the 3-minute budget.
 
 jobs:
   check:

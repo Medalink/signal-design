@@ -13,16 +13,21 @@ permissions:
   contents: write
 
 concurrency:
+  # A newer push cancels the run in progress instead of queueing behind it:
+  # the queued run would build the same tip the newer run builds, so only
+  # the newest one needs to finish. Bot commits (GITHUB_TOKEN) start no
+  # workflow, so a regeneration never cancels itself.
   group: ai-files
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   regenerate:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # The job runs in about 45 seconds with the browser cache below.
+    timeout-minutes: 3
     steps:
-      # The current tip of main, not the commit that triggered this run: a
-      # queued run must build on the previous run's commit, not beside it.
+      # The current tip of main, not the commit that triggered this run: the
+      # one run that survives a newer push builds the tip.
       - uses: actions/checkout@v4
         with:
           ref: main
@@ -33,7 +38,18 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
+      - name: Playwright version
+        id: pw
+        run: echo "version=$(node -p 'require("playwright/package.json").version')" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        id: browsers
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ steps.pw.outputs.version }}-chromium
+      - if: steps.browsers.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install --with-deps chromium
+      - if: steps.browsers.outputs.cache-hit == 'true'
+        run: pnpm exec playwright install-deps chromium
       - name: Regenerate and commit when changed
         run: |
           git config user.name "github-actions[bot]"

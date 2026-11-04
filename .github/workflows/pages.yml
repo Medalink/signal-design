@@ -21,7 +21,8 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # The deploy job runs in 44 seconds to 2.4 minutes.
+    timeout-minutes: 3
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
