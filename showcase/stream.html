@@ -32,6 +32,12 @@
 
     /* As an OBS source: only the chosen scene, edge to edge. */
     [data-source] body { overflow: hidden; background: transparent; }
+    /* Layers: stream.js marks every layer the URL leaves out with data-off. */
+    [data-source] [data-layer][data-off] { display: none; }
+    /* A layer subset paints over nothing: the page itself is clear. */
+    html[data-layer-clear], html[data-layer-clear] body { background: transparent; }
+    /* The bar is chrome around its labels, not a layer: clear it with the scene. */
+    [data-source] .sd-scene[data-clear] .sd-scene-bar { background: transparent; border-top: 0; }
     [data-source] .st-chrome, [data-source] .sd-skip { display: none; }
     [data-source] .st-wrap { max-width: none; padding: 0; display: block; }
     [data-source] .st-block { display: none; }
@@ -51,7 +57,7 @@
   <header class="st-intro st-chrome">
     <span class="sd-label">Example · Twitch overlay package</span>
     <h1>Stream scenes on the rain field</h1>
-    <p class="sd-muted max-w-column">Starting soon, in game, be right back and ending, each a 1920×1080 scene built from the broadcast components. Fire test alerts with the buttons. To use one in OBS, add a Browser Source at 1920×1080 pointing at this page with <code>?scene=start</code>, <code>game</code>, <code>brb</code> or <code>end</code>. Add <code>&amp;demo</code> to play sample alerts.</p>
+    <p class="sd-muted max-w-column">Starting soon, in game, be right back and ending, each a 1920×1080 scene built from the broadcast components. Fire test alerts with the buttons. To use one in OBS, add a Browser Source at 1920×1080 pointing at this page with <code>?scene=start</code>, <code>game</code>, <code>brb</code> or <code>end</code>. Add <code>&amp;demo</code> to play sample alerts. Every word is settable from the URL — <code>socials</code>, <code>kicker</code>, <code>title</code>, <code>line</code>, <code>away</code>, <code>timer</code>, <code>follow</code>, <code>sub</code>, <code>goal</code>, <code>goallabel</code>, <code>name</code> — and <code>layer</code>/<code>hide</code> cut the scene down to named layers (<code>bg title latest socials cam goal alerts credits stats</code>), so each piece can be its own Browser Source. <a href="./stream-setup.html">Stream setup</a> builds the URLs.</p>
   </header>
 
   <section class="st-block" id="start" aria-labelledby="start-title">
@@ -64,20 +70,20 @@
       </div>
     </div>
     <div class="sd-scene st-scene" data-scene="start">
-      <canvas class="sd-rain sd-scene-layer" data-sd-rain="play" aria-hidden="true"></canvas>
-      <div class="sd-scene-fade"></div>
-      <div class="sd-scene-copy">
+      <canvas class="sd-rain sd-scene-layer" data-layer="bg" data-sd-rain="play" aria-hidden="true"></canvas>
+      <div class="sd-scene-fade" data-layer="bg"></div>
+      <div class="sd-scene-copy" data-layer="title">
         <span class="sd-scene-kicker"><span class="sd-live"></span>Stream starting</span>
         <p class="sd-scene-title" data-font="leon-sans">Starting<br>soon</p>
         <span class="sd-scene-count"><small>Live in</small><span data-sd-timer="300">05:00</span></span>
         <p class="sd-scene-line">Tonight: <b>ranked to Diamond</b>, then viewer games</p>
       </div>
       <div class="sd-scene-bar">
-        <span class="sd-scene-label" data-tone="extra"><span class="sd-scene-label-kind">Follow</span><span data-sd-latest="follow">nightowl_42</span></span>
-        <span class="sd-scene-label" data-tone="success"><span class="sd-scene-label-kind">Sub</span><span data-sd-latest="sub">pixelmoth</span></span>
-        <span class="sd-scene-bar-end"><span><b>X</b>@medalink</span><span><b>YT</b>/medalink</span><span><b>DC</b>discord.gg/medalink</span></span>
+        <span class="sd-scene-label" data-layer="latest" data-tone="extra"><span class="sd-scene-label-kind">Follow</span><span data-sd-latest="follow">nightowl_42</span></span>
+        <span class="sd-scene-label" data-layer="latest" data-tone="success"><span class="sd-scene-label-kind">Sub</span><span data-sd-latest="sub">pixelmoth</span></span>
+        <span class="sd-scene-bar-end" data-layer="socials"><span><b>X</b>@medalink</span><span><b>YT</b>/medalink</span><span><b>DC</b>discord.gg/medalink</span></span>
       </div>
-      <div class="sd-stream-alert" role="status" hidden><div class="sd-stream-alert-body"><span class="sd-stream-alert-kind"></span><span class="sd-stream-alert-name"></span><span class="sd-stream-alert-detail"></span></div></div>
+      <div class="sd-stream-alert" data-layer="alerts" role="status" hidden><div class="sd-stream-alert-body"><span class="sd-stream-alert-kind"></span><span class="sd-stream-alert-name"></span><span class="sd-stream-alert-detail"></span></div></div>
     </div>
   </section>
 
@@ -92,20 +98,20 @@
       </div>
     </div>
     <div class="sd-scene st-scene" data-scene="game" data-clear>
-      <div class="st-game" aria-hidden="true">GAME CAPTURE</div>
+      <div class="st-game" data-layer="bg" aria-hidden="true">GAME CAPTURE</div>
       <div class="sd-scene-labels">
-        <span class="sd-scene-label" data-tone="extra"><span class="sd-scene-label-kind">Follow</span><span data-sd-latest="follow">nightowl_42</span></span>
-        <span class="sd-scene-label" data-tone="success"><span class="sd-scene-label-kind">Sub</span><span data-sd-latest="sub">pixelmoth</span></span>
+        <span class="sd-scene-label" data-layer="latest" data-tone="extra"><span class="sd-scene-label-kind">Follow</span><span data-sd-latest="follow">nightowl_42</span></span>
+        <span class="sd-scene-label" data-layer="latest" data-tone="success"><span class="sd-scene-label-kind">Sub</span><span data-sd-latest="sub">pixelmoth</span></span>
       </div>
-      <div class="sd-cam">
+      <div class="sd-cam" data-layer="cam">
         <div class="sd-cam-feed st-cam-feed" aria-hidden="true">WEBCAM</div>
         <div class="sd-cam-tag"><span>Medalink</span><span><span class="sd-live"></span>Live</span></div>
       </div>
-      <div class="sd-scene-goal st-goal" data-sd-goal="sub" data-value="38" data-max="50">
+      <div class="sd-scene-goal st-goal" data-layer="goal" data-sd-goal="sub" data-value="38" data-max="50">
         <div class="sd-scene-goal-head"><span>Sub goal</span><b data-sd-goal-value>38 / 50</b></div>
         <div class="sd-cells" role="presentation"></div>
       </div>
-      <div class="sd-stream-alert" data-place="top" data-tone="accent" data-size="big" role="status"><div class="sd-stream-alert-body"><span class="sd-stream-alert-kind">Raid</span><span class="sd-stream-alert-name">tidepool</span><span class="sd-stream-alert-detail">Raiding with 42 viewers</span></div></div>
+      <div class="sd-stream-alert" data-layer="alerts" data-place="top" data-tone="accent" data-size="big" role="status"><div class="sd-stream-alert-body"><span class="sd-stream-alert-kind">Raid</span><span class="sd-stream-alert-name">tidepool</span><span class="sd-stream-alert-detail">Raiding with 42 viewers</span></div></div>
     </div>
   </section>
 
@@ -118,19 +124,19 @@
       </div>
     </div>
     <div class="sd-scene st-scene" data-scene="brb">
-      <canvas class="sd-rain sd-scene-layer" data-sd-rain="play" aria-hidden="true"></canvas>
-      <div class="sd-scene-fade" data-side="center"></div>
-      <div class="sd-scene-copy" data-align="center" style="top: calc(var(--sd-u) * 340)">
+      <canvas class="sd-rain sd-scene-layer" data-layer="bg" data-sd-rain="play" aria-hidden="true"></canvas>
+      <div class="sd-scene-fade" data-layer="bg" data-side="center"></div>
+      <div class="sd-scene-copy" data-layer="title" data-align="center" style="top: calc(var(--sd-u) * 340)">
         <span class="sd-scene-kicker"><span class="sd-live"></span>Grabbing a drink</span>
         <p class="sd-scene-title" data-font="leon-sans">Be right back</p>
         <span class="sd-scene-kicker">Away <span data-sd-timer="up">00:00</span></span>
       </div>
       <div class="sd-scene-bar">
-        <span class="sd-scene-label" data-tone="extra"><span class="sd-scene-label-kind">Follow</span><span data-sd-latest="follow">nightowl_42</span></span>
-        <span class="sd-scene-label" data-tone="success"><span class="sd-scene-label-kind">Sub</span><span data-sd-latest="sub">pixelmoth</span></span>
-        <span class="sd-scene-bar-end"><span><b>X</b>@medalink</span><span><b>YT</b>/medalink</span><span><b>DC</b>discord.gg/medalink</span></span>
+        <span class="sd-scene-label" data-layer="latest" data-tone="extra"><span class="sd-scene-label-kind">Follow</span><span data-sd-latest="follow">nightowl_42</span></span>
+        <span class="sd-scene-label" data-layer="latest" data-tone="success"><span class="sd-scene-label-kind">Sub</span><span data-sd-latest="sub">pixelmoth</span></span>
+        <span class="sd-scene-bar-end" data-layer="socials"><span><b>X</b>@medalink</span><span><b>YT</b>/medalink</span><span><b>DC</b>discord.gg/medalink</span></span>
       </div>
-      <div class="sd-stream-alert" role="status" hidden><div class="sd-stream-alert-body"><span class="sd-stream-alert-kind"></span><span class="sd-stream-alert-name"></span><span class="sd-stream-alert-detail"></span></div></div>
+      <div class="sd-stream-alert" data-layer="alerts" role="status" hidden><div class="sd-stream-alert-body"><span class="sd-stream-alert-kind"></span><span class="sd-stream-alert-name"></span><span class="sd-stream-alert-detail"></span></div></div>
     </div>
   </section>
 
@@ -139,14 +145,14 @@
       <div><span class="sd-label">Scene 4</span><h2 id="end-title">Ending</h2></div>
     </div>
     <div class="sd-scene st-scene" data-scene="end">
-      <canvas class="sd-rain sd-scene-layer" data-sd-rain="play" aria-hidden="true"></canvas>
-      <div class="sd-scene-fade"></div>
-      <div class="sd-scene-copy">
+      <canvas class="sd-rain sd-scene-layer" data-layer="bg" data-sd-rain="play" aria-hidden="true"></canvas>
+      <div class="sd-scene-fade" data-layer="bg"></div>
+      <div class="sd-scene-copy" data-layer="title">
         <span class="sd-scene-kicker" data-tone="danger"><span class="sd-live"></span>Stream ending</span>
         <p class="sd-scene-title" data-size="md" data-font="leon-sans">Thanks for<br>hanging out</p>
         <p class="sd-scene-line" data-tone="accent">Raiding <b>tidepool</b> next. Stick around.</p>
       </div>
-      <div class="sd-credits">
+      <div class="sd-credits" data-layer="credits">
         <div class="sd-credits-roll">
           <section data-tone="accent"><h3>Raiders</h3><span>tidepool</span><span>northdial</span></section>
           <section data-tone="success"><h3>Subs</h3><span>pixelmoth</span><span>byteharbor</span><span>fernlight</span></section>
@@ -156,8 +162,8 @@
         </div>
       </div>
       <div class="sd-scene-bar">
-        <span class="sd-scene-label" data-tone="extra"><span class="sd-scene-label-kind">Followers today</span><span>+24</span></span>
-        <span class="sd-scene-label" data-tone="success"><span class="sd-scene-label-kind">Subs today</span><span>+6</span></span>
+        <span class="sd-scene-label" data-layer="stats" data-tone="extra"><span class="sd-scene-label-kind">Followers today</span><span>+24</span></span>
+        <span class="sd-scene-label" data-layer="stats" data-tone="success"><span class="sd-scene-label-kind">Subs today</span><span>+6</span></span>
       </div>
     </div>
   </section>
