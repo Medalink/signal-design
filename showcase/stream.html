@@ -48,6 +48,9 @@
     /* Game and camera come from OBS sources under this one. */
     html[data-source="game"], [data-source="game"] body { background: transparent; }
     [data-source] .st-cam-feed { background: transparent; color: transparent; }
+    /* ?native: OBS Text sources draw these strings. A latest name keeps a fixed room, since OBS text can be any length. */
+    [data-source] [data-native] { visibility: hidden; }
+    [data-source] [data-sd-latest][data-native] { inline-size: calc(var(--sd-u) * 240); }
   </style>
 </head>
 <body>
@@ -57,7 +60,7 @@
   <header class="st-intro st-chrome">
     <span class="sd-label">Example · Twitch overlay package</span>
     <h1>Stream scenes on the rain field</h1>
-    <p class="sd-muted max-w-column">Starting soon, in game, be right back and ending, each a 1920×1080 scene built from the broadcast components. Fire test alerts with the buttons. To use one in OBS, add a Browser Source at 1920×1080 pointing at this page with <code>?scene=start</code>, <code>game</code>, <code>brb</code> or <code>end</code>. Add <code>&amp;demo</code> to play sample alerts. <a href="./stream-setup.html">Stream setup</a> builds the URLs for each scene and layer.</p>
+    <p class="sd-muted max-w-column">Starting soon, in game, be right back and ending, each a 1920×1080 scene built from the broadcast components. Fire test alerts with the buttons. To use one in OBS, add a Browser Source at 1920×1080 pointing at this page with <code>?scene=start</code>, <code>game</code>, <code>brb</code> or <code>end</code>. Add <code>&amp;demo</code> to play sample alerts. <a href="./stream-setup.html">Stream setup</a> builds the URLs for each scene and layer, or a scene collection for OBS with every line of text as an OBS text source.</p>
   </header>
 
   <section class="st-block" id="start" aria-labelledby="start-title">

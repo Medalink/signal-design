@@ -1,5 +1,6 @@
 import { mountBar, savedScrollbars } from "./viewport.js";
 import { init, mountStream, ALERT_KINDS } from "../src/js/index.js";
+import { markNative } from "./stream-native.js";
 
 // As an OBS source (?scene=…) the page is the scene alone: no bar, no remembered theme.
 const source = document.documentElement.dataset.source;
@@ -116,6 +117,8 @@ if (params && scene) {
     }
     burst = shown.has("alerts");
   }
+  // ?native: OBS Text sources draw the strings; the page keeps their room.
+  if (params.has("native")) markNative(scene);
 }
 
 const SAMPLE = {

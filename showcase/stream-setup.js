@@ -1,5 +1,6 @@
 import { mountBar, savedScrollbars } from "./viewport.js";
 import { init } from "../src/js/index.js";
+import { obsCollection } from "./stream-obs.js";
 
 mountBar();
 init({ scrollbars: savedScrollbars() });
@@ -63,18 +64,22 @@ const state = {
   layers: new Set(SCENE_TABLE.brb.layers),
 };
 
-const layerParam = (layers) => (layers.size === sceneLayers().length ? null : [...LAYERS].filter((l) => layers.has(l)).join(","));
+// The form edits the chosen scene; names, socials, goal and timer carry to every scene.
+const OWN_TEXT = ["kicker", "title", "line", "away"];
 
-function buildUrl(layers) {
+function urlFor(scene, layers) {
   const url = new URL(base);
-  url.searchParams.set("scene", state.scene);
-  const fields = sceneFields();
-  for (const [key, value] of Object.entries(state.fields)) if (value && fields.includes(key)) url.searchParams.set(key, value);
+  url.searchParams.set("scene", scene);
+  const fields = Object.keys(SCENE_TABLE[scene].fields);
+  for (const [key, value] of Object.entries(state.fields)) {
+    if (value && fields.includes(key) && (scene === state.scene || !OWN_TEXT.includes(key))) url.searchParams.set(key, value);
+  }
   if (fields.includes("socials")) url.searchParams.set("socials", state.socials.map(([label, value]) => `${label}:${value}`).join("|"));
-  const layer = layerParam(layers ?? state.layers);
-  if (layer) url.searchParams.set("layer", layer);
-  return url.toString();
+  if (layers.size !== SCENE_TABLE[scene].layers.length) url.searchParams.set("layer", LAYERS.filter((l) => layers.has(l)).join(","));
+  return url;
 }
+
+const buildUrl = (layers) => urlFor(state.scene, layers ?? state.layers).toString();
 
 const STORAGE_KEY = "sd-stream-setup";
 
@@ -284,6 +289,33 @@ function build() {
 restore();
 render();
 build();
+
+// Every scene as an OBS scene collection: the page as a browser source, its text as OBS Text sources.
+$("#obs-btn").addEventListener("click", async (event) => {
+  const button = event.currentTarget;
+  const status = $("#obs-status");
+  if (button.getAttribute("aria-busy") === "true") return;
+  button.setAttribute("aria-busy", "true");
+  status.textContent = "Measuring the scenes…";
+  try {
+    const scenes = Object.entries(SCENES).map(([key, title]) => {
+      const url = urlFor(key, key === state.scene ? state.layers : new Set(SCENE_TABLE[key].layers));
+      url.searchParams.set("native", "");
+      return { key, title, url: url.toString() };
+    });
+    const { collection, faces } = await obsCollection({ name: "Signal stream", scenes });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(new Blob([JSON.stringify(collection, null, 2)], { type: "application/json" }));
+    link.download = "signal-stream.json";
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    status.textContent = `Saved signal-stream.json. In OBS: Scene Collection › Import. Its text uses ${faces.join(", ")}; OBS draws a face you have not installed in Arial.`;
+  } catch (error) {
+    status.textContent = `Export failed: ${error.message}`;
+  } finally {
+    button.removeAttribute("aria-busy");
+  }
+});
 
 document.body.addEventListener("click", async (event) => {
   const button = event.target.closest("[data-copy]");
