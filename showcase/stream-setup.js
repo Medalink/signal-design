@@ -1,6 +1,5 @@
 import { mountBar, savedScrollbars } from "./viewport.js";
 import { init } from "../src/js/index.js";
-import { obsCollection } from "./stream-obs.js";
 
 mountBar();
 init({ scrollbars: savedScrollbars() });
@@ -80,6 +79,17 @@ function urlFor(scene, layers) {
 }
 
 const buildUrl = (layers) => urlFor(state.scene, layers ?? state.layers).toString();
+
+// The background and graphics with every word left out, for OBS Text sources
+// on top. The timer and goal stay: they are graphics.
+const WORDS = ["kicker", "title", "line", "away", "follow", "sub", "goallabel", "name", "socials"];
+
+function graphicsUrl() {
+  const url = urlFor(state.scene, state.layers);
+  for (const key of WORDS) url.searchParams.delete(key);
+  url.searchParams.set("native", "");
+  return url.toString();
+}
 
 const STORAGE_KEY = "sd-stream-setup";
 
@@ -282,6 +292,7 @@ const urlRow = (id, labelText) => {
 
 function build() {
   $("#out-full").value = buildUrl();
+  $("#out-graphics").value = graphicsUrl();
   for (const layer of sceneLayers()) $(`#out-layer-${layer}`).value = buildUrl(new Set([layer]));
   save();
 }
@@ -289,33 +300,6 @@ function build() {
 restore();
 render();
 build();
-
-// Every scene as an OBS scene collection: the page as a browser source, its text as OBS Text sources.
-$("#obs-btn").addEventListener("click", async (event) => {
-  const button = event.currentTarget;
-  const status = $("#obs-status");
-  if (button.getAttribute("aria-busy") === "true") return;
-  button.setAttribute("aria-busy", "true");
-  status.textContent = "Measuring the scenes…";
-  try {
-    const scenes = Object.entries(SCENES).map(([key, title]) => {
-      const url = urlFor(key, key === state.scene ? state.layers : new Set(SCENE_TABLE[key].layers));
-      url.searchParams.set("native", "");
-      return { key, title, url: url.toString() };
-    });
-    const { collection, faces } = await obsCollection({ name: "Signal stream", scenes });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(new Blob([JSON.stringify(collection, null, 2)], { type: "application/json" }));
-    link.download = "signal-stream.json";
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
-    status.textContent = `Saved signal-stream.json. In OBS: Scene Collection › Import. Its text uses ${faces.join(", ")}; OBS draws a face you have not installed in Arial.`;
-  } catch (error) {
-    status.textContent = `Export failed: ${error.message}`;
-  } finally {
-    button.removeAttribute("aria-busy");
-  }
-});
 
 document.body.addEventListener("click", async (event) => {
   const button = event.target.closest("[data-copy]");

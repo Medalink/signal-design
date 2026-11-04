@@ -1,6 +1,6 @@
 // Native text: with ?native, stream.html keeps every replaceable string in its
 // layout but hidden, so OBS Text sources can sit on top and be edited in OBS.
-// stream.js marks the strings; the OBS export in stream-setup reads the marks.
+// stream.js marks the strings.
 
 // field → where its text is in a scene. "wrap" hides the element's own text
 // and keeps its chrome (the live square, the timer); "self" hides the element.
@@ -16,7 +16,7 @@ export const NATIVE = {
   socials: [".sd-scene-bar-end", "self"],
 };
 
-export const CHROME = ".sd-live, [data-sd-timer]";
+const CHROME = ".sd-live, [data-sd-timer]";
 
 export function markNative(scene) {
   for (const [field, [selector, how]] of Object.entries(NATIVE)) {
@@ -35,22 +35,4 @@ export function markNative(scene) {
       span.append(...nodes);
     }
   }
-}
-
-// The text a marked element shows, with <br> as a newline and the socials as
-// one line ("X @medalink   YT /medalink").
-export function nativeText(el) {
-  if (el.dataset.native === "socials") {
-    return [...el.children].map((pair) => [...pair.childNodes].map((n) => n.textContent.trim()).filter(Boolean).join(" ")).join("   ");
-  }
-  let text = "";
-  const walk = (node) => {
-    for (const n of node.childNodes) {
-      if (n.nodeType === 3) text += n.data;
-      else if (n.nodeName === "BR") text += "\n";
-      else walk(n);
-    }
-  };
-  walk(el);
-  return text.replace(/[ \t]+/g, " ").trim();
 }
