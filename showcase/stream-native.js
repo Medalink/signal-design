@@ -1,5 +1,5 @@
-// Native text: with ?native, stream.html keeps every replaceable string in its
-// layout but hidden, so OBS Text sources can sit on top and be edited in OBS.
+// Native text: with ?native, stream.html keeps every hand-written string in its
+// layout but hidden (live names stay: the Twitch feed fills them), so OBS Text sources can sit on top and be edited in OBS.
 // stream.js marks the strings.
 
 // field → where its text is in a scene. "wrap" hides the element's own text
@@ -9,8 +9,6 @@ export const NATIVE = {
   away: [".sd-scene-kicker:has([data-sd-timer])", "wrap"],
   title: [".sd-scene-title", "wrap"],
   line: [".sd-scene-line", "wrap"],
-  follow: ['[data-sd-latest="follow"]', "self"],
-  sub: ['[data-sd-latest="sub"]', "self"],
   name: [".sd-cam-tag > span:first-child", "self"],
   goallabel: [".sd-scene-goal-head > span", "self"],
   socials: [".sd-scene-bar-end", "self"],

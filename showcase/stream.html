@@ -27,7 +27,9 @@
     .st-scene { outline: 1px solid var(--sd-line); }
     .st-fire { display: flex; flex-wrap: wrap; gap: 8px; }
     .st-game { inset: 0; display: grid; place-items: center; background: var(--sd-raised); color: var(--sd-fg-faint); font: calc(var(--sd-u) * 28) / 1 var(--sd-font-mono); letter-spacing: 0.3em; }
-    .st-cam-feed { display: grid; place-items: center; background: var(--sd-surface); color: var(--sd-fg-faint); font: calc(var(--sd-u) * 20) / 1 var(--sd-font-mono); letter-spacing: 0.2em; }
+    /* The camera slot rains; an OBS camera source over the slot covers it, and hiding the camera shows it. */
+    .st-cam-feed { position: relative; overflow: hidden; }
+    .st-cam-rain { position: absolute; inset: 0; width: 100%; height: 100%; }
     .st-goal { left: calc(var(--sd-u) * 560); bottom: calc(var(--sd-u) * 40); width: calc(var(--sd-u) * 420); }
 
     /* As an OBS source: only the chosen scene, edge to edge. */
@@ -48,9 +50,10 @@
     /* Game and camera come from OBS sources under this one. */
     html[data-source="game"], [data-source="game"] body { background: transparent; }
     [data-source] .st-cam-feed { background: transparent; color: transparent; }
-    /* ?native: OBS Text sources draw these strings. A latest name keeps a fixed room, since OBS text can be any length. */
+    /* ?native: OBS Text sources draw these strings. */
     [data-source] [data-native] { visibility: hidden; }
-    [data-source] [data-sd-latest][data-native] { inline-size: calc(var(--sd-u) * 240); }
+    /* A latest label waits for a real name. */
+    [data-source] .sd-scene-label[hidden] { display: none; }
   </style>
 </head>
 <body>
@@ -107,7 +110,7 @@
         <span class="sd-scene-label" data-layer="latest" data-tone="success"><span class="sd-scene-label-kind">Sub</span><span data-sd-latest="sub">pixelmoth</span></span>
       </div>
       <div class="sd-cam" data-layer="cam">
-        <div class="sd-cam-feed st-cam-feed" aria-hidden="true">WEBCAM</div>
+        <div class="sd-cam-feed st-cam-feed" aria-hidden="true"><canvas class="sd-rain st-cam-rain" data-sd-rain="play"></canvas></div>
         <div class="sd-cam-tag"><span>Medalink</span><span><span class="sd-live"></span>Live</span></div>
       </div>
       <div class="sd-scene-goal st-goal" data-layer="goal" data-sd-goal="sub" data-value="38" data-max="50">

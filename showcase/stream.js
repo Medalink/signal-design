@@ -1,6 +1,7 @@
 import { mountBar, savedScrollbars } from "./viewport.js";
 import { init, mountStream, ALERT_KINDS } from "../src/js/index.js";
 import { markNative } from "./stream-native.js";
+import { startTwitch } from "./stream-twitch.js";
 
 // As an OBS source (?scene=…) the page is the scene alone: no bar, no remembered theme.
 const source = document.documentElement.dataset.source;
@@ -142,6 +143,65 @@ for (const group of document.querySelectorAll("[data-fire-for]")) {
     const button = event.target.closest("[data-fire]");
     if (button) stream.alert(sample(button.dataset.fire));
   });
+}
+
+// Latest names on air are real ones: the last the feed saw (kept across OBS
+// restarts), else the URL's, else the label waits hidden.
+const LATEST = "sd-latest";
+const known = (() => {
+  try {
+    return JSON.parse(localStorage.getItem(LATEST)) ?? {};
+  } catch {
+    return {};
+  }
+})();
+
+function showLatest(kind, name) {
+  for (const el of scene.querySelectorAll(`[data-sd-latest="${kind}"]`)) {
+    el.textContent = name;
+    const label = el.closest(".sd-scene-label");
+    if (label) label.hidden = false;
+  }
+  known[kind] = name;
+  try {
+    localStorage.setItem(LATEST, JSON.stringify(known));
+  } catch {}
+}
+
+function showGoal(kind, value) {
+  for (const goal of scene.querySelectorAll(`[data-sd-goal="${kind}"]`)) {
+    const max = Number(goal.dataset.max) || 1;
+    const shown = Math.min(max, Math.max(0, value));
+    goal.dataset.value = String(value);
+    [...goal.querySelectorAll(".sd-cells > i")].forEach((cell, i) => cell.toggleAttribute("data-on", i < shown));
+    const label = goal.querySelector("[data-sd-goal-value]");
+    if (label) label.textContent = `${shown} / ${max}`;
+  }
+}
+
+if (scene) {
+  for (const el of scene.querySelectorAll("[data-sd-latest]")) {
+    const kind = el.dataset.sdLatest;
+    if (known[kind]) el.textContent = known[kind];
+    else if (!params.has(kind)) el.closest(".sd-scene-label").hidden = true;
+  }
+  // Sample alerts (?demo) never become the remembered names.
+  if (!params.has("demo")) scene.addEventListener("sd:alert", (event) => showLatest(event.detail.kind, event.detail.name));
+  // ?twitch=<client id> runs the live feed; #rt= carries a new sign-in once.
+  const clientId = params.get("twitch");
+  if (clientId) {
+    startTwitch({
+      clientId,
+      seed: new URLSearchParams(location.hash.slice(1)).get("rt") ?? undefined,
+      onEvent(event) {
+        if (event.type === "alert") streams[source].alert(event.alert);
+        else if (event.type === "latest") showLatest(event.kind, event.name);
+        else if (event.type === "goal") showGoal(event.kind, event.value);
+        else if (event.type === "status") document.documentElement.dataset.twitch = event.ok ? "live" : "error";
+        if (event.type === "status" && !event.ok) console.warn("twitch:", event.note);
+      },
+    });
+  }
 }
 
 if (source) {
