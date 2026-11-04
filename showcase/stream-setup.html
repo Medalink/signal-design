@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en" data-theme="ink" data-page="stream-setup">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Signal Stream Setup</title>
+  <script>
+    try { const t = localStorage.getItem("sd-theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
+  </script>
+  <link rel="stylesheet" href="./app.css">
+  <script type="module" src="./stream-setup.js"></script>
+  <style>
+    /* Page layout only; the controls are library parts. Fits an OBS dock at 350px. */
+    .ss-stack { display: grid; gap: 24px; max-width: 40rem; }
+    .ss-intro { display: grid; gap: 8px; }
+    .ss-intro h1 { margin: 0; font-size: var(--text-xl); font-weight: 400; }
+    .ss-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: 8px; align-items: start; }
+    .ss-layers { display: grid; grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr)); gap: 8px 16px; }
+    .ss-layers label { display: flex; gap: 8px; align-items: center; font: 0.8125rem/1 var(--sd-font-mono); }
+    .ss-url { display: flex; gap: 8px; }
+    .ss-url input { flex: 1; min-width: 0; font: 0.75rem/1.4 var(--sd-font-mono); }
+    .ss-socials { display: grid; gap: 8px; }
+  </style>
+</head>
+<body>
+<a class="sd-skip" href="#main">Skip to content</a>
+
+<main id="main" tabindex="-1" class="sd-page">
+  <div class="ss-stack">
+    <header class="ss-intro">
+      <h1>Stream setup</h1>
+      <p class="sd-muted">Builds Browser Source URLs for <a href="./stream.html">stream.html</a>: the full scene, or one URL per layer to stack as transparent sources in OBS. The page works as a Custom Browser Dock.</p>
+    </header>
+
+    <div class="sd-field">
+      <label class="sd-field-label" for="load-url">Load from a URL</label>
+      <div class="sd-input-group">
+        <input id="load-url" type="url" inputmode="url" autocomplete="off" placeholder="Paste a stream.html URL">
+        <button type="button" class="sd-btn" id="load-btn">Load</button>
+      </div>
+      <p class="sd-field-hint">Fills the form from an existing source URL.</p>
+    </div>
+
+    <div class="sd-field">
+      <span class="sd-field-label" id="scene-label">Scene</span>
+      <div class="sd-seg sd-seg-wrap" role="group" aria-labelledby="scene-label" id="scene-seg">
+        <button type="button" data-scene="start" aria-pressed="false">Starting soon</button>
+        <button type="button" data-scene="game" aria-pressed="false">In game</button>
+        <button type="button" data-scene="brb" aria-pressed="false">Be right back</button>
+        <button type="button" data-scene="end" aria-pressed="false">Ending</button>
+      </div>
+    </div>
+
+    <div class="sd-field">
+      <label class="sd-field-label" for="f-kicker">Kicker</label>
+      <input id="f-kicker" type="text" autocomplete="off" placeholder="Stream starting">
+      <p class="sd-field-hint">First small line. <b>x</b> bolds; a newline breaks.</p>
+    </div>
+    <div class="sd-field">
+      <label class="sd-field-label" for="f-title">Title</label>
+      <input id="f-title" type="text" autocomplete="off" placeholder="Starting&#10;soon">
+      <p class="sd-field-hint">Big line: <b>x</b> bolds; a newline breaks.</p>
+    </div>
+    <div class="sd-field">
+      <label class="sd-field-label" for="f-line">Line</label>
+      <input id="f-line" type="text" autocomplete="off" placeholder="Tonight: *ranked to Diamond*">
+    </div>
+    <div class="sd-field">
+      <label class="sd-field-label" for="f-away">Away word (BRB)</label>
+      <input id="f-away" type="text" autocomplete="off" placeholder="Away">
+      <p class="sd-field-hint">The word before the count-up timer.</p>
+    </div>
+    <div class="sd-field">
+      <label class="sd-field-label" for="f-timer">Timer, seconds</label>
+      <input id="f-timer" type="number" inputmode="numeric" min="0" step="1" autocomplete="off" placeholder="300">
+    </div>
+    <div class="ss-row">
+      <div class="sd-field">
+        <label class="sd-field-label" for="f-follow">Latest follow</label>
+        <input id="f-follow" type="text" autocomplete="off" placeholder="nightowl_42">
+      </div>
+      <div class="sd-field">
+        <label class="sd-field-label" for="f-sub">Latest sub</label>
+        <input id="f-sub" type="text" autocomplete="off" placeholder="pixelmoth">
+      </div>
+      <span></span>
+    </div>
+    <div class="ss-row">
+      <div class="sd-field">
+        <label class="sd-field-label" for="f-goal">Goal</label>
+        <input id="f-goal" type="text" autocomplete="off" placeholder="12/50">
+      </div>
+      <div class="sd-field">
+        <label class="sd-field-label" for="f-goallabel">Goal label</label>
+        <input id="f-goallabel" type="text" autocomplete="off" placeholder="Sub goal">
+      </div>
+      <span></span>
+    </div>
+    <div class="sd-field">
+      <label class="sd-field-label" for="f-name">Cam name</label>
+      <input id="f-name" type="text" autocomplete="off" placeholder="Medalink">
+    </div>
+
+    <div class="sd-field">
+      <span class="sd-field-label" id="socials-label">Socials</span>
+      <div class="ss-socials" id="socials-rows"></div>
+      <div class="ss-url" style="margin-top: 8px">
+        <button type="button" class="sd-btn sd-btn-sm" id="socials-add">Add a social</button>
+      </div>
+      <p class="sd-field-hint">Label and value, split on the first colon. No rows leaves them off the air.</p>
+    </div>
+
+    <div class="sd-field">
+      <span class="sd-field-label" id="layers-label">Layers</span>
+      <div class="ss-layers" role="group" aria-labelledby="layers-label" id="layer-checks"></div>
+      <p class="sd-field-hint">Leave all on for the full scene; the URLs below are one layer each.</p>
+    </div>
+
+    <div class="sd-field">
+      <label class="sd-field-label" for="out-full">Full scene URL</label>
+      <div class="ss-url">
+        <input id="out-full" type="text" readonly>
+        <button type="button" class="sd-btn sd-btn-sm" data-copy="out-full">Copy</button>
+      </div>
+    </div>
+
+    <div id="out-layers" class="grid gap-4"></div>
+  </div>
+</main>
+</body>
+</html>
