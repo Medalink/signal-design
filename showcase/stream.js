@@ -1,5 +1,5 @@
 import { mountBar, savedScrollbars } from "./viewport.js";
-import { init, mountStream, ALERT_KINDS } from "../src/js/index.js";
+import { init, mountStream, ALERT_KINDS, setMood, lookAt } from "../src/js/index.js";
 import { markNative } from "./stream-native.js";
 import { startTwitch } from "./stream-twitch.js";
 
@@ -197,11 +197,88 @@ if (scene) {
         if (event.type === "alert") streams[source].alert(event.alert);
         else if (event.type === "latest") showLatest(event.kind, event.name);
         else if (event.type === "goal") showGoal(event.kind, event.value);
-        else if (event.type === "status") document.documentElement.dataset.twitch = event.ok ? "live" : "error";
+        else if (event.type === "status") {
+          document.documentElement.dataset.twitch = event.ok ? "live" : "error";
+          feedState(event.ok);
+        }
         if (event.type === "status" && !event.ok) console.warn("twitch:", event.note);
       },
     });
   }
+}
+
+// IRIS on the camera frame: a mood for each alert, a look around between
+// them, asleep after a long quiet spell, offline while the Twitch feed is down.
+const REACT = { follow: "happy", sub: "happy", bits: "curious", raid: "alert" };
+const QUIET = 20 * 60000;
+const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const irises = [];
+
+for (const el of document.querySelectorAll(".st-cam-mascot")) {
+  const iris = { el, rest: "calm", back: 0, quiet: 0 };
+  const show = (mood, tone) => {
+    setMood(el, mood);
+    el.setAttribute("aria-label", `IRIS, ${mood}`);
+    if (tone) el.dataset.tone = tone;
+    else delete el.dataset.tone;
+  };
+  iris.settle = () => {
+    el.removeAttribute("aria-busy");
+    show(iris.rest);
+    clearTimeout(iris.quiet);
+    iris.quiet = setTimeout(() => iris.rest === "calm" && show("sleepy"), QUIET);
+  };
+  iris.feed = (ok) => {
+    const rest = ok ? "calm" : "offline";
+    if (rest === iris.rest) return;
+    iris.rest = rest;
+    if (!el.hasAttribute("aria-busy")) iris.settle();
+  };
+  el.closest("[data-scene]").addEventListener("sd:alert", (event) => {
+    clearTimeout(iris.back);
+    show(REACT[event.detail.kind] ?? "happy", event.detail.tone);
+    el.setAttribute("aria-busy", "true");
+    lookAt(el, 1, -1);
+    iris.back = setTimeout(iris.settle, 6000);
+  });
+  if (!still) walk(el);
+  iris.settle();
+  irises.push(iris);
+}
+
+// Back and forth along the frame in pixel steps with a bob, eyes on the way
+// ahead. It stops to look around at an edge now and then, and stands still
+// while it reacts or sleeps.
+function walk(el) {
+  const frame = el.closest(".sd-cam");
+  let x = 0;
+  let dir = 1;
+  let bob = false;
+  let rest = 0;
+  setInterval(() => {
+    const u = frame.getBoundingClientRect().width / 480;
+    const max = Math.max(0, frame.getBoundingClientRect().width - el.getBoundingClientRect().width - 32 * u);
+    const standing = el.hasAttribute("aria-busy") || el.dataset.mood === "sleepy" || el.dataset.mood === "offline";
+    if (standing || rest > 0) {
+      rest = Math.max(0, rest - 1);
+      bob = false;
+      if (rest && !standing && rest % 12 === 0) lookAt(el, Math.floor(Math.random() * 3) - 1, -Math.round(Math.random()));
+    } else {
+      x += dir * 4 * u;
+      bob = !bob;
+      lookAt(el, dir, 0);
+      if (x <= 0 || x >= max) {
+        x = Math.min(max, Math.max(0, x));
+        dir = -dir;
+        if (Math.random() < 0.4) rest = 20 + Math.floor(Math.random() * 30);
+      }
+    }
+    el.style.translate = `${Math.round(x)}px ${bob ? Math.round(-3 * u) : 0}px`;
+  }, 110);
+}
+
+function feedState(ok) {
+  for (const iris of irises) iris.feed(ok);
 }
 
 if (source) {

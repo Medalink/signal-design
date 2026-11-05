@@ -30,6 +30,8 @@
     /* The camera slot rains; an OBS camera source over the slot covers it, and hiding the camera shows it. */
     .st-cam-feed { position: relative; overflow: hidden; }
     .st-cam-rain { position: absolute; inset: 0; width: 100%; height: 100%; }
+    /* IRIS walks along the top of the camera frame; stream.js moves it with translate. */
+    .st-cam-mascot { position: absolute; left: calc(var(--sd-u) * 16); bottom: 100%; --sd-mascot-size: calc(var(--sd-u) * 112); }
     .st-goal { left: calc(var(--sd-u) * 560); bottom: calc(var(--sd-u) * 40); width: calc(var(--sd-u) * 420); }
 
     /* As an OBS source: only the chosen scene, edge to edge. */
@@ -50,6 +52,9 @@
     /* Game and camera come from OBS sources under this one. */
     html[data-source="game"], [data-source="game"] body { background: transparent; }
     [data-source] .st-cam-feed { background: transparent; color: transparent; }
+    /* As an OBS source the camera sits under the page: the slot is clear and the rain falls over the camera. */
+    [data-source] .sd-cam:has(.st-cam-feed) { background: transparent; }
+    [data-source] .st-cam-rain { --sd-shell-bg: transparent; opacity: 0.7; }
     /* ?native: OBS Text sources draw these strings. */
     [data-source] [data-native] { visibility: hidden; }
     /* A latest label waits for a real name. */
@@ -110,6 +115,7 @@
         <span class="sd-scene-label" data-layer="latest" data-tone="success"><span class="sd-scene-label-kind">Sub</span><span data-sd-latest="sub">pixelmoth</span></span>
       </div>
       <div class="sd-cam" data-layer="cam">
+        <span class="sd-mascot st-cam-mascot" data-sd-mascot="iris" data-mood="calm" role="img" aria-label="IRIS, calm"></span>
         <div class="sd-cam-feed st-cam-feed" aria-hidden="true"><canvas class="sd-rain st-cam-rain" data-sd-rain="play"></canvas></div>
         <div class="sd-cam-tag"><span>Medalink</span><span><span class="sd-live"></span>Live</span></div>
       </div>

@@ -351,6 +351,9 @@ export function createRainRenderer(
   // texture without competing with the page.
   function drawStatic() {
     clipToOpen();
+    // Clear first: a transparent background (rain over a camera) would
+    // otherwise keep every earlier frame.
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     const canvasH = canvas.height;
@@ -381,6 +384,9 @@ export function createRainRenderer(
 
   function draw(deltaTime) {
     clipToOpen();
+    // Clear first: a transparent background (rain over a camera) would
+    // otherwise keep every earlier frame.
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
