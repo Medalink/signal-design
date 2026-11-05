@@ -156,12 +156,21 @@ const known = (() => {
   }
 })();
 
-function showLatest(kind, name) {
-  for (const el of scene.querySelectorAll(`[data-sd-latest="${kind}"]`)) {
-    el.textContent = name;
-    const label = el.closest(".sd-scene-label");
-    if (label) label.hidden = false;
+// A new follower shows for 10 s, then its label hides again; a sub stays up.
+const FLASH = { follow: 10000 };
+const flashing = {};
+
+const latestLabels = (kind) => [...scene.querySelectorAll(`[data-sd-latest="${kind}"]`)].map((el) => el.closest(".sd-scene-label")).filter(Boolean);
+
+function showLatest(kind, name, { live = false, keep = true } = {}) {
+  for (const el of scene.querySelectorAll(`[data-sd-latest="${kind}"]`)) el.textContent = name;
+  const flash = FLASH[kind];
+  if (!flash || live) for (const label of latestLabels(kind)) label.hidden = false;
+  if (flash && live) {
+    clearTimeout(flashing[kind]);
+    flashing[kind] = setTimeout(() => latestLabels(kind).forEach((label) => (label.hidden = true)), flash);
   }
+  if (!keep) return;
   known[kind] = name;
   try {
     localStorage.setItem(LATEST, JSON.stringify(known));
@@ -183,10 +192,10 @@ if (scene) {
   for (const el of scene.querySelectorAll("[data-sd-latest]")) {
     const kind = el.dataset.sdLatest;
     if (known[kind]) el.textContent = known[kind];
-    else if (!params.has(kind)) el.closest(".sd-scene-label").hidden = true;
+    if (FLASH[kind] || (!known[kind] && !params.has(kind))) el.closest(".sd-scene-label").hidden = true;
   }
-  // Sample alerts (?demo) never become the remembered names.
-  if (!params.has("demo")) scene.addEventListener("sd:alert", (event) => showLatest(event.detail.kind, event.detail.name));
+  // Sample alerts (?demo) show but never become the remembered names.
+  scene.addEventListener("sd:alert", (event) => showLatest(event.detail.kind, event.detail.name, { live: true, keep: !params.has("demo") }));
   // ?twitch=<client id> runs the live feed; #rt= carries a new sign-in once.
   const clientId = params.get("twitch");
   if (clientId) {
