@@ -1,10 +1,10 @@
 /**
- * What every library page shares: the Preview / Code flip on each block, rail
- * sections that open their sidebar, remembered group folds and the current
- * page's link scrolled into view in the sidebar. Theme, chart
- * colors, scrollbars and rain live in the showcase bar (viewport.js). A page
- * module calls mountLibrary() first, before any demo code, so the snapshots
- * below capture each block's markup as authored.
+ * What every library page shares: the Preview / Code flip driven by the
+ * toolbar's single pair, the sidebar page filter, the phone drawer and the
+ * Ctrl K shortcut that focuses the filter. Theme, chart colors, scrollbars
+ * and rain live in the showcase bar (viewport.js). A page module calls
+ * mountLibrary() first, before any demo code, so the snapshots below capture
+ * each block's markup as authored.
  */
 import { mountBar, savedScrollbars } from "./viewport.js";
 import { init } from "../src/js/index.js";
@@ -55,11 +55,6 @@ function decorateBlocks(blocks) {
     head.className = "demo-head";
     title.replaceWith(head);
     head.append(title);
-    const toggle = document.createElement("div");
-    toggle.className = "sd-seg sd-seg-sm sd-seg-inline";
-    toggle.setAttribute("aria-label", `${title.textContent}: view`);
-    toggle.innerHTML = `<button type="button" data-view="preview" aria-pressed="true">Preview</button><button type="button" data-view="code" aria-pressed="false">Code</button>`;
-    head.append(toggle);
 
     const code = document.createElement("div");
     code.className = "demo-code";
@@ -74,64 +69,88 @@ function decorateBlocks(blocks) {
 
   function setView(block, view) {
     block.dataset.view = view;
-    for (const b of block.querySelectorAll(":scope > .demo-head [data-view]")) b.setAttribute("aria-pressed", String(b.dataset.view === view));
-    // The preview shell's Preview/Code tabs read the same state: pressed only when every block agrees.
-    const all = blocks.every((b) => b.dataset.view === "code");
-    const none = blocks.every((b) => b.dataset.view !== "code");
-    for (const b of document.querySelectorAll(".doc-preview-bar [data-code-all]"))
-      b.setAttribute("aria-pressed", String(b.dataset.codeAll === "code" ? all : none));
   }
+  // One control flips every block: the toolbar's Preview / Code pair. The
+  // seg's own wiring keeps its aria-pressed current.
   document.addEventListener("click", (event) => {
-    const b = event.target.closest(".demo-head [data-view]");
-    if (b) setView(b.closest(".demo-block"), b.dataset.view);
     const all = event.target.closest("[data-code-all]");
     if (all) for (const block of blocks) setView(block, all.dataset.codeAll);
   });
 }
 
-/* ---- Rail and sidebar ---------------------------------------------------- */
+/* ---- Sidebar: filter, phone drawer, Ctrl K ------------------------------- */
 
-// A section opens its first page while the sidebar is pinned beside the page.
-// Collapsed, on a tablet or in the phone drawer, the click stays on the rail
-// and the shell shows that section's pages instead.
-function wireRail() {
-  document.getElementById("shell-rail")?.addEventListener("click", (event) => {
-    const item = event.target.closest(".sd-rail-item[data-sd-section]");
-    if (item && (item.closest(".sd-shell").dataset.sidebar === "collapsed" || !matchMedia("(min-width: 64rem)").matches)) event.preventDefault();
-  });
-}
+function wireSidebar() {
+  const sidebar = document.getElementById("doc-sidebar");
+  const filter = document.getElementById("doc-filter");
+  const nav = document.getElementById("doc-nav");
+  if (!sidebar || !filter || !nav) return;
 
-// Folded groups stay folded from page to page; the group holding the current page always opens.
-const FOLDED = "sd-showcase-folded";
-function rememberFolds() {
-  let folded = [];
-  try {
-    folded = JSON.parse(localStorage.getItem(FOLDED)) || [];
-  } catch {
-    /* storage blocked */
-  }
-  for (const group of document.querySelectorAll("#library-sidebar .sd-sidebar-group")) {
-    if (folded.includes(group.dataset.group) && !group.querySelector('[aria-current="page"]')) group.open = false;
-    group.addEventListener("toggle", () => {
-      folded = folded.filter((key) => key !== group.dataset.group).concat(group.open ? [] : [group.dataset.group]);
-      try {
-        localStorage.setItem(FOLDED, JSON.stringify(folded));
-      } catch {
-        /* storage blocked */
+  // The filter hides the links that do not match, then the group headings and
+  // section labels with nothing left under them.
+  const empty = document.createElement("p");
+  empty.className = "doc-nav-empty";
+  empty.hidden = true;
+  empty.textContent = "No pages match.";
+  nav.append(empty);
+  filter.addEventListener("input", () => {
+    const q = filter.value.trim().toLowerCase();
+    for (const section of nav.querySelectorAll(".doc-nav-section")) {
+      let sectionAny = false;
+      for (const group of section.querySelectorAll(".doc-nav-group")) {
+        let groupAny = false;
+        for (const link of group.querySelectorAll(".doc-nav-link")) {
+          const hit = !q || link.textContent.toLowerCase().includes(q);
+          link.hidden = !hit;
+          groupAny ||= hit;
+        }
+        group.hidden = !groupAny;
+        sectionAny ||= groupAny;
       }
-    });
-  }
+      section.hidden = !sectionAny;
+    }
+    empty.hidden = !!nav.querySelector(".doc-nav-link:not([hidden])");
+  });
+
+  // The phone drawer: the topbar button and the sidebar's close button toggle
+  // it, the scrim click and Esc close it, and the article is inert while it
+  // is open. A resize up to desktop closes it.
+  const main = document.getElementById("main");
+  const toggles = [...document.querySelectorAll("[data-doc-nav]")];
+  const isOpen = () => document.body.dataset.docNav === "open";
+  const open = (on) => {
+    if (on) document.body.dataset.docNav = "open";
+    else delete document.body.dataset.docNav;
+    for (const b of toggles) b.setAttribute("aria-expanded", String(on));
+    if (main) main.inert = on;
+  };
+  document.addEventListener("click", (event) => {
+    if (event.target.closest("[data-doc-nav]")) open(!isOpen());
+    else if (event.target.closest("[data-doc-nav-close]")) open(false);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && isOpen()) open(false);
+  });
+  matchMedia("(min-width: 64rem)").addEventListener("change", (m) => m.matches && isOpen() && open(false));
+
+  // Ctrl K focuses the filter — except where the page's own command palette
+  // claims the key.
+  document.addEventListener("keydown", (event) => {
+    if (event.key.toLowerCase() !== "k" || !(event.ctrlKey || event.metaKey) || event.altKey || event.repeat) return;
+    if (document.querySelector(".demo-block dialog[data-sd-palette]")) return;
+    event.preventDefault();
+    if (matchMedia("(max-width: 63.99rem)").matches) {
+      open(true);
+    } else {
+      filter.focus();
+    }
+  });
+
+  // The current page's link starts in view inside the sidebar.
+  nav.querySelector('.doc-nav-link[aria-current="page"]')?.scrollIntoView({ block: "nearest" });
 }
 
-function revealCurrent() {
-  const link = document.querySelector('#library-sidebar .sd-sidebar-link[aria-current="page"]');
-  const body = link?.closest(".sd-sidebar-body");
-  if (!body) return;
-  const top = link.getBoundingClientRect().top - body.getBoundingClientRect().top;
-  if (top + link.offsetHeight > body.clientHeight) body.scrollTop = top - body.clientHeight / 3;
-}
-
-/** Wire the page shell. Call first: it snapshots the blocks, then runs init(). */
+/** Wire the page. Call first: it snapshots the blocks, then runs init(). */
 export function mountLibrary() {
   mountBar();
   const blocks = [...document.querySelectorAll(".demo-block")];
@@ -139,7 +158,5 @@ export function mountLibrary() {
   // An old section link (#tokens) lands on a page with no such anchor: show the page from its top.
   if (location.hash && !document.getElementById(decodeURIComponent(location.hash.slice(1)))) history.replaceState(null, "", location.pathname + location.search);
   init({ scrollbars: savedScrollbars() });
-  wireRail();
-  rememberFolds();
-  revealCurrent();
+  wireSidebar();
 }

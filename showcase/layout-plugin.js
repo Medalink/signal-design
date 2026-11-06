@@ -1,10 +1,12 @@
 /**
  * Vite plugin: wraps each library page (and the overview) in shared chrome. A
- * page file holds only its content in <body>; the head, rail, sidebar, page
- * header, pager, nav palette and aside come from here and from pages.js, so
- * the served and built HTML is static and no page copies the chrome. Library
- * pages get the App Shell (layout.html); the overview gets the landing
- * chrome: a topbar, then a full-width marketing page (layout-landing.html).
+ * page file holds only its content in <body>; the head, topbar, doc sidebar,
+ * page header, pager and on-this-page rail come from here and from pages.js,
+ * so the served and built HTML is static and no page copies the chrome.
+ * Library pages are uiarc-style documents (layout.html): a sticky topbar, a
+ * fixed filter sidebar, the article and a sticky toc rail on normal page
+ * scroll. The overview gets the landing chrome: a topbar, then a full-width
+ * marketing page (layout-landing.html).
  */
 import { existsSync, readFileSync } from "node:fs";
 import { basename, resolve } from "node:path";
@@ -29,57 +31,33 @@ export const ICONS = [
   symbol("home", '<path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/>'),
   symbol("panel", '<rect x="2" y="2.5" width="12" height="11"/><path d="M10 2.5v11"/>', "0 0 16 16", "1.3"),
   `    <symbol id="i-theme" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16"/><rect x="12" y="4" width="8" height="16" fill="currentColor" fill-opacity=".45" stroke="none"/></symbol>`,
+  `    <symbol id="i-github" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/></symbol>`,
 ].join("\n");
 
 const current = (on) => (on ? ' aria-current="page"' : "");
-/** Where a section's rail item goes: its first page, or for the examples, their cards on the overview. */
+/** Where a section's first page is, for the topbar breadcrumb and the landing anchors. */
 const landing = (section) => (section.groups[0].pages[0].id ? section.groups[0].pages[0].file : `${HOME.file}#home-${section.id}`);
 
 /** The module a page loads: the overview's, the page's own `pages/<id>.js`, or the shared mount. */
 export const scriptOf = (page) => (page === HOME ? "pages/home.js" : existsSync(resolve(dir, `pages/${page.id}.js`)) ? `pages/${page.id}.js` : "mount.js");
 
 /**
- * The rail: home, search, then one item per section. A section
- * opens its first page while the sidebar is pinned beside the page; otherwise
- * library.js keeps the click on the rail so the section's sidebar peeks in.
+ * The uiarc-style doc sidebar body: one plain section label per library
+ * section (Foundations, Components, …, Examples), then subgroup headings
+ * with their page count over the page links. The current page takes
+ * aria-current and fg emphasis.
  */
-function rail(page) {
-  const items = SECTIONS.map(
-    (s) =>
-      `      <a class="sd-rail-item" href="./${landing(s)}" data-sd-section="${s.id}"${s === page.section ? ' aria-current="true"' : ""}><svg><use href="#i-${s.icon}"/></svg><span>${s.label}</span></a>`,
-  ).join("\n");
-  return `  <nav class="sd-rail" id="shell-rail" aria-label="Sections" data-sd-ornaments="bottom" data-sd-ornaments-size="200">
-    <a class="sd-rail-home" href="./${HOME.file}" aria-label="Signal home"${current(page === HOME)}><svg class="sd-mark"><use href="#i-mark"/></svg></a>
-    <button class="sd-rail-item" style="margin-top:8px" data-sd-open="nav-palette"{{search_key}} aria-label="{{search_label}}"><svg><use href="#i-search"/></svg>{{search_kbd}}</button>
-    <div class="sd-rail-sep" style="margin-block:8px"></div>
-    <div class="sd-rail-list">
-${items}
-    </div>
-  </nav>`;
-}
-
-/**
- * One panel per section: its pages under folding text groups, each with its
- * page count. The current page's section shows; the overview shows the first.
- */
-function sidebar(page) {
-  const shown = page.section ?? SECTIONS[0];
-  const link = (p) => `          <a class="sd-sidebar-link" href="./${p.file}"${current(p === page)}>${p.title}</a>`;
-  const group = (s, g) => `        <details class="sd-sidebar-group" open data-group="${s.id}/${g.title}">
-          <summary>${g.title} <span class="sd-count">${g.pages.length}</span></summary>
+function docNav(page) {
+  const link = (p) => `        <a class="doc-nav-link" href="./${p.file}"${current(p === page)}>${p.title}</a>`;
+  const group = (g) => `      <div class="doc-nav-group" data-group="${g.title}">
+        <p class="doc-nav-sub">${g.title} <span class="sd-count">${g.pages.length}</span></p>
 ${g.pages.map(link).join("\n")}
-        </details>`;
-  const panel = (s) => `    <div class="sd-sidebar-panel" data-section="${s.id}"${s === shown ? "" : " hidden"}>
-      <div class="sd-sidebar-head"><svg><use href="#i-${s.icon}"/></svg><span class="sd-sidebar-title">${s.title}</span>
-        <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="sidebar" data-sd-key="[" aria-label="Collapse sidebar"><svg><use href="#i-collapse"/></svg></button></div>
-      <nav class="sd-sidebar-body" data-sd-ornaments="bottom" data-sd-ornaments-size="200" aria-label="${s.title} pages">
-${s.groups.map((g) => group(s, g)).join("\n")}
-      </nav>
+      </div>`;
+  const section = (s) => `    <div class="doc-nav-section" data-section="${s.id}">
+      <p class="doc-nav-heading">${s.title}</p>
+${s.groups.map(group).join("\n")}
     </div>`;
-  return `  <aside class="sd-sidebar" id="library-sidebar" aria-label="Section pages">
-${SECTIONS.map(panel).join("\n")}
-    <div class="sd-sidebar-resize" role="separator" aria-orientation="vertical" aria-label="Resize sidebar" aria-controls="library-sidebar" aria-valuemin="224" aria-valuemax="480" aria-valuenow="288" tabindex="0" data-sd-shell="resize"></div>
-  </aside>`;
+  return SECTIONS.map(section).join("\n");
 }
 
 /** The page-level palette: every page under its group, from the registry. It is not a demo block. */
@@ -98,28 +76,22 @@ ${label("Actions")}
 </dialog>`;
 }
 
-/** The right panel holds only what applies to this page: every block as code or as a preview. Theme, chart colors, scrollbars and rain live in the showcase bar. */
-/** The right panel is the "On this page" rail: anchors to the page's sections, then the code-view buttons. */
+/** The toc rail beside the article: "On this page" anchors, then the Markdown link and a way back to the top. Quiet text on the page background, no frame. */
 const asideFor = (page) => {
   const links = pageSections(page)
     .map(([id, label, sub]) => `        <a href="#${id}"${sub ? ' class="doc-toc-sub"' : ""}>${label}</a>`)
     .join("\n");
-  return `  <aside class="sd-shell-aside" id="settings-panel" aria-label="On this page">
-    <div class="sd-shell-aside-head"><span class="flex-1">On this page</span>
-      <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="aside" aria-label="Collapse on this page"><svg><use href="#i-close"/></svg></button></div>
-    <div class="sd-shell-aside-section">
-      <nav class="doc-toc" aria-label="On this page">
+  return `  <aside class="doc-toc-rail" aria-label="On this page">
+    <p class="doc-toc-label">On this page</p>
+    <nav class="doc-toc" aria-label="Page sections">
 ${links}
-      </nav>
+    </nav>
+    <div class="doc-toc-foot">
+      <a href="https://github.com/Medalink/signal-design/blob/main/llms-full.txt">View as Markdown</a>
+      <a href="#main">Back to top</a>
     </div>
-    <div class="sd-shell-aside-section sd-actions"><button class="sd-btn sd-btn-sm" data-code-all="code">Show all code</button><button class="sd-btn sd-btn-sm sd-btn-ghost" data-code-all="preview">Show all previews</button></div>
   </aside>`;
 };
-const asideButton = `      <div class="sd-shell-header-end">
-        <button class="sd-btn sd-btn-sm" data-sd-shell="aside" data-sd-key="]" aria-controls="settings-panel" data-sd-tip="On this page (])" data-sd-tip-side="bottom" aria-label="Toggle the on-this-page panel"><svg><use href="#i-panel"/></svg><span class="sd-desktop-only">On this page</span> <kbd>]</kbd></button>
-      </div>`;
-const asideHint = `    <span><kbd>]</kbd> on this page</span>
-`;
 
 const blockCount = (file) => (readFileSync(resolve(dir, file), "utf8").match(/<div class="demo-block"/g) || []).length;
 const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
@@ -373,10 +345,10 @@ function docHtml(page) {
   return parts.join("\n\n");
 }
 
-/** The preview shell around a page's demo blocks: a Preview/Code toolbar over a canvas. The seg buttons carry data-code-all, the same state the per-block toggles and the aside's "Show all" buttons drive, so there is one writer: the click handler in library.js. */
+/** The preview shell around a page's demo blocks: a Preview/Code toolbar over one canvas. The toolbar pair is the only toggle on the page: data-sd-seg keeps its pressed state, and the click handler in library.js flips every block from data-code-all. */
 const previewShell = (blocks) => `  <div class="doc-preview">
     <div class="doc-preview-bar">
-      <div class="sd-seg sd-seg-sm sd-seg-inline" aria-label="Preview or code">
+      <div class="sd-seg sd-seg-sm sd-seg-inline" data-sd-seg aria-label="Preview or code">
         <button type="button" data-code-all="preview" aria-pressed="true">Preview</button>
         <button type="button" data-code-all="code" aria-pressed="false">Code</button>
       </div>
@@ -390,7 +362,8 @@ ${blocks}
 /** A library page: its group and title over its content, the demo blocks in the preview shell, then the doc sections, then the pages either side. */
 function libraryContent(page, body) {
   const intro = page.doc?.intro;
-  const title = `<div class="demo-title"><p class="sd-label">${page.group.title}</p><h1 id="${page.id}-h" class="sd-display">${page.title}</h1>${intro ? `\n      <p class="sd-lead max-w-[42rem]">${intro}</p>` : ""}</div>`;
+  const copyPage = page.doc?.usage ? `\n        <button class="sd-btn sd-btn-sm" data-sd-copy="#doc-usage">Copy page</button>` : "";
+  const title = `<div class="demo-title"><p class="sd-label">${page.group.title}</p><h1 id="${page.id}-h" class="sd-display">${page.title}</h1>${intro ? `\n      <p class="sd-lead max-w-[42rem]">${intro}</p>` : ""}\n      <div class="doc-header-row">\n        <div class="doc-install-pill"><code id="doc-header-cmd">pnpm add github:Medalink/signal-design</code><button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#doc-header-cmd">Copy</button></div>${copyPage}\n      </div></div>`;
   let header;
   let blocks = body;
   if (blocks.startsWith('<header class="demo-intro">')) {
@@ -404,7 +377,7 @@ function libraryContent(page, body) {
   const doc = docHtml(page);
   const { prev, next } = neighbors(page);
   const step = (p, rel, side) =>
-    p ? `    <a class="sd-link-card" href="./${p.file}" rel="${rel}"><span class="sd-link-card-site">${side}</span><span class="sd-link-card-title">${p.title}</span></a>` : "    <span></span>";
+    p ? `    <a class="doc-pager-link" href="./${p.file}" rel="${rel}"><span>${side}</span><span class="doc-pager-title">${p.title}</span></a>` : "    <span></span>";
   return `  <section class="demo-section" id="${page.id}" aria-labelledby="${page.id}-h">
   ${content}
   </section>
@@ -428,31 +401,22 @@ export function renderPage(page, html) {
     ? libraryContent(page, body)
     : body.replace("<!--@lead-->", homeLead()).replace("<!--@cards-->", homeCards(cards()));
   const title = library ? `${page.title} · Signal design library` : "Signal design library";
-  const own = /<dialog[^>]*data-sd-palette/.test(content);
   const fill = {
     icons: ICONS,
-    label: library ? page.title : "Library",
     crumbs: library
       ? [
-          `<li><a href="./${landing(page.section)}"><svg><use href="#i-${page.section.icon}"/></svg> ${page.section.title}</a></li>`,
+          `<li><a href="./${landing(page.section)}">${page.section.title}</a></li>`,
           `<li><span>${page.group.title}</span></li>`,
           `<li><span aria-current="page">${page.title}</span></li>`,
         ].join("\n          ")
       : `<li><span aria-current="page">Overview</span></li>`,
-    // A page whose own content has a command palette keeps Ctrl K for it.
-    search_key: own ? "" : ' data-sd-key="mod+k" aria-keyshortcuts="Control+K"',
-    search_label: "Go to a page",
-    search_kbd: own ? "" : "<span><kbd>Ctrl K</kbd></span>",
-    rail: rail(page),
-    sidebar: sidebar(page),
+    sidebar: docNav(page),
     aside: library ? asideFor(page) : "",
-    aside_button: library ? asideButton : "",
-    aside_hint: library ? asideHint : "",
     palette: palette(),
   };
   const fillIn = (text) => text.replace(/\{\{(\w+)\}\}/g, (_, key) => (key in fill ? fillIn(fill[key]) : `{{${key}}}`));
   // The page content goes in verbatim: it is never read as a template.
-  // Library pages sit in the App Shell; the overview is the landing template.
+  // Library pages are uiarc-style documents; the overview is the landing template.
   const [before, after] = (library ? template() : landingTemplate()).split("{{content}}");
   return `<!doctype html>
 <html lang="en" data-theme="ink" data-page="${keyOf(page)}">

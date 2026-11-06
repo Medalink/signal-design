@@ -5,15 +5,270 @@
 
 /* Showcase-only chrome. */
 @layer components {
-  /* Inside the shell the content box scrolls; keep a readable width. */
-  .demo-wrap {
-    max-width: 64rem;
+  /* ---- Doc page chrome (layout.html): a uiarc-style docs page ----------- */
+  /* Library pages are documents on normal page scroll: a sticky topbar, a
+     fixed filter sidebar, the article beside a sticky on-this-page rail.
+     Tone separates the regions; an edge shadow where a fixed region meets
+     what scrolls beside it. */
+  :root {
+    --doc-topbar-h: 3.25rem;
+    --doc-sidebar-w: 16.5rem;
   }
-  .demo-wrap > .sd-header {
-    padding-block: 8px 40px;
+  /* The showcase bar stays put above the doc chrome on library pages, so the
+     sticky topbar and the fixed sidebar sit at the same offsets at every
+     scroll position. --vp-bar-h comes from .has-vp-bar (the bar mounts on
+     every showcase page). */
+  html[data-page^="lib-"] .vp-bar {
+    position: sticky;
+    top: 0;
+    z-index: 45;
   }
+  .doc-topbar {
+    position: sticky;
+    top: var(--vp-bar-h, 0px);
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: var(--doc-topbar-h);
+    padding: 0 16px;
+    background: var(--sd-surface);
+    box-shadow: var(--sd-edge-below);
+  }
+  .doc-menu-btn {
+    display: none;
+  }
+  .doc-crumbs {
+    min-width: 0;
+    overflow: hidden;
+  }
+  .doc-topbar-end {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 8px;
+    margin-inline-start: auto;
+  }
+  /* The sidebar: full height under the topbar, its own scroll, tone-1 against
+     the page, an edge shadow instead of a border. */
+  .doc-sidebar {
+    position: fixed;
+    top: calc(var(--vp-bar-h, 0px) + var(--doc-topbar-h));
+    bottom: 0;
+    left: 0;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    width: var(--doc-sidebar-w);
+    background: var(--sd-tone-1);
+    box-shadow: var(--sd-edge-right);
+  }
+  .doc-sidebar-head {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 12px 4px;
+  }
+  .doc-search {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+  }
+  #doc-filter {
+    width: 100%;
+    padding-inline-end: 3.6rem;
+    font-size: var(--text-sm);
+  }
+  .doc-search-kbd {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    translate: 0 -50%;
+    pointer-events: none;
+  }
+  /* The native clear button takes the corner once there is text. */
+  #doc-filter:not(:placeholder-shown) ~ .doc-search-kbd {
+    display: none;
+  }
+  .doc-sidebar-close {
+    display: none;
+  }
+  .doc-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 8px 24px;
+  }
+  .doc-nav-heading {
+    margin: 14px 8px 4px;
+    color: var(--sd-fg-faint);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .doc-nav-section + .doc-nav-section {
+    margin-block-start: 6px;
+  }
+  .doc-nav-section[hidden],
+  .doc-nav-group[hidden],
+  .doc-nav-link[hidden] {
+    display: none;
+  }
+  .doc-nav-sub {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 10px 8px 2px;
+    color: var(--sd-fg-muted);
+    font-size: var(--text-xs);
+  }
+  .doc-nav-link {
+    display: block;
+    padding: 5px 10px;
+    color: var(--sd-fg-muted);
+    font-size: var(--text-sm);
+    text-decoration: none;
+  }
+  .doc-nav-link:hover {
+    color: var(--sd-fg);
+    background: var(--sd-tone-2);
+  }
+  .doc-nav-link[aria-current="page"] {
+    color: var(--sd-fg);
+    background: var(--sd-tone-2);
+    font-weight: 500;
+  }
+  .doc-nav-empty {
+    margin: 12px 8px;
+    color: var(--sd-fg-faint);
+    font-size: var(--text-sm);
+  }
+  .doc-scrim {
+    position: fixed;
+    inset: calc(var(--vp-bar-h, 0px) + var(--doc-topbar-h)) 0 0 0;
+    z-index: 25;
+    display: none;
+    background: var(--sd-backdrop);
+  }
+  body[data-doc-nav="open"] .doc-scrim {
+    display: block;
+  }
+  /* The article column and the toc rail beside it, on the page background. */
+  .doc-main {
+    margin-left: var(--doc-sidebar-w);
+    padding: 32px 24px 56px;
+  }
+  .doc-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 12.5rem;
+    gap: 48px;
+    align-items: start;
+    max-width: 77.5rem;
+    margin-inline: auto;
+  }
+  .doc-article {
+    min-width: 0;
+  }
+  .doc-toc-rail {
+    position: sticky;
+    top: calc(var(--vp-bar-h, 0px) + var(--doc-topbar-h) + 24px);
+    display: grid;
+    gap: 2px;
+    align-self: start;
+    max-height: calc(100vh - var(--vp-bar-h, 0px) - var(--doc-topbar-h) - 40px);
+    overflow-y: auto;
+    padding-block-end: 8px;
+  }
+  .doc-toc-label {
+    margin: 0 0 8px;
+    color: var(--sd-fg);
+    font-size: var(--text-xs);
+    font-weight: 500;
+  }
+  .doc-toc-foot {
+    display: grid;
+    gap: 6px;
+    margin-block-start: 20px;
+  }
+  .doc-toc-foot a {
+    color: var(--sd-fg-muted);
+    font-size: var(--text-xs);
+    text-decoration: none;
+  }
+  .doc-toc-foot a:hover {
+    color: var(--sd-fg);
+  }
+  /* The header row: the install pill left, the copy-page button right. */
+  .doc-header-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-block-start: 4px;
+  }
+  .doc-install-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    padding: 4px 4px 4px 12px;
+    background: var(--sd-field-fill);
+    font-family: var(--sd-font-mono);
+    font-size: var(--text-sm);
+  }
+  .doc-install-pill code {
+    overflow-wrap: anywhere;
+  }
+  /* Quiet pager: text, not cards. */
+  .doc-pager-link {
+    display: grid;
+    gap: 2px;
+    color: var(--sd-fg-muted);
+    font-size: var(--text-sm);
+    text-decoration: none;
+  }
+  .doc-pager-link:hover {
+    color: var(--sd-fg);
+  }
+  .doc-pager-link .doc-pager-title {
+    color: var(--sd-fg);
+    font-weight: 500;
+  }
+  .doc-pager-link[rel="next"] {
+    margin-inline-start: auto;
+    text-align: end;
+  }
+  @media (max-width: 68.75rem) {
+    .doc-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .doc-toc-rail {
+      display: none;
+    }
+  }
+  @media (max-width: 63.99rem) {
+    .doc-menu-btn,
+    .doc-sidebar-close {
+      display: inline-flex;
+    }
+    .doc-main {
+      margin-left: 0;
+      padding-inline: 16px;
+    }
+    /* The sidebar becomes an overlay drawer under the topbar. */
+    .doc-sidebar {
+      translate: -100% 0;
+      transition: translate 160ms var(--ease-out);
+      box-shadow: none;
+    }
+    body[data-doc-nav="open"] .doc-sidebar {
+      translate: 0 0;
+      box-shadow: var(--sd-lift);
+    }
+  }
+
   .demo-section {
-    scroll-margin-top: 16px;
+    scroll-margin-top: calc(var(--vp-bar-h, 0px) + var(--doc-topbar-h) + 16px);
     padding-block: 40px 56px;
   }
   /* The top of a library page: its group over its title, then any intro prose. Never a demo block. */
@@ -31,17 +286,15 @@
   .demo-intro > .demo-title > .sd-label {
     margin: 0;
   }
-  /* The pages either side of this one, across groups. */
+  /* The pages either side of this one, across groups. Quiet text, not cards. */
   .demo-pager {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    padding-block: 32px 56px;
-    border-block-start: 1px solid var(--sd-line);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 40px 8px;
   }
-  .demo-pager > [rel="next"] {
-    grid-column: 2;
-    text-align: end;
+  .demo-pager > span:empty {
+    display: none;
   }
   .demo-intro-cols {
     display: grid;
@@ -154,7 +407,7 @@
   }
   /* Doc anatomy sections on a library page, and the lists inside them. */
   .doc-section {
-    scroll-margin-top: 16px;
+    scroll-margin-top: calc(var(--vp-bar-h, 0px) + var(--doc-topbar-h) + 16px);
     padding-block: 32px;
     border-block-start: 1px solid var(--sd-line);
   }
@@ -201,18 +454,10 @@
   }
   .doc-toc a:hover {
     color: var(--sd-fg);
-    background: var(--sd-tone-2);
   }
   /* Named examples under a doc's Examples section. */
   .doc-toc a.doc-toc-sub {
     padding-inline-start: 24px;
-  }
-  /* The library shell's rail column: narrow like a table of contents. The
-     aside starts open (layout.html), so on wide windows it is a persistent
-     column; the ] button collapses it, and below 75rem the shell JS closes
-     it on load so it only floats when asked. */
-  #shell {
-    --shell-aside: 13rem;
   }
   /* The preview shell around a page's demo blocks: a toolbar row over a
      canvas. Tone separates the three surfaces; no lines. */
@@ -236,9 +481,12 @@
     display: grid;
     gap: 14px;
     align-content: safe center;
-    min-height: 26.25rem;
+    min-height: 32.5rem;
     padding: clamp(20px, 3.5vw, 44px);
     background: var(--sd-canvas);
+    /* Wide demos scroll here, like the old shell's content box did, so the
+       document itself never overflows. */
+    overflow-x: auto;
   }
   .doc-install {
     max-width: 42rem;
@@ -251,7 +499,7 @@
   .doc-example {
     display: grid;
     gap: 12px;
-    scroll-margin-top: 16px;
+    scroll-margin-top: calc(var(--vp-bar-h, 0px) + var(--doc-topbar-h) + 16px);
   }
   .doc-example h3 {
     margin: 0;
@@ -292,7 +540,7 @@
     color: var(--sd-fg-subtle);
   }
   .demo-block {
-    scroll-margin-top: 16px;
+    scroll-margin-top: calc(var(--vp-bar-h, 0px) + var(--doc-topbar-h) + 16px);
   }
   /* Preview / code flip, in place. */
   /* The icon set: one cell per icon with its name. */

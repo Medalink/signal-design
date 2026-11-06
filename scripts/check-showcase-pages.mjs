@@ -1,9 +1,9 @@
 /**
  * Structure checks for the showcase pages: every library page carries the
- * shared chrome and says where it is in the rail, the sidebar and the
- * crumbs, Ctrl K belongs to exactly one palette, Chart.js loads only where
- * charts are, and old links land on the page that holds them now.
- * Called from scripts/check.mjs.
+ * shared doc chrome, says where it is in the sidebar and the topbar crumbs,
+ * and Ctrl K focuses the sidebar filter unless the page owns a palette.
+ * Chart.js loads only where charts are, and old links land on the page that
+ * holds them now. Called from scripts/check.mjs.
  */
 import { existsSync, readFileSync } from "node:fs";
 import { ICONS, scriptOf } from "../showcase/layout-plugin.js";
@@ -45,10 +45,8 @@ export function checkShowcaseRegistry() {
 /** Runs on a library page already loaded at 1280px in ink. */
 export async function checkShowcasePages(page, where, fail, library) {
   const chrome = await page.evaluate(() => ({
-    rail: [...document.querySelectorAll(".sd-rail-item[aria-current]")].map((a) => a.dataset.sdSection),
-    panels: [...document.querySelectorAll("#library-sidebar .sd-sidebar-panel:not([hidden])")].map((p) => p.dataset.section),
-    sidebar: [...document.querySelectorAll('#library-sidebar .sd-sidebar-link[aria-current="page"]')].map((a) => a.getAttribute("href")),
-    crumbs: [...document.querySelectorAll(".sd-shell-header .sd-breadcrumb > li")].map((li) => li.textContent.trim()).filter(Boolean),
+    sidebar: [...document.querySelectorAll('#doc-sidebar .doc-nav-link[aria-current="page"]')].map((a) => a.getAttribute("href")),
+    crumbs: [...document.querySelectorAll(".doc-topbar .sd-breadcrumb > li")].map((li) => li.textContent.trim()).filter(Boolean),
     h1: document.querySelectorAll(".demo-intro > .demo-title > h1").length,
     // Blocks may show an h1 as a demo; only one outside them is a second page title.
     strayH1: [...document.querySelectorAll("h1")].filter((h) => !h.closest(".demo-block, .demo-title")).length,
@@ -57,8 +55,6 @@ export async function checkShowcasePages(page, where, fail, library) {
     chart: performance.getEntriesByType("resource").some((e) => /\/charts\/|chart[._]+js/.test(e.name)),
   }));
   const { section, group } = library;
-  if (chrome.rail.join() !== section.id) fail(where, `rail marks ${JSON.stringify(chrome.rail)} as current, want ${section.id}`);
-  if (chrome.panels.join() !== section.id) fail(where, `sidebar shows ${JSON.stringify(chrome.panels)}, want the ${section.id} panel`);
   if (chrome.sidebar.join() !== `./${library.file}`) fail(where, `sidebar marks ${JSON.stringify(chrome.sidebar)} as current, want ./${library.file}`);
   const crumbs = `${section.title} / ${group.title} / ${library.title}`;
   if (chrome.crumbs.join(" / ") !== crumbs) fail(where, `crumbs read ${chrome.crumbs.join(" / ")}, want ${crumbs}`);
@@ -66,53 +62,19 @@ export async function checkShowcasePages(page, where, fail, library) {
   if (chrome.skip !== "#main" || chrome.main !== "-1") fail(where, `skip link ${chrome.skip}, main tabindex ${chrome.main}`);
   if (chrome.chart !== (library.id === "charts")) fail(where, chrome.chart ? "Chart.js loaded on a page without charts" : "Chart.js did not load on the charts page");
 
-  // Ctrl K opens this page's own palette if it has one, else the chrome's page palette.
-  const own = await page.evaluate(() => !!document.querySelector("dialog[data-sd-palette]:not(#nav-palette)"));
+  // Ctrl K focuses the sidebar filter — except on a page whose own content has a command palette.
+  const own = await page.evaluate(() => !!document.querySelector(".demo-block dialog[data-sd-palette]"));
   await page.locator(".demo-intro h1").click();
   await page.keyboard.press("Control+k");
-  const open = await page.evaluate(() => [...document.querySelectorAll("dialog[data-sd-palette]")].filter((d) => d.open).map((d) => d.id));
-  const want = own ? "demo-palette" : "nav-palette";
-  if (open.join() !== want) fail(where, `Ctrl K opened ${JSON.stringify(open)}, want ${want}`);
-  if (!own) {
-    const options = await page.evaluate(() => [...document.querySelectorAll('#nav-palette [role="option"]')].filter((o) => o.href).map((o) => o.getAttribute("href")));
-    const want = ALL.map((p) => `./${p.file}`);
-    if (options.join() !== want.join()) fail(where, `nav palette lists ${options.join(" ")}, want the registry pages`);
+  if (own) {
+    const open = await page.evaluate(() => [...document.querySelectorAll("dialog[data-sd-palette]")].filter((d) => d.open).map((d) => d.id));
+    if (open.join() !== "demo-palette") fail(where, `Ctrl K opened ${JSON.stringify(open)}, want demo-palette`);
+    await page.keyboard.press("Escape");
+  } else {
+    const focused = await page.evaluate(() => document.activeElement?.id);
+    if (focused !== "doc-filter") fail(where, `Ctrl K focused ${JSON.stringify(focused)}, want doc-filter`);
+    await page.evaluate(() => document.getElementById("doc-filter")?.blur());
   }
-  await page.keyboard.press("Escape");
-  await page.waitForFunction(() => ![...document.querySelectorAll("dialog[data-sd-palette]")].some((d) => d.open), null, { timeout: 1000 }).catch(() => {});
-}
-
-/** Rail sections on a library page at 1280px: pinned, a section opens its first page; collapsed, it peeks its pages in place. */
-export async function checkRailSections(page, base) {
-  const errors = [];
-  await page.goto(`${base}${LIBRARY[0].file}`, { waitUntil: "networkidle" });
-  const target = SECTIONS[2];
-  await page.click(`.sd-rail-item[data-sd-section="${target.id}"]`);
-  const first = target.groups[0].pages[0].file;
-  if (!(await page.waitForURL((url) => url.pathname.endsWith(first), { timeout: 3000 }).then(() => true, () => false)))
-    errors.push(`pinned: ${target.id} went to ${new URL(page.url()).pathname}, want ${first}`);
-  await page.waitForLoadState("networkidle");
-  await page.keyboard.press("[");
-  await page.waitForFunction(() => document.querySelector(".sd-shell").dataset.sidebar === "collapsed", null, { timeout: 2000 }).catch(() => {});
-  const other = SECTIONS[0];
-  await page.click(`.sd-rail-item[data-sd-section="${other.id}"]`);
-  const state = await page
-    .waitForFunction(
-      (id) => {
-        const shell = document.querySelector(".sd-shell");
-        return "peek" in shell.dataset && document.querySelector(`.sd-sidebar-panel[data-section="${id}"]:not([hidden])`);
-      },
-      other.id,
-      { timeout: 2000 },
-    )
-    .then(() => true, () => false);
-  if (!state) errors.push(`collapsed: ${other.id} did not peek its pages`);
-  if (!new URL(page.url()).pathname.endsWith(first)) errors.push(`collapsed: ${other.id} navigated to ${new URL(page.url()).pathname}`);
-  // Leave the sidebar pinned for the pages checked after this.
-  await page.keyboard.press("Escape");
-  await page.keyboard.press("[");
-  await page.evaluate(() => localStorage.removeItem("sd-shell-sidebar"));
-  return errors;
 }
 
 /** Old links to the single components page and the section pages, followed from the overview. */
@@ -137,11 +99,9 @@ export async function checkHashRedirects(page, base) {
     const url = new URL(page.url());
     const got = url.pathname.split("/").pop() + url.hash;
     const inView = await page.evaluate((id) => {
-      const box = document.querySelector(".sd-shell-content");
-      if (!id) return box.scrollTop === 0;
+      if (!id) return window.scrollY <= 2;
       const r = document.getElementById(id)?.getBoundingClientRect();
-      const b = box.getBoundingClientRect();
-      return !!r && r.top < b.bottom && r.bottom > b.top;
+      return !!r && r.top < innerHeight && r.bottom > 0;
     }, want.split("#")[1] ?? "");
     if (got === want && inView) passed++;
     else errors.push(`${hash} went to ${got}, want ${want}; target in view: ${inView}`);

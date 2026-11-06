@@ -128,19 +128,17 @@ export async function checkSidebarResize(page, base, apiUrl) {
   expect(!(await state()).shown, "phones show no handle");
   await page.setViewportSize({ width: 1280, height: 900 });
 
-  // The standalone demo resizes its own sidebar and leaves the page shell alone.
+  // The standalone demo resizes its own sidebar and leaves the page alone.
   await page.goto(new URL(byId("sidebar").file, base).href);
   const demo = '#demo-resize-sidebar > [data-sd-shell="resize"]';
   await page.locator(demo).scrollIntoViewIfNeeded();
-  const pageShell = await page.evaluate(() => document.getElementById("library-sidebar").getBoundingClientRect().width);
   await page.focus(demo);
   await page.keyboard.press("End");
   const result = await page.evaluate(() => ({
     demo: Math.round(document.getElementById("demo-resize-sidebar").getBoundingClientRect().width),
-    page: document.getElementById("library-sidebar").getBoundingClientRect().width,
     key: localStorage.getItem("sd-shell-sidebar-width:demo-resize-sidebar"),
   }));
-  expect(result.demo === 360 && result.page === pageShell && result.key === "360", `the demo sidebar resizes alone under its own key, got ${JSON.stringify(result)}`);
+  expect(result.demo === 360 && result.key === "360", `the demo sidebar resizes alone under its own key, got ${JSON.stringify(result)}`);
 
   // An authored inline width (the demo's 15rem) survives a cancelled drag and null.
   const demoWidth = () => page.evaluate(() => ({
@@ -161,14 +159,20 @@ export async function checkSidebarResize(page, base, apiUrl) {
   d = await demoWidth();
   expect(d.width === 240 && d.inline === "15rem" && d.key === null, `Escape mid-drag returns the demo to its authored 15rem, got ${JSON.stringify(d)}`);
 
-  // The page shell's collapse and peek state do not reach a sidebar nested in its content.
-  await page.evaluate(async (url) => (await import(url)).setSidebar(document.querySelector(".sd-shell"), "collapsed"), apiUrl);
+  // A sidebar nested in page content ignores another shell's collapse state:
+  // the doc pages have no shell of their own, so stand one up bare.
+  await page.evaluate(async (url) => {
+    const api = await import(url);
+    const shell = document.createElement("div");
+    shell.className = "sd-shell";
+    document.body.append(shell);
+    api.setSidebar(shell, "collapsed");
+  }, apiUrl);
   d = await page.evaluate(() => {
     const el = document.getElementById("demo-resize-sidebar");
     return { shown: el.getClientRects().length > 0, position: getComputedStyle(el).position };
   });
-  expect(d.shown && d.position === "relative", `a nested demo sidebar ignores the page shell's collapsed state, got ${JSON.stringify(d)}`);
-  await page.evaluate(async (url) => (await import(url)).setSidebar(document.querySelector(".sd-shell"), "pinned"), apiUrl);
+  expect(d.shown && d.position === "relative", `a nested demo sidebar ignores another shell's collapsed state, got ${JSON.stringify(d)}`);
   await page.evaluate(() => localStorage.clear());
 
   return { errors, passed };

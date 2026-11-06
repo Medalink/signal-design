@@ -9,7 +9,7 @@ export default async function checkOptionCards(page, where, fail) {
   await page.click(card("paper"));
   await lit("paper");
   const clicked = (await ring(card("paper"))) === "1" && (await ring(card("ink"))) === "0";
-  await page.focus('#components-option-cards .demo-head [data-view="code"]');
+  await page.focus(".doc-preview-bar [data-code-all='code']");
   for (let i = 0; i < 12 && !(await page.evaluate(() => document.activeElement?.name === "demo-option-theme")); i++) await page.keyboard.press("Tab");
   const focus = await page.evaluate(() => getComputedStyle(document.activeElement.parentElement).outlineStyle === "solid");
   await page.keyboard.press("ArrowLeft");

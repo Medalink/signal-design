@@ -64,10 +64,10 @@ export async function checkShowcaseBar(browser, base, name) {
   const sets = await page.evaluate(() => ({
     open: document.getElementById("vp-settings").matches(":popover-open"),
     charts: !!document.getElementById("vp-chart-colors"),
-    rain: !!document.querySelector("#vp-settings [data-sd-rain-toggle]"),
     scrollbars: document.documentElement.dataset.sdScrollbars,
   }));
-  expect(sets.open && sets.rain && sets.scrollbars === "auto", `settings ${JSON.stringify(sets)}`);
+  // The rain toggle follows the page: doc pages have no rain canvas, so it belongs to the shell page below.
+  expect(sets.open && sets.scrollbars === "auto", `settings ${JSON.stringify(sets)}`);
   await page.click('#vp-scrollbars [data-value="always"]');
   expect((await page.evaluate(() => [document.documentElement.dataset.sdScrollbars, localStorage.getItem("sd-scrollbars")].join())) === "always,always", "scrollbars apply and are remembered");
   await page.close();
@@ -133,6 +133,11 @@ export async function checkShowcaseBar(browser, base, name) {
     here: document.querySelector(".vp-title")?.textContent,
   }));
   expect(mock.kind === "mock" && mock.badge === "Mock" && !mock.tone && mock.here === "App shell", `mock bar ${JSON.stringify(mock)}`);
+  // The rain toggle appears where the page has a rain canvas; the doc pages above have none.
+  await page.click('.vp-bar [popovertarget="vp-settings"]');
+  await page.waitForFunction(() => document.getElementById("vp-settings").matches(":popover-open"), null, { timeout: 2000 });
+  expect(await page.evaluate(() => !!document.querySelector("#vp-settings [data-sd-rain-toggle]")), "a page with a rain canvas offers the rain toggle");
+  await page.keyboard.press("Escape");
 
   // The width frame is modal, so its header carries the theme and the framed page follows it.
   await page.click('.vp-bar [data-vp="1024"]');

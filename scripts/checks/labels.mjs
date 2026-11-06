@@ -108,6 +108,8 @@ export default async function checkLabels(page, where, fail) {
       const button = document.createElement("button");
       button.id = "labels-copy";
       button.dataset.sdCopy = "text";
+      // Fixed inside the viewport, clear of the fixed doc sidebar, so the click lands.
+      button.style.cssText = "position:fixed;inset-inline-end:16px;bottom:16px;z-index:60";
       document.body.append(button);
     });
     await page.locator("#labels-copy").click();

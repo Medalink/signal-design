@@ -24,7 +24,7 @@ import { checkLivingTable, checkLivingTableTypes } from "./check-living-table.mj
 import { checkReact, checkReactSsr, checkReactTypes } from "./check-react.mjs";
 import { checkFonts } from "./check-fonts.mjs";
 import { checkSidebarResize } from "./check-sidebar-resize.mjs";
-import { checkHashRedirects, checkRailSections, checkShowcasePages, checkShowcaseRegistry } from "./check-showcase-pages.mjs";
+import { checkHashRedirects, checkShowcasePages, checkShowcaseRegistry } from "./check-showcase-pages.mjs";
 import { checkShowcaseBar } from "./check-showcase-bar.mjs";
 import { ALL, EXAMPLES, HOME, LIBRARY, byId, keyOf } from "../showcase/pages.js";
 
@@ -771,12 +771,18 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
 
   const library = LIBRARY.find((p) => keyOf(p) === pageName);
   if (library && width === 1280 && theme === "ink") {
-    // Every block flips between preview and code in place.
+    // Every block exists and has its code snapshot; the toolbar's Preview/Code
+    // pair is the one control that flips them, so no per-block toggles remain.
     const flips = await page.evaluate(() => {
       const blocks = [...document.querySelectorAll(".demo-block")];
-      return { blocks: blocks.length, toggles: blocks.filter((b) => b.querySelector(":scope > .demo-head [data-view='code']")).length };
+      return {
+        blocks: blocks.length,
+        toolbar: !!document.querySelector(".doc-preview-bar [data-code-all='code']"),
+        toggles: blocks.filter((b) => b.querySelector(":scope > .demo-head [data-view='code']")).length,
+      };
     });
-    if (!flips.blocks || flips.toggles !== flips.blocks) fail(where, `code toggles ${flips.toggles} of ${flips.blocks} blocks`);
+    if (!flips.blocks || !flips.toolbar) fail(where, `demo blocks ${flips.blocks}, toolbar ${flips.toolbar}`);
+    if (flips.toggles) fail(where, `per-block toggles remain on ${flips.toggles} of ${flips.blocks} blocks`);
 
     await checkShowcasePages(page, where, fail, library);
     for (const check of componentChecks.filter((c) => c.page === library.id)) await check.run(page, where, fail);
@@ -1017,11 +1023,6 @@ for (const [name, engine] of Object.entries(engines)) {
       const redirects = await checkHashRedirects(page, base);
       for (const error of redirects.errors) fail(`${name} old links`, error);
       if (!redirects.errors.length) console.log(`ok   ${name} old links ${redirects.passed} hash redirects`);
-    },
-    "rail sections": async (page) => {
-      const errors = await checkRailSections(page, base);
-      for (const error of errors) fail(`${name} rail sections`, error);
-      if (!errors.length) console.log(`ok   ${name} rail sections pinned and peek`);
     },
     // The bar check opens its own browser context, so that settings carry from page to page.
     "showcase bar": async (page) => {
