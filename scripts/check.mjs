@@ -7,7 +7,8 @@
  * the example apps; a page's name here is its file without .html), and the
  * prebuilt dist/signal.css loaded without Tailwind (scripts/standalone.html).
  * Fails on: console errors, a font face that did not load, any rounded
- * corner, any blurred shadow (glow), a font weight or family outside Signal's,
+ * corner, any blurred shadow (glow) outside Signal's own edge and lift
+ * shadows, a font weight or family outside Signal's,
  * a hard-coded color, colored navigation, a second primary button on an example
  * screen, a text field named only by its placeholder, horizontal scroll at
  * phone width, and broken JS behaviors.

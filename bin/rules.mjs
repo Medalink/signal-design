@@ -9,12 +9,27 @@
 /** Every rule the gate checks, by the name a finding, --skip and data-sd-check-ignore use. */
 export const RULES = ["corners", "shadows", "type", "color", "nav-color", "primary", "label", "overflow", "fonts", "console", "a11y"];
 
-/** Rounded corners (corners) and blurred shadows (shadows) anywhere on the page. */
+/**
+ * Rounded corners (corners) and blurred shadows (shadows) anywhere on the page.
+ * The blurred parts Signal itself draws (the edge and lift shadows) are read
+ * off the tokens, per theme holder, since a subtree with data-theme resolves
+ * them to its own colors, and allowed.
+ */
 export function sweep() {
   const bad = [];
   const ignored = (el, rule) => !!el.closest(`[data-sd-check-ignore~="${rule}"]`);
   const describe = (el) =>
     el.tagName.toLowerCase() + (el.id ? `#${el.id}` : "") + (el.className && typeof el.className === "string" ? `.${el.className.trim().split(/\s+/).join(".")}` : "");
+  const allowed = new Map();
+  for (const holder of [...new Set([document.documentElement, ...document.querySelectorAll("[data-theme]")])]) {
+    const probe = document.createElement("i");
+    probe.style.display = "none";
+    probe.style.boxShadow = "var(--sd-lift), var(--sd-edge-below), var(--sd-edge-above), var(--sd-edge-left), var(--sd-edge-right)";
+    holder.append(probe);
+    const shadow = getComputedStyle(probe).boxShadow;
+    probe.remove();
+    allowed.set(holder, new Set(shadow === "none" ? [] : shadow.split(/,(?![^(]*\))/).map((p) => p.trim())));
+  }
   for (const el of document.querySelectorAll("body *")) {
     const skipCorners = ignored(el, "corners");
     const skipShadows = ignored(el, "shadows");
@@ -26,11 +41,11 @@ export function sweep() {
         if (s[corner] !== "0px") bad.push(`corners: ${where}: rounded corner ${s[corner]} (Signal is square)`);
       }
       if (!skipShadows && s.boxShadow !== "none") {
-        // Allowed: hairlines drawn as inset or spread-only shadows with zero blur.
+        const ok = allowed.get(el.closest("[data-theme]") ?? document.documentElement);
         for (const part of s.boxShadow.split(/,(?![^(]*\))/)) {
           const nums = part.replace(/rgba?\([^)]*\)|#[0-9a-f]+/gi, "").match(/-?[\d.]+px/g) || [];
           const [, , blur = "0px"] = nums;
-          if (parseFloat(blur) > 0) bad.push(`shadows: ${where}: blurred shadow ${part.trim()} (Signal is flat)`);
+          if (parseFloat(blur) > 0 && !ok.has(part.trim())) bad.push(`shadows: ${where}: blurred shadow ${part.trim()} (Signal is flat)`);
         }
       }
     }

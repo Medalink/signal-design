@@ -55,7 +55,8 @@ pnpm add -D playwright axe-core && npx playwright install chromium
 npx signal-design check http://localhost:5173/ --a11y
 ```
 
-It fails on rounded corners, blurred shadows, text in a weight other than 400
+It fails on rounded corners, blurred shadows (Signal's own edge and lift
+shadows, `--sd-edge-*` and `--sd-lift`, pass), text in a weight other than 400
 and 500 (600 in the reading face) or in a family that is not a Signal font
 token, a color written by hand (the same in every theme and no `--sd-*` token's value;
 a hex copied from a token passes),

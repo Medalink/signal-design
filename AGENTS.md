@@ -199,7 +199,8 @@ It loads each URL in Chromium (Playwright). Every finding starts with the rule
 it breaks:
 
 - `corners`: a rounded corner.
-- `shadows`: a blurred shadow.
+- `shadows`: a blurred shadow. Signal's own edge and lift shadows
+  (`--sd-edge-*`, `--sd-lift`) pass.
 - `type`: text in a weight other than 400 and 500 (600 only in the reading
   face), or in a family that is not `--sd-font-sans`, `--sd-font-mono` or
   `--sd-font-reading`.

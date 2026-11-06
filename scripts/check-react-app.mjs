@@ -356,7 +356,7 @@ export async function checkReactApp(page, base) {
     return { gap: a.y - t.bottom, off: t.left + t.width / 2 - (a.x + a.width / 2), margin: s.margin, overflow: s.overflow, padding: s.padding, border: s.borderTopWidth, position: s.position };
   }, hinted);
   expect(tip.gap >= 0 && tip.gap <= 10 && Math.abs(tip.off) <= 1, `the tooltip sits above its trigger, centered, got ${JSON.stringify(tip)}`);
-  expect(tip.margin === "0px" && tip.overflow === "visible" && tip.padding === "4px 8px" && tip.border === "1px" && tip.position === "fixed", `the tooltip keeps its own box, got ${JSON.stringify(tip)}`);
+  expect(tip.margin === "0px" && tip.overflow === "visible" && tip.padding === "4px 8px" && tip.border === "0px" && tip.position === "fixed", `the tooltip keeps its own box, got ${JSON.stringify(tip)}`);
   // The tooltip was opened by hover, so focus is on another button and its own Escape handler does not run:
   // the one Escape cancels the dialog, and the tooltip goes because its trigger does. Escape on a focused trigger is checked below.
   await page.keyboard.press("Escape");

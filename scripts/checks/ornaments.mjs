@@ -21,15 +21,15 @@ const UNCHANGED = {
   "paint ink [center] size=null edges=false": "41bf463ab95ab173",
   "paint paper [tr bl] size=null edges=false": "971e933d3dc212bd",
   "paint paper [tl tr bl br] size=200 edges=false": "ff5f97767da487ad",
-  "paint ink sd-empty": "9652bc05a1139e36",
-  "paint paper sd-empty": "4a9bc607d744c62b",
+  "paint ink sd-empty": "0b7e3553aed69b53",
+  "paint paper sd-empty": "682eecebfdc2c7fa",
 };
 // Reduced motion drops the sparkle, which changes the painted image.
 const UNCHANGED_REDUCED = {
   "paint ink [tl br] size=200 edges=true": "33049b0f9cea677c",
   "paint ink [center] size=null edges=false": "cff567c246d2935c",
   "paint paper [br] size=null edges=false": "b578552cbeca65fa",
-  "paint ink sd-empty": "16c20b9320440169",
+  "paint ink sd-empty": "5bbdc82a0a8336c5",
 };
 
 /** The contrast text keeps on the art's brightest pixel: AA for body and labels, 3:1 for the faintest token. */

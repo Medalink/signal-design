@@ -115,16 +115,29 @@ function probe({ scope, exclude, width }) {
     return (x + 0.05) / (y + 0.05);
   };
 
-  // Hard rules, scoped.
+  // Hard rules, scoped. The blurred parts Signal itself draws (the edge and lift
+  // shadows) are read off the tokens, per theme holder, and allowed.
+  const html = document.documentElement;
+  const allowedShadow = new Map();
+  for (const holder of [...new Set([html, ...document.querySelectorAll("[data-theme]")])]) {
+    const probe = document.createElement("i");
+    probe.style.display = "none";
+    probe.style.boxShadow = "var(--sd-lift), var(--sd-edge-below), var(--sd-edge-above), var(--sd-edge-left), var(--sd-edge-right)";
+    holder.append(probe);
+    const shadow = getComputedStyle(probe).boxShadow;
+    probe.remove();
+    allowedShadow.set(holder, new Set(shadow === "none" ? [] : shadow.split(/,(?![^(]*\))/).map((p) => p.trim())));
+  }
   for (const el of all) {
     if (!visible(el)) continue;
+    const ok = allowedShadow.get(el.closest("[data-theme]") ?? html);
     for (const pseudo of [null, "::before", "::after"]) {
       const s = getComputedStyle(el, pseudo);
       if (pseudo && (s.content === "none" || s.content === "normal")) continue;
       if (["borderTopLeftRadius", "borderTopRightRadius", "borderBottomLeftRadius", "borderBottomRightRadius"].some((c) => s[c] !== "0px")) add("rules", "critical", el, `rounded ${pseudo ?? ""}`);
       for (const part of s.boxShadow === "none" ? [] : s.boxShadow.split(/,(?![^(]*\))/)) {
         const nums = part.replace(/rgba?\([^)]*\)|oklch\([^)]*\)|#[0-9a-f]+/gi, "").match(/-?[\d.]+px/g) || [];
-        if (parseFloat(nums[2] ?? "0") > 0) add("rules", "critical", el, `blurred shadow ${pseudo ?? ""}`);
+        if (parseFloat(nums[2] ?? "0") > 0 && !ok.has(part.trim())) add("rules", "critical", el, `blurred shadow ${pseudo ?? ""}`);
       }
     }
   }
