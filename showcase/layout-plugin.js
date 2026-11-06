@@ -102,11 +102,11 @@ ${label("Actions")}
 /** The right panel is the "On this page" rail: anchors to the page's sections, then the code-view buttons. */
 const asideFor = (page) => {
   const links = pageSections(page)
-    .map(([id, label]) => `        <a href="#${id}">${label}</a>`)
+    .map(([id, label, sub]) => `        <a href="#${id}"${sub ? ' class="doc-toc-sub"' : ""}>${label}</a>`)
     .join("\n");
   return `  <aside class="sd-shell-aside" id="settings-panel" aria-label="On this page">
     <div class="sd-shell-aside-head"><span class="flex-1">On this page</span>
-      <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="aside" aria-label="Close on this page"><svg><use href="#i-close"/></svg></button></div>
+      <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="aside" aria-label="Collapse on this page"><svg><use href="#i-close"/></svg></button></div>
     <div class="sd-shell-aside-section">
       <nav class="doc-toc" aria-label="On this page">
 ${links}
@@ -138,11 +138,18 @@ function pageSections(page) {
     const out = [];
     if (d.when?.length) out.push(["when", "When to use"]);
     if (d.notWhen?.length) out.push(["not-when", "When not to use"]);
+    if (d.install) out.push(["install", "Installation"]);
     if (d.usage) out.push(["usage", "Usage"]);
-    if (d.api?.length) out.push(["api", "API"]);
-    if (d.keyboard?.length) out.push(["keyboard", "Keyboard"]);
+    if (d.examples?.length) {
+      out.push(["examples", "Examples"]);
+      for (const ex of d.examples) out.push([`ex-${slugToc(ex.title)}`, ex.title, true]);
+    }
+    if (d.api?.length) out.push(["api", "API reference"]);
+    if (d.keyboard?.length) out.push(["keyboard", "Keyboard interactions"]);
     if (d.a11y?.length) out.push(["a11y", "Accessibility"]);
     if (d.motion?.length) out.push(["motion", "Motion"]);
+    if (d.responsive?.length) out.push(["responsive", "Responsive behavior"]);
+    if (d.notes?.length) out.push(["notes", "Notes for AI"]);
     if (d.related?.length) out.push(["related", "Related"]);
     return out;
   }
@@ -321,6 +328,20 @@ const docRelated = (ids) => {
   return `    <div class="sd-grid" style="--min: 16rem; --gap: 12px">\n${cards.join("\n")}\n    </div>`;
 };
 
+/** The doc sections an example provides: an anchored h3 over its demo, on a field-fill canvas. */
+const docExample = (ex) => `      <div class="doc-example" id="ex-${slugToc(ex.title)}">
+        <h3>${ex.title}</h3>
+        <div class="doc-example-demo" data-sd-check-ignore="primary">${ex.html}</div>
+      </div>`;
+
+const docInstall = (install) => `    <div class="sd-code doc-install">
+      <div class="sd-code-head">Install <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#doc-install-cmd">Copy</button></div>
+      <pre id="doc-install-cmd" tabindex="0"><code>${install.cmd}</code></pre>
+    </div>
+    <p class="sd-muted doc-note">${install.note}</p>`;
+
+const docAiFoot = `    <p class="sd-muted doc-note">The machine-readable reference lives in the repo: <a href="https://github.com/Medalink/signal-design/blob/main/ai/components.json">ai/components.json</a> and <a href="https://github.com/Medalink/signal-design/blob/main/llms-full.txt">llms-full.txt</a>.</p>`;
+
 /** Every doc section a page provides, in reading order. Empty for pages without a doc object. */
 function docHtml(page) {
   const d = page.doc;
@@ -328,6 +349,7 @@ function docHtml(page) {
   const parts = [];
   if (d.when?.length) parts.push(docSection("when", "When to use", docBullets(d.when)));
   if (d.notWhen?.length) parts.push(docSection("not-when", "When not to use", docBullets(d.notWhen)));
+  if (d.install) parts.push(docSection("install", "Installation", docInstall(d.install)));
   if (d.usage)
     parts.push(
       docSection(
@@ -339,21 +361,46 @@ function docHtml(page) {
     </div>`,
       ),
     );
-  if (d.api?.length) parts.push(docSection("api", "API", docApi(d.api)));
-  if (d.keyboard?.length) parts.push(docSection("keyboard", "Keyboard", docKeyboard(d.keyboard)));
+  if (d.examples?.length)
+    parts.push(docSection("examples", "Examples", `    <div class="doc-examples">\n${d.examples.map(docExample).join("\n")}\n    </div>`));
+  if (d.api?.length) parts.push(docSection("api", "API reference", docApi(d.api)));
+  if (d.keyboard?.length) parts.push(docSection("keyboard", "Keyboard interactions", docKeyboard(d.keyboard)));
   if (d.a11y?.length) parts.push(docSection("a11y", "Accessibility", docBullets(d.a11y)));
   if (d.motion?.length) parts.push(docSection("motion", "Motion", docBullets(d.motion)));
+  if (d.responsive?.length) parts.push(docSection("responsive", "Responsive behavior", docBullets(d.responsive)));
+  if (d.notes?.length) parts.push(docSection("notes", "Notes for AI", `${docBullets(d.notes)}\n${docAiFoot}`));
   if (d.related?.length) parts.push(docSection("related", "Related", docRelated(d.related)));
   return parts.join("\n\n");
 }
 
-/** A library page: its group and title over its content, then the doc sections, then the pages either side. */
+/** The preview shell around a page's demo blocks: a Preview/Code toolbar over a canvas. The seg buttons carry data-code-all, the same state the per-block toggles and the aside's "Show all" buttons drive, so there is one writer: the click handler in library.js. */
+const previewShell = (blocks) => `  <div class="doc-preview">
+    <div class="doc-preview-bar">
+      <div class="sd-seg sd-seg-sm sd-seg-inline" aria-label="Preview or code">
+        <button type="button" data-code-all="preview" aria-pressed="true">Preview</button>
+        <button type="button" data-code-all="code" aria-pressed="false">Code</button>
+      </div>
+      <span class="doc-preview-hint">Live · keyboard wired</span>
+    </div>
+    <div class="doc-canvas">
+${blocks}
+    </div>
+  </div>`;
+
+/** A library page: its group and title over its content, the demo blocks in the preview shell, then the doc sections, then the pages either side. */
 function libraryContent(page, body) {
   const intro = page.doc?.intro;
   const title = `<div class="demo-title"><p class="sd-label">${page.group.title}</p><h1 id="${page.id}-h" class="sd-display">${page.title}</h1>${intro ? `\n      <p class="sd-lead max-w-[42rem]">${intro}</p>` : ""}</div>`;
-  const content = body.startsWith('<header class="demo-intro">')
-    ? body.replace('<header class="demo-intro">', `<header class="demo-intro">\n    ${title}`)
-    : `<header class="demo-intro">\n    ${title}\n  </header>\n\n  ${body}`;
+  let header;
+  let blocks = body;
+  if (blocks.startsWith('<header class="demo-intro">')) {
+    const at = blocks.indexOf("</header>") + "</header>".length;
+    header = blocks.slice(0, at).replace('<header class="demo-intro">', `<header class="demo-intro">\n    ${title}`);
+    blocks = blocks.slice(at).trim();
+  } else {
+    header = `<header class="demo-intro">\n    ${title}\n  </header>`;
+  }
+  const content = blocks ? `${header}\n${previewShell(blocks)}` : header;
   const doc = docHtml(page);
   const { prev, next } = neighbors(page);
   const step = (p, rel, side) =>

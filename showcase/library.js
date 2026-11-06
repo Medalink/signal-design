@@ -75,6 +75,11 @@ function decorateBlocks(blocks) {
   function setView(block, view) {
     block.dataset.view = view;
     for (const b of block.querySelectorAll(":scope > .demo-head [data-view]")) b.setAttribute("aria-pressed", String(b.dataset.view === view));
+    // The preview shell's Preview/Code tabs read the same state: pressed only when every block agrees.
+    const all = blocks.every((b) => b.dataset.view === "code");
+    const none = blocks.every((b) => b.dataset.view !== "code");
+    for (const b of document.querySelectorAll(".doc-preview-bar [data-code-all]"))
+      b.setAttribute("aria-pressed", String(b.dataset.codeAll === "code" ? all : none));
   }
   document.addEventListener("click", (event) => {
     const b = event.target.closest(".demo-head [data-view]");

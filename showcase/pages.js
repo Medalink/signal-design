@@ -55,6 +55,35 @@ const library = [
               "Navigation between pages: a link reads as navigation, a button reads as an action.",
             ],
             usage: '&lt;button class="sd-btn sd-btn-primary"&gt;Approve&lt;/button&gt;\n&lt;button class="sd-btn"&gt;Save for later&lt;/button&gt;\n&lt;button class="sd-btn sd-btn-ghost"&gt;Cancel&lt;/button&gt;',
+            install: {
+              cmd: "pnpm add github:Medalink/signal-design",
+              note: 'Then <code>@import "signal-design"</code> after Tailwind, or link <code>dist/signal.css</code> with its fonts; pin a tag or commit for reproducible builds.',
+            },
+            examples: [
+              {
+                title: "Busy state",
+                html: '<button class="sd-btn sd-btn-primary" aria-busy="true">Merging</button>\n<button class="sd-btn" aria-busy="true">Syncing</button>\n<button class="sd-btn" disabled>Disabled</button>',
+              },
+              {
+                title: "Destructive confirmation",
+                html: '<button class="sd-btn" data-tone="danger">Delete branch</button>\n<button class="sd-btn sd-btn-ghost">Keep it</button>',
+              },
+              {
+                title: "Sizes",
+                html: '<button class="sd-btn sd-btn-sm">Small</button>\n<button class="sd-btn">Default</button>\n<button class="sd-btn sd-btn-lg">Large</button>',
+              },
+            ],
+            responsive: [
+              "Sizes are fixed, not fluid: the three sizes hold 26, 34 and 44 px of height at every viewport, and a long label wraps the row, not the button.",
+              "A row of buttons wraps: <code>sd-actions</code> is a wrapping flex row, so toolbars fold onto more lines on narrow screens.",
+              "Hover styles apply on touch too (there is no fine-pointer gate), so never put information only in hover; the press nudge gives touch its feedback.",
+            ],
+            notes: [
+              "Pick a button for an action; a segmented control or option cards for a choice, a link for navigation.",
+              "One <code>sd-btn-primary</code> per view: it is the view's main action, and ghost or link buttons carry the rest.",
+              "Meaning comes from <code>data-tone</code>, never a color class; a danger tone states the cost of a destructive step before the click.",
+              "While work runs, keep the button enabled with <code>aria-busy=\"true\"</code> instead of <code>disabled</code>, so it stays reachable and announced.",
+            ],
             api: [
               { name: "sd-btn", type: "class", desc: "The button base: a raised fill that lifts on hover." },
               { name: "sd-btn-primary", type: "class", desc: "Solid foreground fill. One per view." },

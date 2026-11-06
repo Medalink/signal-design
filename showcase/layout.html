@@ -8,7 +8,8 @@
 </svg>
 
 <!-- Every library page is an app in the Signal App Shell. This chrome is shared; layout-plugin.js fills it per page. -->
-<div class="sd-shell" id="shell">
+<!-- The aside starts open: on wide windows it is the persistent "On this page" column, and initShell closes it wherever it would float over the page (the ] button opens it there as an overlay). -->
+<div class="sd-shell" id="shell" data-aside="open">
   <canvas class="sd-rain" data-sd-rain data-sd-rain-style="squares" aria-hidden="true"></canvas>
 
   <header class="sd-shell-topbar">

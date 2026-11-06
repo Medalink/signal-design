@@ -203,6 +203,75 @@
     color: var(--sd-fg);
     background: var(--sd-tone-2);
   }
+  /* Named examples under a doc's Examples section. */
+  .doc-toc a.doc-toc-sub {
+    padding-inline-start: 24px;
+  }
+  /* The library shell's rail column: narrow like a table of contents. The
+     aside starts open (layout.html), so on wide windows it is a persistent
+     column; the ] button collapses it, and below 75rem the shell JS closes
+     it on load so it only floats when asked. */
+  #shell {
+    --shell-aside: 13rem;
+  }
+  /* The preview shell around a page's demo blocks: a toolbar row over a
+     canvas. Tone separates the three surfaces; no lines. */
+  .doc-preview {
+    display: grid;
+    min-width: 0;
+  }
+  .doc-preview-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 10px;
+    background: var(--sd-tone-1);
+  }
+  .doc-preview-hint {
+    margin-inline-start: auto;
+    color: var(--sd-fg-faint);
+    font-size: var(--text-sm);
+  }
+  .doc-canvas {
+    display: grid;
+    gap: 14px;
+    align-content: safe center;
+    min-height: 26.25rem;
+    padding: clamp(20px, 3.5vw, 44px);
+    background: var(--sd-canvas);
+  }
+  .doc-install {
+    max-width: 42rem;
+  }
+  .doc-examples {
+    display: grid;
+    gap: 32px;
+    max-width: 48rem;
+  }
+  .doc-example {
+    display: grid;
+    gap: 12px;
+    scroll-margin-top: 16px;
+  }
+  .doc-example h3 {
+    margin: 0;
+    font-size: var(--text-md);
+  }
+  .doc-example-demo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    min-height: 7rem;
+    padding: 24px;
+    background: var(--sd-field-fill);
+  }
+  .doc-note {
+    margin-block-start: 14px;
+    max-width: 48rem;
+    font-size: var(--text-sm);
+  }
   .demo-block {
     display: grid;
     gap: 14px;
