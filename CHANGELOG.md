@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 1.4.46 (2026-11-06)
+
+### Changed
+- `sd-rain` clears each frame before painting its background, so a
+  transparent `--sd-shell-bg` draws rain over whatever is beneath (a camera
+  in an OBS overlay) without smearing.
+
 ## 1.4.45 (2026-11-04)
 
 ### Changed
