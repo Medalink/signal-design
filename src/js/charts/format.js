@@ -1,11 +1,13 @@
 /**
  * Value formatting for charts. Bandwidth values are in Mbps and climb the
- * Kbps → Mbps → Gbps → Tbps ladder; other units print the value as is.
+ * Kbps → Mbps → Gbps → Tbps ladder; ms prints up to 4 decimals; any other
+ * unit prints compactly (4.4K/min, 2.1M/min).
  *
  *   formatValue(1500, "Mbps")   // "1.5 Gbps"
  *   formatValue(250000, "Mbps") // "250 Gbps"
  *   formatValue(0.5, "Mbps")    // "500 Kbps"
  *   formatValue(12.3, " ms")    // "12.3 ms"
+ *   formatValue(4402.7, "/min") // "4.4K/min"
  */
 export function formatValue(value, unit = "") {
   if (value == null || Number.isNaN(value)) return "";
@@ -16,6 +18,13 @@ export function formatValue(value, unit = "") {
     if (abs >= 1_000) return `${(value / 1_000).toFixed(abs >= 100_000 ? 0 : 1)} Gbps`;
     if (abs >= 1 || abs === 0) return `${Math.round(value * 10) / 10} Mbps`;
     return `${(value * 1000).toFixed(0)} Kbps`;
+  }
+  if (typeof value === "number" && u !== "ms") {
+    const abs = Math.abs(value);
+    if (abs >= 1_000_000) return `${Number((value / 1_000_000).toFixed(1))}M${unit}`;
+    if (abs >= 1_000) return `${Number((value / 1_000).toFixed(1))}K${unit}`;
+    if (abs >= 100) return `${Math.round(value)}${unit}`;
+    return `${Number(value.toFixed(1))}${unit}`;
   }
   const shown = typeof value === "number" ? Number(value.toFixed(4)) : value;
   return `${shown}${unit}`;

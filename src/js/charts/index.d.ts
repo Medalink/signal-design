@@ -65,6 +65,8 @@ export interface ChartLocaleOptions {
 export interface ChartOptions extends ChartLocaleOptions {
   preset?: "bandwidth" | "latency" | "core";
   series: Series[];
+  /** Axis, threshold and tooltip unit; defaults to the preset's. */
+  unit?: string;
   /** Bucket size of the data; ≤10 adds tooltip deltas and burst markers. Default 10. */
   bucketSeconds?: number;
   /** Live refresh in seconds: value tags, live edge, heartbeat, 500ms scroll. */

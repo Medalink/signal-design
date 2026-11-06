@@ -97,7 +97,7 @@ export function createChart(canvas, options = {}) {
   // Source series, keyed by label; the chart's datasets are derived from them.
   const sources = (opts.series ?? []).map((s) => ({
     ...s,
-    unit: s.unit ?? (s.axis === "y1" || /rtt|latency|ping/i.test(s.label) ? " ms" : PRESETS[preset].unit),
+    unit: s.unit ?? (s.axis === "y1" || /rtt|latency|ping/i.test(s.label) ? " ms" : (opts.unit ?? PRESETS[preset].unit)),
     kind: kindOf(s),
     data: (s.data ?? []).map((p) => ({ x: +p.x, y: p.y == null ? null : +p.y })),
     min: s.min?.map((p) => ({ x: +p.x, y: p.y == null ? null : +p.y })),
@@ -238,7 +238,7 @@ export function createChart(canvas, options = {}) {
     const across = (value) => [{ x: xMin, y: value }, { x: xMax, y: value }];
     for (const t of opts.thresholds ?? []) {
       const c = theme.colors[t.level === "critical" ? "critical" : "warning"];
-      sets.push({ label: t.label ?? t.level, data: across(t.value), yAxisID: t.axis ?? "y", _role: "threshold", _color: c, _unit: t.unit ?? PRESETS[preset].unit, borderColor: rgba(c), borderWidth: 1, borderDash: [6, 4], pointRadius: 0, pointHitRadius: 0, fill: false, order: 3, _noHover: true });
+      sets.push({ label: t.label ?? t.level, data: across(t.value), yAxisID: t.axis ?? "y", _role: "threshold", _color: c, _unit: t.unit ?? (opts.unit ?? PRESETS[preset].unit), borderColor: rgba(c), borderWidth: 1, borderDash: [6, 4], pointRadius: 0, pointHitRadius: 0, fill: false, order: 3, _noHover: true });
     }
     for (const b of opts.baselines ?? []) {
       const c = b.color ? colorFor(null, b.color) : theme.colors.baseline;
@@ -249,11 +249,11 @@ export function createChart(canvas, options = {}) {
       const list = events.filter((e) => e.kind === kind);
       if (!list.length) continue;
       const c = theme.colors[kind];
-      sets.push({ label: chartText(`event.${kind}`, {}, opts.text), data: list.map((e) => ({ x: +e.x, y: e.y, label: e.label, unexpected: e.unexpected })), yAxisID: "y", _role: "event", _eventKind: kind, _color: c, _unit: PRESETS[preset].unit, showLine: false, pointStyle: "rect", pointRadius: 4, pointHoverRadius: 5, backgroundColor: rgba(c), borderColor: rgba(c), order: 0 });
+      sets.push({ label: chartText(`event.${kind}`, {}, opts.text), data: list.map((e) => ({ x: +e.x, y: e.y, label: e.label, unexpected: e.unexpected })), yAxisID: "y", _role: "event", _eventKind: kind, _color: c, _unit: (opts.unit ?? PRESETS[preset].unit), showLine: false, pointStyle: "rect", pointRadius: 4, pointHoverRadius: 5, backgroundColor: rgba(c), borderColor: rgba(c), order: 0 });
     }
     if (opts.peaks?.length) {
       const c = theme.colors.burst;
-      sets.push({ label: chartText("dailyPeak", {}, opts.text), data: opts.peaks.map((p) => ({ x: +p.x, y: p.y })), yAxisID: "y", _role: "event", _color: c, _unit: PRESETS[preset].unit, showLine: false, pointStyle: "rect", pointRadius: 5, pointHoverRadius: 6, borderWidth: 1.5, backgroundColor: "transparent", borderColor: rgba(c), order: 0 });
+      sets.push({ label: chartText("dailyPeak", {}, opts.text), data: opts.peaks.map((p) => ({ x: +p.x, y: p.y })), yAxisID: "y", _role: "event", _color: c, _unit: (opts.unit ?? PRESETS[preset].unit), showLine: false, pointStyle: "rect", pointRadius: 5, pointHoverRadius: 6, borderWidth: 1.5, backgroundColor: "transparent", borderColor: rgba(c), order: 0 });
     }
     return { sets, xMin, xMax };
   }
@@ -281,7 +281,7 @@ export function createChart(canvas, options = {}) {
     const ticks = { color: rgba(t.tick), font: { family: theme.font, size }, padding: 8 };
     const b = yBounds();
     const stacked = preset === "core";
-    const primaryUnit = PRESETS[preset].unit;
+    const primaryUnit = (opts.unit ?? PRESETS[preset].unit);
     const result = {
       x: {
         type: "time",
@@ -304,7 +304,7 @@ export function createChart(canvas, options = {}) {
         min: 0,
         grid: { ...grid, drawOnChartArea: true },
         border: { display: false },
-        ticks: { ...ticks, display: !opts.compact, maxTicksLimit: 4, callback: (v) => formatValue(v, " ms") },
+        ticks: { ...ticks, display: !opts.compact, maxTicksLimit: 4, callback: (v) => formatValue(v, sources.find((x) => x.axis === "y1")?.unit ?? " ms") },
       };
     }
     result.y = {
