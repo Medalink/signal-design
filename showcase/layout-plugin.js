@@ -1,9 +1,10 @@
 /**
- * Vite plugin: wraps each library page (and the overview) in the shared App
- * Shell chrome from layout.html. A page file holds only its content in
- * <body>; the head, rail, sidebar, page header, pager, nav palette and aside
- * come from here and from pages.js, so the served and built HTML is static
- * and no page copies the chrome.
+ * Vite plugin: wraps each library page (and the overview) in shared chrome. A
+ * page file holds only its content in <body>; the head, rail, sidebar, page
+ * header, pager, nav palette and aside come from here and from pages.js, so
+ * the served and built HTML is static and no page copies the chrome. Library
+ * pages get the App Shell (layout.html); the overview gets the landing
+ * chrome: a topbar, then a full-width marketing page (layout-landing.html).
  */
 import { existsSync, readFileSync } from "node:fs";
 import { basename, resolve } from "node:path";
@@ -11,6 +12,7 @@ import { HOME, LIBRARY, EXAMPLES, SECTIONS, byFile, byId, keyOf, neighbors } fro
 
 const dir = import.meta.dirname;
 const template = () => readFileSync(resolve(dir, "layout.html"), "utf8");
+const landingTemplate = () => readFileSync(resolve(dir, "layout-landing.html"), "utf8");
 
 const symbol = (id, body, view = "0 0 24 24", stroke = "1.5") => `    <symbol id="i-${id}" viewBox="${view}" fill="none" stroke="currentColor" stroke-width="${stroke}">${body}</symbol>`;
 export const ICONS = [
@@ -26,6 +28,7 @@ export const ICONS = [
   symbol("collapse", '<path d="M8 4L4 8l4 4M12 4L8 8l4 4"/>', "0 0 16 16"),
   symbol("home", '<path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/>'),
   symbol("panel", '<rect x="2" y="2.5" width="12" height="11"/><path d="M10 2.5v11"/>', "0 0 16 16", "1.3"),
+  `    <symbol id="i-theme" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16"/><rect x="12" y="4" width="8" height="16" fill="currentColor" fill-opacity=".45" stroke="none"/></symbol>`,
 ].join("\n");
 
 const current = (on) => (on ? ' aria-current="page"' : "");
@@ -152,16 +155,18 @@ function pageSections(page) {
   return out;
 }
 
-/** Cards for the overview: a section per rail section, a grid per group. */
+/** Cards for the overview: a section per library section, a grid per group. Each lives in the landing's wide column, so the groups separate by spacing, not a second rule. */
 function cards() {
   const card = (p) =>
     `      <a class="sd-link-card" href="./${p.file}"><span class="sd-link-card-site">${p.id ? plural(blockCount(p.file), "block") : "example"}</span><span class="sd-link-card-title">${p.title}</span><span class="sd-link-card-desc">${p.summary}</span></a>`;
-  const group = (g) => `    <h3 class="sd-label">${g.title}</h3>
-    <div class="sd-grid" style="--min: 16rem; --gap: 12px">
+  const group = (g) => `    <section class="home-browse-group" aria-label="${g.title}">
+      <h3 class="sd-label">${g.title}</h3>
+      <div class="sd-grid" style="--min: 14rem; --gap: 12px">
 ${g.pages.map(card).join("\n")}
-    </div>`;
+      </div>
+    </section>`;
   return SECTIONS.map(
-    (s) => `  <section class="home-section" id="home-${s.id}" aria-labelledby="home-${s.id}-h">
+    (s) => `  <section class="home-browse-group" id="home-${s.id}" aria-labelledby="home-${s.id}-h">
     <h2 id="home-${s.id}-h" class="sd-title">${s.title}</h2>
 ${s.groups.map(group).join("\n")}
   </section>`,
@@ -181,11 +186,11 @@ const FEATURED = [
   ["react-shell.html", "terminal", "The app shell as React components, state owned by React."],
 ];
 
-/** Everything under the hero: featured apps, the full grid, AI files, FAQ and the footer. */
+/** Everything under the hero: featured apps, the full grid, AI files, FAQ and the footer. Each section's content sits in the landing's wide column. */
 function homeCards(grid) {
   const featured = FEATURED.map(
     ([file, art, line]) =>
-      `      <a class="sd-link-card" href="./${file}"><span class="sd-link-card-thumb home-featured-art"><span class="sd-art" data-sd-art="${art}" aria-hidden="true"></span></span><span class="sd-link-card-site">Example app</span><span class="sd-link-card-title">${EXAMPLES.find((p) => p.file === file)?.title ?? file}</span><span class="sd-link-card-desc">${line}</span></a>`,
+      `      <a class="sd-link-card sd-link-card-hero home-featured-card" href="./${file}"><span class="sd-link-card-thumb home-featured-art"><span class="sd-art" data-sd-art="${art}" aria-hidden="true"></span></span><span class="sd-link-card-site">Example app</span><span class="sd-link-card-title">${EXAMPLES.find((p) => p.file === file)?.title ?? file}</span><span class="sd-link-card-desc">${line}</span></a>`,
   ).join("\n");
   const faq = [
     ["What is Signal?", `A flat, square, monochrome design library: CSS components for Tailwind v4 or one prebuilt stylesheet, plus a small dependency-free JS module that wires behavior through attributes.`],
@@ -198,21 +203,26 @@ function homeCards(grid) {
     .map(([q, a]) => `      <div><h3>${q}</h3><p class="sd-muted">${a}</p></div>`)
     .join("\n");
   return `  <section class="home-section" id="home-featured" aria-labelledby="home-featured-h">
+    <div class="home-inner">
     <h2 id="home-featured-h" class="sd-title">See it in use</h2>
     <p class="sd-muted max-w-[42rem]">Whole apps built only from library parts. Open one and click around.</p>
-    <div class="sd-grid home-featured-grid" style="--min: 19rem; --gap: 12px">
+    <div class="sd-grid home-featured-grid" style="--min: 20rem; --gap: 20px">
 ${featured}
+    </div>
     </div>
   </section>
 
   <section class="home-section" id="home-browse" aria-labelledby="home-browse-h">
+    <div class="home-inner">
     <h2 id="home-browse-h" class="sd-title">Browse everything</h2>
     <p class="sd-muted max-w-[42rem]">Every part of the library on its own page, with preview and code side by side.</p>
 
 ${grid}
+    </div>
   </section>
 
   <section class="home-section" id="home-ai" aria-labelledby="home-ai-h">
+    <div class="home-inner">
     <h2 id="home-ai-h" class="sd-title">Use Signal with your AI</h2>
     <p class="sd-muted max-w-[42rem]">Install from GitHub, then point your agent at the files it reads. The docs ship as plain text on purpose.</p>
     <div class="grid gap-3 sm:grid-cols-2 items-start">
@@ -230,16 +240,20 @@ ${grid}
       <li><code>ai/components.json</code> is every block as data, with copyable markup. <a href="https://github.com/Medalink/signal-design/blob/main/ai/components.json">Browse it on GitHub</a>.</li>
       <li>The <a href="./lib-setup.html">Setup page</a> shows what <code>init()</code> wires, attribute by attribute.</li>
     </ul>
+    </div>
   </section>
 
   <section class="home-section" id="home-faq" aria-labelledby="home-faq-h">
+    <div class="home-inner">
     <h2 id="home-faq-h" class="sd-title">Good questions</h2>
-    <div class="sd-grid home-faq" style="--min: 19rem; --gap: 24px">
+    <div class="sd-grid home-faq" style="--min: 15rem; --gap: 32px 24px">
 ${faq}
+    </div>
     </div>
   </section>
 
   <section class="home-section home-footer" aria-labelledby="home-cta-h">
+    <div class="home-inner">
     <h2 id="home-cta-h" class="sd-title">Start with one page.</h2>
     <p class="sd-lead max-w-[42rem]">Try it on its page, then install it with one command.</p>
     <div class="sd-actions">
@@ -276,6 +290,7 @@ ${faq}
       </div>
     </nav>
     <p class="sd-subtle home-copyright">© 2026 Signal design. MIT.</p>
+    </div>
   </section>`;
 }
 
@@ -390,7 +405,8 @@ export function renderPage(page, html) {
   };
   const fillIn = (text) => text.replace(/\{\{(\w+)\}\}/g, (_, key) => (key in fill ? fillIn(fill[key]) : `{{${key}}}`));
   // The page content goes in verbatim: it is never read as a template.
-  const [before, after] = template().split("{{content}}");
+  // Library pages sit in the App Shell; the overview is the landing template.
+  const [before, after] = (library ? template() : landingTemplate()).split("{{content}}");
   return `<!doctype html>
 <html lang="en" data-theme="ink" data-page="${keyOf(page)}">
 <head>

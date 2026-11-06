@@ -1,0 +1,29 @@
+<a class="sd-skip" href="#main">Skip to content</a>
+
+<!-- Icons: square strokes only. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+{{icons}}
+  </defs>
+</svg>
+
+<!-- The overview is a marketing page, not the app shell: a topbar over the full-width landing. layout-plugin.js fills it like the shell template. -->
+<header class="sd-topbar sticky top-0 z-30">
+  <a class="sd-wordmark" href="./index.html" aria-label="Signal home"><svg class="sd-mark" style="width:22px;height:22px"><use href="#i-mark"/></svg> Signal</a>
+  <nav class="sd-nav sd-desktop-only" aria-label="Site">
+    <a href="./lib-buttons.html">Components</a>
+    <a href="#home-featured">Examples</a>
+    <a href="./lib-rules.html">Docs</a>
+    <a href="./lib-setup.html">Setup</a>
+  </nav>
+  <div class="sd-topbar-end">
+    <button class="sd-btn sd-btn-ghost sd-btn-icon" data-sd-theme-cycle aria-label="Next theme"><svg><use href="#i-theme"/></svg></button>
+    <button class="sd-btn sd-btn-ghost sd-btn-icon" data-sd-open="nav-palette" data-sd-key="mod+k" aria-keyshortcuts="Control+K" aria-label="Search"><svg><use href="#i-search"/></svg></button>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+{{content}}
+</main>
+
+{{palette}}

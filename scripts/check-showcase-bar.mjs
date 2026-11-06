@@ -220,10 +220,12 @@ export async function checkShowcaseBar(browser, base, name) {
     page = await open(file, width, height);
     const m = await page.evaluate(() => {
       const b = document.querySelector(".vp-bar").getBoundingClientRect();
-      const s = document.querySelector(".sd-shell")?.getBoundingClientRect();
+      const shell = document.querySelector(".sd-shell");
+      const s = shell?.getBoundingClientRect();
       const shown = (sel) => !!document.querySelector(sel) && getComputedStyle(document.querySelector(sel)).display !== "none";
       return {
         bar: Math.round(b.height),
+        shell: !!shell,
         gap: s ? Math.round(s.top - b.bottom) : 0,
         fits: s ? Math.round(s.bottom) <= innerHeight : true,
         scrolls: document.documentElement.scrollHeight - innerHeight,
@@ -244,7 +246,8 @@ export async function checkShowcaseBar(browser, base, name) {
       };
     });
     const phone = width < 768;
-    expect(m.bar === 36 && m.gap === 0 && m.fits && m.scrolls <= 0 && m.overflow <= 0 && m.rail && m.settings && m.widths === width >= 1024 && m.pages === !phone && m.theme === !phone, `${file} at ${width}px ${JSON.stringify(m)}`);
+    // Shell pages fill the window under the bar with no page scroll; the landing (index.html, no shell) is a normal scrolling marketing page, so only the bar, overflow and bar controls hold there.
+    expect(m.bar === 36 && m.gap === 0 && (!m.shell || (m.fits && m.scrolls <= 0)) && m.overflow <= 0 && m.rail && m.settings && m.widths === width >= 1024 && m.pages === !phone && m.theme === !phone, `${file} at ${width}px ${JSON.stringify(m)}`);
     await page.close();
   }
   await context.close();

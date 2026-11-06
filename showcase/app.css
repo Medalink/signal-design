@@ -58,25 +58,60 @@
   .demo-intro .sd-label {
     margin-block-end: 12px;
   }
+  /* The landing: sections span the page, each one's content in the wide column. */
   .home-section {
-    padding-block: 40px;
     border-block-start: 1px solid var(--sd-line);
   }
-  .home-section > .sd-grid {
+  .home-inner {
+    max-width: var(--container-wide);
+    margin-inline: auto;
+    padding: 44px 24px 28px;
+  }
+  @media (max-width: 40rem) {
+    .home-inner {
+      padding: 28px 16px 20px;
+    }
+  }
+  .home-section .sd-grid {
     margin-top: 20px;
   }
-  /* The landing hero. */
+  /* The landing hero: full-bleed rain, the copy in the wide column on canvas. */
   .home-hero {
-    padding-block: 16px 48px;
+    border-block-start: 0;
   }
-  .home-hero .sd-actions {
-    margin-top: 8px;
+  .home-hero .home-inner {
+    padding-block: 96px 72px;
   }
-  /* Featured example cards: the art piece sits in the card's thumb cell. */
-  .home-featured-art {
+  .home-hero-copy {
+    max-width: 48rem;
+  }
+  @media (max-width: 40rem) {
+    .home-hero .home-inner {
+      padding-block: 48px 40px;
+    }
+  }
+  /* Featured example cards: a big art slot on top, like a screenshot. */
+  .home-featured-card {
+    max-width: none;
+  }
+  .home-featured-card > .home-featured-art {
     display: grid;
     place-items: center;
-    --sd-art-cell: 5px;
+    width: calc(100% + 28px);
+    max-width: none;
+    height: 150px;
+    aspect-ratio: auto;
+    margin: -12px -14px 6px;
+    border: 0;
+    --sd-art-cell: 12px;
+  }
+  /* A group under "Browse everything": spacing separates, no second rule. */
+  .home-browse-group {
+    padding-block: 28px 0;
+  }
+  .home-browse-group > .sd-grid,
+  .home-browse-group .home-browse-group > .sd-grid {
+    margin-top: 12px;
   }
   /* FAQ questions. */
   .home-faq h3 {
@@ -86,6 +121,14 @@
   .home-faq p {
     margin: 0;
     font-size: var(--text-sm);
+  }
+  /* The footer: a band set off by tone, not a line. */
+  .home-footer {
+    border-block-start: 0;
+    background: var(--sd-tone-1);
+  }
+  .home-footer .home-inner {
+    padding-block: 56px 32px;
   }
   /* Footer nav columns. */
   .home-footer-nav {
