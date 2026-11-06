@@ -73,7 +73,10 @@ export async function checkShowcasePages(page, where, fail, library) {
   } else {
     const focused = await page.evaluate(() => document.activeElement?.id);
     if (focused !== "doc-filter") fail(where, `Ctrl K focused ${JSON.stringify(focused)}, want doc-filter`);
-    await page.evaluate(() => document.getElementById("doc-filter")?.blur());
+    // Step off the filter with the keyboard, not a script blur: a scripted
+    // focus change resets the focus-visible heuristic, and the component
+    // checks after this one focus blocks programmatically and assert a ring.
+    await page.keyboard.press("Tab");
   }
 }
 
