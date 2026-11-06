@@ -7,7 +7,7 @@
  */
 import { existsSync, readFileSync } from "node:fs";
 import { basename, resolve } from "node:path";
-import { HOME, SECTIONS, byFile, keyOf, neighbors } from "./pages.js";
+import { HOME, LIBRARY, EXAMPLES, SECTIONS, byFile, byId, keyOf, neighbors } from "./pages.js";
 
 const dir = import.meta.dirname;
 const template = () => readFileSync(resolve(dir, "layout.html"), "utf8");
@@ -96,19 +96,61 @@ ${label("Actions")}
 }
 
 /** The right panel holds only what applies to this page: every block as code or as a preview. Theme, chart colors, scrollbars and rain live in the showcase bar. */
-const aside = `  <aside class="sd-shell-aside" id="settings-panel" aria-label="Code views">
-    <div class="sd-shell-aside-head"><span class="flex-1">Code views</span>
-      <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="aside" aria-label="Close code views"><svg><use href="#i-close"/></svg></button></div>
+/** The right panel is the "On this page" rail: anchors to the page's sections, then the code-view buttons. */
+const asideFor = (page) => {
+  const links = pageSections(page)
+    .map(([id, label]) => `        <a href="#${id}">${label}</a>`)
+    .join("\n");
+  return `  <aside class="sd-shell-aside" id="settings-panel" aria-label="On this page">
+    <div class="sd-shell-aside-head"><span class="flex-1">On this page</span>
+      <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" data-sd-shell="aside" aria-label="Close on this page"><svg><use href="#i-close"/></svg></button></div>
+    <div class="sd-shell-aside-section">
+      <nav class="doc-toc" aria-label="On this page">
+${links}
+      </nav>
+    </div>
     <div class="sd-shell-aside-section sd-actions"><button class="sd-btn sd-btn-sm" data-code-all="code">Show all code</button><button class="sd-btn sd-btn-sm sd-btn-ghost" data-code-all="preview">Show all previews</button></div>
   </aside>`;
+};
 const asideButton = `      <div class="sd-shell-header-end">
-        <button class="sd-btn sd-btn-sm" data-sd-shell="aside" data-sd-key="]" aria-controls="settings-panel"><svg><use href="#i-panel"/></svg><span class="sd-desktop-only">Code views</span> <kbd>]</kbd></button>
+        <button class="sd-btn sd-btn-sm" data-sd-shell="aside" data-sd-key="]" aria-controls="settings-panel" data-sd-tip="On this page (])" data-sd-tip-side="bottom" aria-label="Toggle the on-this-page panel"><svg><use href="#i-panel"/></svg><span class="sd-desktop-only">On this page</span> <kbd>]</kbd></button>
       </div>`;
-const asideHint = `    <span><kbd>]</kbd> code views</span>
+const asideHint = `    <span><kbd>]</kbd> on this page</span>
 `;
 
 const blockCount = (file) => (readFileSync(resolve(dir, file), "utf8").match(/<div class="demo-block"/g) || []).length;
 const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
+
+/** The slug decorateBlocks computes for a block title. */
+const slugToc = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+/**
+ * What "On this page" lists: a page with a doc object lists its doc sections;
+ * any other page lists its demo blocks, by their authored id or the id the
+ * block flip derives from the h2.
+ */
+function pageSections(page) {
+  const d = page.doc;
+  if (d) {
+    const out = [];
+    if (d.when?.length) out.push(["when", "When to use"]);
+    if (d.notWhen?.length) out.push(["not-when", "When not to use"]);
+    if (d.usage) out.push(["usage", "Usage"]);
+    if (d.api?.length) out.push(["api", "API"]);
+    if (d.keyboard?.length) out.push(["keyboard", "Keyboard"]);
+    if (d.a11y?.length) out.push(["a11y", "Accessibility"]);
+    if (d.motion?.length) out.push(["motion", "Motion"]);
+    if (d.related?.length) out.push(["related", "Related"]);
+    return out;
+  }
+  const html = readFileSync(resolve(dir, page.file), "utf8");
+  const out = [];
+  for (const [, attrs, h2] of html.matchAll(/<div class="demo-block"([^>]*)>(?:\s*<h2 class="sd-label">([^<]*)<\/h2>)?/g)) {
+    const id = attrs.match(/id="([^"]+)"/)?.[1] ?? (h2 ? slugToc(h2) : null);
+    if (id) out.push([id, h2?.trim() || id]);
+  }
+  return out;
+}
 
 /** Cards for the overview: a section per rail section, a grid per group. */
 function cards() {
@@ -126,19 +168,185 @@ ${s.groups.map(group).join("\n")}
   ).join("\n\n");
 }
 
-/** A library page: its group and title over its content, then the pages either side. */
+/** The lead sentence under the hero headline: real counts from the registry. */
+const homeLead = () =>
+  `<p class="sd-lead max-w-[42rem]">A design library for Tailwind v4 apps, plain HTML and Tauri. <b>${LIBRARY.length} component pages</b> and <b>${EXAMPLES.length} example apps</b> show every part working.</p>`;
+
+/** The strongest example apps, one art piece each. */
+const FEATURED = [
+  ["chat.html", "signal", "A group channel in the whole app frame, with a poll, replies and members by role."],
+  ["shell.html", "laptop", "A containers screen: rows open to details, a confirm before removal, a live status bar."],
+  ["charts.html", "chip", "Live CPU and memory plots for a fleet, with a per-container table."],
+  ["stream.html", "wifi", "A Twitch overlay package with live alerts, ready for OBS."],
+  ["react-shell.html", "terminal", "The app shell as React components, state owned by React."],
+];
+
+/** Everything under the hero: featured apps, the full grid, AI files, FAQ and the footer. */
+function homeCards(grid) {
+  const featured = FEATURED.map(
+    ([file, art, line]) =>
+      `      <a class="sd-link-card" href="./${file}"><span class="sd-link-card-thumb home-featured-art"><span class="sd-art" data-sd-art="${art}" aria-hidden="true"></span></span><span class="sd-link-card-site">Example app</span><span class="sd-link-card-title">${EXAMPLES.find((p) => p.file === file)?.title ?? file}</span><span class="sd-link-card-desc">${line}</span></a>`,
+  ).join("\n");
+  const faq = [
+    ["What is Signal?", `A flat, square, monochrome design library: CSS components for Tailwind v4 or one prebuilt stylesheet, plus a small dependency-free JS module that wires behavior through attributes.`],
+    ["How do I install it?", `From GitHub, not npm: <code>pnpm add github:Medalink/signal-design</code>. Pin a tag or commit for reproducible builds.`],
+    ["Does it need Tailwind?", `No. With Tailwind, import it after <code>tailwindcss</code>. Without, link <code>dist/signal.css</code> and keep the fonts next to it.`],
+    ["How do themes work?", `Four themes: ink, graphite, paper and auto. <code>&lt;html data-theme&gt;</code> sets one, <code>setTheme()</code> switches and remembers it, and every color reads a <code>--sd-*</code> token, so a theme change never breaks a page.`],
+    ["Can my AI read it?", `Yes. <code>llms-full.txt</code> holds the guide and every component's HTML in one file, and <code>ai/components.json</code> holds the same as data with copyable markup.`],
+    ["Where does it run?", `Any browser and most WebViews: Tauri on WebView2, WKWebView and WebKitGTK.`],
+  ]
+    .map(([q, a]) => `      <div><h3>${q}</h3><p class="sd-muted">${a}</p></div>`)
+    .join("\n");
+  return `  <section class="home-section" id="home-featured" aria-labelledby="home-featured-h">
+    <h2 id="home-featured-h" class="sd-title">See it in use</h2>
+    <p class="sd-muted max-w-[42rem]">Whole apps built only from library parts. Open one and click around.</p>
+    <div class="sd-grid home-featured-grid" style="--min: 19rem; --gap: 12px">
+${featured}
+    </div>
+  </section>
+
+  <section class="home-section" id="home-browse" aria-labelledby="home-browse-h">
+    <h2 id="home-browse-h" class="sd-title">Browse everything</h2>
+    <p class="sd-muted max-w-[42rem]">Every part of the library on its own page, with preview and code side by side.</p>
+
+${grid}
+  </section>
+
+  <section class="home-section" id="home-ai" aria-labelledby="home-ai-h">
+    <h2 id="home-ai-h" class="sd-title">Use Signal with your AI</h2>
+    <p class="sd-muted max-w-[42rem]">Install from GitHub, then point your agent at the files it reads. The docs ship as plain text on purpose.</p>
+    <div class="grid gap-3 sm:grid-cols-2 items-start">
+      <div class="sd-code">
+        <div class="sd-code-head">pnpm <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#install-pnpm">Copy</button></div>
+        <pre id="install-pnpm" tabindex="0"><code>pnpm add github:Medalink/signal-design</code></pre>
+      </div>
+      <div class="sd-code">
+        <div class="sd-code-head">npm <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#install-npm">Copy</button></div>
+        <pre id="install-npm" tabindex="0"><code>npm install github:Medalink/signal-design</code></pre>
+      </div>
+    </div>
+    <ul class="doc-list max-w-[42rem]">
+      <li><code>llms-full.txt</code> is the guide and every component's HTML in one file. <a href="https://github.com/Medalink/signal-design/blob/main/llms-full.txt">Read it on GitHub</a>.</li>
+      <li><code>ai/components.json</code> is every block as data, with copyable markup. <a href="https://github.com/Medalink/signal-design/blob/main/ai/components.json">Browse it on GitHub</a>.</li>
+      <li>The <a href="./lib-setup.html">Setup page</a> shows what <code>init()</code> wires, attribute by attribute.</li>
+    </ul>
+  </section>
+
+  <section class="home-section" id="home-faq" aria-labelledby="home-faq-h">
+    <h2 id="home-faq-h" class="sd-title">Good questions</h2>
+    <div class="sd-grid home-faq" style="--min: 19rem; --gap: 24px">
+${faq}
+    </div>
+  </section>
+
+  <section class="home-section home-footer" aria-labelledby="home-cta-h">
+    <h2 id="home-cta-h" class="sd-title">Start with one page.</h2>
+    <p class="sd-lead max-w-[42rem]">Try it on its page, then install it with one command.</p>
+    <div class="sd-actions">
+      <a class="sd-btn" href="./lib-buttons.html">Open the Buttons page</a>
+      <a class="sd-btn sd-btn-ghost" href="./lib-setup.html">Set it up</a>
+    </div>
+    <nav class="home-footer-nav" aria-label="Footer">
+      <div>
+        <p class="sd-label">Library</p>
+        <ul>
+          <li><a href="./lib-rules.html">Rules</a></li>
+          <li><a href="./lib-buttons.html">Buttons</a></li>
+          <li><a href="./lib-fields.html">Fields</a></li>
+          <li><a href="./lib-setup.html">Setup</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="sd-label">AI</p>
+        <ul>
+          <li><a href="https://github.com/Medalink/signal-design/blob/main/llms-full.txt">llms-full.txt</a></li>
+          <li><a href="https://github.com/Medalink/signal-design/blob/main/ai/components.json">ai/components.json</a></li>
+          <li><a href="./lib-owned.html">Framework state</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="sd-label">Examples</p>
+        <ul>
+          <li><a href="./chat.html">Chat</a></li>
+          <li><a href="./shell.html">App shell</a></li>
+          <li><a href="./charts.html">Charts</a></li>
+          <li><a href="./stream.html">Stream</a></li>
+          <li><a href="./react-shell.html">React app shell</a></li>
+        </ul>
+      </div>
+    </nav>
+    <p class="sd-subtle home-copyright">© 2026 Signal design. MIT.</p>
+  </section>`;
+}
+
+/** One doc section: an h2 with a stable id that the "On this page" rail links to. */
+const docSection = (id, title, inner) => `  <section class="doc-section" id="${id}" aria-labelledby="${id}-h">
+    <h2 id="${id}-h" class="sd-title">${title}</h2>
+${inner}
+  </section>`;
+
+const docBullets = (items) => `    <ul class="doc-list">\n${items.map((t) => `      <li>${t}</li>`).join("\n")}\n    </ul>`;
+
+const docApi = (rows) => `    <div class="sd-table-wrap">
+      <table class="sd-table sd-table-compact">
+        <thead><tr><th>Member</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+${rows.map((r) => `          <tr><td><code>${r.name}</code></td><td>${r.type}</td><td>${r.def ?? "—"}</td><td>${r.desc}</td></tr>`).join("\n")}
+        </tbody>
+      </table>
+    </div>`;
+
+const docKeyboard = (rows) => `    <dl class="sd-kv doc-keys">\n${rows.map(([k, v]) => `      <dt><kbd>${k}</kbd></dt><dd>${v}</dd>`).join("\n")}\n    </dl>`;
+
+const docRelated = (ids) => {
+  const cards = ids
+    .map(byId)
+    .filter(Boolean)
+    .map((p) => `      <a class="sd-link-card" href="./${p.file}"><span class="sd-link-card-site">${p.group.title}</span><span class="sd-link-card-title">${p.title}</span><span class="sd-link-card-desc">${p.summary}</span></a>`);
+  return `    <div class="sd-grid" style="--min: 16rem; --gap: 12px">\n${cards.join("\n")}\n    </div>`;
+};
+
+/** Every doc section a page provides, in reading order. Empty for pages without a doc object. */
+function docHtml(page) {
+  const d = page.doc;
+  if (!d) return "";
+  const parts = [];
+  if (d.when?.length) parts.push(docSection("when", "When to use", docBullets(d.when)));
+  if (d.notWhen?.length) parts.push(docSection("not-when", "When not to use", docBullets(d.notWhen)));
+  if (d.usage)
+    parts.push(
+      docSection(
+        "usage",
+        "Usage",
+        `    <div class="sd-code">
+      <div class="sd-code-head">Usage <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#doc-usage">Copy</button></div>
+      <pre id="doc-usage" tabindex="0"><code>${d.usage}</code></pre>
+    </div>`,
+      ),
+    );
+  if (d.api?.length) parts.push(docSection("api", "API", docApi(d.api)));
+  if (d.keyboard?.length) parts.push(docSection("keyboard", "Keyboard", docKeyboard(d.keyboard)));
+  if (d.a11y?.length) parts.push(docSection("a11y", "Accessibility", docBullets(d.a11y)));
+  if (d.motion?.length) parts.push(docSection("motion", "Motion", docBullets(d.motion)));
+  if (d.related?.length) parts.push(docSection("related", "Related", docRelated(d.related)));
+  return parts.join("\n\n");
+}
+
+/** A library page: its group and title over its content, then the doc sections, then the pages either side. */
 function libraryContent(page, body) {
-  const title = `<div class="demo-title"><p class="sd-label">${page.group.title}</p><h1 id="${page.id}-h" class="sd-display">${page.title}</h1></div>`;
+  const intro = page.doc?.intro;
+  const title = `<div class="demo-title"><p class="sd-label">${page.group.title}</p><h1 id="${page.id}-h" class="sd-display">${page.title}</h1>${intro ? `\n      <p class="sd-lead max-w-[42rem]">${intro}</p>` : ""}</div>`;
   const content = body.startsWith('<header class="demo-intro">')
     ? body.replace('<header class="demo-intro">', `<header class="demo-intro">\n    ${title}`)
     : `<header class="demo-intro">\n    ${title}\n  </header>\n\n  ${body}`;
+  const doc = docHtml(page);
   const { prev, next } = neighbors(page);
   const step = (p, rel, side) =>
     p ? `    <a class="sd-link-card" href="./${p.file}" rel="${rel}"><span class="sd-link-card-site">${side}</span><span class="sd-link-card-title">${p.title}</span></a>` : "    <span></span>";
   return `  <section class="demo-section" id="${page.id}" aria-labelledby="${page.id}-h">
   ${content}
   </section>
-
+${doc ? `\n${doc}\n` : ""}
   <nav class="demo-pager" aria-label="Previous and next page">
 ${step(prev, "prev", "Previous")}
 ${step(next, "next", "Next")}
@@ -154,7 +362,9 @@ export function pageOf(filename) {
 export function renderPage(page, html) {
   const body = (html.match(/<body[^>]*>([\s\S]*)<\/body>/)?.[1] ?? "").replace(/^\s+|\s+$/g, "");
   const library = page !== HOME;
-  const content = library ? libraryContent(page, body) : `  ${body.replace("<!--@cards-->", cards())}`;
+  const content = library
+    ? libraryContent(page, body)
+    : body.replace("<!--@lead-->", homeLead()).replace("<!--@cards-->", homeCards(cards()));
   const title = library ? `${page.title} · Signal design library` : "Signal design library";
   const own = /<dialog[^>]*data-sd-palette/.test(content);
   const fill = {
@@ -173,7 +383,7 @@ export function renderPage(page, html) {
     search_kbd: own ? "" : "<span><kbd>Ctrl K</kbd></span>",
     rail: rail(page),
     sidebar: sidebar(page),
-    aside: library ? aside : "",
+    aside: library ? asideFor(page) : "",
     aside_button: library ? asideButton : "",
     aside_hint: library ? asideHint : "",
     palette: palette(),

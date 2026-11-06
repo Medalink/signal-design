@@ -65,6 +65,101 @@
   .home-section > .sd-grid {
     margin-top: 20px;
   }
+  /* The landing hero. */
+  .home-hero {
+    padding-block: 16px 48px;
+  }
+  .home-hero .sd-actions {
+    margin-top: 8px;
+  }
+  /* Featured example cards: the art piece sits in the card's thumb cell. */
+  .home-featured-art {
+    display: grid;
+    place-items: center;
+    --sd-art-cell: 5px;
+  }
+  /* FAQ questions. */
+  .home-faq h3 {
+    margin: 0 0 6px;
+    font-size: var(--text-base);
+  }
+  .home-faq p {
+    margin: 0;
+    font-size: var(--text-sm);
+  }
+  /* Footer nav columns. */
+  .home-footer-nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+    gap: 24px;
+    margin-top: 40px;
+  }
+  .home-footer-nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 8px;
+    font-size: var(--text-sm);
+  }
+  .home-footer-nav .sd-label {
+    margin-block-end: 4px;
+  }
+  .home-copyright {
+    margin-block-start: 40px;
+    font-size: var(--text-sm);
+  }
+  /* Doc anatomy sections on a library page, and the lists inside them. */
+  .doc-section {
+    scroll-margin-top: 16px;
+    padding-block: 32px;
+    border-block-start: 1px solid var(--sd-line);
+  }
+  .doc-section > .sd-title {
+    margin: 0 0 16px;
+  }
+  .doc-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 10px;
+    color: var(--sd-fg-muted);
+    max-width: 48rem;
+  }
+  .doc-list li {
+    padding-inline-start: 16px;
+    text-indent: -16px;
+  }
+  .doc-list li::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-inline-end: 10px;
+    background: var(--sd-fg-faint);
+    vertical-align: 2px;
+  }
+  .doc-keys {
+    max-width: 30rem;
+  }
+  .doc-keys dd {
+    color: var(--sd-fg-muted);
+  }
+  /* The "On this page" rail in the aside. */
+  .doc-toc {
+    display: grid;
+  }
+  .doc-toc a {
+    padding: 4px 8px;
+    color: var(--sd-fg-muted);
+    font-size: var(--text-sm);
+    text-decoration: none;
+  }
+  .doc-toc a:hover {
+    color: var(--sd-fg);
+    background: var(--sd-tone-2);
+  }
   .demo-block {
     display: grid;
     gap: 14px;
