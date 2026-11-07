@@ -31,15 +31,15 @@
   },
   {
    "name": "--sd-fg-muted",
-   "description": "Secondary text: descriptions, leads, subtitles. ink #a3a3a3 · graphite #adadad · paper #2e2e33"
+   "description": "Secondary text: descriptions, leads, subtitles. ink #b8b8b8 · graphite #c2c2c2 · paper #2e2e33"
   },
   {
    "name": "--sd-fg-subtle",
-   "description": "Labels and meta. ink #949494 · graphite #999999 · paper #5c5c66"
+   "description": "Labels and meta. ink #aaaaaa · graphite #b0b0b0 · paper #4f4f58"
   },
   {
    "name": "--sd-fg-faint",
-   "description": "The quietest readable text (still 4.5:1): hints, timestamps. ink #8a8a8a · graphite #959595 · paper #646470"
+   "description": "The quietest readable text (still 4.5:1): hints, timestamps. ink #9a9a9a · graphite #a3a3a3 · paper #5a5a64"
   },
   {
    "name": "--sd-primary",

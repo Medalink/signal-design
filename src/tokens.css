@@ -194,7 +194,7 @@
 [data-theme="ink"] {
   color-scheme: dark;
   /* A black backdrop, #0a0a0a panels and #191a1d hover. Text has two
-     clear levels: neutral white for content, #a3a3a3 for everything
+     clear levels: neutral white for content, #b8b8b8 for everything
      secondary. Hairlines are solid #262626 so dividers read at a glance. */
   --sd-canvas: #000000;
   --sd-surface: #0a0a0a;
@@ -208,9 +208,9 @@
   --sd-line-strong: #333333;
   --sd-line-control: #676767; /* 3:1 on canvas, surface and raised (WCAG 1.4.11) */
   --sd-fg: #fafafa;
-  --sd-fg-muted: #a3a3a3;
-  --sd-fg-subtle: #949494;
-  --sd-fg-faint: #8a8a8a; /* 4.5:1 on every ink surface, a field in a card included */
+  --sd-fg-muted: #b8b8b8;
+  --sd-fg-subtle: #aaaaaa;
+  --sd-fg-faint: #9a9a9a; /* 7:1 on canvas and surface, 4.5:1 on every ink surface */
   --sd-primary: #fafafa;
   --sd-on-primary: var(--color-ink-1000);
   --sd-accent: var(--color-cyan);
@@ -263,9 +263,9 @@
   --sd-line-strong: #3d3d3d;
   --sd-line-control: #6f6f6f; /* 3:1 on every graphite surface */
   --sd-fg: #f5f5f5;
-  --sd-fg-muted: #adadad;
-  --sd-fg-subtle: #999999;
-  --sd-fg-faint: #959595; /* 4.5:1 on every graphite surface, a field in a card included */
+  --sd-fg-muted: #c2c2c2;
+  --sd-fg-subtle: #b0b0b0;
+  --sd-fg-faint: #a3a3a3; /* 7:1 on canvas, 4.5:1 on every graphite surface */
   --sd-primary: #f5f5f5;
   --sd-on-primary: #0f0f0f;
   --sd-accent: var(--color-cyan);
@@ -318,8 +318,8 @@
   --sd-line-control: #858585; /* 3:1 on every light surface, the shell behind the app included */
   --sd-fg: var(--color-ink-1000);
   --sd-fg-muted: #2e2e33;
-  --sd-fg-subtle: #5c5c66;
-  --sd-fg-faint: #646470; /* 4.5:1 on every light surface, a field in a card included */
+  --sd-fg-subtle: #4f4f58;
+  --sd-fg-faint: #5a5a64; /* 6:1 on white, 4.5:1 on every light surface */
   --sd-primary: var(--color-ink-1000);
   --sd-on-primary: #ffffff;
   --sd-accent: var(--color-cyan-deep);
@@ -373,8 +373,8 @@
     --sd-line-control: #858585;
     --sd-fg: var(--color-ink-1000);
     --sd-fg-muted: #2e2e33;
-    --sd-fg-subtle: #5c5c66;
-    --sd-fg-faint: #646470; /* 4.5:1 on every light surface, a field in a card included */
+    --sd-fg-subtle: #4f4f58;
+    --sd-fg-faint: #5a5a64; /* 6:1 on white, 4.5:1 on every light surface */
     --sd-primary: var(--color-ink-1000);
     --sd-on-primary: #ffffff;
     --sd-accent: var(--color-cyan-deep);
