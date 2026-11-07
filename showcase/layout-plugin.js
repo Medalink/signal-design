@@ -501,9 +501,8 @@ export function renderPage(page, html) {
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>${title}</title>
   <script>
-    try { const t = localStorage.getItem("sd-theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
-  </script>
-  <link rel="stylesheet" href="./app.css">
+    try { const d = document.documentElement.dataset, t = localStorage.getItem("sd-theme"), f = localStorage.getItem("sd-font"); if (t) d.theme = t; if (f) d.font = f; } catch {}
+  </script>  <link rel="stylesheet" href="./app.css">
   <script type="module" src="./${scriptOf(page)}"></script>
 </head>
 <body>

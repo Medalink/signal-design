@@ -1359,3 +1359,24 @@
     transform-origin: center;
   }
 }
+
+/* Page to page inside the showcase: a short cross-fade, with the topbar and
+   sidebar held still so only the article changes. */
+@view-transition {
+  navigation: auto;
+}
+.doc-topbar {
+  view-transition-name: doc-topbar;
+}
+.doc-sidebar {
+  view-transition-name: doc-sidebar;
+}
+::view-transition-group(*) {
+  animation-duration: 160ms;
+  animation-timing-function: var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}
