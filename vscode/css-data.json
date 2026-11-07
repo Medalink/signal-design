@@ -51,19 +51,19 @@
   },
   {
    "name": "--sd-accent",
-   "description": "Signal: selected, active, now. Focus rings and the current item use fg, not accent. ink #00d4ff · graphite #00d4ff · paper #00718f"
+   "description": "Signal: selected, active, now. Focus rings and the current item use fg, not accent. ink #00d4ff · graphite #00d4ff · paper #006c89"
   },
   {
    "name": "--sd-success",
-   "description": "Signal: approved, passing, online. ink #00ff88 · graphite #00ff88 · paper #00804a"
+   "description": "Signal: approved, passing, online. ink #00ff88 · graphite #00ff88 · paper #007342"
   },
   {
    "name": "--sd-danger",
-   "description": "Signal: irreversible, risk, reject, errors. ink #ff3366 · graphite #ff4775 · paper #c8003a"
+   "description": "Signal: irreversible, risk, reject, errors. ink #ff4775 · graphite #ff4775 · paper #c8003a"
   },
   {
    "name": "--sd-warning",
-   "description": "Signal: costly. ink #ff8800 · graphite #ff8800 · paper #a84d00"
+   "description": "Signal: costly. ink #ff8800 · graphite #ff8800 · paper #a24a00"
   },
   {
    "name": "--sd-pending",
@@ -71,7 +71,7 @@
   },
   {
    "name": "--sd-extra",
-   "description": "Signal: people and presence. ink #8855ff · graphite #9d73ff · paper #5b2fd1"
+   "description": "Signal: people and presence. ink #9d73ff · graphite #9d73ff · paper #5b2fd1"
   },
   {
    "name": "--sd-backdrop",

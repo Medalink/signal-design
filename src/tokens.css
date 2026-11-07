@@ -118,10 +118,10 @@
   --color-violet: #8855ff; /* reserved: people, presence */
 
   /* Deep signals: the same hues dark enough to read on light surfaces. */
-  --color-cyan-deep: #00718f;
-  --color-green-deep: #00804a;
+  --color-cyan-deep: #006c89;
+  --color-green-deep: #007342;
   --color-pink-deep: #c8003a;
-  --color-orange-deep: #a84d00;
+  --color-orange-deep: #a24a00;
   --color-amber-deep: #855800;
   --color-violet-deep: #5b2fd1;
 
@@ -215,10 +215,10 @@
   --sd-on-primary: var(--color-ink-1000);
   --sd-accent: var(--color-cyan);
   --sd-success: var(--color-green);
-  --sd-danger: var(--color-pink);
+  --sd-danger: #ff4775; /* the signal pink, a touch lighter: 4.5:1 on selected rows */
   --sd-warning: var(--color-orange);
   --sd-pending: var(--color-amber);
-  --sd-extra: var(--color-violet);
+  --sd-extra: #9d73ff; /* the people violet, a touch lighter: 4.5:1 on selected rows */
   --sd-backdrop: rgb(0 0 0 / 0.64);
   --sd-shell-bg: var(--sd-canvas); /* behind the app container, where the rain shows */
   --sd-container: var(--sd-tone-2); /* the app's main content box */

@@ -113,9 +113,9 @@
     --sd-chart-drop: #fb923c;
     --sd-chart-maintenance: rgb(0 212 255 / 0.07);
     --sd-chart-missing: rgb(82 93 108 / 0.1);
-    --sd-chart-alert: rgb(255 51 102 / 0.12);
+    --sd-chart-alert: color-mix(in srgb, var(--sd-chart-critical) 12%, transparent);
     --sd-chart-dip: rgb(34 197 94 / 0.12);
-    --sd-chart-spike: rgb(255 51 102 / 0.13);
+    --sd-chart-spike: color-mix(in srgb, var(--sd-chart-critical) 13%, transparent);
     --sd-chart-day: rgb(100 116 139 / 0.35);
     --sd-chart-forecast: #ffaa00;
     --sd-chart-stale: #ffaa00;

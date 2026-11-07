@@ -165,7 +165,7 @@
   }
   /* Waiting and failed say so in their own color; the head's other words stay grey. */
   .sd-flow-stage:is([data-status="waiting"], [data-status="failed"]) > .sd-flow-stage-head > span {
-    color: color-mix(in srgb, var(--status) 75%, var(--sd-fg));
+    color: color-mix(in srgb, var(--status) 60%, var(--sd-fg));
   }
 
   /* The jobs, and the two buses: the one coming in on the left and the one
@@ -301,7 +301,7 @@
     background-repeat: no-repeat;
   }
   .sd-flow-job:is([data-status="running"], [data-status="waiting"], [data-status="failed"]) > span:not(.sd-sr-only) {
-    color: color-mix(in srgb, var(--status) 75%, var(--sd-fg));
+    color: color-mix(in srgb, var(--status) 60%, var(--sd-fg));
   }
   .sd-flow-job:is([data-status="queued"], [data-status="skipped"]) {
     --job-fill: var(--sd-tone-2);
