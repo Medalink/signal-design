@@ -1290,9 +1290,6 @@
   .settings-panel .sd-seg > button {
     flex: 1;
   }
-  .vp-phone-only {
-    display: none;
-  }
   /* The width switch needs a window wider than the frames it opens. */
   @media (max-width: 63.99rem) {
     .vp-widths {
@@ -1304,12 +1301,8 @@
     .vp-bar {
       gap: 12px;
     }
-    .vp-pages-btn,
-    .vp-theme {
+    .vp-pages-btn {
       display: none;
-    }
-    .vp-phone-only {
-      display: grid;
     }
   }
   /* Nine pages plus home and search: tighter rail items so the whole rail shows at 768px tall and up. Shorter windows scroll the list. A rail inside a demo block keeps the library spacing. */

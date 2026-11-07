@@ -177,12 +177,14 @@ export async function checkShowcaseBar(browser, base, name) {
   }));
   expect(pagesMenu.items.join() === ALL.map((p) => `./${p.file}`).join() && pagesMenu.current === "./shell.html", `pages menu ${JSON.stringify(pagesMenu)}`);
   await page.keyboard.press("Escape");
-  await page.click('.vp-bar [data-sd-theme="paper"]');
-  expect((await page.evaluate(() => [document.documentElement.dataset.theme, localStorage.getItem("sd-theme")].join())) === "paper,paper", "the bar's theme seg sets and remembers paper");
-  await page.click('.vp-bar [data-sd-theme="ink"]');
+  // The bar holds no theme seg of its own: theme lives in its settings, so a mock app's own theme button is the only one in view.
+  expect(!(await page.evaluate(() => document.querySelector(".vp-bar > :not([popover]) [data-sd-theme], .vp-bar > [data-sd-theme]"))), "the example bar shows no theme seg of its own");
   // The rain toggle appears where the page has a rain canvas; the doc pages above have none.
   await page.click('.vp-bar [popovertarget="vp-settings"]');
   await page.waitForFunction(() => document.getElementById("vp-settings").matches(":popover-open"), null, { timeout: 2000 });
+  await page.click('#vp-settings [data-sd-theme="paper"]');
+  expect((await page.evaluate(() => [document.documentElement.dataset.theme, localStorage.getItem("sd-theme")].join())) === "paper,paper", "the bar's settings theme seg sets and remembers paper");
+  await page.click('#vp-settings [data-sd-theme="ink"]');
   const barPanel = await page.evaluate(() => ({
     rain: !!document.querySelector("#vp-settings [data-sd-rain-toggle]"),
     fonts: document.querySelectorAll("#vp-settings [data-sd-font]").length,
@@ -315,7 +317,6 @@ export async function checkShowcaseBar(browser, base, name) {
         overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
         widths: shown(".vp-widths"),
         pages: shown(".vp-pages-btn"),
-        theme: shown(".vp-theme"),
         settings: shown('.vp-bar [popovertarget="vp-settings"]'),
         // Every library page is reachable from the rail without scrolling it, at 768px tall and up.
         // The 16px of spare height absorbs other platforms' font metrics (CI runs on Linux fallbacks).
@@ -329,7 +330,7 @@ export async function checkShowcaseBar(browser, base, name) {
       };
     });
     const phone = width < 768;
-    expect(m.bar === 36 && m.gap === 0 && m.fits && m.scrolls <= 0 && m.overflow <= 0 && m.rail && m.settings && m.widths === width >= 1024 && m.pages === !phone && m.theme === !phone, `${file} at ${width}px ${JSON.stringify(m)}`);
+    expect(m.bar === 36 && m.gap === 0 && m.fits && m.scrolls <= 0 && m.overflow <= 0 && m.rail && m.settings && m.widths === width >= 1024 && m.pages === !phone, `${file} at ${width}px ${JSON.stringify(m)}`);
     await page.close();
   }
   await context.close();

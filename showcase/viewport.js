@@ -154,7 +154,6 @@ function buildBar() {
     (page ? `<span class="vp-here"><span class="sd-badge">Mock</span><span class="vp-title">${page.title}</span></span>` : "") +
     `<button type="button" class="sd-btn sd-btn-ghost sd-btn-sm vp-pages-btn" popovertarget="vp-pages">Pages</button>` +
     `<span class="vp-end">` +
-    `<span class="vp-theme">${themeSeg("Theme")}</span>` +
     `<span class="vp-widths"><span id="vp-label">Width</span><span class="sd-seg sd-seg-sm sd-seg-inline" role="group" aria-labelledby="vp-label">${SIZES.map(
       (s) => `<button type="button" data-vp="${s.w}" aria-pressed="${s.w === 0}" ${s.name ? `aria-label="${s.name}"` : ""}>${s.label}</button>`,
     ).join("")}</span></span>` +
@@ -176,7 +175,7 @@ function buildBar() {
   panel.dataset.sdAlign = "end";
   panel.setAttribute("popover", "");
   panel.setAttribute("aria-label", "Settings");
-  panel.innerHTML = settingsHtml({ themeClass: "vp-phone-only" });
+  panel.innerHTML = settingsHtml();
   // Inside the nav, so the panels belong to its landmark; they open in the top layer, not in the bar.
   bar.append(pages, panel);
 
