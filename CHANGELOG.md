@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 1.4.48 (2026-11-07)
+
+### Changed
+- Source Code Pro loads a 12 KB Latin file instead of the 72 KB whole font
+
 ## 1.4.47 (2026-11-06)
 
 ### Changed
