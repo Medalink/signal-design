@@ -82,6 +82,33 @@ const releaseCard = () => {
   return `<a class="doc-release" href="https://github.com/Medalink/signal-design/releases/tag/v${version}" target="_blank" rel="noreferrer"><span class="sd-dot" data-tone="success" aria-hidden="true"></span><span>What's new</span><span class="doc-release-ver">v${version}</span><svg aria-hidden="true"><use href="#i-next"/></svg></a>`;
 };
 
+/**
+ * The one topbar, shared by the library pages and the overview (they differ
+ * only in the sidebar's menu button). Nav links are the same everywhere; the
+ * Theme button opens the appearance popover, which viewport.js fills from
+ * settings.js; Search opens the page palette. A page with its own palette demo
+ * keeps Ctrl K for that demo, so its Search button has no key of its own.
+ */
+function topbar({ menu, components, examples, ownPalette }) {
+  const here = (on) => (on ? ' aria-current="true"' : "");
+  return `<header class="doc-topbar">
+  ${menu ? `<button class="doc-menu-btn" data-doc-nav aria-controls="doc-sidebar" aria-expanded="false" aria-label="Open navigation"><svg><use href="#i-menu"/></svg></button>
+  ` : ""}<a href="./index.html" class="sd-wordmark" aria-label="Signal home"><svg class="sd-mark" style="width:22px;height:22px"><use href="#i-mark"/></svg> Signal</a>
+  <nav class="doc-topbar-nav" aria-label="Library">
+    <a href="./index.html#home-components"${here(components)}>Components</a>
+    <a href="./index.html#home-examples"${here(examples)}>Examples</a>
+    <a href="./lib-rules.html">Docs</a>
+    <a href="./lib-setup.html">Setup</a>
+  </nav>
+  <div class="doc-topbar-end">
+    <button class="doc-topbar-search" type="button" data-sd-open="nav-palette"${ownPalette ? "" : ' data-sd-key="mod+k" aria-keyshortcuts="Control+K"'} aria-label="Search pages"><svg aria-hidden="true"><use href="#i-search"/></svg><span>Search</span><kbd class="sd-kbd">Ctrl K</kbd></button>
+    <button class="doc-topbar-appearance" type="button" popovertarget="doc-appearance" aria-label="Theme and font"><svg aria-hidden="true"><use href="#i-theme"/></svg><span>Theme</span></button>
+    <a class="doc-topbar-btn" href="https://github.com/Medalink/signal-design" target="_blank" rel="noreferrer" aria-label="Signal design on GitHub"><svg aria-hidden="true"><use href="#i-github"/></svg></a>
+  </div>
+  <div id="doc-appearance" class="sd-popover sd-popover-pad settings-panel" popover data-sd-align="end" aria-label="Theme and font"></div>
+</header>`;
+}
+
 /** The page-level palette: every page under its group, from the registry. It is not a demo block. */
 function palette() {
   const option = (p, hint = "") => `      <a role="option" href="./${p.file}" data-keywords="${p.summary.replace(/"/g, "&quot;")}">${p.title}${hint && ` <span class="sd-menu-hint">${hint}</span>`}</a>`;
@@ -485,8 +512,12 @@ export function renderPage(page, html) {
       : `<li><span aria-current="page">Overview</span></li>`,
     sidebar: docNav(page),
     release: releaseCard(),
-    navComponents: library && page.section.id !== "examples" ? ' aria-current="true"' : "",
-    navExamples: library && page.section.id === "examples" ? ' aria-current="true"' : "",
+    topbar: topbar({
+      menu: library,
+      components: library && page.section.id !== "examples",
+      examples: library && page.section.id === "examples",
+      ownPalette: library && /data-sd-palette/.test(body),
+    }),
     aside: library ? asideFor(page) : "",
     palette: palette(),
   };

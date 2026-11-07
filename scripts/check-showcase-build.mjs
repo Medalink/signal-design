@@ -6,9 +6,10 @@
  * The dev server keeps every import, so only a build shows what a bundler
  * drops (the package marks only CSS as side-effect free). This builds the
  * showcase with SHOWCASE_BASE=/signal-design/ into a temp dir, serves it under
- * that subpath, and opens every page in Chromium. Each page must have the
- * showcase bar, example pages must carry the Mock badge, and nothing may log a
- * console error or fail to load. Each page opens with and without its .html.
+ * that subpath, and opens every page in Chromium. Example pages must have the
+ * showcase bar with the Mock badge, the overview and library pages the doc
+ * topbar with its Theme popover and no bar, and nothing may log a console
+ * error or fail to load. Each page opens with and without its .html.
  */
 import { createReadStream, existsSync, mkdtempSync, rmSync, statSync } from "node:fs";
 import { createServer } from "node:http";
@@ -71,9 +72,7 @@ try {
     page.on("requestfailed", (r) => problems.push(`request failed: ${r.url()}`));
     try {
       await page.goto(`${origin}${BASE}${path}`, { waitUntil: "networkidle" });
-      const bar = await page.waitForSelector(".vp-bar", { timeout: 3000 }).catch(() => null);
-      if (!bar) problems.push("no .vp-bar in the built page");
-      else problems.push(...(await check(page)));
+      problems.push(...(await check(page)));
     } catch (error) {
       problems.push(error.message.split("\n")[0]);
     } finally {
@@ -83,20 +82,33 @@ try {
     if (!problems.length) console.log(`ok   ${where}`);
   };
 
+  // Example pages carry the showcase bar; the overview and library pages carry the doc topbar with its Theme popover and no bar.
   const barOf = (entry) => async (page) => {
     const example = EXAMPLES.includes(entry);
+    await page.waitForSelector(example ? ".vp-bar" : "#doc-appearance [data-sd-theme]", { state: "attached", timeout: 3000 }).catch(() => {});
     const bar = await page.evaluate(() => ({
+      bars: document.querySelectorAll(".vp-bar").length,
       kind: document.querySelector(".vp-bar")?.dataset.kind,
       badge: document.querySelector(".vp-bar .sd-badge")?.textContent,
       title: document.querySelector(".vp-title")?.textContent,
       current: document.querySelector('#vp-pages [aria-current="page"]')?.getAttribute("href"),
+      topbar: document.querySelectorAll(".doc-topbar").length,
+      themes: document.querySelectorAll("#doc-appearance [data-sd-theme]").length,
+      palette: !!document.getElementById("nav-palette"),
     }));
     const problems = [];
-    if (bar.kind !== (example ? "mock" : "library")) problems.push(`bar kind ${bar.kind}`);
-    if (example && bar.badge !== "Mock") problems.push(`Mock badge reads ${JSON.stringify(bar.badge)}`);
-    if (!example && bar.badge) problems.push(`library page shows the badge ${JSON.stringify(bar.badge)}`);
-    if (entry !== HOME && bar.title !== entry.title) problems.push(`bar title ${JSON.stringify(bar.title)}, want ${entry.title}`);
-    if (bar.current !== `./${entry.file}`) problems.push(`pages menu marks ${bar.current} as current, want ./${entry.file}`);
+    if (example) {
+      if (bar.kind !== "mock") problems.push(`bar kind ${bar.kind}`);
+      if (bar.badge !== "Mock") problems.push(`Mock badge reads ${JSON.stringify(bar.badge)}`);
+      if (bar.title !== entry.title) problems.push(`bar title ${JSON.stringify(bar.title)}, want ${entry.title}`);
+      if (bar.current !== `./${entry.file}`) problems.push(`pages menu marks ${bar.current} as current, want ./${entry.file}`);
+      if (bar.topbar) problems.push("example page has a doc topbar");
+    } else {
+      if (bar.bars) problems.push("library page mounts the showcase bar");
+      if (bar.topbar !== 1) problems.push(`${bar.topbar} doc topbars, want 1`);
+      if (bar.themes !== 4) problems.push(`Theme popover has ${bar.themes} theme buttons, want 4`);
+      if (!bar.palette) problems.push("no #nav-palette");
+    }
     return problems;
   };
   for (const entry of ALL) {

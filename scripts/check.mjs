@@ -883,15 +883,15 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
     }));
     if (squares.heat !== 168 || squares.waffle !== 100 || squares.waffleW < 150 || squares.uptime !== 360) fail(where, `square charts ${JSON.stringify(squares)}`);
     // Theme: spectrum colors the series.
-    // The showcase bar owns the chart colors; its settings panel is closed here, so click the button directly.
-    await page.evaluate(() => document.querySelector('#vp-chart-colors [data-value="spectrum"]').click());
+    // The topbar's Theme popover owns the chart colors; it is closed here, so click the button directly.
+    await page.evaluate(() => document.querySelector('#set-chart-colors [data-value="spectrum"]').click());
     await page.waitForFunction(() => {
       const c = document.querySelector("#core canvas").sdChart.chart.data.datasets.find((d) => d.label === "Core ↓")._color;
       return c.g > c.r + 60;
     }, null, { timeout: 2000 }).catch(() => {});
     const spec = (await core()).down;
     if (!(spec.g > spec.r + 60)) fail(where, `spectrum download is not green ${JSON.stringify(spec)}`);
-    await page.evaluate(() => document.querySelector('#vp-chart-colors [data-value="mono"]').click());
+    await page.evaluate(() => document.querySelector('#set-chart-colors [data-value="mono"]').click());
   }
 
   if (pageName === "charts" && width === 1280 && theme === "ink") {

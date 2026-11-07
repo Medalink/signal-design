@@ -7,25 +7,11 @@
   </defs>
 </svg>
 
-<!-- Every library page is a document, like uiarc.dev's docs: a sticky topbar,
+<!-- Every library page is a document, like uiarc.dev's docs: the one sticky topbar,
      a sticky filter sidebar on the left, the article with its breadcrumb, and
      a sticky on-this-page rail, all on normal page scroll. No app shell, no
      rain, no statusbar. layout-plugin.js fills this per page. -->
-<header class="doc-topbar">
-  <button class="doc-menu-btn" data-doc-nav aria-controls="doc-sidebar" aria-expanded="false" aria-label="Open navigation"><svg><use href="#i-menu"/></svg></button>
-  <a href="./index.html" class="sd-wordmark" aria-label="Signal home"><svg class="sd-mark" style="width:22px;height:22px"><use href="#i-mark"/></svg> Signal</a>
-  <nav class="doc-topbar-nav" aria-label="Library">
-    <a href="./index.html#home-components"{{navComponents}}>Components</a>
-    <a href="./index.html#home-examples"{{navExamples}}>Examples</a>
-    <a href="./lib-rules.html">Docs</a>
-    <a href="./lib-setup.html">Setup</a>
-  </nav>
-  <div class="doc-topbar-end">
-    <button class="doc-topbar-search" type="button" data-doc-search aria-label="Search pages"><svg aria-hidden="true"><use href="#i-search"/></svg><span>Search</span><kbd class="sd-kbd">Ctrl K</kbd></button>
-    <button class="doc-topbar-appearance" type="button" data-sd-theme-cycle aria-label="Next theme"><svg aria-hidden="true"><use href="#i-theme"/></svg><span>Theme</span></button>
-    <a class="doc-topbar-btn" href="https://github.com/Medalink/signal-design" target="_blank" rel="noreferrer" aria-label="Signal design on GitHub"><svg aria-hidden="true"><use href="#i-github"/></svg></a>
-  </div>
-</header>
+{{topbar}}
 
 <div class="doc-body">
   <div class="doc-sidebar" id="doc-sidebar">
@@ -33,8 +19,7 @@
     <div class="doc-search-row">
       <label class="doc-search">
         <svg aria-hidden="true"><use href="#i-search"/></svg>
-        <input id="doc-filter" type="search" placeholder="Search" aria-label="Filter components, blocks and docs" autocomplete="off">
-        <kbd class="sd-kbd doc-search-kbd">Ctrl K</kbd>
+        <input id="doc-filter" type="search" placeholder="Filter pages" aria-label="Filter pages in the sidebar" autocomplete="off">
       </label>
     </div>
     <div class="doc-tiers" role="radiogroup" aria-label="Show">
@@ -63,3 +48,5 @@
   </main>
 </div>
 <div class="doc-scrim" data-doc-nav-close aria-hidden="true"></div>
+
+{{palette}}

@@ -15,24 +15,17 @@
     --doc-sidebar-w: 242px;
     --doc-gutter: 26px;
   }
-  /* The showcase bar stays put above the doc chrome on library pages, so the
-     sticky topbar and the sticky sidebar sit at the same offsets at every
-     scroll position. --vp-bar-h comes from .has-vp-bar (the bar mounts on
-     every showcase page). */
-  /* Anything scrolled into view lands below the sticky bars, not under them. */
+  /* The topbar is the only bar on a library page and on the overview: the
+     showcase bar (viewport.js) mounts on example pages only. Anything
+     scrolled into view lands below the sticky topbar, not under it. */
   html[data-page^="lib-"] {
-    scroll-padding-top: calc(var(--vp-bar-h, 0px) + var(--doc-topbar-h) + 32px);
-  }
-  html[data-page^="lib-"] .vp-bar {
-    position: sticky;
-    top: 0;
-    z-index: 45;
+    scroll-padding-top: calc(var(--doc-topbar-h) + 32px);
   }
   /* Topbar: sticky, 64px tall, translucent canvas with an edge shadow where
      it meets what scrolls under it. */
   .doc-topbar {
     position: sticky;
-    top: var(--vp-bar-h, 0px);
+    top: 0;
     z-index: 30;
     display: flex;
     align-items: center;
@@ -170,13 +163,13 @@
      its own scroll when the nav is taller than the viewport. */
   .doc-sidebar {
     position: sticky;
-    top: calc(var(--vp-bar-h, 0px) + var(--doc-topbar-h));
+    top: var(--doc-topbar-h);
     z-index: 20;
     display: flex;
     flex-direction: column;
     flex: none;
     width: var(--doc-sidebar-w);
-    height: calc(100vh - var(--vp-bar-h, 0px) - var(--doc-topbar-h));
+    height: calc(100vh - var(--doc-topbar-h));
     padding: 20px 14px 14px 0;
     box-shadow: var(--sd-edge-right);
   }
@@ -222,16 +215,6 @@
   }
   #doc-filter:focus-visible {
     outline: none;
-  }
-  .doc-search-kbd {
-    flex: none;
-    min-width: 0;
-    padding: 0 5px;
-    border: 0;
-    font-size: 11px;
-    line-height: 18px;
-    color: var(--sd-fg-subtle);
-    background: var(--sd-field-fill);
   }
   /* Tier filter: All / Components / Examples as one segmented strip on the
      field fill; the chosen one is raised. */
@@ -420,7 +403,7 @@
   }
   .doc-scrim {
     position: fixed;
-    inset: var(--vp-bar-h, 0px) 0 0 0;
+    inset: 0;
     z-index: 25;
     display: none;
     background: var(--sd-backdrop);
@@ -609,12 +592,43 @@
     .doc-topbar-appearance > span {
       display: none;
     }
-    .doc-topbar-search {
-      width: auto;
-      padding: 0 9px;
+    /* Touch targets: every topbar control is 40px square, and the bar's
+       padding and gaps tighten so it fits 320px. */
+    .doc-topbar {
+      gap: 4px;
+      padding-inline: 8px;
     }
+    .doc-topbar-end {
+      gap: 2px;
+    }
+    .doc-topbar .sd-wordmark {
+      display: inline-flex;
+      align-items: center;
+      min-height: 40px;
+    }
+    .doc-menu-btn,
+    .doc-topbar-search,
+    .doc-topbar-appearance,
+    .doc-topbar-btn {
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+    }
+    .doc-menu-btn svg,
+    .doc-topbar-search svg,
+    .doc-topbar-appearance svg,
+    .doc-topbar-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+    .doc-topbar-search,
     .doc-topbar-appearance {
-      padding: 0 9px;
+      background: none;
+    }
+    .settings-panel .sd-seg > button,
+    .settings-panel .sd-btn {
+      min-height: 40px;
     }
     .doc-search-row {
       order: 2;
@@ -629,7 +643,7 @@
     /* The sidebar becomes an overlay drawer under the topbar. */
     .doc-sidebar {
       position: fixed;
-      top: var(--vp-bar-h, 0px);
+      top: 0;
       bottom: 0;
       left: 0;
       z-index: 30;
@@ -901,11 +915,11 @@
      muted title, then 13px links with a marker bar on the section in view. */
   .doc-toc-rail {
     position: sticky;
-    top: calc(var(--vp-bar-h, 0px) + 100px);
+    top: 100px;
     display: grid;
     gap: 12px;
     align-self: start;
-    max-height: calc(100vh - var(--vp-bar-h, 0px) - 116px);
+    max-height: calc(100vh - 116px);
     overflow-y: auto;
     padding-top: 6px;
   }
@@ -1196,7 +1210,7 @@
     border: 1px solid var(--sd-line);
   }
 
-  /* Showcase bar (showcase/viewport.js). One height, read by the shell below. */
+  /* Showcase bar (showcase/viewport.js): example pages only. One height, read by the shell below. */
   .has-vp-bar {
     --vp-bar-h: 36px;
   }
@@ -1262,12 +1276,19 @@
     gap: 10px;
     color: var(--sd-fg-faint);
   }
-  .vp-settings {
+  /* The appearance panel: the doc topbar's Theme popover and the example bar's settings. */
+  .settings-panel {
     gap: 14px;
-    width: 18rem;
+    width: min(18rem, calc(100vw - 32px));
   }
-  .vp-settings:popover-open {
+  .settings-panel:popover-open {
     display: grid;
+  }
+  .settings-panel .sd-seg {
+    display: flex;
+  }
+  .settings-panel .sd-seg > button {
+    flex: 1;
   }
   .vp-phone-only {
     display: none;

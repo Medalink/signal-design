@@ -1,17 +1,21 @@
 /**
- * Showcase bar: one slim bar at the top of every showcase page, library and
- * example alike. On the left it says where you are (the library, or a mock
- * app) and links back to the overview; a menu lists every page. On the right
- * are the settings that apply everywhere: theme, a width switch that opens
- * the same page in a frame at a device width (Esc or Full closes), and a
- * settings popover. The bar sits in the page flow (nothing is covered), is
- * compact on phones, and is absent inside the frame.
+ * Showcase bar: one slim bar at the top of every example page (the mock
+ * apps). It says the page is a mock app, links back to the library, and lists
+ * every page in a menu. On the right are theme, a width switch that opens the
+ * same page in a frame at a device width (Esc or Full closes), and a settings
+ * popover. The bar sits in the page flow (nothing is covered), is compact on
+ * phones, and is absent inside the frame.
  *
- * mountBar() and savedScrollbars() run in the frame too, so a framed page
- * shows the same chart colors and scrollbars as the page that opened it.
+ * Library pages and the overview have no bar: their doc topbar carries the
+ * same settings in its Theme popover, filled from settings.js. mountBar()
+ * wires those settings, the sync with a width frame and the remembered chart
+ * colors on every page, and builds the bar only on example pages. It and
+ * savedScrollbars() run in the frame too, so a framed page shows the same
+ * chart colors and scrollbars as the page that opened it.
  */
-import { EXAMPLES, HOME, LIBRARY, SECTIONS, byKey } from "./pages.js";
+import { HOME, LIBRARY, SECTIONS, byKey } from "./pages.js";
 import { getTheme, setScrollbars, setTheme } from "../src/js/index.js";
+import { THEMES, settingsHtml, themeSeg } from "./settings.js";
 
 const SIZES = [
   { label: "Full", w: 0 },
@@ -21,7 +25,6 @@ const SIZES = [
   { label: "390", w: 390, h: 844, name: "Phone 390 × 844" },
   { label: "360", w: 360, h: 780, name: "Small phone 360 × 780" },
 ];
-const THEMES = ["ink", "graphite", "paper", "auto"];
 
 const inFrame = new URLSearchParams(location.search).has("frame") || window !== window.top;
 
@@ -51,15 +54,8 @@ function frameUrl() {
   return url.toString();
 }
 
-/** Where this page sits: the library (with its page title) or a mock app (with its title). */
-function here() {
-  if (LIBRARY.includes(page)) return { mock: false, title: page.title };
-  if (EXAMPLES.includes(page)) return { mock: true, title: page.title };
-  return { mock: false, title: null };
-}
-
-const themeSeg = (label) =>
-  `<span class="sd-seg sd-seg-sm sd-seg-inline" role="group" aria-label="${label}">${THEMES.map((t) => `<button type="button" data-sd-theme="${t}" aria-pressed="false">${t}</button>`).join("")}</span>`;
+/** The overview and the library pages carry the doc topbar, not this bar. */
+const onDocPage = () => page === HOME || LIBRARY.includes(page);
 
 function menu() {
   const link = (p) => `<a role="menuitem" href="./${p.file}"${p === page ? ' aria-current="page"' : ""}>${p.title}</a>`;
@@ -67,23 +63,6 @@ function menu() {
   return (
     link(HOME) +
     SECTIONS.flatMap((s) => s.groups.map((g) => label(g.title) + g.pages.map(link).join(""))).join("")
-  );
-}
-
-const seg = (id, label, options, attrs = "") =>
-  `<div class="sd-field"><span class="sd-field-label" id="${id}-label">${label}</span><div class="sd-seg sd-seg-sm" id="${id}"${attrs} role="group" aria-labelledby="${id}-label">${options.map(([value, text]) => `<button type="button" data-value="${value}" aria-pressed="false">${text}</button>`).join("")}</div></div>`;
-
-const hasCharts = () => !!document.querySelector(".sd-chart, .sd-plot, .sd-heatmap, .sd-waffle, .sd-uptime, .sd-meter, [data-sd-chart]");
-const hasRain = () => !!document.querySelector("canvas[data-sd-rain]");
-
-function settings() {
-  return (
-    `<div class="sd-field vp-phone-only"><span class="sd-field-label">Theme</span>${themeSeg("Theme")}</div>` +
-    // init() restores the remembered font and keeps these buttons' aria-pressed in sync.
-    `<div class="sd-field"><span class="sd-field-label" id="vp-font-label">Text font</span><div class="sd-seg sd-seg-sm" role="group" aria-labelledby="vp-font-label"><button type="button" data-sd-font="system" aria-pressed="false">system</button><button type="button" data-sd-font="leon-sans" aria-pressed="false">leon sans</button><button type="button" data-sd-font="source-code-pro" aria-pressed="false" aria-label="Source Code Pro">mono</button></div></div>` +
-    (hasCharts() ? seg("vp-chart-colors", "Chart colors", [["mono", "mono"], ["spectrum", "spectrum"]], " data-chart-colors") : "") +
-    seg("vp-scrollbars", "Scrollbars", [["auto", "hide when idle"], ["always", "always"]]) +
-    (hasRain() ? `<div class="sd-field"><span class="sd-field-label">Backdrop</span><button class="sd-btn sd-btn-sm" data-sd-rain-toggle aria-pressed="false">Digital rain</button></div>` : "")
   );
 }
 
@@ -144,21 +123,35 @@ export const savedScrollbars = () => (store.get("sd-scrollbars") === "always" ? 
 
 function scrollbars(mode) {
   setScrollbars(mode);
-  pick("#vp-scrollbars", mode);
+  pick("#set-scrollbars", mode);
   store.set("sd-scrollbars", mode);
 }
 
+/**
+ * Fill the settings panel of a page that has one (the doc topbar's Theme
+ * popover) and wire the chart colors and scrollbars, wherever the panel is.
+ * Runs before init(), which restores the theme and font into the new buttons.
+ */
+function mountSettings(panel) {
+  if (panel) panel.innerHTML = settingsHtml();
+  document.addEventListener("click", (e) => {
+    const chart = e.target.closest("#set-chart-colors [data-value]");
+    if (chart) setChartColors(chart.dataset.value);
+    const bars = e.target.closest("#set-scrollbars [data-value]");
+    if (bars) scrollbars(bars.dataset.value);
+  });
+  pick("[data-chart-colors]", store.get("sd-chart-theme") || "mono");
+  pick("#set-scrollbars", savedScrollbars());
+}
+
 function buildBar() {
-  const where = here();
   const bar = document.createElement("nav");
   bar.className = "vp-bar";
-  bar.dataset.kind = where.mock ? "mock" : "library";
+  bar.dataset.kind = "mock";
   bar.setAttribute("aria-label", "Showcase");
   bar.innerHTML =
     `<a class="vp-home" href="./${HOME.file}">${mark}<span>Library</span></a>` +
-    (where.title
-      ? `<span class="vp-here">${where.mock ? '<span class="sd-badge">Mock</span>' : '<span class="vp-sep" aria-hidden="true">/</span>'}<span class="vp-title">${where.title}</span></span>`
-      : "") +
+    (page ? `<span class="vp-here"><span class="sd-badge">Mock</span><span class="vp-title">${page.title}</span></span>` : "") +
     `<button type="button" class="sd-btn sd-btn-ghost sd-btn-sm vp-pages-btn" popovertarget="vp-pages">Pages</button>` +
     `<span class="vp-end">` +
     `<span class="vp-theme">${themeSeg("Theme")}</span>` +
@@ -179,11 +172,11 @@ function buildBar() {
   pages.innerHTML = `<div class="sd-menu" role="menu" aria-label="Pages">${menu()}</div>`;
   const panel = document.createElement("div");
   panel.id = "vp-settings";
-  panel.className = "sd-popover sd-popover-pad vp-settings";
+  panel.className = "sd-popover sd-popover-pad settings-panel";
   panel.dataset.sdAlign = "end";
   panel.setAttribute("popover", "");
   panel.setAttribute("aria-label", "Settings");
-  panel.innerHTML = settings();
+  panel.innerHTML = settingsHtml({ themeClass: "vp-phone-only" });
   // Inside the nav, so the panels belong to its landmark; they open in the top layer, not in the bar.
   bar.append(pages, panel);
 
@@ -226,10 +219,6 @@ function buildBar() {
     const b = e.target.closest("[data-vp]");
     if (b) show(Number(b.dataset.vp));
     else if (e.target === dialog || e.target === stage) show(0);
-    const chart = e.target.closest("#vp-chart-colors [data-value]");
-    if (chart) setChartColors(chart.dataset.value);
-    const bars = e.target.closest("#vp-scrollbars [data-value]");
-    if (bars) scrollbars(bars.dataset.value);
   });
   dialog.addEventListener("close", () => {
     for (const b of document.querySelectorAll("[data-vp]")) b.setAttribute("aria-pressed", String(Number(b.dataset.vp) === 0));
@@ -242,23 +231,22 @@ function buildBar() {
     if (e.source === frame.contentWindow && e.origin === location.origin && e.data?.sdClose) show(0);
   });
   addEventListener("resize", () => dialog.open && fit(current));
-
-  pick("[data-chart-colors]", store.get("sd-chart-theme") || "mono");
-  pick("#vp-scrollbars", savedScrollbars());
 }
 
 /**
- * Mount the bar (not in a frame) and restore the saved chart colors. Each page
- * entry calls it before init(): the package marks only CSS as side-effect
- * free, so a bare `import "./viewport.js"` is tree-shaken out of the
- * production build. The entry passes savedScrollbars() to init() itself.
+ * Wire the page's settings and restore the saved chart colors; mount the bar
+ * on an example page (not in a frame). Each page entry calls it before init():
+ * the package marks only CSS as side-effect free, so a bare
+ * `import "./viewport.js"` is tree-shaken out of the production build. The
+ * entry passes savedScrollbars() to init() itself.
  */
 export function mountBar() {
   for (const [key, setting] of Object.entries(SYNCED)) shown[key] = setting.get();
   addEventListener("message", receive);
   document.addEventListener("sd:theme", ({ detail }) => announce("theme", detail.theme));
-  if (!inFrame) buildBar();
-  else if (window.parent !== window) {
+  if (!inFrame) {
+    if (!onDocPage()) buildBar();
+  } else if (window.parent !== window) {
     peer = () => window.parent;
     // The frame holds the focus, so Esc never reaches the dialog that holds it.
     // Judged on the way down: a Signal tooltip removes itself on this same Esc before the bubble phase.
@@ -270,6 +258,8 @@ export function mountBar() {
       if (closes && !e.defaultPrevented) window.parent.postMessage({ sdClose: true }, location.origin);
     });
   }
+  // After the bar, so the bar's own settings panel is wired and marked too.
+  mountSettings(document.getElementById("doc-appearance"));
 
   // After the page script has run, so a library page has already snapshotted its blocks as authored, whether or not the bar mounted.
   document.addEventListener("DOMContentLoaded", () => {

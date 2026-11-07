@@ -1,8 +1,9 @@
 /**
  * What every library page shares: the Preview / Code flip driven by the
- * toolbar's single pair, the sidebar page filter, the phone drawer and the
- * Ctrl K shortcut that focuses the filter. Theme, chart colors, scrollbars
- * and rain live in the showcase bar (viewport.js). A page module calls
+ * toolbar's single pair, the sidebar page filter and the phone drawer. Search
+ * is the topbar's page palette (Ctrl K, from init()). Theme, font, chart colors,
+ * scrollbars and rain live in the topbar's Theme popover (settings.js,
+ * viewport.js). A page module calls
  * mountLibrary() first, before any demo code, so the snapshots below capture
  * each block's markup as authored.
  */
@@ -92,7 +93,7 @@ function decorateBlocks(blocks) {
   });
 }
 
-/* ---- Sidebar: tiers, filter, phone drawer, Ctrl K ------------------------- */
+/* ---- Sidebar: tiers, filter, phone drawer --------------------------------- */
 
 function wireSidebar() {
   const sidebar = document.getElementById("doc-sidebar");
@@ -167,13 +168,9 @@ function wireSidebar() {
     });
   }
 
-  // The topbar search affordance lands on the sidebar filter, opening the
-  // drawer first on a phone; the toc's back-to-top scrolls home.
+  // The toc's back-to-top scrolls home.
   document.addEventListener("click", (event) => {
-    if (event.target.closest("[data-doc-search]")) {
-      if (matchMedia("(max-width: 63.99rem)").matches && !isOpen()) open(true);
-      filter.focus();
-    } else if (event.target.closest("[data-doc-top]")) {
+    if (event.target.closest("[data-doc-top]")) {
       const smooth = !matchMedia("(prefers-reduced-motion: reduce)").matches;
       scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
     }
@@ -200,19 +197,6 @@ function wireSidebar() {
   });
   matchMedia("(min-width: 64rem)").addEventListener("change", (m) => m.matches && isOpen() && open(false));
 
-  // Ctrl K focuses the filter — except where the page's own command palette
-  // claims the key.
-  document.addEventListener("keydown", (event) => {
-    if (event.key.toLowerCase() !== "k" || !(event.ctrlKey || event.metaKey) || event.altKey || event.repeat) return;
-    if (document.querySelector(".demo-block dialog[data-sd-palette]")) return;
-    event.preventDefault();
-    if (matchMedia("(max-width: 63.99rem)").matches) {
-      open(true);
-    } else {
-      filter.focus();
-    }
-  });
-
   // The current page's link starts in view inside the sidebar.
   nav.querySelector('.doc-nav-link[aria-current="page"]')?.scrollIntoView({ block: "nearest" });
 }
@@ -230,8 +214,8 @@ function wireScrollspy() {
       else a.removeAttribute("aria-current");
     }
   };
-  // The line a section crosses sits just under the topbar (plus the harness bar).
-  const top = document.documentElement.classList.contains("has-vp-bar") ? 140 : 104;
+  // The line a section crosses sits just under the topbar.
+  const top = 104;
   let ticking = false;
   const mark = () => {
     ticking = false;

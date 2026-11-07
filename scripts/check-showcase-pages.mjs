@@ -1,7 +1,7 @@
 /**
  * Structure checks for the showcase pages: every library page carries the
  * shared doc chrome, says where it is in the sidebar and the topbar crumbs,
- * and Ctrl K focuses the sidebar filter unless the page owns a palette.
+ * and Ctrl K opens the page palette unless the page owns one.
  * Chart.js loads only where charts are, and old links land on the page that
  * holds them now. Called from scripts/check.mjs.
  */
@@ -63,22 +63,17 @@ export async function checkShowcasePages(page, where, fail, library) {
   if (chrome.skip !== "#main" || chrome.main !== "-1") fail(where, `skip link ${chrome.skip}, main tabindex ${chrome.main}`);
   if (chrome.chart !== (library.id === "charts")) fail(where, chrome.chart ? "Chart.js loaded on a page without charts" : "Chart.js did not load on the charts page");
 
-  // Ctrl K focuses the sidebar filter — except on a page whose own content has a command palette.
+  // Ctrl K opens the one page palette, except on a page whose own content demos a command palette, which keeps the key.
   const own = await page.evaluate(() => !!document.querySelector(".demo-block dialog[data-sd-palette]"));
   await page.locator(".demo-intro h1").click();
   await page.keyboard.press("Control+k");
-  if (own) {
-    const open = await page.evaluate(() => [...document.querySelectorAll("dialog[data-sd-palette]")].filter((d) => d.open).map((d) => d.id));
-    if (open.join() !== "demo-palette") fail(where, `Ctrl K opened ${JSON.stringify(open)}, want demo-palette`);
-    await page.keyboard.press("Escape");
-  } else {
-    const focused = await page.evaluate(() => document.activeElement?.id);
-    if (focused !== "doc-filter") fail(where, `Ctrl K focused ${JSON.stringify(focused)}, want doc-filter`);
-    // Step off the filter with the keyboard, not a script blur: a scripted
-    // focus change resets the focus-visible heuristic, and the component
-    // checks after this one focus blocks programmatically and assert a ring.
-    await page.keyboard.press("Tab");
-  }
+  const open = await page.evaluate(() => [...document.querySelectorAll("dialog[data-sd-palette]")].filter((d) => d.open).map((d) => d.id));
+  const want = own ? "demo-palette" : "nav-palette";
+  if (open.join() !== want) fail(where, `Ctrl K opened ${JSON.stringify(open)}, want ${want}`);
+  await page.keyboard.press("Escape");
+  // The sidebar filter is a plain filter: no shortcut hint, no second search, one bar.
+  const dup = await page.evaluate(() => ({ kbd: document.querySelectorAll("#doc-sidebar kbd").length, bars: document.querySelectorAll(".vp-bar").length, topbars: document.querySelectorAll(".doc-topbar").length }));
+  if (dup.kbd || dup.bars || dup.topbars !== 1) fail(where, `sidebar kbd ${dup.kbd}, showcase bars ${dup.bars}, topbars ${dup.topbars}`);
 }
 
 /** Old links to the single components page and the section pages, followed from the overview. */
