@@ -1128,6 +1128,12 @@
   .demo-block > * {
     min-width: 0;
   }
+  /* A grid wrapper inside a demo (React's Demo uses `grid gap-4`) sizes its
+     auto track to the min-content of nowrap rows like `sd-tabs`; let items
+     shrink so the tabs row scrolls instead of pushing the page wide. */
+  .demo-block .grid > * {
+    min-width: 0;
+  }
   .demo-block label.grid {
     align-content: start;
   }
