@@ -76,9 +76,23 @@ function decorateBlocks(blocks) {
     const all = event.target.closest("[data-code-all]");
     if (all) for (const block of blocks) setView(block, all.dataset.codeAll);
   });
+
+  // The preview bar's tools: full or phone width for the canvas, and the
+  // canvas full screen.
+  const canvas = document.querySelector(".doc-canvas");
+  document.addEventListener("click", (event) => {
+    const width = event.target.closest("[data-doc-width]");
+    if (width && canvas) {
+      canvas.dataset.width = width.dataset.docWidth;
+      for (const b of document.querySelectorAll("[data-doc-width]")) b.setAttribute("aria-pressed", String(b === width));
+    } else if (event.target.closest("[data-doc-fullscreen]") && canvas) {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else canvas.requestFullscreen?.();
+    }
+  });
 }
 
-/* ---- Sidebar: filter, phone drawer, Ctrl K ------------------------------- */
+/* ---- Sidebar: tiers, filter, phone drawer, Ctrl K ------------------------- */
 
 function wireSidebar() {
   const sidebar = document.getElementById("doc-sidebar");
@@ -86,16 +100,21 @@ function wireSidebar() {
   const nav = document.getElementById("doc-nav");
   if (!sidebar || !filter || !nav) return;
 
-  // The filter hides the links that do not match, then the group headings and
-  // section labels with nothing left under them.
+  // The tier row (All / Components / Examples) picks which registry sections
+  // show; the search narrows the links inside them. Both write the same
+  // hidden attributes, so the filter re-runs after a tier change.
   const empty = document.createElement("p");
   empty.className = "doc-nav-empty";
   empty.hidden = true;
   empty.textContent = "No pages match.";
   nav.append(empty);
-  filter.addEventListener("input", () => {
+  const runFilter = () => {
     const q = filter.value.trim().toLowerCase();
     for (const section of nav.querySelectorAll(".doc-nav-section")) {
+      if (section.dataset.tierHidden === "true") {
+        section.hidden = true;
+        continue;
+      }
       let sectionAny = false;
       for (const group of section.querySelectorAll(".doc-nav-group")) {
         let groupAny = false;
@@ -105,11 +124,59 @@ function wireSidebar() {
           groupAny ||= hit;
         }
         group.hidden = !groupAny;
+        // A search opens every group it matches inside, so a hit is never
+        // folded away; clearing it leaves the tree as the reader left it.
+        if (q && groupAny) group.open = true;
         sectionAny ||= groupAny;
       }
       section.hidden = !sectionAny;
+      if (q && sectionAny) section.open = true;
     }
     empty.hidden = !!nav.querySelector(".doc-nav-link:not([hidden])");
+  };
+  filter.addEventListener("input", runFilter);
+
+  const tiers = document.querySelector(".doc-tiers");
+  if (tiers) {
+    const radios = [...tiers.querySelectorAll('[role="radio"]')];
+    // Roving tabindex: the checked radio is the only one in the tab order.
+    const rove = () => {
+      for (const r of radios) r.tabIndex = r.getAttribute("aria-checked") === "true" ? 0 : -1;
+    };
+    const choose = (radio, focus) => {
+      for (const r of radios) r.setAttribute("aria-checked", String(r === radio));
+      for (const section of nav.querySelectorAll(".doc-nav-section"))
+        section.dataset.tierHidden = String(radio.dataset.tier !== "all" && section.dataset.kind !== radio.dataset.tier);
+      rove();
+      runFilter();
+      if (focus) radio.focus();
+    };
+    rove();
+    tiers.addEventListener("click", (event) => {
+      const radio = event.target.closest('[role="radio"]');
+      if (radio) choose(radio);
+    });
+    tiers.addEventListener("keydown", (event) => {
+      const radio = event.target.closest('[role="radio"]');
+      if (!radio) return;
+      const i = radios.indexOf(radio);
+      const moves = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1 };
+      if (!(event.key in moves)) return;
+      event.preventDefault();
+      choose(radios[(moves[event.key] + radios.length) % radios.length], true);
+    });
+  }
+
+  // The topbar search affordance lands on the sidebar filter, opening the
+  // drawer first on a phone; the toc's back-to-top scrolls home.
+  document.addEventListener("click", (event) => {
+    if (event.target.closest("[data-doc-search]")) {
+      if (matchMedia("(max-width: 63.99rem)").matches && !isOpen()) open(true);
+      filter.focus();
+    } else if (event.target.closest("[data-doc-top]")) {
+      const smooth = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+      scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
+    }
   });
 
   // The phone drawer: the topbar button and the sidebar's close button toggle
@@ -150,6 +217,37 @@ function wireSidebar() {
   nav.querySelector('.doc-nav-link[aria-current="page"]')?.scrollIntoView({ block: "nearest" });
 }
 
+/** The toc's marker bar follows the section in view: the last section whose top has risen past the topbar is current, and Preview before any has. */
+function wireScrollspy() {
+  const links = [...document.querySelectorAll(".doc-toc a[href^='#']")];
+  const ids = [...new Set(links.map((a) => a.getAttribute("href").slice(1)))];
+  const targets = ids.map((id) => document.getElementById(id)).filter(Boolean);
+  if (!links.length || !targets.length) return;
+  const byId = new Map(links.map((a) => [a.getAttribute("href").slice(1), a]));
+  const setCurrent = (id) => {
+    for (const [key, a] of byId) {
+      if (key === id) a.setAttribute("aria-current", "location");
+      else a.removeAttribute("aria-current");
+    }
+  };
+  // The line a section crosses sits just under the topbar (plus the harness bar).
+  const top = document.documentElement.classList.contains("has-vp-bar") ? 140 : 104;
+  let ticking = false;
+  const mark = () => {
+    ticking = false;
+    let current = targets[0].id;
+    for (const t of targets) if (t.getBoundingClientRect().top <= top) current = t.id;
+    setCurrent(current);
+  };
+  addEventListener("scroll", () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(mark);
+    }
+  }, { passive: true });
+  mark();
+}
+
 /** Wire the page. Call first: it snapshots the blocks, then runs init(). */
 export function mountLibrary() {
   mountBar();
@@ -159,4 +257,5 @@ export function mountLibrary() {
   if (location.hash && !document.getElementById(decodeURIComponent(location.hash.slice(1)))) history.replaceState(null, "", location.pathname + location.search);
   init({ scrollbars: savedScrollbars() });
   wireSidebar();
+  wireScrollspy();
 }

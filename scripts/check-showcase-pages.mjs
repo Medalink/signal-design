@@ -46,7 +46,7 @@ export function checkShowcaseRegistry() {
 export async function checkShowcasePages(page, where, fail, library) {
   const chrome = await page.evaluate(() => ({
     sidebar: [...document.querySelectorAll('#doc-sidebar .doc-nav-link[aria-current="page"]')].map((a) => a.getAttribute("href")),
-    crumbs: [...document.querySelectorAll(".doc-topbar .sd-breadcrumb > li")].map((li) => li.textContent.trim()).filter(Boolean),
+    crumbs: [...document.querySelectorAll(".doc-article .doc-crumbs .sd-breadcrumb > li")].map((li) => li.textContent.trim()).filter(Boolean),
     h1: document.querySelectorAll(".demo-intro > .demo-title > h1").length,
     // Blocks may show an h1 as a demo; only one outside them is a second page title.
     strayH1: [...document.querySelectorAll("h1")].filter((h) => !h.closest(".demo-block, .demo-title")).length,
@@ -54,9 +54,10 @@ export async function checkShowcasePages(page, where, fail, library) {
     main: document.getElementById("main")?.getAttribute("tabindex"),
     chart: performance.getEntriesByType("resource").some((e) => /\/charts\/|chart[._]+js/.test(e.name)),
   }));
-  const { section, group } = library;
+  const { section } = library;
   if (chrome.sidebar.join() !== `./${library.file}`) fail(where, `sidebar marks ${JSON.stringify(chrome.sidebar)} as current, want ./${library.file}`);
-  const crumbs = `${section.title} / ${group.title} / ${library.title}`;
+  // The article breadcrumb names the section and the page, like uiarc's "Components › Button".
+  const crumbs = `${section.title} / ${library.title}`;
   if (chrome.crumbs.join(" / ") !== crumbs) fail(where, `crumbs read ${chrome.crumbs.join(" / ")}, want ${crumbs}`);
   if (chrome.h1 !== 1 || chrome.strayH1 !== 0) fail(where, `page has ${chrome.h1} title h1 and ${chrome.strayH1} stray h1, want 1 and 0`);
   if (chrome.skip !== "#main" || chrome.main !== "-1") fail(where, `skip link ${chrome.skip}, main tabindex ${chrome.main}`);

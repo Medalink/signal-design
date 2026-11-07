@@ -27,6 +27,15 @@ export const ICONS = [
   symbol("search", '<rect x="4" y="4" width="11" height="11"/><path d="M15 15l5.5 5.5"/>'),
   symbol("menu", '<path d="M4 6h16M4 12h16M4 18h16"/>'),
   symbol("close", '<path d="M6 6l12 12M18 6L6 18"/>'),
+  symbol("eye", '<path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12s-3.5 6.5-9.5 6.5S2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>'),
+  symbol("copy", '<rect x="8" y="8" width="13" height="13"/><path d="M16 8V3H3v13h5"/>'),
+  symbol("up", '<path d="M12 19V5M5 12l7-7 7 7"/>'),
+  symbol("chevron", '<path d="M6 9l6 6 6-6"/>'),
+  symbol("next", '<path d="M5 12h14M13 6l6 6-6 6"/>'),
+  symbol("monitor", '<rect x="3" y="4" width="18" height="12"/><path d="M8 20h8M12 16v4"/>'),
+  symbol("phone", '<rect x="7" y="3" width="10" height="18"/><path d="M11 18h2"/>'),
+  symbol("expand", '<path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/>'),
+  symbol("markdown", '<rect x="3" y="5" width="18" height="14"/><path d="M6.5 15V9l2.5 3 2.5-3v6M15 9v6M13 13l2 2 2-2"/>'),
   symbol("collapse", '<path d="M8 4L4 8l4 4M12 4L8 8l4 4"/>', "0 0 16 16"),
   symbol("home", '<path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/>'),
   symbol("panel", '<rect x="2" y="2.5" width="12" height="11"/><path d="M10 2.5v11"/>', "0 0 16 16", "1.3"),
@@ -42,23 +51,36 @@ const landing = (section) => (section.groups[0].pages[0].id ? section.groups[0].
 export const scriptOf = (page) => (page === HOME ? "pages/home.js" : existsSync(resolve(dir, `pages/${page.id}.js`)) ? `pages/${page.id}.js` : "mount.js");
 
 /**
- * The uiarc-style doc sidebar body: one plain section label per library
- * section (Foundations, Components, …, Examples), then subgroup headings
- * with their page count over the page links. The current page takes
- * aria-current and fg emphasis.
+ * The uiarc-style doc sidebar body: one section label per library section
+ * (Foundations, Components, …, Examples), then subgroup headings with their
+ * page count at the row's end over the page links. Each section carries the
+ * tier the sidebar's All/Components/Examples filter shows it under. The
+ * current page takes aria-current, fg emphasis and the left marker bar.
  */
+const SECTION_ICON = { foundations: "tokens", components: "inputs", patterns: "shell", scripting: "code", examples: "pages" };
+const chevron = `<svg class="doc-chevron" aria-hidden="true"><use href="#i-chevron"/></svg>`;
+
 function docNav(page) {
-  const link = (p) => `        <a class="doc-nav-link" href="./${p.file}"${current(p === page)}>${p.title}</a>`;
-  const group = (g) => `      <div class="doc-nav-group" data-group="${g.title}">
-        <p class="doc-nav-sub">${g.title} <span class="sd-count">${g.pages.length}</span></p>
+  const link = (p) => `          <a class="doc-nav-link" href="./${p.file}"${current(p === page)}>${p.title}</a>`;
+  const group = (g) => `      <details class="doc-nav-group" data-group="${g.title}" open>
+        <summary class="doc-nav-sub">${chevron}<span>${g.title}</span><span class="sd-count">${g.pages.length}</span></summary>
+        <div class="doc-nav-links">
 ${g.pages.map(link).join("\n")}
-      </div>`;
-  const section = (s) => `    <div class="doc-nav-section" data-section="${s.id}">
-      <p class="doc-nav-heading">${s.title}</p>
+        </div>
+      </details>`;
+  const count = (s) => s.groups.reduce((n, g) => n + g.pages.length, 0);
+  const section = (s) => `    <details class="doc-nav-section" data-section="${s.id}" data-kind="${s.id === "examples" ? "examples" : "components"}" open>
+      <summary class="doc-nav-heading"><svg class="doc-nav-icon" aria-hidden="true"><use href="#i-${SECTION_ICON[s.id] ?? "pages"}"/></svg><span>${s.title}</span><span class="doc-nav-total">${count(s)}</span>${chevron}</summary>
 ${s.groups.map(group).join("\n")}
-    </div>`;
+    </details>`;
   return SECTIONS.map(section).join("\n");
 }
+
+/** The sidebar's pinned footer card: the current release, linking to its notes. */
+const releaseCard = () => {
+  const { version } = JSON.parse(readFileSync(resolve(dir, "../package.json"), "utf8"));
+  return `<a class="doc-release" href="https://github.com/Medalink/signal-design/releases/tag/v${version}" target="_blank" rel="noreferrer"><span class="sd-dot" data-tone="success" aria-hidden="true"></span><span>What's new</span><span class="doc-release-ver">v${version}</span><svg aria-hidden="true"><use href="#i-next"/></svg></a>`;
+};
 
 /** The page-level palette: every page under its group, from the registry. It is not a demo block. */
 function palette() {
@@ -79,16 +101,16 @@ ${label("Actions")}
 /** The toc rail beside the article: "On this page" anchors, then the Markdown link and a way back to the top. Quiet text on the page background, no frame. */
 const asideFor = (page) => {
   const links = pageSections(page)
-    .map(([id, label, sub]) => `        <a href="#${id}"${sub ? ' class="doc-toc-sub"' : ""}>${label}</a>`)
+    .map(([id, label, sub]) => `        <li><a href="#${id}"${sub ? ' class="doc-toc-sub"' : ""}>${label}</a></li>`)
     .join("\n");
   return `  <aside class="doc-toc-rail" aria-label="On this page">
     <p class="doc-toc-label">On this page</p>
-    <nav class="doc-toc" aria-label="Page sections">
+    <ul class="doc-toc">
 ${links}
-    </nav>
+    </ul>
     <div class="doc-toc-foot">
-      <a href="https://github.com/Medalink/signal-design/blob/main/llms-full.txt">View as Markdown</a>
-      <a href="#main">Back to top</a>
+      <a class="doc-toc-link" href="https://github.com/Medalink/signal-design/blob/main/llms-full.txt" target="_blank" rel="noreferrer"><svg aria-hidden="true"><use href="#i-markdown"/></svg>View as Markdown</a>
+      <button class="doc-toc-link" type="button" data-doc-top>Back to top <svg aria-hidden="true"><use href="#i-up"/></svg></button>
     </div>
   </aside>`;
 };
@@ -107,7 +129,7 @@ const slugToc = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-
 function pageSections(page) {
   const d = page.doc;
   if (d) {
-    const out = [];
+    const out = [["preview", "Preview"]];
     if (d.when?.length) out.push(["when", "When to use"]);
     if (d.notWhen?.length) out.push(["not-when", "When not to use"]);
     if (d.install) out.push(["install", "Installation"]);
@@ -126,7 +148,7 @@ function pageSections(page) {
     return out;
   }
   const html = readFileSync(resolve(dir, page.file), "utf8");
-  const out = [];
+  const out = [["preview", "Preview"]];
   for (const [, attrs, h2] of html.matchAll(/<div class="demo-block"([^>]*)>(?:\s*<h2 class="sd-label">([^<]*)<\/h2>)?/g)) {
     const id = attrs.match(/id="([^"]+)"/)?.[1] ?? (h2 ? slugToc(h2) : null);
     if (id) out.push([id, h2?.trim() || id]);
@@ -306,11 +328,41 @@ const docExample = (ex) => `      <div class="doc-example" id="ex-${slugToc(ex.t
         <div class="doc-example-demo" data-sd-check-ignore="primary">${ex.html}</div>
       </div>`;
 
-const docInstall = (install) => `    <div class="sd-code doc-install">
-      <div class="sd-code-head">Install <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#doc-install-cmd">Copy</button></div>
+/** The same install command for each package manager, when the page's command is a plain `pnpm add`. */
+const MANAGERS = [
+  ["pnpm", "pnpm add"],
+  ["npm", "npm install"],
+  ["yarn", "yarn add"],
+  ["bun", "bun add"],
+];
+const copyBtn = (target, label = "Copy") =>
+  `<button class="doc-code-copy" type="button" data-sd-copy="${target}"><svg aria-hidden="true"><use href="#i-copy"/></svg>${label}</button>`;
+
+/** Installation: a package-manager tab row over one command, like uiarc's CLI block, then the note. */
+const docInstall = (install) => {
+  const args = install.cmd.startsWith("pnpm add ") ? install.cmd.slice("pnpm add ".length) : null;
+  const note = `    <p class="sd-muted doc-note">${install.note}</p>`;
+  if (!args)
+    return `    <div class="sd-code doc-code">
+      <div class="sd-code-head doc-code-head"><span>Terminal</span>${copyBtn("#doc-install-cmd")}</div>
       <pre id="doc-install-cmd" tabindex="0"><code>${install.cmd}</code></pre>
     </div>
-    <p class="sd-muted doc-note">${install.note}</p>`;
+${note}`;
+  const tabs = MANAGERS.map(
+    ([pm], i) => `<button role="tab" id="pm-${pm}-t" aria-controls="pm-${pm}"${i ? "" : ' aria-selected="true"'}>${pm}</button>`,
+  ).join("");
+  const panels = MANAGERS.map(
+    ([pm, verb], i) => `      <div class="sd-tabpanel doc-code-panel" role="tabpanel" id="pm-${pm}" aria-labelledby="pm-${pm}-t"${i ? " hidden" : ""}>
+        <div class="doc-code-copy-row">${copyBtn(`#pm-${pm}-cmd`)}</div>
+        <pre id="pm-${pm}-cmd" tabindex="0"><code>${verb} ${args}</code></pre>
+      </div>`,
+  ).join("\n");
+  return `    <div class="sd-code doc-code doc-install">
+      <div class="sd-code-head doc-code-head"><div class="doc-pm-tabs" role="tablist" aria-label="Package manager">${tabs}</div></div>
+${panels}
+    </div>
+${note}`;
+};
 
 const docAiFoot = `    <p class="sd-muted doc-note">The machine-readable reference lives in the repo: <a href="https://github.com/Medalink/signal-design/blob/main/ai/components.json">ai/components.json</a> and <a href="https://github.com/Medalink/signal-design/blob/main/llms-full.txt">llms-full.txt</a>.</p>`;
 
@@ -327,8 +379,8 @@ function docHtml(page) {
       docSection(
         "usage",
         "Usage",
-        `    <div class="sd-code">
-      <div class="sd-code-head">Usage <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#doc-usage">Copy</button></div>
+        `    <div class="sd-code doc-code">
+      <div class="sd-code-head doc-code-head"><span class="doc-code-file"><svg aria-hidden="true"><use href="#i-code"/></svg>example.html</span>${copyBtn("#doc-usage")}</div>
       <pre id="doc-usage" tabindex="0"><code>${d.usage}</code></pre>
     </div>`,
       ),
@@ -345,25 +397,45 @@ function docHtml(page) {
   return parts.join("\n\n");
 }
 
-/** The preview shell around a page's demo blocks: a Preview/Code toolbar over one canvas. The toolbar pair is the only toggle on the page: data-sd-seg keeps its pressed state, and the click handler in library.js flips every block from data-code-all. */
+/** The preview shell around a page's demo blocks: a Preview/Code tablist over one canvas. init() owns the tabs' aria-selected (roving focus included); the click handler in library.js flips every block from data-code-all. */
 const previewShell = (blocks) => `  <div class="doc-preview">
     <div class="doc-preview-bar">
-      <div class="sd-seg sd-seg-sm sd-seg-inline" data-sd-seg aria-label="Preview or code">
-        <button type="button" data-code-all="preview" aria-pressed="true">Preview</button>
-        <button type="button" data-code-all="code" aria-pressed="false">Code</button>
+      <div class="doc-tabs" role="tablist" aria-label="Preview or code">
+        <button type="button" role="tab" aria-selected="true" data-code-all="preview"><svg aria-hidden="true"><use href="#i-eye"/></svg>Preview</button>
+        <button type="button" role="tab" aria-selected="false" data-code-all="code"><svg aria-hidden="true"><use href="#i-code"/></svg>Code</button>
       </div>
-      <span class="doc-preview-hint">Live · keyboard wired</span>
+      <span class="doc-preview-hint">Live · keyboard ready</span>
+      <div class="doc-preview-tools">
+        <div class="doc-width" role="group" aria-label="Preview width">
+          <button type="button" class="doc-tool" data-doc-width="full" aria-pressed="true" aria-label="Full width"><svg aria-hidden="true"><use href="#i-monitor"/></svg></button>
+          <button type="button" class="doc-tool" data-doc-width="phone" aria-pressed="false" aria-label="Phone width"><svg aria-hidden="true"><use href="#i-phone"/></svg></button>
+        </div>
+        <button type="button" class="doc-tool" data-doc-fullscreen aria-label="Full screen"><svg aria-hidden="true"><use href="#i-expand"/></svg></button>
+      </div>
     </div>
-    <div class="doc-canvas">
+    <div class="doc-canvas" id="preview">
 ${blocks}
     </div>
   </div>`;
 
-/** A library page: its group and title over its content, the demo blocks in the preview shell, then the doc sections, then the pages either side. */
+/** A library page: its breadcrumb, title and lead over its content, the demo blocks in the preview shell, then the doc sections, then the pages either side. */
 function libraryContent(page, body) {
   const intro = page.doc?.intro;
-  const copyPage = page.doc?.usage ? `\n        <button class="sd-btn sd-btn-sm" data-sd-copy="#doc-usage">Copy page</button>` : "";
-  const title = `<div class="demo-title"><p class="sd-label">${page.group.title}</p><h1 id="${page.id}-h" class="sd-display">${page.title}</h1>${intro ? `\n      <p class="sd-lead max-w-[42rem]">${intro}</p>` : ""}\n      <div class="doc-header-row">\n        <div class="doc-install-pill"><code id="doc-header-cmd">pnpm add github:Medalink/signal-design</code><button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#doc-header-cmd">Copy</button></div>${copyPage}\n      </div></div>`;
+  const copyPage = page.doc?.usage
+    ? `
+        <div class="doc-copy-page">
+          <button type="button" data-sd-copy="#doc-usage"><svg aria-hidden="true"><use href="#i-copy"/></svg>Copy page</button>
+          <button type="button" popovertarget="doc-copy-menu" aria-haspopup="menu" aria-expanded="false" aria-label="More copy options"><svg aria-hidden="true"><use href="#i-chevron"/></svg></button>
+        </div>
+        <div popover id="doc-copy-menu" class="sd-popover">
+          <div class="sd-menu" role="menu" aria-label="Copy options">
+            <button role="menuitem" data-sd-copy="#doc-header-cmd">Copy install command</button>
+            <a role="menuitem" href="https://github.com/Medalink/signal-design/blob/main/llms-full.txt" target="_blank" rel="noreferrer">View as Markdown</a>
+            <a role="menuitem" href="https://github.com/Medalink/signal-design/blob/main/ai/components.json" target="_blank" rel="noreferrer">Open components.json</a>
+          </div>
+        </div>`
+    : "";
+  const title = `<div class="demo-title"><h1 id="${page.id}-h" class="doc-h1">${page.title}</h1>${intro ? `\n      <p class="doc-lead">${intro}</p>` : ""}\n      <div class="doc-header-row">\n        <div class="doc-install-pill"><code id="doc-header-cmd">pnpm add github:Medalink/signal-design</code><button class="doc-icon-btn" type="button" data-sd-copy="#doc-header-cmd" aria-label="Copy install command"><svg aria-hidden="true"><use href="#i-copy"/></svg></button></div>${copyPage}\n      </div></div>`;
   let header;
   let blocks = body;
   if (blocks.startsWith('<header class="demo-intro">')) {
@@ -378,6 +450,7 @@ function libraryContent(page, body) {
   const { prev, next } = neighbors(page);
   const step = (p, rel, side) =>
     p ? `    <a class="doc-pager-link" href="./${p.file}" rel="${rel}"><span>${side}</span><span class="doc-pager-title">${p.title}</span></a>` : "    <span></span>";
+  const pages = SECTIONS.reduce((n, s) => n + s.groups.reduce((m, g) => m + g.pages.length, 0), 0);
   return `  <section class="demo-section" id="${page.id}" aria-labelledby="${page.id}-h">
   ${content}
   </section>
@@ -385,7 +458,8 @@ ${doc ? `\n${doc}\n` : ""}
   <nav class="demo-pager" aria-label="Previous and next page">
 ${step(prev, "prev", "Previous")}
 ${step(next, "next", "Next")}
-  </nav>`;
+  </nav>
+  <footer class="doc-footer"><span>Signal · ${pages} pages</span><a href="https://github.com/Medalink/signal-design/blob/main/llms-full.txt">llms-full.txt</a></footer>`;
 }
 
 /** The page whose file this is, or null for the example pages and everything else. */
@@ -406,11 +480,13 @@ export function renderPage(page, html) {
     crumbs: library
       ? [
           `<li><a href="./${landing(page.section)}">${page.section.title}</a></li>`,
-          `<li><span>${page.group.title}</span></li>`,
           `<li><span aria-current="page">${page.title}</span></li>`,
         ].join("\n          ")
       : `<li><span aria-current="page">Overview</span></li>`,
     sidebar: docNav(page),
+    release: releaseCard(),
+    navComponents: library && page.section.id !== "examples" ? ' aria-current="true"' : "",
+    navExamples: library && page.section.id === "examples" ? ' aria-current="true"' : "",
     aside: library ? asideFor(page) : "",
     palette: palette(),
   };

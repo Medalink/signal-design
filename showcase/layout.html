@@ -7,40 +7,59 @@
   </defs>
 </svg>
 
-<!-- Every library page is a document, like uiarc.dev's docs: a sticky topbar, a fixed filter sidebar on the left, the article, and a sticky on-this-page rail, all on normal page scroll. No app shell, no rain, no statusbar. layout-plugin.js fills this per page. -->
+<!-- Every library page is a document, like uiarc.dev's docs: a sticky topbar,
+     a sticky filter sidebar on the left, the article with its breadcrumb, and
+     a sticky on-this-page rail, all on normal page scroll. No app shell, no
+     rain, no statusbar. layout-plugin.js fills this per page. -->
 <header class="doc-topbar">
-  <button class="sd-btn sd-btn-ghost sd-btn-icon doc-menu-btn" data-doc-nav aria-controls="doc-sidebar" aria-expanded="false" aria-label="Open navigation"><svg><use href="#i-menu"/></svg></button>
+  <button class="doc-menu-btn" data-doc-nav aria-controls="doc-sidebar" aria-expanded="false" aria-label="Open navigation"><svg><use href="#i-menu"/></svg></button>
   <a href="./index.html" class="sd-wordmark" aria-label="Signal home"><svg class="sd-mark" style="width:22px;height:22px"><use href="#i-mark"/></svg> Signal</a>
-  <nav class="doc-crumbs" aria-label="Breadcrumb">
-    <ol class="sd-breadcrumb">
-          {{crumbs}}
-    </ol>
+  <nav class="doc-topbar-nav" aria-label="Library">
+    <a href="./index.html#home-components"{{navComponents}}>Components</a>
+    <a href="./index.html#home-examples"{{navExamples}}>Examples</a>
+    <a href="./lib-rules.html">Docs</a>
+    <a href="./lib-setup.html">Setup</a>
   </nav>
   <div class="doc-topbar-end">
-    <button class="sd-btn sd-btn-ghost sd-btn-icon" data-sd-theme-cycle aria-label="Next theme"><svg><use href="#i-theme"/></svg></button>
-    <a class="sd-btn sd-btn-ghost sd-btn-icon" href="https://github.com/Medalink/signal-design" target="_blank" rel="noreferrer" aria-label="Signal design on GitHub"><svg><use href="#i-github"/></svg></a>
+    <button class="doc-topbar-search" type="button" data-doc-search aria-label="Search pages"><svg aria-hidden="true"><use href="#i-search"/></svg><span>Search</span><kbd class="sd-kbd">Ctrl K</kbd></button>
+    <button class="doc-topbar-appearance" type="button" data-sd-theme-cycle aria-label="Next theme"><svg aria-hidden="true"><use href="#i-theme"/></svg><span>Theme</span></button>
+    <a class="doc-topbar-btn" href="https://github.com/Medalink/signal-design" target="_blank" rel="noreferrer" aria-label="Signal design on GitHub"><svg aria-hidden="true"><use href="#i-github"/></svg></a>
   </div>
 </header>
 
-<div class="doc-sidebar" id="doc-sidebar">
-  <div class="doc-sidebar-head">
-    <div class="doc-search">
-      <input id="doc-filter" type="search" placeholder="Filter pages" aria-label="Filter pages" autocomplete="off">
-      <kbd class="doc-search-kbd">Ctrl K</kbd>
-    </div>
+<div class="doc-body">
+  <div class="doc-sidebar" id="doc-sidebar">
     <button class="sd-btn sd-btn-ghost sd-btn-icon doc-sidebar-close" data-doc-nav aria-label="Close navigation"><svg><use href="#i-close"/></svg></button>
-  </div>
-  <nav class="doc-nav" id="doc-nav" aria-label="Library pages">
+    <div class="doc-search-row">
+      <label class="doc-search">
+        <svg aria-hidden="true"><use href="#i-search"/></svg>
+        <input id="doc-filter" type="search" placeholder="Search" aria-label="Filter components, blocks and docs" autocomplete="off">
+        <kbd class="sd-kbd doc-search-kbd">Ctrl K</kbd>
+      </label>
+    </div>
+    <div class="doc-tiers" role="radiogroup" aria-label="Show">
+      <button type="button" role="radio" aria-checked="true" data-tier="all">All</button>
+      <button type="button" role="radio" aria-checked="false" data-tier="components">Components</button>
+      <button type="button" role="radio" aria-checked="false" data-tier="examples">Examples</button>
+    </div>
+    <nav class="doc-nav" id="doc-nav" aria-label="Library pages">
 {{sidebar}}
-  </nav>
+    </nav>
+    {{release}}
+  </div>
+
+  <main class="doc-main" id="main" tabindex="-1">
+    <div class="doc-grid">
+      <article class="doc-article">
+        <nav class="doc-crumbs" aria-label="Breadcrumb">
+          <ol class="sd-breadcrumb">
+          {{crumbs}}
+          </ol>
+        </nav>
+{{content}}
+      </article>
+{{aside}}
+    </div>
+  </main>
 </div>
 <div class="doc-scrim" data-doc-nav-close aria-hidden="true"></div>
-
-<main class="doc-main" id="main" tabindex="-1">
-  <div class="doc-grid">
-    <article class="doc-article">
-{{content}}
-    </article>
-{{aside}}
-  </div>
-</main>
