@@ -1,6 +1,9 @@
 export const page = "schedule";
 
-export default async function checkSchedule(page, where, fail) {
+// Each width and theme runs on a page of its own, side by side (scripts/check.mjs).
+export const parts = [1280, 375].flatMap((width) => ["ink", "paper"].map((theme) => ({ width, theme })));
+
+export default async function checkSchedule(page, where, fail, only) {
   const originalViewport = page.viewportSize();
   const originalTheme = await page.evaluate(() => document.documentElement.dataset.theme);
   let assertions = 0;
@@ -91,9 +94,9 @@ export default async function checkSchedule(page, where, fail) {
   const sameRect = (a, b) => ["x", "y", "width", "height"].every((key) => Math.abs(a[key] - b[key]) <= 0.5);
 
   try {
-    for (const width of [1280, 375]) {
+    for (const width of [1280, 375].filter((w) => !only || only.width === w)) {
       await page.setViewportSize({ ...originalViewport, width });
-      for (const theme of ["ink", "paper"]) {
+      for (const theme of ["ink", "paper"].filter((t) => !only || only.theme === t)) {
         await page.evaluate(async (value) => {
           document.documentElement.dataset.theme = value;
           await document.fonts.ready;
@@ -238,5 +241,5 @@ export default async function checkSchedule(page, where, fail) {
     }, originalTheme);
     await page.mouse.move(0, 0);
   }
-  console.log(`${failures ? "FAIL" : "ok  "} ${where} schedule ${assertions} assertions, ${labels} labels across both boards, ink/paper at 1280/375px`);
+  console.log(`${failures ? "FAIL" : "ok  "} ${where} schedule ${assertions} assertions, ${labels} labels across both boards, ${only ? `${only.theme} at ${only.width}px` : "ink/paper at 1280/375px"}`);
 }

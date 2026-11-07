@@ -1,7 +1,11 @@
 /**
  * Hard-rule sweep of the showcase pages in Chromium and WebKit.
  *
- *   node scripts/check.mjs [baseUrl] [screenshotDir] [--engine chromium|webkit] [--only|--except lib-buttons,charts,behaviors,webkit-1,...]
+ *   node scripts/check.mjs [baseUrl] [screenshotDir] [--engine chromium|webkit] [--only|--except lib-buttons,charts,behaviors,webkit-1,...] [--jobs N] [--times]
+ *
+ * Pages run in parallel, both engines at once, --jobs at a time (default: half
+ * the CPUs, at most 16); output prints in the same order as a serial run.
+ * --times ends with the 20 slowest jobs, to keep the order below honest.
  *
  * Pages: every page in showcase/pages.js (the overview, the library pages and
  * the example apps; a page's name here is its file without .html), and the
@@ -14,14 +18,16 @@
  * phone width, and broken JS behaviors.
  */
 import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { availableParallelism, tmpdir } from "node:os";
+import { AsyncLocalStorage } from "node:async_hooks";
+import { format } from "node:util";
 import { join } from "node:path";
 import ts from "typescript";
 import { fileURLToPath } from "node:url";
 import { chromium, webkit } from "playwright";
 import { sweep as rulesSweep, typeRule, colorRule, navColorRule, primaryRule, labelRule } from "../bin/rules.mjs";
 import { checkLivingTable, checkLivingTableTypes } from "./check-living-table.mjs";
-import { checkReact, checkReactSsr, checkReactTypes } from "./check-react.mjs";
+import { checkReact, checkReactSsr, checkReactTypes, reactSuites } from "./check-react.mjs";
 import { checkFonts } from "./check-fonts.mjs";
 import { checkSidebarResize } from "./check-sidebar-resize.mjs";
 import { checkHashRedirects, checkShowcasePages, checkShowcaseRegistry } from "./check-showcase-pages.mjs";
@@ -31,7 +37,9 @@ import { ALL, EXAMPLES, HOME, LIBRARY, byId, keyOf } from "../showcase/pages.js"
 // One file per component in scripts/checks/, each exporting
 // `default async (page, where, fail)` and `page`, the id of the library page
 // (showcase/pages.js) whose blocks it tests. They run on that page once per
-// engine, at 1280px in ink. A new check is a new file, not an edit here.
+// engine, at 1280px in ink. A new check is a new file, not an edit here. A
+// slow check can also export `parts`: it then runs once per part, each on a
+// fresh page of its own, as `default(page, where, fail, part)`.
 const checksDir = new URL("./checks/", import.meta.url);
 const componentChecks = await Promise.all(
   readdirSync(checksDir).filter((f) => f.endsWith(".mjs")).sort().map(async (f) => {
@@ -40,7 +48,7 @@ const componentChecks = await Promise.all(
       console.log(`FAIL scripts/checks/${f}: needs a default function and \`export const page = "<id>"\` naming a library page (${LIBRARY.map((p) => p.id).join(", ")}); got ${JSON.stringify(mod.page)}`);
       process.exit(1);
     }
-    return { file: f, page: mod.page, run: mod.default };
+    return { file: f, page: mod.page, run: mod.default, parts: mod.parts };
   }),
 );
 
@@ -62,6 +70,13 @@ const expand = (names) => names?.flatMap((name) => groups[name] ?? [name]);
 const onlyEngines = listFlag("--engine");
 const onlyParts = expand(listFlag("--only"));
 const exceptParts = expand(listFlag("--except"));
+const jobsFlag = listFlag("--jobs");
+const showTimes = args.includes("--times") && !!args.splice(args.indexOf("--times"), 1);
+const concurrency = jobsFlag ? Number(jobsFlag[0]) : Math.max(1, Math.min(16, Math.floor(availableParallelism() / 2)));
+if (!Number.isInteger(concurrency) || concurrency < 1) {
+  console.log(`FAIL --jobs ${jobsFlag?.join(",")}: use a whole number of 1 or more`);
+  process.exit(1);
+}
 const base = (args[0] || "http://localhost:5178/").replace(/\/?$/, "/");
 const apiUrl = `${base}@fs/${fileURLToPath(new URL("../src/js/index.js", import.meta.url)).replace(/\\/g, "/")}`;
 const pageUrl = (page) => `${base}${page.file}`;
@@ -92,8 +107,18 @@ const examplePages = new Set(EXAMPLES.map(keyOf));
 const widths = [1280, 1024, 768, 375];
 let failures = 0;
 
+// A job's lines are held until every job listed before it has printed.
+const held = new AsyncLocalStorage();
+const print = console.log;
+console.log = (...parts) => {
+  const job = held.getStore();
+  if (job) job.lines.push(format(...parts));
+  else print(...parts);
+};
+
 function fail(where, msg) {
   failures++;
+  if (held.getStore()) held.getStore().failed++;
   console.log(`FAIL ${where}: ${msg}`);
 }
 
@@ -785,7 +810,7 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
     if (flips.toggles) fail(where, `per-block toggles remain on ${flips.toggles} of ${flips.blocks} blocks`);
 
     await checkShowcasePages(page, where, fail, library);
-    for (const check of componentChecks.filter((c) => c.page === library.id)) await check.run(page, where, fail);
+    for (const check of componentChecks.filter((c) => c.page === library.id && !c.parts)) await check.run(page, where, fail);
   }
 
   if (pageName === "lib-charts" && width === 1280 && theme === "ink") {
@@ -960,36 +985,47 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
   }
 }
 
-for (const [name, engine] of Object.entries(engines)) {
-  let browser = await engine.launch();
+// Seconds the slowest jobs take in WebKit on medaviper with 16 at a time
+// (`--times`): a check split into parts (each part), a behavior group, or a
+// page at its widest width in the first theme, where the interactive checks
+// run. Any other such job counts 2, and a plain page 1.
+const slow = { "schedule.mjs": 50, "react app": 40, "react overlays": 39, "react bindings": 35, "react editor": 34, "showcase bar": 22, "react gaps": 20, "old links": 11, "living tables": 11, chat: 9, "lib-ornaments": 8, "lib-charts": 8 };
+
+// Every page, width and theme, and every behavior group, is a job on its own
+// page (Playwright gives each page its own context: storage, focus, hover and
+// viewport are its own). A pool runs the jobs across both engines at once, one
+// browser per engine. Each job's output is held and printed in list order, so
+// a run reads the same as one page at a time.
+const jobs = [];
+for (const name of Object.keys(engines)) {
   for (const [pageName, url] of Object.entries(pages).filter(([pageName]) => runs(pageName))) {
     for (const width of widths) {
       for (const theme of themes) {
         if ((width === 1024 || width === 768) && theme !== "ink") continue;
         const where = `${name} ${pageName} ${width}px ${theme}`;
-        for (let attempt = 1; ; attempt++) {
-          if (!browser.isConnected()) browser = await engine.launch();
-          let page;
-          try {
-            page = await browser.newPage({ viewport: { width, height: 900 } });
-            await checkPage(page, where, name, pageName, url, width, theme);
-            console.log(`ok   ${where}`);
-          } catch (error) {
-            // A browser process that dies mid-page is not a finding about Signal;
-            // relaunch and run the page once more. A crash that repeats fails.
-            // WebKit's renderer can also die while the browser process lives on,
-            // so a "target has been closed" error counts as a crash as well.
-            const crashed = !browser.isConnected() || /has been closed|has crashed|Target closed/i.test(error.message);
-            if (crashed && attempt === 1) {
-              console.log(`::warning::${where}: ${name} crashed (${error.message.split("\n")[0]}); relaunched and retrying`);
-              continue;
-            }
-            fail(where, error.message.split("\n")[0]);
-          } finally {
-            await page?.close().catch(() => {});
-          }
-          break;
-        }
+        // A browser that dies mid-page is not a finding about Signal: relaunch
+        // and run the page once more. A crash that repeats fails. WebKit's
+        // renderer can also die while the browser process lives on, so a
+        // "target has been closed" error counts as a crash as well.
+        jobs.push({ engine: name, where, cost: width === widths[0] && theme === themes[0] ? (slow[pageName] ?? 2) : 1, retry: true, run: async (page) => {
+          await checkPage(page, where, name, pageName, url, width, theme);
+          console.log(`ok   ${where}`);
+        }, viewport: { width, height: 900 } });
+      }
+    }
+    // A check split into parts runs each part on the page as it loads at 1280px in ink.
+    const library = LIBRARY.find((p) => keyOf(p) === pageName);
+    for (const check of componentChecks.filter((c) => library && c.page === library.id && c.parts)) {
+      const where = `${name} ${pageName} ${widths[0]}px ${themes[0]}`;
+      for (const part of check.parts) {
+        jobs.push({ engine: name, where, part, cost: slow[`${check.file} ${JSON.stringify(part)}`] ?? slow[check.file] ?? 2, retry: true, viewport: { width: widths[0], height: 900 }, run: async (page) => {
+          await page.addInitScript((t) => {
+            try { localStorage.setItem("sd-theme", t); localStorage.removeItem("sd-shell-sidebar"); } catch {}
+          }, themes[0]);
+          await page.goto(url, { waitUntil: "networkidle" });
+          await page.evaluate(() => document.fonts.ready);
+          await check.run(page, where, fail, part);
+        } });
       }
     }
   }
@@ -1019,6 +1055,11 @@ for (const [name, engine] of Object.entries(engines)) {
       for (const error of react.errors) fail(`${name} react bindings`, error);
       if (!react.errors.length) console.log(`ok   ${name} react bindings ${react.passed} behavior checks`);
     },
+    ...Object.fromEntries(Object.entries(reactSuites).map(([suite, check]) => [`react ${suite}`, async (page) => {
+      const react = await check(page, base);
+      for (const error of react.errors) fail(`${name} react bindings`, error);
+      if (!react.errors.length) console.log(`ok   ${name} react ${suite} ${react.passed} behavior checks`);
+    }])),
     "old links": async (page) => {
       const redirects = await checkHashRedirects(page, base);
       for (const error of redirects.errors) fail(`${name} old links`, error);
@@ -1033,21 +1074,102 @@ for (const [name, engine] of Object.entries(engines)) {
   };
   // Each group gets a fresh page, and an exception fails that group only.
   for (const [label, run] of runs("behaviors") ? Object.entries(behaviors) : []) {
-    if (!browser.isConnected()) browser = await engine.launch();
+    jobs.push({ engine: name, where: `${name} ${label}`, cost: slow[label] ?? 2, retry: false, run });
+  }
+}
+
+// One browser per engine, launched on first use. A job that finds it dead
+// relaunches it once for everyone: the first to notice swaps in a new launch.
+const browsers = Object.fromEntries(Object.entries(engines).map(([name, engine]) => {
+  let current = null;
+  let launching = null;
+  const get = async () => {
+    if (!launching || (current && !current.isConnected())) {
+      current = null;
+      launching = engine.launch().then((browser) => (current = browser), (error) => {
+        launching = null;
+        throw error;
+      });
+    }
+    return launching;
+  };
+  return [name, { get, close: () => current?.close() }];
+}));
+
+// Many pages loading at once can fill the dev server's accept queue, and
+// Windows refuses a connection then instead of queuing it. A job whose only
+// failures are refused connections runs once more; a refusal that repeats fails.
+const refused = /ERR_CONNECTION_REFUSED|ERR_CONNECTION_RESET|Could not connect to server/;
+const onlyRefused = (out) => out.failed > 0 && out.lines.filter((line) => line.startsWith("FAIL ")).every((line) => refused.test(line));
+async function runJob(job) {
+  const out = held.getStore();
+  for (let attempt = 1; ; attempt++) {
+    if (attempt > 1 && onlyRefused(out)) {
+      const why = out.lines.find((line) => refused.test(line));
+      failures -= out.failed;
+      out.failed = 0;
+      out.lines.length = 0;
+      console.log(`::warning::${job.where}: ${why.slice(5)}; retrying`);
+    }
+    let browser;
     let page;
     try {
-      page = await browser.newPage();
-      await run(page);
+      browser = await browsers[job.engine].get();
+      page = await browser.newPage(job.viewport ? { viewport: job.viewport } : undefined);
+      await job.run(page);
     } catch (error) {
-      fail(`${name} ${label}`, error.message.split("\n")[0]);
+      const crashed = (browser && !browser.isConnected()) || /has been closed|has crashed|Target closed/i.test(error.message);
+      if (job.retry && crashed && attempt === 1) {
+        console.log(`::warning::${job.where}: ${job.engine} crashed (${error.message.split("\n")[0]}); relaunched and retrying`);
+        continue;
+      }
+      fail(job.where, error.message.split("\n")[0]);
     } finally {
       await page?.close().catch(() => {});
     }
+    if (attempt === 1 && onlyRefused(out)) continue;
+    return;
   }
-  // WebKit on Linux CI takes 30s to close after the behavior groups; Playwright
-  // kills a browser still running when this process exits, so do not wait.
-  await Promise.race([browser.close(), new Promise((resolve) => setTimeout(resolve, 2000))]);
 }
+
+// The longest jobs start first, so none is left running alone at the end; the
+// engines take turns.
+const seen = {};
+const rank = jobs.map((job) => (seen[`${job.engine} ${job.cost}`] = (seen[`${job.engine} ${job.cost}`] ?? -1) + 1));
+const order = jobs.map((job, i) => i).sort((a, b) => (jobs[b].cost - jobs[a].cost) || (rank[a] - rank[b]));
+const outputs = jobs.map(() => null);
+const running = new Map();
+let started = 0;
+let printed = 0;
+// A run killed or crashing midway still prints what it found so far.
+const flushAll = () => {
+  for (let i = printed; i < jobs.length; i++) for (const line of outputs[i] ?? running.get(i) ?? []) print(line);
+  printed = jobs.length;
+};
+process.once("SIGTERM", () => { flushAll(); process.exit(1); });
+process.once("SIGINT", () => { flushAll(); process.exit(1); });
+process.once("uncaughtException", (error) => { flushAll(); print(`FAIL check.mjs: ${error.stack ?? error}`); process.exit(1); });
+async function worker() {
+  while (started < order.length) {
+    const i = order[started++];
+    const out = { lines: [], failed: 0 };
+    running.set(i, out.lines);
+    const begun = performance.now();
+    await held.run(out, () => runJob(jobs[i]));
+    jobs[i].seconds = (performance.now() - begun) / 1000;
+    running.delete(i);
+    outputs[i] = out.lines;
+    for (; printed < jobs.length && outputs[printed]; printed++) {
+      for (const line of outputs[printed]) print(line);
+      outputs[printed] = [];
+    }
+  }
+}
+await Promise.all(Array.from({ length: Math.min(concurrency, jobs.length) }, worker));
+if (showTimes) for (const job of [...jobs].sort((a, b) => b.seconds - a.seconds).slice(0, 20)) print(`time ${job.seconds.toFixed(1).padStart(6)}s ${job.where}${job.part ? ` ${JSON.stringify(job.part)}` : ""}`);
+// WebKit on Linux CI takes 30s to close after the behavior groups; Playwright
+// kills a browser still running when this process exits, so do not wait.
+await Promise.race([Promise.all(Object.values(browsers).map((b) => b.close())), new Promise((resolve) => setTimeout(resolve, 2000))]);
 
 // Chart formatting and scale maths, checked without a browser.
 {

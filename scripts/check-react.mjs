@@ -3,6 +3,7 @@
  *   checkReactTypes()  a strict consumer compilation through the package export map
  *   checkReactSsr()    every export rendered to a string in plain Node, no DOM
  *   checkReact()       dialog, menu, tabs, toast, tooltip, fields and table in a real browser
+ *   reactSuites        the editor, gaps, app and overlays suites, one page each
  */
 import assert from "node:assert/strict";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -747,13 +748,8 @@ export async function checkReact(page, base) {
   expect(await page.locator(".sd-toaster .sd-toast", { hasText: "Signed out" }).count() === 1, "a menu item in the header runs its action");
 
   expect(browserErrors.length === 0, `console errors: ${browserErrors.join(" | ")}`);
-  const editor = await checkReactEditor(page, base);
-  errors.push(...editor.errors);
-  const gaps = await checkReactGaps(page, base);
-  errors.push(...gaps.errors);
-  const app = await checkReactApp(page, base);
-  errors.push(...app.errors);
-  const overlays = await checkReactOverlays(page, base);
-  errors.push(...overlays.errors);
-  return { errors, passed: passed + editor.passed + gaps.passed + app.passed + overlays.passed };
+  return { errors, passed };
 }
+
+/** The other React suites, each on a page of its own: check.mjs runs them side by side. */
+export const reactSuites = { editor: checkReactEditor, gaps: checkReactGaps, app: checkReactApp, overlays: checkReactOverlays };
