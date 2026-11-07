@@ -32,6 +32,7 @@ import { checkFonts } from "./check-fonts.mjs";
 import { checkSidebarResize } from "./check-sidebar-resize.mjs";
 import { checkHashRedirects, checkShowcasePages, checkShowcaseRegistry } from "./check-showcase-pages.mjs";
 import { checkShowcaseBar } from "./check-showcase-bar.mjs";
+import { gotoSettled } from "./settle.mjs";
 import { ALL, EXAMPLES, HOME, LIBRARY, byId, keyOf } from "../showcase/pages.js";
 
 // One file per component in scripts/checks/, each exporting
@@ -613,15 +614,17 @@ async function checkFeedAndHotkeys(page, name) {
 
 if (!checkFeedTypes()) process.exit(1);
 
+/** Every load of a page job starts in its theme with the sidebar at its default width. */
+const startIn = (page, theme) => page.addInitScript((t) => {
+  try { localStorage.setItem("sd-theme", t); localStorage.removeItem("sd-shell-sidebar"); } catch {}
+}, theme);
+
 /** One page at one width in one theme: hard rules, then that page's behaviors. */
 async function checkPage(page, where, name, pageName, url, width, theme) {
   const errors = [];
   page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.addInitScript((t) => {
-    try { localStorage.setItem("sd-theme", t); localStorage.removeItem("sd-shell-sidebar"); } catch {}
-  }, theme);
-  await page.goto(url, { waitUntil: "networkidle" });
+  await gotoSettled(page, url);
   if (pageName === "standalone") await page.evaluate((t) => (document.documentElement.dataset.theme = t), theme);
   await page.evaluate(() => document.fonts.ready);
 
@@ -1007,8 +1010,16 @@ for (const name of Object.keys(engines)) {
         // and run the page once more. A crash that repeats fails. WebKit's
         // renderer can also die while the browser process lives on, so a
         // "target has been closed" error counts as a crash as well.
-        jobs.push({ engine: name, where, cost: width === widths[0] && theme === themes[0] ? (slow[pageName] ?? 2) : 1, retry: true, run: async (page) => {
-          await checkPage(page, where, name, pageName, url, width, theme);
+        // Only 1280px and 375px in ink click, hover or type; the other loads
+        // just read the page, so they share one page per worker.
+        const reuse = url.startsWith(base) && (theme !== "ink" || (width !== widths[0] && width !== widths.at(-1)));
+        jobs.push({ engine: name, where, reuse, cost: width === widths[0] && theme === themes[0] ? (slow[pageName] ?? 2) : 1, retry: true, run: async (page) => {
+          const init = await startIn(page, theme);
+          try {
+            await checkPage(page, where, name, pageName, url, width, theme);
+          } finally {
+            await init.dispose().catch(() => {});
+          }
           console.log(`ok   ${where}`);
         }, viewport: { width, height: 900 } });
       }
@@ -1019,10 +1030,8 @@ for (const name of Object.keys(engines)) {
       const where = `${name} ${pageName} ${widths[0]}px ${themes[0]}`;
       for (const part of check.parts) {
         jobs.push({ engine: name, where, part, cost: slow[`${check.file} ${JSON.stringify(part)}`] ?? slow[check.file] ?? 2, retry: true, viewport: { width: widths[0], height: 900 }, run: async (page) => {
-          await page.addInitScript((t) => {
-            try { localStorage.setItem("sd-theme", t); localStorage.removeItem("sd-shell-sidebar"); } catch {}
-          }, themes[0]);
-          await page.goto(url, { waitUntil: "networkidle" });
+          await startIn(page, themes[0]);
+          await gotoSettled(page, url);
           await page.evaluate(() => document.fonts.ready);
           await check.run(page, where, fail, part);
         } });
@@ -1097,14 +1106,23 @@ const browsers = Object.fromEntries(Object.entries(engines).map(([name, engine])
 }));
 
 // Many pages loading at once can fill the dev server's accept queue, and
-// Windows refuses a connection then instead of queuing it. A job whose only
-// failures are refused connections runs once more; a refusal that repeats fails.
+// Windows refuses a connection then instead of queuing it. A job that met a
+// refused connection runs once more, since whatever failed after it may have
+// failed for it; a refusal that repeats fails.
 const refused = /ERR_CONNECTION_REFUSED|ERR_CONNECTION_RESET|Could not connect to server/;
-const onlyRefused = (out) => out.failed > 0 && out.lines.filter((line) => line.startsWith("FAIL ")).every((line) => refused.test(line));
-async function runJob(job) {
+const metRefused = (out) => out.lines.some((line) => line.startsWith("FAIL ") && refused.test(line));
+/** A reused page starts each job as a fresh one would: its viewport, empty storage, no listeners from the last job. */
+async function reset(page, viewport) {
+  page.removeAllListeners("console");
+  page.removeAllListeners("pageerror");
+  await page.setViewportSize(viewport);
+  await page.evaluate(() => { localStorage.clear(); sessionStorage.clear(); });
+}
+
+async function runJob(job, kept) {
   const out = held.getStore();
   for (let attempt = 1; ; attempt++) {
-    if (attempt > 1 && onlyRefused(out)) {
+    if (attempt > 1 && metRefused(out)) {
       const why = out.lines.find((line) => refused.test(line));
       failures -= out.failed;
       out.failed = 0;
@@ -1115,8 +1133,12 @@ async function runJob(job) {
     let page;
     try {
       browser = await browsers[job.engine].get();
-      page = await browser.newPage(job.viewport ? { viewport: job.viewport } : undefined);
+      page = job.reuse && kept[job.engine]?.context().browser() === browser && !kept[job.engine].isClosed() ? kept[job.engine] : null;
+      delete kept[job.engine];
+      if (page) await reset(page, job.viewport);
+      else page = await browser.newPage(job.viewport ? { viewport: job.viewport } : undefined);
       await job.run(page);
+      if (job.reuse) [kept[job.engine], page] = [page, null];
     } catch (error) {
       const crashed = (browser && !browser.isConnected()) || /has been closed|has crashed|Target closed/i.test(error.message);
       if (job.retry && crashed && attempt === 1) {
@@ -1127,7 +1149,7 @@ async function runJob(job) {
     } finally {
       await page?.close().catch(() => {});
     }
-    if (attempt === 1 && onlyRefused(out)) continue;
+    if (attempt === 1 && metRefused(out)) continue;
     return;
   }
 }
@@ -1150,12 +1172,13 @@ process.once("SIGTERM", () => { flushAll(); process.exit(1); });
 process.once("SIGINT", () => { flushAll(); process.exit(1); });
 process.once("uncaughtException", (error) => { flushAll(); print(`FAIL check.mjs: ${error.stack ?? error}`); process.exit(1); });
 async function worker() {
+  const kept = {};
   while (started < order.length) {
     const i = order[started++];
     const out = { lines: [], failed: 0 };
     running.set(i, out.lines);
     const begun = performance.now();
-    await held.run(out, () => runJob(jobs[i]));
+    await held.run(out, () => runJob(jobs[i], kept));
     jobs[i].seconds = (performance.now() - begun) / 1000;
     running.delete(i);
     outputs[i] = out.lines;
@@ -1164,9 +1187,13 @@ async function worker() {
       outputs[printed] = [];
     }
   }
+  for (const page of Object.values(kept)) await page.close().catch(() => {});
 }
 await Promise.all(Array.from({ length: Math.min(concurrency, jobs.length) }, worker));
-if (showTimes) for (const job of [...jobs].sort((a, b) => b.seconds - a.seconds).slice(0, 20)) print(`time ${job.seconds.toFixed(1).padStart(6)}s ${job.where}${job.part ? ` ${JSON.stringify(job.part)}` : ""}`);
+if (showTimes) {
+  for (const job of [...jobs].sort((a, b) => b.seconds - a.seconds).slice(0, 20)) print(`time ${job.seconds.toFixed(1).padStart(6)}s ${job.where}${job.part ? ` ${JSON.stringify(job.part)}` : ""}`);
+  print(`time ${jobs.reduce((sum, job) => sum + job.seconds, 0).toFixed(0)}s of jobs over ${jobs.length} jobs, ${concurrency} at a time, ${performance.now() / 1000 | 0}s since start`);
+}
 // WebKit on Linux CI takes 30s to close after the behavior groups; Playwright
 // kills a browser still running when this process exits, so do not wait.
 await Promise.race([Promise.all(Object.values(browsers).map((b) => b.close())), new Promise((resolve) => setTimeout(resolve, 2000))]);

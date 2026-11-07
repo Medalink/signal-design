@@ -9,6 +9,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { ICONS, scriptOf } from "../showcase/layout-plugin.js";
 import { MOVED } from "../showcase/moved.js";
 import { ALL, EXAMPLES, LIBRARY, SECTIONS, keyOf } from "../showcase/pages.js";
+import { gotoSettled, settle, track } from "./settle.mjs";
 
 const showcase = new URL("../showcase/", import.meta.url);
 
@@ -78,6 +79,7 @@ export async function checkShowcasePages(page, where, fail, library) {
 
 /** Old links to the single components page and the section pages, followed from the overview. */
 export async function checkHashRedirects(page, base) {
+  track(page);
   const errors = [];
   let passed = 0;
   // An old section with no anchor of its own now lands on the top of its page.
@@ -94,7 +96,7 @@ export async function checkHashRedirects(page, base) {
   for (const [hash, want] of cases) {
     await page.goto(`${base}${ALL[0].file}${hash}`);
     await page.waitForURL((url) => url.pathname.endsWith(".html") && !url.pathname.endsWith(ALL[0].file));
-    await page.waitForLoadState("networkidle");
+    await settle(page);
     const url = new URL(page.url());
     const got = url.pathname.split("/").pop() + url.hash;
     const inView = await page.evaluate((id) => {
@@ -106,12 +108,12 @@ export async function checkHashRedirects(page, base) {
     else errors.push(`${hash} went to ${got}, want ${want}; target in view: ${inView}`);
   }
   // An old link followed on an overview that is already open changes only the hash.
-  await page.goto(`${base}${ALL[0].file}`, { waitUntil: "networkidle" });
+  await gotoSettled(page, `${base}${ALL[0].file}`);
   await page.evaluate(() => (location.hash = "#components-buttons"));
   if (await page.waitForURL((url) => url.pathname.endsWith("lib-buttons.html"), { timeout: 3000 }).then(() => true, () => false)) passed++;
   else errors.push(`#components-buttons set on the open overview stayed on ${new URL(page.url()).pathname}, want lib-buttons.html`);
   await page.goto(`${base}${ALL[0].file}#top`);
-  await page.waitForLoadState("networkidle");
+  await settle(page);
   if (new URL(page.url()).pathname.endsWith(ALL[0].file)) passed++;
   else errors.push("#top left the overview");
   return { errors, passed, pages: LIBRARY.length };

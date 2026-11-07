@@ -6,6 +6,7 @@
  * once per engine.
  */
 import { ALL } from "../showcase/pages.js";
+import { gotoSettled, settle } from "./settle.mjs";
 
 export async function checkShowcaseBar(browser, base, name) {
   const errors = [];
@@ -20,7 +21,7 @@ export async function checkShowcaseBar(browser, base, name) {
     const page = await context.newPage();
     await page.setViewportSize({ width, height });
     page.on("pageerror", (e) => errors.push(`${name} bar ${file} ${width}px: ${e.message}`));
-    await page.goto(`${base}${file}`, { waitUntil: "networkidle" });
+    await gotoSettled(page, `${base}${file}`);
     return page;
   };
 
@@ -105,7 +106,8 @@ export async function checkShowcaseBar(browser, base, name) {
   expect((await page.evaluate(() => document.documentElement.dataset.sdScrollbars)) === "always", "the scrollbars choice follows to the next page");
   await panelOpen(page);
   await page.click('#set-chart-colors [data-value="spectrum"]');
-  await page.reload({ waitUntil: "networkidle" });
+  await page.reload({ waitUntil: "load" });
+  await settle(page);
   expect((await page.evaluate(() => [document.documentElement.dataset.chartTheme, localStorage.getItem("sd-chart-theme")].join())) === "spectrum,spectrum", "chart colors apply and are remembered");
   await page.close();
 
