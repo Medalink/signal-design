@@ -19,6 +19,10 @@
      sticky topbar and the sticky sidebar sit at the same offsets at every
      scroll position. --vp-bar-h comes from .has-vp-bar (the bar mounts on
      every showcase page). */
+  /* Anything scrolled into view lands below the sticky bars, not under them. */
+  html[data-page^="lib-"] {
+    scroll-padding-top: calc(var(--vp-bar-h, 0px) + var(--doc-topbar-h) + 32px);
+  }
   html[data-page^="lib-"] .vp-bar {
     position: sticky;
     top: 0;
@@ -644,7 +648,6 @@
   }
 
   .demo-section {
-    scroll-margin-top: calc(var(--vp-bar-h, 0px) + var(--doc-topbar-h) + 32px);
     padding-block: 0 24px;
   }
   /* The top of a library page: its breadcrumb over title, lead and the
@@ -776,7 +779,6 @@
   }
   /* Doc anatomy sections on a library page, and the lists inside them. */
   .doc-section {
-    scroll-margin-top: calc(var(--vp-bar-h, 0px) + var(--doc-topbar-h) + 32px);
     padding-block: 48px 0;
   }
   .doc-section > .sd-title {
@@ -1076,7 +1078,7 @@
     gap: 14px;
     align-content: safe center;
     min-height: 520px;
-    padding: clamp(24px, 4vw, 48px);
+    padding: clamp(12px, 4vw, 48px);
     background: var(--sd-field-fill);
     /* Wide demos scroll here, like the old shell's content box did, so the
        document itself never overflows. */
@@ -1091,7 +1093,6 @@
   .doc-example {
     display: grid;
     gap: 12px;
-    scroll-margin-top: calc(var(--vp-bar-h, 0px) + var(--doc-topbar-h) + 32px);
   }
   .doc-example h3 {
     margin: 0;
@@ -1130,9 +1131,6 @@
   .demo-usage {
     font-size: var(--text-sm);
     color: var(--sd-fg-subtle);
-  }
-  .demo-block {
-    scroll-margin-top: calc(var(--vp-bar-h, 0px) + var(--doc-topbar-h) + 32px);
   }
   /* Preview / code flip, in place. */
   /* The icon set: one cell per icon with its name. */
