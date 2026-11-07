@@ -1290,6 +1290,52 @@
   .settings-panel .sd-seg > button {
     flex: 1;
   }
+  /* Theme previews: a swatch in each theme's own canvas with two lines of
+     its text, the name under it. */
+  .settings-panel .set-themes {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .settings-panel .set-themes > button {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
+    gap: 6px;
+    justify-items: stretch;
+    padding: 6px 4px;
+    letter-spacing: 0;
+  }
+  .set-swatch {
+    display: flex;
+    height: 28px;
+  }
+  .set-swatch > span {
+    flex: 1;
+    display: grid;
+    align-content: center;
+    gap: 4px;
+    padding-inline: 6px;
+    background: var(--sd-canvas);
+  }
+  .set-swatch i,
+  .set-swatch i::after {
+    display: block;
+    height: 3px;
+    background: var(--sd-fg);
+  }
+  .set-swatch i {
+    width: 70%;
+  }
+  .set-swatch i::after {
+    content: "";
+    width: 60%;
+    margin-block-start: 7px;
+    background: var(--sd-fg-faint);
+  }
+  .settings-panel .set-fonts > button > span {
+    font-size: var(--text-sm);
+    letter-spacing: 0;
+  }
   /* The width switch needs a window wider than the frames it opens. */
   @media (max-width: 63.99rem) {
     .vp-widths {
