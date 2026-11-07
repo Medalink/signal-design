@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 1.4.49 (2026-11-07)
+
+### Changed
+- Secondary text gets brighter in ink and graphite and darker in paper, for AAA contrast
+
 ## 1.4.48 (2026-11-07)
 
 ### Changed
