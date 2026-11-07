@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 1.4.50 (2026-11-07)
+
+### Changed
+- Status colors reach 4.5:1 on selected fills in every theme
+
 ## 1.4.49 (2026-11-07)
 
 ### Changed
