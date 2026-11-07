@@ -82,7 +82,18 @@ export async function checkFonts(page) {
   await open(["signal.css"], READING);
   expect(new Set(await faceRules()).size === 4, `signal.css declares ${[...new Set(await faceRules())].join(", ")}`);
   const used = files();
-  expect(used.includes("literata-latin.woff2") && used.includes("source-code-pro-400.woff2"), `the default stylesheet did not fetch the faces the text uses, got ${used.join(", ")}`);
+  expect(used.includes("literata-latin.woff2") && used.includes("source-code-pro-400-latin.woff2"), `the default stylesheet did not fetch the faces the text uses, got ${used.join(", ")}`);
+  expect(!used.includes("source-code-pro-400.woff2"), `plain Latin code fetched the whole mono font, got ${used.join(", ")}`);
+  await page.evaluate(() => {
+    document.getElementById("code").textContent = "┌─┐";
+  });
+  for (let i = 0; i < 40 && !files().includes("source-code-pro-400-symbols.woff2"); i++) await page.waitForTimeout(100);
+  expect(files().includes("source-code-pro-400-symbols.woff2") && !files().includes("source-code-pro-400.woff2"), `box drawing in code should fetch only the mono symbols file, got ${files().join(", ")}`);
+  await page.evaluate(() => {
+    document.getElementById("code").textContent = "Ω";
+  });
+  for (let i = 0; i < 40 && !files().includes("source-code-pro-400.woff2"); i++) await page.waitForTimeout(100);
+  expect(files().includes("source-code-pro-400.woff2"), `Greek in code did not fetch the whole mono font, got ${files().join(", ")}`);
   expect(!used.some((name) => name.startsWith("leon-sans")), `the default stylesheet fetched Leon Sans without data-font, got ${used.join(", ")}`);
 
   await page.unroute(`${origin}/**`);
