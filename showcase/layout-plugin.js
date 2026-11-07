@@ -431,7 +431,6 @@ const previewShell = (blocks) => `  <div class="doc-preview">
         <button type="button" role="tab" aria-selected="true" data-code-all="preview"><svg aria-hidden="true"><use href="#i-eye"/></svg>Preview</button>
         <button type="button" role="tab" aria-selected="false" data-code-all="code"><svg aria-hidden="true"><use href="#i-code"/></svg>Code</button>
       </div>
-      <span class="doc-preview-hint">Live · keyboard ready</span>
       <div class="doc-preview-tools">
         <div class="doc-width" role="group" aria-label="Preview width">
           <button type="button" class="doc-tool" data-doc-width="full" aria-pressed="true" aria-label="Full width"><svg aria-hidden="true"><use href="#i-monitor"/></svg></button>

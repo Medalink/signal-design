@@ -1032,13 +1032,9 @@
     height: 2px;
     background: var(--sd-fg);
   }
-  .doc-preview-hint {
-    margin-inline-start: auto;
-    color: var(--sd-fg-faint);
-    font-size: 13px;
-  }
   .doc-preview-tools {
     display: flex;
+    margin-inline-start: auto;
     align-items: center;
     gap: 6px;
   }
@@ -1079,12 +1075,8 @@
     background: var(--sd-canvas);
   }
   @media (max-width: 40rem) {
-    .doc-preview-hint,
     .doc-width {
       display: none;
-    }
-    .doc-preview-tools {
-      margin-inline-start: auto;
     }
   }
   .doc-canvas {
