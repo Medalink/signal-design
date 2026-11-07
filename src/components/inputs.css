@@ -55,6 +55,7 @@
     min-height: 40px;
     padding: 5px 8px;
     border: 1px solid transparent;
+    border-block-end-color: var(--sd-field-edge, var(--sd-line-control));
     background: var(--sd-field-fill);
     cursor: text;
   }
@@ -91,6 +92,7 @@
     width: 34px;
     padding: 0;
     border: 1px solid transparent;
+    border-block-end-color: var(--sd-field-edge, var(--sd-line-control));
     background: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-field-fill));
     color: var(--sd-fg-muted);
     font: inherit;

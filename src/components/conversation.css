@@ -1523,6 +1523,7 @@
     grid-template-columns: minmax(0, 1fr);
     gap: 8px;
     padding: 8px;
+    border-block-end: 1px solid var(--sd-field-edge, var(--sd-line-control));
     background: var(--sd-tone-3);
   }
   /* An outline on the box's edge, so a composer drawn without a border shows
@@ -1760,12 +1761,16 @@
     display: grid;
     gap: 6px;
     margin-inline: -11px;
+    /* The row under it wears the current-row tint, which pulls the control
+       line below 3:1; the field's bottom edge takes the subtle text tone. */
+    --sd-field-edge: var(--sd-fg-subtle);
   }
   .sd-message-edit textarea {
     width: 100%;
     min-height: 0;
     padding: 7px 10px;
     border: 1px solid transparent;
+    border-block-end-color: var(--sd-field-edge, var(--sd-line-control));
     background: var(--sd-tone-3);
     color: var(--sd-fg);
     font: inherit;

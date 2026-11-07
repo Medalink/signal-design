@@ -64,8 +64,13 @@ hover shimmers play through to the end.
    (`--sd-edge-below`, `-above`, `-left`, `-right`); a floating layer takes
    `--sd-lift`. No other blurred shadow, no glow, no glass. Lines stay only where
    they mean something: focus, a status color, the current or selected item, a
-   dashed pending or drop zone, chart axes, the timeline, and the outline of a
-   checkbox, radio, switch or slider. The main content box keeps its edge.
+   dashed pending or drop zone, chart axes, the timeline, the outline of a
+   checkbox, radio, switch or slider, and the bottom edge of a text field. A
+   text field (input, select, textarea) keeps its fill and a 1px bottom edge in
+   `--sd-line-control`, 3:1 against what surrounds it (WCAG 1.4.11), so it reads
+   as a field. When an input sits in a composite that is itself the field (a tag
+   list, the composer), the composite takes that edge and the input has none.
+   The main content box keeps its edge.
 3. **Color means something.** Only status and selection are colored, via the roles
    `accent`, `success`, `danger`, `warning`, `pending`, `extra` (`data-tone="danger"`,
    `text-danger`). Everything else, navigation included, is black, white and grey.

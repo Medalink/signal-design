@@ -433,6 +433,7 @@
     min-height: 34px;
     padding: 6px 10px;
     border: 1px solid transparent;
+    border-block-end-color: var(--sd-field-edge, var(--sd-line-control));
     background-color: var(--sd-field-fill);
     color: var(--sd-fg);
     font: inherit;
@@ -440,9 +441,13 @@
     line-height: 20px;
     transition: border-color 120ms var(--ease-out), background-color 120ms var(--ease-out);
   }
-  /* Text fields are tone, not lines: --sd-field-fill (the fg at 4% over
-     whatever the field sits on) on a 1px transparent edge, so the box keeps
-     its size. Hover lifts the fill; focus, invalid and read-only keep an edge. */
+  /* A text field is a tone with one line: --sd-field-fill (the fg at 4% over
+     whatever the field sits on) and a 1px bottom edge in --sd-line-control,
+     3:1 against what surrounds it (WCAG 1.4.11), so the field reads as a field
+     and the box keeps its size. The other three edges stay transparent. Hover
+     lifts the fill; focus, invalid and read-only recolor the whole edge. A
+     composite that is itself the field (a tag list, the composer) takes the
+     bottom edge and its input has none. */
   :is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"], [type="submit"], [type="button"], [type="reset"], [type="image"], [type="hidden"]), textarea, select):is(:hover:not(:disabled, :focus, input:read-only, textarea:read-only)) {
     background-color: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-field-fill));
   }
