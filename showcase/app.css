@@ -35,6 +35,12 @@
     background: color-mix(in srgb, var(--sd-canvas) 96%, transparent);
     box-shadow: var(--sd-edge-below);
   }
+  /* The home link is a full-height target, not a 22px line of type. */
+  .doc-topbar > .sd-wordmark {
+    display: inline-flex;
+    align-items: center;
+    align-self: stretch;
+  }
   .doc-menu-btn {
     display: none;
     align-items: center;
@@ -124,7 +130,7 @@
     white-space: nowrap;
     padding: 0 4px;
     border: 0;
-    font-size: 11px;
+    font-size: 12px;
     line-height: 18px;
     color: var(--sd-fg-subtle);
   }
@@ -316,7 +322,7 @@
     margin-inline-start: auto;
     color: var(--sd-fg-subtle);
     font-family: var(--sd-font-mono);
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 400;
   }
   .doc-nav-sub {
@@ -330,6 +336,7 @@
   }
   .doc-nav-sub .sd-count {
     color: var(--sd-fg-subtle);
+    font-size: 12px;
   }
   .doc-nav-links {
     display: grid;
@@ -388,7 +395,7 @@
     margin-inline-start: auto;
     color: var(--sd-fg-subtle);
     font-family: var(--sd-font-mono);
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 400;
   }
   .doc-release svg {
