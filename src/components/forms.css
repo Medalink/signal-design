@@ -62,7 +62,9 @@
   }
   /* Focusing a control, from a failed submit or a skip link, leaves its label
      above it and its message below it in view. */
-  .sd-field :is(input, select, textarea) {
+  .sd-field input,
+  .sd-field select,
+  .sd-field textarea {
     scroll-margin-block: 5rem;
   }
 
@@ -95,14 +97,18 @@
     align-items: stretch;
     min-width: 0;
   }
-  .sd-input-group > :where(input, select, textarea) {
+  .sd-input-group > :where(input),
+  .sd-input-group > :where(select),
+  .sd-input-group > :where(textarea) {
     flex: 1 1 auto;
     min-width: 0;
   }
   .sd-input-group > * + * {
     margin-inline-start: -1px;
   }
-  .sd-input-group > :where(input, select, textarea):focus {
+  .sd-input-group > :where(input):focus,
+  .sd-input-group > :where(select):focus,
+  .sd-input-group > :where(textarea):focus {
     position: relative;
     z-index: 1;
   }
@@ -200,7 +206,8 @@
     cursor: pointer;
     transition: background-color 120ms var(--ease-out), color 120ms var(--ease-out);
   }
-  .sd-seg > :where(button, label):hover {
+  .sd-seg > :where(button):hover,
+  .sd-seg > :where(label):hover {
     background: color-mix(in srgb, var(--sd-fg) 6%, var(--seg-fill));
     color: var(--sd-fg);
   }
