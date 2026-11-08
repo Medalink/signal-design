@@ -82,7 +82,11 @@
     line-height: var(--sd-message-line);
     overflow-wrap: anywhere;
   }
-  .sd-message-text > :where(p, ul, ol, pre, blockquote):not(:last-child) {
+  .sd-message-text > :where(p):not(:last-child),
+  .sd-message-text > :where(ul):not(:last-child),
+  .sd-message-text > :where(ol):not(:last-child),
+  .sd-message-text > :where(pre):not(:last-child),
+  .sd-message-text > :where(blockquote):not(:last-child) {
     margin-block-end: 0.5em;
   }
   /*
@@ -143,7 +147,8 @@
   .sd-md blockquote > :where(* + *) {
     margin-block-start: 0.5em;
   }
-  .sd-md :is(ul, ol) {
+  .sd-md ul,
+  .sd-md ol {
     margin-block: 0;
     padding-inline-start: 1.5em;
   }
@@ -156,7 +161,9 @@
   .sd-md :is(ul, ol) > li + li {
     margin-block-start: 0.15em;
   }
-  .sd-md li > :is(p, ul, ol) {
+  .sd-md li > p,
+  .sd-md li > ul,
+  .sd-md li > ol {
     margin-block: 0;
   }
   .sd-md .sd-table-wrap {
@@ -180,10 +187,12 @@
   .sd-md td {
     padding: 6px 12px;
   }
-  .sd-md :is(th, td):first-child {
+  .sd-md th:first-child,
+  .sd-md td:first-child {
     padding-inline-start: 0;
   }
-  .sd-md :is(th, td):last-child {
+  .sd-md th:last-child,
+  .sd-md td:last-child {
     padding-inline-end: 0;
   }
   /* The author leads the first line in the name color. A clickable author is
@@ -193,7 +202,8 @@
     color: color-mix(in srgb, var(--who, var(--sd-extra)) 70%, var(--sd-fg));
     font-weight: var(--font-weight-semibold);
   }
-  :is(.sd-message-author, .sd-message-head > b, .sd-message-ref > b) > :is(button, a) {
+  :is(.sd-message-author, .sd-message-head > b, .sd-message-ref > b) > button,
+  :is(.sd-message-author, .sd-message-head > b, .sd-message-ref > b) > a {
     padding: 0;
     border: 0;
     background: none;
@@ -202,7 +212,8 @@
     text-decoration: none;
     cursor: pointer;
   }
-  :is(.sd-message-author, .sd-message-head > b, .sd-message-ref > b) > :is(button, a):hover {
+  :is(.sd-message-author, .sd-message-head > b, .sd-message-ref > b) > button:hover,
+  :is(.sd-message-author, .sd-message-head > b, .sd-message-ref > b) > a:hover {
     text-decoration: underline;
     text-underline-offset: 2px;
   }
@@ -229,9 +240,12 @@
   }
   /* An author that is a button or a link: <b> clips an atomic inline-block
      without an ellipsis, so the control itself becomes the truncating box. */
-  .sd-message-head > b > :is(button, a),
-  .sd-reply > b > :is(button, a),
-  .sd-message-ref > b > :is(button, a) {
+  .sd-message-head > b > button,
+  .sd-message-head > b > a,
+  .sd-reply > b > button,
+  .sd-reply > b > a,
+  .sd-message-ref > b > button,
+  .sd-message-ref > b > a {
     display: block;
     min-height: 24px; /* a 24px target */
     line-height: 24px;
@@ -244,10 +258,14 @@
   /* On a coarse pointer the name reaches a finger past the line it sits in;
      negative margins keep the line's height. */
   @media (pointer: coarse) {
-    .sd-message-author > :is(button, a),
-    .sd-message-head > b > :is(button, a),
-    .sd-reply > b > :is(button, a),
-    .sd-message-ref > b > :is(button, a) {
+    .sd-message-author > button,
+    .sd-message-author > a,
+    .sd-message-head > b > button,
+    .sd-message-head > b > a,
+    .sd-reply > b > button,
+    .sd-reply > b > a,
+    .sd-message-ref > b > button,
+    .sd-message-ref > b > a {
       min-height: var(--sd-touch);
       margin-block: calc((24px - var(--sd-touch)) / 2);
       line-height: var(--sd-touch);
@@ -433,10 +451,22 @@
     color: var(--sd-danger);
   }
   /* Embeds in a message share one width and sit 3px under the text. */
-  .sd-message-body > :is(.sd-file, .sd-link-card, .sd-reactions, .sd-poll, .sd-thread-chip, .sd-event-card, .sd-cw, .sd-tasklist, .sd-ack) {
+  .sd-message-body > .sd-file,
+  .sd-message-body > .sd-link-card,
+  .sd-message-body > .sd-reactions,
+  .sd-message-body > .sd-poll,
+  .sd-message-body > .sd-thread-chip,
+  .sd-message-body > .sd-event-card,
+  .sd-message-body > .sd-cw,
+  .sd-message-body > .sd-tasklist,
+  .sd-message-body > .sd-ack {
     margin-top: 3px;
   }
-  .sd-message-body > :is(.sd-file, .sd-link-card, .sd-poll, .sd-event-card, .sd-tasklist) {
+  .sd-message-body > .sd-file,
+  .sd-message-body > .sd-link-card,
+  .sd-message-body > .sd-poll,
+  .sd-message-body > .sd-event-card,
+  .sd-message-body > .sd-tasklist {
     width: 100%;
     max-width: 30rem;
   }
@@ -813,7 +843,9 @@
     overflow-y: auto;
     scrollbar-width: thin;
   }
-  .sd-emoji-scroll :is(h2, h3, h4) {
+  .sd-emoji-scroll h2,
+  .sd-emoji-scroll h3,
+  .sd-emoji-scroll h4 {
     position: sticky;
     top: 0;
     z-index: 1;
@@ -953,7 +985,10 @@
     font-size: 13px;
     line-height: var(--sd-message-line, 24px);
   }
-  .sd-event > :is(svg, .sd-dot) {
+  /* Written one selector per child so each is indexed by its class or tag; the
+     :is(*, :root) after a tag keeps the specificity the :is() list had. */
+  .sd-event > :where(svg):is(*, :root),
+  .sd-event > .sd-dot {
     justify-self: end;
     width: 16px;
     height: 16px;
@@ -1582,13 +1617,17 @@
       min-width: var(--sd-hit);
     }
   }
-  .sd-composer-row > :is(.sd-composer-discard, .sd-composer-rec) {
+  .sd-composer-row > .sd-composer-discard,
+  .sd-composer-row > .sd-composer-rec {
     display: none;
   }
-  .sd-composer[data-recording] .sd-composer-row > :is(textarea, .sd-composer-add, .sd-composer-mic) {
+  .sd-composer[data-recording] .sd-composer-row > :where(textarea):is(*, :root),
+  .sd-composer[data-recording] .sd-composer-row > .sd-composer-add,
+  .sd-composer[data-recording] .sd-composer-row > .sd-composer-mic {
     display: none;
   }
-  .sd-composer[data-recording] .sd-composer-row > :is(.sd-composer-discard, .sd-composer-rec) {
+  .sd-composer[data-recording] .sd-composer-row > .sd-composer-discard,
+  .sd-composer[data-recording] .sd-composer-row > .sd-composer-rec {
     display: flex;
   }
   .sd-composer-rec {
@@ -2125,15 +2164,36 @@
   /* Paper: conversation hairlines are lighter (7% and 14% black instead of
      10% and 22%), so cards, chips and dividers stop outlining everything.
      The composer and form fields keep the strong line for a 3:1 input edge. */
-  :is([data-theme="paper"], [data-theme="light"]) :is(.sd-message, .sd-event, .sd-feed-day, .sd-feed-jump, .sd-composer-status, .sd-composer-reply, .sd-message-menu, .sd-emoji-picker, .sd-roster, .sd-thread, .sd-catchup) {
+  :is([data-theme="paper"], [data-theme="light"]) .sd-message,
+  :is([data-theme="paper"], [data-theme="light"]) .sd-event,
+  :is([data-theme="paper"], [data-theme="light"]) .sd-feed-day,
+  :is([data-theme="paper"], [data-theme="light"]) .sd-feed-jump,
+  :is([data-theme="paper"], [data-theme="light"]) .sd-composer-status,
+  :is([data-theme="paper"], [data-theme="light"]) .sd-composer-reply,
+  :is([data-theme="paper"], [data-theme="light"]) .sd-message-menu,
+  :is([data-theme="paper"], [data-theme="light"]) .sd-emoji-picker,
+  :is([data-theme="paper"], [data-theme="light"]) .sd-roster,
+  :is([data-theme="paper"], [data-theme="light"]) .sd-thread,
+  :is([data-theme="paper"], [data-theme="light"]) .sd-catchup {
     --sd-line: rgb(0 0 0 / 0.07);
     --sd-line-strong: rgb(0 0 0 / 0.14);
   }
-  :is([data-theme="paper"], [data-theme="light"]) :is(.sd-message-edit textarea, .sd-emoji-search > input) {
+  :is([data-theme="paper"], [data-theme="light"]) :is(.sd-message-edit textarea),
+  :is([data-theme="paper"], [data-theme="light"]) :is(.sd-emoji-search > input) {
     --sd-line-strong: rgb(0 0 0 / 0.22);
   }
   @media (prefers-color-scheme: light) {
-    [data-theme="auto"] :is(.sd-message, .sd-event, .sd-feed-day, .sd-feed-jump, .sd-composer-status, .sd-composer-reply, .sd-message-menu, .sd-emoji-picker, .sd-roster, .sd-thread, .sd-catchup) {
+    [data-theme="auto"] .sd-message,
+    [data-theme="auto"] .sd-event,
+    [data-theme="auto"] .sd-feed-day,
+    [data-theme="auto"] .sd-feed-jump,
+    [data-theme="auto"] .sd-composer-status,
+    [data-theme="auto"] .sd-composer-reply,
+    [data-theme="auto"] .sd-message-menu,
+    [data-theme="auto"] .sd-emoji-picker,
+    [data-theme="auto"] .sd-roster,
+    [data-theme="auto"] .sd-thread,
+    [data-theme="auto"] .sd-catchup {
       --sd-line: rgb(0 0 0 / 0.07);
       --sd-line-strong: rgb(0 0 0 / 0.14);
     }
