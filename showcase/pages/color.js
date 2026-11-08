@@ -6,12 +6,12 @@ mountLibrary();
 
 const ROLES = ["canvas", "surface", "raised", "overlay", "line", "line-strong", "fg", "fg-muted", "fg-subtle", "fg-faint", "primary", "on-primary"];
 const SIGNALS = [
-  ["accent", "selected, active"],
-  ["success", "approved, passing"],
-  ["danger", "irreversible, risk"],
+  ["accent", "selected"],
+  ["success", "passing"],
+  ["danger", "risk"],
   ["warning", "costly"],
-  ["pending", "unproven, waiting"],
-  ["extra", "people, presence"],
+  ["pending", "waiting"],
+  ["extra", "people"],
 ];
 const INK = [1000, 950, 900, 850, 800, 700, 600, 500, 400, 300, 200, 100, 50];
 const GRAPHITE = [950, 900, 850, 800, 700, 600, 500, 400, 300, 200];

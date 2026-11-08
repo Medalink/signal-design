@@ -42,7 +42,7 @@
       <div class="grid justify-items-center gap-6 border border-line bg-surface p-8" id="mascot-stage" data-sd-ornaments="br" data-sd-ornaments-size="240">
         <button class="sd-mascot sd-mascot-xl" id="mascot-demo" type="button" data-sd-mascot="iris" data-mood="idle" aria-label="IRIS, idle. Press to say hello."></button>
         <div class="grid justify-items-center gap-3 w-full">
-          <div class="sd-seg" data-sd-seg aria-label="Mascot" id="mascot-pick">
+          <div class="sd-seg sd-seg-wrap" data-sd-seg aria-label="Mascot" id="mascot-pick">
             <button type="button" value="iris" aria-pressed="true">IRIS</button>
             <button type="button" value="eagle" aria-pressed="false">Eagle</button>
             <button type="button" value="squirrel" aria-pressed="false">Squirrel</button>
@@ -59,7 +59,7 @@
             <button type="button" value="offline" aria-pressed="false">Offline</button>
           </div>
           <div class="sd-actions justify-center">
-            <div class="sd-seg sd-seg-sm" data-sd-seg aria-label="Status light" id="mascot-tones">
+            <div class="sd-seg sd-seg-sm sd-seg-wrap" data-sd-seg aria-label="Status light" id="mascot-tones">
               <button type="button" value="" aria-pressed="true">None</button>
               <button type="button" value="success" aria-pressed="false">Success</button>
               <button type="button" value="pending" aria-pressed="false">Pending</button>
@@ -150,7 +150,7 @@
     <div class="demo-block" id="art-scenes">
       <h2 class="sd-label">Scenes</h2>
       <p class="demo-usage">Pieces and a mascot placed on one grid. The scene picks the largest whole-pixel cell that fits its width, so it scales without blurring. Swap the mascot in every scene at once.</p>
-      <div class="sd-seg" data-sd-seg aria-label="Mascot in the scenes" id="scene-pick">
+      <div class="sd-seg sd-seg-wrap" data-sd-seg aria-label="Mascot in the scenes" id="scene-pick">
         <button type="button" value="" aria-pressed="true">As drawn</button>
         <button type="button" value="iris" aria-pressed="false">IRIS</button>
         <button type="button" value="eagle" aria-pressed="false">Eagle</button>
