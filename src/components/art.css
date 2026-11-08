@@ -14,7 +14,8 @@
    * or any --sd-mascot-size.
    */
   .sd-art,
-  :is(.sd-mascot, .sd-iris) {
+  .sd-mascot,
+  .sd-iris {
     display: inline-block;
     flex: none;
     line-height: 0;
@@ -43,7 +44,8 @@
 
   /* ---- Mascots ------------------------------------------------------------ */
 
-  :is(.sd-mascot, .sd-iris) {
+  .sd-mascot,
+  .sd-iris {
     --sd-mascot-size: 60px;
     inline-size: var(--sd-mascot-size);
     block-size: var(--sd-mascot-size);
@@ -52,17 +54,22 @@
     background: none;
     -webkit-tap-highlight-color: transparent;
   }
-  :is(.sd-mascot-sm, .sd-iris-sm) { --sd-mascot-size: 30px; }
-  :is(.sd-mascot-lg, .sd-iris-lg) { --sd-mascot-size: 120px; }
-  :is(.sd-mascot-xl, .sd-iris-xl) { --sd-mascot-size: 180px; }
+  .sd-mascot-sm,
+  .sd-iris-sm { --sd-mascot-size: 30px; }
+  .sd-mascot-lg,
+  .sd-iris-lg { --sd-mascot-size: 120px; }
+  .sd-mascot-xl,
+  .sd-iris-xl { --sd-mascot-size: 180px; }
   :is(.sd-mascot, .sd-iris) > svg {
     inline-size: 100%;
     block-size: 100%;
   }
-  :is(button, a):is(.sd-mascot, .sd-iris) {
+  button:is(.sd-mascot, .sd-iris),
+  a:is(.sd-mascot, .sd-iris) {
     cursor: pointer;
   }
-  :is(button, a):is(.sd-mascot, .sd-iris):focus-visible {
+  button:is(.sd-mascot, .sd-iris):focus-visible,
+  a:is(.sd-mascot, .sd-iris):focus-visible {
     outline: 1px solid var(--sd-focus, var(--sd-accent));
     outline-offset: 4px;
   }
@@ -168,7 +175,8 @@
     left: calc(var(--sd-art-left) + var(--x, 0) * var(--sd-art-cell));
     top: calc(var(--sd-art-top) + var(--y, 0) * var(--sd-art-cell));
   }
-  .sd-art-scene > :is(.sd-mascot, .sd-iris) {
+  .sd-art-scene > .sd-mascot,
+  .sd-art-scene > .sd-iris {
     --sd-mascot-size: calc(15 * var(--sd-art-cell));
   }
   .sd-art-scene .sd-mascot-ground {
@@ -182,7 +190,9 @@
 
   @media (prefers-reduced-motion: reduce) {
     .sd-mascot-eyes,
-    [aria-busy="true"] > svg :is(.sd-mascot-scan, .sd-mascot-alt, .sd-art-signal) {
+    [aria-busy="true"] > svg .sd-mascot-scan,
+    [aria-busy="true"] > svg .sd-mascot-alt,
+    [aria-busy="true"] > svg .sd-art-signal {
       animation: none;
     }
     [aria-busy="true"] > svg .sd-mascot-scan {
