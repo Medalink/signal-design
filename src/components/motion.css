@@ -120,7 +120,9 @@
     animation: sd-sweep-progress var(--sd-sweep-duration, var(--_sd-sweep-base, 1s)) var(--sd-sweep-easing, linear) 1;
   }
 
-  /* Pieces with their own colors keep them while their parent shimmers. */
+  /* Pieces with their own colors keep them while their parent shimmers. One
+     selector per piece so each is indexed by its class, tag or attribute; the
+     :is(*, :root) after kbd only restores the specificity the :is() list had. */
   :is(
       .sd-nav :where(a, button),
       .sd-tabs > :where(a, button),
@@ -136,7 +138,119 @@
       .sd-seg > :where(button, label),
       .sd-sidebar-group > summary,
       a:not([class])
-    ):is(:hover, [data-sd-sweeping]) :is(.sd-avatar, .sd-badge, .sd-badge-count, .sd-dot, .sd-count, [data-tone], kbd, .sd-kbd) {
+    ):is(:hover, [data-sd-sweeping]) .sd-avatar,
+  :is(
+      .sd-nav :where(a, button),
+      .sd-tabs > :where(a, button),
+      .sd-breadcrumb > li > :where(a, button),
+      .sd-sidebar-link,
+      .sd-sidenav :where(a, button),
+      .sd-rail-item,
+      .sd-menu :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item),
+      .sd-pagination :where(a, button),
+      .sd-btn:not(.sd-btn-primary),
+      .sd-chip:is(button, a),
+      .sd-pill:is(button, a),
+      .sd-seg > :where(button, label),
+      .sd-sidebar-group > summary,
+      a:not([class])
+    ):is(:hover, [data-sd-sweeping]) .sd-badge,
+  :is(
+      .sd-nav :where(a, button),
+      .sd-tabs > :where(a, button),
+      .sd-breadcrumb > li > :where(a, button),
+      .sd-sidebar-link,
+      .sd-sidenav :where(a, button),
+      .sd-rail-item,
+      .sd-menu :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item),
+      .sd-pagination :where(a, button),
+      .sd-btn:not(.sd-btn-primary),
+      .sd-chip:is(button, a),
+      .sd-pill:is(button, a),
+      .sd-seg > :where(button, label),
+      .sd-sidebar-group > summary,
+      a:not([class])
+    ):is(:hover, [data-sd-sweeping]) .sd-badge-count,
+  :is(
+      .sd-nav :where(a, button),
+      .sd-tabs > :where(a, button),
+      .sd-breadcrumb > li > :where(a, button),
+      .sd-sidebar-link,
+      .sd-sidenav :where(a, button),
+      .sd-rail-item,
+      .sd-menu :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item),
+      .sd-pagination :where(a, button),
+      .sd-btn:not(.sd-btn-primary),
+      .sd-chip:is(button, a),
+      .sd-pill:is(button, a),
+      .sd-seg > :where(button, label),
+      .sd-sidebar-group > summary,
+      a:not([class])
+    ):is(:hover, [data-sd-sweeping]) .sd-dot,
+  :is(
+      .sd-nav :where(a, button),
+      .sd-tabs > :where(a, button),
+      .sd-breadcrumb > li > :where(a, button),
+      .sd-sidebar-link,
+      .sd-sidenav :where(a, button),
+      .sd-rail-item,
+      .sd-menu :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item),
+      .sd-pagination :where(a, button),
+      .sd-btn:not(.sd-btn-primary),
+      .sd-chip:is(button, a),
+      .sd-pill:is(button, a),
+      .sd-seg > :where(button, label),
+      .sd-sidebar-group > summary,
+      a:not([class])
+    ):is(:hover, [data-sd-sweeping]) .sd-count,
+  :is(
+      .sd-nav :where(a, button),
+      .sd-tabs > :where(a, button),
+      .sd-breadcrumb > li > :where(a, button),
+      .sd-sidebar-link,
+      .sd-sidenav :where(a, button),
+      .sd-rail-item,
+      .sd-menu :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item),
+      .sd-pagination :where(a, button),
+      .sd-btn:not(.sd-btn-primary),
+      .sd-chip:is(button, a),
+      .sd-pill:is(button, a),
+      .sd-seg > :where(button, label),
+      .sd-sidebar-group > summary,
+      a:not([class])
+    ):is(:hover, [data-sd-sweeping]) [data-tone],
+  :is(
+      .sd-nav :where(a, button),
+      .sd-tabs > :where(a, button),
+      .sd-breadcrumb > li > :where(a, button),
+      .sd-sidebar-link,
+      .sd-sidenav :where(a, button),
+      .sd-rail-item,
+      .sd-menu :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item),
+      .sd-pagination :where(a, button),
+      .sd-btn:not(.sd-btn-primary),
+      .sd-chip:is(button, a),
+      .sd-pill:is(button, a),
+      .sd-seg > :where(button, label),
+      .sd-sidebar-group > summary,
+      a:not([class])
+    ):is(:hover, [data-sd-sweeping]) :where(kbd):is(*, :root),
+  :is(
+      .sd-nav :where(a, button),
+      .sd-tabs > :where(a, button),
+      .sd-breadcrumb > li > :where(a, button),
+      .sd-sidebar-link,
+      .sd-sidenav :where(a, button),
+      .sd-rail-item,
+      .sd-menu :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item),
+      .sd-pagination :where(a, button),
+      .sd-btn:not(.sd-btn-primary),
+      .sd-chip:is(button, a),
+      .sd-pill:is(button, a),
+      .sd-seg > :where(button, label),
+      .sd-sidebar-group > summary,
+      a:not([class])
+    ):is(:hover, [data-sd-sweeping]) .sd-kbd {
     -webkit-text-fill-color: currentColor;
   }
 
