@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## 1.4.55 (2026-11-08)
+
+### Changed
+- Living table rules are indexed by tag, not tried on every element
+- Form and segmented-control rules are indexed by tag, not tried on every element
+- Navigation rules are indexed by tag and attribute, not tried on every element
+- Base element rules are indexed by tag, not tried on every element
+- Chat and feed rules are indexed by class, not tried on every element
+- Mascot rules are indexed by class, not tried on every element
+- Surface ring colors and muted rows are indexed by class, not tried on every element
+- Shimmer color exceptions stop being tried on every element
+- Nav-link shimmer rules stop being tried on every element
+
 ## 1.4.54 (2026-11-08)
 
 ### Changed
