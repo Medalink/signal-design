@@ -83,7 +83,8 @@
     outline-offset: 2px;
   }
 
-  :where([disabled], [aria-disabled="true"]) {
+  :where([disabled]),
+  :where([aria-disabled="true"]) {
     cursor: not-allowed;
   }
 
@@ -125,21 +126,46 @@
 
   /* ---- Flow spacing ----------------------------------------------- */
 
-  :is(p, ul, ol, dl, blockquote, pre, table, figure, details, fieldset, address):not([class], :last-child) {
+  p:not([class], :last-child),
+  ul:not([class], :last-child),
+  ol:not([class], :last-child),
+  dl:not([class], :last-child),
+  blockquote:not([class], :last-child),
+  pre:not([class], :last-child),
+  table:not([class], :last-child),
+  figure:not([class], :last-child),
+  details:not([class], :last-child),
+  fieldset:not([class], :last-child),
+  address:not([class], :last-child) {
     margin-block-end: 1em;
   }
 
   /* ---- Headings --------------------------------------------------- */
 
-  :is(h1, h2, h3, h4, h5, h6) {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     color: var(--sd-fg);
     font-weight: 400;
     text-wrap: balance;
   }
-  :is(h1, h2, h3, h4, h5, h6):not([class]) {
+  h1:not([class]),
+  h2:not([class]),
+  h3:not([class]),
+  h4:not([class]),
+  h5:not([class]),
+  h6:not([class]) {
     margin-block-end: 0.5em;
   }
-  :is(h1, h2, h3, h4, h5, h6):not([class], :first-child) {
+  h1:not([class], :first-child),
+  h2:not([class], :first-child),
+  h3:not([class], :first-child),
+  h4:not([class], :first-child),
+  h5:not([class], :first-child),
+  h6:not([class], :first-child) {
     margin-block-start: 1.6em;
   }
   :is(h1) {
@@ -197,10 +223,14 @@
     text-decoration-color: currentColor;
   }
 
-  :is(strong, b) {
+  strong,
+  b {
     font-weight: var(--font-weight-semibold);
   }
-  :is(em, i, cite, dfn) {
+  em,
+  i,
+  cite,
+  dfn {
     font-style: italic;
   }
   :is(cite) {
@@ -218,7 +248,8 @@
     color: var(--sd-fg);
     padding-inline: 0.15em;
   }
-  :is(del, s) {
+  del,
+  s {
     color: var(--sd-fg-faint);
     text-decoration: line-through;
     text-decoration-color: var(--sd-danger);
@@ -241,7 +272,9 @@
     quotes: "\201C" "\201D" "\2018" "\2019";
     color: var(--sd-fg-muted);
   }
-  :is(time, data, output) {
+  time,
+  data,
+  output {
     font-variant-numeric: tabular-nums;
   }
   :is(var) {
@@ -255,7 +288,8 @@
     font-style: normal;
     color: var(--sd-fg-muted);
   }
-  :is(sub, sup) {
+  sub,
+  sup {
     font-size: 0.72em;
   }
 
@@ -309,7 +343,8 @@
     line-height: var(--text-lg--line-height);
     letter-spacing: var(--tracking-tight);
   }
-  :is(blockquote footer, blockquote cite) {
+  :is(blockquote footer),
+  :is(blockquote cite) {
     display: block;
     margin-block-start: 0.75em;
     font-size: var(--text-2xs);
@@ -328,7 +363,8 @@
   /* ---- Lists ------------------------------------------------------ */
   /* Unclassed lists get markers; classed lists (menus, navs) stay bare. */
 
-  :is(ul:not([class]), ol:not([class])) {
+  ul:not([class]),
+  ol:not([class]) {
     padding-inline-start: 1.5em;
   }
   :is(ul:not([class])) {
@@ -340,7 +376,10 @@
   :is(ul:not([class]), ol:not([class])) > :is(li) + :is(li) {
     margin-block-start: 0.35em;
   }
-  :is(ul:not([class]) ul, ol:not([class]) ol, ul:not([class]) ol, ol:not([class]) ul) {
+  :is(ul:not([class]) ul),
+  :is(ol:not([class]) ol),
+  :is(ul:not([class]) ol),
+  :is(ol:not([class]) ul) {
     margin-block: 0.35em 0;
   }
   :is(li)::marker {
@@ -404,7 +443,8 @@
     letter-spacing: normal;
     text-transform: none;
   }
-  :is(tfoot td, tfoot th) {
+  :is(tfoot td),
+  :is(tfoot th) {
     background: none;
     color: var(--sd-fg-muted);
   }
@@ -431,12 +471,12 @@
     color: var(--sd-fg-muted);
   }
 
-  /* Text-like controls */
-  :is(
-      input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"], [type="submit"], [type="button"], [type="reset"], [type="image"], [type="hidden"]),
-      textarea,
-      select
-    ) {
+  /* Text-like controls. Lists of controls are written one selector per tag so the
+     browser indexes each by its tag. A trailing :is(*, :root) restores the
+     specificity the input's :not() list gave the whole list; do not remove it. */
+  :is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"], [type="submit"], [type="button"], [type="reset"], [type="image"], [type="hidden"])),
+  textarea:is(*, :root),
+  select:is(*, :root) {
     appearance: none;
     width: 100%;
     min-height: 34px;
@@ -457,30 +497,41 @@
      lifts the fill; focus, invalid and read-only recolor the whole edge. A
      composite that is itself the field (a tag list, the composer) takes the
      bottom edge and its input has none. */
-  :is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"], [type="submit"], [type="button"], [type="reset"], [type="image"], [type="hidden"]), textarea, select):is(:hover:not(:disabled, :focus, input:read-only, textarea:read-only)) {
+  :is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"], [type="submit"], [type="button"], [type="reset"], [type="image"], [type="hidden"])):is(:hover:not(:disabled, :focus, input:read-only, textarea:read-only)),
+  textarea:is(:hover:not(:disabled, :focus, input:read-only, textarea:read-only)):is(*, :root),
+  select:is(:hover:not(:disabled, :focus, input:read-only, textarea:read-only)):is(*, :root) {
     background-color: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-field-fill));
   }
   /* Text-like controls show focus on their own edge. Checkboxes, radios and
      button-like inputs keep the outline: their edge is already that color. */
-  :is(input:where(:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"], [type="submit"], [type="button"], [type="reset"], [type="image"])), textarea, select):is(:focus, :focus-visible) {
+  :is(input:where(:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"], [type="submit"], [type="button"], [type="reset"], [type="image"]))):is(:focus, :focus-visible),
+  textarea:is(:focus, :focus-visible),
+  select:is(:focus, :focus-visible) {
     outline: none;
     border-color: var(--sd-fg);
   }
-  :is(input, textarea, select):is(:user-invalid, [aria-invalid="true"]) {
+  input:is(:user-invalid, [aria-invalid="true"]),
+  textarea:is(:user-invalid, [aria-invalid="true"]),
+  select:is(:user-invalid, [aria-invalid="true"]) {
     border-color: var(--sd-danger);
   }
   /* An invalid field keeps its danger edge (status), so focus shows as a
      ring outside it instead of a second edge color. */
-  :is(input:where(:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"], [type="submit"], [type="button"], [type="reset"], [type="image"])), textarea, select):is(:user-invalid, [aria-invalid="true"]):is(:focus, :focus-visible) {
+  :is(input:where(:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"], [type="submit"], [type="button"], [type="reset"], [type="image"]))):is(:user-invalid, [aria-invalid="true"]):is(:focus, :focus-visible),
+  textarea:is(:user-invalid, [aria-invalid="true"]):is(:focus, :focus-visible),
+  select:is(:user-invalid, [aria-invalid="true"]):is(:focus, :focus-visible) {
     outline: 1px solid var(--sd-fg);
     outline-offset: 2px;
   }
-  :is(input, textarea, select):is(:disabled) {
+  input:is(:disabled),
+  textarea:is(:disabled),
+  select:is(:disabled) {
     opacity: 0.4;
   }
   /* Read-only is not a field to type in: no fill, a dashed edge. Focus and
      invalid keep their own edge. */
-  :is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"], [type="submit"], [type="button"], [type="reset"], [type="image"], [type="hidden"]), textarea):is(:read-only:not(:disabled, :focus, :focus-visible, :user-invalid, [aria-invalid="true"])) {
+  :is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"], [type="submit"], [type="button"], [type="reset"], [type="image"], [type="hidden"])):is(:read-only:not(:disabled, :focus, :focus-visible, :user-invalid, [aria-invalid="true"])),
+  textarea:is(:read-only:not(:disabled, :focus, :focus-visible, :user-invalid, [aria-invalid="true"])):is(*, :root) {
     border-color: var(--sd-line-control);
     border-style: dashed;
     background-color: transparent;
@@ -505,7 +556,8 @@
     background-size: 14px 14px;
     cursor: pointer;
   }
-  :is(select[multiple], select[size]:not([size="1"])) {
+  select[multiple]:is(*, :root),
+  select[size]:not([size="1"]) {
     padding: 4px;
     cursor: default;
   }
@@ -585,7 +637,8 @@
   }
 
   /* Checkbox and radio: squares. A checked radio is a square in a square. */
-  :is(input[type="checkbox"], input[type="radio"]) {
+  input[type="checkbox"],
+  input[type="radio"] {
     appearance: none;
     flex-shrink: 0;
     width: 16px;
@@ -597,7 +650,8 @@
     cursor: pointer;
     transition: background-color 120ms var(--ease-out), border-color 120ms var(--ease-out);
   }
-  :is(input[type="checkbox"], input[type="radio"]):is(:hover:not(:disabled)) {
+  input[type="checkbox"]:is(:hover:not(:disabled)),
+  input[type="radio"]:is(:hover:not(:disabled)) {
     border-color: var(--sd-fg-subtle);
   }
   :is(input[type="checkbox"]):is(:checked) {
@@ -615,10 +669,12 @@
     background-color: var(--sd-primary);
     box-shadow: inset 0 0 0 3px var(--sd-canvas);
   }
-  :is(input[type="checkbox"], input[type="radio"]):is(:disabled) {
+  input[type="checkbox"]:is(:disabled),
+  input[type="radio"]:is(:disabled) {
     opacity: 0.4;
   }
-  :is(input[type="checkbox"], input[type="radio"]):is(:user-invalid, [aria-invalid="true"]) {
+  input[type="checkbox"]:is(:user-invalid, [aria-invalid="true"]),
+  input[type="radio"]:is(:user-invalid, [aria-invalid="true"]) {
     border-color: var(--sd-danger);
   }
 
@@ -738,7 +794,10 @@
   }
 
   /* Buttons without a class still look intentional. */
-  :is(button, input[type="submit"], input[type="button"], input[type="reset"]):is(:not([class])) {
+  button:is(:not([class])):is(*, :root),
+  input[type="submit"]:is(:not([class])),
+  input[type="button"]:is(:not([class])),
+  input[type="reset"]:is(:not([class])) {
     display: inline-flex;
     align-items: center;
     gap: 9px;
@@ -751,7 +810,10 @@
     cursor: pointer;
     transition: background-color 120ms var(--ease-out), border-color 120ms var(--ease-out);
   }
-  :is(button, input[type="submit"], input[type="button"], input[type="reset"]):is(:not([class])):is(:hover:not(:disabled)) {
+  button:is(:not([class])):is(:hover:not(:disabled)):is(*, :root),
+  input[type="submit"]:is(:not([class])):is(:hover:not(:disabled)),
+  input[type="button"]:is(:not([class])):is(:hover:not(:disabled)),
+  input[type="reset"]:is(:not([class])):is(:hover:not(:disabled)) {
     background: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-field-fill));
   }
   :is(input[type="submit"]):is(:not([class])) {
@@ -764,12 +826,16 @@
     background: var(--sd-primary);
     opacity: 0.88;
   }
-  :is(button, input[type="submit"], input[type="button"], input[type="reset"]):is(:disabled) {
+  button:is(:disabled):is(*, :root),
+  input[type="submit"]:is(:disabled),
+  input[type="button"]:is(:disabled),
+  input[type="reset"]:is(:disabled) {
     opacity: 0.35;
   }
 
   /* Progress and meter: 4px flat bars. */
-  :is(progress, meter) {
+  progress,
+  meter {
     appearance: none;
     display: block;
     width: 100%;
@@ -915,10 +981,17 @@
     text-transform: uppercase;
     color: var(--sd-fg-subtle);
   }
-  :is(img, video, canvas, svg, iframe, embed, object) {
+  img,
+  video,
+  canvas,
+  svg,
+  iframe,
+  embed,
+  object {
     max-width: 100%;
   }
-  :is(img, video) {
+  img,
+  video {
     height: auto;
   }
   :is(figure img, figure video, iframe) {
