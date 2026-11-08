@@ -18,7 +18,8 @@
   .sd-nav::-webkit-scrollbar {
     display: none;
   }
-  .sd-nav :where(a, button) {
+  .sd-nav :where(a),
+  .sd-nav :where(button) {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -35,8 +36,10 @@
     cursor: pointer;
     transition: color 120ms var(--ease-out);
   }
-  .sd-nav :where(a, button):hover,
-  .sd-nav :where(a, button):is([aria-current]:not([aria-current="false"]), [aria-selected="true"], [aria-pressed="true"]) {
+  .sd-nav :where(a):hover,
+  .sd-nav :where(button):hover,
+  .sd-nav :where(a):is([aria-current]:not([aria-current="false"]), [aria-selected="true"], [aria-pressed="true"]),
+  .sd-nav :where(button):is([aria-current]:not([aria-current="false"]), [aria-selected="true"], [aria-pressed="true"]) {
     color: var(--sd-fg);
   }
 
@@ -51,7 +54,8 @@
   .sd-tabs::-webkit-scrollbar {
     display: none;
   }
-  .sd-tabs > :where(button, a) {
+  .sd-tabs > :where(button),
+  .sd-tabs > :where(a) {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -69,14 +73,17 @@
     cursor: pointer;
     transition: color 120ms var(--ease-out), border-color 120ms var(--ease-out);
   }
-  .sd-tabs > :where(button, a):hover {
+  .sd-tabs > :where(button):hover,
+  .sd-tabs > :where(a):hover {
     color: var(--sd-fg);
   }
-  .sd-tabs > :where(button, a):is([aria-selected="true"], [aria-current]:not([aria-current="false"])) {
+  .sd-tabs > :where(button):is([aria-selected="true"], [aria-current]:not([aria-current="false"])),
+  .sd-tabs > :where(a):is([aria-selected="true"], [aria-current]:not([aria-current="false"])) {
     color: var(--sd-fg);
     border-block-end-color: var(--sd-fg);
   }
-  .sd-tabs > :where(button, a):focus-visible {
+  .sd-tabs > :where(button):focus-visible,
+  .sd-tabs > :where(a):focus-visible {
     outline-offset: -1px;
   }
   .sd-tabpanel {
@@ -124,7 +131,9 @@
     border-inline-end: 1.5px solid var(--sd-fg-faint);
     transform: rotate(45deg);
   }
-  .sd-breadcrumb > li > :where(a, span, button) {
+  .sd-breadcrumb > li > :where(a),
+  .sd-breadcrumb > li > :where(span),
+  .sd-breadcrumb > li > :where(button) {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -137,11 +146,13 @@
     font: inherit;
     text-decoration: none;
   }
-  .sd-breadcrumb > li > :where(a, button) {
+  .sd-breadcrumb > li > :where(a),
+  .sd-breadcrumb > li > :where(button) {
     cursor: pointer;
     transition: color 120ms var(--ease-out), background-color 120ms var(--ease-out);
   }
-  .sd-breadcrumb > li > :where(a, button):hover {
+  .sd-breadcrumb > li > :where(a):hover,
+  .sd-breadcrumb > li > :where(button):hover {
     background: var(--sd-raised);
     color: var(--sd-fg);
   }
@@ -186,7 +197,9 @@
     padding: 0;
     list-style: none;
   }
-  .sd-pagination :where(a, button, span) {
+  .sd-pagination :where(a),
+  .sd-pagination :where(button),
+  .sd-pagination :where(span) {
     display: inline-grid;
     place-items: center;
     min-width: 30px;
@@ -201,7 +214,8 @@
     text-decoration: none;
     cursor: pointer;
   }
-  .sd-pagination :where(a, button):hover {
+  .sd-pagination :where(a):hover,
+  .sd-pagination :where(button):hover {
     background: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-field-fill));
     color: var(--sd-fg);
   }
@@ -227,7 +241,11 @@
     padding: 0;
     list-style: none;
   }
-  .sd-menu :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item) {
+  .sd-menu :where([role="menuitem"]),
+  .sd-menu :where([role="menuitemradio"]),
+  .sd-menu :where([role="menuitemcheckbox"]),
+  .sd-menu :where([role="option"]),
+  .sd-menu :where(.sd-menu-item) {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -243,10 +261,15 @@
     cursor: pointer;
     outline: none;
   }
-  .sd-menu :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item):is(:hover, :focus, [data-active]) {
+  .sd-menu :where([role="menuitem"]):is(:hover, :focus, [data-active]),
+  .sd-menu :where([role="menuitemradio"]):is(:hover, :focus, [data-active]),
+  .sd-menu :where([role="menuitemcheckbox"]):is(:hover, :focus, [data-active]),
+  .sd-menu :where([role="option"]):is(:hover, :focus, [data-active]),
+  .sd-menu :where(.sd-menu-item):is(:hover, :focus, [data-active]) {
     background: color-mix(in srgb, var(--sd-fg) 6%, transparent);
   }
-  .sd-menu :where([aria-checked="true"], [aria-selected="true"]) {
+  .sd-menu :where([aria-checked="true"]),
+  .sd-menu :where([aria-selected="true"]) {
     box-shadow: inset 1px 0 0 var(--sd-fg);
   }
   .sd-menu :where([aria-disabled="true"]) {
@@ -294,7 +317,8 @@
     padding: 0;
     list-style: none;
   }
-  .sd-sidenav :where(a, button) {
+  .sd-sidenav :where(a),
+  .sd-sidenav :where(button) {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -310,11 +334,13 @@
     text-decoration: none;
     cursor: pointer;
   }
-  .sd-sidenav :where(a, button):hover {
+  .sd-sidenav :where(a):hover,
+  .sd-sidenav :where(button):hover {
     color: var(--sd-fg);
     background: color-mix(in srgb, var(--sd-fg) 6%, transparent);
   }
-  .sd-sidenav :where(a, button):is([aria-current]:not([aria-current="false"]), [aria-selected="true"]) {
+  .sd-sidenav :where(a):is([aria-current]:not([aria-current="false"]), [aria-selected="true"]),
+  .sd-sidenav :where(button):is([aria-current]:not([aria-current="false"]), [aria-selected="true"]) {
     border-inline-start-color: var(--sd-fg);
     background: var(--sd-raised);
     color: var(--sd-fg);
