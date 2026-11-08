@@ -20,7 +20,12 @@ export function getTheme() {
 export function setTheme(name, { persist = true } = {}) {
   name = canonical(name);
   if (!THEMES.includes(name)) throw new Error(`Unknown theme "${name}". Use one of: ${THEMES.join(", ")}`);
-  document.documentElement.dataset.theme = name;
+  const root = document.documentElement;
+  // Swap with transitions off for one style pass (see base.css), then let go.
+  root.setAttribute("data-sd-theme-swap", "");
+  root.dataset.theme = name;
+  getComputedStyle(root).color;
+  root.removeAttribute("data-sd-theme-swap");
   if (persist) {
     try {
       localStorage.setItem(KEY, name);

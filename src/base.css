@@ -7,7 +7,7 @@
  * them, whatever the specificity. Flow margins apply only to unclassed
  * elements, so a classed <p> or <h2> never gets surprise spacing.
  * The only !important rules enforce the hard rules (square corners,
- * reduced motion).
+ * reduced motion) and the instant theme swap.
  */
 
 @layer base {
@@ -30,6 +30,15 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
+  }
+
+  /* setTheme() holds this for the one style pass that swaps the theme, so
+     every color changes at once instead of each element fading on its own
+     clock (and the browser starts no transitions it would then run). */
+  :root[data-sd-theme-swap] *,
+  :root[data-sd-theme-swap] ::before,
+  :root[data-sd-theme-swap] ::after {
+    transition: none !important;
   }
 
   /* ---- Document --------------------------------------------------- */
