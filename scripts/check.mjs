@@ -1106,11 +1106,12 @@ const browsers = Object.fromEntries(Object.entries(engines).map(([name, engine])
 }));
 
 // Many pages loading at once can fill the dev server's accept queue, and
-// Windows refuses a connection then instead of queuing it. A job that met a
-// refused connection runs once more, since whatever failed after it may have
-// failed for it; a refusal that repeats fails.
-const refused = /ERR_CONNECTION_REFUSED|ERR_CONNECTION_RESET|Could not connect to server/;
-const metRefused = (out) => out.lines.some((line) => line.startsWith("FAIL ") && refused.test(line));
+// Windows refuses a connection then instead of queuing it. A network change
+// mid-sweep aborts loads the same way, with ERR_NETWORK_CHANGED. A job that
+// met one of these runs once more, since whatever failed after it may have
+// failed for it; a failure that repeats fails.
+const transient = /ERR_CONNECTION_REFUSED|ERR_CONNECTION_RESET|ERR_NETWORK_CHANGED|Could not connect to server/;
+const metTransient = (out) => out.lines.some((line) => line.startsWith("FAIL ") && transient.test(line));
 /** A reused page starts each job as a fresh one would: its viewport, empty storage, no listeners from the last job. */
 async function reset(page, viewport) {
   page.removeAllListeners("console");
@@ -1122,7 +1123,7 @@ async function reset(page, viewport) {
 async function runJob(job, kept) {
   const out = held.getStore();
   for (let attempt = 1; ; attempt++) {
-    if (attempt > 1 && metRefused(out)) {
+    if (attempt > 1 && metTransient(out)) {
       const why = out.lines.find((line) => refused.test(line));
       failures -= out.failed;
       out.failed = 0;
@@ -1149,7 +1150,7 @@ async function runJob(job, kept) {
     } finally {
       await page?.close().catch(() => {});
     }
-    if (attempt === 1 && metRefused(out)) continue;
+    if (attempt === 1 && metTransient(out)) continue;
     return;
   }
 }

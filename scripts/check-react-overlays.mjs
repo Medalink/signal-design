@@ -22,8 +22,15 @@ export async function checkReactOverlays(page, base) {
   const until = (fn, arg, timeout = 2000) => page.waitForFunction(fn, arg, { timeout }).then(() => true, () => false);
 
   await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto(`${base}react.html`);
-  await page.waitForSelector("#react-dialog-options");
+  try {
+    await page.goto(`${base}react.html`);
+    await page.waitForSelector("#react-dialog-options");
+  } catch (error) {
+    // A load killed by a transient network error would otherwise surface as a
+    // bare selector timeout; name what the page reported, so the sweep's
+    // retry-once sees the transient error and runs the suite again.
+    throw browserErrors.length ? new Error(`react.html did not load: ${browserErrors.join(" | ")}`) : error;
+  }
 
   // From the keyboard: WebKit does not focus a button on click, so only a focused opener gets focus back.
   const open = async (scope, label) => {

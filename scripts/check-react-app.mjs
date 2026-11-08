@@ -20,8 +20,15 @@ export async function checkReactApp(page, base) {
   const until = (fn, arg, timeout) => untilOn(page, fn, arg, timeout);
 
   await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto(`${base}react.html`);
-  await page.waitForSelector("#react-buttons");
+  try {
+    await page.goto(`${base}react.html`);
+    await page.waitForSelector("#react-buttons");
+  } catch (error) {
+    // A load killed by a transient network error would otherwise surface as a
+    // bare selector timeout; name what the page reported, so the sweep's
+    // retry-once sees the transient error and runs the suite again.
+    throw browserErrors.length ? new Error(`react.html did not load: ${browserErrors.join(" | ")}`) : error;
+  }
 
   /* ---- Scrollbars without init() ---- */
   const bars = await page.evaluate(async (api) => {
