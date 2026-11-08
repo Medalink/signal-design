@@ -89,7 +89,8 @@
     background: var(--sd-fg);
   }
   /* Muted steps back by color, not opacity, so its text stays readable. */
-  .sd-item[data-muted] :is(.sd-item-title, .sd-item-end) {
+  .sd-item[data-muted] .sd-item-title,
+  .sd-item[data-muted] .sd-item-end {
     color: var(--sd-fg-subtle);
   }
   .sd-item[data-muted] .sd-item-sub {
@@ -271,40 +272,76 @@
   /* Cut-outs (the presence square, a corner count, a stacked avatar's gap)
      take the color of what they sit on. Each Signal surface sets --sd-ring;
      outside them it is the page canvas. On a panel of your own, set
-     --sd-ring to its background. Hover and current rows come last. */
-  :where(.sd-rail, .sd-sidebar, .sd-shell-aside, .sd-shell-topbar, .sd-titlebar, .sd-statusbar,
-    .sd-composer, .sd-message[data-mention],
-    .sd-callout, .sd-chip, .sd-tags, .sd-sidenav :is(a, button):hover, .sd-table-hover tbody tr:hover) {
+     --sd-ring to its background. Hover and current rows come last.
+     One :where() per surface, not one list: the browser indexes each by its
+     class, so it is not tried on every element. Keep new surfaces separate. */
+  :where(.sd-rail),
+  :where(.sd-sidebar),
+  :where(.sd-shell-aside),
+  :where(.sd-shell-topbar),
+  :where(.sd-titlebar),
+  :where(.sd-statusbar),
+  :where(.sd-composer),
+  :where(.sd-message[data-mention]),
+  :where(.sd-callout),
+  :where(.sd-chip),
+  :where(.sd-tags),
+  :where(.sd-sidenav a:hover),
+  :where(.sd-sidenav button:hover),
+  :where(.sd-table-hover tbody tr:hover) {
     --sd-ring: var(--sd-surface);
   }
   /* Boxes now filled with --sd-tone-3; a cut-out inside them takes that fill. */
-  :where(.sd-banner, .sd-file, .sd-link-card, .sd-poll, .sd-event-card, .sd-tasklist, .sd-tile) {
+  :where(.sd-banner),
+  :where(.sd-file),
+  :where(.sd-link-card),
+  :where(.sd-poll),
+  :where(.sd-event-card),
+  :where(.sd-tasklist),
+  :where(.sd-tile) {
     --sd-ring: var(--sd-tone-3);
   }
   :where(.sd-code) {
     --sd-ring: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-tone-3));
   }
-  :where(.sd-card, .sd-stat-box, .sd-pill, .sd-topbar, .sd-living-table) {
+  :where(.sd-card),
+  :where(.sd-stat-box),
+  :where(.sd-pill),
+  :where(.sd-topbar),
+  :where(.sd-living-table) {
     --sd-ring: var(--sd-canvas);
   }
-  :where(.sd-shell-content, .sd-shell-crumbs, .sd-shell-header-end, .sd-shell-bar, .sd-shell-dock) {
+  :where(.sd-shell-content),
+  :where(.sd-shell-crumbs),
+  :where(.sd-shell-header-end),
+  :where(.sd-shell-bar),
+  :where(.sd-shell-dock) {
     --sd-ring: var(--sd-container);
   }
-  :where(dialog, [popover], .sd-suggest, .sd-toast, .sd-combobox-list, .sd-tooltip, .sd-message-actions) {
+  :where(dialog),
+  :where([popover]),
+  :where(.sd-suggest),
+  :where(.sd-toast),
+  :where(.sd-combobox-list),
+  :where(.sd-tooltip),
+  :where(.sd-message-actions) {
     --sd-ring: var(--sd-overlay);
   }
-  :where(
-    :is(a, button, label).sd-item:hover,
-    .sd-item:is([aria-current]:not([aria-current="false"]), [aria-selected="true"]),
-    .sd-item-row:is(:hover, :has(:focus-visible), :has(> .sd-item:is([aria-current]:not([aria-current="false"]), [aria-selected="true"]))),
-    .sd-message:not([data-mention]):is(:hover, :focus-within, [aria-current]:not([aria-current="false"])),
-    .sd-rail-item:is(:hover, [aria-current]:not([aria-current="false"]), [aria-pressed="true"], [aria-expanded="true"]),
-    .sd-sidebar-link:is(:hover, [aria-current]:not([aria-current="false"])),
-    .sd-icon-btn:is(:hover, [aria-expanded="true"], [aria-pressed="true"]),
-    .sd-menu :is([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item):is(:hover, :focus, [data-active]),
-    .sd-sidenav :is(a, button):is([aria-current]:not([aria-current="false"]), [aria-selected="true"]),
-    .sd-table tbody tr[aria-selected="true"]
-  ) {
+  :where(:is(a, button, label).sd-item:hover),
+  :where(.sd-item:is([aria-current]:not([aria-current="false"]), [aria-selected="true"])),
+  :where(.sd-item-row:is(:hover, :has(:focus-visible), :has(> .sd-item:is([aria-current]:not([aria-current="false"]), [aria-selected="true"])))),
+  :where(.sd-message:not([data-mention]):is(:hover, :focus-within, [aria-current]:not([aria-current="false"]))),
+  :where(.sd-rail-item:is(:hover, [aria-current]:not([aria-current="false"]), [aria-pressed="true"], [aria-expanded="true"])),
+  :where(.sd-sidebar-link:is(:hover, [aria-current]:not([aria-current="false"]))),
+  :where(.sd-icon-btn:is(:hover, [aria-expanded="true"], [aria-pressed="true"])),
+  :where(.sd-menu [role="menuitem"]:is(:hover, :focus, [data-active])),
+  :where(.sd-menu [role="menuitemradio"]:is(:hover, :focus, [data-active])),
+  :where(.sd-menu [role="menuitemcheckbox"]:is(:hover, :focus, [data-active])),
+  :where(.sd-menu [role="option"]:is(:hover, :focus, [data-active])),
+  :where(.sd-menu .sd-menu-item:is(:hover, :focus, [data-active])),
+  :where(.sd-sidenav a:is([aria-current]:not([aria-current="false"]), [aria-selected="true"])),
+  :where(.sd-sidenav button:is([aria-current]:not([aria-current="false"]), [aria-selected="true"])),
+  :where(.sd-table tbody tr[aria-selected="true"]) {
     --sd-ring: var(--sd-raised);
   }
 
@@ -571,7 +608,9 @@
     border: 0;
     object-fit: contain;
   }
-  .sd-link-card-media > .sd-link-card-thumb > :where(img, video, canvas) {
+  .sd-link-card-media > .sd-link-card-thumb > :where(img),
+  .sd-link-card-media > .sd-link-card-thumb > :where(video),
+  .sd-link-card-media > .sd-link-card-thumb > :where(canvas) {
     display: block;
     width: 100%;
     max-height: inherit;
@@ -593,7 +632,8 @@
   .sd-link-card-thumb-action {
     position: absolute;
   }
-  :is(:is(.sd-link-card-hero, .sd-link-card-media) > .sd-link-card-dismiss, .sd-link-card-thumb-action):not(:hover) {
+  :is(:is(.sd-link-card-hero, .sd-link-card-media) > .sd-link-card-dismiss):not(:hover),
+  .sd-link-card-thumb-action:not(:hover):is(*, :root) {
     --btn-bg: var(--sd-canvas);
   }
   .sd-link-card-thumb-label {
@@ -651,7 +691,9 @@
     margin-block-start: 4px;
   }
   /* Loading: static placeholder bars in the text slots, no shimmer. */
-  .sd-link-card[aria-busy="true"] > :is(.sd-link-card-site, .sd-link-card-title, .sd-link-card-desc) {
+  .sd-link-card[aria-busy="true"] > .sd-link-card-site,
+  .sd-link-card[aria-busy="true"] > .sd-link-card-title,
+  .sd-link-card[aria-busy="true"] > .sd-link-card-desc {
     height: 0.9em;
     background: color-mix(in srgb, var(--sd-fg) 12%, var(--sd-tone-3));
   }
@@ -1121,7 +1163,8 @@
     gap: 2px;
     grid-template-columns: repeat(var(--cols, 8), 36px);
   }
-  .sd-grid-picker > :where(button, [role="option"]) {
+  .sd-grid-picker > :where(button),
+  .sd-grid-picker > :where([role="option"]) {
     display: grid;
     place-items: center;
     width: 36px;
@@ -1133,7 +1176,8 @@
     line-height: 1;
     cursor: pointer;
   }
-  .sd-grid-picker > :where(button, [role="option"]):is(:hover, :focus-visible) {
+  .sd-grid-picker > :where(button):is(:hover, :focus-visible),
+  .sd-grid-picker > :where([role="option"]):is(:hover, :focus-visible) {
     background: color-mix(in srgb, var(--sd-fg) 6%, transparent);
   }
   .sd-grid-picker > :where(button, [role="option"])[aria-selected="true"] {
