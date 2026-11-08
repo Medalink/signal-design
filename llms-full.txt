@@ -1465,7 +1465,7 @@ JS: init() from signal-design/js wires data-sd-fps.
 
 ## Status / Group chat avatar
 
-Up to four members as one square, two by two, the size of one avatar: --sd-avatar-size or a size class sets it, and each cell takes one letter or a picture. A missing member leaves its cell empty; a fifth person is a +N cell in place of the fourth. Name the whole grid with role="img" and aria-label. sd-avatar-grid + -sm|md|lg|xl or --sd-avatar-size · four sd-avatar children, one letter or an img each · React AvatarGrid
+Up to four members as one square, two by two, the size of one avatar: --sd-avatar-size or a size class sets it, and each cell takes one letter (from 40px up) or a picture. A missing member leaves its cell empty; a fifth person is a +N cell in place of the fourth. Name the whole grid with role="img" and aria-label. sd-avatar-grid + -sm|md|lg|xl or --sd-avatar-size · four sd-avatar children, one letter or an img each (letters show from 40px up; under that the tones carry it) · React AvatarGrid
 
 Classes: sd-avatar, sd-avatar-grid, sd-avatar-lg, sd-avatar-md, sd-avatar-sm, sd-avatar-xl, sd-cluster, sd-item, sd-item-body, sd-item-end, sd-item-sub, sd-item-title, sd-meta
 
