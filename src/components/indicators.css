@@ -178,11 +178,9 @@
     overflow: hidden;
     border: 1px solid transparent;
     background: var(--sd-tone-3);
-  }
-  .sd-avatar-grid {
     container-type: size;
   }
-  /* A letter in a cell under half of 40px would be under 12px, so small grids
+  /* A letter is 0.3 of the grid, under 12px below a 40px grid, so small grids
      show the four tones only (the grid's aria-label names the members) and the
      letters come back at 40px and up. */
   .sd-avatar-grid > .sd-avatar {
