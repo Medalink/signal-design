@@ -1136,6 +1136,14 @@
   .demo-block > * {
     min-width: 0;
   }
+  /* Off-screen blocks and doc sections skip style, layout and paint until
+     they near the viewport; auto keeps each one's last measured height so
+     scrolling and anchors don't jump. */
+  .demo-block:not(:first-child),
+  .doc-section {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 480px;
+  }
   /* A grid wrapper inside a demo (React's Demo uses `grid gap-4`) sizes its
      auto track to the min-content of nowrap rows like `sd-tabs`; let items
      shrink so the tabs row scrolls instead of pushing the page wide. */
