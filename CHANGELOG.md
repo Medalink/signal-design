@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 1.4.54 (2026-11-08)
+
+### Changed
+- Chart color rules stop being tested against every element on the page
+
 ## 1.4.53 (2026-11-08)
 
 ### Changed
