@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 1.4.53 (2026-11-08)
+
+### Changed
+- Group avatar grid: one rule block and a comment that states the letter math
+- Slash commands, pending messages, option cards, invalid fields and small group avatars now read and focus properly
+
 ## 1.4.52 (2026-11-08)
 
 ### Changed
