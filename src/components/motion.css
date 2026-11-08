@@ -42,22 +42,33 @@
     --_sd-sweep-base: 1.4s;
   }
 
-  :is(
-      .sd-nav :where(a, button),
-      .sd-tabs > :where(a, button),
-      .sd-breadcrumb > li > :where(a, button),
-      .sd-sidebar-link,
-      .sd-sidenav :where(a, button),
-      .sd-rail-item,
-      .sd-menu :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item),
-      .sd-pagination :where(a, button),
-      .sd-btn:not(.sd-btn-primary),
-      .sd-chip:is(button, a),
-      .sd-pill:is(button, a),
-      .sd-seg > :where(button, label),
-      .sd-sidebar-group > summary,
-      a:not([class])
-    ):is(:hover, [data-sd-sweeping]),
+  /* One line per link and button the shimmer covers, written out so the browser
+     can index each by its class or tag. The doubled :is(:hover, [data-sd-sweeping])
+     keeps the specificity of the :is() list this replaced; do not collapse it. */
+  .sd-nav :where(a):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-nav :where(button):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-tabs > :where(a):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-tabs > :where(button):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-breadcrumb > :where(li) > :where(a):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-breadcrumb > :where(li) > :where(button):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-sidebar-link:is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-sidenav :where(a):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-sidenav :where(button):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-rail-item:is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-menu :where([role="menuitem"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-menu :where([role="menuitemradio"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-menu :where([role="menuitemcheckbox"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-menu :where([role="option"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-menu :where(.sd-menu-item):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-pagination :where(a):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-pagination :where(button):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-btn:not(.sd-btn-primary):is(:hover, [data-sd-sweeping]),
+  .sd-chip:where(button, a):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-pill:where(button, a):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-seg > :where(button):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-seg > :where(label):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-sidebar-group > :where(summary):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  :where(a):not([class]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
   [data-sd-sweeping],
   [data-sd-sweep="progress"] {
     /* Layer 1, clipped to the text: settled hover color behind the band,
@@ -81,22 +92,30 @@
     -webkit-text-fill-color: transparent;
   }
 
-  :is(
-      .sd-nav :where(a, button),
-      .sd-tabs > :where(a, button),
-      .sd-breadcrumb > li > :where(a, button),
-      .sd-sidebar-link,
-      .sd-sidenav :where(a, button),
-      .sd-rail-item,
-      .sd-menu :where([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item),
-      .sd-pagination :where(a, button),
-      .sd-btn:not(.sd-btn-primary),
-      .sd-chip:is(button, a),
-      .sd-pill:is(button, a),
-      .sd-seg > :where(button, label),
-      .sd-sidebar-group > summary,
-      a:not([class])
-    ):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]),
+  .sd-nav :where(a):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-nav :where(button):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-tabs > :where(a):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-tabs > :where(button):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-breadcrumb > :where(li) > :where(a):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-breadcrumb > :where(li) > :where(button):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-sidebar-link:not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-sidenav :where(a):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-sidenav :where(button):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-rail-item:not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-menu :where([role="menuitem"]):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-menu :where([role="menuitemradio"]):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-menu :where([role="menuitemcheckbox"]):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-menu :where([role="option"]):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-menu :where(.sd-menu-item):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-pagination :where(a):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-pagination :where(button):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-btn:not(.sd-btn-primary):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]),
+  .sd-chip:where(button, a):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-pill:where(button, a):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-seg > :where(button):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-seg > :where(label):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  .sd-sidebar-group > :where(summary):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
+  :where(a):not([class]):not([data-sd-sweep="progress"]):is(:hover, [data-sd-sweeping]):is(:hover, [data-sd-sweeping]),
   [data-sd-sweeping] {
     animation: sd-sweep-progress var(--sd-sweep-duration, var(--_sd-sweep-base, 1s)) var(--sd-sweep-easing, linear) 1;
   }
@@ -117,8 +136,19 @@
       .sd-seg > :where(button, label),
       .sd-sidebar-group > summary,
       a:not([class])
-    ):is(:hover, [data-sd-sweeping]) :is(.sd-avatar, .sd-badge, .sd-badge-count, .sd-dot, .sd-count, [data-tone], kbd, .sd-kbd),
-  :is([data-sd-sweeping], [data-sd-sweep="progress"]) :is(.sd-avatar, .sd-badge, .sd-badge-count, .sd-dot, .sd-count, [data-tone], kbd, .sd-kbd) {
+    ):is(:hover, [data-sd-sweeping]) :is(.sd-avatar, .sd-badge, .sd-badge-count, .sd-dot, .sd-count, [data-tone], kbd, .sd-kbd) {
+    -webkit-text-fill-color: currentColor;
+  }
+
+  /* The same for a sweep the page drives. */
+  :is([data-sd-sweeping], [data-sd-sweep="progress"]) .sd-avatar,
+  :is([data-sd-sweeping], [data-sd-sweep="progress"]) .sd-badge,
+  :is([data-sd-sweeping], [data-sd-sweep="progress"]) .sd-badge-count,
+  :is([data-sd-sweeping], [data-sd-sweep="progress"]) .sd-dot,
+  :is([data-sd-sweeping], [data-sd-sweep="progress"]) .sd-count,
+  :is([data-sd-sweeping], [data-sd-sweep="progress"]) [data-tone],
+  :is([data-sd-sweeping], [data-sd-sweep="progress"]) :where(kbd):is(*, :root),
+  :is([data-sd-sweeping], [data-sd-sweep="progress"]) .sd-kbd {
     -webkit-text-fill-color: currentColor;
   }
 
