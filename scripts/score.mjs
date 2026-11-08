@@ -324,7 +324,10 @@ async function interact(page, helper, { scope, exclude }) {
       let best = r;
       for (let n = el.parentElement, i = 0; n && i < 3; n = n.parentElement, i++) {
         const p = n.getBoundingClientRect();
-        if (p.width * p.height <= 4 * r.width * r.height) best = p;
+        // Only a wrapper that holds the control: a composer's box does not
+        // include its absolutely placed suggestion list.
+        const holds = p.left <= r.left + 1 && p.top <= r.top + 1 && p.right >= r.right - 1 && p.bottom >= r.bottom - 1;
+        if (holds && p.width * p.height <= 4 * r.width * r.height) best = p;
       }
       return { x: best.left, y: best.top, width: best.width, height: best.height };
     });

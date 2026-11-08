@@ -25,7 +25,7 @@
 
     <div class="demo-block" id="components-group-chat-avatar">
       <h2 class="sd-label">Group chat avatar</h2>
-      <p class="demo-usage">Up to four members as one square, two by two, the size of one avatar: <code>--sd-avatar-size</code> or a size class sets it, and each cell takes one letter or a picture. A missing member leaves its cell empty; a fifth person is a <code>+N</code> cell in place of the fourth. Name the whole grid with <code>role="img"</code> and <code>aria-label</code>.</p>
+      <p class="demo-usage">Up to four members as one square, two by two, the size of one avatar: <code>--sd-avatar-size</code> or a size class sets it, and each cell takes one letter (from 40px up) or a picture. A missing member leaves its cell empty; a fifth person is a <code>+N</code> cell in place of the fourth. Name the whole grid with <code>role="img"</code> and <code>aria-label</code>.</p>
       <div class="sd-cluster" style="--gap: 24px; align-items: end">
         <span class="grid justify-items-center gap-2"><span class="sd-avatar-grid sd-avatar-sm" role="img" aria-label="Maya, Kai, Leo, Priya"><span class="sd-avatar" data-tone="extra">M</span><span class="sd-avatar" data-tone="success">K</span><span class="sd-avatar" data-tone="warning">L</span><span class="sd-avatar" data-tone="accent">P</span></span><span class="sd-meta">sm 22</span></span>
         <span class="grid justify-items-center gap-2"><span class="sd-avatar-grid" role="img" aria-label="Maya, Kai, Leo"><span class="sd-avatar" data-tone="extra">M</span><span class="sd-avatar" data-tone="success">K</span><span class="sd-avatar" data-tone="warning">L</span></span><span class="sd-meta">24, three</span></span>
@@ -43,7 +43,7 @@
           <div class="flex items-center gap-3 px-3 py-2.5 border border-line"><span class="sd-avatar-grid sd-avatar-md" role="img" aria-label="Maya, Kai, Leo"><span class="sd-avatar" data-tone="extra">M</span><span class="sd-avatar" data-tone="success">K</span><span class="sd-avatar" data-tone="warning">L</span></span><span class="grid min-w-0"><span class="sd-item-title">Maya, Kai, Leo</span><span class="sd-meta">3 people</span></span></div>
         </div>
       </div>
-      <p class="demo-usage"><code>sd-avatar-grid</code> + <code>-sm|md|lg|xl</code> or <code>--sd-avatar-size</code> · four <code>sd-avatar</code> children, one letter or an <code>img</code> each · React <code>AvatarGrid</code></p>
+      <p class="demo-usage"><code>sd-avatar-grid</code> + <code>-sm|md|lg|xl</code> or <code>--sd-avatar-size</code> · four <code>sd-avatar</code> children, one letter or an <code>img</code> each (letters show from 40px up; under that the tones carry it) · React <code>AvatarGrid</code></p>
     </div>
 
     <div class="demo-block" id="components-avatar-sizes-and-presence">

@@ -55,7 +55,9 @@
   .sd-field[data-invalid] .sd-field-label {
     color: var(--sd-danger);
   }
-  .sd-field:has(:disabled) .sd-field-label {
+  /* Dimmed only when every text control in the field is off; a group with one
+     disabled choice (an option card) still has a live label. */
+  .sd-field:has(:is(input, select, textarea):disabled):not(:has(:is(input, select, textarea):enabled)) .sd-field-label {
     opacity: 0.5;
   }
   /* Focusing a control, from a failed submit or a skip link, leaves its label
@@ -294,6 +296,10 @@
   }
   .sd-option-desc {
     color: var(--sd-fg-subtle);
+  }
+  /* The selected fill is a step darker than the card; muted keeps 4.5:1 on it. */
+  .sd-option:is([aria-pressed="true"], [aria-checked="true"], :has(> input:checked)) .sd-option-desc {
+    color: var(--sd-fg-muted);
   }
   /* Selected: a 2px edge drawn over the preview, a lifted fill and a solid
      corner square. */

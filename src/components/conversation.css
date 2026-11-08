@@ -407,8 +407,10 @@
   .sd-message[data-editing] {
     border-inline-start-color: var(--sd-fg);
   }
+  /* Pending reads as quieter text, not as a faded row: opacity would pull the
+     timer, the "Sending" state and the name under 4.5:1. */
   .sd-message[data-pending] .sd-message-text {
-    opacity: 0.55;
+    color: var(--sd-fg-subtle);
   }
   .sd-message[data-failed],
   .sd-message[data-failed][aria-current] {
@@ -1753,6 +1755,20 @@
   }
   .sd-suggest .sd-suggest-command .sd-menu-hint {
     color: var(--sd-fg-faint);
+  }
+  /* The overlay is the same step as a raised row, so a row's hover, focus and
+     active state take the current fill (the library's selected-row fill), and
+     keyboard focus adds an fg ring inside the row, so it differs from hover
+     and from the active row. */
+  .sd-suggest .sd-menu [role="option"]:is(:hover, :focus-visible, [data-active]) {
+    background: var(--sd-current-fill);
+  }
+  .sd-suggest .sd-menu [role="option"]:focus-visible {
+    outline: 1px solid var(--sd-fg);
+    outline-offset: -1px;
+  }
+  .sd-suggest .sd-suggest-command:is(:hover, :focus-visible, [data-active]) .sd-menu-hint {
+    color: var(--sd-fg-muted);
   }
 
   /* Editing in place: the field keeps the text column (inset by its border

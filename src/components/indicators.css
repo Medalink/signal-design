@@ -161,7 +161,8 @@
 
   /* A group chat's avatar: up to four members as one square, two by two. It
      is the size of one avatar (--sd-avatar-size, or -sm|md|lg|xl) and takes
-     one letter each; a missing member leaves its cell empty.
+     one letter each from 40px up (smaller grids show the tones only); a
+     missing member leaves its cell empty.
        <span class="sd-avatar-grid sd-avatar-sm" role="img" aria-label="Maya, Kai, Leo">
          <span class="sd-avatar" data-tone="extra">M</span>…
        </span> */
@@ -178,12 +179,23 @@
     border: 1px solid transparent;
     background: var(--sd-tone-3);
   }
+  .sd-avatar-grid {
+    container-type: size;
+  }
+  /* A letter in a cell under half of 40px would be under 12px, so small grids
+     show the four tones only (the grid's aria-label names the members) and the
+     letters come back at 40px and up. */
   .sd-avatar-grid > .sd-avatar {
     width: 100%;
     height: 100%;
     border: 0;
-    font-size: calc(var(--cell) * 0.3);
+    font-size: 0;
     line-height: 1;
+  }
+  @container (min-width: 40px) {
+    .sd-avatar-grid > .sd-avatar {
+      font-size: calc(var(--cell) * 0.3);
+    }
   }
 
   /* Inline status: a dot and a word. */
