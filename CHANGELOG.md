@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 1.4.52 (2026-11-08)
+
+### Changed
+- A theme switch repaints at once and costs a third less
+
 ## 1.4.51 (2026-11-08)
 
 ### Changed
