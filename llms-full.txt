@@ -314,7 +314,7 @@ Classes: none
 No JS needed: the HTML works with the CSS alone.
 
 ```html
-<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4" data-swatches="signals"></div>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-4" data-swatches="signals"></div>
 ```
 
 ## Design / Greys
@@ -1183,26 +1183,26 @@ JS: init() from signal-design/js wires role="tab".
   </ul>
 </div>
 
-<div class="grid gap-6 sm:grid-cols-[15rem_1fr] items-start">
-  <nav aria-label="App" class="border border-line py-2">
-    <div class="sd-sidenav-group">Projects</div>
-    <ul class="sd-sidenav">
-      <li><a href="#components" aria-current="page">All items <span class="sd-count">108</span></a></li>
-      <li><a href="#components">High risk <span class="sd-count" data-tone="danger">6</span></a></li>
-      <li><a href="#components">Saved <span class="sd-count">3</span></a></li>
-    </ul>
-    <div class="sd-sidenav-group">Online now</div>
-    <ul class="sd-sidenav">
-      <li><a href="#components"><span class="sd-avatar sd-avatar-sm" data-tone="success">JD</span> You <span class="sd-count">#21</span></a></li>
-      <li><a href="#components"><span class="sd-avatar sd-avatar-sm" data-tone="extra">AL</span> Alex <span class="sd-count">#23</span></a></li>
-    </ul>
-  </nav>
-  <div class="grid gap-4">
-    <div class="sd-topbar border border-line">
-      <span class="sd-wordmark">ACME</span>
-      <nav class="sd-nav" aria-label="Demo top"><a href="#components" aria-current="page">Projects</a><a href="#components">History</a></nav>
-      <div class="sd-topbar-end"><button class="sd-btn sd-btn-sm">Search <kbd>Ctrl K</kbd></button><span class="sd-avatar" data-tone="success">JD</span></div>
-    </div>
+<div class="grid gap-4">
+  <div class="sd-topbar border border-line">
+    <span class="sd-wordmark">ACME</span>
+    <nav class="sd-nav" aria-label="Demo top"><a href="#components" aria-current="page">Projects</a><a href="#components">History</a></nav>
+    <div class="sd-topbar-end"><button class="sd-btn sd-btn-sm">Search <kbd>Ctrl K</kbd></button><span class="sd-avatar" data-tone="success">JD</span></div>
+  </div>
+  <div class="grid gap-6 sm:grid-cols-[15rem_1fr] items-start">
+    <nav aria-label="App" class="border border-line py-2">
+      <div class="sd-sidenav-group">Projects</div>
+      <ul class="sd-sidenav">
+        <li><a href="#components" aria-current="page">All items <span class="sd-count">108</span></a></li>
+        <li><a href="#components">High risk <span class="sd-count" data-tone="danger">6</span></a></li>
+        <li><a href="#components">Saved <span class="sd-count">3</span></a></li>
+      </ul>
+      <div class="sd-sidenav-group">Online now</div>
+      <ul class="sd-sidenav">
+        <li><a href="#components"><span class="sd-avatar sd-avatar-sm" data-tone="success">JD</span> You <span class="sd-count">#21</span></a></li>
+        <li><a href="#components"><span class="sd-avatar sd-avatar-sm" data-tone="extra">AL</span> Alex <span class="sd-count">#23</span></a></li>
+      </ul>
+    </nav>
     <div class="sd-statusbar border border-line">
       <span><kbd>N</kbd> next</span><span><kbd>j</kbd><kbd>k</kbd> move</span><span><kbd>a</kbd> approve</span><span><kbd>↵</kbd> details</span>
       <span class="sd-statusbar-end">v1.0 · 3 online</span>
@@ -3277,7 +3277,7 @@ JS: init() from signal-design/js wires data-sd-open · data-sd-close.
 
 ```html
 <div class="grid gap-6 sm:grid-cols-2 items-start">
-  <div class="sd-hovercard" role="group" aria-label="Maya" style="position: static; animation: none">
+  <div class="sd-hovercard" role="group" aria-label="Maya" style="position: static; animation: none; width: auto">
     <div class="sd-profile" style="--who: var(--sd-extra)">
       <header class="sd-profile-head">
         <span class="sd-avatar sd-avatar-xl" data-tone="extra">MA</span>
@@ -4187,7 +4187,7 @@ JS: init() from signal-design/js wires data-sd-ornaments · data-sd-mascot · da
 <div class="grid justify-items-center gap-6 border border-line bg-surface p-8" id="mascot-stage" data-sd-ornaments="br" data-sd-ornaments-size="240">
   <button class="sd-mascot sd-mascot-xl" id="mascot-demo" type="button" data-sd-mascot="iris" data-mood="idle" aria-label="IRIS, idle. Press to say hello."></button>
   <div class="grid justify-items-center gap-3 w-full">
-    <div class="sd-seg" data-sd-seg="" aria-label="Mascot" id="mascot-pick">
+    <div class="sd-seg sd-seg-wrap" data-sd-seg="" aria-label="Mascot" id="mascot-pick">
       <button type="button" value="iris" aria-pressed="true">IRIS</button>
       <button type="button" value="eagle" aria-pressed="false">Eagle</button>
       <button type="button" value="squirrel" aria-pressed="false">Squirrel</button>
@@ -4204,7 +4204,7 @@ JS: init() from signal-design/js wires data-sd-ornaments · data-sd-mascot · da
       <button type="button" value="offline" aria-pressed="false">Offline</button>
     </div>
     <div class="sd-actions justify-center">
-      <div class="sd-seg sd-seg-sm" data-sd-seg="" aria-label="Status light" id="mascot-tones">
+      <div class="sd-seg sd-seg-sm sd-seg-wrap" data-sd-seg="" aria-label="Status light" id="mascot-tones">
         <button type="button" value="" aria-pressed="true">None</button>
         <button type="button" value="success" aria-pressed="false">Success</button>
         <button type="button" value="pending" aria-pressed="false">Pending</button>
@@ -4315,12 +4315,12 @@ JS: init() from signal-design/js wires data-sd-art.
 
 Pieces and a mascot placed on one grid. The scene picks the largest whole-pixel cell that fits its width, so it scales without blurring. Swap the mascot in every scene at once. <div class="sd-art-scene" style="--cols: 64; --rows: 24"> with children placed by --x and --y in cells · sd-art-horizon draws the ground line
 
-Classes: sd-art, sd-art-horizon, sd-art-scene, sd-mascot, sd-muted, sd-seg
+Classes: sd-art, sd-art-horizon, sd-art-scene, sd-mascot, sd-muted, sd-seg, sd-seg-wrap
 
 JS: init() from signal-design/js wires data-sd-seg · data-sd-ornaments · data-sd-art · data-sd-mascot.
 
 ```html
-<div class="sd-seg" data-sd-seg="" aria-label="Mascot in the scenes" id="scene-pick">
+<div class="sd-seg sd-seg-wrap" data-sd-seg="" aria-label="Mascot in the scenes" id="scene-pick">
   <button type="button" value="" aria-pressed="true">As drawn</button>
   <button type="button" value="iris" aria-pressed="false">IRIS</button>
   <button type="button" value="eagle" aria-pressed="false">Eagle</button>
