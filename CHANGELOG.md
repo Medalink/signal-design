@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 1.4.51 (2026-11-08)
+
+### Changed
+- Text fields now show a 3:1 bottom edge so every field reads as a field
+
 ## 1.4.50 (2026-11-07)
 
 ### Changed
