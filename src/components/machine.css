@@ -401,7 +401,7 @@
     background: var(--sd-tone-1);
     outline: 1.5px solid var(--sd-fg-subtle);
     outline-offset: -1.5px;
-    transition: translate 220ms var(--ease-out), scale 200ms var(--ease-out), opacity 200ms var(--ease-out),
+    transition: translate 200ms var(--ease-out), scale 200ms var(--ease-out), opacity 200ms var(--ease-out),
       background-color 200ms var(--ease-out), outline-color 200ms var(--ease-out), outline-offset 200ms var(--ease-out);
   }
   .sd-machine-dot[data-status] {
@@ -550,6 +550,20 @@
   }
   .sd-machine-token[data-held]:not([data-kind="signal"]) {
     background-color: var(--sd-fg);
+  }
+  .sd-machine-token[data-hidden] {
+    opacity: 0;
+  }
+  .sd-machine-token[data-more]::before {
+    content: "+" attr(data-more);
+    position: absolute;
+    right: calc(100% + 4px);
+    top: 50%;
+    translate: 0 -50%;
+    color: var(--sd-fg-muted);
+    font-family: var(--sd-font-mono);
+    font-size: var(--text-3xs);
+    line-height: 1;
   }
   .sd-machine-token[data-gone="fade"] {
     opacity: 0;

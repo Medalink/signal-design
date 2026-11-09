@@ -26,7 +26,7 @@ const kinds = new Map(Object.entries(KINDS));
 const SVG = "http://www.w3.org/2000/svg";
 const TRAIL = 36;
 const QUEUE_GAP = 14;
-const QUEUE_ROOM = 84;
+const QUEUE_SHOWN = 7;
 
 /** Add or replace a node kind. See machine-kinds.js for the hooks a kind may define. */
 export function defineKind(name, kind) {
@@ -108,8 +108,33 @@ function outcomes(out) {
   return Object.entries(out).map(([key, o]) => ({ key, weight: 1, ...(typeof o === "string" ? { to: o } : o) }));
 }
 
+/** Throw, naming the bad id, before a broken spec touches the board. */
+function validate(spec) {
+  if (!spec || !Array.isArray(spec.nodes)) throw new Error("A machine spec needs a nodes list");
+  const ids = new Set();
+  for (const node of spec.nodes) {
+    if (!node?.id) throw new Error("Every machine node needs an id");
+    if (ids.has(node.id)) throw new Error(`Two machine nodes are named "${node.id}"`);
+    ids.add(node.id);
+    if (!kinds.has(node.kind || "box")) throw new Error(`Node "${node.id}" has an unknown kind "${node.kind}". Known: ${machineKinds().join(", ")}`);
+  }
+  const known = (id, where) => {
+    if (!ids.has(id)) throw new Error(`${where} names a missing node "${id}"`);
+  };
+  for (const node of spec.nodes) {
+    for (const o of outcomes(node.out)) for (const to of [o.to ?? []].flat()) known(to, `Node "${node.id}", outcome "${o.key}",`);
+    if (node.to != null) known(node.to, `Node "${node.id}"`);
+    for (const to of node.emit ?? []) known(to, `Node "${node.id}"`);
+  }
+  for (const wire of spec.wires ?? []) {
+    known(wire.from, `A wire from "${wire.from}"`);
+    known(wire.to, `A wire to "${wire.to}"`);
+  }
+}
+
 /**
- * Mount a machine into `root`: a `.sd-machine` figure (the board is its
+ * Mount a machine
+ into `root`: a `.sd-machine` figure (the board is its
  * `.sd-machine-board`) or the board itself.
  */
 export function mountMachine(root, spec, options = {}) {
@@ -251,8 +276,27 @@ export function mountMachine(root, spec, options = {}) {
 
   function queuePoint(n, i) {
     const [x, y] = n.port.in;
-    const gap = Math.max(3, Math.min(QUEUE_GAP, QUEUE_ROOM / n.queue.length));
-    return [x - 8 - gap * i, y];
+    return [x - 8 - QUEUE_GAP * i, y];
+  }
+
+  /** The first QUEUE_SHOWN waiting tokens line up at the port; the rest wait out of sight, counted on the last. */
+  function layoutQueue(n) {
+    const more = n.queue.length - QUEUE_SHOWN;
+    n.queue.forEach((tok, i) => {
+      if (i >= QUEUE_SHOWN) {
+        tok.el.dataset.hidden = "";
+        delete tok.el.dataset.more;
+        tok.qi = -1;
+        if (!moving.has(tok)) place(tok, ...queuePoint(n, QUEUE_SHOWN - 1));
+        return;
+      }
+      delete tok.el.dataset.hidden;
+      if (i === QUEUE_SHOWN - 1 && more > 0) tok.el.dataset.more = String(more);
+      else delete tok.el.dataset.more;
+      if (tok.qi === i) return;
+      tok.qi = i;
+      move(tok, [queuePoint(n, i)]);
+    });
   }
 
   function enqueue(n, tok) {
@@ -276,14 +320,16 @@ export function mountMachine(root, spec, options = {}) {
     }
     n.queue.push(tok);
     tok.el.dataset.queued = "";
-    if (QUEUE_ROOM / n.queue.length < QUEUE_GAP) n.queue.forEach((other, i) => move(other, [queuePoint(n, i)]));
-    else move(tok, [queuePoint(n, n.queue.length - 1)]);
+    layoutQueue(n);
   }
 
   function seat(n, slot, tok) {
     slot.tok = tok;
     tok.node = n;
     delete tok.el.dataset.queued;
+    delete tok.el.dataset.hidden;
+    delete tok.el.dataset.more;
+    tok.qi = undefined;
     for (const ref of tok.refs) ref.dataset.busy = String((Number(ref.dataset.busy) || 0) + 1);
     const [x, y] = slot.at;
     move(tok, [[n.x + x, n.y + y]], () => {
@@ -341,7 +387,7 @@ export function mountMachine(root, spec, options = {}) {
       if (slot.tok || !n.queue.length) continue;
       seat(n, slot, n.queue.shift());
     }
-    n.queue.forEach((tok, i) => move(tok, [queuePoint(n, i)]));
+    layoutQueue(n);
     refresh(n);
   }
 
@@ -453,6 +499,7 @@ export function mountMachine(root, spec, options = {}) {
   /* ---- Build ----------------------------------------------------------- */
 
   function build(next) {
+    validate(next);
     s = structuredClone(next);
     cell = s.cell ?? 20;
     rand = random(s.seed ?? 1);
@@ -643,6 +690,7 @@ export function mountMachine(root, spec, options = {}) {
     },
     /** Swap the whole machine. */
     load(next) {
+      validate(next);
       for (const tok of tokens) tok.el.remove();
       build(next);
       board.dataset.swap = String((Number(board.dataset.swap) || 0) + 1);
@@ -657,6 +705,13 @@ export function mountMachine(root, spec, options = {}) {
       if (original) Object.assign(original, structuredClone(patch));
       if ("capacity" in patch && !n.kind.capacity) {
         const held = n.slots.map((slot) => slot.tok).filter(Boolean);
+        for (const tok of held) {
+          for (const ref of tok.refs) {
+            const holders = (Number(ref.dataset.busy) || 1) - 1;
+            if (holders) ref.dataset.busy = String(holders);
+            else delete ref.dataset.busy;
+          }
+        }
         const count = Math.max(0, patch.capacity);
         const at = n.kind.slots ? n.kind.slots(n, count) : defaultSlots(n, count);
         n.slots = at.map((p) => ({ at: p, tok: null, holding: false, t0: 0, t1: 0 }));
