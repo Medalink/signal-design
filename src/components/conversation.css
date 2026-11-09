@@ -718,8 +718,11 @@
     color: var(--sd-fg-muted);
     font-size: 14px;
   }
+  /* background-color, not the shorthand: the hover shimmer paints the label
+     through a background-image clipped to the glyphs, which `background:`
+     would wipe and leave the label invisible on hover (motion.css). */
   .sd-message-menu .sd-menu [role="menuitem"]:is(:hover, :focus-visible) {
-    background: var(--sd-raised);
+    background-color: var(--sd-raised);
     color: var(--sd-fg);
   }
   .sd-message-menu .sd-menu [role="menuitem"] > svg {
@@ -745,7 +748,7 @@
     color: var(--sd-danger);
   }
   .sd-message-menu .sd-menu [role="menuitem"][data-tone="danger"]:hover {
-    background: color-mix(in srgb, var(--sd-danger) 12%, transparent);
+    background-color: color-mix(in srgb, var(--sd-danger) 12%, transparent);
   }
   .sd-message-menu .sd-menu-sep {
     margin: 4px 0;
