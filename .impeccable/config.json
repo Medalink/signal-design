@@ -11,6 +11,15 @@
         ],
         "createdAt": "2026-10-29T22:28:42.121Z",
         "reason": "Claude: app screen; the only h1 is sd-sr-only and the h2s are roster and emoji-picker section labels; finding predates this session (detector run before any edit)"
+      },
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "showcase/ship.html"
+        ],
+        "createdAt": "2026-11-09T22:33:10.746Z",
+        "reason": "agent decision: ship.html uses only Signal's own type scale and shell parts (shell bar title, caps sd-label, sd-stat-value), the same hierarchy as the existing charts.html and chat.html examples; a bigger heading step would break the design system it showcases"
       }
     ]
   }
