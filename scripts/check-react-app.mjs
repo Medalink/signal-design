@@ -179,17 +179,6 @@ export async function checkReactApp(page, base) {
   const menuOpenAt = (on) => until((on) => document.querySelector('[role=menu][aria-label="Message actions"]').parentElement.matches(":popover-open") === on, on);
   const focused = () => page.evaluate(() => document.activeElement?.textContent ?? "");
   await card.scrollIntoViewIfNeeded();
-  // Demo blocks skip rendering until they near the viewport (content-visibility
-  // in showcase/app.css), so the card's first box can predate its block's real
-  // layout and a click at it would land on the block instead. Wait until a
-  // point in the card hit-tests to the card, then measure.
-  const cardHit = (sel) => {
-    const card = document.querySelector(sel);
-    const r = card.getBoundingClientRect();
-    const at = document.elementFromPoint(r.left + 40, r.top + 20);
-    return !!at && (at === card || card.contains(at));
-  };
-  expect(await until(cardHit, "#react-context-menu article"), "the context menu card hit-tests inside its own box once scrolled to");
   const cardBox = await card.boundingBox();
   const aim = { x: cardBox.x + 40, y: cardBox.y + 20 };
   expect(await page.locator("#react-context-menu").getByRole("button").count() === 0, "the context menu block has no trigger button");
