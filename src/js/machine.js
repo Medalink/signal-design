@@ -534,6 +534,17 @@ export function mountMachine(root, spec, options = {}) {
     const H = canvas.offsetHeight;
     const room = board.clientWidth;
     const scale = room ? Math.max(options.minScale ?? 0.5, Math.min(1, room / W)) : 1;
+    // A tab stop on the board while it overflows, so keyboard users can scroll
+    // it (WCAG 2.1.1); the stop goes away when the machine fits again.
+    if (room > 0 && W * scale > room + 1) {
+      if (!board.hasAttribute("tabindex")) {
+        board.tabIndex = 0;
+        board.dataset.sdScrollTabbed = "";
+      }
+    } else if ("sdScrollTabbed" in board.dataset) {
+      board.removeAttribute("tabindex");
+      delete board.dataset.sdScrollTabbed;
+    }
     const width = `${W * scale}px`;
     if (fit.style.width === width) return;
     canvas.style.scale = scale === 1 ? "" : String(scale);
@@ -740,6 +751,8 @@ export function mountMachine(root, spec, options = {}) {
       document.removeEventListener("visibilitychange", onVisibility);
       board.removeEventListener("click", onClick);
       board.removeEventListener("keydown", onKey);
+      board.removeAttribute("tabindex");
+      delete board.dataset.sdScrollTabbed;
       board.replaceChildren();
     },
   };
