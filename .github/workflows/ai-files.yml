@@ -51,10 +51,13 @@ jobs:
       - if: steps.browsers.outputs.cache-hit == 'true'
         run: pnpm exec playwright install-deps chromium
       - name: Regenerate and commit when changed
+        # The commit goes through the API (createCommitOnBranch), so GitHub signs
+        # it and it shows Verified; a `git push` from the runner is unsigned.
+        # expectedHeadOid makes the API refuse when main moved since the fetch.
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # When main moves between the build and the push, start over from the
+          # When main moves between the build and the commit, start over from the
           # new tip rather than rebasing a regeneration of an older tree.
           for attempt in 1 2 3; do
             git fetch -q origin main
@@ -63,9 +66,40 @@ jobs:
             node scripts/build-ai.mjs
             git add ai/components.json ai/tokens.json llms-full.txt vscode/html-data.json vscode/css-data.json
             if git diff --cached --quiet; then echo "AI files unchanged."; exit 0; fi
-            git commit -q -m "Regenerate AI files"
-            if git push origin HEAD:main; then exit 0; fi
+            status=0
+            node --input-type=module - <<'JS' || status=$?
+          import { execFileSync } from "node:child_process";
+          import fs from "node:fs";
+          const git = (...args) => execFileSync("git", args, { encoding: "utf8" }).trim();
+          const changed = git("diff", "--cached", "--name-status", "--no-renames").split("\n").filter(Boolean).map((l) => l.split("\t"));
+          const input = {
+            branch: { repositoryNameWithOwner: process.env.GITHUB_REPOSITORY, branchName: "main" },
+            expectedHeadOid: git("rev-parse", "HEAD"),
+            message: { headline: "Regenerate AI files" },
+            fileChanges: {
+              additions: changed.filter(([s]) => s !== "D").map(([, path]) => ({ path, contents: fs.readFileSync(path).toString("base64") })),
+              deletions: changed.filter(([s]) => s === "D").map(([, path]) => ({ path })),
+            },
+          };
+          const query = "mutation($input: CreateCommitOnBranchInput!) { createCommitOnBranch(input: $input) { commit { oid url } } }";
+          const res = await fetch("https://api.github.com/graphql", {
+            method: "POST",
+            headers: { authorization: `bearer ${process.env.GH_TOKEN}`, "content-type": "application/json" },
+            body: JSON.stringify({ query, variables: { input } }),
+          });
+          const body = await res.json().catch(() => ({}));
+          const commit = body.data?.createCommitOnBranch?.commit;
+          if (commit) {
+            console.log(`committed ${commit.url}`);
+            process.exit(0);
+          }
+          const why = JSON.stringify(body.errors ?? body).slice(0, 500);
+          console.log(`createCommitOnBranch (HTTP ${res.status}): ${why}`);
+          process.exit(/expected branch to point to/i.test(why) ? 2 : 1);
+          JS
+            [ "$status" = 0 ] && exit 0
+            [ "$status" = 2 ] || exit 1
             echo "main moved; regenerating from the new tip."
           done
-          echo "::error::Could not push regenerated AI files after 3 attempts"
+          echo "::error::Could not commit regenerated AI files after 3 attempts"
           exit 1
