@@ -40,11 +40,16 @@ export default async function checkMessageLayout(page, where, fail) {
   });
   for (const [key, passed] of Object.entries(got)) if (!passed) fail(`${where} message layout`, key);
 
-  // Focus inside the row reveals the bar.
+  // Focus inside the row reveals the bar. The reveal is a 120ms transition,
+  // and a headless engine advances it only on a rendered frame, so a wall-clock
+  // wait alone can read the start value. Drive frames until the transition has
+  // run its course, then assert the end state.
   const shown = await page.evaluate(async () => {
     const actions = document.querySelector("#conversation-messages .sd-message-actions");
     actions.querySelector("button").focus();
-    await new Promise((r) => setTimeout(r, 200));
+    for (const end = performance.now() + 2000; actions.getAnimations().length && performance.now() < end;) {
+      await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 20)));
+    }
     const opacity = getComputedStyle(actions).opacity;
     document.activeElement.blur();
     return opacity === "1";
