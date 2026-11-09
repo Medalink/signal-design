@@ -1146,6 +1146,57 @@
    "html": "<div class=\"grid gap-6 lg:grid-cols-2\">\n  <section class=\"sd-checklist\" aria-labelledby=\"checklist-mono-h\">\n    <div class=\"sd-checklist-head\">\n      <span class=\"sd-label sd-label-strong\" id=\"checklist-mono-h\">Checks</span>\n      <span class=\"sd-meta\"><span>4 passed</span><span>2 running</span><span>1 queued</span></span>\n    </div>\n    <ul>\n      <li data-status=\"done\"><i></i><b>Type check</b><span>0 errors</span><span class=\"sd-sr-only\">Passed</span></li>\n      <li data-status=\"done\"><i></i><b>Lint</b><span data-tone=\"pending\">2 warnings</span><span class=\"sd-sr-only\">Passed</span></li>\n      <li data-status=\"done\"><i></i><b>Accessibility</b><span>0 violations</span><span class=\"sd-sr-only\">Passed</span></li>\n      <li data-status=\"done\"><i></i><b>Bundle size</b><span>84 kB · −3%</span><span class=\"sd-sr-only\">Passed</span></li>\n      <li data-status=\"running\" style=\"--value: 43\"><i></i><b>End to end · Chromium</b><span>18 / 42</span><span class=\"sd-sr-only\">Running</span></li>\n      <li data-status=\"running\" style=\"--value: 70\"><i></i><b>End to end · WebKit</b><span>70%</span><span class=\"sd-sr-only\">Running</span></li>\n      <li data-status=\"queued\"><i></i><b>Visual diff</b><span>queued</span></li>\n    </ul>\n  </section>\n\n  <section class=\"sd-checklist\" data-chart-theme=\"spectrum\" aria-labelledby=\"checklist-spectrum-h\">\n    <div class=\"sd-checklist-head\">\n      <span class=\"sd-label sd-label-strong\" id=\"checklist-spectrum-h\">Checks · spectrum</span>\n      <span class=\"sd-meta\"><span>3 passed</span><span>1 failed</span><span>1 waiting</span></span>\n    </div>\n    <ul>\n      <li data-status=\"done\"><i></i><b>Type check</b><span>0 errors</span><span class=\"sd-sr-only\">Passed</span></li>\n      <li data-status=\"done\"><i></i><b>Lint</b><span data-tone=\"pending\">2 warnings</span><span class=\"sd-sr-only\">Passed</span></li>\n      <li data-status=\"done\"><i></i><b>Accessibility</b><span>0 violations</span><span class=\"sd-sr-only\">Passed</span></li>\n      <li data-status=\"failed\"><i></i><b>End to end · WebKit</b><span>3 of 42 failed</span><span class=\"sd-sr-only\">Failed</span></li>\n      <li data-status=\"waiting\"><i></i><b>Release approval</b><span>1 of 2</span><span class=\"sd-sr-only\">Waiting</span></li>\n      <li data-status=\"skipped\"><i></i><b>Deploy preview</b><span>skipped</span></li>\n    </ul>\n  </section>\n</div>"
   },
   {
+   "id": "machine-live",
+   "section": "Data",
+   "title": "Machine",
+   "classes": [
+    "sd-btn",
+    "sd-btn-sm",
+    "sd-label",
+    "sd-label-strong",
+    "sd-machine",
+    "sd-machine-board",
+    "sd-machine-clock",
+    "sd-machine-foot",
+    "sd-machine-head",
+    "sd-seg",
+    "sd-seg-inline"
+   ],
+   "attributes": [],
+   "usage": "sd-machine + -head, -board, -foot, sd-machine-clock · mountMachine(figure, spec) from signal-design/js draws the spec · kinds box, press, scan, checks, line, source, sink, more with defineKind() · queue: \"latest\" folds what waits into one token · judge: true colors the line's dots · data-chart-theme=\"mono|spectrum\"",
+   "js": "No JS needed: the HTML works with the CSS alone.",
+   "html": "<figure class=\"sd-machine\" id=\"machine-deploy\" aria-labelledby=\"machine-deploy-h\">\n  <div class=\"sd-machine-head\">\n    <span class=\"sd-label sd-label-strong\" id=\"machine-deploy-h\">Deploy queue</span>\n    <span class=\"sd-machine-clock\">10 minutes, sped up<i></i></span>\n  </div>\n  <div class=\"sd-machine-board\"></div>\n  <div class=\"sd-machine-foot\">\n    <div class=\"flex flex-wrap items-center gap-2\">\n      <button class=\"sd-btn sd-btn-sm\" type=\"button\" data-machine-toggle=\"\">Pause</button>\n      <div class=\"sd-seg sd-seg-inline\" role=\"group\" aria-label=\"Speed\">\n        <button type=\"button\" data-speed=\"0.25\" aria-pressed=\"false\">¼×</button>\n        <button type=\"button\" data-speed=\"1\" aria-pressed=\"true\">1×</button>\n        <button type=\"button\" data-speed=\"4\" aria-pressed=\"false\">4×</button>\n      </div>\n    </div>\n  </div>\n</figure>"
+  },
+  {
+   "id": "machine-spectrum",
+   "section": "Data",
+   "title": "Spectrum and folding",
+   "classes": [
+    "sd-label",
+    "sd-label-strong",
+    "sd-machine",
+    "sd-machine-board",
+    "sd-machine-clock",
+    "sd-machine-head"
+   ],
+   "attributes": [],
+   "usage": "A ring with queue: \"latest\" keeps only the newest waiting token: each later arrival glides into it and its count goes up, so one run covers the whole range.",
+   "js": "No JS needed: the HTML works with the CSS alone.",
+   "html": "<figure class=\"sd-machine\" id=\"machine-fold\" data-chart-theme=\"spectrum\" aria-labelledby=\"machine-fold-h\">\n  <div class=\"sd-machine-head\">\n    <span class=\"sd-label sd-label-strong\" id=\"machine-fold-h\">Rings on a branch</span>\n    <span class=\"sd-machine-clock\">1 hour, sped up<i></i></span>\n  </div>\n  <div class=\"sd-machine-board\"></div>\n</figure>"
+  },
+  {
+   "id": "machine-chain",
+   "section": "Data",
+   "title": "Chain",
+   "classes": [
+    "sd-machine-chain"
+   ],
+   "attributes": [],
+   "usage": "sd-machine-chain > span steps joined by arrows · dashed until data-status=\"running|done|failed\" · CSS only",
+   "js": "No JS needed: the HTML works with the CSS alone.",
+   "html": "<div class=\"grid gap-4\">\n  <div class=\"sd-machine-chain\" aria-label=\"Planned steps\">\n    <span>red on main</span><span>rerun since green</span><span>revert the culprit</span><span>reopen its task</span>\n  </div>\n  <div class=\"sd-machine-chain\" aria-label=\"Steps of a run\">\n    <span data-status=\"done\">merge</span><span data-status=\"done\">compile</span><span data-status=\"running\">fmt</span><span>guard</span><span>push</span>\n  </div>\n  <div class=\"sd-machine-chain\" data-chart-theme=\"spectrum\" aria-label=\"Checks after the push\">\n    <span data-status=\"done\">docs</span><span data-status=\"done\">clippy</span><span data-status=\"failed\">tests</span><span data-status=\"running\">static</span>\n  </div>\n</div>"
+  },
+  {
    "id": "conversation-messages",
    "section": "Conversation",
    "title": "Messages",
