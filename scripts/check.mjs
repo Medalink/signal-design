@@ -619,6 +619,22 @@ const startIn = (page, theme) => page.addInitScript((t) => {
   try { localStorage.setItem("sd-theme", t); localStorage.removeItem("sd-shell-sidebar"); } catch {}
 }, theme);
 
+/**
+ * The docs site skips rendering off-screen demo blocks and doc sections
+ * (content-visibility: auto, showcase/app.css) until they near the viewport,
+ * but the sweep asserts hard rules and behaviors across a whole page without
+ * scrolling it: an ornament in a demo below the fold never draws, and a
+ * bounding box taken before a scroll lands stale once the demo renders. Make
+ * every block and section render as soon as the DOM exists, on every page.
+ */
+const renderWhole = (page) => page.addInitScript(() => {
+  addEventListener("DOMContentLoaded", () => {
+    const style = document.createElement("style");
+    style.textContent = ".demo-block, .doc-section { content-visibility: visible !important; }";
+    document.head.append(style);
+  });
+});
+
 /** One page at one width in one theme: hard rules, then that page's behaviors. */
 async function checkPage(page, where, name, pageName, url, width, theme) {
   const errors = [];
@@ -1137,7 +1153,11 @@ async function runJob(job, kept) {
       page = job.reuse && kept[job.engine]?.context().browser() === browser && !kept[job.engine].isClosed() ? kept[job.engine] : null;
       delete kept[job.engine];
       if (page) await reset(page, job.viewport);
-      else page = await browser.newPage(job.viewport ? { viewport: job.viewport } : undefined);
+      else {
+        page = await browser.newPage(job.viewport ? { viewport: job.viewport } : undefined);
+        // A kept page already carries it; addInitScript lives for the page's whole life.
+        await renderWhole(page);
+      }
       await job.run(page);
       if (job.reuse) [kept[job.engine], page] = [page, null];
     } catch (error) {
