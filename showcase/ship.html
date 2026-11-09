@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en" data-theme="ink" data-page="ship">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Flow</title>
+  <script>
+    try { const t = localStorage.getItem("sd-theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
+  </script>
+  <link rel="stylesheet" href="./app.css">
+  <style>
+    .ship-panel { padding: 16px; overflow-y: auto; }
+    .sd-shell-aside-head .sd-tabs { flex: 1; }
+    .ship-station { display: flex; align-items: center; gap: 10px; }
+    .ship-station b { font-weight: 500; }
+    .ship-range-label { display: flex; justify-content: space-between; gap: 8px; }
+    .ship-range-label output { color: var(--sd-fg-subtle); font-size: var(--text-3xs); }
+    .ship-extras { display: grid; gap: 14px; }
+    .ship-extra { display: grid; grid-template-columns: minmax(10rem, 16rem) 1fr; align-items: center; gap: 6px 24px; }
+    .ship-extra > div:first-child { display: grid; }
+    .ship-extra > div:first-child > b { font-weight: 500; }
+    .ship-extra > div:first-child > span { color: var(--sd-fg-faint); font-size: var(--text-sm); }
+    @media (max-width: 640px) { .ship-extra { grid-template-columns: 1fr; } }
+    #spec-text { min-height: 24rem; font-size: var(--text-3xs); }
+  </style>
+  <script type="module" src="./ship.js"></script>
+</head>
+<body>
+<a class="sd-skip" href="#main">Skip to content</a>
+
+<div class="sd-shell" id="shell" data-aside="open">
+  <div class="sd-titlebar sd-desktop-only" data-tauri-drag-region role="region" aria-label="Window">
+    <div class="sd-titlebar-start"><span class="sd-titlebar-brand"><b>Flow</b></span></div>
+    <div class="sd-titlebar-end">
+      <div class="sd-window-controls">
+        <button data-sd-window="minimize" data-icon="minimize" aria-label="Minimize"></button>
+        <button data-sd-window="maximize" aria-label="Maximize"><span class="sd-icon-maximize" data-icon="maximize"></span><span class="sd-icon-restore" data-icon="restore"></span></button>
+        <button data-sd-window="close" data-icon="close" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="sd-rail" id="shell-rail" aria-label="Pages">
+    <a class="sd-rail-home" href="./index.html" data-icon="view" aria-label="Signal library"></a>
+    <div class="sd-rail-list">
+      <a class="sd-rail-item" href="./ship.html" data-icon="sync" aria-current="page"><span>Machines</span></a>
+      <button class="sd-rail-item" type="button" disabled data-icon="history"><span>Runs</span></button>
+      <button class="sd-rail-item" type="button" disabled data-icon="flag"><span>Doors</span></button>
+      <button class="sd-rail-item" type="button" disabled data-icon="settings"><span>Settings</span></button>
+    </div>
+    <div class="sd-rail-tools">
+      <button class="sd-rail-item" type="button" data-sd-theme-cycle data-icon="theme"><span>Theme</span></button>
+    </div>
+  </nav>
+
+  <aside class="sd-sidebar" id="machines" aria-label="Machines">
+    <div class="sd-sidebar-panel">
+      <div class="sd-sidebar-head"><span class="sd-sidebar-title">Machines</span></div>
+      <nav class="sd-sidebar-body" aria-label="Machines" id="machine-list"></nav>
+    </div>
+    <div class="sd-sidebar-resize" role="separator" aria-orientation="vertical" aria-label="Resize sidebar" aria-controls="machines" aria-valuemin="200" aria-valuemax="400" aria-valuenow="240" tabindex="0" data-sd-shell="resize"></div>
+  </aside>
+
+  <main class="sd-shell-main" id="main" tabindex="-1" data-joined>
+    <header class="sd-shell-bar">
+      <div class="sd-shell-bar-title">
+        <button class="sd-icon-btn sd-phone-only" type="button" data-sd-shell="drawer" aria-controls="shell-rail" aria-label="Open navigation" data-icon="menu"></button>
+        <h1 class="sd-sr-only">Flow</h1>
+        <b id="machine-title">Continuous flow</b><span class="sd-desktop-only" id="machine-sub"></span>
+      </div>
+      <div class="sd-shell-bar-center sd-desktop-only"><span class="sd-status" id="line-status">waiting</span></div>
+      <div class="sd-shell-bar-end">
+        <button class="sd-btn sd-btn-sm" type="button" id="toggle" data-icon="pause"><span>Pause</span></button>
+        <div class="sd-seg sd-seg-inline" id="speed" role="group" aria-label="Speed">
+          <button type="button" data-speed="0.25" aria-pressed="false">¼×</button>
+          <button type="button" data-speed="1" aria-pressed="true">1×</button>
+          <button type="button" data-speed="4" aria-pressed="false">4×</button>
+        </div>
+        <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" type="button" data-sd-shell="aside" aria-controls="inspector" aria-expanded="true" data-icon="sliders" aria-label="Inspector" data-sd-tip="Inspector" data-sd-tip-side="bottom"></button>
+      </div>
+    </header>
+
+    <div class="sd-shell-content">
+      <div class="mx-auto grid w-full max-w-[84rem] gap-8">
+        <figure class="sd-machine" id="machine" data-chart-theme="spectrum" aria-labelledby="machine-h">
+          <div class="sd-machine-head">
+            <span class="sd-label sd-label-strong" id="machine-h">Live</span>
+            <span class="sd-machine-clock" id="clock-label">1 hour, sped up<i></i></span>
+          </div>
+          <div class="sd-machine-board"></div>
+          <figcaption class="sd-meta" id="machine-summary"></figcaption>
+        </figure>
+
+        <section class="grid gap-3" aria-label="Totals">
+          <div class="grid gap-3 grid-cols-[repeat(auto-fit,minmax(min(100%,10rem),1fr))]" id="stats"></div>
+        </section>
+
+        <div id="extras" class="grid gap-8" data-chart-theme="spectrum"></div>
+
+        <section class="grid gap-3" aria-labelledby="log-h">
+          <h2 class="sd-label sd-label-strong" id="log-h">Recent</h2>
+          <div class="sd-table-wrap" tabindex="0" role="region" aria-label="Recent events">
+            <table class="sd-table sd-table-compact">
+              <thead><tr><th scope="col">Time</th><th scope="col">Station</th><th scope="col">Event</th><th scope="col">Change</th></tr></thead>
+              <tbody id="log"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <aside class="sd-shell-aside" id="inspector" aria-label="Inspector">
+    <div class="sd-shell-aside-head">
+      <div class="sd-tabs" role="tablist" aria-label="Inspector">
+        <button role="tab" aria-selected="true" aria-controls="tab-station" id="t-station">Station</button>
+        <button role="tab" aria-controls="tab-spec" id="t-spec">Spec</button>
+      </div>
+      <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" type="button" data-sd-shell="aside" data-icon="close" aria-label="Close inspector" data-sd-tip="Close inspector"></button>
+    </div>
+    <div class="sd-tabpanel ship-panel" role="tabpanel" id="tab-station" aria-labelledby="t-station"></div>
+    <div class="sd-tabpanel ship-panel" role="tabpanel" id="tab-spec" aria-labelledby="t-spec" hidden>
+      <div class="sd-field">
+        <label class="sd-field-label" for="spec-text">Machine spec</label>
+        <textarea id="spec-text" class="font-mono" rows="18" spellcheck="false" aria-describedby="spec-error"></textarea>
+        <p class="sd-field-error" id="spec-error"></p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button class="sd-btn sd-btn-primary" type="button" id="spec-apply">Run this spec</button>
+        <button class="sd-btn sd-btn-ghost" type="button" id="spec-reset">Reset</button>
+      </div>
+    </div>
+  </aside>
+
+  <footer class="sd-statusbar sd-shell-status">
+    <span class="sd-status" id="status"></span>
+    <span class="sd-statusbar-end"><span id="clock" class="font-mono"></span><span class="sd-fps" data-sd-fps data-sd-tip="Browser frame rate" data-sd-tip-side="top"><b>--</b> fps</span></span>
+  </footer>
+
+  <div class="sd-shell-scrim" data-sd-shell="close"></div>
+</div>
+
+</body>
+</html>
