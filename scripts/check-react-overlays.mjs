@@ -297,13 +297,29 @@ window.__sdDialog = { onDialogClick, onDialogKeydown };` });
 
   // closeDelay: the tip lingers, can be reached, and is kept by coming back.
   const linger = trigger("Linger");
+  // The engine may handle the pointerleave well before the move's reply
+  // reaches the test, so a host clock loses the first tens of milliseconds of
+  // the closeDelay (seen on WebKit). Stamp the leave and the removal in the
+  // page, where the delay actually runs.
+  await linger.evaluate((el) => {
+    window.__linger = {};
+    el.addEventListener("pointerleave", () => { window.__linger.left = performance.now(); }, { capture: true, once: true });
+    const mo = new MutationObserver(() => {
+      if (!document.querySelector("body > [role=tooltip]")) {
+        window.__linger.gone = performance.now();
+        mo.disconnect();
+      }
+    });
+    mo.observe(document.body, { childList: true });
+  });
   await hoverOn(linger);
   expect(await shows("Stays a moment", 2500), "a tip with a closeDelay shows after its delay");
   await away();
-  const left = Date.now();
   await pause(150);
   expect((await tipsNow()).length === 1, "a tip with a closeDelay stays when the pointer leaves");
-  expect(await gone(2000) && Date.now() - left >= 350, `the tip goes once its closeDelay is up, after ${Date.now() - left}ms`);
+  expect(await gone(2000), "the tip goes once its closeDelay is up");
+  const lingered = await page.evaluate(() => (window.__linger?.left != null && window.__linger?.gone != null ? Math.round(window.__linger.gone - window.__linger.left) : -1));
+  expect(lingered >= 350, `the tip goes once its closeDelay is up, after ${lingered}ms`);
   await hoverOn(linger);
   expect(await shows("Stays a moment", 2500), "the tip shows again");
   const lingerAt = await centerOf(linger);
