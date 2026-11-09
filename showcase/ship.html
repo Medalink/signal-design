@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Flow</title>
+  <title>Continuous flow</title>
   <script>
     try { const t = localStorage.getItem("sd-theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
   </script>
@@ -28,7 +28,7 @@
 <body>
 <a class="sd-skip" href="#main">Skip to content</a>
 
-<div class="sd-shell" id="shell" data-aside="open">
+<div class="sd-shell" id="shell">
   <div class="sd-titlebar sd-desktop-only" data-tauri-drag-region role="region" aria-label="Window">
     <div class="sd-titlebar-start"><span class="sd-titlebar-brand"><b>Flow</b></span></div>
     <div class="sd-titlebar-end">
@@ -66,7 +66,7 @@
       <div class="sd-shell-bar-title">
         <button class="sd-icon-btn sd-phone-only" type="button" data-sd-shell="drawer" aria-controls="shell-rail" aria-label="Open navigation" data-icon="menu"></button>
         <h1 class="sd-sr-only">Flow</h1>
-        <b id="machine-title">Continuous flow</b><span class="sd-desktop-only" id="machine-sub"></span>
+        <b id="machine-title">Continuous flow</b>
       </div>
       <div class="sd-shell-bar-center sd-desktop-only"><span class="sd-status" id="line-status">waiting</span></div>
       <div class="sd-shell-bar-end">
@@ -76,7 +76,7 @@
           <button type="button" data-speed="1" aria-pressed="true">1×</button>
           <button type="button" data-speed="4" aria-pressed="false">4×</button>
         </div>
-        <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" type="button" data-sd-shell="aside" aria-controls="inspector" aria-expanded="true" data-icon="sliders" aria-label="Inspector" data-sd-tip="Inspector" data-sd-tip-side="bottom"></button>
+        <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" type="button" data-sd-shell="aside" aria-controls="inspector" aria-expanded="false" data-icon="sliders" aria-label="Inspector" data-sd-tip="Inspector" data-sd-tip-side="bottom"></button>
       </div>
     </header>
 
@@ -88,7 +88,6 @@
             <span class="sd-machine-clock" id="clock-label">1 hour, sped up<i></i></span>
           </div>
           <div class="sd-machine-board"></div>
-          <figcaption class="sd-meta" id="machine-summary"></figcaption>
         </figure>
 
         <section class="grid gap-3" aria-label="Totals">

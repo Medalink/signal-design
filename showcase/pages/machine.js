@@ -8,12 +8,12 @@ const deploy = {
   size: [40, 14],
   clock: { period: 40 },
   nodes: [
-    { id: "writers", kind: "source", at: [1, 2], size: [5, 8], agents: 3, every: [3, 6], to: "build", label: "writers", labelSide: "top-start" },
+    { id: "writers", kind: "source", at: [1, 2], size: [5, 8], agents: 3, every: [5, 9], to: "build", label: "writers", labelSide: "top-start" },
     {
       id: "build", kind: "box", at: [9, 3], size: [4, 6], capacity: 2, hold: [2, 4], label: "build", meta: "2 at a time",
       out: { pass: { to: "deploy", weight: 9 }, fail: { to: "writers", weight: 1, status: "failed" } },
     },
-    { id: "deploy", kind: "press", at: [16, 3], size: [5, 6], hold: [0.6, 1.2], label: "deploy", meta: "one at a time", note: "{done} deployed", noteTone: "warning", out: "prod" },
+    { id: "deploy", kind: "press", at: [16, 3], size: [5, 6], hold: [0.6, 1.2], label: "deploy", meta: "one at a time", note: "{done} deployed", out: "prod" },
     { id: "prod", kind: "line", at: [24, 5], size: [15, 2], label: "prod", labelSide: "top-start", note: "waiting", notes: { done: "healthy", failed: "failing" } },
     {
       id: "verify", kind: "scan", at: [27, 10], size: [12, 3], queue: "latest", judge: true, hold: [3, 5], label: "verify", meta: "newest only", labelSide: "top-start",

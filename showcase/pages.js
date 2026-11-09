@@ -390,7 +390,7 @@ const examples = {
       { file: "chat.html", title: "Chat", summary: "A group channel in the full app frame: group rail, resizable channel sidebar, feed with a poll and replies, members by role." },
       { file: "form.html", title: "Form", summary: "AI settings: connected servers, a found server, command-line agents and an add-a-server form that validates on blur and counts its errors." },
       { file: "landing.html", title: "Landing", summary: "A one-screen download page: a hero, four points and a download block." },
-      { file: "ship.html", title: "Flow", summary: "Continuous flow as a live machine: agents ship to main, rings fold and judge, failures queue agent runs. Swap in any machine or edit its spec." },
+      { file: "ship.html", title: "Continuous flow", summary: "A live machine: agents ship to main, rings fold and judge, failures queue agent runs. Swap in any machine or edit its spec." },
       { file: "charts.html", title: "Charts", summary: "Watcher's Stats screen: range, tiles, CPU and memory plots with a limit line, a per-container table and database facts." },
       { file: "stream.html", title: "Stream", summary: "A Twitch overlay package: starting soon, in game, BRB and ending scenes with live alerts, ready for OBS." },
       { file: "stream-setup.html", title: "Stream setup", summary: "Builds the OBS source URLs for each Stream scene and layer." },

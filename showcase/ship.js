@@ -1,5 +1,5 @@
 import { mountBar, savedScrollbars } from "./viewport.js";
-import { init } from "../src/js/index.js";
+import { init, setAside } from "../src/js/index.js";
 import { icon } from "../src/js/icons.js";
 import { mountMachine } from "../src/js/machine.js";
 import { MACHINES } from "./machines.js";
@@ -46,15 +46,13 @@ function show(next) {
     else link.removeAttribute("aria-current");
   }
   $("machine-title").textContent = next.title;
-  $("machine-sub").textContent = next.summary;
-  $("machine-summary").textContent = `${next.spec.nodes.length} stations · ${next.spec.wires.length} wires · seed ${next.spec.seed ?? 1}`;
-  document.title = `${next.title} · Flow`;
+  document.title = next.title;
   renderStats();
   renderExtras();
   $("spec-text").value = JSON.stringify(next.spec, null, 2);
   $("spec-error").closest(".sd-field").removeAttribute("data-invalid");
   $("spec-text").removeAttribute("aria-invalid");
-  machine.select(next.spec.nodes.find((n) => n.hold)?.id ?? null);
+  machine.select(null);
 }
 
 /* ---- Stats ----------------------------------------------------------------- */
@@ -195,7 +193,7 @@ $("spec-apply").addEventListener("click", () => {
     field.removeAttribute("data-invalid");
     $("spec-text").removeAttribute("aria-invalid");
     renderStats();
-    machine.select(spec.nodes.find((n) => n.hold)?.id ?? null);
+    machine.select(null);
   } catch (error) {
     $("spec-error").textContent = error.message;
     field.dataset.invalid = "";
@@ -234,7 +232,10 @@ const WORDS = { emit: "wrote", fold: "folded", land: "landed" };
 
 figure.addEventListener("sd:machine", ({ detail }) => {
   events[detail.type] = (events[detail.type] ?? 0) + 1;
-  if (detail.type === "select") return renderInspector();
+  if (detail.type === "select") {
+    if (detail.node) setAside($("shell"), true);
+    return renderInspector();
+  }
   if (detail.type === "load") return;
   const word = detail.type === "finish" ? detail.outcome : WORDS[detail.type];
   if (!word || word === "pass" || word === "end") return;

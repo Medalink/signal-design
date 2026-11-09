@@ -45,7 +45,7 @@ const flow = {
         out: { pass: { to: "push", weight: 14 }, red: { to: "agents", weight: 2, status: "failed" } },
       },
       {
-        id: "push", kind: "press", at: [18, 6], size: [6, 6], hold: [0.7, 1.5], label: "push", meta: "one at a time", note: "{done} landed", noteTone: "warning",
+        id: "push", kind: "press", at: [18, 6], size: [6, 6], hold: [0.7, 1.5], label: "push", meta: "one at a time", note: "{done} landed",
         out: { pass: { to: "main", weight: 11 }, race: { to: "ship", weight: 1, status: "waiting" } },
       },
       { id: "main", kind: "line", at: [27, 8], size: [34, 2], label: "main", labelSide: "top-start", note: "waiting for the lab", notes: { done: "green", failed: "red · agent run queued" } },
@@ -113,14 +113,14 @@ const pulls = {
     travel: 300,
     clock: { period: 60 },
     nodes: [
-      { id: "agents", kind: "source", at: [1, 4], size: [5, 10], agents: 4, every: [6, 10], to: "open", label: "agents", labelSide: "top-start" },
+      { id: "agents", kind: "source", at: [1, 4], size: [5, 10], agents: 3, every: [14, 22], to: "open", label: "agents", labelSide: "top-start" },
       { id: "open", kind: "box", at: [10, 6], size: [4, 6], capacity: 3, hold: [0.6, 1.2], label: "open", meta: "a PR each", out: "ci" },
       {
-        id: "ci", kind: "checks", at: [18, 7.5], size: [14, 3], hold: [5, 8], items: ["build", "lint", "e2e"], label: "CI", meta: "one runner",
+        id: "ci", kind: "checks", at: [18, 7.5], size: [14, 3], hold: [3, 5], items: ["build", "lint", "e2e"], label: "CI", meta: "one runner",
         out: { pass: { to: "review", weight: 4, status: "done" }, fail: { to: "agents", weight: 1, status: "failed" } },
       },
       {
-        id: "review", kind: "box", at: [36, 6], size: [5, 6], capacity: 1, hold: [6, 12], label: "review", meta: "a person", note: "{queue} waiting", noteTone: "pending",
+        id: "review", kind: "box", at: [36, 6], size: [5, 6], capacity: 2, hold: [5, 10], label: "review", meta: "a person", note: "{queue} waiting",
         out: { approve: { to: "merge", weight: 3, status: "done" }, changes: { to: "agents", weight: 1, status: "waiting" } },
       },
       { id: "merge", kind: "press", at: [45, 6], size: [5, 6], hold: [0.6, 1.2], label: "merge", out: "main" },
@@ -166,7 +166,7 @@ const runs = {
     travel: 320,
     clock: { period: 60 },
     nodes: [
-      { id: "events", kind: "source", at: [1, 4], size: [5, 12], agents: 5, every: [4, 9], to: "inbox", label: "events", meta: "rings, issues, ideas", labelSide: "top-start" },
+      { id: "events", kind: "source", at: [1, 4], size: [5, 12], agents: 5, every: [8, 14], to: "inbox", label: "events", meta: "rings, issues, ideas", labelSide: "top-start" },
       { id: "inbox", kind: "box", at: [10, 7], size: [4, 6], capacity: 1, hold: [0.4, 0.9], label: "inbox", meta: "oldest first", note: "{queue} queued", out: "room" },
       {
         id: "room", kind: "press", at: [18, 7], size: [6, 6], hold: [0.3, 0.7], label: "room", meta: "go · cool · halt",
@@ -208,9 +208,9 @@ const kitchen = {
     travel: 260,
     clock: { period: 90 },
     nodes: [
-      { id: "tables", kind: "source", at: [1, 3], size: [5, 10], agents: 4, every: [5, 9], to: "tickets", label: "tables", labelSide: "top-start" },
+      { id: "tables", kind: "source", at: [1, 3], size: [5, 10], agents: 4, every: [10, 16], to: "tickets", label: "tables", labelSide: "top-start" },
       { id: "tickets", kind: "box", at: [10, 5], size: [6, 6], capacity: 4, cols: 2, hold: [0.6, 1.4], label: "tickets", meta: "on the rail", out: "grill" },
-      { id: "grill", kind: "press", at: [21, 5], size: [6, 6], hold: [2.5, 4.5], label: "grill", meta: "one at a time", note: "{queue} waiting", noteTone: "warning", out: "pass" },
+      { id: "grill", kind: "press", at: [21, 5], size: [6, 6], hold: [1.6, 2.6], label: "grill", meta: "one at a time", note: "{queue} waiting", out: "pass" },
       {
         id: "pass", kind: "scan", at: [32, 6.5], size: [14, 3], hold: [1, 2], label: "pass", meta: "the chef checks",
         out: { served: { to: "served", weight: 8, status: "done" }, back: { to: "grill", weight: 1, status: "failed" } },
