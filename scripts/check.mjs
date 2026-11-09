@@ -620,6 +620,25 @@ const startIn = (page, theme) => page.addInitScript((t) => {
 }, theme);
 
 /**
+ * Wait for the finite animations and transitions in a subtree to finish, so the
+ * next click cannot land mid-move. A busy run renders few frames, which can
+ * slip Playwright's own stability check (two samples with no rendered frame
+ * between them read the same stale box), and a click then lands between the
+ * element's old and new position: the browser fires it on an ancestor, the
+ * handler matches nothing, and the next step times out on a state that never
+ * came. Loops (shimmer sweeps, typing squares) run forever and don't count.
+ */
+const settleMotion = (page, selector, timeout = 2000) =>
+  page.waitForFunction((s) => {
+    const el = document.querySelector(s);
+    return !!el && el.getAnimations({ subtree: true }).every((a) => a.effect?.getComputedTiming().endTime === Infinity);
+  }, selector, { timeout }).catch(() => {});
+
+/** A Playwright timeout with its call log on one line: the log names the locator, which is the whole diagnosis. */
+const firstLines = (error, n = 3) =>
+  error.message.replace(/\x1b\[[0-9;]*m/g, "").split("\n").map((l) => l.trim()).filter((l) => l && l !== "Call log:").slice(0, n).join(" | ");
+
+/**
  * The docs site skips rendering off-screen demo blocks and doc sections
  * (content-visibility: auto, showcase/app.css) until they near the viewport,
  * but the sweep asserts hard rules and behaviors across a whole page without
@@ -702,6 +721,7 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
       const tone = await page.evaluate(() => document.querySelector("[data-orphans-tile]").dataset.tone ?? "");
       if (tone) fail(where, `Orphaned is colored at 0 (${tone})`);
       await page.click('[data-sd-toggle="detail-checkout-api"]');
+      await settleMotion(page, "#detail-checkout-api");
       await page.waitForFunction(() => document.getElementById("detail-checkout-api").getBoundingClientRect().height >= 100, null, { timeout: 2000 }).catch(() => {});
       const open = await page.evaluate(() => ({ h: document.getElementById("detail-checkout-api").getBoundingClientRect().height, expanded: document.querySelector('[data-sd-toggle="detail-checkout-api"]').getAttribute("aria-expanded") }));
       if (open.h < 100 || open.expanded !== "true") fail(where, `container row did not open ${JSON.stringify(open)}`);
@@ -713,6 +733,7 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
       const sorted = await page.evaluate(() => document.querySelector('th[data-sort="memory"]').getAttribute("aria-sort"));
       if (sorted !== "ascending") fail(where, `sorting by Memory gave aria-sort ${sorted}`);
       await page.click('[data-sd-toggle="detail-storefront"]');
+      await settleMotion(page, "#detail-storefront");
       await page.waitForFunction(() => document.getElementById("detail-storefront").getBoundingClientRect().height >= 100, null, { timeout: 2000 }).catch(() => {});
       await page.click('[data-id="storefront"] [data-act="remove"]');
       if (!(await page.evaluate(() => document.getElementById("confirm-remove").open))) fail(where, "Remove did not ask first");
@@ -767,6 +788,8 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
     await page.locator("body").press("]");
     const reopened = await aside();
     if (reopened.state !== "open" || reopened.expanded !== "true") fail(where, `] did not open the members aside ${JSON.stringify(reopened)}`);
+    // The aside's open/close shifts the dock; let it finish before the first click.
+    await settleMotion(page, "#shell");
     const box = page.locator("[data-composer] textarea");
     await page.locator("[data-composer-emoji]").click();
     await page.locator("#emoji .sd-emoji-grid > button", { hasText: "🎉" }).click();
@@ -794,15 +817,18 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
     if (!(await page.evaluate(() => document.getElementById("msg-menu").matches(":popover-open")))) fail(where, "context menu did not open");
     await page.keyboard.press("Escape");
     await page.locator(".sd-message").first().hover();
+    await settleMotion(page, "[data-feed]");
     await page.locator('.sd-message >> nth=0 >> .sd-message-actions [aria-label="Add reaction"]').click();
     await page.locator("#emoji .sd-emoji-grid > button", { hasText: "🎉" }).click();
     const party = await page.evaluate(() => [...document.querySelectorAll(".sd-message")][0].querySelector(".sd-reactions").textContent.includes("🎉"));
     if (!party) fail(where, "emoji picker did not add a reaction");
     await page.locator(".sd-message").nth(2).hover();
+    await settleMotion(page, "[data-feed]");
     await page.locator('.sd-message >> nth=2 >> .sd-message-actions [aria-label="React 🔥"]').click();
     const fire = await page.evaluate(() => [...document.querySelectorAll(".sd-message")][2].querySelector(".sd-reactions")?.textContent.includes("🔥"));
     if (!fire) fail(where, "quick reaction did not add a reaction");
     await page.locator(".sd-message").nth(2).hover();
+    await settleMotion(page, "[data-feed]");
     await page.locator('.sd-message >> nth=2 >> .sd-message-actions [aria-label="Reply"]').click();
     const reply = await page.evaluate(() => ({ bar: document.querySelector(".sd-composer-reply b")?.textContent, current: document.querySelectorAll('.sd-message[aria-current="true"]').length }));
     if (reply.bar !== "Rosa" || reply.current !== 1) fail(where, `reply bar ${JSON.stringify(reply)}`);
@@ -1163,15 +1189,31 @@ async function runJob(job, kept) {
     } catch (error) {
       const crashed = (browser && !browser.isConnected()) || /has been closed|has crashed|Target closed/i.test(error.message);
       if (job.retry && crashed && attempt === 1) {
-        console.log(`::warning::${job.where}: ${job.engine} crashed (${error.message.split("\n")[0]}); relaunched and retrying`);
+        console.log(`::warning::${job.where}: ${job.engine} crashed (${firstLines(error, 1)}); relaunched and retrying`);
         continue;
       }
-      fail(job.where, error.message.split("\n")[0]);
+      fail(job.where, firstLines(error));
     } finally {
       await page?.close().catch(() => {});
     }
     if (attempt === 1 && metTransient(out)) continue;
     return;
+  }
+}
+
+// A busy run starts many pages at once, and the dev server compiles each
+// page's module graph on first request; that cold burst lands inside the
+// jobs' own timeouts and one slow page fails its load (seen as a webkit
+// `page.goto` timeout with every other job healthy). Warm every page once,
+// serially, before the pool, so the burst is paid up front where nothing
+// waits on it. The lab's second engine then finds the server warm too.
+{
+  const [name] = Object.keys(engines);
+  if (name) {
+    const warmBrowser = await browsers[name].get();
+    const warmPage = await warmBrowser.newPage();
+    for (const url of Object.values(pages)) await warmPage.goto(url, { waitUntil: "load" }).catch(() => {});
+    await warmPage.close();
   }
 }
 
