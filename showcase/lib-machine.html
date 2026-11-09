@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+    <div class="demo-block" id="machine-live">
+      <h2 class="sd-label">Machine</h2>
+      <figure class="sd-machine" id="machine-deploy" aria-labelledby="machine-deploy-h">
+        <div class="sd-machine-head">
+          <span class="sd-label sd-label-strong" id="machine-deploy-h">Deploy queue</span>
+          <span class="sd-machine-clock">10 minutes, sped up<i></i></span>
+        </div>
+        <div class="sd-machine-board"></div>
+        <div class="sd-machine-foot">
+          <span class="sd-meta"><span>tokens wait at a port, sit in a slot, leave with an outcome</span></span>
+          <div class="flex flex-wrap items-center gap-2">
+            <button class="sd-btn sd-btn-sm" type="button" data-machine-toggle>Pause</button>
+            <div class="sd-seg sd-seg-inline" role="group" aria-label="Speed">
+              <button type="button" data-speed="0.25" aria-pressed="false">¼×</button>
+              <button type="button" data-speed="1" aria-pressed="true">1×</button>
+              <button type="button" data-speed="4" aria-pressed="false">4×</button>
+            </div>
+          </div>
+        </div>
+      </figure>
+      <p class="demo-usage"><code>sd-machine</code> + <code>-head</code>, <code>-board</code>, <code>-foot</code>, <code>sd-machine-clock</code> · <code>mountMachine(figure, spec)</code> from <code>signal-design/js</code> draws the spec · kinds <code>box</code>, <code>press</code>, <code>scan</code>, <code>checks</code>, <code>line</code>, <code>source</code>, <code>sink</code>, more with <code>defineKind()</code> · <code>queue: "latest"</code> folds what waits into one token · <code>judge: true</code> colors the line's dots · <code>data-chart-theme="mono|spectrum"</code></p>
+    </div>
+
+    <div class="demo-block" id="machine-spectrum">
+      <h2 class="sd-label">Spectrum and folding</h2>
+      <figure class="sd-machine" id="machine-fold" data-chart-theme="spectrum" aria-labelledby="machine-fold-h">
+        <div class="sd-machine-head">
+          <span class="sd-label sd-label-strong" id="machine-fold-h">Rings on a branch</span>
+          <span class="sd-machine-clock">1 hour, sped up<i></i></span>
+        </div>
+        <div class="sd-machine-board"></div>
+      </figure>
+      <p class="demo-usage">A ring with <code>queue: "latest"</code> keeps only the newest waiting token: each later arrival glides into it and its count goes up, so one run covers the whole range.</p>
+    </div>
+
+    <div class="demo-block" id="machine-chain">
+      <h2 class="sd-label">Chain</h2>
+      <div class="grid gap-4">
+        <div class="sd-machine-chain" aria-label="Planned steps">
+          <span>red on main</span><span>rerun since green</span><span>revert the culprit</span><span>reopen its task</span>
+        </div>
+        <div class="sd-machine-chain" aria-label="Steps of a run">
+          <span data-status="done">merge</span><span data-status="done">compile</span><span data-status="running">fmt</span><span>guard</span><span>push</span>
+        </div>
+        <div class="sd-machine-chain" data-chart-theme="spectrum" aria-label="Checks after the push">
+          <span data-status="done">docs</span><span data-status="done">clippy</span><span data-status="failed">tests</span><span data-status="running">static</span>
+        </div>
+      </div>
+      <p class="demo-usage"><code>sd-machine-chain</code> &gt; <code>span</code> steps joined by arrows · dashed until <code>data-status="running|done|failed"</code> · CSS only</p>
+    </div>
+</body>
+</html>

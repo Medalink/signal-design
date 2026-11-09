@@ -1,0 +1,640 @@
+@layer components {
+  /*
+   * Machine: a live state machine on a dot grid. mountMachine() from
+   * signal-design/js draws a JSON spec into the board: stations as tone
+   * boxes, wires between them, and tokens that travel the wires, wait in
+   * line, sit in a station's slots and leave with an outcome.
+   *
+   *   <figure class="sd-machine" aria-labelledby="m-h">
+   *     <div class="sd-machine-head">
+   *       <span class="sd-label sd-label-strong" id="m-h">Flow</span>
+   *       <span class="sd-machine-clock">1 hour, sped up<i></i></span>
+   *     </div>
+   *     <div class="sd-machine-board"></div>
+   *   </figure>
+   *
+   * Everything the script writes is data-* state: data-busy on a working
+   * node or slot, data-status (done, running, waiting, failed) on tokens,
+   * dots, checks and a line, data-result for the short flash an outcome
+   * leaves, data-queue with a node's waiting count. Status colors come from
+   * the chart tokens, so data-chart-theme ("mono" default, "spectrum")
+   * switches the whole machine, as it does a flow.
+   *
+   * .sd-machine-chain is the static companion: dashed steps joined by
+   * arrows, for the planned and next parts beside a live machine.
+   */
+  .sd-machine {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+    margin: 0;
+    --machine-dots: color-mix(in srgb, var(--sd-fg) 13%, transparent);
+  }
+  .sd-machine-head,
+  .sd-machine-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+    min-height: 28px;
+  }
+
+  /* A square clock face; its hand turns once per spec.clock.period. */
+  .sd-machine-clock {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--sd-fg-faint);
+    font-family: var(--sd-font-mono);
+    font-size: var(--text-3xs);
+  }
+  .sd-machine-clock > i {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    background: var(--sd-field-fill);
+    outline: 1px solid var(--sd-line-control);
+    outline-offset: -1px;
+  }
+  .sd-machine-clock > i::after {
+    content: "";
+    position: absolute;
+    left: 7px;
+    top: 3px;
+    width: 2px;
+    height: 5px;
+    background: var(--sd-fg-muted);
+    transform-origin: 1px 5px;
+    rotate: var(--turn, 0turn);
+  }
+  .sd-machine:not([data-playing="true"]) .sd-machine-clock > i::after {
+    background: var(--sd-fg-faint);
+  }
+
+  .sd-machine-board {
+    position: relative;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    background: var(--sd-tone-1);
+  }
+  .sd-machine-fit {
+    position: relative;
+  }
+  .sd-machine-canvas {
+    position: absolute;
+    left: 0;
+    top: 0;
+    isolation: isolate;
+    transform-origin: 0 0;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-3xs);
+    line-height: 1.5;
+    background: conic-gradient(at 2px 2px, transparent 75%, var(--machine-dots) 0) calc(var(--cell) / 2 - 1px)
+      calc(var(--cell) / 2 - 1px) / var(--cell) var(--cell);
+    animation: sd-machine-in 200ms var(--ease-out);
+  }
+  @keyframes sd-machine-in {
+    from {
+      opacity: 0;
+      translate: 0 6px;
+    }
+  }
+
+  /* Wires and the short trail a token draws along the wire it rides. */
+  .sd-machine-wires {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .sd-machine-wire {
+    fill: none;
+    stroke: var(--sd-line-strong);
+    stroke-width: 1;
+  }
+  .sd-machine-wire[data-dashed] {
+    stroke-dasharray: 3 4;
+  }
+  .sd-machine-trail {
+    fill: none;
+    stroke: var(--status, var(--sd-fg-muted));
+    stroke-width: 1.5;
+    transition: opacity 200ms var(--ease-out);
+  }
+
+  /* Status, one role per word, as in a flow. */
+  :is(.sd-machine, .sd-machine-chain) [data-status="done"] {
+    --status: var(--sd-chart-2);
+  }
+  :is(.sd-machine, .sd-machine-chain) [data-status="running"] {
+    --status: var(--sd-chart-accent);
+  }
+  :is(.sd-machine, .sd-machine-chain) [data-status="waiting"] {
+    --status: var(--sd-chart-warning);
+  }
+  :is(.sd-machine, .sd-machine-chain) [data-status="failed"] {
+    --status: var(--sd-chart-critical);
+  }
+
+  /* ---- Nodes ---------------------------------------------------------- */
+
+  .sd-machine-node {
+    position: absolute;
+    background: var(--sd-tone-3);
+    transition: background-color 200ms var(--ease-out);
+  }
+  .sd-machine-node[data-busy] {
+    background: color-mix(in srgb, var(--sd-fg) 4%, var(--sd-tone-3));
+  }
+  .sd-machine-node:is([data-bare], [data-kind="line"], [data-kind="source"]) {
+    background: none;
+  }
+  .sd-machine-node[role="button"] {
+    cursor: pointer;
+  }
+  .sd-machine-node[role="button"]:hover:not([data-bare], [data-kind="line"], [data-kind="source"]) {
+    background: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-tone-3));
+  }
+  .sd-machine-node:focus-visible,
+  .sd-machine-node[aria-pressed="true"] {
+    outline: 1px solid var(--sd-fg);
+    outline-offset: 4px;
+  }
+  .sd-machine-body {
+    position: absolute;
+    inset: 0;
+  }
+  .sd-machine-port {
+    position: absolute;
+    top: 50%;
+    width: 4px;
+    height: 16px;
+    margin-top: -8px;
+    background: var(--sd-line-control);
+  }
+  .sd-machine-port[data-side="in"] {
+    left: -2px;
+  }
+  .sd-machine-port[data-side="out"] {
+    right: -2px;
+  }
+
+  /* The label sits outside the box: name, then a mono meta, then a note. */
+  .sd-machine-label {
+    position: absolute;
+    white-space: nowrap;
+    color: var(--sd-fg-faint);
+    font-size: var(--text-3xs);
+    line-height: 1.5;
+    pointer-events: none;
+  }
+  .sd-machine-label b {
+    color: var(--sd-fg);
+    font-size: var(--text-2xs);
+    font-weight: 500;
+  }
+  .sd-machine-label span {
+    font-family: var(--sd-font-mono);
+  }
+  .sd-machine-label b + span::before {
+    content: " · ";
+  }
+  .sd-machine-note {
+    font-family: var(--sd-font-mono);
+  }
+  .sd-machine-label[data-side="top"] {
+    bottom: calc(100% + 8px);
+    left: 50%;
+    translate: -50% 0;
+    text-align: center;
+  }
+  .sd-machine-label[data-side="top-start"] {
+    bottom: calc(100% + 8px);
+    left: 0;
+  }
+  .sd-machine-label[data-side="bottom"] {
+    top: calc(100% + 8px);
+    left: 50%;
+    translate: -50% 0;
+    text-align: center;
+  }
+  .sd-machine-label[data-side="right"] {
+    top: -2px;
+    left: calc(100% + 14px);
+  }
+  .sd-machine-label[data-side="left"] {
+    top: -2px;
+    right: calc(100% + 14px);
+    text-align: right;
+  }
+  .sd-machine-note[data-tone="accent"] {
+    color: var(--sd-accent);
+  }
+  .sd-machine-note[data-tone="success"] {
+    color: var(--sd-success);
+  }
+  .sd-machine-note[data-tone="danger"] {
+    color: var(--sd-danger);
+  }
+  .sd-machine-note[data-tone="warning"] {
+    color: var(--sd-warning);
+  }
+  .sd-machine-note[data-tone="pending"] {
+    color: var(--sd-pending);
+  }
+  .sd-machine-node[data-status] .sd-machine-note {
+    color: var(--status);
+    transition: color 200ms var(--ease-out);
+  }
+
+  /* ---- Slots: a square well and a trace around it that fills as the hold runs. */
+  .sd-machine-slot {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: var(--sd-field-fill);
+    transition: background-color 200ms var(--ease-out);
+  }
+  .sd-machine-slot > svg {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+  }
+  .sd-machine-trace {
+    fill: none;
+    stroke: var(--sd-chart-accent);
+    stroke-width: 1.5;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  :is(.sd-machine-slot, .sd-machine-track, .sd-machine-tag, .sd-machine-agent)[data-result="done"] {
+    --flash: var(--sd-chart-2);
+  }
+  :is(.sd-machine-slot, .sd-machine-track, .sd-machine-tag, .sd-machine-agent)[data-result="failed"] {
+    --flash: var(--sd-chart-critical);
+  }
+  :is(.sd-machine-slot, .sd-machine-tag)[data-result] {
+    background: color-mix(in srgb, var(--flash) 28%, transparent);
+  }
+
+  /* press: two plates close on the token, and snap shut when it leaves. */
+  .sd-machine-plate {
+    position: absolute;
+    left: 50%;
+    width: 52%;
+    height: 6px;
+    translate: -50% 0;
+    background: var(--sd-line-control);
+    transition: translate 180ms var(--ease-out), background-color 180ms var(--ease-out);
+  }
+  .sd-machine-plate[data-side="top"] {
+    top: 12px;
+  }
+  .sd-machine-plate[data-side="bottom"] {
+    bottom: 12px;
+  }
+  .sd-machine-node[data-busy] .sd-machine-plate {
+    background: var(--sd-fg-subtle);
+  }
+  .sd-machine-node[data-busy] .sd-machine-plate[data-side="top"] {
+    translate: -50% 8px;
+  }
+  .sd-machine-node[data-busy] .sd-machine-plate[data-side="bottom"] {
+    translate: -50% -8px;
+  }
+  .sd-machine-node[data-stamp] .sd-machine-plate {
+    background: var(--sd-fg);
+    transition-duration: 120ms;
+  }
+  .sd-machine-node[data-stamp] .sd-machine-plate[data-side="top"] {
+    translate: -50% 14px;
+  }
+  .sd-machine-node[data-stamp] .sd-machine-plate[data-side="bottom"] {
+    translate: -50% -14px;
+  }
+
+  /* scan: the token rides the track, which fills behind it. */
+  .sd-machine-track {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    height: 2px;
+    background: var(--sd-field-fill);
+    transition: background-color 200ms var(--ease-out);
+  }
+  .sd-machine-track[data-result] {
+    background: var(--flash);
+  }
+  .sd-machine-track-fill {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--sd-chart-accent) 55%, transparent);
+    transform-origin: 0 50%;
+    scale: 0 1;
+  }
+
+  /* checks: named checks in a row; dashed until they run. */
+  .sd-machine-checks {
+    position: absolute;
+    left: 36px;
+    right: 10px;
+    top: 50%;
+    translate: 0 -50%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .sd-machine-check,
+  .sd-machine-chain > span {
+    padding: 1px 7px;
+    color: var(--sd-fg-faint);
+    font-family: var(--sd-font-mono);
+    font-size: var(--text-3xs);
+    white-space: nowrap;
+    background: var(--sd-field-fill);
+    transition: background-color 200ms var(--ease-out), color 200ms var(--ease-out), outline-color 200ms var(--ease-out);
+  }
+  .sd-machine-check[data-status="queued"],
+  .sd-machine-chain > span:not([data-status]) {
+    outline: 1px dashed var(--sd-line-control);
+    outline-offset: -1px;
+    background: none;
+  }
+  .sd-machine-check[data-status="running"],
+  .sd-machine-chain > span[data-status="running"] {
+    color: var(--sd-fg-muted);
+    outline: 1px solid var(--sd-chart-accent);
+    outline-offset: -1px;
+  }
+  :is(.sd-machine-check, .sd-machine-chain > span):is([data-status="done"], [data-status="failed"]) {
+    color: var(--sd-fg);
+    background: color-mix(in srgb, var(--status) 24%, var(--sd-tone-3));
+  }
+
+  /* line: a branch of dots, newest first, in the status of what judged them. */
+  .sd-machine-rule {
+    position: absolute;
+    left: 0;
+    right: 6px;
+    height: 2px;
+    margin-top: -1px;
+    background: var(--sd-line-strong);
+    transition: background-color 200ms var(--ease-out);
+  }
+  .sd-machine-node[data-status] .sd-machine-rule {
+    background: color-mix(in srgb, var(--status) 55%, transparent);
+  }
+  .sd-machine-cap {
+    position: absolute;
+    right: 0;
+    width: 4px;
+    height: 18px;
+    background: var(--sd-line-control);
+  }
+  .sd-machine-dot {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    margin: -5px;
+    background: var(--sd-tone-1);
+    outline: 1.5px solid var(--sd-fg-subtle);
+    outline-offset: -1.5px;
+    transition: translate 220ms var(--ease-out), scale 200ms var(--ease-out), opacity 200ms var(--ease-out),
+      background-color 200ms var(--ease-out), outline-color 200ms var(--ease-out), outline-offset 200ms var(--ease-out);
+  }
+  .sd-machine-dot[data-status] {
+    background: var(--status);
+    outline-color: var(--status);
+  }
+  .sd-machine-dot[data-busy] {
+    outline: 1px solid var(--sd-chart-accent);
+    outline-offset: 2px;
+  }
+  .sd-machine-dot[data-new] {
+    scale: 0;
+  }
+  .sd-machine-dot[data-gone] {
+    opacity: 0;
+    scale: 0.4;
+  }
+
+  /* source: rows of workers; the chip fills as each writes its next change. */
+  .sd-machine-agent {
+    position: absolute;
+    left: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 20px;
+  }
+  .sd-machine-bot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 20px;
+    height: 20px;
+    background: var(--sd-field-fill);
+  }
+  .sd-machine-bot > i {
+    width: 3px;
+    height: 3px;
+    background: var(--sd-fg-muted);
+  }
+  .sd-machine-chip {
+    position: relative;
+    width: 38px;
+    height: 20px;
+    background:
+      linear-gradient(var(--sd-line-control) 0 0) 6px 6px / 18px 1px no-repeat,
+      linear-gradient(var(--sd-line-control) 0 0) 6px 10px / 24px 1px no-repeat,
+      var(--sd-tone-3);
+    transition: background-color 200ms var(--ease-out);
+  }
+  .sd-machine-chip::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: var(--sd-fg-faint);
+    transform-origin: 0 50%;
+    scale: var(--p, 0) 1;
+  }
+  .sd-machine-agent[data-result] .sd-machine-chip {
+    background-color: color-mix(in srgb, var(--flash) 30%, var(--sd-tone-3));
+  }
+  .sd-machine-fan {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  /* sink: a counter that flips to its newest value. */
+  .sd-machine-tag {
+    position: absolute;
+    inset: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: var(--sd-fg);
+    font-family: var(--sd-font-mono);
+    background: var(--sd-field-fill);
+    transition: background-color 200ms var(--ease-out);
+  }
+  .sd-machine-tag > b {
+    font-weight: 500;
+  }
+  .sd-machine-tag[data-flip="0"] > b {
+    animation: sd-machine-flip-a 200ms var(--ease-out);
+  }
+  .sd-machine-tag[data-flip="1"] > b {
+    animation: sd-machine-flip-b 200ms var(--ease-out);
+  }
+  @keyframes sd-machine-flip-a {
+    from {
+      opacity: 0;
+      translate: 0 60%;
+    }
+  }
+  @keyframes sd-machine-flip-b {
+    from {
+      opacity: 0;
+      translate: 0 60%;
+    }
+  }
+
+  /* ---- Tokens ---------------------------------------------------------- */
+
+  .sd-machine-tokens {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .sd-machine-token {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 10px;
+    height: 10px;
+    margin: -5px;
+    background: var(--sd-fg-muted);
+    will-change: transform;
+    transition: opacity 200ms var(--ease-out), scale 200ms var(--ease-out), background-color 200ms var(--ease-out);
+  }
+  .sd-machine-token[data-kind="change"] {
+    width: 14px;
+    height: 10px;
+    margin: -5px -7px;
+    background:
+      linear-gradient(var(--sd-tone-1) 0 0) 3px 3px / 6px 1px no-repeat,
+      linear-gradient(var(--sd-tone-1) 0 0) 3px 6px / 8px 1px no-repeat,
+      var(--status, var(--sd-fg-muted));
+  }
+  .sd-machine-token[data-kind="signal"] {
+    width: 8px;
+    height: 8px;
+    margin: -4px;
+    background: var(--sd-tone-1);
+    outline: 1.5px solid var(--status, var(--sd-fg-muted));
+    outline-offset: -1.5px;
+  }
+  .sd-machine-token[data-status]:not([data-kind="signal"]) {
+    background-color: var(--status);
+  }
+  .sd-machine-token[data-held]:not([data-kind="signal"]) {
+    background-color: var(--sd-fg);
+  }
+  .sd-machine-token[data-gone="fade"] {
+    opacity: 0;
+    scale: 0.4;
+  }
+  .sd-machine-token[data-gone="merge"] {
+    opacity: 0;
+    scale: 1.8;
+  }
+  .sd-machine-token[data-count]::after {
+    content: "\00d7" attr(data-count);
+    position: absolute;
+    bottom: calc(100% + 3px);
+    left: 50%;
+    translate: -50% 0;
+    color: var(--sd-fg-muted);
+    font-family: var(--sd-font-mono);
+    font-size: var(--text-3xs);
+    line-height: 1;
+  }
+  .sd-machine-token[data-pop="0"] {
+    animation: sd-machine-pop-a 200ms var(--ease-out);
+  }
+  .sd-machine-token[data-pop="1"] {
+    animation: sd-machine-pop-b 200ms var(--ease-out);
+  }
+  @keyframes sd-machine-pop-a {
+    50% {
+      scale: 1.5;
+    }
+  }
+  @keyframes sd-machine-pop-b {
+    50% {
+      scale: 1.5;
+    }
+  }
+
+  /* Free text placed on the grid. */
+  .sd-machine-text {
+    position: absolute;
+    white-space: nowrap;
+    color: var(--sd-fg-faint);
+    font-family: var(--sd-font-mono);
+    font-size: var(--text-3xs);
+    line-height: 1.6;
+    pointer-events: none;
+  }
+  .sd-machine-text[data-align="center"] {
+    translate: -50% 0;
+    text-align: center;
+  }
+  .sd-machine-text[data-align="right"] {
+    translate: -100% 0;
+    text-align: right;
+  }
+
+  /* ---- Chain: static steps joined by arrows. Dashed until a status is set. */
+  .sd-machine-chain {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 22px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .sd-machine-chain > span {
+    position: relative;
+  }
+  .sd-machine-chain > span + span::before {
+    content: "";
+    position: absolute;
+    right: calc(100% + 5px);
+    top: 50%;
+    width: 12px;
+    height: 1px;
+    background: var(--sd-line-control);
+  }
+  .sd-machine-chain > span + span::after {
+    content: "";
+    position: absolute;
+    right: calc(100% + 4px);
+    top: calc(50% - 2px);
+    border-left: 4px solid var(--sd-line-control);
+    border-top: 2.5px solid transparent;
+    border-bottom: 2.5px solid transparent;
+  }
+}

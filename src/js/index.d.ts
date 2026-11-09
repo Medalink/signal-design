@@ -161,6 +161,153 @@ export function mountFeed(root: HTMLElement, options?: {
   align?: number;
 }): FeedMount;
 
+/* Machines */
+/** A point on the machine's grid, in cells (spec.cell px each). */
+export type MachineCell = [number, number];
+/** Seconds of machine time: one value, or a range picked at random. */
+export type MachineSpan = number | [number, number];
+export type MachineStatus = "done" | "running" | "waiting" | "failed" | (string & {});
+export interface MachineOutcome {
+  /** The node the token goes to next; a list sends a copy to each; none ends it. */
+  to?: string | string[];
+  /** Relative chance. Default 1. */
+  weight?: number;
+  /** Written to the token, and to the line's dots when the node has judge: true. */
+  status?: MachineStatus;
+}
+export interface MachineNode {
+  id: string;
+  /** box (default), press, scan, checks, line, source, sink, or a kind from defineKind(). */
+  kind?: string;
+  at: MachineCell;
+  size: MachineCell;
+  label?: string;
+  /** Mono text after the label; {in}, {done}, {failed}, {queue} and {busy} fill in live. */
+  meta?: string;
+  note?: string;
+  /** The note by the line's status (line only). */
+  notes?: Partial<Record<MachineStatus, string>>;
+  noteTone?: Tone;
+  labelSide?: "top" | "top-start" | "bottom" | "left" | "right";
+  /** How long a token stays in a slot. */
+  hold?: MachineSpan;
+  /** Slots that hold at once (box). Default 1. */
+  capacity?: number;
+  /** Slot columns (box). */
+  cols?: number;
+  /** "latest" keeps one waiting token and folds every later arrival into it. */
+  queue?: "fifo" | "latest";
+  /** Color the line dots this node's tokens came from with each outcome's status. */
+  judge?: boolean;
+  /** Where a finished token goes: a node id, or outcomes by name. */
+  out?: string | Record<string, string | MachineOutcome>;
+  /** source: workers, how often each writes, and where it sends what it wrote. */
+  agents?: number;
+  every?: MachineSpan;
+  to?: string;
+  /** checks: the names of the checks. */
+  items?: string[];
+  /** line: px between dots. sink: the counter's text, with {n}, and its first value. */
+  gap?: number;
+  format?: string;
+  start?: number;
+  bare?: boolean;
+  ports?: boolean;
+  tone?: Tone;
+  [key: string]: unknown;
+}
+export interface MachineWire {
+  from: string;
+  to: string;
+  /** Override the ports: the wire's first and last point. */
+  start?: MachineCell;
+  end?: MachineCell;
+  /** Corners to pass through; between points the wire runs in right angles. */
+  via?: MachineCell[];
+  dashed?: boolean;
+}
+export interface MachineSpec {
+  seed?: number;
+  /** px per grid cell. Default 20. */
+  cell?: number;
+  size: MachineCell;
+  /** How fast tokens travel, px per machine second. Default 300. */
+  travel?: number;
+  /** One turn of the .sd-machine-clock hand, in machine seconds. Default 60. */
+  clock?: { period?: number };
+  nodes: MachineNode[];
+  wires?: MachineWire[];
+  text?: { at: MachineCell; lines: string | string[]; align?: "left" | "center" | "right"; tone?: Tone }[];
+}
+export interface MachineEvent {
+  type: "emit" | "enter" | "start" | "finish" | "fold" | "land" | "select" | "state" | "load";
+  /** Machine time in seconds. */
+  t: number;
+  node?: string | null;
+  outcome?: string;
+  token?: { id: number; label: string; status: string; count: number };
+  playing?: boolean;
+  speed?: number;
+  nodes?: string[];
+}
+export interface MachineNodeInfo {
+  id: string;
+  spec: MachineNode;
+  count: { in: number; done: number; failed: number };
+  queue: number;
+  busy: number;
+  capacity: number;
+  state: Record<string, unknown>;
+}
+export interface Machine {
+  readonly time: number;
+  readonly playing: boolean;
+  /** 1 is real time; 0.25 is slow motion. */
+  speed: number;
+  /** A copy of the running spec, with every set() applied. */
+  readonly spec: MachineSpec;
+  readonly selected: string | null;
+  play(): void;
+  pause(): void;
+  toggle(): void;
+  /** Run machine time forward, playing or not. */
+  advance(seconds?: number): void;
+  /** Swap the whole machine. */
+  load(spec: MachineSpec): void;
+  /** Change one node's behavior while it runs. */
+  set(id: string, patch: Partial<MachineNode>): void;
+  node(id: string): MachineNodeInfo | undefined;
+  select(id: string | null): void;
+  destroy(): void;
+}
+/** A node kind: every hook is optional. See src/js/machine-kinds.js. */
+export interface MachineKind {
+  ports?: boolean;
+  build?(node: any, helpers: any): void;
+  capacity?(node: any): number;
+  slots?(node: any, count: number): [number, number][];
+  decorate?(node: any, helpers: any): void;
+  ready?(node: any, helpers: any): void;
+  accept?(node: any, token: any, helpers: any): boolean | void;
+  start?(node: any, slot: any, token: any, helpers: any): void;
+  progress?(node: any, slot: any, p: number, helpers: any): void;
+  finish?(node: any, slot: any, token: any, outcome: MachineOutcome & { key: string }, helpers: any): void;
+  tick?(node: any, helpers: any): void;
+  patch?(node: any, patch: Partial<MachineNode>, helpers: any): void;
+  judged?(node: any, helpers: any): void;
+}
+/** Draw a spec into a .sd-machine figure (or its .sd-machine-board). Plays at once unless the user asks for reduced motion. */
+export function mountMachine(root: HTMLElement, spec: MachineSpec, options?: {
+  autoplay?: boolean;
+  speed?: number;
+  /** Nodes become buttons with aria-pressed; a click selects one and fires a select event. */
+  select?: boolean;
+  /** The smallest scale before the board scrolls instead. Default 0.5. */
+  minScale?: number;
+}): Machine;
+export function defineKind(name: string, kind: MachineKind): void;
+export function machineKinds(): string[];
+
 /* Living tables */
 export interface LivingTableState {
   width: number;
@@ -386,12 +533,14 @@ declare global {
     "sd:living-table": CustomEvent<LivingTableState>;
     "sd:countdown": CustomEvent<CountdownState>;
     "sd:feed": CustomEvent<FeedState>;
+    "sd:machine": CustomEvent<MachineEvent>;
   }
   interface DocumentEventMap {
     "sd:living-table": CustomEvent<LivingTableState>;
     "sd:countdown": CustomEvent<CountdownState>;
 
     "sd:feed": CustomEvent<FeedState>;
+    "sd:machine": CustomEvent<MachineEvent>;
     "sd:theme": CustomEvent<{ theme: Theme }>;
     "sd:font": CustomEvent<{ font: Font }>;
     "sd:shell": CustomEvent<{ sidebar: "pinned" | "collapsed"; aside: "open" | "closed"; drawer: boolean; section?: string; width?: number }>;

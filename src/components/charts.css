@@ -25,7 +25,9 @@
   .sd-weighted,
   .sd-schedule,
   .sd-flow,
-  .sd-checklist {
+  .sd-checklist,
+  .sd-machine,
+  .sd-machine-chain {
     /* Frame */
     --sd-chart-grid: var(--sd-line);
     --sd-chart-tick: var(--sd-fg-faint);
@@ -101,7 +103,9 @@
   .sd-weighted:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *),
   .sd-schedule:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *),
   .sd-flow:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *),
-  .sd-checklist:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *) {
+  .sd-checklist:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *),
+  .sd-machine:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *),
+  .sd-machine-chain:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *) {
     --sd-chart-down: #22c55e;
     --sd-chart-up: #ff3366;
     --sd-chart-up-dash: none;
@@ -151,7 +155,9 @@
   .sd-weighted:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="paper"], [data-theme="paper"] *, [data-theme="light"], [data-theme="light"] *),
   .sd-schedule:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="paper"], [data-theme="paper"] *, [data-theme="light"], [data-theme="light"] *),
   .sd-flow:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="paper"], [data-theme="paper"] *, [data-theme="light"], [data-theme="light"] *),
-  .sd-checklist:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="paper"], [data-theme="paper"] *, [data-theme="light"], [data-theme="light"] *) {
+  .sd-checklist:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="paper"], [data-theme="paper"] *, [data-theme="light"], [data-theme="light"] *),
+  .sd-machine:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="paper"], [data-theme="paper"] *, [data-theme="light"], [data-theme="light"] *),
+  .sd-machine-chain:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="paper"], [data-theme="paper"] *, [data-theme="light"], [data-theme="light"] *) {
     --sd-chart-down: #15803d;
     --sd-chart-up: #c8003a;
     --sd-chart-in: #8a5a32;
@@ -189,7 +195,9 @@
     .sd-weighted:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="auto"], [data-theme="auto"] *),
     .sd-schedule:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="auto"], [data-theme="auto"] *),
     .sd-flow:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="auto"], [data-theme="auto"] *),
-    .sd-checklist:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="auto"], [data-theme="auto"] *) {
+    .sd-checklist:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="auto"], [data-theme="auto"] *),
+    .sd-machine:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="auto"], [data-theme="auto"] *),
+    .sd-machine-chain:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="auto"], [data-theme="auto"] *) {
       --sd-chart-down: #15803d;
       --sd-chart-up: #c8003a;
       --sd-chart-in: #8a5a32;

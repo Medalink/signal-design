@@ -1,0 +1,4 @@
+order: 735
+row: Data
+
+`sd-machine` (a live state machine from one JSON spec: `mountMachine(figure, spec)` draws stations, wires and tokens that glide, wait, fold (`queue: "latest"`) and land; kinds `box`, `press`, `scan`, `checks`, `line`, `source`, `sink`, more with `defineKind()`; `judge: true` colors a line's dots; `machine.set()` tunes a node live, `machine.load()` swaps the machine; mono/spectrum), `sd-machine-chain` (dashed steps joined by arrows, `data-status` once they run)

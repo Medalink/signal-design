@@ -38,6 +38,7 @@ export { mountCountdown } from "./countdown.js";
 export { mountStream, ALERT_KINDS } from "./broadcast.js";
 
 export { mountFeed } from "./feed.js";
+export { mountMachine, defineKind, machineKinds } from "./machine.js";
 export { mountLivingTable } from "./living-table.js";
 export { setExpanded } from "./controls.js";
 export { setTheme, getTheme, restoreTheme, cycleTheme, THEMES } from "./theme.js";
