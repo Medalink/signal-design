@@ -1124,7 +1124,7 @@ async function runJob(job, kept) {
   const out = held.getStore();
   for (let attempt = 1; ; attempt++) {
     if (attempt > 1 && metTransient(out)) {
-      const why = out.lines.find((line) => refused.test(line));
+      const why = out.lines.find((line) => line.startsWith("FAIL ") && transient.test(line));
       failures -= out.failed;
       out.failed = 0;
       out.lines.length = 0;
