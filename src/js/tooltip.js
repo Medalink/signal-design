@@ -16,8 +16,11 @@ function show(el) {
   tip.className = "sd-tooltip";
   tip.id = "sd-tooltip";
   tip.setAttribute("role", "tooltip");
+  // A manual popover paints in the top layer, above a modal dialog the trigger may sit in.
+  tip.popover = "manual";
   tip.textContent = el.dataset.sdTip;
   document.body.append(tip);
+  tip.showPopover?.();
   el.setAttribute("aria-describedby", tip.id);
   place(tip, el, { side: el.dataset.sdTipSide || "top", align: "center" });
 }
