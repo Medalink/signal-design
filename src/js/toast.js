@@ -64,9 +64,18 @@ export function toast(message, { tone, timeout = 2400, action } = {}) {
 
   toaster().append(el);
   if (timeout > 0) {
-    timer = setTimeout(dismiss, timeout);
-    el.addEventListener("pointerenter", () => clearTimeout(timer));
-    el.addEventListener("pointerleave", () => (timer = setTimeout(dismiss, timeout)));
+    // The pointer or keyboard focus on the toast holds it on screen; it counts down only when neither is.
+    let hovered = false;
+    let focused = false;
+    const settle = () => {
+      clearTimeout(timer);
+      if (!hovered && !focused) timer = setTimeout(dismiss, timeout);
+    };
+    settle();
+    el.addEventListener("pointerenter", () => ((hovered = true), settle()));
+    el.addEventListener("pointerleave", () => ((hovered = false), settle()));
+    el.addEventListener("focusin", () => ((focused = true), settle()));
+    el.addEventListener("focusout", () => ((focused = false), settle()));
   }
   return dismiss;
 }
