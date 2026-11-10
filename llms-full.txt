@@ -182,7 +182,12 @@ The library meets WCAG 2.2 AA contrast and wires keyboard behavior. You still mu
 - keep focus visible (do not remove outlines);
 - label every field with visible text (`sd-field-label`); a placeholder is a hint
   that disappears when you type, not a label;
-- respect `prefers-reduced-motion` in any motion you add.
+- respect `prefers-reduced-motion` in any motion you add;
+- in a Windows contrast theme (`forced-colors: active`) the system repaints every
+  fill, and Signal's parts show selected, pressed and current state in the system
+  colors. State you draw with a fill of your own needs one there too
+  (`background-color: Highlight; color: HighlightText` under
+  `@media (forced-colors: active)`).
 
 ## Translating labels
 
