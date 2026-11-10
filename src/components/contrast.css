@@ -7,6 +7,10 @@
  * takes the system's selection colors (Highlight, HighlightText) and each
  * mark drawn with a fill is redrawn in system colors. Nothing in this file
  * applies outside forced colors.
+ *
+ * transition: none on a restyled part is not for motion: with a color
+ * transition left on, Chromium settles on the wrong color under forced
+ * colors and the state stays unpainted.
  */
 @layer components {
   @media (forced-colors: active) {
