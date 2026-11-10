@@ -49,10 +49,18 @@
             <button class="sd-btn sd-btn-sm" type="button" data-drive="run">Run lab</button>
             <button class="sd-btn sd-btn-sm" type="button" data-drive="pass">Pass</button>
             <button class="sd-btn sd-btn-sm" type="button" data-drive="fail">Fail</button>
+            <button class="sd-btn sd-btn-sm" type="button" data-drive="freeze" aria-pressed="false">Freeze lab</button>
+            <button class="sd-btn sd-btn-sm" type="button" data-drive="agent">Agent run</button>
+            <button class="sd-btn sd-btn-sm" type="button" data-drive="stall">Stall</button>
+            <button class="sd-btn sd-btn-sm" type="button" data-drive="join">Join</button>
+            <button class="sd-btn sd-btn-sm" type="button" data-drive="tag">Tag</button>
+            <button class="sd-btn sd-btn-sm" type="button" data-drive="clear">Clear</button>
           </div>
+          <output class="text-fg-faint font-mono text-xs" data-machine-log></output>
         </div>
       </figure>
-      <p class="demo-usage"><code>driven: true</code> in the spec, and nothing starts by itself · <code>machine.emit(node, { key, label, row })</code> · <code>machine.start(node, { key, label, from, hold, since, count })</code> · <code>machine.finish(key, "pass" | "fail")</code> · <code>machine.land(line, { key, label, status })</code> · <code>instant: true</code> draws what is already true without a glide</p>
+      <p class="demo-usage"><code>driven: true</code> in the spec, and nothing starts by itself · <code>machine.emit(node, { key, label, row })</code> · <code>machine.start(node, { key, label, from, hold, since, count, link })</code> · <code>machine.finish(key, "pass" | "fail" | { outcome: "fail", items: { perf: "failed" } })</code> · <code>machine.land(line, { key, label, status })</code> · <code>instant: true</code> draws what is already true without a glide</p>
+      <p class="demo-usage"><code>machine.set(node, { tone, frozen, label, meta, items, value })</code> changes how a node looks · <code>machine.status(key, "waiting")</code> retones a token · <code>machine.fold(key, intoKey)</code> merges one into another · <code>machine.emit(sink)</code> sends a copy down each wire · <code>machine.clear()</code> starts over · a <code>link</code> on a node or token fires <code>sd:machine</code> <code>open</code> on click</p>
     </div>
 
     <div class="demo-block" id="machine-chain">

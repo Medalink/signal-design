@@ -162,6 +162,52 @@
     outline: 1px solid var(--sd-fg);
     outline-offset: 4px;
   }
+  /* A tone from the host (set(id, { tone })): the role tints the box, its rule and its note. */
+  .sd-machine-node[data-tone="accent"] {
+    --tone: var(--sd-accent);
+  }
+  .sd-machine-node[data-tone="success"] {
+    --tone: var(--sd-success);
+  }
+  .sd-machine-node[data-tone="danger"] {
+    --tone: var(--sd-danger);
+  }
+  .sd-machine-node[data-tone="warning"] {
+    --tone: var(--sd-warning);
+  }
+  .sd-machine-node[data-tone="pending"] {
+    --tone: var(--sd-pending);
+  }
+  .sd-machine-node[data-tone="extra"] {
+    --tone: var(--sd-extra);
+  }
+  .sd-machine-node[data-tone]:not([data-bare], [data-kind="line"], [data-kind="source"]) {
+    background: color-mix(in srgb, var(--tone) 14%, var(--sd-tone-3));
+  }
+  .sd-machine-node[data-tone] .sd-machine-rule {
+    background: color-mix(in srgb, var(--tone) 55%, transparent);
+  }
+  .sd-machine-node[data-tone] .sd-machine-note {
+    color: var(--tone);
+  }
+
+  /* Frozen (set(id, { frozen })): paused, so dashed like anything planned and not running, and muted. */
+  .sd-machine-node[data-frozen]:not([data-bare], [data-kind="line"], [data-kind="source"]) {
+    outline: 1px dashed var(--sd-line-control);
+    outline-offset: -1px;
+    background: var(--sd-tone-2);
+  }
+  .sd-machine-node[data-frozen] .sd-machine-label b {
+    color: var(--sd-fg-muted);
+  }
+  .sd-machine-node[data-frozen] .sd-machine-rule {
+    background: repeating-linear-gradient(90deg, var(--sd-line-strong) 0 6px, transparent 6px 10px);
+  }
+  .sd-machine-node[data-frozen] .sd-machine-slot {
+    background: none;
+    outline: 1px dashed var(--sd-line-control);
+    outline-offset: -1px;
+  }
   .sd-machine-body {
     position: absolute;
     inset: 0;
@@ -375,6 +421,14 @@
     color: var(--sd-fg);
     background: color-mix(in srgb, var(--status) 24%, var(--sd-tone-3));
   }
+  /* A step that never ran: struck through and dashed, with no status color. */
+  :is(.sd-machine-check, .sd-machine-chain > span)[data-status="skipped"] {
+    color: var(--sd-fg-faint);
+    text-decoration: line-through;
+    background: none;
+    outline: 1px dashed var(--sd-line-control);
+    outline-offset: -1px;
+  }
 
   /* line: a branch of dots, newest first, in the status of what judged them. */
   .sd-machine-rule {
@@ -553,6 +607,23 @@
   }
   .sd-machine-token[data-held]:not([data-kind="signal"]) {
     background-color: var(--sd-fg);
+  }
+  /* A host retoned a held change (status()): show its status, not the working color. */
+  .sd-machine-token[data-held][data-retoned][data-status]:not([data-kind="signal"]) {
+    background-color: var(--status);
+  }
+  /* A token with a link is a button: a wider target, and a hard ring for focus. */
+  .sd-machine-token[data-link] {
+    pointer-events: auto;
+    cursor: pointer;
+  }
+  .sd-machine-token[data-link]:not([data-more])::before {
+    content: "";
+    position: absolute;
+    inset: -8px;
+  }
+  .sd-machine-token[data-link]:focus-visible {
+    box-shadow: 0 0 0 2px var(--sd-tone-1), 0 0 0 3px var(--sd-fg);
   }
   .sd-machine-token[data-hidden] {
     opacity: 0;

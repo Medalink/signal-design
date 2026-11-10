@@ -23,7 +23,11 @@
  * A spec with `driven: true` decides nothing by itself: sources stay quiet,
  * holds never end and lines send no copies. The host says what happened
  * (emit, start, finish, land, by a key it picks) and the machine animates it,
- * so a live system can drive the board from its own events.
+ * so a live system can drive the board from its own events. A driven host
+ * also says what a node looks like (set: tone, frozen, label, meta, items,
+ * value), retones a token (status), folds one token into another (fold),
+ * starts over (clear), and hears a click on anything with a `link` as
+ * an "open" event.
  */
 import { KINDS } from "./machine-kinds.js";
 
@@ -173,8 +177,9 @@ export function mountMachine(root, spec, options = {}) {
   const tokens = new Set();
   const keyed = new Map();
   const moving = new Set();
+  const byEl = new WeakMap();
 
-  const px = ([c, r]) => [c * cell, r * cell];
+  const px =([c, r]) => [c * cell, r * cell];
   const emit = (type, detail = {}) =>
     figure.dispatchEvent(new CustomEvent("sd:machine", { bubbles: true, detail: { type, t, ...detail } }));
   const info = (tok) => tok && { id: tok.id, key: tok.key, label: tok.label, status: tok.status, count: tok.count };
@@ -187,11 +192,21 @@ export function mountMachine(root, spec, options = {}) {
     tok.el.style.transform = `translate(${x}px, ${y}px)`;
   }
 
-  function spawn({ x, y, label, status, origin, ref, kind, key, count } = {}) {
+  function spawn({ x, y, label, status, origin, ref, kind, key, count, link } = {}) {
     const tok = {
       id: ++ids, key, label: label ?? "", status: status ?? "", origin, refs: ref ? [ref] : [], count: Math.max(1, count ?? 1),
-      el: el("i", "sd-machine-token", tokensLayer),
+      el: el("i", "sd-machine-token", tokensLayer), link,
     };
+    byEl.set(tok.el, tok);
+    if (link) {
+      // A token with a link is a button the host can open. The layer is hidden
+      // from assistive tech only while nothing in it can be activated.
+      tok.el.dataset.link = "";
+      tok.el.tabIndex = 0;
+      tok.el.setAttribute("role", "button");
+      tok.el.setAttribute("aria-label", String(label || key || "Open"));
+      tokensLayer.removeAttribute("aria-hidden");
+    }
     if (kind) tok.el.dataset.kind = kind;
     if (tok.status) tok.el.dataset.status = tok.status;
     if (tok.count > 1) tok.el.dataset.count = String(tok.count);
@@ -214,6 +229,13 @@ export function mountMachine(root, spec, options = {}) {
     if (!status) return;
     tok.status = status;
     tok.el.dataset.status = status;
+  }
+
+  /** One holder fewer on a line dot a token stood for. */
+  function unbusy(ref) {
+    const holders = (Number(ref.dataset.busy) || 1) - 1;
+    if (holders) ref.dataset.busy = String(holders);
+    else delete ref.dataset.busy;
   }
 
   function dropTrail(tok) {
@@ -270,8 +292,10 @@ export function mountMachine(root, spec, options = {}) {
     const wire = wireBetween(from.id, to);
     const points = wire ? wire.points : [from.port.out, target.port.in];
     tok.node = null;
+    tok.dest = target;
     target.inbound++;
     move(tok, [...lead, ...points], () => {
+      tok.dest = null;
       target.inbound--;
       accept(target, tok);
     });
@@ -312,6 +336,18 @@ export function mountMachine(root, spec, options = {}) {
     });
   }
 
+  /** `tok` merges into `into`: counts add up, the dots it stood for are judged with it. */
+  function absorb(into, tok) {
+    into.count += tok.count;
+    into.refs.push(...tok.refs);
+    if ("held" in into.el.dataset) for (const ref of tok.refs) ref.dataset.busy = String((Number(ref.dataset.busy) || 0) + 1);
+    into.el.dataset.count = String(into.count);
+    into.el.dataset.pop = String(into.count % 2);
+    despawn(tok, "merge");
+    emit("fold", { node: into.node?.id, token: info(into), from: info(tok) });
+    if (into.node) refresh(into.node);
+  }
+
   function enqueue(n, tok) {
     tok.node = n;
     const newest = n.queue[n.queue.length - 1];
@@ -321,13 +357,7 @@ export function mountMachine(root, spec, options = {}) {
           tokens.has(tok) && enqueue(n, tok);
           return;
         }
-        newest.count += tok.count;
-        newest.refs.push(...tok.refs);
-        newest.el.dataset.count = String(newest.count);
-        newest.el.dataset.pop = String(newest.count % 2);
-        despawn(tok, "merge");
-        emit("fold", { node: n.id, token: info(newest) });
-        refresh(n);
+        absorb(newest, tok);
       });
       return;
     }
@@ -369,9 +399,16 @@ export function mountMachine(root, spec, options = {}) {
     return table[table.length - 1];
   }
 
-  /** An outcome by name from the node's out table, or a plain { status, to }. */
+  /**
+   * An outcome by name from the node's out table, or a plain { status, to }.
+   * `{ outcome: "fail", items }` takes the named outcome and adds to it.
+   */
   function resolve(n, outcome) {
-    if (outcome && typeof outcome === "object") return { key: outcome.key ?? "custom", ...outcome };
+    if (outcome && typeof outcome === "object") {
+      const { outcome: name, ...rest } = outcome;
+      const base = name != null ? resolve(n, name) : {};
+      return { key: "custom", ...base, ...rest };
+    }
     const key = String(outcome ?? "pass");
     return outcomes(n.spec.out).find((o) => o.key === key) ?? { key, status: key === "fail" ? "failed" : "done" };
   }
@@ -385,9 +422,7 @@ export function mountMachine(root, spec, options = {}) {
     setStatus(tok, outcome.status);
     n.count[outcome.status === "failed" ? "failed" : "done"]++;
     for (const ref of tok.refs) {
-      const holders = (Number(ref.dataset.busy) || 1) - 1;
-      if (holders) ref.dataset.busy = String(holders);
-      else delete ref.dataset.busy;
+      unbusy(ref);
       if (n.spec.judge) helpers.mark(ref, outcome.status || "done");
     }
     n.kind.finish?.(n, slot, tok, outcome, helpers);
@@ -400,6 +435,35 @@ export function mountMachine(root, spec, options = {}) {
       if (i > 0) sent.refs = [...tok.refs];
       send(sent, n, to);
     });
+    pull(n);
+  }
+
+  /** Take a token out of wherever it waits, works or travels to, without an outcome. */
+  function detach(tok) {
+    if (tok.dest) {
+      tok.dest.inbound--;
+      tok.dest = null;
+    }
+    const n = tok.node;
+    if (!n) return;
+    tok.node = null;
+    const slot = n.slots.find((x) => x.tok === tok);
+    if (slot) {
+      const worked = slot.holding;
+      slot.tok = null;
+      slot.holding = false;
+      delete tok.el.dataset.held;
+      for (const ref of tok.refs) unbusy(ref);
+      if (worked) n.kind.release?.(n, slot, tok, helpers);
+      if (!n.slots.some((other) => other.holding)) delete n.el.dataset.busy;
+    } else {
+      const i = n.queue.indexOf(tok);
+      if (i >= 0) n.queue.splice(i, 1);
+      delete tok.el.dataset.queued;
+      delete tok.el.dataset.hidden;
+      delete tok.el.dataset.more;
+      tok.qi = undefined;
+    }
     pull(n);
   }
 
@@ -433,7 +497,75 @@ export function mountMachine(root, spec, options = {}) {
       const text = fill(n.spec.meta, n);
       if (n.metaEl.textContent !== text) n.metaEl.textContent = text;
     }
-    n.el.setAttribute("aria-description", `${busy} working, ${n.queue.length} waiting`);
+    n.el.setAttribute("aria-description", `${busy} working, ${n.queue.length} waiting${n.spec.frozen ? ", frozen" : ""}`);
+  }
+
+  /* A node's label block is made when first needed: a name, then a mono meta, then a note. */
+  function labelBlock(n) {
+    if (!n.labelEl) {
+      n.labelEl = el("div", "sd-machine-label", n.el);
+      n.labelEl.dataset.side = n.spec.labelSide || "top";
+      n.headEl = el("div", "", n.labelEl);
+    }
+    return n.labelEl;
+  }
+
+  function setName(n) {
+    const name = n.spec.label;
+    if (name) {
+      labelBlock(n);
+      if (!n.nameEl) {
+        n.nameEl = el("b", "");
+        n.headEl.prepend(n.nameEl);
+      }
+      n.nameEl.textContent = name;
+    } else if (n.nameEl) {
+      n.nameEl.remove();
+      n.nameEl = null;
+    }
+  }
+
+  function setMeta(n) {
+    if (n.spec.meta) {
+      labelBlock(n);
+      n.metaEl ??= el("span", "", n.headEl);
+    } else if (n.metaEl) {
+      n.metaEl.remove();
+      n.metaEl = null;
+    }
+  }
+
+  /** How a node can be used: a link opens, a select selects, otherwise it only names itself. */
+  function setRole(n) {
+    const linked = Boolean(n.spec.link) && !selectable;
+    if (selectable || linked) {
+      n.el.tabIndex = 0;
+      n.el.setAttribute("role", "button");
+    } else {
+      n.el.removeAttribute("tabindex");
+      n.el.setAttribute("role", "group");
+    }
+    if (selectable) n.el.setAttribute("aria-pressed", String(selected === n.id));
+    else n.el.removeAttribute("aria-pressed");
+    if (linked) n.el.dataset.link = "";
+    else delete n.el.dataset.link;
+    n.el.setAttribute("aria-label", n.spec.label || n.id);
+  }
+
+  /** The look a host can change live: tone, frozen, label, label side, meta and link. */
+  function setLook(n, patch) {
+    if ("tone" in patch) {
+      if (n.spec.tone) n.el.dataset.tone = n.spec.tone;
+      else delete n.el.dataset.tone;
+    }
+    if ("frozen" in patch) {
+      if (n.spec.frozen) n.el.dataset.frozen = "";
+      else delete n.el.dataset.frozen;
+    }
+    if ("label" in patch) setName(n);
+    if ("meta" in patch) setMeta(n);
+    if ("labelSide" in patch && n.labelEl) n.labelEl.dataset.side = n.spec.labelSide || "top";
+    if ("label" in patch || "link" in patch) setRole(n);
   }
 
   function buildNode(spec) {
@@ -451,6 +583,7 @@ export function mountMachine(root, spec, options = {}) {
     n.el.dataset.id = spec.id;
     if (spec.bare) n.el.dataset.bare = "";
     if (spec.tone) n.el.dataset.tone = spec.tone;
+    if (spec.frozen) n.el.dataset.frozen = "";
     Object.assign(n.el.style, { left: `${x}px`, top: `${y}px`, width: `${w}px`, height: `${h}px` });
     n.body = el("div", "sd-machine-body", n.el);
     if (spec.ports !== false && kind.ports !== false && !spec.bare) {
@@ -458,25 +591,15 @@ export function mountMachine(root, spec, options = {}) {
       el("span", "sd-machine-port", n.el).dataset.side = "out";
     }
     if (spec.label || spec.note != null || spec.notes) {
-      const label = el("div", "sd-machine-label", n.el);
-      label.dataset.side = spec.labelSide || "top";
-      const head = el("div", "", label);
-      if (spec.label) el("b", "", head).textContent = spec.label;
-      if (spec.meta) n.metaEl = el("span", "", head);
+      labelBlock(n);
+      setName(n);
+      setMeta(n);
       if (spec.note != null || spec.notes) {
-        n.noteEl = el("div", "sd-machine-note", label);
+        n.noteEl = el("div", "sd-machine-note", n.labelEl);
         if (spec.noteTone) n.noteEl.dataset.tone = spec.noteTone;
       }
     }
-    if (selectable) {
-      n.el.tabIndex = 0;
-      n.el.setAttribute("role", "button");
-      n.el.setAttribute("aria-pressed", String(selected === spec.id));
-      n.el.setAttribute("aria-label", spec.label || spec.id);
-    } else {
-      n.el.setAttribute("role", "group");
-      n.el.setAttribute("aria-label", spec.label || spec.id);
-    }
+    setRole(n);
     kind.build?.(n, helpers);
     const capacity = kind.capacity ? kind.capacity(n) : Math.max(0, spec.capacity ?? 1);
     const at = kind.slots ? kind.slots(n, capacity) : defaultSlots(n, capacity);
@@ -636,6 +759,7 @@ export function mountMachine(root, spec, options = {}) {
     move,
     emit,
     setStatus,
+    has: (key) => keyed.has(key),
     nodes,
     wiresFrom: (id) => wires.filter((w) => w.from === id).map((w) => w.to),
     /** Judge a line dot: its status, then the line's own status from its newest judged dot. */
@@ -668,12 +792,21 @@ export function mountMachine(root, spec, options = {}) {
     emit("select", { node: selected });
   }
 
+  /** A click on a linked token or node tells the host to open what it links to. */
   const onClick = (e) => {
+    const tokEl = e.target.closest?.(".sd-machine-token[data-link]");
+    const tok = tokEl && board.contains(tokEl) ? byEl.get(tokEl) : null;
+    if (tok) {
+      emit("open", { node: tok.node?.id ?? null, key: tok.key, link: tok.link, token: info(tok) });
+      return;
+    }
     const node = e.target.closest?.(".sd-machine-node");
-    if (selectable && node && board.contains(node)) select(node.dataset.id === selected ? null : node.dataset.id);
+    if (!node || !board.contains(node)) return;
+    if (selectable) select(node.dataset.id === selected ? null : node.dataset.id);
+    else if (nodes.get(node.dataset.id)?.spec.link) emit("open", { node: node.dataset.id, link: nodes.get(node.dataset.id).spec.link });
   };
   const onKey = (e) => {
-    if ((e.key === "Enter" || e.key === " ") && e.target.matches?.(".sd-machine-node")) {
+    if ((e.key === "Enter" || e.key === " ") && e.target.matches?.(".sd-machine-node, .sd-machine-token[data-link]")) {
       e.preventDefault();
       onClick(e);
     }
@@ -749,7 +882,11 @@ export function mountMachine(root, spec, options = {}) {
       board.dataset.swap = String((Number(board.dataset.swap) || 0) + 1);
       emit("load", { nodes: [...nodes.keys()] });
     },
-    /** Change one node's behavior while it runs: hold, capacity, out, every and the rest. */
+    /**
+     * Change one node while it runs: hold, capacity, out, every and the rest
+     * of its behavior, and its look: tone, frozen, label, meta and link, plus
+     * a checks node's items and a sink's value.
+     */
     set(id, patch) {
       const n = nodes.get(id);
       if (!n) return;
@@ -758,13 +895,7 @@ export function mountMachine(root, spec, options = {}) {
       if (original) Object.assign(original, structuredClone(patch));
       if ("capacity" in patch && !n.kind.capacity) {
         const held = n.slots.map((slot) => slot.tok).filter(Boolean);
-        for (const tok of held) {
-          for (const ref of tok.refs) {
-            const holders = (Number(ref.dataset.busy) || 1) - 1;
-            if (holders) ref.dataset.busy = String(holders);
-            else delete ref.dataset.busy;
-          }
-        }
+        for (const tok of held) for (const ref of tok.refs) unbusy(ref);
         const count = Math.max(0, patch.capacity);
         const at = n.kind.slots ? n.kind.slots(n, count) : defaultSlots(n, count);
         n.slots = at.map((p) => ({ at: p, tok: null, holding: false, t0: 0, t1: 0 }));
@@ -772,6 +903,7 @@ export function mountMachine(root, spec, options = {}) {
         n.queue.unshift(...held);
         pull(n);
       }
+      setLook(n, patch);
       n.kind.patch?.(n, patch, helpers);
       refresh(n);
     },
@@ -810,8 +942,9 @@ export function mountMachine(root, spec, options = {}) {
      * a line (from the dot with the same key or label), another node, or
      * nowhere (it appears by the queue). `hold` is the expected time in
      * seconds, `since` how long it has already run, `count` how many it covers.
+     * `link` makes the token a button: a click fires an "open" event with it.
      */
-    start(id, { key, label, from, count, hold, since, status, kind = "signal", instant } = {}) {
+    start(id, { key, label, from, count, hold, since, status, kind = "signal", link, instant } = {}) {
       const n = nodes.get(id);
       if (!n || (key != null && keyed.has(key))) return false;
       return now(instant, () => {
@@ -827,7 +960,7 @@ export function mountMachine(root, spec, options = {}) {
         } else if (src) {
           [x, y] = src.port.out;
         }
-        const tok = spawn({ x, y, label, status, kind, key, count, ref });
+        const tok = spawn({ x, y, label, status, kind, key, count, ref, link });
         tok.hold = hold;
         tok.since = since;
         if (src) send(tok, src, n.id);
@@ -868,6 +1001,61 @@ export function mountMachine(root, spec, options = {}) {
         if (status && dot) helpers.mark(dot, status);
         return true;
       });
+    },
+    /** Retone a keyed token, held or moving: "waiting" for a stalled one. An empty status clears it. */
+    status(key, status) {
+      const tok = keyed.get(key);
+      if (!tok) return false;
+      tok.status = status || "";
+      for (const target of [tok.el, tok.trail]) {
+        if (!target) continue;
+        if (status) target.dataset.status = status;
+        else delete target.dataset.status;
+      }
+      // A held change shows the working color; a retoned one shows its status.
+      if (status) tok.el.dataset.retoned = "";
+      else delete tok.el.dataset.retoned;
+      emit("status", { token: info(tok) });
+      return true;
+    },
+    /**
+     * Glide a keyed token into another keyed token and merge it: the counts add
+     * up, as when a waiting token folds. False when either key is missing.
+     */
+    fold(key, intoKey, { instant } = {}) {
+      const tok = keyed.get(key);
+      const into = keyed.get(intoKey);
+      if (!tok || !into || tok === into) return false;
+      return now(instant, () => {
+        detach(tok);
+        move(tok, [[into.x, into.y]], () => {
+          if (!tokens.has(into)) despawn(tok);
+          else absorb(into, tok);
+        });
+        return true;
+      });
+    },
+    /** Empty every token, dot and count without rebuilding, so a replay can start over. Looks set with set() stay. */
+    clear() {
+      tokens.clear();
+      keyed.clear();
+      moving.clear();
+      tokensLayer.replaceChildren();
+      trailsLayer.replaceChildren();
+      tokensLayer.setAttribute("aria-hidden", "true");
+      for (const n of nodes.values()) {
+        n.queue.length = 0;
+        n.inbound = 0;
+        n.count = { in: 0, done: 0, failed: 0 };
+        for (const slot of n.slots) {
+          slot.tok = null;
+          slot.holding = false;
+        }
+        for (const name of ["busy", "status", "stamp"]) delete n.el.dataset[name];
+        n.kind.clear?.(n, helpers);
+        refresh(n);
+      }
+      emit("clear");
     },
     select,
     destroy() {

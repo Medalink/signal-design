@@ -174,7 +174,13 @@ export interface MachineOutcome {
   weight?: number;
   /** Written to the token, and to the line's dots when the node has judge: true. */
   status?: MachineStatus;
+  /** A checks node: set chips by name when the hold ends (the failed step lights red). The rest end done. */
+  items?: Record<string, MachineCheckStatus>;
+  /** In a finish() outcome: take the named outcome from the node's `out` table and add to it. */
+  outcome?: string;
 }
+/** The state of one chip in a checks node. "skipped" never ran. */
+export type MachineCheckStatus = "queued" | "running" | "done" | "failed" | "skipped";
 export interface MachineNode {
   id: string;
   /** box (default), press, scan, checks, line, source, sink, or a kind from defineKind(). */
@@ -205,12 +211,20 @@ export interface MachineNode {
   agents?: number;
   every?: MachineSpan;
   to?: string;
-  /** checks: the names of the checks. */
-  items?: string[];
+  /** checks: the names of the checks, or { name, status } to start a chip in a state. */
+  items?: (string | { name: string; status?: MachineCheckStatus })[];
+  /** checks: leave the finished chips until the next run starts, instead of resetting them after a moment. */
+  keep?: boolean;
   /** line: px between dots. sink: the counter's text, with {n}, and its first value. */
   gap?: number;
   format?: string;
   start?: number;
+  /** sink: show this instead of the count (a release tag); set() flips to it. */
+  value?: string | null;
+  /** Paused: drawn muted with a dashed outline. Settable live. */
+  frozen?: boolean;
+  /** A click (or Enter) on the node fires an "open" event with this, unless the machine is selectable. Settable live. */
+  link?: string;
   bare?: boolean;
   ports?: boolean;
   tone?: Tone;
@@ -242,12 +256,17 @@ export interface MachineSpec {
   text?: { at: MachineCell; lines: string | string[]; align?: "left" | "center" | "right"; tone?: Tone }[];
 }
 export interface MachineEvent {
-  type: "emit" | "enter" | "start" | "finish" | "fold" | "land" | "select" | "state" | "load";
+  type: "emit" | "enter" | "start" | "finish" | "fold" | "land" | "select" | "state" | "load" | "status" | "clear" | "open";
   /** Machine time in seconds. */
   t: number;
   node?: string | null;
   outcome?: string;
   token?: { id: number; key?: MachineKey; label: string; status: string; count: number };
+  /** fold: the token that merged away. */
+  from?: { id: number; key?: MachineKey; label: string; status: string; count: number };
+  /** open: the key of the clicked token, and what it or the clicked node links to. */
+  key?: MachineKey;
+  link?: string;
   playing?: boolean;
   speed?: number;
   nodes?: string[];
@@ -258,6 +277,8 @@ export interface MachineToken {
   key?: MachineKey;
   label?: string;
   status?: MachineStatus;
+  /** start(): makes the token a button; a click fires an "open" event with this and the token's key. */
+  link?: string;
   /** Land at once instead of gliding: for drawing what is already true. */
   instant?: boolean;
 }
@@ -285,12 +306,18 @@ export interface Machine {
   advance(seconds?: number): void;
   /** Swap the whole machine. */
   load(spec: MachineSpec): void;
-  /** Change one node's behavior while it runs. */
+  /**
+   * Change one node while it runs: its behavior (hold, capacity, out…) and its look: `tone`, `frozen`, `label`, `meta`,
+   * `link`, a checks node's `items` (rebuilds the chips), a sink's `value`.
+   */
   set(id: string, patch: Partial<MachineNode>): void;
   node(id: string): MachineNodeInfo | undefined;
   /** True while a token with this key is on the board. */
   has(key: MachineKey): boolean;
-  /** A token leaves the node (a source's row, or its out side) for its `to` or first wire. False when the node is missing or the key is taken. */
+  /**
+   * A token leaves the node (a source's row, or its out side) for its `to` or first wire. False when the node is missing or the key is taken.
+   * A sink sends a copy down each of its wires, keyed `<key>:<node>`.
+   */
   emit(id: string, token?: MachineToken & { row?: number; kind?: string }): boolean;
   /**
    * A token enters the node and starts there: from a line's dot with the same key or label, from another node, or
@@ -301,6 +328,12 @@ export interface Machine {
   finish(key: MachineKey, outcome?: string | MachineOutcome): boolean;
   /** Put a dot on a line at once, judged when `status` is given. */
   land(id: string, token?: Omit<MachineToken, "instant">): boolean;
+  /** Retone a held or moving keyed token, such as "waiting" for a stalled run. An empty status clears it. False when the key is missing. */
+  status(key: MachineKey, status: MachineStatus): boolean;
+  /** Glide a keyed token into another keyed token and merge it: the counts add up. False when either key is missing. */
+  fold(key: MachineKey, intoKey: MachineKey, options?: { instant?: boolean }): boolean;
+  /** Empty every token, dot and count without rebuilding, so a replay can start over. Looks set with `set()` stay. */
+  clear(): void;
   select(id: string | null): void;
   destroy(): void;
 }
@@ -320,6 +353,10 @@ export interface MachineKind {
   patch?(node: any, patch: Partial<MachineNode>, helpers: any): void;
   judged?(node: any, helpers: any): void;
   emit?(node: any, token: MachineToken & { row?: number; kind?: string }, helpers: any): boolean | void;
+  /** A working token left its slot without an outcome (it folded into another). */
+  release?(node: any, slot: any, token: any, helpers: any): void;
+  /** machine.clear() emptied the board: reset what the kind draws. */
+  clear?(node: any, helpers: any): void;
 }
 /** Draw a spec into a .sd-machine figure (or its .sd-machine-board). Plays at once unless the user asks for reduced motion. */
 export function mountMachine(root: HTMLElement, spec: MachineSpec, options?: {

@@ -16,9 +16,11 @@
  *   patch(n, patch, h)       machine.set() changed the spec
  *   judged(n, h)             a dot of this line was judged (line only)
  *   emit(n, token, h)        machine.emit() asked this node to send a token out
+ *   release(n, slot, token, h) a working token left its slot without an outcome (fold)
+ *   clear(n, h)              machine.clear() emptied the board: reset what you draw
  *
  * h holds the engine's helpers: t, rand, span, el, svg, place, spawn,
- * despawn, send, move, emit, setStatus, mark, refresh, nodes, reduced,
+ * despawn, send, move, emit, setStatus, has, mark, refresh, nodes, reduced,
  * driven (the spec has driven: true, so nothing starts by itself).
  * Kinds write data-* state only; machine.css draws it.
  */
@@ -79,6 +81,17 @@ const box = {
     slot.trace.style.strokeDashoffset = "";
     flash(slot.box, outcome.status, h);
   },
+  release(n, slot) {
+    delete slot.box.dataset.busy;
+    slot.trace.style.strokeDashoffset = "";
+  },
+  clear(n) {
+    for (const slot of n.slots) {
+      box.release(n, slot);
+      delete slot.box.dataset.result;
+      delete slot.box.dataset.resultAt;
+    }
+  },
   tick(n, h) {
     for (const slot of n.slots) if (slot.box) clearFlash(slot.box, h, 0.5);
   },
@@ -97,6 +110,10 @@ const press = {
     box.finish(n, slot, tok, outcome, h);
     n.el.dataset.stamp = "";
     n.state.stampAt = h.t;
+  },
+  clear(n, h) {
+    box.clear(n, h);
+    delete n.el.dataset.stamp;
   },
   tick(n, h) {
     box.tick(n, h);
@@ -123,23 +140,56 @@ const scan = {
     n.fill.style.scale = "";
     flash(n.track, outcome.status, h);
   },
+  release(n) {
+    n.fill.style.scale = "";
+  },
+  clear(n) {
+    n.fill.style.scale = "";
+    delete n.track.dataset.result;
+    delete n.track.dataset.resultAt;
+  },
   tick(n, h) {
     clearFlash(n.track, h, 0.8);
   },
 };
 
-/** One at a time, with a row of named checks that finish at their own pace. */
+/** The chips of a checks node: a name, or { name, status } to start in a state. */
+function drawChecks(n, items, h) {
+  n.row.replaceChildren();
+  const working = Boolean(n.slots[0]?.holding);
+  n.items = items.map((item) => {
+    const { name, status } = typeof item === "string" ? { name: item } : item;
+    const chip = h.el("span", "sd-machine-check", n.row);
+    chip.textContent = name;
+    chip.dataset.status = status || (working ? "running" : "queued");
+    return { chip, name, at: working ? 0.3 + h.rand() * 0.7 : 1 };
+  });
+}
+
+/**
+ * One at a time, with a row of named checks that finish at their own pace.
+ * A finish outcome may carry `items: { name: "done" | "failed" | "skipped" }`
+ * to set chips by name (a driven host knows which step failed); `keep: true`
+ * leaves the finished chips until the next run starts, and
+ * `machine.set(id, { items })` rebuilds them under new names.
+ */
 const checks = {
   capacity: () => 1,
   slots: (n) => [[16, n.h / 2]],
   build(n, h) {
-    const row = h.el("div", "sd-machine-checks", n.body);
-    n.items = (n.spec.items || ["check"]).map((name) => {
-      const chip = h.el("span", "sd-machine-check", row);
-      chip.textContent = name;
-      chip.dataset.status = "queued";
-      return { chip, at: 1 };
-    });
+    n.row = h.el("div", "sd-machine-checks", n.body);
+    n.state.resetAt = Infinity;
+    drawChecks(n, n.spec.items || ["check"], h);
+  },
+  patch(n, patch, h) {
+    if ("items" in patch) drawChecks(n, patch.items || [], h);
+  },
+  release(n) {
+    for (const item of n.items) item.chip.dataset.status = "queued";
+  },
+  clear(n) {
+    n.state.resetAt = Infinity;
+    for (const item of n.items) item.chip.dataset.status = "queued";
   },
   start(n, slot, tok, h) {
     for (const item of n.items) {
@@ -154,9 +204,14 @@ const checks = {
     }
   },
   finish(n, slot, tok, outcome, h) {
-    for (const item of n.items) item.chip.dataset.status = "done";
-    if (outcome.status === "failed") n.items[Math.floor(h.rand() * n.items.length)].chip.dataset.status = "failed";
-    n.state.resetAt = h.t + 1.2;
+    const named = outcome.items;
+    for (const item of n.items) {
+      const given = named?.[item.name];
+      const now = item.chip.dataset.status;
+      item.chip.dataset.status = typeof given === "string" ? given : named && (now === "failed" || now === "skipped") ? now : "done";
+    }
+    if (!named && outcome.status === "failed" && n.items.length) n.items[Math.floor(h.rand() * n.items.length)].chip.dataset.status = "failed";
+    n.state.resetAt = n.spec.keep ? Infinity : h.t + 1.2;
   },
   tick(n, h) {
     if (h.t < n.state.resetAt || !n.items) return;
@@ -219,6 +274,10 @@ const line = {
     if (newest) n.el.dataset.status = newest.dataset.status;
     h.refresh(n);
   },
+  clear(n) {
+    for (const dot of n.dots) dot.remove();
+    n.dots.length = 0;
+  },
 };
 
 /**
@@ -270,6 +329,15 @@ const source = {
       source.emit(n, { label: sha(h), row: i }, h);
     }
   },
+  clear(n, h) {
+    for (const [i, r] of n.rows.entries()) {
+      delete r.row.dataset.result;
+      delete r.row.dataset.resultAt;
+      r.shown = -1;
+      r.start = h.t;
+      r.next = h.t + h.span(n.spec.every ?? [3, 6]) * ((i + 1) / n.rows.length);
+    }
+  },
   emit(n, { key, label, row = 0, status, kind = "change" }, h) {
     const i = ((row % n.rows.length) + n.rows.length) % n.rows.length;
     const r = n.rows[i];
@@ -291,25 +359,66 @@ const source = {
   },
 };
 
-/** The end of the road: counts what arrives and shows the latest (`format`, with {n}). */
+/** What a sink shows: the host's `value` when it gave one, else `format` with the count in {n}. */
+function sinkText(n) {
+  return String(n.spec.value ?? (n.spec.format ?? "{n}").replace("{n}", n.state.n));
+}
+
+/** Show the sink's text, flipping when it changed. */
+function showTag(n) {
+  const text = sinkText(n);
+  if (n.tagText.textContent === text) return;
+  n.tagText.textContent = text;
+  n.state.flips = (n.state.flips ?? 0) + 1;
+  n.tag.dataset.flip = String(n.state.flips % 2);
+}
+
+/**
+ * The end of the road: counts what arrives and shows the latest (`format`,
+ * with {n}). A host can show a name instead with `machine.set(id, { value })`
+ * (a release tag), and `machine.emit(id)` sends a copy token down each of
+ * its wires, so one tag fans out to everything that consumes it. A copy's key
+ * is `<key>:<node it goes to>`.
+ */
 const sink = {
   capacity: () => 0,
   build(n, h) {
     n.tag = h.el("span", "sd-machine-tag", n.body);
     n.state.n = n.spec.start ?? 0;
     n.tagText = h.el("b", "", n.tag);
-    n.tagText.textContent = (n.spec.format ?? "{n}").replace("{n}", n.state.n);
+    n.tagText.textContent = sinkText(n);
   },
   accept(n, tok, h) {
     h.move(tok, [[n.x + n.w / 2, n.y + n.h / 2]], () => {
       h.despawn(tok, "merge");
       n.state.n++;
       n.count.done++;
-      n.tagText.textContent = (n.spec.format ?? "{n}").replace("{n}", n.state.n);
-      n.tag.dataset.flip = String(n.state.n % 2);
+      showTag(n);
       flash(n.tag, tok.status, h);
       h.refresh(n);
     });
+    return true;
+  },
+  patch(n) {
+    showTag(n);
+  },
+  clear(n) {
+    n.state.n = n.spec.start ?? 0;
+    delete n.tag.dataset.result;
+    delete n.tag.dataset.resultAt;
+    showTag(n);
+  },
+  emit(n, { key, label, status, kind }, h) {
+    const to = [...new Set(n.spec.emit ?? h.wiresFrom(n.id))];
+    if (!to.length || (key != null && to.some((id) => h.has(`${key}:${id}`)))) return false;
+    for (const id of to) {
+      const tok = h.spawn({
+        x: n.x + n.w / 2, y: n.y + n.h / 2, label: label ?? n.tagText.textContent, status, kind,
+        key: key != null ? `${key}:${id}` : undefined,
+      });
+      h.emit("emit", { node: n.id, token: { id: tok.id, key: tok.key, label: tok.label, status: tok.status, count: 1 } });
+      h.send(tok, n, id);
+    }
     return true;
   },
   tick(n, h) {
