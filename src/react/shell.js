@@ -81,8 +81,21 @@ export function AppShell({
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [closable, closeOverlays]);
 
+  const drawerOpener = useRef(null);
   useEffect(() => {
-    if (drawerOpen) root.current.querySelector('.sd-rail-item[aria-current]:not([aria-current="false"])')?.focus();
+    if (drawerOpen) {
+      const opener = document.activeElement;
+      // A strict-mode second run sees focus already moved into the drawer; that is not an opener.
+      drawerOpener.current = opener === document.body || opener?.closest(".sd-rail, .sd-sidebar") ? null : opener;
+      root.current.querySelector('.sd-rail-item[aria-current]:not([aria-current="false"])')?.focus();
+      return;
+    }
+    const opener = drawerOpener.current;
+    drawerOpener.current = null;
+    // Focus left in the drawer, or dropped to the page, goes back to the control that opened it.
+    const active = document.activeElement;
+    const lost = !active || active === document.body || active.closest(".sd-rail, .sd-sidebar");
+    if (opener?.isConnected && lost) opener.focus({ preventScroll: true });
   }, [drawerOpen]);
 
   const context = useMemo(

@@ -76,11 +76,25 @@ export function setAside(shell, open) {
   emit(shell);
 }
 
+// The control that was focused when each drawer opened, so closing the drawer can hand focus back to it.
+const drawerOpeners = new WeakMap();
+
 export function setDrawer(shell, open) {
-  if (open) shell.dataset.drawer = "";
-  else delete shell.dataset.drawer;
+  if (open) {
+    const opener = document.activeElement;
+    if (opener && opener !== document.body && !("drawer" in shell.dataset)) drawerOpeners.set(shell, opener);
+    shell.dataset.drawer = "";
+  } else delete shell.dataset.drawer;
   sync(shell);
   if (open) shell.querySelector('.sd-rail-item[aria-current]:not([aria-current="false"])')?.focus();
+  else {
+    const opener = drawerOpeners.get(shell);
+    drawerOpeners.delete(shell);
+    // Focus left in the drawer, or dropped to the page, goes back to the control that opened it.
+    const active = document.activeElement;
+    const lost = !active || active === document.body || active.closest(".sd-rail, .sd-sidebar");
+    if (opener?.isConnected && lost) opener.focus({ preventScroll: true });
+  }
   emit(shell);
 }
 
