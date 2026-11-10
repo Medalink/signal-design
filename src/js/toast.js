@@ -7,13 +7,32 @@
  */
 let region;
 
+/** The open modal dialog, if any. Where `:modal` is not a selector (WKWebView before Safari 16.4) any open dialog stands in. */
+function modal() {
+  let open;
+  try {
+    open = document.querySelectorAll("dialog:modal");
+  } catch {
+    open = document.querySelectorAll("dialog[open]");
+  }
+  return open[open.length - 1];
+}
+
 function toaster() {
-  if (region?.isConnected) return region;
-  region = document.createElement("div");
-  region.className = "sd-toaster";
-  region.setAttribute("role", "status");
-  region.setAttribute("aria-live", "polite");
-  document.body.append(region);
+  if (!region?.isConnected) {
+    region = document.createElement("div");
+    region.className = "sd-toaster";
+    region.setAttribute("role", "status");
+    region.setAttribute("aria-live", "polite");
+  }
+  // A modal paints above the page and makes it inert, so toasts raised while it is open live inside it.
+  const host = modal() ?? document.body;
+  if (region.parentNode !== host) {
+    host.append(region);
+    if (host !== document.body) {
+      host.addEventListener("close", () => region.parentNode === host && document.body.append(region), { once: true });
+    }
+  }
   return region;
 }
 
