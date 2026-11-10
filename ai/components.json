@@ -1185,6 +1185,25 @@
    "html": "<figure class=\"sd-machine\" id=\"machine-fold\" data-chart-theme=\"spectrum\" aria-labelledby=\"machine-fold-h\">\n  <div class=\"sd-machine-head\">\n    <span class=\"sd-label sd-label-strong\" id=\"machine-fold-h\">Rings on a branch</span>\n    <span class=\"sd-machine-clock\">1 hour, sped up<i></i></span>\n  </div>\n  <div class=\"sd-machine-board\"></div>\n</figure>"
   },
   {
+   "id": "machine-driven",
+   "section": "Data",
+   "title": "Driven",
+   "classes": [
+    "sd-btn",
+    "sd-btn-sm",
+    "sd-label",
+    "sd-label-strong",
+    "sd-machine",
+    "sd-machine-board",
+    "sd-machine-foot",
+    "sd-machine-head"
+   ],
+   "attributes": [],
+   "usage": "driven: true in the spec, and nothing starts by itself · machine.emit(node, { key, label, row }) · machine.start(node, { key, label, from, hold, since, count }) · machine.finish(key, \"pass\" | \"fail\") · machine.land(line, { key, label, status }) · instant: true draws what is already true without a glide",
+   "js": "No JS needed: the HTML works with the CSS alone.",
+   "html": "<figure class=\"sd-machine\" id=\"machine-hand\" aria-labelledby=\"machine-hand-h\">\n  <div class=\"sd-machine-head\">\n    <span class=\"sd-label sd-label-strong\" id=\"machine-hand-h\">Your events</span>\n  </div>\n  <div class=\"sd-machine-board\"></div>\n  <div class=\"sd-machine-foot\">\n    <div class=\"flex flex-wrap items-center gap-2\">\n      <button class=\"sd-btn sd-btn-sm\" type=\"button\" data-drive=\"push\">Push</button>\n      <button class=\"sd-btn sd-btn-sm\" type=\"button\" data-drive=\"run\">Run lab</button>\n      <button class=\"sd-btn sd-btn-sm\" type=\"button\" data-drive=\"pass\">Pass</button>\n      <button class=\"sd-btn sd-btn-sm\" type=\"button\" data-drive=\"fail\">Fail</button>\n    </div>\n  </div>\n</figure>"
+  },
+  {
    "id": "machine-chain",
    "section": "Data",
    "title": "Chain",
