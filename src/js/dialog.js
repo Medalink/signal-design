@@ -44,9 +44,18 @@ export function closeDialog(target, value) {
   return dialog;
 }
 
-/** Escape closes the dialog it was pressed in. WebKit's search fields swallow it otherwise. */
+/** An open popover that Escape dismisses (a manual one ignores it). Where `:popover-open` is not a selector there is none. */
+function lightDismissOpen() {
+  try {
+    return document.querySelector('[popover]:not([popover="manual"]):popover-open') !== null;
+  } catch {
+    return false;
+  }
+}
+
+/** Escape closes the dialog it was pressed in. WebKit's search fields swallow it otherwise. An open popover takes the key first, and closes alone. */
 export function onDialogKeydown(event) {
-  if (event.key !== "Escape" || event.defaultPrevented) return;
+  if (event.key !== "Escape" || event.defaultPrevented || lightDismissOpen()) return;
   const dialog = event.target.closest?.("dialog[open]");
   if (dialog && closes(dialog, "escape")) {
     event.preventDefault();
