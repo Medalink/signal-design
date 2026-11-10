@@ -28,15 +28,28 @@ export function onTabClick(event) {
   if (tab) selectTab(tab);
 }
 
+/** A tab the keyboard passes over. */
+const skipped = (tab) => tab.disabled || tab.getAttribute("aria-disabled") === "true";
+
 export function onTabKeydown(event) {
   const tab = event.target.closest('[role="tab"]');
   if (!tab) return;
   const list = tabsOf(tab);
   const i = list.indexOf(tab);
-  const moves = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: list.length - 1 };
-  if (!(event.key in moves)) return;
+  const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
+  if (step === undefined && event.key !== "Home" && event.key !== "End") return;
   event.preventDefault();
-  const next = list[(moves[event.key] + list.length) % list.length];
+  const enabled = list.filter((t) => !skipped(t));
+  let next;
+  if (event.key === "Home") next = enabled[0];
+  else if (event.key === "End") next = enabled[enabled.length - 1];
+  else {
+    for (let n = 1; n <= list.length && !next; n++) {
+      const candidate = list[(((i + step * n) % list.length) + list.length) % list.length];
+      if (!skipped(candidate)) next = candidate;
+    }
+  }
+  if (!next) return;
   next.focus();
   selectTab(next);
 }
