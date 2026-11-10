@@ -36,6 +36,25 @@
       <p class="demo-usage">A ring with <code>queue: "latest"</code> keeps only the newest waiting token: each later arrival glides into it and its count goes up, so one run covers the whole range.</p>
     </div>
 
+    <div class="demo-block" id="machine-driven">
+      <h2 class="sd-label">Driven</h2>
+      <figure class="sd-machine" id="machine-hand" aria-labelledby="machine-hand-h">
+        <div class="sd-machine-head">
+          <span class="sd-label sd-label-strong" id="machine-hand-h">Your events</span>
+        </div>
+        <div class="sd-machine-board"></div>
+        <div class="sd-machine-foot">
+          <div class="flex flex-wrap items-center gap-2">
+            <button class="sd-btn sd-btn-sm" type="button" data-drive="push">Push</button>
+            <button class="sd-btn sd-btn-sm" type="button" data-drive="run">Run lab</button>
+            <button class="sd-btn sd-btn-sm" type="button" data-drive="pass">Pass</button>
+            <button class="sd-btn sd-btn-sm" type="button" data-drive="fail">Fail</button>
+          </div>
+        </div>
+      </figure>
+      <p class="demo-usage"><code>driven: true</code> in the spec, and nothing starts by itself · <code>machine.emit(node, { key, label, row })</code> · <code>machine.start(node, { key, label, from, hold, since, count })</code> · <code>machine.finish(key, "pass" | "fail")</code> · <code>machine.land(line, { key, label, status })</code> · <code>instant: true</code> draws what is already true without a glide</p>
+    </div>
+
     <div class="demo-block" id="machine-chain">
       <h2 class="sd-label">Chain</h2>
       <div class="grid gap-4">

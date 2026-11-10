@@ -15,9 +15,11 @@
  *   tick(n, h)               every frame
  *   patch(n, patch, h)       machine.set() changed the spec
  *   judged(n, h)             a dot of this line was judged (line only)
+ *   emit(n, token, h)        machine.emit() asked this node to send a token out
  *
  * h holds the engine's helpers: t, rand, span, el, svg, place, spawn,
- * despawn, send, move, emit, setStatus, mark, refresh, nodes, reduced.
+ * despawn, send, move, emit, setStatus, mark, refresh, nodes, reduced,
+ * driven (the spec has driven: true, so nothing starts by itself).
  * Kinds write data-* state only; machine.css draws it.
  */
 
@@ -186,6 +188,7 @@ const line = {
     const dot = h.el("i", "sd-machine-dot", n.body);
     dot.dataset.line = n.id;
     dot.dataset.label = tok.label;
+    if (tok.key != null) dot.dataset.key = String(tok.key);
     dot.dataset.new = "";
     dot.style.left = `${x}px`;
     dot.style.top = `${y}px`;
@@ -203,7 +206,7 @@ const line = {
       requestAnimationFrame(() => delete dot.dataset.new);
       n.count.done++;
       h.emit("land", { node: n.id, token: { id: tok.id, label: tok.label, status: tok.status, count: tok.count } });
-      for (const to of n.spec.emit ?? h.wiresFrom(n.id)) {
+      for (const to of h.driven ? [] : (n.spec.emit ?? h.wiresFrom(n.id))) {
         const copy = h.spawn({ x: n.x + x, y: n.y + y, label: tok.label, ref: dot, kind: "signal" });
         h.send(copy, n, to);
       }
@@ -250,6 +253,10 @@ const source = {
   },
   tick(n, h) {
     for (const [i, r] of n.rows.entries()) {
+      if (h.driven) {
+        clearFlash(r.row, h, 1.2);
+        continue;
+      }
       const p = Math.min(1, (h.t - r.start) / (r.next - r.start || 1));
       const shown = Math.round(p * 20) / 20;
       if (shown !== r.shown) {
@@ -260,12 +267,18 @@ const source = {
       if (h.t < r.next) continue;
       r.start = h.t;
       r.next = h.t + h.span(n.spec.every ?? [3, 6]);
-      const tok = h.spawn({ x: n.x + 66, y: n.y + r.y, label: sha(h), origin: i, kind: "change" });
-      n.count.done++;
-      h.emit("emit", { node: n.id, token: { id: tok.id, label: tok.label, status: "", count: 1 } });
-      h.send(tok, n, n.spec.to, [[n.x + n.w - 10, n.y + r.y], [n.x + n.w - 10, n.y + n.h / 2]]);
-      h.refresh(n);
+      source.emit(n, { label: sha(h), row: i }, h);
     }
+  },
+  emit(n, { key, label, row = 0, status, kind = "change" }, h) {
+    const i = ((row % n.rows.length) + n.rows.length) % n.rows.length;
+    const r = n.rows[i];
+    const tok = h.spawn({ x: n.x + 66, y: n.y + r.y, label, status, origin: i, kind, key });
+    n.count.done++;
+    if (h.driven) flash(r.row, "running", h);
+    h.emit("emit", { node: n.id, token: { id: tok.id, key, label: tok.label, status: tok.status, count: 1 } });
+    h.send(tok, n, n.spec.to, [[n.x + n.w - 10, n.y + r.y], [n.x + n.w - 10, n.y + n.h / 2]]);
+    h.refresh(n);
   },
   accept(n, tok, h) {
     const r = n.rows[tok.origin] ?? n.rows[0];

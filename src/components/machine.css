@@ -275,6 +275,9 @@
   :is(.sd-machine-slot, .sd-machine-track, .sd-machine-tag, .sd-machine-agent)[data-result="failed"] {
     --flash: var(--sd-chart-critical);
   }
+  .sd-machine-agent[data-result="running"] {
+    --flash: var(--sd-chart-accent);
+  }
   :is(.sd-machine-slot, .sd-machine-tag)[data-result] {
     background: color-mix(in srgb, var(--flash) 28%, transparent);
   }

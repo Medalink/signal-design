@@ -19,6 +19,11 @@
  * stops it, and the loop sleeps while the machine is off screen or the tab is
  * hidden. Under prefers-reduced-motion nothing plays until asked, and tokens
  * jump instead of gliding.
+ *
+ * A spec with `driven: true` decides nothing by itself: sources stay quiet,
+ * holds never end and lines send no copies. The host says what happened
+ * (emit, start, finish, land, by a key it picks) and the machine animates it,
+ * so a live system can drive the board from its own events.
  */
 import { KINDS } from "./machine-kinds.js";
 
@@ -99,6 +104,8 @@ function pointAt({ points, cum, len }, d) {
 
 const pathD = (points) => points.map(([x, y], i) => `${i ? "L" : "M"}${x} ${y}`).join("");
 const ease = (p) => 0.5 - Math.cos(Math.PI * p) / 2;
+/** A driven hold's progress: true to the estimate up to 90%, then creeping, never done until told. */
+const guess = (f) => (f < 0.9 ? Math.max(0, f) : 0.9 + 0.08 * (1 - Math.exp((0.9 - f) * 3)));
 const span = (v, rand) => (Array.isArray(v) ? v[0] + (v[1] - v[0]) * rand() : Number(v) || 0);
 
 /** `out` as a table of outcomes: "main" means one outcome, pass, to main. */
@@ -154,6 +161,7 @@ export function mountMachine(root, spec, options = {}) {
   let last = 0;
   let ids = 0;
   let selected = null;
+  let snap = false;
   let canvas;
   let fit;
   let wiresLayer;
@@ -163,12 +171,13 @@ export function mountMachine(root, spec, options = {}) {
   const nodes = new Map();
   const wires = [];
   const tokens = new Set();
+  const keyed = new Map();
   const moving = new Set();
 
   const px = ([c, r]) => [c * cell, r * cell];
   const emit = (type, detail = {}) =>
     figure.dispatchEvent(new CustomEvent("sd:machine", { bubbles: true, detail: { type, t, ...detail } }));
-  const info = (tok) => tok && { id: tok.id, label: tok.label, status: tok.status, count: tok.count };
+  const info = (tok) => tok && { id: tok.id, key: tok.key, label: tok.label, status: tok.status, count: tok.count };
 
   /* ---- Tokens ---------------------------------------------------------- */
 
@@ -178,21 +187,24 @@ export function mountMachine(root, spec, options = {}) {
     tok.el.style.transform = `translate(${x}px, ${y}px)`;
   }
 
-  function spawn({ x, y, label, status, origin, ref, kind } = {}) {
+  function spawn({ x, y, label, status, origin, ref, kind, key, count } = {}) {
     const tok = {
-      id: ++ids, label: label ?? "", status: status ?? "", origin, refs: ref ? [ref] : [], count: 1,
+      id: ++ids, key, label: label ?? "", status: status ?? "", origin, refs: ref ? [ref] : [], count: Math.max(1, count ?? 1),
       el: el("i", "sd-machine-token", tokensLayer),
     };
     if (kind) tok.el.dataset.kind = kind;
     if (tok.status) tok.el.dataset.status = tok.status;
+    if (tok.count > 1) tok.el.dataset.count = String(tok.count);
     place(tok, x, y);
     tokens.add(tok);
+    if (key != null) keyed.set(key, tok);
     return tok;
   }
 
   function despawn(tok, how = "fade") {
     moving.delete(tok);
     tokens.delete(tok);
+    if (keyed.get(tok.key) === tok) keyed.delete(tok.key);
     dropTrail(tok);
     tok.el.dataset.gone = how;
     setTimeout(() => tok.el.remove(), 200);
@@ -219,8 +231,9 @@ export function mountMachine(root, spec, options = {}) {
     tok.path = path;
     tok.then = then;
     tok.t0 = t;
-    tok.dur = reduced.matches ? 0 : Math.max(min, path.len / (s.travel ?? 300));
-    if (!reduced.matches && path.len > TRAIL * 1.5) {
+    const jump = reduced.matches || snap;
+    tok.dur = jump ? 0 : Math.max(min, path.len / (s.travel ?? 300));
+    if (!jump && path.len > TRAIL * 1.5) {
       tok.trail = svg("path", { class: "sd-machine-trail", d: pathD(path.points), "stroke-dasharray": `${TRAIL} ${path.len + TRAIL}` }, trailsLayer);
       if (tok.status) tok.trail.dataset.status = tok.status;
       tok.trail.style.strokeDashoffset = String(TRAIL);
@@ -333,13 +346,14 @@ export function mountMachine(root, spec, options = {}) {
     for (const ref of tok.refs) ref.dataset.busy = String((Number(ref.dataset.busy) || 0) + 1);
     const [x, y] = slot.at;
     move(tok, [[n.x + x, n.y + y]], () => {
-      slot.t0 = t;
-      slot.t1 = t + span(n.spec.hold ?? 1, rand);
+      slot.t0 = t - (tok.since ?? 0);
+      slot.t1 = slot.t0 + Math.max(0.001, span(tok.hold ?? n.spec.hold ?? 1, rand));
       slot.holding = true;
       tok.el.dataset.held = "";
       n.kind.start?.(n, slot, tok, helpers);
       n.el.dataset.busy = "";
       emit("start", { node: n.id, token: info(tok) });
+      if (tok.verdict) finish(n, slot, resolve(n, tok.verdict));
     });
   }
 
@@ -355,9 +369,16 @@ export function mountMachine(root, spec, options = {}) {
     return table[table.length - 1];
   }
 
-  function finish(n, slot) {
+  /** An outcome by name from the node's out table, or a plain { status, to }. */
+  function resolve(n, outcome) {
+    if (outcome && typeof outcome === "object") return { key: outcome.key ?? "custom", ...outcome };
+    const key = String(outcome ?? "pass");
+    return outcomes(n.spec.out).find((o) => o.key === key) ?? { key, status: key === "fail" ? "failed" : "done" };
+  }
+
+  function finish(n, slot, chosen) {
     const tok = slot.tok;
-    const outcome = pick(n);
+    const outcome = chosen ?? pick(n);
     slot.tok = null;
     slot.holding = false;
     delete tok.el.dataset.held;
@@ -508,6 +529,7 @@ export function mountMachine(root, spec, options = {}) {
     nodes.clear();
     wires.length = 0;
     tokens.clear();
+    keyed.clear();
     moving.clear();
     board.replaceChildren();
     const [W, H] = px(s.size || [48, 24]);
@@ -567,6 +589,10 @@ export function mountMachine(root, spec, options = {}) {
     for (const n of nodes.values()) {
       for (const slot of n.slots) {
         if (!slot.holding) continue;
+        if (s.driven) {
+          n.kind.progress?.(n, slot, guess((t - slot.t0) / (slot.t1 - slot.t0 || 1)), helpers);
+          continue;
+        }
         const p = slot.t1 > slot.t0 ? Math.min(1, (t - slot.t0) / (slot.t1 - slot.t0)) : 1;
         n.kind.progress?.(n, slot, p, helpers);
         if (p >= 1) finish(n, slot);
@@ -596,6 +622,9 @@ export function mountMachine(root, spec, options = {}) {
     get reduced() {
       return reduced.matches;
     },
+    get driven() {
+      return Boolean(s.driven);
+    },
     rand: () => rand(),
     span: (v) => span(v, rand),
     el,
@@ -611,12 +640,25 @@ export function mountMachine(root, spec, options = {}) {
     wiresFrom: (id) => wires.filter((w) => w.from === id).map((w) => w.to),
     /** Judge a line dot: its status, then the line's own status from its newest judged dot. */
     mark(dot, status) {
+      if (dot.dataset.status === "failed" && status !== "failed") return;
       dot.dataset.status = status;
       const line = nodes.get(dot.dataset.line);
       if (line) line.kind.judged?.(line, helpers);
     },
     refresh,
   };
+
+  /** Run `fn` with every move it starts landing at once when `instant`. */
+  function now(instant, fn) {
+    if (!instant) return fn();
+    const was = snap;
+    snap = true;
+    try {
+      return fn();
+    } finally {
+      snap = was;
+    }
+  }
 
   /* ---- Input ----------------------------------------------------------- */
 
@@ -740,6 +782,92 @@ export function mountMachine(root, spec, options = {}) {
         id, spec: structuredClone(n.spec), count: { ...n.count }, queue: n.queue.length,
         busy: n.slots.filter((slot) => slot.tok).length, capacity: n.slots.length, state: { ...n.state },
       };
+    },
+    /** True while a token with this key is on the board. */
+    has(key) {
+      return keyed.has(key);
+    },
+    /**
+     * A token leaves a node (a source's row, or any node's out side) for the
+     * node's `to` or its first wire. False when the node is missing or the key is taken.
+     */
+    emit(id, { key, label, row, status, kind = "change", instant } = {}) {
+      const n = nodes.get(id);
+      if (!n || (key != null && keyed.has(key))) return false;
+      return now(instant, () => {
+        if (n.kind.emit) return n.kind.emit(n, { key, label, row, status, kind }, helpers) !== false;
+        const to = n.spec.to ?? helpers.wiresFrom(n.id)[0];
+        if (!to) return false;
+        const tok = spawn({ x: n.port.out[0], y: n.port.out[1], label, status, kind, key });
+        n.count.done++;
+        emit("emit", { node: n.id, token: info(tok) });
+        send(tok, n, to);
+        return true;
+      });
+    },
+    /**
+     * A token enters a node and starts there. `from` is where it comes from:
+     * a line (from the dot with the same key or label), another node, or
+     * nowhere (it appears by the queue). `hold` is the expected time in
+     * seconds, `since` how long it has already run, `count` how many it covers.
+     */
+    start(id, { key, label, from, count, hold, since, status, kind = "signal", instant } = {}) {
+      const n = nodes.get(id);
+      if (!n || (key != null && keyed.has(key))) return false;
+      return now(instant, () => {
+        const src = from != null ? nodes.get(from) : null;
+        let x = n.port.in[0] - 8;
+        let y = n.port.in[1];
+        let ref;
+        if (src?.dots) {
+          const i = src.dots.findIndex((d) => (key != null && d.dataset.key === String(key)) || (label && d.dataset.label === label));
+          ref = src.dots[i];
+          const wire = wireBetween(src.id, n.id);
+          [x, y] = ref ? [src.x + 12 + i * src.gap, src.y + src.h / 2] : wire ? wire.points[0] : src.port.out;
+        } else if (src) {
+          [x, y] = src.port.out;
+        }
+        const tok = spawn({ x, y, label, status, kind, key, count, ref });
+        tok.hold = hold;
+        tok.since = since;
+        if (src) send(tok, src, n.id);
+        else accept(n, tok);
+        return true;
+      });
+    },
+    /** End a keyed token's hold with an outcome from its node's out table ("pass", "fail") or { status, to }. */
+    finish(key, outcome = "pass") {
+      const tok = keyed.get(key);
+      if (!tok) return false;
+      const n = tok.node;
+      if (!n) {
+        tok.verdict = outcome;
+        return true;
+      }
+      const chosen = resolve(n, outcome);
+      const slot = n.slots.find((x) => x.tok === tok);
+      if (slot?.holding) finish(n, slot, chosen);
+      else if (slot) tok.verdict = chosen;
+      else {
+        n.queue.splice(n.queue.indexOf(tok), 1);
+        setStatus(tok, chosen.status);
+        despawn(tok);
+        pull(n);
+      }
+      return true;
+    },
+    /** Put a dot on a line at once, with a status when it is already judged. */
+    land(id, { key, label, status } = {}) {
+      const n = nodes.get(id);
+      if (!n?.dots) return false;
+      return now(true, () => {
+        const tok = spawn({ x: n.x + 12, y: n.y + n.h / 2, label, kind: "change" });
+        accept(n, tok);
+        const dot = n.dots[0];
+        if (key != null && dot) dot.dataset.key = String(key);
+        if (status && dot) helpers.mark(dot, status);
+        return true;
+      });
     },
     select,
     destroy() {

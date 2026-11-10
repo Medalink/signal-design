@@ -228,6 +228,8 @@ export interface MachineWire {
 }
 export interface MachineSpec {
   seed?: number;
+  /** Nothing starts by itself: sources stay quiet, holds wait for finish() and lines send no copies. The host drives it with emit, start, finish and land. */
+  driven?: boolean;
   /** px per grid cell. Default 20. */
   cell?: number;
   size: MachineCell;
@@ -245,10 +247,19 @@ export interface MachineEvent {
   t: number;
   node?: string | null;
   outcome?: string;
-  token?: { id: number; label: string; status: string; count: number };
+  token?: { id: number; key?: MachineKey; label: string; status: string; count: number };
   playing?: boolean;
   speed?: number;
   nodes?: string[];
+}
+/** The host's name for a token, so it can finish what it started. */
+export type MachineKey = string | number;
+export interface MachineToken {
+  key?: MachineKey;
+  label?: string;
+  status?: MachineStatus;
+  /** Land at once instead of gliding: for drawing what is already true. */
+  instant?: boolean;
 }
 export interface MachineNodeInfo {
   id: string;
@@ -277,6 +288,19 @@ export interface Machine {
   /** Change one node's behavior while it runs. */
   set(id: string, patch: Partial<MachineNode>): void;
   node(id: string): MachineNodeInfo | undefined;
+  /** True while a token with this key is on the board. */
+  has(key: MachineKey): boolean;
+  /** A token leaves the node (a source's row, or its out side) for its `to` or first wire. False when the node is missing or the key is taken. */
+  emit(id: string, token?: MachineToken & { row?: number; kind?: string }): boolean;
+  /**
+   * A token enters the node and starts there: from a line's dot with the same key or label, from another node, or
+   * from nowhere. `hold` is the expected seconds, `since` how long it has already run, `count` how many it covers.
+   */
+  start(id: string, token?: MachineToken & { from?: string; hold?: MachineSpan; since?: number; count?: number; kind?: string }): boolean;
+  /** End a keyed token's hold with an outcome from its node's `out` ("pass", "fail"), or a plain one. */
+  finish(key: MachineKey, outcome?: string | MachineOutcome): boolean;
+  /** Put a dot on a line at once, judged when `status` is given. */
+  land(id: string, token?: Omit<MachineToken, "instant">): boolean;
   select(id: string | null): void;
   destroy(): void;
 }
@@ -295,6 +319,7 @@ export interface MachineKind {
   tick?(node: any, helpers: any): void;
   patch?(node: any, patch: Partial<MachineNode>, helpers: any): void;
   judged?(node: any, helpers: any): void;
+  emit?(node: any, token: MachineToken & { row?: number; kind?: string }, helpers: any): boolean | void;
 }
 /** Draw a spec into a .sd-machine figure (or its .sd-machine-board). Plays at once unless the user asks for reduced motion. */
 export function mountMachine(root: HTMLElement, spec: MachineSpec, options?: {

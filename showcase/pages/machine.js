@@ -52,6 +52,51 @@ const rings = {
   ],
 };
 
+const hand = {
+  driven: true,
+  size: [40, 12],
+  nodes: [
+    { id: "agents", kind: "source", at: [1, 2], size: [5, 6], agents: 3, to: "main", label: "agents", labelSide: "top-start" },
+    { id: "main", kind: "line", at: [9, 4], size: [30, 2], label: "main", labelSide: "top-start", note: "", notes: { done: "green", failed: "red" } },
+    {
+      id: "lab", kind: "checks", at: [14, 8], size: [18, 3], judge: true, hold: 8, items: ["build", "a11y", "perf"],
+      label: "lab", labelSide: "top-start", out: { pass: { status: "done" }, fail: { status: "failed" } },
+    },
+  ],
+  wires: [
+    { from: "agents", to: "main" },
+    { from: "main", to: "lab", start: [10, 5], via: [[10, 9.5]] },
+  ],
+};
+
+{
+  const figure = document.getElementById("machine-hand");
+  const machine = mountMachine(figure, hand);
+  let pushed = 0;
+  let newest = null;
+  let running = null;
+  const sha = () => Math.floor(Math.random() * 0xfffffff).toString(16).padStart(7, "0");
+  const act = {
+    push() {
+      newest = sha();
+      machine.emit("agents", { key: newest, label: newest, row: pushed++ });
+    },
+    run() {
+      if (!newest || (running && machine.has(running))) return;
+      running = `lab:${newest}`;
+      machine.start("lab", { key: running, label: newest, from: "main" });
+    },
+    pass: () => running && machine.finish(running, "pass"),
+    fail: () => running && machine.finish(running, "fail"),
+  };
+  for (const button of figure.querySelectorAll("[data-drive]")) {
+    button.addEventListener("click", () => {
+      machine.play();
+      act[button.dataset.drive]();
+    });
+  }
+}
+
 for (const [id, spec] of [["machine-deploy", deploy], ["machine-fold", rings]]) {
   const figure = document.getElementById(id);
   const machine = mountMachine(figure, spec);
