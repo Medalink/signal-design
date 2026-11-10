@@ -36,7 +36,10 @@ export function onTabKeydown(event) {
   if (!tab) return;
   const list = tabsOf(tab);
   const i = list.indexOf(tab);
-  const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
+  const steps = { ArrowRight: 1, ArrowLeft: -1 };
+  // A vertical tablist also moves on Up and Down; Left and Right keep working there for existing pages.
+  if (tab.closest('[role="tablist"]').getAttribute("aria-orientation") === "vertical") Object.assign(steps, { ArrowDown: 1, ArrowUp: -1 });
+  const step = steps[event.key];
   if (step === undefined && event.key !== "Home" && event.key !== "End") return;
   event.preventDefault();
   const enabled = list.filter((t) => !skipped(t));
