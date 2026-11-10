@@ -1,0 +1,156 @@
+/*
+ * High contrast: a Windows contrast theme, or any forced-colors mode. The
+ * system paints every fill in Canvas and drops every shadow, so state that
+ * Signal draws with tone is gone: a pressed segment, the current channel and a
+ * ticked checkbox all look like their neighbours. A system color is the one
+ * value forced colors keeps, so here the selected, pressed or current item
+ * takes the system's selection colors (Highlight, HighlightText) and each
+ * mark drawn with a fill is redrawn in system colors. Nothing in this file
+ * applies outside forced colors.
+ */
+@layer components {
+  @media (forced-colors: active) {
+    /* A control whose whole box is the state. forced-color-adjust: none stops
+       the system painting a Canvas plate behind the label, and it reaches the
+       content too, so the content takes the same text color and no fill. */
+    :is(
+      .sd-seg > :is([aria-pressed="true"], [aria-checked="true"], [aria-selected="true"], label:has(:checked)),
+      .sd-chip:is([aria-pressed="true"], [aria-checked="true"]),
+      .sd-btn[aria-pressed="true"],
+      .sd-icon-btn[aria-pressed="true"],
+      .sd-statusbar-seg[aria-pressed="true"],
+      .sd-reactions > button[aria-pressed="true"],
+      .sd-emoji-cats > button[aria-pressed="true"],
+      .sd-emoji-grid > button:is([aria-pressed="true"], [aria-current="true"]),
+      .sd-grid-picker > :is(button, [role="option"])[aria-selected="true"],
+      .sd-pagination [aria-current]:not([aria-current="false"]),
+      .sd-tabs > :is(a, button):is([aria-selected="true"], [aria-current]:not([aria-current="false"])),
+      .sd-nav :is(a, button):is([aria-current]:not([aria-current="false"]), [aria-selected="true"], [aria-pressed="true"]),
+      .sd-sidenav :is(a, button):is([aria-current]:not([aria-current="false"]), [aria-selected="true"]),
+      .sd-sidebar-link[aria-current]:not([aria-current="false"]),
+      .sd-rail-item:is([aria-current]:not([aria-current="false"]), [aria-pressed="true"]),
+      .sd-item:is([aria-current]:not([aria-current="false"]), [aria-selected="true"]),
+      .sd-menu :is([role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], .sd-menu-item):is(:focus, [data-active]),
+      [role="treeitem"][aria-selected="true"] > .sd-tree-row,
+      .sd-table tbody tr[aria-selected="true"]
+    ) {
+      transition: none;
+      forced-color-adjust: none;
+      border-color: Highlight;
+      background-color: Highlight;
+      color: HighlightText;
+      outline-color: CanvasText;
+      & * {
+        background-color: transparent;
+        color: HighlightText;
+      }
+    }
+
+    /* An edge that is transparent until its item is current would show on
+       every item, since forced colors paints transparent edges too. */
+    .sd-sidebar-link,
+    .sd-sidenav :is(a, button),
+    .sd-item {
+      border-inline-start-color: Canvas;
+    }
+    .sd-tabs > :is(a, button) {
+      border-block-end-color: Canvas;
+    }
+
+    /* A marker drawn as a filled box: the bar beside the current row, the
+       corner of the chosen option card. */
+    :is(.sd-rail-item, .sd-rail-tile, .sd-row)[aria-current]:not([aria-current="false"])::before,
+    .sd-steps > li[aria-current="step"]::before,
+    .sd-option:is([aria-pressed="true"], [aria-checked="true"], :has(> input:checked))::after {
+      background-color: Highlight;
+    }
+    .sd-option:is([aria-pressed="true"], [aria-checked="true"], :has(> input:checked)) {
+      border-color: Highlight;
+    }
+
+    /* A box with content of its own (a poll's result bar, a message's links
+       and attachments) keeps its colors and takes a frame instead. */
+    .sd-poll-option:is([aria-pressed="true"], [data-chosen]) {
+      border-color: Highlight;
+    }
+    .sd-poll-option:is([aria-pressed="true"], [data-chosen]):not(:focus-visible),
+    .sd-message:is([data-selected], [aria-current]:not([aria-current="false"])):not(:focus-visible) {
+      outline: 2px solid Highlight;
+      outline-offset: -2px;
+    }
+
+    /* Checkbox, radio and switch. forced-color-adjust: none lets the box keep
+       the fills written here; they have no content it could leak into. */
+    input:is([type="checkbox"], [type="radio"]) {
+      forced-color-adjust: none;
+      border-color: ButtonText;
+      background-color: Canvas;
+      transition: none;
+    }
+    input:is([type="checkbox"], [type="radio"]):focus-visible {
+      outline-color: Highlight;
+    }
+    /* The tick and the dash are cut out of a Highlight box, so they show in
+       Canvas whatever the theme's lightness. */
+    input[type="checkbox"]:not([role="switch"]):is(:checked, :indeterminate) {
+      border-color: Highlight;
+      background: Highlight;
+      mask: var(--sd-icon-check) center / 16px 16px no-repeat, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+    }
+    input[type="checkbox"]:not([role="switch"]):indeterminate {
+      mask-image: var(--sd-icon-dash), linear-gradient(#000 0 0);
+    }
+    input[type="radio"]:checked {
+      border-color: Highlight;
+      background: Highlight;
+      box-shadow: inset 0 0 0 3px Canvas;
+    }
+    input[type="checkbox"][role="switch"] {
+      background: linear-gradient(ButtonText 0 0) left 2px center / 12px 12px no-repeat Canvas;
+    }
+    input[type="checkbox"][role="switch"]:checked {
+      border-color: Highlight;
+      background: linear-gradient(Canvas 0 0) right 2px center / 12px 12px no-repeat Highlight;
+    }
+
+    /* Progress and meter: a framed track, the value in Highlight. */
+    progress,
+    meter {
+      outline: 1px solid CanvasText;
+    }
+    progress::-webkit-progress-value {
+      background: Highlight;
+    }
+    progress::-moz-progress-bar {
+      background: Highlight;
+    }
+    progress:indeterminate::-moz-progress-bar {
+      background: Canvas;
+    }
+    meter::-moz-meter-bar {
+      background: Highlight;
+    }
+
+    /* Slider: the track and thumb are fills. */
+    input[type="range"]::-webkit-slider-runnable-track {
+      background: CanvasText;
+    }
+    input[type="range"]::-moz-range-track {
+      background: CanvasText;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      background: Highlight;
+    }
+    input[type="range"]::-moz-range-thumb,
+    input[type="range"]::-moz-range-progress {
+      background: Highlight;
+    }
+    input[type="range"]:focus-visible::-webkit-slider-thumb {
+      outline-color: CanvasText;
+    }
+    input[type="range"]:focus-visible::-moz-range-thumb {
+      outline-color: CanvasText;
+    }
+  }
+}
