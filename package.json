@@ -131,7 +131,7 @@
   },
   "types": "./src/js/index.d.ts",
   "engines": {
-    "node": ">=24.22.1 <25"
+    "node": ">=24.22.3 <25"
   },
   "packageManager": "pnpm@11.27.1",
   "bin": {
