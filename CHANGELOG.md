@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 1.4.63 (2026-11-11)
+
+### Removed
+- `sd-composer`: the 1px `--sd-fg` outline that drew around the whole box while
+  the text field held focus. The composer keeps its bottom edge and the caret;
+  a focused button inside still takes its own ring.
+
 ## 1.4.62 (2026-11-10)
 
 ### Fixed
