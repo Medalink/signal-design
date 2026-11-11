@@ -1566,13 +1566,6 @@
     border-block-end: 1px solid var(--sd-field-edge, var(--sd-line-control));
     background: var(--sd-tone-3);
   }
-  /* An outline on the box's edge, so a composer drawn without a border shows
-     focus. Only the text field lights it: a focused button inside has its own
-     ring. */
-  .sd-composer:has(textarea:focus) {
-    outline: 1px solid var(--sd-fg);
-    outline-offset: -1px;
-  }
   .sd-composer-row {
     display: flex;
     align-items: flex-end;
