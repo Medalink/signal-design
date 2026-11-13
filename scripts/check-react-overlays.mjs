@@ -265,22 +265,34 @@ window.__sdDialog = { onDialogClick, onDialogKeydown };` });
   // Escape forgets the warm window. First's tip closes as the pointer leaves, which opens the window for 300 ms; focus
   // then shows Second's tip, and Escape closes it. Without the reset in `dismiss` the window is still open, so the
   // pointer reaching Second shows its tip at once; with it, Second waits its delay. The window is what makes this able
-  // to fail, so the steps are timed and a run too slow to keep inside it fails instead of passing for nothing.
+  // to fail, so the steps are timed and only a run that keeps inside it is asserted on: a busy runner can spend the
+  // window on the steps themselves, so the sequence runs again until one fits, and a too-slow engine fails the budget
+  // instead of passing the dismissal for nothing.
   await cold();
   await hoverOn(trigger("First"));
   expect(await shows("First tip", 2500), "a hover from cold shows its tip, so leaving it opens the warm window");
   const secondTrigger = await trigger("Second").elementHandle();
   const target = await centerOf(trigger("Second"));
   const clock = () => page.evaluate(() => performance.now());
-  const began = await clock();
-  await away();
-  await secondTrigger.focus();
-  await page.keyboard.press("Escape");
-  await moveTo(target);
-  const spent = (await clock()) - began;
-  await pause(250);
-  expect(spent < 280, `the steps fit inside the 300 ms warm window, took ${Math.round(spent)} ms`);
-  expect((await tipsNow()).length === 0, `after Escape closed a tip the next trigger waits its delay even inside the warm window, got ${JSON.stringify(await tipsNow())}`);
+  const escapeSteps = async () => {
+    const began = await clock();
+    await away();
+    await secondTrigger.focus();
+    await page.keyboard.press("Escape");
+    await moveTo(target);
+    const spent = (await clock()) - began;
+    await pause(250);
+    return { spent, waits: (await tipsNow()).length === 0 };
+  };
+  let run = await escapeSteps();
+  for (let attempt = 0; attempt < 3 && run.spent >= 280; attempt++) {
+    await cold();
+    await hoverOn(trigger("First"));
+    if (!(await shows("First tip", 2500))) break;
+    run = await escapeSteps();
+  }
+  expect(run.spent < 280, `the steps fit inside the 300 ms warm window, took ${Math.round(run.spent)} ms`);
+  expect(run.waits, `after Escape closed a tip the next trigger waits its delay even inside the warm window, got ${JSON.stringify(await tipsNow())}`);
   await trigger("Second").blur();
 
   // At delay 0 too: a tip opened by focus gives way to the one the pointer opens, even in another demo.
@@ -300,23 +312,35 @@ window.__sdDialog = { onDialogClick, onDialogKeydown };` });
   // The engine may handle the pointerleave well before the move's reply
   // reaches the test, so a host clock loses the first tens of milliseconds of
   // the closeDelay (seen on WebKit). Stamp the leave and the removal in the
-  // page, where the delay actually runs.
+  // page, where the delay actually runs. The stamp repeats, so a probe that
+  // landed too late can redo the leave and measure a fresh one.
   await linger.evaluate((el) => {
     window.__linger = {};
-    el.addEventListener("pointerleave", () => { window.__linger.left = performance.now(); }, { capture: true, once: true });
+    el.addEventListener("pointerleave", () => { window.__linger.left = performance.now(); }, { capture: true });
     const mo = new MutationObserver(() => {
-      if (!document.querySelector("body > [role=tooltip]")) {
-        window.__linger.gone = performance.now();
-        mo.disconnect();
-      }
+      if (!document.querySelector("body > [role=tooltip]")) window.__linger.gone = performance.now();
     });
     mo.observe(document.body, { childList: true });
   });
   await hoverOn(linger);
   expect(await shows("Stays a moment", 2500), "a tip with a closeDelay shows after its delay");
+  // The tip must still be there shortly after the pointer leaves, but a busy
+  // runner's probe can arrive after the closeDelay has already run, so the
+  // presence is measured in the page against the stamped leave and the leave
+  // is redone until a probe lands inside the delay to assert on.
+  const lingerStayed = () => page.evaluate(() => {
+    const left = window.__linger?.left;
+    return { seen: document.querySelector("body > [role=tooltip]") !== null, late: left == null || performance.now() - left > 350 };
+  });
   await away();
-  await pause(150);
-  expect((await tipsNow()).length === 1, "a tip with a closeDelay stays when the pointer leaves");
+  let stayed = await lingerStayed();
+  for (let attempt = 0; stayed.late && attempt < 3; attempt++) {
+    await hoverOn(linger);
+    if (!(await shows("Stays a moment", 2500))) break;
+    await away();
+    stayed = await lingerStayed();
+  }
+  expect(stayed.seen, "a tip with a closeDelay stays when the pointer leaves");
   expect(await gone(2000), "the tip goes once its closeDelay is up");
   const lingered = await page.evaluate(() => (window.__linger?.left != null && window.__linger?.gone != null ? Math.round(window.__linger.gone - window.__linger.left) : -1));
   expect(lingered >= 350, `the tip goes once its closeDelay is up, after ${lingered}ms`);

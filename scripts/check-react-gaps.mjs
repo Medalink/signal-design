@@ -250,6 +250,10 @@ export async function checkReactGaps(page, base) {
   const hostIs = (text) => until((text) => document.querySelector("#react-editor-hostcard [data-host-state]").textContent === text, text);
   const hostCount = (count) => until((count) => document.querySelectorAll(".sd-hovercard").length === count, count, 3000);
   await hostDemo.scrollIntoViewIfNeeded();
+  // The placer flips a card above an anchor with too little room below it, so
+  // give the trigger the middle of the viewport: its card fits under it there
+  // whatever a late font load or a busy runner's scroll left behind.
+  await hostTrigger("lisbon").evaluate((el) => el.scrollIntoView({ block: "center" }));
   expect(await hostCards.count() === 0, "a host that was not asked to show renders no card");
   await hostTrigger("lisbon").hover();
   expect(await hostCount(1), "hovering a trigger React did not render shows the card after the owner's delay");
