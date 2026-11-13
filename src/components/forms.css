@@ -139,8 +139,9 @@
   .sd-check > input {
     margin-top: 2px;
   }
+  /* The switch box is taller than its track; the track stays on the first line. */
   .sd-check > input[role="switch"] {
-    margin-top: 0;
+    margin-top: calc(-1 * var(--sw-pad));
   }
   /* A control with no text beside it (a table cell, a toolbar): only the
      control is the target. React's Checkbox and Switch add it when they have

@@ -111,11 +111,14 @@
       box-shadow: inset 0 0 0 3px Canvas;
     }
     input[type="checkbox"][role="switch"] {
-      background: linear-gradient(ButtonText 0 0) left 2px center / 12px 12px no-repeat Canvas;
+      border-color: transparent;
+      background: linear-gradient(ButtonText 0 0) left 3px center / 12px 12px no-repeat padding-box Canvas;
+      box-shadow: inset 0 0 0 1px ButtonText;
     }
     input[type="checkbox"][role="switch"]:checked {
-      border-color: Highlight;
-      background: linear-gradient(Canvas 0 0) right 2px center / 12px 12px no-repeat Highlight;
+      border-color: transparent;
+      background: linear-gradient(Canvas 0 0) right 3px center / 12px 12px no-repeat padding-box Highlight;
+      box-shadow: inset 0 0 0 1px Highlight;
     }
 
     /* Progress and meter: a framed track, the value in Highlight. */
