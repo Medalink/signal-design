@@ -2712,6 +2712,34 @@
    "script": "import { init } from \"signal-design/js\";\ninit();\n\n// Start the work as soon as the pointer heads for the button.\ndocument.addEventListener(\"sd:predict\", (event) => {\n  const { via, eta } = event.detail; // via: \"path\" | \"hover\" | \"touch\" | \"focus\"\n  router.preloadRoute({ to: event.target.dataset.to });\n});\n\n// Or for one element, from a framework effect:\nimport { predict } from \"signal-design/js\";\nconst stop = predict(button, () => loadSettingsDialog());"
   },
   {
+   "id": "js-predict-parts",
+   "section": "Setup",
+   "title": "Signal parts",
+   "classes": [
+    "sd-avatar",
+    "sd-avatar-stack",
+    "sd-btn",
+    "sd-btn-ghost",
+    "sd-btn-icon",
+    "sd-btn-sm",
+    "sd-dialog",
+    "sd-dialog-body",
+    "sd-dialog-head",
+    "sd-kv",
+    "sd-rail-tile",
+    "sd-thread-chip"
+   ],
+   "attributes": [
+    "data-sd-close",
+    "data-sd-open",
+    "data-sd-predict"
+   ],
+   "usage": "sd-rail-tile, sd-thread-chip, button.sd-shot and [data-sd-open] are targets with no attribute · data-sd-predict=\"off\" on one or an ancestor opts out",
+   "js": "JS: init() from signal-design/js wires data-sd-open · data-sd-predict · data-sd-close.",
+   "html": "<div class=\"demo-predict-field demo-predict-parts\" id=\"predict-parts\">\n  <button class=\"sd-rail-tile\" type=\"button\" aria-label=\"Operations\">OP</button>\n  <button class=\"sd-thread-chip\" type=\"button\">\n    <span class=\"sd-avatar-stack\" aria-hidden=\"true\"><span class=\"sd-avatar\" data-tone=\"accent\">M</span><span class=\"sd-avatar\" data-tone=\"success\">L</span></span>\n    <b>4 replies</b><time datetime=\"12:41\">12:41 PM</time>\n  </button>\n  <button class=\"sd-btn\" type=\"button\" data-sd-open=\"predict-dialog\">Open settings</button>\n  <button class=\"sd-btn\" type=\"button\" data-sd-open=\"predict-dialog\" data-sd-predict=\"off\">Not predicted</button>\n</div>\n\n<dl class=\"sd-kv\">\n  <dt>Predicted</dt><dd class=\"font-mono\" id=\"parts-name\">none</dd>\n  <dt>Via</dt><dd class=\"font-mono\" id=\"parts-via\">none</dd>\n</dl>\n\n<dialog class=\"sd-dialog\" id=\"predict-dialog\" aria-labelledby=\"predict-dialog-h\">\n  <header class=\"sd-dialog-head\"><span id=\"predict-dialog-h\">Settings</span><button class=\"sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost\" data-sd-close=\"\" aria-label=\"Close\">×</button></header>\n  <div class=\"sd-dialog-body\"><p>Loaded when the pointer headed for the button.</p></div>\n</dialog>",
+   "script": "document.addEventListener(\"sd:predict\", (event) => {\n  const el = event.target;\n  if (el.matches(\".sd-rail-tile\")) loadGroup(el.dataset.group);\n  else if (el.matches(\".sd-thread-chip\")) loadReplies(el.closest(\".sd-message\").id);\n  else if (el.matches(\"button.sd-shot\")) new Image().src = el.dataset.full;\n  else if (el.matches(\"[data-sd-open]\")) loadDialog(el.dataset.sdOpen);\n});"
+  },
+  {
    "id": "js-predict-prefetch",
    "section": "Setup",
    "title": "Prefetched links",

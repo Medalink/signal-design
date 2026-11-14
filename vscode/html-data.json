@@ -259,7 +259,7 @@
   },
   {
    "name": "data-sd-predict",
-   "description": "Marks a prediction target: it gets data-sd-predicted and an sd:predict event when the mouse heads for it, hovers, touches or focuses it, once per approach."
+   "description": "Marks a prediction target: it gets data-sd-predicted and an sd:predict event when the mouse heads for it, hovers, touches or focuses it, once per approach. sd-rail-tile, sd-thread-chip, button.sd-shot and [data-sd-open] are targets without it; \"off\" on a target or an ancestor opts out."
   },
   {
    "name": "data-sd-prefetch",

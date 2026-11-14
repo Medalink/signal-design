@@ -165,7 +165,7 @@ by `title` or `classes`) rather than inventing markup.
 | Art, mascots and scenes | `sd-art` + `data-sd-art` (15 tech pieces: router, switch, server, database, chip, signal, wifi, mast, battery, globe, packet, terminal, laptop, shield, gear; 16 nature pieces: pine, oak, sprout, mountain, sun, moon, cloud, birds, rock, grass, flower, mushroom, acorn, leaf, waves, signpost; `defineArt()` adds more; React `<Art name tone>`, or `artRects()` for another framework); `sd-mascot` + `data-sd-mascot` (iris, eagle, squirrel, elephant) with `data-mood` (idle, calm, happy, curious, focused, sleepy, alert, offline), `data-tone` on its status light, `aria-busy` to work; `sd-art-scene` (`--cols`, `--rows`) with children at `--x`/`--y` cells and an `sd-art-horizon`; `data-sd-ornaments-style="circuit"` for tech corners |
 | Stream overlays (OBS) | `sd-scene` (1920×1080 units in `--sd-u`; `data-full`, `data-clear`) with `sd-scene-copy`, `sd-scene-bar`, `sd-scene-label`, `sd-cam`, `sd-scene-goal`, `sd-credits`, `sd-stream-alert`; `mountStream(scene).alert({ kind, name })` |
 | Empty | `sd-empty` (gets a center ornament automatically) |
-| Pointer prediction | `data-sd-predict` (a target: `sd:predict` with `via` `path`, `hover`, `touch` or `focus` and an `eta` in ms when the mouse heads for it, once per approach; `data-sd-predicted` on the current one, no style), `data-sd-prefetch` on a link (`<link rel="prefetch">` for the href or the value, same origin, not under Save-Data), `predict(el, fn)` (returns a disposer), `prefetch(url)`, `initPredict()` on pages that skip `init()` |
+| Pointer prediction | `data-sd-predict` (a target: `sd:predict` with `via` `path`, `hover`, `touch` or `focus` and an `eta` in ms when the mouse slows toward it or rests on it, once per approach; `data-sd-predicted` on the current one, no style; `sd-rail-tile`, `sd-thread-chip`, `button.sd-shot` and `[data-sd-open]` are targets without it; `data-sd-predict="off"` on a target or an ancestor opts out), `data-sd-prefetch` on a link (`<link rel="prefetch">` for the href or the value, same origin, not under Save-Data), `predict(el, fn)` (returns a disposer), `prefetch(url)`, `initPredict()` on pages that skip `init()` |
 | Ornaments | `data-sd-ornaments="<placement> <style>"`: dust by default; a style word draws art instead: `contours` (fiction), `lattice` (research), `waveform` (blogs, notes), `dashed` (empty, planned), `book` (the hero), `stack` (manuscripts). Placements `tl tr bl br top bottom center`, `data-sd-ornaments-size`, `data-sd-ornaments-seed`. Faint, behind content |
 | React app | `signal-design/react`: `Button`, `Field` + `Input`, `Dialog`, `Menu`, `Tabs`, `ToastProvider`, `Table`, `AppShell` with `Rail`, `Sidebar` and `ShellMain`; editor parts `Toolbar`, `ToolbarButton`, `Manuscript`, `StatusSegment`, `Mark`, `Spoiler`, `ContentWarning`, `HoverCard`, `Tree`, `Combobox`, `CommandPalette`, `RadioGroup`, `SegmentedControl`, `MenuItemCheckbox`; props are the state (`open`/`onOpenChange`, `value`/`onValueChange`, `pressed`/`onPressedChange`); also `Icon`, `Art` (a pixel piece), `GutterBlock` (a margin marker for a block), `HoverCardHost` (a hover card for a trigger React does not render), `ResizablePanel`, `WeightedBar`, `Tree` row `actions` (keys, not buttons inside the treeitem), `Sheet side="bottom"` |
 <!-- /doc-table:agents -->
@@ -4896,6 +4896,46 @@ document.addEventListener("sd:predict", (event) => {
 // Or for one element, from a framework effect:
 import { predict } from "signal-design/js";
 const stop = predict(button, () => loadSettingsDialog());
+```
+
+## Setup / Signal parts
+
+sd-rail-tile, sd-thread-chip, button.sd-shot and [data-sd-open] are targets with no attribute · data-sd-predict="off" on one or an ancestor opts out
+
+Classes: sd-avatar, sd-avatar-stack, sd-btn, sd-btn-ghost, sd-btn-icon, sd-btn-sm, sd-dialog, sd-dialog-body, sd-dialog-head, sd-kv, sd-rail-tile, sd-thread-chip
+
+JS: init() from signal-design/js wires data-sd-open · data-sd-predict · data-sd-close.
+
+```html
+<div class="demo-predict-field demo-predict-parts" id="predict-parts">
+  <button class="sd-rail-tile" type="button" aria-label="Operations">OP</button>
+  <button class="sd-thread-chip" type="button">
+    <span class="sd-avatar-stack" aria-hidden="true"><span class="sd-avatar" data-tone="accent">M</span><span class="sd-avatar" data-tone="success">L</span></span>
+    <b>4 replies</b><time datetime="12:41">12:41 PM</time>
+  </button>
+  <button class="sd-btn" type="button" data-sd-open="predict-dialog">Open settings</button>
+  <button class="sd-btn" type="button" data-sd-open="predict-dialog" data-sd-predict="off">Not predicted</button>
+</div>
+
+<dl class="sd-kv">
+  <dt>Predicted</dt><dd class="font-mono" id="parts-name">none</dd>
+  <dt>Via</dt><dd class="font-mono" id="parts-via">none</dd>
+</dl>
+
+<dialog class="sd-dialog" id="predict-dialog" aria-labelledby="predict-dialog-h">
+  <header class="sd-dialog-head"><span id="predict-dialog-h">Settings</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close="" aria-label="Close">×</button></header>
+  <div class="sd-dialog-body"><p>Loaded when the pointer headed for the button.</p></div>
+</dialog>
+```
+
+```js
+document.addEventListener("sd:predict", (event) => {
+  const el = event.target;
+  if (el.matches(".sd-rail-tile")) loadGroup(el.dataset.group);
+  else if (el.matches(".sd-thread-chip")) loadReplies(el.closest(".sd-message").id);
+  else if (el.matches("button.sd-shot")) new Image().src = el.dataset.full;
+  else if (el.matches("[data-sd-open]")) loadDialog(el.dataset.sdOpen);
+});
 ```
 
 ## Setup / Prefetched links
