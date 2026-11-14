@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 1.4.69 (2026-11-14)
+
+### Added
+- `data-sd-prerender` and `prerender(url)`: a predicted same-origin page is
+  prerendered with a speculation rule, scripts included, so it opens at once.
+  Chromium and Edge only; elsewhere it prefetches instead.
+
 ## 1.4.68 (2026-11-14)
 
 ### Added
