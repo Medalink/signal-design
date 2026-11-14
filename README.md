@@ -1111,8 +1111,14 @@ document.addEventListener("sd:predict", (event) => {
   (Safari, Tauri on macOS and Linux) ignores `rel="prefetch"`, so there it
   also runs a low-priority `fetch()`, which helps only when the response is
   cacheable.
+- `data-sd-prerender` goes further: it renders the whole page in the
+  background with a speculation rule, scripts included, so opening it is
+  instant. Use it only for pages whose scripts are safe to run before the user
+  arrives (no analytics page view, no state change on load). Chromium and
+  Edge only; elsewhere it prefetches instead.
 - `predict(el, fn)` makes one element a target and calls `fn` with the detail;
-  it returns a function that undoes both. `prefetch(url)` prefetches from code.
+  it returns a function that undoes both. `prefetch(url)` and `prerender(url)`
+  do the same loads from code.
 - A path prediction aims at where the pointer will stop, worked out from how
   fast it is slowing over the last 80 ms, and hit-tests that spot with
   `elementFromPoint`, so it sees what is on top, scrolled or added since load.

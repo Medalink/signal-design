@@ -54,7 +54,7 @@ export { initArt, ART, ART_SETS, MASCOTS, MASCOT_MOODS, IRIS_MOODS, artSVG, artR
 export { setScrollbars, initScrollbars } from "./scrollbars.js";
 export { initKeyboard } from "./keyboard.js";
 export { initSweep } from "./sweep.js";
-export { initPredict, predict, prefetch } from "./predict.js";
+export { initPredict, predict, prefetch, prerender } from "./predict.js";
 export { setOptions, filterList } from "./listbox.js";
 export { drawSpark } from "./inputs.js";
 export { windowAction } from "./window.js";

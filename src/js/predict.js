@@ -11,9 +11,11 @@
  * `[data-sd-prefetch]` also adds `<link rel="prefetch">` for its URL
  * (the attribute's value, else the element's href), same origin only, and a
  * low-priority fetch() where the engine ignores rel="prefetch".
+ * `[data-sd-prerender]` prerenders its page with a speculation rule instead,
+ * or prefetches it where speculation rules are missing.
  */
 // Signal's own parts whose next step is a load (a group, a thread, an image, a dialog) are targets without the attribute.
-const SELECTOR = ":is([data-sd-predict], [data-sd-prefetch], .sd-rail-tile, .sd-thread-chip, button.sd-shot, [data-sd-open]):not([data-sd-predict=off])";
+const SELECTOR = ":is([data-sd-predict], [data-sd-prefetch], [data-sd-prerender], .sd-rail-tile, .sd-thread-chip, button.sd-shot, [data-sd-open]):not([data-sd-predict=off])";
 const WINDOW_MS = 80;
 const MIN_DT = 4;
 const MIN_SPEED = 0.3;
@@ -31,6 +33,7 @@ let current = null;
 let dwell = 0;
 let candidate = null;
 const fetched = new Set();
+const rendered = new Set();
 
 function anyTargets(now) {
   if (now - targetsSeenAt > 500) {
@@ -51,8 +54,10 @@ function settle(el, detail) {
   current = el;
   if (!el) return;
   el.setAttribute("data-sd-predicted", "");
-  const url = el.getAttribute("data-sd-prefetch") || el.getAttribute("href");
-  if (el.hasAttribute("data-sd-prefetch") && url) prefetch(url);
+  for (const [attr, load] of LOADS) {
+    const url = el.hasAttribute(attr) && (el.getAttribute(attr) || el.getAttribute("href"));
+    if (url) load(url);
+  }
   el.dispatchEvent(new CustomEvent("sd:predict", { bubbles: true, detail }));
 }
 
@@ -149,33 +154,62 @@ function onBlur(event) {
   if (current && event.target === current && !current.matches(":hover")) settle(null);
 }
 
+// A same-origin http(s) URL that is not this page, without its hash, or null; null under Save-Data.
+function loadable(href) {
+  if (typeof document === "undefined" || navigator.connection?.saveData) return null;
+  let url;
+  try {
+    url = new URL(href, location.href);
+  } catch {
+    return null;
+  }
+  url.hash = "";
+  const here = new URL(location.href);
+  here.hash = "";
+  return url.origin === location.origin && /^https?:$/.test(url.protocol) && url.href !== here.href ? url.href : null;
+}
+
 /**
  * Prefetch a same-origin URL once, with `<link rel="prefetch">`. Returns
  * false when it skipped: Save-Data is on, the URL is another origin or this
  * page, or it was already fetched.
  */
 export function prefetch(href) {
-  if (typeof document === "undefined" || navigator.connection?.saveData) return false;
-  let url;
-  try {
-    url = new URL(href, location.href);
-  } catch {
-    return false;
-  }
-  url.hash = "";
-  const here = new URL(location.href);
-  here.hash = "";
-  if (url.origin !== location.origin || !/^https?:$/.test(url.protocol) || url.href === here.href) return false;
-  if (fetched.has(url.href)) return false;
-  fetched.add(url.href);
+  const url = loadable(href);
+  if (!url || fetched.has(url)) return false;
+  fetched.add(url);
   const link = document.createElement("link");
   link.rel = "prefetch";
-  link.href = url.href;
+  link.href = url;
   document.head.append(link);
   // WebKit (Safari, Tauri on macOS and Linux) keeps the link but never fetches it.
-  if (!link.relList.supports("prefetch")) fetch(url.href, { priority: "low" }).catch(() => {});
+  if (!link.relList.supports("prefetch")) fetch(url, { priority: "low" }).catch(() => {});
   return true;
 }
+
+/**
+ * Prerender a same-origin page once with a speculation rule, so opening it is
+ * instant. Where speculation rules are missing (Safari, Firefox, Tauri) it
+ * prefetches instead. Returns false when it skipped, as prefetch() does.
+ */
+export function prerender(href) {
+  const url = loadable(href);
+  if (!url) return false;
+  // WebKit parses speculation rules but does not prerender; document.prerendering marks an engine that does.
+  if (!HTMLScriptElement.supports?.("speculationrules") || !("prerendering" in document)) return prefetch(url);
+  if (rendered.has(url)) return false;
+  rendered.add(url);
+  const rule = document.createElement("script");
+  rule.type = "speculationrules";
+  rule.textContent = JSON.stringify({ prerender: [{ source: "list", urls: [url] }] });
+  document.head.append(rule);
+  return true;
+}
+
+const LOADS = [
+  ["data-sd-prefetch", prefetch],
+  ["data-sd-prerender", prerender],
+];
 
 /**
  * Make `el` a prediction target and call `fn` with the `sd:predict` detail.

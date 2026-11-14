@@ -24,6 +24,8 @@ document.getElementById("predict-parts").addEventListener("sd:predict", (event) 
 
 const list = document.getElementById("predict-fetched");
 new MutationObserver(() => {
-  const urls = [...document.head.querySelectorAll('link[rel="prefetch"]')].map((l) => new URL(l.href).pathname);
+  const prefetched = [...document.head.querySelectorAll('link[rel="prefetch"]')].map((l) => new URL(l.href).pathname);
+  const prerendered = [...document.head.querySelectorAll('script[type="speculationrules"]')].flatMap((s) => JSON.parse(s.textContent).prerender[0].urls.map((u) => `${new URL(u).pathname} (prerendered)`));
+  const urls = [...prefetched, ...prerendered];
   if (urls.length) list.replaceChildren(...urls.map((u) => Object.assign(document.createElement("li"), { textContent: u })));
 }).observe(document.head, { childList: true });

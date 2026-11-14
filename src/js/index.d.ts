@@ -599,6 +599,8 @@ export function initPredict(): void;
 export function predict(el: Element, fn: (detail: PredictDetail) => void): () => void;
 /** Prefetch a same-origin URL once. False when skipped: Save-Data, another origin, this page, or already fetched. */
 export function prefetch(href: string): boolean;
+/** Prerender a same-origin page once with a speculation rule; prefetches it where speculation rules are missing. False when skipped, as prefetch(). */
+export function prerender(href: string): boolean;
 
 /* Listboxes: palette and combobox */
 export interface PaletteOption {
