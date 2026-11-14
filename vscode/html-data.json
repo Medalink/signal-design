@@ -266,6 +266,10 @@
    "description": "A prediction target that also prefetches a same-origin URL (the value, else the href) with <link rel=prefetch> when predicted."
   },
   {
+   "name": "data-sd-prerender",
+   "description": "A prediction target that prerenders a same-origin page (the value, else the href) with a speculation rule when predicted; prefetches it where speculation rules are missing."
+  },
+  {
    "name": "data-sd-predicted",
    "description": "Set by the JS on the target the pointer is predicted to reach; cleared when the prediction moves on."
   },

@@ -2747,11 +2747,12 @@
     "sd-cluster"
    ],
    "attributes": [
-    "data-sd-prefetch"
+    "data-sd-prefetch",
+    "data-sd-prerender"
    ],
    "usage": "data-sd-prefetch on a link adds <link rel=\"prefetch\"> for its href once, same origin only, skipped under Save-Data · a value overrides the URL · prefetch(url) does it from code",
-   "js": "JS: init() from signal-design/js wires data-sd-prefetch.",
-   "html": "<nav class=\"sd-cluster\" style=\"--gap: 16px\" aria-label=\"Prefetch examples\">\n  <a href=\"./lib-buttons.html\" data-sd-prefetch=\"\">Buttons</a>\n  <a href=\"./lib-charts.html\" data-sd-prefetch=\"\">Charts</a>\n  <a href=\"./lib-messages.html\" data-sd-prefetch=\"\">Messages</a>\n</nav>\n\n<ul class=\"font-mono\" id=\"predict-fetched\"><li>none yet</li></ul>",
+   "js": "JS: init() from signal-design/js wires data-sd-prefetch · data-sd-prerender.",
+   "html": "<nav class=\"sd-cluster\" style=\"--gap: 16px\" aria-label=\"Prefetch examples\">\n  <a href=\"./lib-buttons.html\" data-sd-prefetch=\"\">Buttons</a>\n  <a href=\"./lib-charts.html\" data-sd-prefetch=\"\">Charts</a>\n  <a href=\"./lib-messages.html\" data-sd-prefetch=\"\">Messages</a>\n  <a href=\"./lib-type.html\" data-sd-prerender=\"\">Type (prerendered)</a>\n</nav>\n\n<ul class=\"font-mono\" id=\"predict-fetched\"><li>none yet</li></ul>",
    "script": "<a href=\"/reports\" data-sd-prefetch>Reports</a>\n<a href=\"/reports\" data-sd-prefetch=\"/api/reports.json\">Reports</a>"
   },
   {
