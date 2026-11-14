@@ -14,6 +14,7 @@ import { Fragment, cloneElement, createElement as h, useCallback, useEffect, use
 import { createPortal } from "react-dom";
 import { place } from "../js/position.js";
 import { cx, mergeRefs, useControllable, useIsomorphicLayoutEffect } from "./util.js";
+import { usePredicted } from "./predict.js";
 
 const rectOf = (rect) => ({ left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom, width: rect.right - rect.left, height: rect.bottom - rect.top });
 
@@ -52,13 +53,14 @@ function Card({ id, anchor, at, side, align, label, className, content, onEscape
   );
 }
 
-export function HoverCard({ content, label = "Preview", side = "bottom", align = "start", open, defaultOpen = false, onOpenChange, openDelay = 300, closeDelay = 150, className, children }) {
+export function HoverCard({ content, label = "Preview", side = "bottom", align = "start", open, defaultOpen = false, onOpenChange, onPredict, openDelay = 300, closeDelay = 150, className, children }) {
   const [isOpen, setOpen] = useControllable(open, defaultOpen, onOpenChange);
   const id = useId();
   const anchor = useRef(null);
   const card = useRef(null);
   const timer = useRef(0);
   const props = children.props;
+  const left = usePredicted(anchor, onPredict);
 
   const cancel = () => clearTimeout(timer.current);
   const later = (next, delay) => {
@@ -75,7 +77,8 @@ export function HoverCard({ content, label = "Preview", side = "bottom", align =
   const trigger = cloneElement(children, {
     ref: mergeRefs(props.ref, anchor),
     "aria-describedby": isOpen ? id : props["aria-describedby"],
-    onPointerEnter: on("onPointerEnter", (event) => mouse(event) && later(true, openDelay)),
+    "data-sd-predict": "",
+    onPointerEnter: on("onPointerEnter", (event) => mouse(event) && later(true, left(openDelay))),
     onPointerLeave: on("onPointerLeave", (event) => mouse(event) && later(false, closeDelay)),
     onFocus: on("onFocus", () => {
       cancel();

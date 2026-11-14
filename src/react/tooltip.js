@@ -18,6 +18,7 @@ import { Fragment, cloneElement, createElement as h, useEffect, useId, useLayout
 import { createPortal } from "react-dom";
 import { place } from "../js/position.js";
 import { cx, mergeRefs, showManual, useControllable } from "./util.js";
+import { usePredicted } from "./predict.js";
 
 /** How long after a tip closes, in milliseconds, a different trigger the pointer reaches shows at once. */
 const WARM = 300;
@@ -38,6 +39,7 @@ export function Tooltip({ content, side = "top", delay = 0, closeDelay = 0, clas
   const me = useRef(null);
   const props = children.props;
   const hoverable = closeDelay > 0;
+  const left = usePredicted(anchor);
 
   const stop = () => {
     clearTimeout(wait.current);
@@ -117,12 +119,13 @@ export function Tooltip({ content, side = "top", delay = 0, closeDelay = 0, clas
   const trigger = cloneElement(children, {
     ref: mergeRefs(props.ref, anchor),
     "aria-describedby": visible ? id : props["aria-describedby"],
+    "data-sd-predict": delay > 0 ? "" : props["data-sd-predict"],
     onPointerEnter: on("onPointerEnter", (event) => {
       // Coming back to a tip that is lingering keeps it.
       clearTimeout(linger.current);
       linger.current = 0;
       if (shown()) return;
-      show(event.pointerType !== "touch" && warm(me.current) ? 0 : delay);
+      show(event.pointerType !== "touch" && warm(me.current) ? 0 : left(delay));
     }),
     // A tap shows the tip as the finger lifts, which also ends a delay still running.
     onPointerUp: on("onPointerUp", (event) => event.pointerType !== "mouse" && show()),

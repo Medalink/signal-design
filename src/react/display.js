@@ -1,7 +1,8 @@
 /** Static parts: badges, avatars, cards, panels, empty states and tables. State is props; there is no behavior. */
-import { createElement as h, useId } from "react";
+import { createElement as h, useId, useRef } from "react";
 import { Icon } from "./icons.js";
-import { cx } from "./util.js";
+import { cx, mergeRefs } from "./util.js";
+import { usePredicted } from "./predict.js";
 
 export function Badge({ tone, solid, className, ...props }) {
   return h("span", { className: cx("sd-badge", solid && "sd-badge-solid", className), "data-tone": tone, ...props });
@@ -67,10 +68,12 @@ export function AvatarGrid({ members, label, size, className, ...props }) {
  * `open` is `aria-expanded` and `controls` the panel's id. The avatars are
  * decoration; `label` and `time` name the button.
  */
-export function ThreadChip({ participants = [], label, time, dateTime, open, controls, type = "button", className, ...props }) {
+export function ThreadChip({ participants = [], label, time, dateTime, open, controls, onPredict, type = "button", className, ...props }) {
+  const own = useRef(null);
+  usePredicted(own, onPredict);
   return h(
     "button",
-    { type, className: cx("sd-thread-chip", className), "aria-expanded": open, "aria-controls": controls, ...props },
+    { type, className: cx("sd-thread-chip", className), "aria-expanded": open, "aria-controls": controls, ...props, ref: mergeRefs(props.ref, own) },
     participants.length > 0 &&
       h(
         "span",

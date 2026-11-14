@@ -4,7 +4,7 @@
  * accepted and passed through.
  */
 import type { IconName } from "../js/icons.js";
-import type { PlaceAnchor } from "../js/index.js";
+import type { PlaceAnchor, PredictDetail } from "../js/index.js";
 import type { ComponentProps, ElementType, HTMLAttributes, MouseEvent, MouseEventHandler, ReactElement, ReactNode, Ref, SyntheticEvent } from "react";
 
 export type Tone = "accent" | "success" | "danger" | "warning" | "pending" | "extra" | "neutral";
@@ -172,6 +172,8 @@ export interface ThreadChipProps extends Omit<ComponentProps<"button">, "childre
   open?: boolean | undefined;
   /** The id of the thread panel, for `aria-controls`. */
   controls?: string | undefined;
+  /** The pointer is heading for the chip, it rests on it or it has focus: load the replies now. */
+  onPredict?: ((detail: PredictDetail) => void) | undefined;
 }
 /** The summary under a root message that opens its thread (`sd-thread-chip`). */
 export function ThreadChip(props: ThreadChipProps): ReactElement;
@@ -535,7 +537,8 @@ export interface TooltipProps {
    * still running on the trigger, so Tab does and a mouse press that focuses the trigger (or the input a click focuses)
    * does not. A touch tap shows it as the finger lifts, whatever the delay, and it stays until the trigger blurs or a
    * press lands elsewhere. Default 0. A different trigger the pointer reaches while a tip is open, or within 300 ms of
-   * one closing, shows its tip at once, whatever its delay.
+   * one closing, shows its tip at once, whatever its delay. With a delay, the trigger is a prediction target: when the
+   * pointer's path foretold it, the delay counts from that moment, so the tip shows sooner, never before the pointer arrives.
    */
   delay?: number | undefined;
   /**
@@ -838,6 +841,8 @@ export interface HoverCardProps {
   onOpenChange?: ((open: boolean) => void) | undefined;
   /** Milliseconds the pointer rests on the trigger before it opens. Default 300. Focus opens it at once. */
   openDelay?: number | undefined;
+  /** The pointer is heading for the trigger, rests on it or it has focus: load the card's data now. When the pointer's path foretold it, `openDelay` counts from that moment, so the card opens sooner, never before the pointer arrives. */
+  onPredict?: ((detail: PredictDetail) => void) | undefined;
   /** Milliseconds after the pointer leaves the trigger and the card before it closes. Default 150. */
   closeDelay?: number | undefined;
   /** On the card. */
