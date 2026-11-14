@@ -256,7 +256,10 @@ export interface MachineSpec {
   text?: { at: MachineCell; lines: string | string[]; align?: "left" | "center" | "right"; tone?: Tone }[];
 }
 export interface MachineEvent {
-  type: "emit" | "enter" | "start" | "finish" | "fold" | "land" | "select" | "state" | "load" | "status" | "clear" | "open";
+  type: "emit" | "enter" | "start" | "finish" | "fold" | "land" | "select" | "state" | "load" | "status" | "clear" | "open" | "predict";
+  /** predict: the pointer is heading for a linked node or token; the rest is as "open". */
+  via?: PredictVia;
+  eta?: number;
   /** Machine time in seconds. */
   t: number;
   node?: string | null;

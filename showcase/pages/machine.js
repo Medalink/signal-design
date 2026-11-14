@@ -144,7 +144,7 @@ const hand = {
   }
   figure.addEventListener("sd:machine", (event) => {
     const { type, node, key, link } = event.detail;
-    if (type === "open" && log) log.textContent = `open ${link}${key != null ? ` (${key})` : node ? ` (${node})` : ""}`;
+    if ((type === "open" || type === "predict") && log) log.textContent = `${type} ${link}${key != null ? ` (${key})` : node ? ` (${node})` : ""}`;
   });
 }
 

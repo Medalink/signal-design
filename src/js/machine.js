@@ -27,9 +27,10 @@
  * also says what a node looks like (set: tone, frozen, label, meta, items,
  * value), retones a token (status), folds one token into another (fold),
  * starts over (clear), and hears a click on anything with a `link` as
- * an "open" event.
+ * an "open" event, and the pointer heading for one as a "predict" event.
  */
 import { KINDS } from "./machine-kinds.js";
+import { initPredict } from "./predict.js";
 
 const kinds = new Map(Object.entries(KINDS));
 const SVG = "http://www.w3.org/2000/svg";
@@ -202,6 +203,7 @@ export function mountMachine(root, spec, options = {}) {
       // A token with a link is a button the host can open. The layer is hidden
       // from assistive tech only while nothing in it can be activated.
       tok.el.dataset.link = "";
+      tok.el.dataset.sdPredict = "";
       tok.el.tabIndex = 0;
       tok.el.setAttribute("role", "button");
       tok.el.setAttribute("aria-label", String(label || key || "Open"));
@@ -547,8 +549,11 @@ export function mountMachine(root, spec, options = {}) {
     }
     if (selectable) n.el.setAttribute("aria-pressed", String(selected === n.id));
     else n.el.removeAttribute("aria-pressed");
-    if (linked) n.el.dataset.link = "";
-    else delete n.el.dataset.link;
+    if (linked) n.el.dataset.link = n.el.dataset.sdPredict = "";
+    else {
+      delete n.el.dataset.link;
+      delete n.el.dataset.sdPredict;
+    }
     n.el.setAttribute("aria-label", n.spec.label || n.id);
   }
 
@@ -792,18 +797,27 @@ export function mountMachine(root, spec, options = {}) {
     emit("select", { node: selected });
   }
 
+  /** The linked token or node under a target, as the "open" event names it. */
+  function linkAt(target) {
+    const tokEl = target.closest?.(".sd-machine-token[data-link]");
+    const tok = tokEl && board.contains(tokEl) ? byEl.get(tokEl) : null;
+    if (tok) return { node: tok.node?.id ?? null, key: tok.key, link: tok.link, token: info(tok) };
+    const node = target.closest?.(".sd-machine-node");
+    const link = node && board.contains(node) && !selectable && nodes.get(node.dataset.id)?.spec.link;
+    return link ? { node: node.dataset.id, link } : null;
+  }
+
   /** A click on a linked token or node tells the host to open what it links to. */
   const onClick = (e) => {
-    const tokEl = e.target.closest?.(".sd-machine-token[data-link]");
-    const tok = tokEl && board.contains(tokEl) ? byEl.get(tokEl) : null;
-    if (tok) {
-      emit("open", { node: tok.node?.id ?? null, key: tok.key, link: tok.link, token: info(tok) });
-      return;
-    }
+    const target = linkAt(e.target);
     const node = e.target.closest?.(".sd-machine-node");
-    if (!node || !board.contains(node)) return;
-    if (selectable) select(node.dataset.id === selected ? null : node.dataset.id);
-    else if (nodes.get(node.dataset.id)?.spec.link) emit("open", { node: node.dataset.id, link: nodes.get(node.dataset.id).spec.link });
+    if (!target?.token && selectable && node && board.contains(node)) select(node.dataset.id === selected ? null : node.dataset.id);
+    else if (target) emit("open", target);
+  };
+  /** The pointer heading for a linked token or node tells the host before the click, so it can load what opens. */
+  const onPredict = (e) => {
+    const target = linkAt(e.target);
+    if (target) emit("predict", { ...target, via: e.detail.via, eta: e.detail.eta });
   };
   const onKey = (e) => {
     if ((e.key === "Enter" || e.key === " ") && e.target.matches?.(".sd-machine-node, .sd-machine-token[data-link]")) {
@@ -813,6 +827,8 @@ export function mountMachine(root, spec, options = {}) {
   };
   board.addEventListener("click", onClick);
   board.addEventListener("keydown", onKey);
+  board.addEventListener("sd:predict", onPredict);
+  initPredict();
 
   let sizing = 0;
   const sizes = new ResizeObserver(() => {
@@ -1066,6 +1082,7 @@ export function mountMachine(root, spec, options = {}) {
       seen.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
       board.removeEventListener("click", onClick);
+      board.removeEventListener("sd:predict", onPredict);
       board.removeEventListener("keydown", onKey);
       board.removeAttribute("tabindex");
       delete board.dataset.sdScrollTabbed;
