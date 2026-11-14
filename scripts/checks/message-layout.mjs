@@ -1,5 +1,5 @@
 export const page = "messages";
-/** Message layout: the time centers on the author's line, a grouped row has no time, every row keeps one rhythm, names take --who (extra without it), mixed 30% toward --sd-fg, and the action bar stays in the tab order while hidden. */
+/** Message layout: the time centers on the author's line, a grouped row has no time, every row keeps one rhythm, names take --who (extra without it), mixed 30% toward --sd-fg, and the action bar stays in the tab order while hidden, shows for a hovering pointer, keyboard focus and an expanded button, and not after a press. */
 export default async function checkMessageLayout(page, where, fail) {
   const got = await page.evaluate(() => {
     const block = document.getElementById("conversation-messages");
@@ -55,4 +55,38 @@ export default async function checkMessageLayout(page, where, fail) {
     return opacity === "1";
   });
   if (!shown) fail(`${where} message layout`, "actionsOnFocus");
+
+  const row = page.locator("#conversation-messages .sd-message").first();
+  const actionsOpacity = () => row.locator(".sd-message-actions").evaluate((el) => getComputedStyle(el).opacity);
+  const settled = (opacity) => page.waitForFunction(
+    ([selector, wanted]) => getComputedStyle(document.querySelector(selector)).opacity === wanted,
+    ["#conversation-messages .sd-message-actions", opacity],
+    { timeout: 2000 },
+  );
+
+  // A press inside the row does not reveal the bar: the pressed button keeps focus, the pointer leaves.
+  const reaction = row.locator("[data-sd-reaction]").first();
+  await reaction.scrollIntoViewIfNeeded();
+  const box = await reaction.boundingBox();
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(2, 2);
+  await page.waitForTimeout(300);
+  const pressedAway = await actionsOpacity();
+  await page.mouse.up();
+  await page.evaluate(() => document.activeElement?.blur());
+  if (pressedAway !== "0") fail(`${where} message layout`, "actionsOnPress");
+
+  // A pointer that hovers shows it.
+  await row.hover();
+  await settled("1").catch(() => fail(`${where} message layout`, "actionsOnHover"));
+  await page.mouse.move(2, 2);
+  await settled("0").catch(() => fail(`${where} message layout`, "actionsOnLeave"));
+
+  // An expanded button holds it open after the pointer leaves.
+  await row.locator(".sd-message-actions > button").last().evaluate((el) => el.setAttribute("aria-expanded", "true"));
+  await page.waitForTimeout(300);
+  const held = await actionsOpacity();
+  await row.locator(".sd-message-actions > button").last().evaluate((el) => el.removeAttribute("aria-expanded"));
+  if (held !== "1") fail(`${where} message layout`, "actionsWhileExpanded");
 }

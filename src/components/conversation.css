@@ -593,9 +593,12 @@
   /*
    * Action bar: quick reactions first, then the likeliest actions, then More.
    * 32px targets on a 3px inset; rules split reactions, actions and the
-   * overflow. Revealed by opacity, so Tab still reaches it. Hover reveals it
-   * only where the pointer hovers; a touch screen opens it with data-hover on
-   * the message. A button with data-key shows its action and key in a tip.
+   * overflow. Revealed by opacity, so Tab still reaches it: by a pointer that
+   * hovers, by keyboard focus inside the row, while one of its buttons is
+   * expanded, and by data-hover. A press on a touch screen does not show it.
+   * It sits on the row's first line, centered on a one-line row, so it covers
+   * no line of a neighbor. A button with data-key shows its action and key in
+   * a tip.
    *   <div class="sd-message-actions" role="toolbar" aria-label="Message actions">
    *     <button data-emoji aria-label="React 👍">👍</button>…<hr>
    *     <button aria-label="Add reaction" data-key="E"><svg/></button>
@@ -605,7 +608,7 @@
    */
   .sd-message-actions {
     position: absolute;
-    top: -20px;
+    top: -3px;
     right: 16px;
     z-index: 4;
     display: flex;
@@ -619,7 +622,7 @@
     transform: translateY(2px);
     transition: opacity 120ms var(--ease-out), transform 120ms var(--ease-out);
   }
-  .sd-message:is(:focus-within, [data-hover]) > .sd-message-actions {
+  .sd-message:is([data-hover], :has(:focus-visible), :has(> .sd-message-actions > [aria-expanded="true"])) > .sd-message-actions {
     opacity: 1;
     pointer-events: auto;
     transform: none;
