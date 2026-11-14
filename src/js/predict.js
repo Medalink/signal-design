@@ -7,7 +7,8 @@
  * prediction, `eta`: the milliseconds until the pointer arrives at its speed.
  * It fires once per approach: again only after the prediction has left.
  * `[data-sd-prefetch]` also adds `<link rel="prefetch">` for its URL
- * (the attribute's value, else the element's href), same origin only.
+ * (the attribute's value, else the element's href), same origin only, and a
+ * low-priority fetch() where the engine ignores rel="prefetch".
  */
 const SELECTOR = "[data-sd-predict], [data-sd-prefetch]";
 const WINDOW_MS = 80;
@@ -131,6 +132,8 @@ export function prefetch(href) {
   link.rel = "prefetch";
   link.href = url.href;
   document.head.append(link);
+  // WebKit (Safari, Tauri on macOS and Linux) keeps the link but never fetches it.
+  if (!link.relList.supports("prefetch")) fetch(url.href, { priority: "low" }).catch(() => {});
   return true;
 }
 

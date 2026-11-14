@@ -1100,7 +1100,10 @@ document.addEventListener("sd:predict", (event) => {
   has moved off it.
 - `data-sd-prefetch` is a target that also adds `<link rel="prefetch">` for its
   URL, once: the attribute's value, else the element's `href`. Only same-origin
-  http(s) URLs, never the current page, and nothing under Save-Data.
+  http(s) URLs, never the current page, and nothing under Save-Data. WebKit
+  (Safari, Tauri on macOS and Linux) ignores `rel="prefetch"`, so there it
+  also runs a low-priority `fetch()`, which helps only when the response is
+  cacheable.
 - `predict(el, fn)` makes one element a target and calls `fn` with the detail;
   it returns a function that undoes both. `prefetch(url)` prefetches from code.
 - The path is the pointer's velocity over the last 80 ms, followed up to
