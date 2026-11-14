@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head></head>
+<body>
+    <div class="demo-block" id="js-predict-path">
+      <h2 class="sd-label">Predicted targets</h2>
+      <div class="demo-predict-field" id="predict-field">
+        <button class="sd-btn" type="button" data-sd-predict>Inbox</button>
+        <button class="sd-btn" type="button" data-sd-predict>Drafts</button>
+        <button class="sd-btn" type="button" data-sd-predict>Archive</button>
+        <button class="sd-btn" type="button" data-sd-predict>Settings</button>
+        <button class="sd-btn" type="button" data-sd-predict>Billing</button>
+        <button class="sd-btn" type="button" data-sd-predict>Members</button>
+      </div>
+      <dl class="sd-kv">
+        <dt>Predicted</dt><dd class="font-mono" id="predict-name">none</dd>
+        <dt>Via</dt><dd class="font-mono" id="predict-via">none</dd>
+        <dt>Arrives in</dt><dd class="font-mono" id="predict-eta">none</dd>
+        <dt>Lead before click</dt><dd class="font-mono" id="predict-lead">none</dd>
+      </dl>
+      <p class="demo-usage"><code>data-sd-predict</code> on any element · <code>sd:predict</code> bubbles with <code>{ via, eta }</code> · <code>data-sd-predicted</code> marks the current one · <code>predict(el, fn)</code> returns a disposer</p>
+      <script type="text/plain" data-demo-js>
+import { init } from "signal-design/js";
+init();
+
+// Start the work as soon as the pointer heads for the button.
+document.addEventListener("sd:predict", (event) => {
+  const { via, eta } = event.detail; // via: "path" | "hover" | "touch" | "focus"
+  router.preloadRoute({ to: event.target.dataset.to });
+});
+
+// Or for one element, from a framework effect:
+import { predict } from "signal-design/js";
+const stop = predict(button, () => loadSettingsDialog());
+      </script>
+    </div>
+
+    <div class="demo-block" id="js-predict-prefetch">
+      <h2 class="sd-label">Prefetched links</h2>
+      <nav class="sd-cluster" style="--gap: 16px" aria-label="Prefetch examples">
+        <a href="./lib-buttons.html" data-sd-prefetch>Buttons</a>
+        <a href="./lib-charts.html" data-sd-prefetch>Charts</a>
+        <a href="./lib-messages.html" data-sd-prefetch>Messages</a>
+      </nav>
+      <ul class="font-mono" id="predict-fetched"><li>none yet</li></ul>
+      <p class="demo-usage"><code>data-sd-prefetch</code> on a link adds <code>&lt;link rel="prefetch"&gt;</code> for its href once, same origin only, skipped under Save-Data · a value overrides the URL · <code>prefetch(url)</code> does it from code</p>
+      <script type="text/plain" data-demo-js>
+<a href="/reports" data-sd-prefetch>Reports</a>
+<a href="/reports" data-sd-prefetch="/api/reports.json">Reports</a>
+      </script>
+    </div>
+</body>
+</html>

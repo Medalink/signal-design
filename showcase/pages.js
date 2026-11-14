@@ -367,6 +367,7 @@ const library = [
           },
         },
         { id: "owned", title: "Framework state", summary: "Leaving state to React, Vue or Svelte: one writer per state." },
+        { id: "predict", title: "Prediction", summary: "Where the mouse is heading, so a route or a file loads before the click." },
       ]),
       group("Mounts", [
         { id: "countdown", title: "Countdown", summary: "A countdown you can pause and resume." },

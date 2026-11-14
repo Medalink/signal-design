@@ -574,6 +574,29 @@ export function initKeyboard(): void;
  */
 export function initSweep(): void;
 
+/* Pointer prediction */
+export type PredictVia = "path" | "hover" | "touch" | "focus";
+export interface PredictDetail {
+  /** What made the prediction: the mouse's path, a hover, a touch or keyboard focus. */
+  via: PredictVia;
+  /** On a path prediction, the milliseconds until the pointer arrives at its current speed. */
+  eta?: number;
+}
+
+/**
+ * Watch where the mouse is heading. A `[data-sd-predict]` or
+ * `[data-sd-prefetch]` element on its path, under it, touched or focused
+ * gets `data-sd-predicted` and an `sd:predict` event, once per approach.
+ * `[data-sd-prefetch]` also prefetches its URL. `init()` calls it; a
+ * framework app can call it on its own, since it writes only that attribute
+ * and `<link rel="prefetch">` in the head.
+ */
+export function initPredict(): void;
+/** Make `el` a prediction target and call `fn` on each prediction. Returns a function that undoes both. */
+export function predict(el: Element, fn: (detail: PredictDetail) => void): () => void;
+/** Prefetch a same-origin URL once. False when skipped: Save-Data, another origin, this page, or already fetched. */
+export function prefetch(href: string): boolean;
+
 /* Listboxes: palette and combobox */
 export interface PaletteOption {
   label: string;
@@ -596,6 +619,7 @@ declare global {
     "sd:countdown": CustomEvent<CountdownState>;
     "sd:feed": CustomEvent<FeedState>;
     "sd:machine": CustomEvent<MachineEvent>;
+    "sd:predict": CustomEvent<PredictDetail>;
   }
   interface DocumentEventMap {
     "sd:living-table": CustomEvent<LivingTableState>;
@@ -612,5 +636,6 @@ declare global {
     "sd:cw": CustomEvent<{ open: boolean }>;
     "sd:contextmenu": CustomEvent<{ target: HTMLElement }>;
     "sd:tab": CustomEvent<{ tab: HTMLElement }>;
+    "sd:predict": CustomEvent<PredictDetail>;
   }
 }

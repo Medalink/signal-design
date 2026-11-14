@@ -1073,6 +1073,43 @@ hover animation and draws the band where the page sets `--sd-sweep`, so your own
 time series drives it. Pages that skip `init()` call `initSweep()` from
 `signal-design/js`. Reduced motion and forced colors show no sweep.
 
+## Pointer prediction
+
+The JS reads where the mouse is heading and tells a target before the pointer
+lands on it, so a route, a code chunk or an image can load during the last
+100 to 200 ms of the move instead of after the click.
+
+```html
+<button data-sd-predict data-to="/settings">Settings</button>
+<a href="/reports" data-sd-prefetch>Reports</a>
+<a href="/reports" data-sd-prefetch="/api/reports.json">Reports</a>
+```
+
+```js
+document.addEventListener("sd:predict", (event) => {
+  const { via, eta } = event.detail;
+  router.preloadRoute({ to: event.target.dataset.to });
+});
+```
+
+- `data-sd-predict` makes an element a target. It gets `data-sd-predicted` and
+  an `sd:predict` event that bubbles. `via` says what predicted it: `path` (the
+  mouse is moving toward it; `eta` is the milliseconds until it arrives at its
+  speed), `hover`, `touch` (on `pointerdown`) or `focus`.
+- It fires once per approach. A target fires again only after the prediction
+  has moved off it.
+- `data-sd-prefetch` is a target that also adds `<link rel="prefetch">` for its
+  URL, once: the attribute's value, else the element's `href`. Only same-origin
+  http(s) URLs, never the current page, and nothing under Save-Data.
+- `predict(el, fn)` makes one element a target and calls `fn` with the detail;
+  it returns a function that undoes both. `prefetch(url)` prefetches from code.
+- The path is the pointer's velocity over the last 80 ms, followed up to
+  160 ms ahead and hit-tested with `elementFromPoint`, so it sees what is on
+  top, scrolled or added since load. A slow or still pointer runs no hit tests.
+
+Signal adds no style for `data-sd-predicted`: a prediction changes nothing the
+user sees. Pages that skip `init()` call `initPredict()`.
+
 ## FPS counter
 
 ```html
@@ -1502,7 +1539,9 @@ once at startup (`initScrollbars("always")` keeps them visible): it sets
 `data-sd-keyboard`, `--sd-view-height` and `--sd-view-top` on `<html>`, and
 `sd-shell` fits the screen above the keyboard instead of sliding its header
 off the top. Call `initSweep()` so hover shimmers play
-through; it writes only `data-sd-sweeping`. `init()` calls all three.
+through; it writes only `data-sd-sweeping`. Call `initPredict()` for
+`sd:predict` and `data-sd-prefetch`; it writes only `data-sd-predicted` and
+prefetch links. `init()` calls all four.
 `react.html` and `react-shell.html` in the showcase use every component above, and `react-editor.html` the editor parts below.
 
 ### Editor parts

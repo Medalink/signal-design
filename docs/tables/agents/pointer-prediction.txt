@@ -1,0 +1,4 @@
+order: 785
+row: Pointer prediction
+
+`data-sd-predict` (a target: `sd:predict` with `via` `path`, `hover`, `touch` or `focus` and an `eta` in ms when the mouse heads for it, once per approach; `data-sd-predicted` on the current one, no style), `data-sd-prefetch` on a link (`<link rel="prefetch">` for the href or the value, same origin, not under Save-Data), `predict(el, fn)` (returns a disposer), `prefetch(url)`, `initPredict()` on pages that skip `init()`

@@ -22,6 +22,7 @@ import { initOrnaments } from "./ornaments.js";
 import { initArt, onMascotClick } from "./art.js";
 import { initScrollbars } from "./scrollbars.js";
 import { initSweep } from "./sweep.js";
+import { initPredict } from "./predict.js";
 import { initScrollTabs } from "./scrolltabs.js";
 import { initKeyboard } from "./keyboard.js";
 import { onWindowClick, onWindowDblClick, initWindow } from "./window.js";
@@ -53,6 +54,7 @@ export { initArt, ART, ART_SETS, MASCOTS, MASCOT_MOODS, IRIS_MOODS, artSVG, artR
 export { setScrollbars, initScrollbars } from "./scrollbars.js";
 export { initKeyboard } from "./keyboard.js";
 export { initSweep } from "./sweep.js";
+export { initPredict, predict, prefetch } from "./predict.js";
 export { setOptions, filterList } from "./listbox.js";
 export { drawSpark } from "./inputs.js";
 export { windowAction } from "./window.js";
@@ -73,6 +75,7 @@ export function init({ theme = true, font = true, scrollbars = "auto", themeKey 
   initScrollbars(scrollbars);
   initKeyboard();
   initSweep();
+  initPredict();
   initTabs();
   initShell();
   initRain();

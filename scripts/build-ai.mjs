@@ -94,6 +94,9 @@ const ATTRIBUTES = {
   "data-sd-scrolling-page": "Set by the JS on <html> while anything scrolls (idle motion pauses).",
   "data-sd-sweep": "Hover shimmer mode: hold gives any element the sweep (every sweep plays to the end by default), hover stops it when the pointer leaves, progress draws the band at the --sd-sweep (0 to 1) the page sets.",
   "data-sd-sweeping": "Set by the JS while a held hover shimmer plays; cleared when the sweep ends.",
+  "data-sd-predict": "Marks a prediction target: it gets data-sd-predicted and an sd:predict event when the mouse heads for it, hovers, touches or focuses it, once per approach.",
+  "data-sd-prefetch": "A prediction target that also prefetches a same-origin URL (the value, else the href) with <link rel=prefetch> when predicted.",
+  "data-sd-predicted": "Set by the JS on the target the pointer is predicted to reach; cleared when the prediction moves on.",
   "data-sd-check-ignore": "Space-separated rule names (\"color\", \"primary\", ...) that signal-design check skips for this element and what it holds. For what is right on purpose, such as a palette swatch.",
 };
 

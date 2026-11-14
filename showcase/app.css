@@ -1136,6 +1136,19 @@
   .demo-block > * {
     min-width: 0;
   }
+  .demo-predict-field {
+    display: grid;
+    grid-template-columns: repeat(3, max-content);
+    justify-content: space-between;
+    row-gap: 96px;
+    padding: 32px;
+    background: var(--sd-tone-1);
+  }
+  .demo-predict-field [data-sd-predicted],
+  #js-predict-prefetch [data-sd-predicted] {
+    outline: 1px dashed var(--sd-fg-muted);
+    outline-offset: 4px;
+  }
   /* Off-screen blocks and doc sections skip style, layout and paint until
      they near the viewport; auto keeps each one's last measured height so
      scrolling and anchors don't jump. */
