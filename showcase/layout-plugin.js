@@ -61,7 +61,7 @@ const SECTION_ICON = { foundations: "tokens", components: "inputs", patterns: "s
 const chevron = `<svg class="doc-chevron" aria-hidden="true"><use href="#i-chevron"/></svg>`;
 
 function docNav(page) {
-  const link = (p) => `          <a class="doc-nav-link" href="./${p.file}"${current(p === page)}>${p.title}</a>`;
+  const link = (p) => `          <a class="doc-nav-link" href="./${p.file}"${current(p === page)} data-sd-prefetch>${p.title}</a>`;
   const group = (g) => `      <details class="doc-nav-group" data-group="${g.title}" open>
         <summary class="doc-nav-sub">${chevron}<span>${g.title}</span><span class="sd-count">${g.pages.length}</span></summary>
         <div class="doc-nav-links">
@@ -475,7 +475,7 @@ function libraryContent(page, body) {
   const doc = docHtml(page);
   const { prev, next } = neighbors(page);
   const step = (p, rel, side) =>
-    p ? `    <a class="doc-pager-link" href="./${p.file}" rel="${rel}"><span>${side}</span><span class="doc-pager-title">${p.title}</span></a>` : "    <span></span>";
+    p ? `    <a class="doc-pager-link" href="./${p.file}" rel="${rel}" data-sd-prefetch><span>${side}</span><span class="doc-pager-title">${p.title}</span></a>` : "    <span></span>";
   const pages = SECTIONS.reduce((n, s) => n + s.groups.reduce((m, g) => m + g.pages.length, 0), 0);
   return `  <section class="demo-section" id="${page.id}" aria-labelledby="${page.id}-h">
   ${content}
