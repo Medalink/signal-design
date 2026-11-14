@@ -35,6 +35,37 @@ const stop = predict(button, () => loadSettingsDialog());
       </script>
     </div>
 
+    <div class="demo-block" id="js-predict-parts">
+      <h2 class="sd-label">Signal parts</h2>
+      <div class="demo-predict-field demo-predict-parts" id="predict-parts">
+        <button class="sd-rail-tile" type="button" aria-label="Operations">OP</button>
+        <button class="sd-thread-chip" type="button">
+          <span class="sd-avatar-stack" aria-hidden="true"><span class="sd-avatar" data-tone="accent">M</span><span class="sd-avatar" data-tone="success">L</span></span>
+          <b>4 replies</b><time datetime="12:41">12:41 PM</time>
+        </button>
+        <button class="sd-btn" type="button" data-sd-open="predict-dialog">Open settings</button>
+        <button class="sd-btn" type="button" data-sd-open="predict-dialog" data-sd-predict="off">Not predicted</button>
+      </div>
+      <dl class="sd-kv">
+        <dt>Predicted</dt><dd class="font-mono" id="parts-name">none</dd>
+        <dt>Via</dt><dd class="font-mono" id="parts-via">none</dd>
+      </dl>
+      <dialog class="sd-dialog" id="predict-dialog" aria-labelledby="predict-dialog-h">
+        <header class="sd-dialog-head"><span id="predict-dialog-h">Settings</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">×</button></header>
+        <div class="sd-dialog-body"><p>Loaded when the pointer headed for the button.</p></div>
+      </dialog>
+      <p class="demo-usage"><code>sd-rail-tile</code>, <code>sd-thread-chip</code>, <code>button.sd-shot</code> and <code>[data-sd-open]</code> are targets with no attribute · <code>data-sd-predict="off"</code> on one or an ancestor opts out</p>
+      <script type="text/plain" data-demo-js>
+document.addEventListener("sd:predict", (event) => {
+  const el = event.target;
+  if (el.matches(".sd-rail-tile")) loadGroup(el.dataset.group);
+  else if (el.matches(".sd-thread-chip")) loadReplies(el.closest(".sd-message").id);
+  else if (el.matches("button.sd-shot")) new Image().src = el.dataset.full;
+  else if (el.matches("[data-sd-open]")) loadDialog(el.dataset.sdOpen);
+});
+      </script>
+    </div>
+
     <div class="demo-block" id="js-predict-prefetch">
       <h2 class="sd-label">Prefetched links</h2>
       <nav class="sd-cluster" style="--gap: 16px" aria-label="Prefetch examples">

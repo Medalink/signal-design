@@ -1144,6 +1144,10 @@
     padding: 32px;
     background: var(--sd-tone-1);
   }
+  .demo-predict-parts {
+    grid-template-columns: repeat(2, max-content);
+    align-items: center;
+  }
   .demo-predict-field [data-sd-predicted],
   #js-predict-prefetch [data-sd-predicted] {
     outline: 1px dashed var(--sd-fg-muted);

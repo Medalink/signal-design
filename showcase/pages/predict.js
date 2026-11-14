@@ -17,6 +17,11 @@ document.getElementById("predict-field").addEventListener("click", (event) => {
   if (event.target.closest("[data-sd-predict]") && predictedAt) out("predict-lead", `${Math.round(event.timeStamp - predictedAt)} ms`);
 });
 
+document.getElementById("predict-parts").addEventListener("sd:predict", (event) => {
+  out("parts-name", event.target.className || event.target.textContent.trim());
+  out("parts-via", event.detail.via);
+});
+
 const list = document.getElementById("predict-fetched");
 new MutationObserver(() => {
   const urls = [...document.head.querySelectorAll('link[rel="prefetch"]')].map((l) => new URL(l.href).pathname);

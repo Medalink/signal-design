@@ -587,6 +587,9 @@ export interface PredictDetail {
  * Watch where the mouse is heading. A `[data-sd-predict]` or
  * `[data-sd-prefetch]` element on its path, under it, touched or focused
  * gets `data-sd-predicted` and an `sd:predict` event, once per approach.
+ * `.sd-rail-tile`, `.sd-thread-chip`, `button.sd-shot` and `[data-sd-open]`
+ * are targets without the attribute; `data-sd-predict="off"` on a target or
+ * an ancestor opts out.
  * `[data-sd-prefetch]` also prefetches its URL. `init()` calls it; a
  * framework app can call it on its own, since it writes only that attribute
  * and `<link rel="prefetch">` in the head.

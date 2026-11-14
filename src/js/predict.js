@@ -1,7 +1,9 @@
 /**
  * Pointer prediction. Reads where the mouse is heading and tells a target
  * before the pointer lands on it, so its work (a route, a chunk, an image)
- * can start early. Targets are `[data-sd-predict]` and `[data-sd-prefetch]`.
+ * can start early. Targets are `[data-sd-predict]`, `[data-sd-prefetch]` and
+ * Signal's `.sd-rail-tile`, `.sd-thread-chip`, `button.sd-shot` and
+ * `[data-sd-open]`; `data-sd-predict="off"` on one or an ancestor opts out.
  * The predicted one gets `data-sd-predicted` and an `sd:predict` event that
  * bubbles, with `via` ("path", "hover", "touch" or "focus") and, on a path
  * prediction, `eta`: the milliseconds until the pointer arrives.
@@ -10,7 +12,8 @@
  * (the attribute's value, else the element's href), same origin only, and a
  * low-priority fetch() where the engine ignores rel="prefetch".
  */
-const SELECTOR = "[data-sd-predict], [data-sd-prefetch]";
+// Signal's own parts whose next step is a load (a group, a thread, an image, a dialog) are targets without the attribute.
+const SELECTOR = ":is([data-sd-predict], [data-sd-prefetch], .sd-rail-tile, .sd-thread-chip, button.sd-shot, [data-sd-open]):not([data-sd-predict=off])";
 const WINDOW_MS = 80;
 const MIN_DT = 4;
 const MIN_SPEED = 0.3;
@@ -38,7 +41,8 @@ function anyTargets(now) {
 }
 
 function targetAt(node) {
-  return node instanceof Element ? node.closest(SELECTOR) : null;
+  const el = node instanceof Element ? node.closest(SELECTOR) : null;
+  return el?.closest("[data-sd-predict=off]") ? null : el;
 }
 
 function settle(el, detail) {

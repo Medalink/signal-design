@@ -1097,6 +1097,12 @@ document.addEventListener("sd:predict", (event) => {
   mouse is slowing down toward it; `eta` is the milliseconds until it arrives),
   `hover` (the pointer came to rest on it), `touch` (on `pointerdown`) or
   `focus`.
+- Signal's parts whose next step is a load are targets with no attribute:
+  `sd-rail-tile` (a group's messages), `sd-thread-chip` (a thread's replies),
+  `button.sd-shot` (the full image) and `[data-sd-open]` (a dialog's content).
+  Listen for `sd:predict` and load what each one opens.
+  `data-sd-predict="off"` on a target or an ancestor, such as a whole
+  `sd-rail`, opts out.
 - It fires once per approach. A target fires again only after the prediction
   has moved off it.
 - `data-sd-prefetch` is a target that also adds `<link rel="prefetch">` for its
