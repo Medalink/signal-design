@@ -1094,8 +1094,9 @@ document.addEventListener("sd:predict", (event) => {
 
 - `data-sd-predict` makes an element a target. It gets `data-sd-predicted` and
   an `sd:predict` event that bubbles. `via` says what predicted it: `path` (the
-  mouse is moving toward it; `eta` is the milliseconds until it arrives at its
-  speed), `hover`, `touch` (on `pointerdown`) or `focus`.
+  mouse is slowing down toward it; `eta` is the milliseconds until it arrives),
+  `hover` (the pointer came to rest on it), `touch` (on `pointerdown`) or
+  `focus`.
 - It fires once per approach. A target fires again only after the prediction
   has moved off it.
 - `data-sd-prefetch` is a target that also adds `<link rel="prefetch">` for its
@@ -1106,9 +1107,12 @@ document.addEventListener("sd:predict", (event) => {
   cacheable.
 - `predict(el, fn)` makes one element a target and calls `fn` with the detail;
   it returns a function that undoes both. `prefetch(url)` prefetches from code.
-- The path is the pointer's velocity over the last 80 ms, followed up to
-  160 ms ahead and hit-tested with `elementFromPoint`, so it sees what is on
-  top, scrolled or added since load. A slow or still pointer runs no hit tests.
+- A path prediction aims at where the pointer will stop, worked out from how
+  fast it is slowing over the last 80 ms, and hit-tests that spot with
+  `elementFromPoint`, so it sees what is on top, scrolled or added since load.
+  A pointer that is speeding up, cruising or barely moving predicts nothing by
+  its path, and one that crosses a target without stopping is not a hover, so
+  a scan down a long list predicts only where it ends.
 
 Signal adds no style for `data-sd-predicted`: a prediction changes nothing the
 user sees. Pages that skip `init()` call `initPredict()`.

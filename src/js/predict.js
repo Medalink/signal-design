@@ -4,7 +4,7 @@
  * can start early. Targets are `[data-sd-predict]` and `[data-sd-prefetch]`.
  * The predicted one gets `data-sd-predicted` and an `sd:predict` event that
  * bubbles, with `via` ("path", "hover", "touch" or "focus") and, on a path
- * prediction, `eta`: the milliseconds until the pointer arrives at its speed.
+ * prediction, `eta`: the milliseconds until the pointer arrives.
  * It fires once per approach: again only after the prediction has left.
  * `[data-sd-prefetch]` also adds `<link rel="prefetch">` for its URL
  * (the attribute's value, else the element's href), same origin only, and a
@@ -14,16 +14,19 @@ const SELECTOR = "[data-sd-predict], [data-sd-prefetch]";
 const WINDOW_MS = 80;
 const MIN_DT = 4;
 const MIN_SPEED = 0.3;
-const LOOKAHEAD_MS = 160;
-const MAX_REACH = 420;
+const MAX_REACH = 480;
 const STEP = 24;
 const THROTTLE_MS = 30;
+const DWELL_MS = 60;
+const REST_PX = 6;
 
 let samples = [];
 let lastPath = 0;
 let targetsSeenAt = -Infinity;
 let hasTargets = false;
 let current = null;
+let dwell = 0;
+let candidate = null;
 const fetched = new Set();
 
 function anyTargets(now) {
@@ -49,45 +52,78 @@ function settle(el, detail) {
   el.dispatchEvent(new CustomEvent("sd:predict", { bubbles: true, detail }));
 }
 
-// Walk the line the pointer is drawing and return the first target on it.
-function onPath(x, y, vx, vy, speed) {
-  const reach = Math.min(speed * LOOKAHEAD_MS, MAX_REACH);
-  const ux = vx / speed;
-  const uy = vy / speed;
-  for (let d = STEP; d <= reach; d += STEP) {
-    const px = x + ux * d;
-    const py = y + uy * d;
-    if (px < 0 || py < 0 || px >= innerWidth || py >= innerHeight) return null;
+// Where a slowing pointer comes to rest, nearest target first, walking back toward the pointer.
+function landing(x, y, ux, uy, stop) {
+  for (let d = stop; d > -STEP; d -= STEP) {
+    const px = x + ux * Math.max(d, 0);
+    const py = y + uy * Math.max(d, 0);
+    if (px < 0 || py < 0 || px >= innerWidth || py >= innerHeight) continue;
     const el = targetAt(document.elementFromPoint(px, py));
-    if (el) return { el, eta: Math.round(d / speed) };
+    if (el) return { el, d: Math.max(d, 0) };
   }
   return null;
 }
 
+const velocity = (a, b) => ({ x: (b.x - a.x) / (b.t - a.t), y: (b.y - a.y) / (b.t - a.t) });
+
+// A pointer that is still speeding up or cruising could be going anywhere, so
+// only a slowing one predicts: the deceleration says where it will stop.
 function onMove(event) {
   if (event.pointerType === "touch" || event.buttons !== 0) return;
   const t = event.timeStamp;
   samples.push({ x: event.clientX, y: event.clientY, t });
-  while (samples.length > 2 && t - samples[0].t > WINDOW_MS) samples.shift();
+  while (samples.length > 3 && t - samples[0].t > WINDOW_MS) samples.shift();
   if (t - lastPath < THROTTLE_MS || !anyTargets(t)) return;
   const first = samples[0];
-  const dt = t - first.t;
-  if (dt < MIN_DT) return;
-  const vx = (event.clientX - first.x) / dt;
-  const vy = (event.clientY - first.y) / dt;
-  const speed = Math.hypot(vx, vy);
+  const last = samples.at(-1);
+  const mid = samples.reduce((m, s) => (Math.abs(s.t - (first.t + last.t) / 2) < Math.abs(m.t - (first.t + last.t) / 2) ? s : m));
+  if (mid.t - first.t < MIN_DT || last.t - mid.t < MIN_DT) return;
+  const before = velocity(first, mid);
+  const now = velocity(mid, last);
+  const speed = Math.hypot(now.x, now.y);
   if (speed < MIN_SPEED) return;
   lastPath = t;
-  if (targetAt(event.target)) return;
-  const hit = onPath(event.clientX, event.clientY, vx, vy, speed);
-  if (hit) settle(hit.el, { via: "path", eta: hit.eta });
-  else settle(null);
+  const slowing = (Math.hypot(before.x, before.y) - speed) / ((last.t - first.t) / 2);
+  if (slowing <= 0) return;
+  const stop = Math.min((speed * speed) / (2 * slowing), MAX_REACH);
+  const hit = landing(last.x, last.y, now.x / speed, now.y / speed, stop);
+  const el = hit?.el ?? null;
+  // Time to cover the distance while slowing at this rate.
+  const eta = hit && (speed - Math.sqrt(Math.max(0, speed * speed - 2 * slowing * hit.d))) / slowing;
+  // The same landing twice in a row, so one noisy sample does not fire a guess.
+  if (el && el === candidate) settle(el, { via: "path", eta: Math.round(eta) });
+  else if (!el && candidate === null && current && !heading(current, last, now)) settle(null);
+  candidate = el;
+}
+
+// Whether the pointer is still moving toward el, so a short guess about where it stops does not drop it.
+function heading(el, at, v) {
+  const r = el.getBoundingClientRect();
+  return (r.x + r.width / 2 - at.x) * v.x + (r.y + r.height / 2 - at.y) * v.y > 0;
+}
+
+// The pointer has hardly moved over the last DWELL_MS.
+function resting() {
+  const last = samples.at(-1);
+  if (!last || performance.now() - last.t >= DWELL_MS) return true;
+  const then = samples.findLast((s) => last.t - s.t >= DWELL_MS) ?? samples[0];
+  return Math.hypot(last.x - then.x, last.y - then.y) <= REST_PX;
+}
+
+// A pointer passing over a target on its way elsewhere is not a hover: it has to come to rest there.
+function settleWhenResting(el) {
+  dwell = setTimeout(() => {
+    if (!el.matches(":hover")) return;
+    if (resting()) settle(el, { via: "hover" });
+    else settleWhenResting(el);
+  }, DWELL_MS);
 }
 
 function onOver(event) {
   if (event.pointerType === "touch") return;
   const el = targetAt(event.target);
-  if (el) settle(el, { via: "hover" });
+  clearTimeout(dwell);
+  if (el && el !== current) settleWhenResting(el);
 }
 
 function onOut(event) {

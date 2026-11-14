@@ -579,7 +579,7 @@ export type PredictVia = "path" | "hover" | "touch" | "focus";
 export interface PredictDetail {
   /** What made the prediction: the mouse's path, a hover, a touch or keyboard focus. */
   via: PredictVia;
-  /** On a path prediction, the milliseconds until the pointer arrives at its current speed. */
+  /** On a path prediction, the milliseconds until the pointer arrives, at the rate it is slowing. */
   eta?: number;
 }
 
