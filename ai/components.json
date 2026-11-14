@@ -2696,6 +2696,37 @@
    "script": "// React: the state lives in the component; no data-sd-* attributes.\nfunction Toolbar() {\n  const [view, setView] = useState(\"list\");\n  const [open, setOpen] = useState(false);\n  const [liked, setLiked] = useState(false);\n  return (\n    <>\n      <div className=\"sd-seg sd-seg-inline\" role=\"group\" aria-label=\"View\">\n        {[\"list\", \"board\"].map((v) => (\n          <button key={v} type=\"button\" aria-pressed={view === v} onClick={() => setView(v)}>{v}</button>\n        ))}\n      </div>\n      <button className=\"sd-btn sd-btn-sm\" aria-expanded={open} aria-controls=\"details\" onClick={() => setOpen(!open)}>Details</button>\n      <div className=\"sd-reactions\">\n        <button aria-pressed={liked} onClick={() => setLiked(!liked)}>👍 <b>{2 + (liked ? 1 : 0)}</b></button>\n      </div>\n      <div className=\"sd-expand\" id=\"details\" data-open={open || undefined}><div>…</div></div>\n    </>\n  );\n}"
   },
   {
+   "id": "js-predict-path",
+   "section": "Setup",
+   "title": "Predicted targets",
+   "classes": [
+    "sd-btn",
+    "sd-kv"
+   ],
+   "attributes": [
+    "data-sd-predict"
+   ],
+   "usage": "data-sd-predict on any element · sd:predict bubbles with { via, eta } · data-sd-predicted marks the current one · predict(el, fn) returns a disposer",
+   "js": "JS: init() from signal-design/js wires data-sd-predict.",
+   "html": "<div class=\"demo-predict-field\" id=\"predict-field\">\n  <button class=\"sd-btn\" type=\"button\" data-sd-predict=\"\">Inbox</button>\n  <button class=\"sd-btn\" type=\"button\" data-sd-predict=\"\">Drafts</button>\n  <button class=\"sd-btn\" type=\"button\" data-sd-predict=\"\">Archive</button>\n  <button class=\"sd-btn\" type=\"button\" data-sd-predict=\"\">Settings</button>\n  <button class=\"sd-btn\" type=\"button\" data-sd-predict=\"\">Billing</button>\n  <button class=\"sd-btn\" type=\"button\" data-sd-predict=\"\">Members</button>\n</div>\n\n<dl class=\"sd-kv\">\n  <dt>Predicted</dt><dd class=\"font-mono\" id=\"predict-name\">none</dd>\n  <dt>Via</dt><dd class=\"font-mono\" id=\"predict-via\">none</dd>\n  <dt>Arrives in</dt><dd class=\"font-mono\" id=\"predict-eta\">none</dd>\n  <dt>Lead before click</dt><dd class=\"font-mono\" id=\"predict-lead\">none</dd>\n</dl>",
+   "script": "import { init } from \"signal-design/js\";\ninit();\n\n// Start the work as soon as the pointer heads for the button.\ndocument.addEventListener(\"sd:predict\", (event) => {\n  const { via, eta } = event.detail; // via: \"path\" | \"hover\" | \"touch\" | \"focus\"\n  router.preloadRoute({ to: event.target.dataset.to });\n});\n\n// Or for one element, from a framework effect:\nimport { predict } from \"signal-design/js\";\nconst stop = predict(button, () => loadSettingsDialog());"
+  },
+  {
+   "id": "js-predict-prefetch",
+   "section": "Setup",
+   "title": "Prefetched links",
+   "classes": [
+    "sd-cluster"
+   ],
+   "attributes": [
+    "data-sd-prefetch"
+   ],
+   "usage": "data-sd-prefetch on a link adds <link rel=\"prefetch\"> for its href once, same origin only, skipped under Save-Data · a value overrides the URL · prefetch(url) does it from code",
+   "js": "JS: init() from signal-design/js wires data-sd-prefetch.",
+   "html": "<nav class=\"sd-cluster\" style=\"--gap: 16px\" aria-label=\"Prefetch examples\">\n  <a href=\"./lib-buttons.html\" data-sd-prefetch=\"\">Buttons</a>\n  <a href=\"./lib-charts.html\" data-sd-prefetch=\"\">Charts</a>\n  <a href=\"./lib-messages.html\" data-sd-prefetch=\"\">Messages</a>\n</nav>\n\n<ul class=\"font-mono\" id=\"predict-fetched\"><li>none yet</li></ul>",
+   "script": "<a href=\"/reports\" data-sd-prefetch>Reports</a>\n<a href=\"/reports\" data-sd-prefetch=\"/api/reports.json\">Reports</a>"
+  },
+  {
    "id": "js-countdown",
    "section": "Mounts",
    "title": "Pauseable countdown",
