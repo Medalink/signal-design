@@ -1910,6 +1910,7 @@ const core = createChart(canvas, {
   events: [{ x, y, kind: "surge", unexpected: true }],
 });
 core.append({ "Core ↓": [{ x, y }] });
+core.setEvents([{ x, y, kind: "drop", label: "Link down" }]); // replaces the markers in place
 ```
 
 **Presets.** `bandwidth` is one Mbps panel. `latency` is one ms panel.

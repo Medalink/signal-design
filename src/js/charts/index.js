@@ -708,6 +708,11 @@ export function createChart(canvas, options = {}) {
       opts.ranges = list;
       refresh();
     },
+    /** Replace the surge and drop markers. */
+    setEvents(list) {
+      opts.events = list;
+      refresh();
+    },
     destroy() {
       clearInterval(scroll);
       cancelAnimationFrame(geomQueued);

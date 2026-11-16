@@ -115,6 +115,8 @@ export interface SignalChart {
   setWindow(from?: number, to?: number): void;
   select(range: { from: number; to: number } | null): void;
   setRanges(ranges: Range[]): void;
+  /** Replace the surge and drop markers without drawing the chart again from scratch. */
+  setEvents(events: NonNullable<ChartOptions["events"]>): void;
   destroy(): void;
 }
 
