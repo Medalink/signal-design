@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 1.4.73 (2026-11-16)
+
+### Added
+- Charts: `setEvents(events)` replaces the surge and drop markers of a live chart in place, the way `setRanges` replaces its ranges. Before, a host had to destroy the chart and create it again to change its markers, which repainted the canvas over several frames.
+
 ## 1.4.72 (2026-11-14)
 
 ### Changed
