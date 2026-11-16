@@ -1149,10 +1149,12 @@ const browsers = Object.fromEntries(Object.entries(engines).map(([name, engine])
 
 // Many pages loading at once can fill the dev server's accept queue, and
 // Windows refuses a connection then instead of queuing it. A network change
-// mid-sweep aborts loads the same way, with ERR_NETWORK_CHANGED. A job that
-// met one of these runs once more, since whatever failed after it may have
-// failed for it; a failure that repeats fails.
-const transient = /ERR_CONNECTION_REFUSED|ERR_CONNECTION_RESET|ERR_NETWORK_CHANGED|Could not connect to server/;
+// mid-sweep aborts loads the same way, with ERR_NETWORK_CHANGED. A font face
+// it kills mid-fetch shows no network text of its own, only an `error`
+// status in the fonts rule's FAIL line. A job that met one of these runs
+// once more, since whatever failed after it may have failed for it; a
+// failure that repeats fails.
+const transient = /ERR_CONNECTION_REFUSED|ERR_CONNECTION_RESET|ERR_NETWORK_CHANGED|Could not connect to server|fonts:.*:error/;
 const metTransient = (out) => out.lines.some((line) => line.startsWith("FAIL ") && transient.test(line));
 /** A reused page starts each job as a fresh one would: its viewport, empty storage, no listeners from the last job. */
 async function reset(page, viewport) {
