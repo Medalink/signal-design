@@ -27,6 +27,12 @@ const validate = process.argv.includes("--validate");
 const out = process.env.SD_AI_OUT ? resolve(process.env.SD_AI_OUT) : root;
 const pkg = JSON.parse(readFileSync(resolve(root, "package.json"), "utf8"));
 
+/* The ring's worktree is cleaned before every run, so Vite always starts cold, and the first
+   showcase page can take over 30 s to transform when the machine is busy (the release ring
+   failed exactly there on 2026-11-15). Give the waits a real budget: a page that never
+   renders still fails, just later. */
+const PAGE_BUDGET = 120_000;
+
 /** What each data-sd-* attribute does; the generator fails on an unknown one. */
 const ATTRIBUTES = {
   "data-sd-living-table": "Grouped native table mounted explicitly with mountLivingTable(root), independent of init(). Metadata folds at container widths of 48rem and 32rem.",
@@ -138,8 +144,8 @@ try {
   /* ---- components: every block of every library page, in registry order --- */
   const blocks = [];
   for (const { file, group } of LIBRARY) {
-    await page.goto(`http://localhost:${port}/${file}`);
-    await page.waitForSelector(".demo-code pre", { state: "attached" });
+    await page.goto(`http://localhost:${port}/${file}`, { timeout: PAGE_BUDGET });
+    await page.waitForSelector(".demo-code pre", { state: "attached", timeout: PAGE_BUDGET });
     blocks.push(
       ...(await page.evaluate((section) =>
         [...document.querySelectorAll(".demo-block")].map((b) => {
