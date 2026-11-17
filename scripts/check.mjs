@@ -33,6 +33,7 @@ import { checkSidebarResize } from "./check-sidebar-resize.mjs";
 import { checkHashRedirects, checkShowcasePages, checkShowcaseRegistry } from "./check-showcase-pages.mjs";
 import { checkShowcaseBar } from "./check-showcase-bar.mjs";
 import { gotoSettled } from "./settle.mjs";
+import { transient, watchTransient } from "./transient.mjs";
 import { ALL, EXAMPLES, HOME, LIBRARY, byId, keyOf } from "../showcase/pages.js";
 
 // One file per component in scripts/checks/, each exporting
@@ -1147,15 +1148,19 @@ const browsers = Object.fromEntries(Object.entries(engines).map(([name, engine])
   return [name, { get, close: () => current?.close() }];
 }));
 
-// Many pages loading at once can fill the dev server's accept queue, and
-// Windows refuses a connection then instead of queuing it. A network change
-// mid-sweep aborts loads the same way, with ERR_NETWORK_CHANGED. A font face
-// it kills mid-fetch shows no network text of its own, only an `error`
-// status in the fonts rule's FAIL line. A job that met one of these runs
-// once more, since whatever failed after it may have failed for it; a
-// failure that repeats fails.
-const transient = /ERR_CONNECTION_REFUSED|ERR_CONNECTION_RESET|ERR_NETWORK_CHANGED|Could not connect to server|fonts:.*:error/;
-const metTransient = (out) => out.lines.some((line) => line.startsWith("FAIL ") && transient.test(line));
+// A job that failed and met a transient network failure (scripts/transient.mjs)
+// runs once more, since whatever failed after it may have failed for it; a
+// failure that repeats fails. It met one when a FAIL line names it, or when
+// the job's page saw a request or console error that matches. The second
+// covers the failures a network change causes without naming it: a selector
+// that never appears because its script was aborted, a network that never
+// settles. A failure on a page that saw no such error is never retried.
+/** Why the job's run should repeat, or null: the first transient FAIL line, else the first thing its page saw, when it failed. */
+const transientWhy = (out, met) => {
+  const line = out.lines.find((l) => l.startsWith("FAIL ") && transient.test(l));
+  if (line) return line.slice(5);
+  return out.failed && met.length ? `page saw ${met[0]}` : null;
+};
 /** A reused page starts each job as a fresh one would: its viewport, empty storage, no listeners from the last job. */
 async function reset(page, viewport) {
   page.removeAllListeners("console");
@@ -1167,15 +1172,9 @@ async function reset(page, viewport) {
 async function runJob(job, kept) {
   const out = held.getStore();
   for (let attempt = 1; ; attempt++) {
-    if (attempt > 1 && metTransient(out)) {
-      const why = out.lines.find((line) => line.startsWith("FAIL ") && transient.test(line));
-      failures -= out.failed;
-      out.failed = 0;
-      out.lines.length = 0;
-      console.log(`::warning::${job.where}: ${why.slice(5)}; retrying`);
-    }
     let browser;
     let page;
+    let watch = null;
     try {
       browser = await browsers[job.engine].get();
       page = job.reuse && kept[job.engine]?.context().browser() === browser && !kept[job.engine].isClosed() ? kept[job.engine] : null;
@@ -1186,6 +1185,7 @@ async function runJob(job, kept) {
         // A kept page already carries it; addInitScript lives for the page's whole life.
         await renderWhole(page);
       }
+      watch = watchTransient(page);
       await job.run(page);
       if (job.reuse) [kept[job.engine], page] = [page, null];
     } catch (error) {
@@ -1196,10 +1196,15 @@ async function runJob(job, kept) {
       }
       fail(job.where, firstLines(error));
     } finally {
+      watch?.stop();
       await page?.close().catch(() => {});
     }
-    if (attempt === 1 && metTransient(out)) continue;
-    return;
+    const why = attempt === 1 ? transientWhy(out, watch?.met ?? []) : null;
+    if (!why) return;
+    failures -= out.failed;
+    out.failed = 0;
+    out.lines.length = 0;
+    console.log(`::warning::${job.where}: ${why}; retrying`);
   }
 }
 

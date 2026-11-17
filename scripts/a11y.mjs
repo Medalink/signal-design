@@ -4,12 +4,16 @@
  *
  *   node scripts/a11y.mjs [baseUrl] [--pages index,lib-color,chat] [--json]
  *
- * Exits non-zero when any violation is found.
+ * Exits non-zero when any violation is found. A page whose audit met a network
+ * change (a failed request or console error, see scripts/transient.mjs) is
+ * audited once more; if that audit meets one too, the page is a `page-load`
+ * violation, never audited half-loaded.
  */
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { chromium } from "playwright";
 import { ALL, keyOf } from "../showcase/pages.js";
+import { transient, watchTransient } from "./transient.mjs";
 
 const require = createRequire(import.meta.url);
 const axeSource = readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
@@ -32,30 +36,62 @@ async function settle(page) {
   });
 }
 
-async function audit(browser, key, theme, width) {
+/**
+ * One audit of one page. It watches the page from before `goto` until axe has
+ * run, and returns what a network change or refused connection killed on the
+ * way in `met`: a page that lost a stylesheet or script is not the real page,
+ * so its violations are not returned.
+ */
+async function auditOnce(browser, key, theme, width) {
   const page = await browser.newPage({ viewport: { width, height: 900 } });
-  await page.addInitScript((t) => localStorage.setItem("sd-theme", t), theme);
-  await page.goto(base + PAGES[key], { waitUntil: "load" });
-  await settle(page);
-  // Render every section: content-visibility skips off-screen ones, which
-  // makes axe think their controls are covered.
-  await page.addStyleTag({ content: "*{content-visibility:visible!important}" });
-  await settle(page);
-  await page.addScriptTag({ content: axeSource });
-  const result = await page.evaluate(async () =>
-    window.axe.run(document, {
-      runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "best-practice"] },
-      resultTypes: ["violations"],
-    }),
-  );
-  for (const v of result.violations) {
+  const watch = watchTransient(page);
+  try {
+    await page.addInitScript((t) => localStorage.setItem("sd-theme", t), theme);
+    await page.goto(base + PAGES[key], { waitUntil: "load" });
+    await settle(page);
+    // Render every section: content-visibility skips off-screen ones, which
+    // makes axe think their controls are covered.
+    await page.addStyleTag({ content: "*{content-visibility:visible!important}" });
+    await settle(page);
+    await page.addScriptTag({ content: axeSource });
+    const result = await page.evaluate(async () =>
+      window.axe.run(document, {
+        runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "best-practice"] },
+        resultTypes: ["violations"],
+      }),
+    );
+    return { met: watch.met, violations: result.violations };
+  } catch (error) {
+    // A navigation the network change killed throws; anything else is a real error.
+    if (!watch.met.length && !transient.test(error.message)) throw error;
+    return { met: [...watch.met, error.message.split("\n")[0]], violations: [] };
+  } finally {
+    watch.stop();
+    await page.close().catch(() => {});
+  }
+}
+
+/** Audits a page once, and once more when a network change hit the first audit; a second hit fails the page. */
+async function audit(browser, key, theme, width) {
+  const where = `${theme}@${width}`;
+  let run = await auditOnce(browser, key, theme, width);
+  if (run.met.length) {
+    console.log(`::warning::${key} ${where}: ${run.met[0]}; auditing again`);
+    run = await auditOnce(browser, key, theme, width);
+    if (run.met.length) {
+      const k = `${key} · page-load · ${run.met[0]}`;
+      if (!found.has(k)) found.set(k, { page: key, rule: "page-load", impact: "critical", help: "the page could not be loaded to audit", target: run.met[0], html: "", where: [], summary: "a network change hit both audits" });
+      found.get(k).where.push(where);
+      return;
+    }
+  }
+  for (const v of run.violations) {
     for (const n of v.nodes) {
       const k = `${key} · ${v.id} · ${n.target.join(" ")}`;
       if (!found.has(k)) found.set(k, { page: key, rule: v.id, impact: v.impact, help: v.help, target: n.target.join(" "), html: n.html.slice(0, 140), where: [], summary: n.failureSummary?.split("\n").slice(1, 3).join(" ") });
-      found.get(k).where.push(`${theme}@${width}`);
+      found.get(k).where.push(where);
     }
   }
-  await page.close();
 }
 
 const browser = await chromium.launch();
