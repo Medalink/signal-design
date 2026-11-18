@@ -783,12 +783,14 @@ async function checkPage(page, where, name, pageName, url, width, theme) {
 
   if (pageName === "chat" && width === 1280 && theme === "ink") {
     const aside = () => page.evaluate(() => ({ state: document.getElementById("shell").dataset.aside ?? "closed", expanded: document.querySelector('[data-sd-shell="aside"]').getAttribute("aria-expanded") }));
+    const initial = await aside();
+    if (initial.state !== "closed" || initial.expanded !== "false") fail(where, `the members aside should start closed at 1280px ${JSON.stringify(initial)}`);
+    await page.locator("body").press("]");
+    const opened = await aside();
+    if (opened.state !== "open" || opened.expanded !== "true") fail(where, `] did not open the members aside ${JSON.stringify(opened)}`);
     await page.locator("body").press("]");
     const closed = await aside();
     if (closed.state !== "closed" || closed.expanded !== "false") fail(where, `] did not close the members aside ${JSON.stringify(closed)}`);
-    await page.locator("body").press("]");
-    const reopened = await aside();
-    if (reopened.state !== "open" || reopened.expanded !== "true") fail(where, `] did not open the members aside ${JSON.stringify(reopened)}`);
     // The aside's open/close shifts the dock; let it finish before the first click.
     await settleMotion(page, "#shell");
     const box = page.locator("[data-composer] textarea");

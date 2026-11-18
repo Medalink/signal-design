@@ -27,7 +27,9 @@
 <a class="sd-skip" href="#main">Skip to content</a>
 
 <!-- Icons are <i data-ic="name"> slots; chat.js swaps each for icon(name) from signal-design/js/icons. -->
-<div class="sd-shell" id="shell" data-aside="open">
+<div class="sd-shell" id="shell">
+  <!-- The members panel starts open on windows 1440px and wider; below that the conversation keeps the width. -->
+  <script>if (matchMedia("(min-width: 90rem)").matches) document.getElementById("shell").dataset.aside = "open";</script>
 
   <!-- Window chrome for a frameless desktop app -->
   <div class="sd-titlebar sd-desktop-only" data-tauri-drag-region role="region" aria-label="Window">
