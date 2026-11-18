@@ -439,6 +439,15 @@
     text-align: start;
     text-decoration: none;
     cursor: pointer;
+    transition: background-color 120ms var(--ease-out);
+  }
+  /* The type tile is already one step up, so it takes a second one to stay
+     visible on the lifted card. */
+  .sd-file:is(button, a):hover {
+    background: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-tone-3));
+  }
+  .sd-file:is(button, a):hover > .sd-file-type {
+    background: color-mix(in srgb, var(--sd-fg) 12%, var(--sd-tone-3));
   }
   .sd-file-type {
     display: grid;
