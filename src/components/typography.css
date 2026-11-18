@@ -92,7 +92,7 @@
   .sd-meta:dir(rtl) {
     clip-path: inset(-100vh -6px -100vh -100vw);
   }
-  .sd-meta > * + *::before {
+  .sd-meta > :where(:not(:first-child))::before {
     content: "\00B7";
     display: inline-block;
     width: 5px;

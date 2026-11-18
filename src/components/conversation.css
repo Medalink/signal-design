@@ -121,7 +121,7 @@
   .sd-md > :where(*) {
     margin-block: 0;
   }
-  .sd-md > :where(* + *) {
+  .sd-md > :where(:not(:first-child)) {
     margin-block-start: 0.5em;
   }
   .sd-md pre {
@@ -144,7 +144,7 @@
     line-height: inherit;
     letter-spacing: normal;
   }
-  .sd-md blockquote > :where(* + *) {
+  .sd-md blockquote > :where(:not(:first-child)) {
     margin-block-start: 0.5em;
   }
   .sd-md ul,
@@ -295,7 +295,7 @@
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
-  .sd-message-meta > * + * {
+  .sd-message-meta > :where(:not(:first-child)) {
     margin-inline-start: 8px;
   }
   .sd-message-meta [data-state="read"] {

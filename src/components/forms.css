@@ -103,7 +103,7 @@
     flex: 1 1 auto;
     min-width: 0;
   }
-  .sd-input-group > * + * {
+  .sd-input-group > :where(:not(:first-child)) {
     margin-inline-start: -1px;
   }
   .sd-input-group > :where(input):focus,
