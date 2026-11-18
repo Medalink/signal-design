@@ -263,6 +263,10 @@ export function mountBar() {
   // After the page script has run, so a library page has already snapshotted its blocks as authored, whether or not the bar mounted.
   document.addEventListener("DOMContentLoaded", () => {
     const colors = store.get("sd-chart-theme");
-    if (colors && colors !== "mono") setChartColors(colors, { persist: false });
+    if (!colors || colors === "mono") return;
+    // The opener stored these colors, so restoring them is not news to send back: a frame that announced
+    // them would overwrite whatever the opener chose while the frame was still loading.
+    shown.chartColors = colors;
+    setChartColors(colors, { persist: false });
   });
 }
