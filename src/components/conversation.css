@@ -1324,13 +1324,14 @@
   }
   .sd-voice-wave {
     --progress: 0;
+    --wave-h: 28px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex: 0 1 auto;
     width: var(--voice-wave);
     min-width: 4rem;
-    height: 28px;
+    height: var(--wave-h);
     cursor: pointer;
     touch-action: pan-y;
     user-select: none;
@@ -1346,7 +1347,7 @@
     position: relative;
     flex: 0 1 2px;
     min-width: 1px;
-    height: max(2px, calc(var(--h) * 100%));
+    height: max(2px, calc(var(--h) * var(--wave-h)));
     background: var(--sd-line-control);
   }
   /* The played bars: the foreground over the faint one, once the progress

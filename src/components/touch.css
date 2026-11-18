@@ -76,6 +76,11 @@
     .sd-message-menu .sd-menu [role="menuitem"] {
       min-height: var(--sd-touch);
     }
+    /* The seek slider is a target: it grows to the touch size and the bars,
+       sized from --wave-h, keep their height. */
+    .sd-voice-wave {
+      height: var(--sd-touch);
+    }
     input[type="color"] {
       min-width: var(--sd-touch);
     }
