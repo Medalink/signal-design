@@ -570,7 +570,11 @@ export function mountMachine(root, spec, options = {}) {
     if ("label" in patch) setName(n);
     if ("meta" in patch) setMeta(n);
     if ("labelSide" in patch && n.labelEl) n.labelEl.dataset.side = n.spec.labelSide || "top";
-    if ("label" in patch || "link" in patch) setRole(n);
+    if ("label" in patch || "link" in patch) {
+      const was = n.el.tabIndex;
+      setRole(n);
+      if (n.el.tabIndex !== was) resize();
+    }
   }
 
   function buildNode(spec) {
