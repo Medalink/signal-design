@@ -491,6 +491,21 @@ function docHtml(page) {
   return parts.join("\n\n");
 }
 
+/**
+ * A block's usage note explains its demo, so it follows the demo: the first screen of a page shows the
+ * part, not a paragraph about it. It reads the page file as written, because the indent is how it finds
+ * a block's end: the closing tag sits at the opener's indent and the notes one level in. A note with
+ * another class (a mid-block caption) or a block that does not fit that shape is left as written.
+ */
+const usageAfterDemo = (html) =>
+  html.replace(/^([ \t]*)<div class="demo-block"[^>]*>[\s\S]*?\n\1<\/div>/gm, (block, indent) => {
+    const notes = [...block.matchAll(new RegExp(`\\n${indent}  <p class="demo-usage">[\\s\\S]*?</p>`, "g"))].map((m) => m[0]);
+    if (!notes.length) return block;
+    const rest = notes.reduce((text, note) => text.replace(note, ""), block);
+    const end = rest.lastIndexOf(`\n${indent}</div>`);
+    return rest.slice(0, end) + notes.join("") + rest.slice(end);
+  });
+
 /** The preview shell around a page's demo blocks: a Preview/Code tablist over one canvas. init() owns the tabs' aria-selected (roving focus included); the click handler in library.js flips every block from data-code-all. */
 const previewShell = (blocks) => `  <div class="doc-preview">
     <div class="doc-preview-bar">
@@ -563,8 +578,8 @@ export function pageOf(filename) {
 }
 
 export function renderPage(page, html) {
-  const body = (html.match(/<body[^>]*>([\s\S]*)<\/body>/)?.[1] ?? "").replace(/^\s+|\s+$/g, "");
   const library = page !== HOME;
+  const body = ((library ? usageAfterDemo(html) : html).match(/<body[^>]*>([\s\S]*)<\/body>/)?.[1] ?? "").replace(/^\s+|\s+$/g, "");
   const content = library
     ? libraryContent(page, body)
     : body.replace("<!--@lead-->", homeLead()).replace("<!--@cards-->", homeCards(cards()));
