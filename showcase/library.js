@@ -26,6 +26,7 @@ function jsNote(html) {
   if (/data-sd-living-table/.test(html)) return 'JS: Call <code>mountLivingTable(root)</code> from <code>signal-design/js</code>; <code>init()</code> does not mount it. Call <code>dispose()</code> on teardown.';
   if (/data-sd-countdown/.test(html)) return 'JS: Call <code>mountCountdown(root)</code> from <code>signal-design/js</code>, then <code>set({ remainingMs, running })</code>; <code>init()</code> does not mount it.';
 
+  if (/class="sd-machine"/.test(html)) return 'JS: Call <code>mountMachine(figure, spec)</code> from <code>signal-design/js</code> (the JS tab); it draws the board. <code>init()</code> does not mount it.';
   if (/data-sd-feed/.test(html)) return 'JS: Call <code>mountFeed(root, options)</code> and <code>hotkeys(map, options)</code> from <code>signal-design/js</code>; <code>init()</code> wires detail toggles.';
   const passive = /^data-sd-(ornaments-size|ornaments-seed|ornaments-still|ornaments-style|iris-still|mascot-still|mascot-press|rain-style|rain-skip|tip-side|align|side|static|chart-scale)$/;
   const attrs = [...new Set(html.match(/data-sd-[a-z-]+/g) || [])].filter((a) => !passive.test(a));
