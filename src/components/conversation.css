@@ -228,6 +228,11 @@
     font-size: 13px;
     line-height: var(--sd-message-line);
   }
+  /* A select box in the head keeps the line's height: its label reaches past
+     the 16px box with negative margins. */
+  .sd-message-head > .sd-check-bare {
+    margin: calc((16px - var(--check-box, 16px)) / 2);
+  }
   .sd-message-head > b {
     min-width: 0;
     max-width: 60%; /* a long name leaves room for the tags and the status */
@@ -1854,8 +1859,12 @@
     color: var(--sd-fg-faint);
     font-size: 13px;
   }
+  /* The key is a 24px target: padding and a minimum height reach past the
+     word, and the negative margins give the space back to the line. */
   .sd-message-edit-hint button {
-    padding: 0;
+    min-block-size: 24px;
+    margin: -2px -4px;
+    padding: 0 4px;
     border: 0;
     background: none;
     color: var(--sd-fg-muted);
