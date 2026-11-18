@@ -67,6 +67,11 @@
   button:is(.sd-mascot, .sd-iris),
   a:is(.sd-mascot, .sd-iris) {
     cursor: pointer;
+    transition: opacity 120ms var(--ease-out);
+  }
+  button:is(.sd-mascot, .sd-iris):hover,
+  a:is(.sd-mascot, .sd-iris):hover {
+    opacity: 0.88;
   }
   button:is(.sd-mascot, .sd-iris):focus-visible,
   a:is(.sd-mascot, .sd-iris):focus-visible {
