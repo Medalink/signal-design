@@ -2963,7 +2963,7 @@ JS: init() from signal-design/js wires data-sd-spoiler.
 
 --edge (author or role color, user data) · data-own (grey edge) · data-selected + a real checkbox · data-editing + sd-message-edit · fills --sd-mention-fill and --sd-current-fill · edge order: data-failed > aria-current > data-selected > data-mention > data-own > --edge
 
-Classes: sd-btn, sd-btn-link, sd-mention, sd-message, sd-message-author, sd-message-body, sd-message-edit, sd-message-edit-hint, sd-message-head, sd-message-status, sd-message-tag, sd-message-text, sd-message-time
+Classes: sd-btn, sd-btn-link, sd-check, sd-check-bare, sd-mention, sd-message, sd-message-author, sd-message-body, sd-message-edit, sd-message-edit-hint, sd-message-head, sd-message-status, sd-message-tag, sd-message-text, sd-message-time
 
 No JS needed: the HTML works with the CSS alone.
 
@@ -2983,7 +2983,7 @@ No JS needed: the HTML works with the CSS alone.
   <article class="sd-message" data-selected="" style="--edge: var(--sd-extra); --who: var(--sd-extra)">
     <time class="sd-message-time">11:05</time>
     <div class="sd-message-body">
-      <header class="sd-message-head"><input type="checkbox" checked="" aria-label="Select message from Alex at 11:05"><b>Alex</b></header>
+      <header class="sd-message-head"><label class="sd-check sd-check-bare"><input type="checkbox" checked="" aria-label="Select message from Alex at 11:05"></label><b>Alex</b></header>
       <div class="sd-message-text">Selected for a bulk action: the accent edge replaces the role color.</div>
     </div>
   </article>
