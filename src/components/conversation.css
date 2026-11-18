@@ -1570,6 +1570,11 @@
     border-block-end: 1px solid var(--sd-field-edge, var(--sd-line-control));
     background: var(--sd-tone-3);
   }
+  /* The composer is the field, so it shows focus the way a text field does:
+     its edge turns --sd-fg. Only the bottom edge exists, so no box appears. */
+  .sd-composer:has(textarea:focus) {
+    border-block-end-color: var(--sd-fg);
+  }
   .sd-composer-row {
     display: flex;
     align-items: flex-end;
