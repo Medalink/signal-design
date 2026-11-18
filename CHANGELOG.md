@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 1.4.76 (2026-11-18)
+
+### Changed
+- A UX scorecard measures every showcase page
+
 ## 1.4.75 (2026-11-18)
 
 ### Fixed
