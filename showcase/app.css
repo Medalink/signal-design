@@ -1148,6 +1148,13 @@
     grid-template-columns: repeat(2, max-content);
     align-items: center;
   }
+  @media (max-width: 480px) {
+    .demo-predict-parts {
+      grid-template-columns: minmax(0, max-content);
+      justify-content: start;
+      row-gap: 48px;
+    }
+  }
   .demo-predict-field [data-sd-predicted],
   #js-predict-prefetch [data-sd-predicted] {
     outline: 1px dashed var(--sd-fg-muted);
