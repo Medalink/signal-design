@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="./app.css">
   <style>
     /* Layout glue only. Plain CSS, so the page also works on the prebuilt stylesheet (examples/tauri). */
-    .sd-shell { --shell-rail: 4.5rem; --shell-head: 3rem; }
+    .sd-shell { --shell-rail: 4.5rem; --shell-head: 3rem; --shell-sidebar: 15rem; }
     .chat-content { display: flex; flex-direction: column; padding: 0; --sd-feed-bg: var(--sd-container); }
     .chat-feed { flex: 1; min-height: 0; overflow-y: auto; padding-bottom: 8px; }
     .chat-account { display: flex; align-items: center; gap: 12px; --sd-ring: var(--sd-surface); }
@@ -78,7 +78,7 @@
         <button class="sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm" popovertarget="account-menu" aria-haspopup="menu" aria-label="Account menu" data-sd-tip="Account"><i data-ic="more"></i></button>
       </div>
     </div>
-    <div class="sd-sidebar-resize" role="separator" aria-orientation="vertical" aria-label="Resize sidebar" aria-controls="channels" aria-valuemin="224" aria-valuemax="480" aria-valuenow="288" tabindex="0" data-sd-shell="resize"></div>
+    <div class="sd-sidebar-resize" role="separator" aria-orientation="vertical" aria-label="Resize sidebar" aria-controls="channels" aria-valuemin="224" aria-valuemax="480" aria-valuenow="240" tabindex="0" data-sd-shell="resize"></div>
   </aside>
 
   <!-- Main -->

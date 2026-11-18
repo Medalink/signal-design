@@ -49,15 +49,16 @@ export async function checkSidebarResize(page, base, apiUrl) {
     document.addEventListener("sd:shell", (e) => window.__widths.push(e.detail.width));
   });
 
+  const START = 240; // the width chat.html authors with --shell-sidebar: 15rem
   let s = await state();
-  expect(s.shown && s.width === 288 && s.now === 288, `starts at 288px with aria-valuenow 288, got ${JSON.stringify(s)}`);
+  expect(s.shown && s.width === START && s.now === START, `starts at ${START}px with aria-valuenow ${START}, got ${JSON.stringify(s)}`);
 
   await drag(100, { release: false });
   s = await state();
-  expect(s.width === 388 && s.now === 388 && s.resizing && s.stored === null && s.events.length === 0, `mid-drag width 388, data-resizing, nothing stored or emitted yet, got ${JSON.stringify(s)}`);
+  expect(s.width === START + 100 && s.now === START + 100 && s.resizing && s.stored === null && s.events.length === 0, `mid-drag width ${START + 100}, data-resizing, nothing stored or emitted yet, got ${JSON.stringify(s)}`);
   await page.mouse.up();
   s = await state();
-  expect(s.width === 388 && s.stored === "388" && !s.resizing && s.events.join() === "388", `drag commits 388 once, got ${JSON.stringify(s)}`);
+  expect(s.width === START + 100 && s.stored === String(START + 100) && !s.resizing && s.events.join() === String(START + 100), `drag commits ${START + 100} once, got ${JSON.stringify(s)}`);
   expect(s.mainLeft >= s.sidebarRight, `the shell grid track follows the sidebar (main at ${s.mainLeft}, sidebar ends at ${s.sidebarRight})`);
 
   await drag(1000);
@@ -94,14 +95,14 @@ export async function checkSidebarResize(page, base, apiUrl) {
 
   await page.evaluate(async (url) => (await import(url)).setSidebarWidth(document.querySelector(".sd-shell"), null), apiUrl);
   s = await state();
-  expect(s.width === 288 && s.now === 288 && s.stored === null, `setSidebarWidth(shell, null) returns to 288 and forgets, got ${JSON.stringify(s)}`);
+  expect(s.width === START && s.now === START && s.stored === null, `setSidebarWidth(shell, null) returns to ${START} and forgets, got ${JSON.stringify(s)}`);
 
   await page.evaluate(() => (document.documentElement.dir = "rtl"));
   await page.focus(HANDLE);
   await page.keyboard.press("ArrowLeft");
-  expect((await state()).width === 304, "in RTL, ArrowLeft widens the sidebar");
+  expect((await state()).width === START + 16, "in RTL, ArrowLeft widens the sidebar");
   await drag(-50);
-  expect((await state()).width === 354, "in RTL, dragging left widens the sidebar");
+  expect((await state()).width === START + 66, "in RTL, dragging left widens the sidebar");
   await page.evaluate(() => document.documentElement.removeAttribute("dir"));
 
   await page.evaluate((sel) => document.querySelector(sel).removeAttribute("data-sd-shell"), HANDLE);
