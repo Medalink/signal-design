@@ -8,7 +8,7 @@
  * scroll. The overview gets the landing chrome: a topbar, then a full-width
  * marketing page (layout-landing.html).
  */
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { basename, resolve } from "node:path";
 import { HOME, LIBRARY, EXAMPLES, SECTIONS, byFile, byId, keyOf, neighbors } from "./pages.js";
 
@@ -109,9 +109,42 @@ function topbar({ menu, components, examples, ownPalette }) {
 </header>`;
 }
 
+const plain = (html) => html.replace(/<[^>]+>/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&amp;/g, "&");
+const inAttribute = (text) => text.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+const PART = /\b(?:data-sd-[a-z0-9-]+|sd-[a-z0-9-]+)\b/g;
+const searchCache = new Map();
+
+/**
+ * What a reader might type for a page besides its title, strongest first, as
+ * "block titles and find words | parts its usage notes and API table name |
+ * summary | every part its markup uses". The palette matches the whole string
+ * and library.js ranks a hit by the first place it lands, so `sd-btn` opens
+ * Buttons, which documents it, before a page that only uses it. Example pages
+ * and the overview have a summary only.
+ */
+function searchTerms(page) {
+  if (!page.id) return ["", "", page.summary, ""].join(" | ");
+  const file = resolve(dir, page.file);
+  const mtime = statSync(file).mtimeMs;
+  const cached = searchCache.get(page);
+  if (cached?.mtime === mtime) return cached.terms;
+  const html = readFileSync(file, "utf8");
+  const d = page.doc ?? {};
+  const blocks = [...html.matchAll(/<div class="demo-block"[^>]*>\s*<h2 class="sd-label">([^<]*)<\/h2>/g)].map((m) => plain(m[1]).trim());
+  const usage = [...html.matchAll(/<p class="demo-usage">([\s\S]*?)<\/p>/g)].map((m) => plain(m[1]));
+  const named = usage.flatMap((text) => text.match(/\b(?:data-sd-[a-z0-9-]+|sd-[a-z0-9-]+|[a-z][A-Za-z0-9]*\(\))/g) ?? []);
+  const unique = (items) => [...new Set(items.filter(Boolean))];
+  const first = unique([...blocks, ...(d.examples ?? []).map((e) => e.title), ...(page.find ? [page.find] : [])]);
+  const second = unique([...named, ...(d.api ?? []).map((row) => row.name)]);
+  const uses = unique(html.match(PART) ?? []).filter((name) => !second.includes(name));
+  const terms = [first.join(" "), second.join(" "), page.summary, uses.join(" ")].join(" | ");
+  searchCache.set(page, { mtime, terms });
+  return terms;
+}
+
 /** The page-level palette: every page under its group, from the registry. It is not a demo block. */
 function palette() {
-  const option = (p, hint = "") => `      <a role="option" href="./${p.file}" data-keywords="${p.summary.replace(/"/g, "&quot;")}">${p.title}${hint && ` <span class="sd-menu-hint">${hint}</span>`}</a>`;
+  const option = (p, hint = "") => `      <a role="option" href="./${p.file}" data-keywords="${inAttribute(searchTerms(p))}">${p.title}${hint && ` <span class="sd-menu-hint">${hint}</span>`}</a>`;
   const label = (text) => `    <div class="sd-menu-label" role="presentation">${text}</div>`;
   return `<dialog class="sd-command" id="nav-palette" aria-label="Go to a page" data-sd-palette>
   <input type="search" placeholder="Go to a page" aria-label="Go to a page">

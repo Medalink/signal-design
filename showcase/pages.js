@@ -19,7 +19,9 @@ const group = (title, pages) => ({ title, pages });
  * The library's rail sections, in order. Each section's sidebar files its
  * pages under text groups. `label` is the short rail name and `icon` the
  * `#i-<icon>` symbol in layout-plugin.js. A page's file is `lib-<id>.html`;
- * it loads `pages/<id>.js` when that file exists.
+ * it loads `pages/<id>.js` when that file exists. `find` adds words a reader
+ * would type for the page that no title, block or class on it spells (the
+ * Ctrl K palette searches them).
  */
 const library = [
   {
@@ -202,7 +204,7 @@ const library = [
             related: ["overlays", "command", "buttons"],
           },
         },
-        { id: "overlays", title: "Overlays", summary: "Dialogs, sheets and drawers opened with an attribute." },
+        { id: "overlays", title: "Overlays", summary: "Dialogs, sheets and drawers opened with an attribute.", find: "tooltip" },
         { id: "command", title: "Command palette", summary: "A command palette and keyboard shortcuts." },
       ]),
       group("Status", [

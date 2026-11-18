@@ -8,7 +8,7 @@
  * each block's markup as authored.
  */
 import { mountBar, savedScrollbars } from "./viewport.js";
-import { init } from "../src/js/index.js";
+import { init, filterList } from "../src/js/index.js";
 
 const slug = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const esc = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -233,6 +233,43 @@ function wireScrollspy() {
   mark();
 }
 
+/* ---- Page palette: best match first --------------------------------------- */
+
+/**
+ * The topbar palette lists pages in sidebar order and Enter opens the first
+ * match. A page's data-keywords reads "block titles | named parts | summary |
+ * parts it uses" (layout-plugin.js), so a query ranks by the first place it
+ * lands: the page title, the start of a title word, inside the title, a block
+ * title, a part the page documents, its summary, then a part it only uses.
+ * While a query is typed the matches run as one list in that order; the group
+ * labels come back with an empty query.
+ */
+function wirePalette() {
+  const palette = document.getElementById("nav-palette");
+  const list = palette?.querySelector('[role="listbox"]');
+  const input = palette?.querySelector("input");
+  if (!list || !input) return;
+  const original = [...list.children];
+  const labels = original.filter((el) => el.matches(".sd-menu-label"));
+  const options = original.filter((el) => el.matches('[role="option"]'));
+  const rank = (option, q) => {
+    const title = option.firstChild.textContent.trim().toLowerCase();
+    if (title === q) return 0;
+    if (title.split(/[^a-z0-9-]+/).some((word) => word.startsWith(q))) return 1;
+    if (title.includes(q)) return 2;
+    const at = (option.dataset.keywords ?? "").toLowerCase().split(" | ").findIndex((part) => part.includes(q));
+    return at < 0 ? 7 : at + 3;
+  };
+  const arrange = () => {
+    const q = input.value.trim().toLowerCase();
+    list.prepend(...(q ? options.map((option, i) => ({ option, i, r: rank(option, q) })).sort((a, b) => a.r - b.r || a.i - b.i).map(({ option }) => option) : original));
+    filterList(list, input.value);
+    if (q) for (const label of labels) label.hidden = true;
+  };
+  document.addEventListener("input", (event) => event.target === input && arrange());
+  new MutationObserver(() => palette.open && arrange()).observe(palette, { attributes: true, attributeFilter: ["open"] });
+}
+
 /** Wire the page. Call first: it snapshots the blocks, then runs init(). */
 export function mountLibrary() {
   mountBar();
@@ -241,6 +278,7 @@ export function mountLibrary() {
   // An old section link (#tokens) lands on a page with no such anchor: show the page from its top.
   if (location.hash && !document.getElementById(decodeURIComponent(location.hash.slice(1)))) history.replaceState(null, "", location.pathname + location.search);
   init({ scrollbars: savedScrollbars() });
+  wirePalette();
   wireSidebar();
   wireScrollspy();
 }

@@ -11,7 +11,7 @@ export const DOCS_TASKS = [
     steps: [
       { key: 'ControlOrMeta+k', only: 'desktop' },
       { click: '.doc-topbar-search', only: 'phone' },
-      { type: 'overlay' },
+      { type: 'tooltip' },
       { key: 'Enter' },
     ],
     done: () => location.pathname.endsWith('/lib-overlays.html'),
