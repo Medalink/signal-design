@@ -15,8 +15,9 @@
     .ss-intro { display: grid; gap: 8px; }
     .ss-intro h1 { margin: 0; font-size: var(--text-xl); font-weight: 400; }
     .ss-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: 8px; align-items: start; }
-    .ss-layers { display: grid; grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr)); gap: 8px 16px; }
-    .ss-layers label { display: flex; gap: 8px; align-items: center; font: 0.8125rem/1 var(--sd-font-mono); }
+    .ss-layers { display: grid; grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr)); gap: 0 16px; }
+    .ss-layers label { display: flex; gap: 8px; align-items: center; min-block-size: 24px; font: 0.8125rem/1 var(--sd-font-mono); }
+    @media (pointer: coarse) { .ss-layers label { min-block-size: var(--sd-touch); } }
     .ss-url { display: flex; gap: 8px; }
     .ss-url input { flex: 1; min-width: 0; font: 0.75rem/1.4 var(--sd-font-mono); }
     .ss-socials { display: grid; gap: 8px; }

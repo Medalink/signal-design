@@ -80,6 +80,9 @@
     input[type="color"] {
       min-width: var(--sd-touch);
     }
+    .sd-check-bare:has(> input:not([role="switch"])) {
+      --check-box: var(--sd-touch);
+    }
     /* A checklist row is its label, which min-height skips with the checkbox
        (above), so the row itself reaches the touch size. */
     .sd-tasklist-items {

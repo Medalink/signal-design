@@ -149,6 +149,19 @@
   .sd-check-bare {
     width: fit-content;
   }
+  /* A bare checkbox or radio is its label's whole target: the label is 24px
+     square (--sd-touch on a coarse pointer, touch.css) with the 16px box
+     centered. A switch already has its own taller box. */
+  .sd-check-bare:has(> input:not([role="switch"])) {
+    --check-box: 24px;
+    align-items: center;
+    justify-content: center;
+    min-inline-size: var(--check-box);
+    min-block-size: var(--check-box);
+  }
+  .sd-check-bare > input:not([role="switch"]) {
+    margin-top: 0;
+  }
   /* The label fades the control and its text together, once: the control's own
      disabled fade (base.css) would stack on it. */
   .sd-check:has(:disabled) {
