@@ -2,6 +2,34 @@
 
 ## Unreleased
 
+## 1.4.74 (2026-11-18)
+
+### Fixed
+- `sd-composer`: the composer shows keyboard focus again. While its text field
+  holds focus, the composer's bottom edge turns `--sd-fg` (`Highlight` in a
+  Windows contrast theme), the way a text field and `sd-tags` recolor their
+  edge. No outline returns around the whole box.
+- `button.sd-file` and `a.sd-file`: the row lifts one grey step under the
+  pointer, as the other pressable cards do. The type tile steps up with it.
+- `sd-btn-ghost`: the hover fill is a 6% `--sd-fg` tint over whatever the
+  button sits on, so it shows on a raised card (`--sd-tone-3`) and on a toolbar
+  where `--sd-raised` was the same grey or one faint step off. The composer's
+  icon buttons take the same tint, and a dismiss or play button over link-card
+  media keeps an opaque fill on hover.
+- `sd-machine`: a pressable source, line or bare node (a machine mounted with
+  `select: true`, or a node with a `link`) tints under the pointer. It drew no
+  box, so hovering it changed nothing.
+- `mountMachine`: on a touch screen, a machine with pressable nodes (`select:
+  true` or a node `link`) no longer shrinks to half size to fit the board. It
+  stays at full size and the board scrolls, so a finger can hit a node and its
+  labels stay readable. `set(id, { link })` refits the board when it makes a
+  node pressable or plain. `minScale` still wins when set.
+- `button.sd-mascot` and `a.sd-mascot` (and `sd-iris`): a pressable mascot dims
+  to 88% under the pointer, the step a primary button uses.
+- `sd-voice-wave`: the seek slider is `--sd-touch` tall on a coarse pointer
+  (44 px on a phone) instead of 28 px. The bars keep their height: they now size
+  from `--wave-h` (28 px), so set `--wave-h` rather than `height` to change it.
+
 ## 1.4.73 (2026-11-16)
 
 ### Added
