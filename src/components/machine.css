@@ -157,6 +157,10 @@
   .sd-machine-node[role="button"]:hover:not([data-bare], [data-kind="line"], [data-kind="source"]) {
     background: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-tone-3));
   }
+  /* A pressable source or line draws no box, so the tint is the only cue. */
+  .sd-machine-node[role="button"]:is([data-bare], [data-kind="line"], [data-kind="source"]):hover {
+    background: color-mix(in srgb, var(--sd-fg) 6%, transparent);
+  }
   .sd-machine-node:focus-visible,
   .sd-machine-node[aria-pressed="true"] {
     outline: 1px solid var(--sd-fg);
