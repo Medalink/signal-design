@@ -3,7 +3,8 @@
 <head></head>
 <body>
   <header class="demo-intro">
-    <p class="sd-lead max-w-[42rem]">Parts for what plain elements cannot do: buttons, fields, rows, navigation, feedback and overlays. Tone and state come from attributes, so your CSS, your code and a screen reader agree on what is true.</p>
+    <p class="sd-lead max-w-[42rem]">The rules every Signal part follows.</p>
+    <p class="sd-muted max-w-[42rem]">Parts for what plain elements cannot do: buttons, fields, rows, navigation, feedback and overlays. Tone and state come from attributes, so your CSS, your code and a screen reader agree on what is true.</p>
     <p class="sd-muted max-w-[42rem]">Classes start with <code>sd-</code>. Color comes from <code>data-tone</code>: accent, success, danger, warning, pending, extra, neutral. State comes from ARIA and <code>data-*</code>, so the JS never needs your Tailwind build to contain a class.</p>
     <div class="demo-intro-cols">
       <div>
@@ -38,14 +39,50 @@
 
     <div class="demo-block" id="tokens-hard-rules">
       <h2 class="sd-label">Hard rules</h2>
-      <ol class="grid gap-y-2 gap-x-16 sm:grid-cols-2 text-fg-muted" style="list-style: decimal-leading-zero; padding-inline-start: 2.2em">
-        <li>Square corners everywhere, avatars and checkboxes included.</li>
-        <li>Flat surfaces. No glass, grain, glow or shadow.</li>
-        <li>Color is for important things: risk, status, success and selection. Everything else is black, white and grey, navigation included.</li>
-        <li>120–200ms transitions and a one-pass hover shimmer. Loops are allowed; the rain moves while work runs or when the reader turns it on.</li>
-        <li>Minimal by default, detail on expand.</li>
-        <li>SF Pro for text in regular and medium; Source Code Pro for code. The font picker swaps the text face.</li>
-      </ol>
+      <ul class="grid gap-y-8" style="list-style: none; padding: 0">
+        <li class="grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center">
+          <p class="text-fg-muted">Square corners everywhere, avatars and checkboxes included.</p>
+          <div class="sd-cluster">
+            <button class="sd-btn">Button</button>
+            <span class="sd-avatar" role="img" aria-label="Avatar">AL</span>
+            <label class="sd-check"><input type="checkbox" checked><span class="sd-check-text">Checkbox</span></label>
+          </div>
+        </li>
+        <li class="grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center">
+          <p class="text-fg-muted">Flat surfaces. No glass, grain, glow or shadow.</p>
+          <div class="sd-cluster">
+            <span class="bg-canvas p-3 text-sm">Canvas</span>
+            <span class="bg-surface p-3 text-sm">Surface</span>
+            <span class="bg-raised p-3 text-sm">Raised</span>
+          </div>
+        </li>
+        <li class="grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center">
+          <p class="text-fg-muted">Color is for important things: risk, status, success and selection. Everything else is black, white and grey, navigation included.</p>
+          <div class="sd-cluster">
+            <nav class="sd-nav" aria-label="Grey navigation"><a href="#tokens-hard-rules" aria-current="page">Projects</a><a href="#tokens-hard-rules">History</a></nav>
+            <span class="sd-badge" data-tone="danger">Risk</span>
+            <span class="sd-badge" data-tone="success">Passed</span>
+          </div>
+        </li>
+        <li class="grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center">
+          <p class="text-fg-muted">120–200ms transitions and a one-pass hover shimmer. Loops are allowed; the rain moves while work runs or when the reader turns it on.</p>
+          <div class="sd-cluster">
+            <button class="sd-btn">Hover me</button>
+            <span class="sd-typing"><i><b></b></i><span>Working</span></span>
+          </div>
+        </li>
+        <li class="grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center">
+          <p class="text-fg-muted">Minimal by default, detail on expand.</p>
+          <details>
+            <summary>web-1 · running</summary>
+            <p>Image, ports and the last restart.</p>
+          </details>
+        </li>
+        <li class="grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center">
+          <p class="text-fg-muted">SF Pro for text in regular and medium; Source Code Pro for code. The font picker swaps the text face.</p>
+          <p>Regular <span class="font-medium">Medium</span> <code>mono</code></p>
+        </li>
+      </ul>
       <p class="demo-usage">Square corners · flat, hairlines only · color only for status and selection · transitions of 120–200ms · tokens, never hex values · one text face in regular and medium, <code>font-mono</code> for code · see AGENTS.md for the full list and <code>npx signal-design check</code> to test a page against it</p>
     </div>
 </body>

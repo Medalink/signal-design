@@ -1138,6 +1138,9 @@
   .doc-section > .sd-title + .doc-note {
     margin-block: 0 16px;
   }
+  .doc-note + .doc-list {
+    margin-block-start: 16px;
+  }
   .demo-block {
     display: grid;
     gap: 14px;
