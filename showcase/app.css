@@ -724,6 +724,10 @@
   .home-section .sd-grid {
     margin-top: 20px;
   }
+  /* A card in a row of taller ones keeps its title over its description instead of spreading them apart. */
+  :is(.home-section, .doc-section) .sd-link-card {
+    align-content: start;
+  }
   /* The landing hero: full-bleed rain, the copy in the wide column on canvas. */
   .home-hero {
     border-block-start: 0;

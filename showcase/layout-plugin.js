@@ -175,9 +175,6 @@ ${links}
   </aside>`;
 };
 
-const blockCount = (file) => (readFileSync(resolve(dir, file), "utf8").match(/<div class="demo-block"/g) || []).length;
-const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
-
 /** The slug decorateBlocks computes for a block title. */
 const slugToc = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
@@ -221,7 +218,7 @@ function pageSections(page) {
 /** Cards for the overview: a section per library section, a grid per group. Each lives in the landing's wide column, so the groups separate by spacing, not a second rule. */
 function cards() {
   const card = (p) =>
-    `      <a class="sd-link-card" href="./${p.file}"><span class="sd-link-card-site">${p.id ? plural(blockCount(p.file), "block") : "example"}</span><span class="sd-link-card-title">${p.title}</span><span class="sd-link-card-desc">${p.summary}</span></a>`;
+    `      <a class="sd-link-card" href="./${p.file}"><span class="sd-link-card-title">${p.title}</span><span class="sd-link-card-desc">${p.summary}</span></a>`;
   const group = (g) => `    <section class="home-browse-group" aria-label="${g.title}">
       <h3 class="sd-label">${g.title}</h3>
       <div class="sd-grid" style="--min: 14rem; --gap: 12px">
@@ -253,7 +250,7 @@ const FEATURED = [
 function homeCards(grid) {
   const featured = FEATURED.map(
     ([file, art, line]) =>
-      `      <a class="sd-link-card sd-link-card-hero home-featured-card" href="./${file}"><span class="sd-link-card-thumb home-featured-art"><span class="sd-art" data-sd-art="${art}" aria-hidden="true"></span></span><span class="sd-link-card-site">Example app</span><span class="sd-link-card-title">${EXAMPLES.find((p) => p.file === file)?.title ?? file}</span><span class="sd-link-card-desc">${line}</span></a>`,
+      `      <a class="sd-link-card sd-link-card-hero home-featured-card" href="./${file}"><span class="sd-link-card-thumb home-featured-art"><span class="sd-art" data-sd-art="${art}" aria-hidden="true"></span></span><span class="sd-link-card-title">${EXAMPLES.find((p) => p.file === file)?.title ?? file}</span><span class="sd-link-card-desc">${line}</span></a>`,
   ).join("\n");
   const faq = [
     ["What is Signal?", `A flat, square, monochrome design library: CSS components for Tailwind v4 or one prebuilt stylesheet, plus a small dependency-free JS module that wires behavior through attributes.`],
@@ -380,7 +377,7 @@ const docRelated = (ids) => {
   const cards = ids
     .map(byId)
     .filter(Boolean)
-    .map((p) => `      <a class="sd-link-card" href="./${p.file}"><span class="sd-link-card-site">${p.group.title}</span><span class="sd-link-card-title">${p.title}</span><span class="sd-link-card-desc">${p.summary}</span></a>`);
+    .map((p) => `      <a class="sd-link-card" href="./${p.file}"><span class="sd-link-card-title">${p.title}</span><span class="sd-link-card-desc">${p.summary}</span></a>`);
   return `    <div class="sd-grid" style="--min: 16rem; --gap: 12px">\n${cards.join("\n")}\n    </div>`;
 };
 

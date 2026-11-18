@@ -161,7 +161,7 @@ const library = [
       group("Navigation", [
         { id: "nav-bars", title: "Bars and tabs", summary: "Top bar, side navigation, tabs, pagination and status bar." },
         {
-          id: "menus", title: "Menus", summary: "Menus and popovers anchored to their trigger, with keyboard focus.",
+          id: "menus", title: "Menus", summary: "Dropdown lists and popovers anchored to their trigger, with keyboard focus.",
           doc: {
             intro: "A native popover positioned next to its trigger: a menu of actions, or a small panel of facts.",
             when: [
@@ -209,7 +209,7 @@ const library = [
       ]),
       group("Status", [
         { id: "badges", title: "Badges", summary: "Markers, badges, chips and pills, each taking a tone." },
-        { id: "avatars", title: "Avatars", summary: "Avatars in every size with presence, status and counts." },
+        { id: "avatars", title: "Avatars", summary: "Square pictures and initials in every size, with presence, status and counts." },
         {
           id: "feedback", title: "Feedback", summary: "Callouts, notes, progress, skeletons, checks, empty states and toasts.",
           doc: {
@@ -286,7 +286,7 @@ const library = [
             related: ["charts", "rows", "living-tables"],
           },
         },
-        { id: "rows", title: "Rows", summary: "Rows that show an outcome and expand for detail." },
+        { id: "rows", title: "Rows", summary: "Lists of work that show an outcome and expand for detail." },
         { id: "living-tables", title: "Living tables", summary: "Tables whose rows arrive, change and leave while you read them." },
         { id: "charts", title: "Charts", summary: "Live time series, chart types, square CSS charts, sparklines and diffs." },
         { id: "timeline", title: "Timeline", summary: "Ranges over one time axis." },
@@ -300,7 +300,7 @@ const library = [
     id: "patterns", title: "Patterns", label: "Patterns", icon: "shell",
     groups: [
       group("Conversation", [
-        { id: "messages", title: "Messages", summary: "Messages with names, edges, replies, selection and narrow columns." },
+        { id: "messages", title: "Messages", summary: "Author names, role edges, replies, selection and narrow columns." },
         { id: "feed", title: "Feed", summary: "A message feed with day breaks and a jump back to the present." },
         { id: "composer", title: "Composer", summary: "The composer, its add menu and the emoji picker." },
         { id: "people", title: "People", summary: "Conversation items, presence, counts and the roster." },
@@ -309,14 +309,14 @@ const library = [
       group("App shell", [
         { id: "window", title: "Window and bars", summary: "The full shell, the desktop title bar and the header bar." },
         { id: "rail", title: "Rail", summary: "A compact rail of places with tiles, unread marks and counts." },
-        { id: "sidebar", title: "Sidebar", summary: "Sidebar heads and a sidebar you can resize." },
+        { id: "sidebar", title: "Sidebar", summary: "Section heads and a panel beside the content that you can resize." },
       ]),
       group("Effects", [
         { id: "rain", title: "Rain", summary: "The digital rain backdrop, and a job that speeds it up." },
         { id: "ornaments", title: "Ornaments", summary: "Corner ornaments, border glow, art ornaments and edge dust." },
         { id: "surfaces", title: "Shimmer and scrollbars", summary: "The hover shimmer and the scrollbar styles." },
         { id: "art", title: "Art", summary: "Pixel pieces in the theme's ink, mascots, scenes and circuit ornaments, drawn from attributes." },
-        { id: "ascii", title: "ASCII", summary: "Animated ASCII art in greys, still until the work behind it is running." },
+        { id: "ascii", title: "ASCII", summary: "Animated art drawn in greys, still until the work behind it is running." },
       ]),
     ],
   },
@@ -401,7 +401,7 @@ const examples = {
       { file: "stream-setup.html", title: "Stream setup", summary: "Builds the OBS source URLs for each Stream scene and layer." },
     ]),
     group("React apps", [
-      { file: "react.html", title: "React", summary: "Every React binding on one page with no init(): buttons, fields, overlays, menus, tabs, tables and toasts." },
+      { file: "react.html", title: "React", summary: "Every binding on one page with no init(): buttons, fields, overlays, menus, tabs, tables and toasts." },
       { file: "react-shell.html", title: "React app shell", summary: "The Signal App Shell as React components: rail sections, sidebar panels, drawer and details panel owned by React state." },
       { file: "react-editor.html", title: "React editor", summary: "The parts a document editor is built from, as React components: toolbar, manuscript, marks, document tree, combobox, command palette and choice controls." },
     ]),
