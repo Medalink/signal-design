@@ -60,6 +60,11 @@
     .sd-tabs > :is(a, button) {
       border-block-end-color: Canvas;
     }
+    /* The composer's edge is its focus cue; a field's own edge gets the
+       system's focus color from the browser, the composer's does not. */
+    .sd-composer:has(textarea:focus) {
+      border-block-end-color: Highlight;
+    }
 
     /* A marker drawn as a filled box: the bar beside the current row, the
        corner of the chosen option card. */
