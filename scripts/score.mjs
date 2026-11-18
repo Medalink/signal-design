@@ -207,6 +207,13 @@ function probe({ scope, exclude, width }) {
     const behind = backdrop(el.parentElement);
     const fill = over(rgba(s.backgroundColor), behind);
     const edges = ["Top", "Right", "Bottom", "Left"].filter((side) => parseFloat(s[`border${side}Width`]) > 0).map((side) => over(rgba(s[`border${side}Color`]), behind));
+    // A switch draws its edge as an inset shadow with no blur and no offset
+    // (its borders are transparent padding), which is an edge all the same.
+    for (const part of s.boxShadow === "none" ? [] : s.boxShadow.split(/,(?![^(]*\))/)) {
+      const color = part.match(/(?:rgba?|oklch|color)\([^)]*\)|#[0-9a-f]+/i)?.[0];
+      const [x, y, blur, spread] = (part.replace(color ?? "", "").match(/-?[\d.]+px/g) || []).map(parseFloat);
+      if (color && /\binset\b/.test(part) && x === 0 && y === 0 && blur === 0 && spread > 0) edges.push(over(rgba(color), behind));
+    }
     if (inline !== null) {
       el.style.borderColor = inline;
       void s.borderTopColor;
