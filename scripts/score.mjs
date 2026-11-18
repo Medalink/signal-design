@@ -454,6 +454,9 @@ const BLOCK_PARTS = (id) => `#${id} > :not(.demo-head):not(.demo-code):not(.demo
 
 const components = JSON.parse(readFileSync(componentsFile ?? new URL("../ai/components.json", import.meta.url), "utf8")).components;
 const meta = new Map(components.map((c) => [c.id, c]));
+// The token blocks were a "Tokens" section until the pages were filed by group
+// (b532eb1); the section is now "Design", so they are told apart by id.
+const isToken = (c) => c.id.startsWith("tokens-");
 const libPages = LIBRARY.filter((p) => !only || only.includes(keyOf(p)));
 const allPages = ALL.filter((p) => !only || only.includes(keyOf(p)));
 const t0 = performance.now();
@@ -548,7 +551,7 @@ if (!skip.has("snippets")) {
       const c = meta.get(b.id);
       // Token blocks draw their swatches from script, so their HTML is a skeleton;
       // live blocks (charts, rain, feeds) change on every frame.
-      if (!c?.html || b.live || c.script || c.section === "Tokens") continue;
+      if (!c?.html || b.live || c.script || isToken(c)) continue;
       const sel = BLOCK_PARTS(b.id);
       const a = await page.$$eval(sel, (parts, fn) => new Function(`return (${fn})`)()(parts), shape.toString());
       await bare.evaluate(({ html, width, gap }) => {
@@ -595,7 +598,7 @@ for (const c of components) {
   for (const k of c.classes.filter((k) => !styled.has(k))) record(it, { check: "class", severity: "major", el: k, detail: "in the copyable HTML, styled by no rule" }, "static");
   if (!c.usage) record(it, { check: "docs", severity: "minor", el: "usage", detail: "no usage note" }, "static");
   if (c.attributes.length && !c.attributes.some((a) => checks.includes(a)) && !c.classes.some((k) => checks.includes(k))) record(it, { check: "docs", severity: "major", el: "checks", detail: `behavior (${c.attributes.join(", ")}) that no check exercises` }, "static");
-  if (c.classes.length && !c.classes.some((k) => apps.includes(k)) && c.section !== "Tokens") record(it, { check: "composed", severity: "minor", el: "apps", detail: "no example app uses it" }, "static");
+  if (c.classes.length && !c.classes.some((k) => apps.includes(k)) && !isToken(c)) record(it, { check: "composed", severity: "minor", el: "apps", detail: "no example app uses it" }, "static");
 }
 
 /* ---- report ------------------------------------------------------------- */
