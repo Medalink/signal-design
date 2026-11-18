@@ -190,6 +190,7 @@ function pageSections(page) {
   const d = page.doc;
   if (d) {
     const out = [["preview", "Preview"]];
+    for (const [id, title] of splitIntro(readFileSync(resolve(dir, page.file), "utf8"), d)?.sections ?? []) out.push([id, title]);
     if (d.when?.length) out.push(["when", "When to use"]);
     if (d.notWhen?.length) out.push(["not-when", "When not to use"]);
     if (d.install) out.push(["install", "Installation"]);
@@ -213,6 +214,7 @@ function pageSections(page) {
     const id = attrs.match(/id="([^"]+)"/)?.[1] ?? (h2 ? slugToc(h2) : null);
     if (id) out.push([id, h2?.trim() || id]);
   }
+  for (const [id, title] of splitIntro(html)?.sections ?? []) out.push([id, title]);
   return out;
 }
 
@@ -388,6 +390,38 @@ const docExample = (ex) => `      <div class="doc-example" id="ex-${slugToc(ex.t
         <div class="doc-example-demo" data-sd-check-ignore="primary">${ex.html}</div>
       </div>`;
 
+/**
+ * What a page's authored `<header class="demo-intro">` hands to the shared chrome. Pages without a doc
+ * object write a lead sentence, sometimes a note, and under `demo-intro-cols` three lists labelled by
+ * `INTRO_LISTS`. Only the lead stays above the first demo: the lists, and the note that leads into
+ * them, become sections after the preview, and the rail links to each. A page with a doc object already
+ * has When to use and When not to use, and its intro, so the page's own copies of those are left out.
+ * A header without those columns (a one-line attribution) is not split and stays where it is.
+ */
+const INTRO_LISTS = {
+  Principles: ["principles", "Principles"],
+  "Use it for": ["when", "When to use"],
+  "Leave it out when": ["not-when", "When not to use"],
+};
+
+function splitIntro(html, doc) {
+  const header = html.match(/<header class="demo-intro">[\s\S]*?<\/header>/)?.[0];
+  if (!header?.includes("demo-intro-cols")) return null;
+  const lead = header.match(/<p class="sd-lead[^"]*">([\s\S]*?)<\/p>/)?.[1].trim();
+  const notes = [...header.matchAll(/<p class="sd-muted[^"]*">([\s\S]*?)<\/p>/g)].map((m) => m[1].trim());
+  const owned = { when: doc?.when?.length, "not-when": doc?.notWhen?.length };
+  const sections = [...header.matchAll(/<p class="sd-label">([^<]+)<\/p>\s*<ul>([\s\S]*?)<\/ul>/g)]
+    .filter(([, label]) => label in INTRO_LISTS && !owned[INTRO_LISTS[label][0]])
+    .map(([, label, list]) => [...INTRO_LISTS[label], [...list.matchAll(/<li>([\s\S]*?)<\/li>/g)].map((li) => li[1].trim())]);
+  return { header, lead, notes, sections };
+}
+
+/** The sections after a page's preview that came from its authored header; the note opens the first. */
+const introHtml = ({ notes, sections }) =>
+  sections
+    .map(([id, title, items], i) => docSection(id, title, `${i ? "" : notes.map((n) => `    <p class="sd-muted doc-note">${n}</p>\n`).join("")}${docBullets(items)}`))
+    .join("\n\n");
+
 /** The same install command for each package manager, when the page's command is a plain `pnpm add`. */
 const MANAGERS = [
   ["pnpm", "pnpm add"],
@@ -479,7 +513,8 @@ ${blocks}
 
 /** A library page: its breadcrumb, title and lead over its content, the demo blocks in the preview shell, then the doc sections, then the pages either side. */
 function libraryContent(page, body) {
-  const intro = page.doc?.intro;
+  const split = splitIntro(body, page.doc);
+  const intro = page.doc?.intro ?? split?.lead;
   const copyPage = page.doc?.usage
     ? `
         <div class="doc-copy-page">
@@ -494,18 +529,18 @@ function libraryContent(page, body) {
           </div>
         </div>`
     : "";
-  const title = `<div class="demo-title"><h1 id="${page.id}-h" class="doc-h1">${page.title}</h1>${intro ? `\n      <p class="doc-lead">${intro}</p>` : ""}\n      <div class="doc-header-row">\n        <div class="doc-install-pill"><code id="doc-header-cmd">pnpm add github:Medalink/signal-design</code><button class="doc-icon-btn" type="button" data-sd-copy="#doc-header-cmd" aria-label="Copy install command"><svg aria-hidden="true"><use href="#i-copy"/></svg></button></div>${copyPage}\n      </div></div>`;
+  const title = `<div class="demo-title"><h1 id="${page.id}-h" class="doc-h1">${page.title}</h1>${intro ? `\n      <p class="doc-lead${split && !page.doc?.intro ? " max-w-[42rem]" : ""}">${intro}</p>` : ""}\n      <div class="doc-header-row">\n        <div class="doc-install-pill"><code id="doc-header-cmd">pnpm add github:Medalink/signal-design</code><button class="doc-icon-btn" type="button" data-sd-copy="#doc-header-cmd" aria-label="Copy install command"><svg aria-hidden="true"><use href="#i-copy"/></svg></button></div>${copyPage}\n      </div></div>`;
   let header;
   let blocks = body;
   if (blocks.startsWith('<header class="demo-intro">')) {
     const at = blocks.indexOf("</header>") + "</header>".length;
-    header = blocks.slice(0, at).replace('<header class="demo-intro">', `<header class="demo-intro">\n    ${title}`);
+    header = split ? `<header class="demo-intro">\n    ${title}\n  </header>` : blocks.slice(0, at).replace('<header class="demo-intro">', `<header class="demo-intro">\n    ${title}`);
     blocks = blocks.slice(at).trim();
   } else {
     header = `<header class="demo-intro">\n    ${title}\n  </header>`;
   }
   const content = blocks ? `${header}\n${previewShell(blocks)}` : header;
-  const doc = docHtml(page);
+  const doc = [split && introHtml(split), docHtml(page)].filter(Boolean).join("\n\n");
   const { prev, next } = neighbors(page);
   const step = (p, rel, side) =>
     p ? `    <a class="doc-pager-link" href="./${p.file}" rel="${rel}" data-sd-prefetch><span>${side}</span><span class="doc-pager-title">${p.title}</span></a>` : "    <span></span>";

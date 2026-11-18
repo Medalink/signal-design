@@ -332,8 +332,10 @@ const library = [
               "Plain HTML or server-rendered pages: attributes alone give dialogs, menus, tabs and tooltips.",
               "Markup that arrives after load: every listener is delegated, so no re-init is needed.",
               "Theme switching with a remembered choice, and copy buttons with feedback.",
+              "Live lists that must keep the reader's place: mountFeed.",
             ],
             notWhen: [
+              "A page where the HTML works with CSS alone: each block says whether it needs JS.",
               "A framework already renders the state: leave out that piece's data-sd attribute and set ARIA yourself (see Framework state).",
               "Heavy parts: living tables, countdowns and feeds mount explicitly, init() does not run them.",
             ],

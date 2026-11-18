@@ -707,21 +707,6 @@
     gap: 12px;
     padding-block: 48px 8px;
   }
-  .demo-intro-cols {
-    display: grid;
-    gap: 40px;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
-    align-items: start;
-  }
-  .demo-intro li {
-    color: var(--sd-fg-muted);
-  }
-  .demo-intro li + li {
-    margin-block-start: 10px;
-  }
-  .demo-intro .sd-label {
-    margin-block-end: 12px;
-  }
   /* The landing: sections span the page, each one's content in the wide column. */
   .home-section {
     border-block-start: 1px solid var(--sd-line);
@@ -1145,6 +1130,9 @@
     margin-block-start: 14px;
     max-width: 48rem;
     font-size: var(--text-sm);
+  }
+  .doc-section > .sd-title + .doc-note {
+    margin-block: 0 16px;
   }
   .demo-block {
     display: grid;
