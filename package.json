@@ -105,6 +105,7 @@
     "perf": "node scripts/perf.mjs",
     "a11y": "node scripts/a11y.mjs",
     "score": "node scripts/score.mjs",
+    "ux": "node scripts/ux/run.mjs",
     "build:ai": "node scripts/build-ai.mjs",
     "check:ai": "node scripts/build-ai.mjs --validate",
     "build:docs": "node scripts/doc-tables.mjs",
