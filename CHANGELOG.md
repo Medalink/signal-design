@@ -2,6 +2,28 @@
 
 ## Unreleased
 
+## 1.4.77 (2026-11-18)
+
+### Fixed
+- The warm-window hover check survives the same one-off WebKit hiccup the
+  Escape sequence already re-runs for: the pointerleave that starts the
+  window's 300 ms can arrive so late that the hover lands inside it. The
+  hover re-runs, and a hover that always shows a tip still fails.
+- The React overlays check survives a one-off WebKit hiccup that shows a tip
+  inside the warm window: the Escape sequence re-runs, and a run that never
+  waits still fails.
+- Running the check alone no longer fails the tooltip hovers in WebKit: the
+  standalone runner injects the render-whole style the sweep adds, without
+  which WebKit will not scroll a skipped content-visibility demo into view.
+- `sd-chip`: the remove button's press box is 24px square (44px on a coarse
+  pointer) around its 16px glyph. The chip keeps its size on a mouse and is 44px
+  tall on a phone, where it was 52px.
+- `sd-check-bare`: a bare checkbox or radio is its label's whole target, so the
+  label is 24px square (44px on a coarse pointer) with the 16px box centered.
+  The box sits 4px further in than before.
+- `sd-message-edit-hint`: the Esc and Enter keys are 24px tall targets that keep
+  the hint's line height.
+
 ## 1.4.76 (2026-11-18)
 
 ### Changed
