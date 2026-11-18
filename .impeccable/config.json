@@ -20,6 +20,33 @@
         ],
         "createdAt": "2026-11-09T22:33:10.746Z",
         "reason": "agent decision: ship.html uses only Signal's own type scale and shell parts (shell bar title, caps sd-label, sd-stat-value), the same hierarchy as the existing charts.html and chat.html examples; a bigger heading step would break the design system it showcases"
+      },
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "showcase/lib-elements.html"
+        ],
+        "createdAt": "2026-11-18T23:09:10.643Z",
+        "reason": "poteto-agent: lib-elements is the specimen page for unclassed HTML elements; the heading ladder h1 to h6 is the content shown. My only edit there removed one duplicate paragraph (d60d3d2)."
+      },
+      {
+        "rule": "skipped-heading",
+        "value": "*",
+        "files": [
+          "showcase/lib-elements.html"
+        ],
+        "createdAt": "2026-11-18T23:09:10.849Z",
+        "reason": "poteto-agent: the h4 'Plain dialog' sits inside a dialog demo of plain elements, and the h1 to h6 ladder is the specimen. The page chrome supplies the real h1 and h2 outline. Not changed by this work."
+      },
+      {
+        "rule": "monotonous-spacing",
+        "value": "*",
+        "files": [
+          "showcase/lib-rules.html"
+        ],
+        "createdAt": "2026-11-18T23:09:11.069Z",
+        "reason": "poteto-agent: six peer rule rows share one gap-y-8 on purpose, with a tighter gap-3 inside each row between rule and specimen; section spacing comes from shared chrome. Checked in ink and paper at 1280 and 390 wide."
       }
     ]
   }
