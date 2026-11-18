@@ -48,16 +48,12 @@
       min-width: var(--sd-hit);
       min-height: var(--sd-hit);
     }
-    /* A chip's dismiss sits inside the chip, so its hit area reaches past the
-       glyph with a transparent box and the chip keeps its size. */
+    /* A chip's dismiss is --sd-hit square around its 16px glyph. The negative
+       margins (indicators.css gives 4px more at the trailing side) keep the
+       chip's own width, and the box reaches past the chip into the gap. */
     .sd-chip > button {
-      position: relative;
-    }
-    .sd-chip > button::after {
-      content: "";
-      position: absolute;
-      inset-block: min(0px, calc((100% - var(--sd-hit)) / 2));
-      inset-inline: min(0px, calc((100% - var(--sd-hit)) / 2));
+      min-width: var(--sd-hit);
+      margin-inline: calc((16px - var(--sd-hit)) / 2) calc((16px - var(--sd-hit)) / 2 - 4px);
     }
     /* A square button stays square. Nine of them are wider than a phone, so
        the bar keeps inside its message and scrolls. No hover tip clips: a

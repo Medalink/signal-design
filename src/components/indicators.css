@@ -68,9 +68,12 @@
   .sd-chip > button {
     display: inline-grid;
     place-items: center;
-    width: 16px;
-    height: 16px;
-    margin-inline-end: -4px;
+    /* The press box is 24px (WCAG 2.5.8) around a 16px glyph; the margins give
+       the 8px back so the chip keeps its size. */
+    width: 24px;
+    height: 24px;
+    margin-block: -4px;
+    margin-inline: -4px -8px;
     padding: 0;
     border: 0;
     background: none;
