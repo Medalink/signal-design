@@ -75,7 +75,7 @@
     --btn-border: transparent;
   }
   .sd-btn-ghost:hover {
-    --btn-bg: var(--sd-raised);
+    --btn-bg: color-mix(in srgb, var(--sd-fg) 6%, transparent);
     --btn-border: transparent;
   }
 
