@@ -144,9 +144,9 @@ A task that has no path on a layout lists the profiles it runs on and is reporte
 task with no path anywhere carries a `skip` reason that the report prints. `app.chat.thread` is
 skipped for that reason: `chat.html` has no threads.
 
-The Ctrl K palette searches page titles and summaries only, so `docs.find-search` types
-`overlay` to reach Overlays, the page where tooltips are documented. A search for `tooltip` finds
-nothing today.
+`docs.find-search` types `tooltip` into the Ctrl K palette and expects Overlays, the page where
+tooltips are documented, as the first result. The palette matches what a page documents (its block
+titles, `sd-` classes and `data-sd-*` attributes), not only its title.
 
 ### Surfaces
 
