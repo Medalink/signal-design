@@ -1592,7 +1592,7 @@
   }
   .sd-composer-row > .sd-btn-ghost.sd-btn-icon:hover,
   .sd-composer-add[aria-expanded="true"] {
-    background: var(--sd-raised);
+    background: color-mix(in srgb, var(--sd-fg) 6%, transparent);
     color: var(--sd-fg);
   }
   .sd-composer-row > .sd-composer-send {

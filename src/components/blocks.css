@@ -645,6 +645,11 @@
   .sd-link-card-thumb-action:not(:hover):is(*, :root) {
     --btn-bg: var(--sd-canvas);
   }
+  /* Over media the hover stays opaque, so the mark never sits on the image. */
+  :is(.sd-link-card-hero, .sd-link-card-media) > .sd-link-card-dismiss:hover,
+  .sd-link-card-thumb-action:hover:is(*, :root) {
+    --btn-bg: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-canvas));
+  }
   .sd-link-card-thumb-label {
     background: var(--sd-canvas);
     inset-block-start: 4px;
