@@ -285,19 +285,55 @@ Every block from the library pages, with its copyable HTML. `JS:` says what `ini
 
 Square corners · flat, hairlines only · color only for status and selection · transitions of 120–200ms · tokens, never hex values · one text face in regular and medium, font-mono for code · see AGENTS.md for the full list and npx signal-design check to test a page against it
 
-Classes: none
+Classes: sd-avatar, sd-badge, sd-btn, sd-check, sd-check-text, sd-cluster, sd-nav, sd-typing
 
 No JS needed: the HTML works with the CSS alone.
 
 ```html
-<ol class="grid gap-y-2 gap-x-16 sm:grid-cols-2 text-fg-muted" style="list-style: decimal-leading-zero; padding-inline-start: 2.2em">
-  <li>Square corners everywhere, avatars and checkboxes included.</li>
-  <li>Flat surfaces. No glass, grain, glow or shadow.</li>
-  <li>Color is for important things: risk, status, success and selection. Everything else is black, white and grey, navigation included.</li>
-  <li>120–200ms transitions and a one-pass hover shimmer. Loops are allowed; the rain moves while work runs or when the reader turns it on.</li>
-  <li>Minimal by default, detail on expand.</li>
-  <li>SF Pro for text in regular and medium; Source Code Pro for code. The font picker swaps the text face.</li>
-</ol>
+<ul class="grid gap-y-8" style="list-style: none; padding: 0">
+  <li class="grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center">
+    <p class="text-fg-muted">Square corners everywhere, avatars and checkboxes included.</p>
+    <div class="sd-cluster">
+      <button class="sd-btn">Button</button>
+      <span class="sd-avatar" role="img" aria-label="Avatar">AL</span>
+      <label class="sd-check"><input type="checkbox" checked=""><span class="sd-check-text">Checkbox</span></label>
+    </div>
+  </li>
+  <li class="grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center">
+    <p class="text-fg-muted">Flat surfaces. No glass, grain, glow or shadow.</p>
+    <div class="sd-cluster">
+      <span class="bg-canvas p-3 text-sm">Canvas</span>
+      <span class="bg-surface p-3 text-sm">Surface</span>
+      <span class="bg-raised p-3 text-sm">Raised</span>
+    </div>
+  </li>
+  <li class="grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center">
+    <p class="text-fg-muted">Color is for important things: risk, status, success and selection. Everything else is black, white and grey, navigation included.</p>
+    <div class="sd-cluster">
+      <nav class="sd-nav" aria-label="Grey navigation"><a href="#tokens-hard-rules" aria-current="page">Projects</a><a href="#tokens-hard-rules">History</a></nav>
+      <span class="sd-badge" data-tone="danger">Risk</span>
+      <span class="sd-badge" data-tone="success">Passed</span>
+    </div>
+  </li>
+  <li class="grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center">
+    <p class="text-fg-muted">120–200ms transitions and a one-pass hover shimmer. Loops are allowed; the rain moves while work runs or when the reader turns it on.</p>
+    <div class="sd-cluster">
+      <button class="sd-btn">Hover me</button>
+      <span class="sd-typing"><i><b></b></i><span>Working</span></span>
+    </div>
+  </li>
+  <li class="grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center">
+    <p class="text-fg-muted">Minimal by default, detail on expand.</p>
+    <details>
+      <summary>web-1 · running</summary>
+      <p>Image, ports and the last restart.</p>
+    </details>
+  </li>
+  <li class="grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center">
+    <p class="text-fg-muted">SF Pro for text in regular and medium; Source Code Pro for code. The font picker swaps the text face.</p>
+    <p>Regular <span class="font-medium">Medium</span> <code>mono</code></p>
+  </li>
+</ul>
 ```
 
 ## Design / Semantic roles
@@ -439,7 +475,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Design / Fonts
 
-data-font sets the text face of a subtree, or of the page on <html>. Code stays in Source Code Pro. Pick the page font under Settings in the bar above. sd-reading (or font-reading, or face="reading" on the React Manuscript) sets prose to be read at length in Literata, with real italics and a semibold for strong text. data-font does not change it.
+sd-reading (or font-reading, or face="reading" on the React Manuscript) sets prose to be read at length in Literata, with real italics and a semibold for strong text. data-font does not change it. data-font sets the text face of a subtree, or of the page on <html>. Code stays in Source Code Pro. Pick the page font under Settings in the bar above.
 
 Classes: sd-card, sd-label, sd-reading
 

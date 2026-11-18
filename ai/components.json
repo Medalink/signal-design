@@ -8,11 +8,20 @@
    "id": "tokens-hard-rules",
    "section": "Design",
    "title": "Hard rules",
-   "classes": [],
+   "classes": [
+    "sd-avatar",
+    "sd-badge",
+    "sd-btn",
+    "sd-check",
+    "sd-check-text",
+    "sd-cluster",
+    "sd-nav",
+    "sd-typing"
+   ],
    "attributes": [],
    "usage": "Square corners · flat, hairlines only · color only for status and selection · transitions of 120–200ms · tokens, never hex values · one text face in regular and medium, font-mono for code · see AGENTS.md for the full list and npx signal-design check to test a page against it",
    "js": "No JS needed: the HTML works with the CSS alone.",
-   "html": "<ol class=\"grid gap-y-2 gap-x-16 sm:grid-cols-2 text-fg-muted\" style=\"list-style: decimal-leading-zero; padding-inline-start: 2.2em\">\n  <li>Square corners everywhere, avatars and checkboxes included.</li>\n  <li>Flat surfaces. No glass, grain, glow or shadow.</li>\n  <li>Color is for important things: risk, status, success and selection. Everything else is black, white and grey, navigation included.</li>\n  <li>120–200ms transitions and a one-pass hover shimmer. Loops are allowed; the rain moves while work runs or when the reader turns it on.</li>\n  <li>Minimal by default, detail on expand.</li>\n  <li>SF Pro for text in regular and medium; Source Code Pro for code. The font picker swaps the text face.</li>\n</ol>"
+   "html": "<ul class=\"grid gap-y-8\" style=\"list-style: none; padding: 0\">\n  <li class=\"grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center\">\n    <p class=\"text-fg-muted\">Square corners everywhere, avatars and checkboxes included.</p>\n    <div class=\"sd-cluster\">\n      <button class=\"sd-btn\">Button</button>\n      <span class=\"sd-avatar\" role=\"img\" aria-label=\"Avatar\">AL</span>\n      <label class=\"sd-check\"><input type=\"checkbox\" checked=\"\"><span class=\"sd-check-text\">Checkbox</span></label>\n    </div>\n  </li>\n  <li class=\"grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center\">\n    <p class=\"text-fg-muted\">Flat surfaces. No glass, grain, glow or shadow.</p>\n    <div class=\"sd-cluster\">\n      <span class=\"bg-canvas p-3 text-sm\">Canvas</span>\n      <span class=\"bg-surface p-3 text-sm\">Surface</span>\n      <span class=\"bg-raised p-3 text-sm\">Raised</span>\n    </div>\n  </li>\n  <li class=\"grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center\">\n    <p class=\"text-fg-muted\">Color is for important things: risk, status, success and selection. Everything else is black, white and grey, navigation included.</p>\n    <div class=\"sd-cluster\">\n      <nav class=\"sd-nav\" aria-label=\"Grey navigation\"><a href=\"#tokens-hard-rules\" aria-current=\"page\">Projects</a><a href=\"#tokens-hard-rules\">History</a></nav>\n      <span class=\"sd-badge\" data-tone=\"danger\">Risk</span>\n      <span class=\"sd-badge\" data-tone=\"success\">Passed</span>\n    </div>\n  </li>\n  <li class=\"grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center\">\n    <p class=\"text-fg-muted\">120–200ms transitions and a one-pass hover shimmer. Loops are allowed; the rain moves while work runs or when the reader turns it on.</p>\n    <div class=\"sd-cluster\">\n      <button class=\"sd-btn\">Hover me</button>\n      <span class=\"sd-typing\"><i><b></b></i><span>Working</span></span>\n    </div>\n  </li>\n  <li class=\"grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center\">\n    <p class=\"text-fg-muted\">Minimal by default, detail on expand.</p>\n    <details>\n      <summary>web-1 · running</summary>\n      <p>Image, ports and the last restart.</p>\n    </details>\n  </li>\n  <li class=\"grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center\">\n    <p class=\"text-fg-muted\">SF Pro for text in regular and medium; Source Code Pro for code. The font picker swaps the text face.</p>\n    <p>Regular <span class=\"font-medium\">Medium</span> <code>mono</code></p>\n  </li>\n</ul>"
   },
   {
    "id": "tokens-semantic-roles",
@@ -126,7 +135,7 @@
     "sd-reading"
    ],
    "attributes": [],
-   "usage": "data-font sets the text face of a subtree, or of the page on <html>. Code stays in Source Code Pro. Pick the page font under Settings in the bar above. sd-reading (or font-reading, or face=\"reading\" on the React Manuscript) sets prose to be read at length in Literata, with real italics and a semibold for strong text. data-font does not change it.",
+   "usage": "sd-reading (or font-reading, or face=\"reading\" on the React Manuscript) sets prose to be read at length in Literata, with real italics and a semibold for strong text. data-font does not change it. data-font sets the text face of a subtree, or of the page on <html>. Code stays in Source Code Pro. Pick the page font under Settings in the bar above.",
    "js": "No JS needed: the HTML works with the CSS alone.",
    "html": "<div class=\"grid gap-4 sm:grid-cols-3\">\n  <div class=\"sd-card\" data-font=\"system\"><p class=\"sd-label\">system</p><p class=\"text-lg mt-2\"><span class=\"font-normal\">Regular</span> · <span class=\"font-semibold\">Medium</span></p><p class=\"text-sm text-fg-muted mt-1\">Approved 21 of 24 <code>sd-btn</code></p></div>\n  <div class=\"sd-card\" data-font=\"leon-sans\"><p class=\"sd-label\">leon-sans</p><p class=\"text-lg mt-2\"><span class=\"font-normal\">Regular</span> · <span class=\"font-semibold\">Medium</span></p><p class=\"text-sm text-fg-muted mt-1\">Approved 21 of 24 <code>sd-btn</code></p></div>\n  <div class=\"sd-card\" data-font=\"source-code-pro\"><p class=\"sd-label\">source-code-pro</p><p class=\"text-lg mt-2\"><span class=\"font-normal\">Regular</span> · <span class=\"font-semibold\">Medium</span></p><p class=\"text-sm text-fg-muted mt-1\">Approved 21 of 24 <code>sd-btn</code></p></div>\n</div>\n\n<div class=\"sd-card\" id=\"tokens-reading\"><p class=\"sd-label\">reading</p><div class=\"sd-reading text-md mt-2 max-w-[38rem]\"><p>The harbour was <em>quiet</em> at that hour, and she walked the length of the quay before she let herself think about the letter. <strong>Nothing</strong> in it was unkind. That was the difficulty.</p><p class=\"mt-3\">“Lisbon,” he said, “is a city that forgives you slowly.” Naïve, façade, Żółć, 1,284 words, 0123456789.</p></div></div>"
   },
