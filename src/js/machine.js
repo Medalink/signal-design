@@ -683,7 +683,10 @@ export function mountMachine(root, spec, options = {}) {
     const W = canvas.offsetWidth;
     const H = canvas.offsetHeight;
     const room = board.clientWidth;
-    const scale = room ? Math.max(options.minScale ?? 0.5, Math.min(1, room / W)) : 1;
+    // Pressable nodes on a touch screen keep their size so a finger lands on
+    // them: the board scrolls instead of shrinking them.
+    const pressable = matchMedia("(pointer: coarse)").matches && [...nodes.values()].some((n) => n.el.tabIndex === 0);
+    const scale = room ? Math.max(options.minScale ?? (pressable ? 1 : 0.5), Math.min(1, room / W)) : 1;
     // A tab stop on the board while it overflows, so keyboard users can scroll
     // it (WCAG 2.1.1); the stop goes away when the machine fits again.
     if (room > 0 && W * scale > room + 1) {
