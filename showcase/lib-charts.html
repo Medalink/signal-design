@@ -285,6 +285,35 @@ init(); // draws every .sd-spark[data-values] that is on the page when it runs</
           <tr><td><code>createChart</code></td><td>Time axes, units, several series, bands, tooltips, live data. Needs Chart.js.</td></tr>
         </tbody>
       </table>
+      <script type="text/plain" data-demo-js>
+const SVG = "http://www.w3.org/2000/svg";
+
+// points: [{ x: time, y: value }], oldest first. The CSS styles the polyline.
+function drawPlot(el, points, { grid = true } = {}) {
+  const w = 600;
+  const h = 100;
+  const ys = points.map((p) => p.y).filter(Number.isFinite);
+  const lo = Math.min(...ys);
+  const hi = Math.max(...ys);
+  const x0 = points[0].x;
+  const span = points.at(-1).x - x0 || 1;
+  const xy = (p) => [((p.x - x0) / span) * w, h - 4 - ((p.y - lo) / (hi - lo || 1)) * (h - 8)];
+  const line = points.filter((p) => p.y != null).map((p) => xy(p).map((n) => n.toFixed(1)).join(",")).join(" ");
+  el.querySelector("svg")?.remove();
+  const svg = document.createElementNS(SVG, "svg");
+  svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+  svg.setAttribute("preserveAspectRatio", "none");
+  svg.setAttribute("aria-hidden", "true");
+  svg.innerHTML = `${grid ? `<path class="grid" d="M0 25H${w}M0 50H${w}M0 75H${w}"/>` : ""}<polygon class="area" points="0,${h} ${line} ${w},${h}"/><polyline class="line" points="${line}"/>`;
+  el.prepend(svg);
+}
+
+const now = Date.now();
+const points = Array.from({ length: 60 }, (_, i) => ({ x: now - (59 - i) * 10000, y: 480 + Math.sin(i / 6) * 120 }));
+
+drawPlot(document.querySelector("#plot-down"), points);
+drawPlot(document.querySelector("#sparks [data-from=down]"), points, { grid: false });
+      </script>
       <p class="demo-usage"><code>sd-plot</code> + <code>data-series</code> · <code>sd-plot-readout</code> · <code>sd-plot-inline</code></p>
     </div>
 
@@ -296,6 +325,15 @@ init(); // draws every .sd-spark[data-values] that is on the page when it runs</
           <tbody id="formats"></tbody>
         </table>
       </div>
+      <script type="text/plain" data-demo-js>
+import { formatValue } from "signal-design/charts";
+
+formatValue(1500, "Mbps");    // 1.5 Gbps
+formatValue(250000, "Mbps");  // 250 Gbps
+formatValue(0.5, "Mbps");     // 500 Kbps
+formatValue(1200000, "Mbps"); // 1.20 Tbps
+formatValue(12.3, " ms");     // 12.3 ms
+      </script>
       <p class="demo-usage"><code>formatValue(value, unit)</code> from <code>signal-design/charts</code></p>
     </div>
 </body>
