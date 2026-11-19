@@ -137,7 +137,7 @@ function mountLivingTableTile() {
   const root = document.querySelector(".wall-tile [data-sd-living-table]");
   whenVisible(root, () => {
     let table;
-    import("../../src/js/index.js").then(({ mountLivingTable }) => {
+    import("../../src/js/living-table.js").then(({ mountLivingTable }) => {
       table = mountLivingTable(root);
       requestAnimationFrame(markScrollers);
     });
