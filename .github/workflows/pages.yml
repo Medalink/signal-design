@@ -21,11 +21,12 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # The deploy job runs in 44 seconds to 2.4 minutes.
-    timeout-minutes: 3
+    # The deploy job runs in 44 seconds to 2.4 minutes; 8 leaves room for one
+    # deploy-pages retry.
+    timeout-minutes: 8
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment-retry.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -41,5 +42,14 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .showcase-dist
+      # deploy-pages has hit GitHub's artifact-metadata API returning 0 artifacts
+      # for an artifact that is present (run 44463953127). One retry after a short
+      # wait rides out the race; a longer GitHub outage still fails the run.
       - id: deployment
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+      - if: steps.deployment.outcome == 'failure'
+        run: sleep 20
+      - id: deployment-retry
+        if: steps.deployment.outcome == 'failure'
         uses: actions/deploy-pages@v4
