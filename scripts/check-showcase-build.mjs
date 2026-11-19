@@ -10,6 +10,12 @@
  * showcase bar with the Mock badge, the overview and library pages the doc
  * topbar with its Theme popover and no bar, and nothing may log a console
  * error or fail to load. Each page opens with and without its .html.
+ *
+ * It also fails a page that can load, statically or through a dynamic import,
+ * a chunk holding a script another page loads from its HTML. The package
+ * marks its JS side-effect free, so the bundler is free to place a page's own
+ * script in a chunk other pages share; the home page once loaded the Stream
+ * example's script that way and ran a second init().
  */
 import { createReadStream, existsSync, mkdtempSync, rmSync, statSync } from "node:fs";
 import { createServer } from "node:http";
@@ -36,8 +42,42 @@ let browser;
 try {
   const started = Date.now();
   process.env.SHOWCASE_BASE = BASE;
-  await build({ root: showcase, configFile: resolve(showcase, "vite.config.js"), logLevel: "warn", build: { outDir: out, emptyOutDir: true } });
+  const chunks = new Map();
+  const pageScripts = new Map();
+  const slash = (id) => id.replaceAll("\\", "/");
+  const collect = {
+    name: "collect-chunks",
+    generateBundle(_, bundle) {
+      for (const chunk of Object.values(bundle)) {
+        if (chunk.type !== "chunk") continue;
+        chunks.set(chunk.fileName, chunk);
+        if (!chunk.facadeModuleId?.endsWith(".html")) continue;
+        const info = this.getModuleInfo(chunk.facadeModuleId);
+        const scripts = [...info.importedIds, ...info.dynamicallyImportedIds].map(slash).filter((id) => id.endsWith(".js"));
+        pageScripts.set(slash(chunk.facadeModuleId).split("/showcase/").pop(), new Set(scripts));
+      }
+    },
+  };
+  await build({ root: showcase, configFile: resolve(showcase, "vite.config.js"), logLevel: "warn", plugins: [collect], build: { outDir: out, emptyOutDir: true } });
   console.log(`ok   built the showcase under ${BASE} in ${((Date.now() - started) / 1000).toFixed(1)}s`);
+
+  for (const chunk of chunks.values()) {
+    if (!chunk.facadeModuleId?.endsWith(".html")) continue;
+    const page = slash(chunk.facadeModuleId).split("/showcase/").pop();
+    const own = pageScripts.get(page);
+    const foreign = new Set([...pageScripts].filter(([other]) => other !== page).flatMap(([, ids]) => [...ids]).filter((id) => !own.has(id)));
+    const reached = new Set();
+    const reach = (file) => {
+      if (reached.has(file)) return;
+      reached.add(file);
+      for (const next of [...chunks.get(file).imports, ...chunks.get(file).dynamicImports]) reach(next);
+    };
+    reach(chunk.fileName);
+    for (const file of reached) {
+      const strays = chunks.get(file).moduleIds.map(slash).filter((id) => foreign.has(id));
+      if (strays.length) fail(page, `can load ${file}, which holds another page's script: ${strays.map((id) => id.split("/showcase/").pop()).join(", ")}`);
+    }
+  }
 
   // GitHub Pages: files as they are, a missing .html added, a directory to its index.html.
   const resolveFile = (pathname) => {
