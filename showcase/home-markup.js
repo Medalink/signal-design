@@ -218,7 +218,7 @@ ${EXAMPLES.map(card).join("\n")}
   </section>`;
 }
 
-/** Every page, grouped the way the docs sidebar groups them. */
+/** Every library page, grouped the way the docs sidebar groups them. The example apps are the previews above it. */
 export function homeIndex() {
   const group = (g) => `        <div class="home-index-group">
           <h4>${g.title} <span class="sd-count">${g.pages.length}</span></h4>
