@@ -2153,8 +2153,10 @@
   }
 }
 
-/* Page to page inside the showcase: a short cross-fade, with the topbar and
-   sidebar held still so only the article changes. */
+/* Page to page inside the showcase: the old article fades out, then the new
+   one fades in, over the canvas, with the topbar and sidebar held still. A
+   plain cross-fade shows both articles at once halfway through, and the old
+   one reads as a ghost behind the new. */
 @view-transition {
   navigation: auto;
 }
@@ -2164,9 +2166,28 @@
 .doc-sidebar {
   view-transition-name: doc-sidebar;
 }
+::view-transition {
+  background: var(--sd-canvas);
+}
 ::view-transition-group(*) {
   animation-duration: 160ms;
   animation-timing-function: var(--ease-out);
+}
+::view-transition-old(root) {
+  animation: sd-page-out 70ms var(--ease-out) both;
+}
+::view-transition-new(root) {
+  animation: sd-page-in 130ms var(--ease-out) 70ms both;
+}
+@keyframes sd-page-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes sd-page-in {
+  from {
+    opacity: 0;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   @view-transition {
