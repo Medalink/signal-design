@@ -69,7 +69,7 @@
 
     /* Marks and overlays */
     --sd-chart-accent: var(--sd-fg); /* crosshair and selection */
-    --sd-chart-warning: var(--sd-pending);
+    --sd-chart-warning: var(--sd-warning); /* a warning threshold: the costly orange, not pending amber */
     --sd-chart-critical: var(--sd-danger);
     --sd-chart-burst: var(--sd-pending);
     --sd-chart-surge: var(--sd-fg);
@@ -118,17 +118,19 @@
     --sd-chart-ghost: #64748b;
     --sd-chart-baseline: #94a3b8;
     --sd-chart-fallback: #94a3b8;
+    /* Categories carry no status: accent, people violet, blue, fuchsia and two greys.
+       Green, pink, orange and amber stay for thresholds, alerts and status. */
     --sd-chart-1: #00d4ff;
-    --sd-chart-2: #22c55e;
-    --sd-chart-3: #a78bfa;
-    --sd-chart-4: #fbbf24;
-    --sd-chart-5: #ff3366;
-    --sd-chart-6: #fb923c;
+    --sd-chart-2: #a78bfa;
+    --sd-chart-3: #d4d4d8;
+    --sd-chart-4: #5b8cff;
+    --sd-chart-5: #e879f9;
+    --sd-chart-6: #8a8a92;
     --sd-chart-dashes: off;
     --sd-chart-heat: #00d4ff;
     --sd-chart-ok: #22c55e;
     --sd-chart-accent: #00d4ff;
-    --sd-chart-warning: #ffaa00;
+    --sd-chart-warning: #ff6a00;
     --sd-chart-critical: #ff3366;
     --sd-chart-burst: #fbbf24;
     --sd-chart-surge: #a78bfa;
@@ -139,8 +141,8 @@
     --sd-chart-dip: rgb(34 197 94 / 0.12);
     --sd-chart-spike: color-mix(in srgb, var(--sd-chart-critical) 13%, transparent);
     --sd-chart-day: rgb(100 116 139 / 0.35);
-    --sd-chart-forecast: #ffaa00;
-    --sd-chart-stale: #ffaa00;
+    --sd-chart-forecast: #ffb800;
+    --sd-chart-stale: #ffb800;
     --sd-chart-dead: #8a8a8a;
     --sd-chart-tag-text: #0d1117;
   }
@@ -167,21 +169,21 @@
     --sd-chart-ghost: #64748b;
     --sd-chart-baseline: #64748b;
     --sd-chart-accent: #00718f;
-    --sd-chart-warning: #855800;
+    --sd-chart-warning: #ad3f00;
     --sd-chart-critical: #c8003a;
     --sd-chart-burst: #a16207;
     --sd-chart-surge: #6d28d9;
     --sd-chart-drop: #c2410c;
     --sd-chart-maintenance: rgb(0 113 143 / 0.08);
-    --sd-chart-forecast: #855800;
-    --sd-chart-stale: #855800;
+    --sd-chart-forecast: #7a5c00;
+    --sd-chart-stale: #7a5c00;
     --sd-chart-tag-text: #ffffff;
     --sd-chart-1: #00718f;
-    --sd-chart-2: #15803d;
-    --sd-chart-3: #6d28d9;
-    --sd-chart-4: #a16207;
-    --sd-chart-5: #c8003a;
-    --sd-chart-6: #c2410c;
+    --sd-chart-2: #6d28d9;
+    --sd-chart-3: #3f3f46;
+    --sd-chart-4: #2f5fd0;
+    --sd-chart-5: #a2289b;
+    --sd-chart-6: #7a7a84;
     --sd-chart-heat: #00718f;
     --sd-chart-ok: #15803d;
   }
@@ -206,21 +208,21 @@
       --sd-chart-jitter: rgb(91 47 209 / 0.16);
       --sd-chart-baseline: #64748b;
       --sd-chart-accent: #00718f;
-      --sd-chart-warning: #855800;
+      --sd-chart-warning: #ad3f00;
       --sd-chart-critical: #c8003a;
       --sd-chart-burst: #a16207;
       --sd-chart-surge: #6d28d9;
       --sd-chart-drop: #c2410c;
       --sd-chart-maintenance: rgb(0 113 143 / 0.08);
-      --sd-chart-forecast: #855800;
-      --sd-chart-stale: #855800;
+      --sd-chart-forecast: #7a5c00;
+      --sd-chart-stale: #7a5c00;
       --sd-chart-tag-text: #ffffff;
       --sd-chart-1: #00718f;
-      --sd-chart-2: #15803d;
-      --sd-chart-3: #6d28d9;
-      --sd-chart-4: #a16207;
-      --sd-chart-5: #c8003a;
-      --sd-chart-6: #c2410c;
+      --sd-chart-2: #6d28d9;
+      --sd-chart-3: #3f3f46;
+      --sd-chart-4: #2f5fd0;
+      --sd-chart-5: #a2289b;
+      --sd-chart-6: #7a7a84;
       --sd-chart-heat: #00718f;
       --sd-chart-ok: #15803d;
     }

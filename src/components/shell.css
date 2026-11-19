@@ -279,8 +279,10 @@
   .sd-rail-tile[data-unread]::before {
     height: 10px;
   }
+  /* The current place is a selection, so its bar is accent; the unread nub stays fg. */
   .sd-rail-tile[aria-current]:not([aria-current="false"])::before {
     height: calc(var(--tile) - 8px);
+    background: var(--sd-accent);
   }
 
   /*

@@ -18,14 +18,14 @@ colors:
   accent: "#00d4ff"
   success: "#00ff88"
   danger: "#ff3366"
-  warning: "#ff8800"
-  pending: "#ffaa00"
+  warning: "#ff6a00"
+  pending: "#ffb800"
   extra: "#8855ff"
   accent-deep: "#00718f"
   success-deep: "#00804a"
   danger-deep: "#c8003a"
-  warning-deep: "#a84d00"
-  pending-deep: "#855800"
+  warning-deep: "#ad3f00"
+  pending-deep: "#7a5c00"
   extra-deep: "#5b2fd1"
 typography:
   display-xl:
@@ -180,11 +180,11 @@ Near-black greys carry everything; six saturated signals are reserved for meanin
 
 ### Signals
 Each signal is a role, set through `data-tone` or a `--sd-*` token, and appears as a dot, an edge, a hairline border, a word or an 8% wash. Never as a large fill.
-- **Selection Cyan** (`--sd-accent`): selected, active, now: a selected message's edge, text marks and highlights, a resize grip while dragged or focused, the timeline's "now" line, an Active badge. Focus rings and the current nav item are Text, not cyan.
+- **Selection Cyan** (`--sd-accent`): selected, active, now: a selected message's edge, text marks and highlights, a resize grip while dragged or focused, the timeline's "now" line, an Active badge, the bar beside the current rail tile, the edge and corner of a chosen option card, the start edge of the command palette's active result. Focus rings and current nav links and tabs are Text, not cyan.
 - **Pass Green** (`--sd-success`): approved, passing, online, your position.
 - **Risk Pink** (`--sd-danger`): irreversible, high risk, reject, invalid fields.
-- **Cost Orange** (`--sd-warning`): costly.
-- **Pending Amber** (`--sd-pending`): unproven, waiting, low confidence.
+- **Cost Orange** (`--sd-warning`): costly. A deep orange, warmer than the amber.
+- **Pending Amber** (`--sd-pending`): unproven, waiting, low confidence. A gold, and told from orange by shape too: its dot and status square are ringed with a centre pip, its badge edge is dashed.
 - **Presence Violet** (`--sd-extra`): people and presence; the fallback name color in conversations.
 
 The `-deep` variants are the same hues dark enough to read on paper; the paper theme maps each role to its deep value.
@@ -221,7 +221,7 @@ On paper every signal takes its `-deep` value. The full per-theme set is in `ai/
 `auto` follows the OS: ink, or paper when it asks for light. Any element may carry `data-theme` to theme a subtree. Charts add `data-chart-theme="mono"` (greys, default) or `"spectrum"`.
 
 ### Named Rules
-**The Lit Readout Rule.** Color appears only when it means something: status, risk, selection. Navigation, headings, icons and current items stay grey. If a colored mark could be removed without losing information, it should not be there.
+**The Lit Readout Rule.** Color appears only when it means something: status, risk, selection. Navigation, headings, icons and current links stay grey; the selection markers under Selection Cyan are the only current-item color. If a colored mark could be removed without losing information, it should not be there.
 
 **The Tokens Not Values Rule.** Code reads `--sd-*` variables or the Tailwind utilities on them (`bg-canvas`, `text-fg-muted`, `border-line`). The hex values here are a reference; hard-coding one breaks every other theme.
 
@@ -305,7 +305,7 @@ Outlines that brighten under the pointer.
 
 ### Navigation
 - **Style:** grey. Slim nav is uppercase tracked words in subtle text; tabs are subtle text tracked 0.08em on a hairline, with a 1px fg line under the selected one; sidebar links and list items take a raised fill and a 2px fg start edge when current.
-- **States:** hover and current brighten to fg; navigation is never colored. Current is marked with `aria-current`, `aria-selected` or `aria-pressed`, and the CSS keys on those attributes.
+- **States:** hover and current brighten to fg; navigation text is never colored. Current is marked with `aria-current`, `aria-selected` or `aria-pressed`, and the CSS keys on those attributes.
 - **Mobile:** the slim nav strip scrolls; the shell collapses its sidebar and swaps chrome at 768px.
 
 ### Display Line

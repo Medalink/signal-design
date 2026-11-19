@@ -54,11 +54,11 @@
   .sd-btn[data-tone] {
     --btn-fg: var(--tone);
     --btn-bg: transparent;
-    --btn-border: color-mix(in srgb, var(--tone) 40%, transparent);
+    --btn-border: color-mix(in srgb, var(--tone) calc(40% + var(--sd-outline-boost)), transparent);
   }
   .sd-btn[data-tone]:hover {
     --btn-bg: color-mix(in srgb, var(--tone) 8%, transparent);
-    --btn-border: color-mix(in srgb, var(--tone) 70%, transparent);
+    --btn-border: color-mix(in srgb, var(--tone) calc(70% + var(--sd-outline-boost)), transparent);
   }
   .sd-btn-primary[data-tone] {
     --btn-fg: var(--sd-canvas);

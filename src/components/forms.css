@@ -322,13 +322,13 @@
   .sd-option:is([aria-pressed="true"], [aria-checked="true"], :has(> input:checked)) .sd-option-desc {
     color: var(--sd-fg-muted);
   }
-  /* Selected: a 2px edge drawn over the preview, a lifted fill and a solid
-     corner square. */
+  /* Selected: a 2px accent edge drawn over the preview, a lifted fill and a
+     solid accent corner square. The title and text stay grey. */
   .sd-option::before {
     content: "";
     position: absolute;
     inset: -1px;
-    border: 2px solid var(--sd-fg);
+    border: 2px solid var(--sd-accent);
     opacity: 0;
     pointer-events: none;
     transition: opacity 120ms var(--ease-out);
@@ -340,12 +340,12 @@
     right: 0;
     width: 10px;
     height: 10px;
-    background: var(--sd-fg);
+    background: var(--sd-accent);
     opacity: 0;
     transition: opacity 120ms var(--ease-out);
   }
   .sd-option:is([aria-pressed="true"], [aria-checked="true"], :has(> input:checked)) {
-    border-color: var(--sd-fg);
+    border-color: var(--sd-accent);
     background: color-mix(in srgb, var(--sd-fg) 10%, var(--sd-field-fill));
   }
   .sd-option:is([aria-pressed="true"], [aria-checked="true"], :has(> input:checked))::before,

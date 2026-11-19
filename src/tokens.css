@@ -113,16 +113,16 @@
   --color-cyan: #00d4ff; /* selected, active, now */
   --color-green: #00ff88; /* approved, passing, your position */
   --color-pink: #ff3366; /* irreversible, high risk, reject */
-  --color-orange: #ff8800; /* costly */
-  --color-amber: #ffaa00; /* unproven, pending, low confidence */
+  --color-orange: #ff6a00; /* costly: deep orange, well clear of the amber */
+  --color-amber: #ffb800; /* unproven, pending, low confidence: gold */
   --color-violet: #8855ff; /* reserved: people, presence */
 
   /* Deep signals: the same hues dark enough to read on light surfaces. */
   --color-cyan-deep: #006c89;
   --color-green-deep: #007342;
   --color-pink-deep: #c8003a;
-  --color-orange-deep: #a24a00;
-  --color-amber-deep: #855800;
+  --color-orange-deep: #ad3f00;
+  --color-amber-deep: #7a5c00;
   --color-violet-deep: #5b2fd1;
 
   /* Ink: the shipped Signal greys (cool, near-black). */
@@ -219,6 +219,9 @@
   --sd-warning: var(--color-orange);
   --sd-pending: var(--color-amber);
   --sd-extra: #9d73ff; /* the people violet, a touch lighter: 4.5:1 on selected rows */
+  /* Paper reads tone tints and outlines fainter, so it adds to them; dark themes add nothing. */
+  --sd-tint-boost: 0%;
+  --sd-outline-boost: 0%;
   --sd-backdrop: rgb(0 0 0 / 0.64);
   --sd-shell-bg: var(--sd-canvas); /* behind the app container, where the rain shows */
   --sd-container: var(--sd-tone-2); /* the app's main content box */
@@ -274,6 +277,9 @@
   --sd-warning: var(--color-orange);
   --sd-pending: var(--color-amber);
   --sd-extra: #9d73ff; /* the people violet, a touch lighter: 4.7:1 on every graphite surface */
+  /* Paper reads tone tints and outlines fainter, so it adds to them; dark themes add nothing. */
+  --sd-tint-boost: 0%;
+  --sd-outline-boost: 0%;
   --sd-backdrop: rgb(0 0 0 / 0.6);
   --sd-shell-bg: #0f0f0f;
   --sd-container: var(--sd-tone-2); /* the app's main content box */
@@ -328,6 +334,10 @@
   --sd-warning: var(--color-orange-deep);
   --sd-pending: var(--color-amber-deep);
   --sd-extra: var(--color-violet-deep);
+  /* Tone tints under plain text +4%, tone outlines +20%, so they read on #f6f6f7 as clearly as on ink.
+     A tint under tone text (a toned button's hover) takes no boost: it would drop that text under 4.5:1. */
+  --sd-tint-boost: 4%;
+  --sd-outline-boost: 20%;
   --sd-backdrop: rgb(5 5 6 / 0.32);
   --sd-shell-bg: #e9e9ec;
   --sd-container: var(--sd-tone-2); /* the app's main content box */
@@ -383,6 +393,10 @@
     --sd-warning: var(--color-orange-deep);
     --sd-pending: var(--color-amber-deep);
     --sd-extra: var(--color-violet-deep);
+    /* Tone tints under plain text +4%, tone outlines +20%, so they read on #f6f6f7 as clearly as on ink.
+       A tint under tone text (a toned button's hover) takes no boost: it would drop that text under 4.5:1. */
+    --sd-tint-boost: 4%;
+    --sd-outline-boost: 20%;
     --sd-backdrop: rgb(5 5 6 / 0.32);
     --sd-shell-bg: #e9e9ec;
     --sd-container: var(--sd-tone-2); /* the app's main content box */

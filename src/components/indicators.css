@@ -23,6 +23,14 @@
     width: 8px;
     height: 8px;
   }
+  /* Pending is told from warning by shape too, so the two read apart in
+     grey: a ringed square with a centre pip. An explicit data-shape wins. */
+  .sd-dot[data-tone="pending"]:not([data-shape]) {
+    box-sizing: border-box;
+    padding: 1px;
+    border: 1px solid var(--tone);
+    background: var(--tone) content-box;
+  }
 
   /* RISK, PENDING, v0.1 ... */
   .sd-badge {
@@ -30,7 +38,7 @@
     align-items: center;
     gap: 6px;
     padding: 2px 7px;
-    border: 1px solid color-mix(in srgb, var(--tone, var(--sd-fg-subtle)) 45%, transparent);
+    border: 1px solid color-mix(in srgb, var(--tone, var(--sd-fg-subtle)) calc(45% + var(--sd-outline-boost)), transparent);
     color: var(--tone, var(--sd-fg-subtle));
     font-size: var(--text-2xs);
     line-height: 18px;
@@ -39,6 +47,9 @@
     white-space: nowrap;
     vertical-align: 0.1em;
     font-variant-numeric: tabular-nums;
+  }
+  .sd-badge[data-tone="pending"] {
+    border-style: dashed;
   }
   .sd-badge-solid {
     border-color: transparent;
@@ -213,6 +224,12 @@
     width: 6px;
     height: 6px;
     background: var(--tone, var(--sd-fg-subtle));
+  }
+  .sd-status[data-tone="pending"]::before {
+    box-sizing: border-box;
+    padding: 1px;
+    border: 1px solid var(--tone);
+    background: var(--tone) content-box;
   }
 
   /* A count next to a nav item. */

@@ -51,7 +51,7 @@
   }
   .sd-mark[data-mark="comment"][aria-current]:not([aria-current="false"]) {
     --mark: var(--sd-accent);
-    background: color-mix(in srgb, var(--sd-accent) 18%, transparent);
+    background: color-mix(in srgb, var(--sd-accent) calc(18% + var(--sd-tint-boost)), transparent);
     text-decoration-thickness: 2px;
   }
   .sd-mark[data-mark="comment"][data-resolved] {
@@ -62,11 +62,11 @@
 
   .sd-mark[data-mark="insert"] {
     --mark: var(--sd-success);
-    background: color-mix(in srgb, var(--sd-success) 9%, transparent);
+    background: color-mix(in srgb, var(--sd-success) calc(9% + var(--sd-tint-boost)), transparent);
   }
   .sd-mark[data-mark="delete"] {
     --mark: var(--sd-danger);
-    background: color-mix(in srgb, var(--sd-danger) 9%, transparent);
+    background: color-mix(in srgb, var(--sd-danger) calc(9% + var(--sd-tint-boost)), transparent);
     color: var(--sd-fg-muted);
     text-decoration-line: line-through;
     text-decoration-thickness: 1px;
@@ -117,7 +117,7 @@
     text-decoration-thickness: 2px;
   }
   .sd-mark[data-mark="find"][aria-current]:not([aria-current="false"]) {
-    background: color-mix(in srgb, var(--sd-accent) 22%, transparent);
+    background: color-mix(in srgb, var(--sd-accent) calc(22% + var(--sd-tint-boost)), transparent);
   }
   .sd-mark[data-mark="check"][aria-current]:not([aria-current="false"]) {
     background: color-mix(in srgb, var(--sd-fg) 12%, transparent);
@@ -197,7 +197,7 @@
     border-color: var(--sd-accent);
     border-style: solid;
     border-width: 2px;
-    background: color-mix(in srgb, var(--sd-accent) 14%, var(--sd-tone-3));
+    background: color-mix(in srgb, var(--sd-accent) calc(14% + var(--sd-tint-boost)), var(--sd-tone-3));
     color: var(--sd-fg);
   }
   .sd-gutter-marker[data-resolved] {

@@ -38,6 +38,11 @@
     margin-block-start: 10px;
     overflow-y: auto;
   }
+  /* The palette's active result is the selection Enter opens: an accent edge
+     on the start side. Other listboxes keep the fg hairline. */
+  :is(.sd-command, [data-sd-palette]) .sd-menu :where([role="option"][aria-selected="true"]) {
+    box-shadow: inset 2px 0 0 var(--sd-accent);
+  }
 
   /*
    * Tags: chips and a text input in one field. Enter or comma adds the

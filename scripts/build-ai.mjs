@@ -121,7 +121,7 @@ const ROLES = {
   "fg-faint": "The quietest readable text (still 4.5:1): hints, timestamps.",
   primary: "Primary button background.",
   "on-primary": "Text on primary.",
-  accent: "Signal: selected, active, now. Focus rings and the current item use fg, not accent.",
+  accent: "Signal: selected, active, now: the current rail tile's bar, a chosen option card, the palette's active result. Focus rings and current nav links use fg, not accent.",
   success: "Signal: approved, passing, online.",
   danger: "Signal: irreversible, risk, reject, errors.",
   warning: "Signal: costly.",
