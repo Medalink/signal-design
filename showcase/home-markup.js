@@ -85,7 +85,7 @@ ${sidebar()}
         <header class="sd-shell-bar">
           <div class="sd-shell-bar-title">${ic("hash")}<b id="home-channel">${ch.id}</b><span class="sd-desktop-only" id="home-topic">${ch.topic}</span></div>
           <div class="sd-shell-bar-end">
-            <button class="sd-btn sd-btn-sm home-search" type="button" data-sd-open="nav-palette">${ic("search")}<span>Search pages</span></button>
+            <button class="sd-btn sd-btn-sm home-search" type="button" data-sd-open="nav-palette" aria-label="Search pages">${ic("search")}<span>Search pages</span></button>
             ${themeSeg("Theme", "sd-seg-inline home-theme")}
           </div>
         </header>
