@@ -21,7 +21,9 @@ const group = (title, pages) => ({ title, pages });
  * `#i-<icon>` symbol in layout-plugin.js. A page's file is `lib-<id>.html`;
  * it loads `pages/<id>.js` when that file exists. `find` adds words a reader
  * would type for the page that no title, block or class on it spells (the
- * Ctrl K palette searches them).
+ * Ctrl K palette searches them). A page's doc sections (When to use, API
+ * reference, and the rest) live in page-docs/<id>.js, which only the build
+ * reads.
  */
 const library = [
   {
@@ -43,249 +45,25 @@ const library = [
     id: "components", title: "Components", label: "Components", icon: "inputs",
     groups: [
       group("Forms", [
-        {
-          id: "buttons", title: "Buttons", summary: "Primary, ghost, and link buttons in every size, with icons and states.",
-          doc: {
-            intro: "Every action a view offers, from the one solid primary down to a quiet link, with tones, sizes, icons, and a busy state.",
-            when: [
-              "A view has one clear action: the primary is that action and appears once.",
-              "Rows and toolbars of secondary actions: ghost and link buttons keep them quiet.",
-              "A destructive or costly step: a danger tone states the cost before the click.",
-            ],
-            notWhen: [
-              "Single-select choices: a segmented control or option cards do that (see Choices).",
-              "Navigation between pages: a link reads as navigation, a button reads as an action.",
-            ],
-            usage: '&lt;button class="sd-btn sd-btn-primary"&gt;Approve&lt;/button&gt;\n&lt;button class="sd-btn"&gt;Save for later&lt;/button&gt;\n&lt;button class="sd-btn sd-btn-ghost"&gt;Cancel&lt;/button&gt;',
-            install: {
-              cmd: "pnpm add github:Medalink/signal-design",
-              note: 'Then <code>@import "signal-design"</code> after Tailwind, or link <code>dist/signal.css</code> with its fonts; pin a tag or commit for reproducible builds.',
-            },
-            examples: [
-              {
-                title: "Busy state",
-                html: '<button class="sd-btn sd-btn-primary" aria-busy="true">Merging</button>\n<button class="sd-btn" aria-busy="true">Syncing</button>\n<button class="sd-btn" disabled>Disabled</button>',
-              },
-              {
-                title: "Destructive confirmation",
-                html: '<button class="sd-btn" data-tone="danger">Delete branch</button>\n<button class="sd-btn sd-btn-ghost">Keep it</button>',
-              },
-              {
-                title: "Sizes",
-                html: '<button class="sd-btn sd-btn-sm">Small</button>\n<button class="sd-btn">Default</button>\n<button class="sd-btn sd-btn-lg">Large</button>',
-              },
-            ],
-            responsive: [
-              "Sizes are fixed, not fluid: the three sizes hold 26, 34, and 44 px of height at every viewport, and a long label wraps the row, not the button.",
-              "A row of buttons wraps: <code>sd-actions</code> is a wrapping flex row, so toolbars fold onto more lines on narrow screens.",
-              "Hover styles apply on touch too (there is no fine-pointer gate), so never put information only in hover; the press nudge gives touch its feedback.",
-            ],
-            notes: [
-              "Pick a button for an action; a segmented control or option cards for a choice, a link for navigation.",
-              "One <code>sd-btn-primary</code> per view: it is the view's main action, and ghost or link buttons carry the rest.",
-              "Meaning comes from <code>data-tone</code>, never a color class; a danger tone states the cost of a destructive step before the click.",
-              "While work runs, keep the button enabled with <code>aria-busy=\"true\"</code> instead of <code>disabled</code>, so it stays reachable and announced.",
-            ],
-            api: [
-              { name: "sd-btn", type: "class", desc: "The button base: a raised fill that lifts on hover." },
-              { name: "sd-btn-primary", type: "class", desc: "Solid foreground fill. One per view." },
-              { name: "sd-btn-ghost", type: "class", desc: "Transparent until hover, for toolbars and quiet actions." },
-              { name: "sd-btn-link", type: "class", desc: "A button that looks like a link." },
-              { name: "sd-btn-sm, sd-btn-lg", type: "class", desc: "Smaller and larger sizes; sd-btn-icon is square for an icon only." },
-              { name: "sd-btn-block", type: "class", desc: "Takes the full width of its column, for stacked forms." },
-              { name: "sd-btn-group", type: "class", desc: "Joins buttons into one control with role=\"group\"." },
-              { name: "data-tone", type: "attribute", def: "unset", desc: "success, danger, warning, pending, or accent, on plain and primary buttons." },
-              { name: "aria-busy", type: "ARIA", def: "false", desc: "Shows work in flight without disabling the button." },
-              { name: "sd-kbd", type: "class", desc: "A key look for any element, inside a button or beside it." },
-            ],
-            keyboard: [
-              ["Enter", "Activates the focused button."],
-              ["Space", "Activates the focused button."],
-            ],
-            a11y: [
-              "An icon-only button needs an aria-label; there is no text to fall back on.",
-              "Keep aria-busy instead of disabled while work runs, so the button stays reachable and announced.",
-              "A kbd hint inside a button is read with its label; put the key last.",
-            ],
-            motion: [
-              "Hover and press transitions run 120-200ms.",
-              "prefers-reduced-motion stops the transitions; the state change stays visible.",
-            ],
-            related: ["choices", "menus", "overlays"],
-          },
-        },
-        {
-          id: "fields", title: "Fields", summary: "Labels, hints, inputs, selects, switches, and a dropzone.",
-          doc: {
-            intro: "One field is a label, a control, and its hint or error, read in that order by assistive tech and styled by the library.",
-            when: [
-              "Any form: settings, creation dialogs, filters, and importers.",
-              "A value needs a format: the hint states it, the error restates it after a failed blur.",
-              "Files must come from the user: the dropzone labels a real file input.",
-            ],
-            notWhen: [
-              "A choice between options shown all at once: option cards and radios do that (see Choices).",
-              "Picking many values with search: a combobox does that (see Combobox and tags).",
-            ],
-            usage: '&lt;div class="sd-field"&gt;\n  &lt;label class="sd-field-label" for="name"&gt;Name&lt;/label&gt;\n  &lt;input id="name" aria-describedby="name-hint"&gt;\n  &lt;p class="sd-field-hint" id="name-hint"&gt;Shown on your profile.&lt;/p&gt;\n&lt;/div&gt;',
-            api: [
-              { name: "sd-form", type: "class", desc: "The form grid; sd-form-row puts fields side by side." },
-              { name: "sd-field", type: "class", desc: "One field: label, control, hint, and error in a column." },
-              { name: "sd-field-label", type: "class", desc: "The visible label. Point its for at the control." },
-              { name: "sd-field-hint, sd-field-error", type: "class", desc: "Helper text under the control; the error shows when the field is invalid." },
-              { name: "sd-field-aside", type: "class", desc: "A marker in the label, such as optional." },
-              { name: "data-invalid, aria-invalid", type: "attribute", desc: "Shows the error text and reddens the label." },
-              { name: "sd-input-group, sd-addon", type: "class", desc: "Joins a prefix or a button to an input." },
-              { name: "sd-control-sm, sd-control-lg", type: "class", desc: "Smaller and larger controls, matching the button sizes." },
-              { name: "sd-dropzone", type: "class", desc: "A label wrapping a file input, with a drag state." },
-            ],
-            keyboard: [
-              ["Tab", "Moves between controls in DOM order; keep the label before its control."],
-              ["Enter", "Submits the form, unless it moves to the next line in a textarea."],
-            ],
-            a11y: [
-              "Every field is named by visible text: a placeholder is a hint, not a label.",
-              "Point aria-describedby at the hint and error so they are read with the field.",
-              "Mark invalid fields with aria-invalid as well as data-invalid, so the state is announced.",
-            ],
-            motion: [
-              "Focus and invalid states change without animation.",
-              "The dropzone drag state is a background change, safe under prefers-reduced-motion.",
-            ],
-            related: ["choices", "pickers", "elements"],
-          },
-        },
+        { id: "buttons", title: "Buttons", summary: "Primary, ghost, and link buttons in every size, with icons and states." },
+        { id: "fields", title: "Fields", summary: "Labels, hints, inputs, selects, switches, and a dropzone." },
         { id: "choices", title: "Choices", summary: "Option cards and segmented controls, wrapped in narrow containers." },
         { id: "pickers", title: "Combobox and tags", summary: "Combobox, tags, number input, and steps." },
       ]),
       group("Navigation", [
         { id: "nav-bars", title: "Bars and tabs", summary: "Top bar, side navigation, tabs, pagination, and status bar." },
-        {
-          id: "menus", title: "Menus", summary: "Dropdown lists and popovers anchored to their trigger, with keyboard focus.",
-          doc: {
-            intro: "A native popover positioned next to its trigger: a menu of actions, or a small panel of facts.",
-            when: [
-              "Row actions that would crowd the row: one more button opens the rest.",
-              "A choice of a few commands with shortcuts: the menu shows the keys.",
-              "A short explanation belongs next to its term: a padded popover holds it.",
-            ],
-            notWhen: [
-              "Search over many commands: the command palette does that (see Command palette).",
-              "A decision that needs space or a form: a dialog does that (see Overlays).",
-            ],
-            usage: '&lt;button popovertarget="row-menu" aria-haspopup="menu"&gt;More&lt;/button&gt;\n&lt;div popover id="row-menu" class="sd-popover"&gt;\n  &lt;div class="sd-menu" role="menu" aria-label="Item actions"&gt;\n    &lt;button role="menuitem"&gt;Open&lt;/button&gt;\n    &lt;button role="menuitem" data-tone="danger"&gt;Delete&lt;/button&gt;\n  &lt;/div&gt;\n&lt;/div&gt;',
-            api: [
-              { name: "popovertarget", type: "attribute", desc: "The native attribute. The JS places the panel at the trigger and keeps aria-expanded in sync." },
-              { name: "sd-popover", type: "class", desc: "The panel; sd-popover-pad gives it inner padding for prose." },
-              { name: "data-sd-side", type: "attribute", def: "bottom", desc: "Preferred placement, such as top; the panel still flips at the edge." },
-              { name: "data-sd-align", type: "attribute", def: "start", desc: "end aligns the panel with the trigger's far edge." },
-              { name: "sd-menu", type: "class", desc: "The menu inside a popover, with role=\"menu\" or role=\"listbox\"." },
-              { name: "role=\"menuitem\"", type: "ARIA", desc: "One command; menuitemradio and menuitemcheckbox carry aria-checked." },
-              { name: "sd-menu-label", type: "class", desc: "A group heading inside the menu." },
-              { name: "sd-menu-sep", type: "class", desc: "A separator between groups, an hr." },
-              { name: "sd-menu-hint", type: "class", desc: "Faint trailing text for a shortcut." },
-              { name: "sd-menu-item", type: "class", desc: "A link styled as a menu item." },
-            ],
-            keyboard: [
-              ["↓ / ↑", "Moves between items, wrapping at the ends."],
-              ["Home / End", "Jumps to the first or last item."],
-              ["A-Z", "Types ahead to the next item that starts with those letters."],
-              ["Esc", "Closes the menu and returns focus to the trigger."],
-            ],
-            a11y: [
-              "Set aria-haspopup on the trigger; the JS keeps aria-expanded current.",
-              "Give every menu an aria-label; the trigger's name alone does not describe the menu.",
-              "Disabled items keep role=\"menuitem\" with aria-disabled, so they stay findable.",
-            ],
-            motion: [
-              "The panel opens in about 150ms with a small move and fade.",
-              "prefers-reduced-motion removes the move; the panel still appears and closes.",
-            ],
-            related: ["overlays", "command", "buttons"],
-          },
-        },
+        { id: "menus", title: "Menus", summary: "Dropdown lists and popovers anchored to their trigger, with keyboard focus." },
         { id: "overlays", title: "Overlays", summary: "Dialogs, sheets, and drawers opened with an attribute.", find: "tooltip" },
         { id: "command", title: "Command palette", summary: "A command palette and keyboard shortcuts." },
       ]),
       group("Status", [
         { id: "badges", title: "Badges", summary: "Markers, badges, chips, and pills, each taking a tone." },
         { id: "avatars", title: "Avatars", summary: "Square pictures and initials in every size, with presence, status, and counts." },
-        {
-          id: "feedback", title: "Feedback", summary: "Callouts, notes, progress, skeletons, checks, empty states, and toasts.",
-          doc: {
-            intro: "What the system tells the user while it works and after it finishes, from an inline note to a toast.",
-            when: [
-              "Something changed under the user: a note states it and offers the next step.",
-              "Work has a length: progress shows the amount, or runs indeterminate when it has none.",
-              "A list or screen has nothing to show yet: an empty state says what will appear here.",
-            ],
-            notWhen: [
-              "A standing state on a row or item: a badge or status does that (see Badges).",
-              "A result the user must not miss: a dialog holds the decision (see Overlays).",
-            ],
-            usage: '&lt;div class="sd-callout" data-tone="danger"&gt;\n  &lt;p class="sd-callout-title"&gt;High risk&lt;/p&gt;\n  &lt;p&gt;Expires in 45 min. Review before approving.&lt;/p&gt;\n&lt;/div&gt;\n&lt;button data-sd-toast="Saved"&gt;Save&lt;/button&gt;',
-            api: [
-              { name: "sd-note", type: "class", desc: "An inline line of text that takes a tone and can hold a button." },
-              { name: "sd-callout, sd-callout-title", type: "class", desc: "A boxed note with a titled edge in its tone." },
-              { name: "toast(text, { tone })", type: "function", desc: "Shows a short result at the edge; data-sd-toast does it from a click." },
-              { name: "sd-progress", type: "class", desc: "A bar driven by --value, or data-state=\"indeterminate\" when the amount is unknown." },
-              { name: "sd-progress-label", type: "class", desc: "The row above a bar: name and value at the ends." },
-              { name: "sd-cells", type: "class", desc: "A row of small squares, i elements with data-on." },
-              { name: "sd-skeleton, sd-skeleton-text", type: "class", desc: "A loading placeholder; keep it aria-hidden." },
-              { name: "sd-checks", type: "class", desc: "A result list; each li takes a tone." },
-              { name: "sd-empty, sd-empty-title", type: "class", desc: "An empty state with its ornament and a next action." },
-            ],
-            a11y: [
-              "Give every progress bar role=\"progressbar\" with aria-label, and aria-valuenow when the value is known.",
-              "A toast is announced as it appears; keep its text short enough to hear in one breath.",
-              "Skeletons are decoration: aria-hidden, with the real wait described nearby.",
-            ],
-            motion: [
-              "An indeterminate progress bar loops; everything else runs once.",
-              "prefers-reduced-motion stops the loop and the skeleton shimmer; the state stays readable.",
-            ],
-            related: ["badges", "overlays", "setup"],
-          },
-        },
+        { id: "feedback", title: "Feedback", summary: "Callouts, notes, progress, skeletons, checks, empty states, and toasts." },
         { id: "level", title: "Level meter", summary: "A live level from one custom property." },
       ]),
       group("Data", [
-        {
-          id: "stats", title: "Stats and tables", summary: "Stats, numbers, tables, and key-value lists.",
-          doc: {
-            intro: "Numbers and their facts: a stat for one figure, a table for many rows, a key-value list for one record.",
-            when: [
-              "A dashboard leads with a few figures: stats carry them, deltas say which way they moved.",
-              "Comparable rows with columns: a table, sortable when the user needs an order.",
-              "One record's details beside its content: a key-value list, plain when keys get long.",
-            ],
-            notWhen: [
-              "Values over time: a chart shows the shape (see Charts).",
-              "Rows that arrive and leave while you watch: a living table does that (see Living tables).",
-            ],
-            usage: '&lt;div class="sd-stat"&gt;\n  &lt;span class="sd-stat-value"&gt;260&lt;small&gt;ms&lt;/small&gt;&lt;/span&gt;\n  &lt;span class="sd-stat-label"&gt;Checkout p95&lt;/span&gt;\n  &lt;span class="sd-stat-delta" data-tone="success"&gt;−150ms&lt;/span&gt;\n&lt;/div&gt;',
-            api: [
-              { name: "sd-stat", type: "class", desc: "An inline stat: value over label, with an optional delta." },
-              { name: "sd-stat-value, sd-stat-label", type: "class", desc: "The figure, with small for units, and its name." },
-              { name: "sd-stat-delta", type: "class", desc: "The change since before, taking a tone." },
-              { name: "sd-stat-box", type: "class", desc: "The boxed stat, with -sm, sd-stat-sub, and sd-stat-end." },
-              { name: "sd-table", type: "class", desc: "The table, in an sd-table-wrap; -hover and -compact vary it." },
-              { name: "th[data-sort]", type: "attribute", desc: "A sortable header; the JS sets aria-sort." },
-              { name: "sd-num", type: "class", desc: "Tabular numbers on numeric cells, so digits line up." },
-              { name: "sd-kv", type: "class", desc: "A key-value list; sd-kv-plain is sentence case and truncates long keys." },
-            ],
-            a11y: [
-              "Mark the sorting column with aria-sort; the JS keeps it current as the order changes.",
-              "A th needs scope or a table layout a screen reader can infer; keep the first row a header row.",
-              "Units belong in the value text, so 260 ms is read as one figure.",
-            ],
-            motion: [
-              "Hover states on rows and headers run 120-200ms.",
-              "prefers-reduced-motion keeps the hover change without the transition.",
-            ],
-            related: ["charts", "rows", "living-tables"],
-          },
-        },
+        { id: "stats", title: "Stats and tables", summary: "Stats, numbers, tables, and key-value lists." },
         { id: "rows", title: "Rows", summary: "Lists of work that show an outcome and expand for detail." },
         { id: "living-tables", title: "Living tables", summary: "Tables whose rows arrive, change, and leave while you read them." },
         { id: "charts", title: "Charts", summary: "Live time series, chart types, square CSS charts, sparklines, and diffs." },
@@ -324,52 +102,7 @@ const library = [
     id: "scripting", title: "Scripting", label: "JS", icon: "code",
     groups: [
       group("Setup", [
-        {
-          id: "setup", title: "Setup", summary: "init(), the data-sd attributes it wires, and copy feedback.",
-          doc: {
-            intro: "One import and one call: init() reads data-sd attributes and writes ARIA and data-* state that the CSS styles.",
-            when: [
-              "Plain HTML or server-rendered pages: attributes alone give dialogs, menus, tabs, and tooltips.",
-              "Markup that arrives after load: every listener is delegated, so no re-init is needed.",
-              "Theme switching with a remembered choice, and copy buttons with feedback.",
-              "Live lists that must keep the reader's place: mountFeed.",
-            ],
-            notWhen: [
-              "A page where the HTML works with CSS alone: each block says whether it needs JS.",
-              "A framework already renders the state: leave out that piece's data-sd attribute and set ARIA yourself (see Framework state).",
-              "Heavy components (living tables, countdowns, and feeds) mount explicitly. init() does not run them.",
-            ],
-            usage: 'import { init } from "signal-design/js";\n\ninit(); // once, after the DOM exists',
-            api: [
-              { name: "init()", type: "function", desc: "Wires every data-sd attribute once, after the DOM exists." },
-              { name: "toast(text, { tone })", type: "function", desc: "Shows a toast; data-sd-toast does it from a click." },
-              { name: "hotkeys({ key: fn })", type: "function", desc: "A map of shortcuts, including sequences; returns the off function." },
-              { name: "setTheme(name)", type: "function", desc: "ink, graphite, paper, or auto; remembers the choice." },
-              { name: "data-sd-open, data-sd-close", type: "attribute", desc: "Opens a dialog as modal, closes the nearest one." },
-              { name: "data-sd-toggle", type: "attribute", desc: "Opens and closes an .sd-expand, keeping aria-expanded in sync." },
-              { name: "data-sd-seg", type: "attribute", desc: "A single-select button group; fires change." },
-              { name: "data-sd-key", type: "attribute", desc: "Clicks the element when the key is pressed, unless the user is typing." },
-              { name: "data-sd-tip", type: "attribute", desc: "A tooltip on hover and focus." },
-              { name: "data-sd-copy", type: "attribute", desc: "Copies the target pre's text and toasts the result." },
-              { name: "data-sd-theme, data-sd-theme-cycle", type: "attribute", desc: "Sets or steps the theme from a click." },
-              { name: "mountFeed, mountCountdown, mountLivingTable", type: "function", desc: "The heavy mounts; call them yourself on teardown with dispose()." },
-            ],
-            keyboard: [
-              ["Shift T", "Steps to the next theme, from data-sd-theme-cycle or the key itself."],
-              ["Esc", "Closes the top dialog, popover, or tooltip."],
-            ],
-            a11y: [
-              "The JS writes ARIA; it never reads classes back, so tests and frameworks can set the same attributes.",
-              "Shortcuts ignore keys typed into a field, except Ctrl or Cmd combinations.",
-              "Toasts and copy feedback are announced; the failure toast names the fallback.",
-            ],
-            motion: [
-              "Dialogs, popovers, and menus move in 120-200ms.",
-              "prefers-reduced-motion removes the movement; everything still opens and closes.",
-            ],
-            related: ["owned", "overlays", "command"],
-          },
-        },
+        { id: "setup", title: "Setup", summary: "init(), the data-sd attributes it wires, and copy feedback." },
         { id: "owned", title: "Framework state", summary: "Leaving state to React, Vue, or Svelte: one writer per state." },
         { id: "predict", title: "Prediction", summary: "Where the mouse is heading, so a route or a file loads before the click." },
       ]),

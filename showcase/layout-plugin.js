@@ -12,6 +12,7 @@ import { existsSync, readFileSync, statSync } from "node:fs";
 import { basename, resolve } from "node:path";
 import { HOME, SECTIONS, byFile, byId, keyOf, neighbors } from "./pages.js";
 import { homeContent } from "./home-markup.js";
+import { docOf } from "./page-docs/index.js";
 
 const dir = import.meta.dirname;
 const template = () => readFileSync(resolve(dir, "layout.html"), "utf8");
@@ -139,7 +140,7 @@ function searchTerms(page) {
   const cached = searchCache.get(page);
   if (cached?.mtime === mtime) return cached.terms;
   const html = readFileSync(file, "utf8");
-  const d = page.doc ?? {};
+  const d = docOf(page) ?? {};
   const blocks = [...html.matchAll(/<div class="demo-block"[^>]*>\s*<h2 class="sd-label">([^<]*)<\/h2>/g)].map((m) => plain(m[1]).trim());
   const usage = [...html.matchAll(/<p class="demo-usage">([\s\S]*?)<\/p>/g)].map((m) => plain(m[1]));
   const named = usage.flatMap((text) => text.match(/\b(?:data-sd-[a-z0-9-]+|sd-[a-z0-9-]+|[a-z][A-Za-z0-9]*\(\))/g) ?? []);
@@ -194,7 +195,7 @@ const slugToc = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-
  * block flip derives from the h2.
  */
 function pageSections(page) {
-  const d = page.doc;
+  const d = docOf(page);
   if (d) {
     const out = [["preview", "Preview"]];
     for (const [id, title] of splitIntro(readFileSync(resolve(dir, page.file), "utf8"), d)?.sections ?? []) out.push([id, title]);
@@ -330,7 +331,7 @@ const docAiFoot = `    <p class="sd-muted doc-note">The machine-readable referen
 
 /** Every doc section a page provides, in reading order. Empty for pages without a doc object. */
 function docHtml(page) {
-  const d = page.doc;
+  const d = docOf(page);
   if (!d) return "";
   const parts = [];
   if (d.when?.length) parts.push(docSection("when", "When to use", docBullets(d.when)));
@@ -406,9 +407,10 @@ ${blocks}
 
 /** A library page: its breadcrumb, title and lead over its content, the demo blocks in the preview shell, then the doc sections, then the pages either side. */
 function libraryContent(page, body) {
-  const split = splitIntro(body, page.doc);
-  const intro = page.doc?.intro ?? split?.lead;
-  const copyPage = page.doc?.usage
+  const pageDoc = docOf(page);
+  const split = splitIntro(body, pageDoc);
+  const intro = pageDoc?.intro ?? split?.lead;
+  const copyPage = pageDoc?.usage
     ? `
         <div class="doc-copy-page">
           <button type="button" data-sd-copy="#doc-usage"><svg aria-hidden="true"><use href="#i-copy"/></svg>Copy page</button>
