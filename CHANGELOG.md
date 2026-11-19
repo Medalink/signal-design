@@ -2,6 +2,28 @@
 
 ## Unreleased
 
+## 1.4.86 (2026-11-19)
+
+### Changed
+- Paper: `--sd-surface` is `#f4f4f6` and `--sd-raised` `#e9e9ed`, one step further apart; `--sd-line` is
+  15% black and `--sd-line-strong` 30%, so hollow dots, dashed blocks and neutral badges read on white.
+- `--sd-fill-edge`: a plain `sd-btn`, `sd-chip`, `sd-pill` and `sd-flow-job` take a 1px hairline in paper
+  (`--sd-line`) and none in ink and graphite.
+
+### Fixed
+- `sd-key` and `sd-heatmap-key` swatches show their colors: the chart tokens now reach the legends, not only the
+  charts, in mono and spectrum on every theme.
+- `createChart` with `type: "hbar"` widens its category axis to the longest label, so a narrow ranking chart no
+  longer cuts off the start of a long label.
+- `sd-flow-board` fades its right edge while stages run past it, and the fade is gone once scrolled to the end
+  (browsers with scroll-driven animations; others show the plain edge).
+- `sd-dialog-head`: a close button (`data-sd-close`, or the React `DialogHeader` icon button) has a 32px target at
+  every size class; the head keeps its height.
+- `sd-input-group`: a button attached to the field carries the field's bottom edge, so the line runs under the
+  whole group instead of stopping at the button.
+- `sd-schedule-now`: the now line runs over the rows but under the blocks, so it no longer crosses a block's label.
+- A proposed block's dashed edge takes its full status color, as its legend swatch does, so it reads in mono on paper.
+
 ## 1.4.85 (2026-11-19)
 
 ### Fixed
