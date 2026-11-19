@@ -1,0 +1,67 @@
+/** The doc sections of lib-people.html: see page-docs/index.js. */
+export default {
+  when: [
+    "A list of people or conversations with a name, a second line and a time: <code>sd-item</code> rows in <code>sd-item-group</code> sections.",
+    "Presence matters: <code>data-status</code> on <code>sd-avatar</code> draws online, away, busy or offline as a square.",
+    "An inbox of what happened to you: <code>sd-activity</code> puts tabs over rows with a mark, an action and a time.",
+    "A row needs a trailing action such as Mark read or Remove: <code>sd-item-row</code>.",
+    "A group's members by role and presence: <code>sd-roster</code>. A person's card: <code>sd-profile</code>.",
+  ],
+  notWhen: [
+    "A table of records with columns: use a table (see Stats and tables).",
+    "A single status on a thing, not a person: a badge or status does that (see Badges).",
+  ],
+  usage: "&lt;a class=\"sd-item\" href=\"#alex\" data-unread aria-current=\"true\"&gt;\n  &lt;span class=\"sd-avatar\" data-tone=\"extra\" data-status=\"online\"&gt;AL&lt;/span&gt;\n  &lt;span class=\"sd-item-body\"&gt;\n    &lt;span class=\"sd-item-title\"&gt;Alex&lt;/span&gt;\n    &lt;span class=\"sd-item-sub\"&gt;Reviewing the spec&lt;/span&gt;\n  &lt;/span&gt;\n  &lt;span class=\"sd-item-end\"&gt;2m&lt;/span&gt;\n&lt;/a&gt;",
+  api: [
+    { name: "sd-item", type: "class", desc: "A row, with <code>-body</code>, <code>-title</code>, <code>-sub</code>, <code>-end</code>, <code>-group</code> and <code>-nested</code>." },
+    { name: "data-unread", type: "attribute", desc: "Bolds the row's title; in <code>sd-activity</code> it draws a pending-tone square on the left edge." },
+    { name: "data-muted", type: "attribute", desc: "Quiets a row by color, not opacity." },
+    { name: "aria-current", type: "ARIA", desc: "Marks the open row." },
+    { name: "data-status", type: "attribute", desc: "On <code>sd-avatar</code>: <code>online</code>, <code>away</code>, <code>busy</code> or <code>offline</code> as a corner square." },
+    { name: "--sd-ring", type: "token", desc: "Set to the panel color so the presence ring matches the background." },
+    { name: "sd-badge-count", type: "class", desc: "A number; <code>data-corner</code> pins it to an icon button, and <code>data-tone</code> colors it only when it is a status." },
+    { name: "sd-activity", type: "class", desc: "An inbox: <code>sd-tabs</code> over <code>sd-tabpanel</code>s of <code>sd-item</code> rows. <code>sd-item-mark</code> is a 24px box for <code>@</code>, an icon or an emoji; the title is an author name in <code>--who</code> plus the action." },
+    { name: "sd-item-row", type: "class", desc: "A box around an <code>sd-item</code> link and an <code>sd-item-actions</code> cell, as siblings, because a link cannot hold a button." },
+    { name: "sd-item-actions", type: "class", desc: "The trailing cell. It shows on hover and keyboard focus, always where there is no hover, and keeps its width on every row." },
+    { name: "sd-roster", type: "class", desc: "Members by role: <code>sd-roster-group</code>, <code>sd-roster-head</code> (sticky, <code>aria-expanded</code>) with <code>-label</code> and <code>-count</code>, then <code>sd-roster-row</code>." },
+    { name: "data-presence", type: "attribute", desc: "On <code>sd-roster-row</code>: <code>online</code>, <code>offline</code> or <code>unresolved</code>." },
+    { name: "sd-roster-sub, sd-roster-more", type: "class", desc: "A mono second line inside the name, which makes the row 48px; and a button that pages in the next 25." },
+    { name: "sd-profile", type: "class", desc: "A person's card with no frame of its own: <code>-head</code>, <code>-name</code>, <code>-status</code>, <code>-section</code>, <code>-label</code>, <code>-about</code>, <code>-groups</code> and <code>-actions</code>." },
+    { name: "sd-hovercard", type: "class", desc: "The container for a profile on hover; the React <code>HoverCard</code> renders it. Inside a dialog, put the profile in <code>sd-dialog-body</code> instead." },
+    { name: "sd-avatar-grid", type: "class", desc: "Four avatars two by two in one square for a group chat; React <code>AvatarGrid</code>." },
+  ],
+  keyboard: [
+    ["Tab", "Reaches an <code>sd-item-row</code>'s link, then its action; a roster head is a button too."],
+    ["← / → / Home / End", "Move between the tabs of an <code>sd-activity</code> inbox."],
+    ["Enter / Space", "Activate a row, an action, a roster head or a tab."],
+  ],
+  a11y: [
+    "Add an <code>sd-sr-only</code> \"Unread: \" before a title so assistive tech hears what the square shows.",
+    "Presence is a square, not a color alone; label an avatar or row with the status where it matters.",
+    "Give an icon-only action an <code>aria-label</code> (\"Mark read\"); <code>data-sd-tip</code> shows the same words on hover.",
+    "A tab list needs <code>role=\"tablist\"</code> with <code>role=\"tab\"</code> buttons and <code>aria-controls</code>; the panels take <code>role=\"tabpanel\"</code> and <code>hidden</code> while inactive.",
+    "In a roster, <code>aria-expanded</code> on the head's button is the group's state; the app toggles it.",
+    "Give a profile card in a hover card <code>role=\"group\"</code> and an <code>aria-label</code> with the name; a profile in a dialog uses the dialog's label.",
+    "Leave a profile section out when it has nothing in it.",
+  ],
+  motion: [
+    "Row hover and action fades run 120ms.",
+    "<code>prefers-reduced-motion</code> cuts those transitions to 0.01ms.",
+  ],
+  responsive: [
+    "Where there is no hover (<code>hover: none</code>), the action cell is always visible.",
+    "A long title ends in an ellipsis before the action button, so the time column holds.",
+    "The roster scrolls inside its container; give that container a width and a max height.",
+  ],
+  notes: [
+    "<code>sd-item-end</code> holds a time, a count or a badge; <code>sd-badge</code> with a pending tone and a clock icon marks a reminder on a saved item.",
+    "A saved item uses <code>sd-item</code> and <code>sd-activity</code> spacing; there is no class of its own.",
+    "<code>aria-current</code> on the link covers the whole <code>sd-item-row</code>.",
+  ],
+  related: [
+    "avatars",
+    "messages",
+    "badges",
+    "menus",
+  ],
+};

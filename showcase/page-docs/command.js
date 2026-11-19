@@ -1,0 +1,67 @@
+/** The doc sections of lib-command.html: see page-docs/index.js. */
+export default {
+  when: [
+    "One place to reach any page or action by typing: the palette filters as you type and Enter runs the top result.",
+    "A quick switcher between conversations or files: the same panel with a leading icon or avatar before each name and a hint after it.",
+    "An app with many keyboard shortcuts: the shortcuts sheet lists them and opens on <kbd>?</kbd> from anywhere outside a text field.",
+  ],
+  notWhen: [
+    "A short list of actions on one control: a menu anchored to its trigger does that (see Menus).",
+    "Choosing a value inside a form: a combobox keeps the choice in the field (see Combobox and tags).",
+  ],
+  usage: "&lt;button class=\"sd-btn\" data-sd-open=\"palette\" data-sd-key=\"mod+k\"&gt;Search &lt;kbd&gt;Ctrl K&lt;/kbd&gt;&lt;/button&gt;\n\n&lt;dialog class=\"sd-command\" id=\"palette\" aria-label=\"Search\" data-sd-palette&gt;\n  &lt;input type=\"search\" placeholder=\"Search pages and actions\" aria-label=\"Search\"&gt;\n  &lt;div class=\"sd-menu\" role=\"listbox\" aria-label=\"Results\"&gt;\n    &lt;div class=\"sd-menu-label\" role=\"presentation\"&gt;Pages&lt;/div&gt;\n    &lt;a role=\"option\" href=\"/settings\"&gt;Settings &lt;span class=\"sd-menu-hint\"&gt;page&lt;/span&gt;&lt;/a&gt;\n    &lt;div class=\"sd-menu-label\" role=\"presentation\"&gt;Actions&lt;/div&gt;\n    &lt;button type=\"button\" role=\"option\" data-sd-toast=\"Copied link\"&gt;Copy link&lt;/button&gt;\n  &lt;/div&gt;\n  &lt;p class=\"sd-command-foot\"&gt;↑↓ move · ↵ open · Esc close&lt;/p&gt;\n&lt;/dialog&gt;",
+  api: [
+    { name: "sd-command", type: "class", desc: "The palette panel: a centered dialog, 520px wide at most, with a lift shadow." },
+    { name: "data-sd-palette", type: "attribute", desc: "On the dialog: filters the options as you type, moves with the arrows, and runs the active one on Enter." },
+    { name: "sd-command-search", type: "class", desc: "Wraps an icon, the input, and a <code>sd-kbd</code> hint into one search field." },
+    { name: "sd-command-list", type: "class", desc: "Put it on the listbox with <code>sd-menu</code>; the list scrolls inside the dialog, 24rem tall at most." },
+    { name: "sd-command-head, sd-command-foot", type: "class", desc: "A caption above the field and a line of key hints below the list." },
+    { name: "sd-menu-label", type: "class", desc: "A group heading in the list; the filter hides it when nothing under it matches." },
+    { name: "sd-menu-lead, sd-menu-hint", type: "class", desc: "An icon or avatar before an option's label, and a quiet hint after it." },
+    { name: "data-keywords", type: "attribute", desc: "On an option: extra words the filter matches besides the visible text." },
+    { name: "data-sd-empty", type: "attribute", desc: "On the listbox: the text shown when nothing matches." },
+    { name: "data-sd-key", type: "attribute", desc: "On the opening button: a key combo such as <code>mod+k</code> that clicks it." },
+    { name: "setOptions(dialog, items)", type: "function", desc: "Replaces the options from code with <code>{ label, hint, leading, group, href, keywords, run }</code> items." },
+    { name: "filterList(list, query)", type: "function", desc: "Applies the filter to a listbox and returns how many options show." },
+    { name: "data-sd-shortcuts", type: "attribute", desc: "On a <code>sd-dialog</code>: opens on <kbd>?</kbd> when focus is not in a text field." },
+    { name: "sd-shortcuts, sd-shortcuts-group", type: "class", desc: "A <code>dl</code> of keys and what they do, under a small caps group heading." },
+    { name: "aria-selected", type: "ARIA", desc: "Marks the active option; the JS moves it and a 2px accent edge shows it." },
+  ],
+  keyboard: [
+    ["Ctrl K, Cmd K", "Opens the palette when its button carries <code>data-sd-key=\"mod+k\"</code>."],
+    ["Down, Up", "Moves the active option, wrapping at both ends."],
+    ["Enter", "Closes the palette and follows the active link or clicks the active button."],
+    ["Esc", "Closes the dialog."],
+    ["?", "Opens the shortcuts dialog, except while typing in a field."],
+  ],
+  a11y: [
+    "Give the dialog an <code>aria-label</code> and the input its own; a placeholder is not a name.",
+    "Options are <code>role=\"option\"</code> in a <code>role=\"listbox\"</code> with an <code>aria-label</code>; group headings use <code>role=\"presentation\"</code>.",
+    "Focus moves into the input each time the palette opens, and the query is cleared.",
+    "The active option carries <code>aria-selected=\"true\"</code> and a 2px accent edge, so it does not rely on color alone for position.",
+    "The React <code>CommandPalette</code> uses a text input with <code>role=\"combobox\"</code> and <code>aria-activedescendant</code> so that Escape always closes instead of first clearing a search input.",
+    "A key hint in a <code>kbd</code> is read with its label; keep it last in the button.",
+  ],
+  motion: [
+    "The dialog fades in and rises 8px over 160ms, and fades out the same way.",
+    "The active option has no transition: it follows the arrow keys at once.",
+    "prefers-reduced-motion cuts the dialog transition to near zero; the open state stays visible.",
+  ],
+  responsive: [
+    "The panel is 520px wide, or the viewport minus 32px when narrower, and stays centered.",
+    "The list scrolls at 50vh or 24rem, whichever is less, so a long result list never pushes the panel off screen.",
+    "The key hint in the search field is pointer-events none and the input pads 72px at the end to keep text clear of it.",
+  ],
+  notes: [
+    "Use the native <code>dialog</code> with <code>sd-command</code>; do not build a floating div.",
+    "In React, use <code>CommandPalette</code> with <code>items</code>, <code>open</code>, and <code>onSelect</code>; it needs no <code>init()</code> and no <code>data-sd-palette</code>.",
+    "Set the shortcut once with <code>data-sd-key</code> on the button, not a second keydown listener.",
+    "Put the shortcuts dialog on the page once; <kbd>?</kbd> opens the first <code>dialog[data-sd-shortcuts]</code> it finds.",
+  ],
+  related: [
+    "menus",
+    "overlays",
+    "pickers",
+    "buttons",
+  ],
+};

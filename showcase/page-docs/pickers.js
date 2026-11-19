@@ -1,0 +1,68 @@
+/** The doc sections of lib-pickers.html: see page-docs/index.js. */
+export default {
+  when: [
+    "Forms with search, tags, or numeric steps: a combobox filters a long list, tags collect free text, and a number stepper nudges a count.",
+    "A multi-step task: <code>sd-steps</code> shows which step is done, current, and next.",
+    "A command palette for jumping to pages and running actions, and a shortcut sheet so keyboard users can find what exists (see Command palette).",
+  ],
+  notWhen: [
+    "Time axes, units, or live data: use the Charts page, <code>createChart</code> with Chart.js.",
+    "A second palette on a page that already has one on <kbd>Ctrl K</kbd>.",
+    "A short list of options: a native <code>&lt;select&gt;</code> or a radio group is simpler (see Choices).",
+  ],
+  usage: "&lt;div class=\"sd-field\"&gt;\n  &lt;label class=\"sd-field-label\" for=\"city\"&gt;City&lt;/label&gt;\n  &lt;div class=\"sd-combobox\" data-sd-combobox&gt;\n    &lt;input id=\"city\" role=\"combobox\" aria-controls=\"city-list\" aria-expanded=\"false\" autocomplete=\"off\"&gt;\n    &lt;input type=\"hidden\" name=\"city\"&gt;\n    &lt;div class=\"sd-menu sd-combobox-list\" role=\"listbox\" id=\"city-list\" hidden&gt;\n      &lt;button type=\"button\" role=\"option\"&gt;Berlin&lt;/button&gt;\n      &lt;button type=\"button\" role=\"option\"&gt;Lisbon&lt;/button&gt;\n    &lt;/div&gt;\n  &lt;/div&gt;\n&lt;/div&gt;\n&lt;div class=\"sd-field\"&gt;\n  &lt;label class=\"sd-field-label\" for=\"labels\"&gt;Labels&lt;/label&gt;\n  &lt;div class=\"sd-tags\" data-sd-tags data-name=\"labels\"&gt;&lt;input id=\"labels\" placeholder=\"Add a label\"&gt;&lt;/div&gt;\n&lt;/div&gt;\n&lt;div class=\"sd-number\" data-sd-number&gt;\n  &lt;button type=\"button\" data-step=\"-1\" aria-label=\"Less\"&gt;-&lt;/button&gt;\n  &lt;input type=\"number\" value=\"3\" min=\"1\" max=\"9\" aria-label=\"Seats\"&gt;\n  &lt;button type=\"button\" data-step=\"1\" aria-label=\"More\"&gt;+&lt;/button&gt;\n&lt;/div&gt;\n&lt;ol class=\"sd-steps\"&gt;&lt;li data-state=\"done\"&gt;Account&lt;/li&gt;&lt;li aria-current=\"step\"&gt;Workspace&lt;/li&gt;&lt;li&gt;Invite&lt;/li&gt;&lt;/ol&gt;",
+  api: [
+    { name: "sd-combobox", type: "class", desc: "A text input that filters a list below it. Put <code>data-sd-combobox</code> on the same element." },
+    { name: "data-sd-combobox", type: "attribute", desc: "Wires filtering, arrow-key movement, and picking. Picking sets the text and a hidden input, and fires <code>change</code> with <code>detail.value</code>." },
+    { name: "role=\"combobox\"", type: "ARIA", desc: "On the text input, with <code>aria-controls</code> naming the list and <code>aria-expanded</code> kept current by the JS." },
+    { name: "sd-combobox-list", type: "class", desc: "The listbox, added to <code>sd-menu</code> with <code>role=\"listbox\"</code>. It scrolls past 16rem." },
+    { name: "role=\"option\"", type: "ARIA", desc: "One choice. The text filters on <code>data-keywords</code> and <code>data-value</code> as well; <code>data-value</code> is what the hidden input gets." },
+    { name: "data-chosen", type: "attribute", desc: "Marks the picked option. <code>data-active</code> marks the option the arrow keys are on." },
+    { name: "data-sd-empty", type: "attribute", def: "No matches", desc: "On the list: the text shown when nothing matches." },
+    { name: "sd-tags", type: "class", desc: "Chips and a text input in one field. Put <code>data-sd-tags</code> on the same element." },
+    { name: "data-sd-tags", type: "attribute", desc: "Enter or comma adds the text as an <code>sd-chip</code>; each chip fires <code>change</code> on the field." },
+    { name: "data-name", type: "attribute", desc: "On the tags field: each chip gets a hidden input with this name, so a form submits the tags." },
+    { name: "sd-number, data-sd-number", type: "class", desc: "A number input with a step button on each side. A button disables at <code>min</code> or <code>max</code>." },
+    { name: "data-step", type: "attribute", desc: "On a button in <code>sd-number</code>: <code>-1</code> or <code>1</code>, stepping by the input's <code>step</code>." },
+    { name: "sd-steps", type: "class", desc: "An ordered list of steps. <code>data-state=\"done\"</code> marks a finished one and <code>aria-current=\"step\"</code> the current one." },
+    { name: "data-sd-key", type: "attribute", desc: "Clicks the first visible match when its key is pressed, such as <code>mod+k</code>. It does not fire while you type, except for combinations with Ctrl or Cmd." },
+    { name: "sd-spark", type: "class", desc: "A sparkline drawn from <code>data-values</code>. <code>sd-bars</code> draws CSS bars from <code>--v</code> (0 to 100)." },
+  ],
+  keyboard: [
+    ["Down / Up", "In a combobox: opens the list, then moves between options, wrapping at the ends."],
+    ["Enter", "In a combobox: picks the active option. In a tags field: adds the text as a tag."],
+    ["Esc", "Closes an open combobox list."],
+    ["Backspace", "In an empty tags field: removes the last tag."],
+    [",", "In a tags field: adds the text as a tag."],
+    ["?", "Opens the shortcut sheet, the <code>dialog[data-sd-shortcuts]</code>, outside text fields."],
+  ],
+  a11y: [
+    "Label every combobox, tags field, and number input with visible text; the demos use <code>sd-field-label</code> and <code>for</code>.",
+    "Give the step buttons in <code>sd-number</code> an <code>aria-label</code>, since their text is a sign.",
+    "A tag's remove button is labeled \"Remove &lt;value&gt;\" by default; <code>setLabels({ \"tags.remove\": ... })</code> translates it.",
+    "The combobox keeps a real text input and a hidden input for the value, and a tags field keeps a hidden input per tag, so forms submit as they always did.",
+    "<code>aria-current=\"step\"</code> marks the current step; the finished and upcoming steps also differ in text and rule color.",
+    "Shortcuts stay out of text fields: <code>data-sd-key</code> ignores typing there, except combinations with Ctrl or Cmd.",
+  ],
+  motion: [
+    "No transitions: the combobox list, tags, number stepper, and steps change state at once.",
+    "Nothing here loops, so prefers-reduced-motion changes nothing.",
+  ],
+  responsive: [
+    "The combobox list is as wide as its field and scrolls at 16rem tall.",
+    "A tags field wraps its chips onto more rows; its input keeps at least 8rem.",
+    "<code>sd-steps</code> gives each step an equal share of the row and lets a long label shrink.",
+  ],
+  notes: [
+    "Use a native <code>select</code> or radio group for a short list; the combobox is for a list long enough to filter.",
+    "Do not render the combobox or tags state from React while keeping <code>data-sd-combobox</code> or <code>data-sd-tags</code>; React has its own <code>Combobox</code>.",
+    "<code>filterList(list, query)</code> narrows any listbox from code, and <code>setOptions(dialog, items)</code> replaces a command palette's options.",
+    "One key, one owner: <code>data-sd-key</code> clicks the first visible match, so do not put the same key on two controls.",
+  ],
+  related: [
+    "choices",
+    "fields",
+    "command",
+    "menus",
+  ],
+};

@@ -1,0 +1,60 @@
+/** The doc sections of lib-type.html: see page-docs/index.js. */
+export default {
+  when: [
+    "Body text, meta text, labels, and display lines: each size in the scale has its line height built in.",
+    "Large text and row titles: <code>tracking-display</code> and <code>tracking-tight</code> pull the letters in.",
+    "Uppercase labels and status lines: <code>text-2xs</code> with <code>tracking-caps</code>.",
+    "Long-form reading, such as a manuscript or an article: <code>sd-reading</code> sets it in Literata.",
+  ],
+  notWhen: [
+    "Text below 12px: nothing in the scale is smaller than <code>text-3xs</code>.",
+    "A weight other than 400 or 500: <code>font-bold</code> also maps to 500, and 600 appears only in the reading face.",
+    "Naming a family in your own CSS: set <code>font-sans</code> or <code>var(--sd-font-sans)</code> so the font picker still applies.",
+    "Interface text in the reading face: Literata is for prose read at length.",
+  ],
+  usage: "&lt;p class=\"sd-title\"&gt;Billing cycle&lt;/p&gt;\n&lt;p class=\"sd-lead\"&gt;You are billed at the start of each cycle.&lt;/p&gt;\n&lt;p class=\"sd-label\"&gt;Plan&lt;/p&gt;\n&lt;p class=\"text-sm text-fg-muted\"&gt;Approved 21 of 24 &lt;code&gt;sd-btn&lt;/code&gt;&lt;/p&gt;",
+  api: [
+    { name: "text-3xs ... text-5xl", type: "token", desc: "The scale, from 12px to 66px, each with its line height (<code>--text-*</code>). <code>text-base</code> is 16px body, <code>text-sm</code> is 15px meta." },
+    { name: "tracking-display, tracking-tight", type: "token", desc: "-0.03em for large text and -0.025em for row titles." },
+    { name: "tracking-caps, tracking-widest", type: "token", desc: "0.14em on uppercase labels and status lines, 0.16em on labels. <code>tracking-wordmark</code> (0.28em) is for the wordmark only." },
+    { name: "font-normal, font-semibold", type: "token", desc: "400 and 500. <code>font-bold</code> also maps to 500." },
+    { name: "--sd-font-sans, --sd-font-mono, --sd-font-reading", type: "token", desc: "The text face, Source Code Pro for code, and Literata for long prose. Utilities: <code>font-sans</code>, <code>font-mono</code>, <code>font-reading</code>." },
+    { name: "sd-display, sd-display-xl", type: "class", desc: "A display line. <code>em</code> or <code>sd-quiet</code> inside it gives the quiet half." },
+    { name: "sd-title, sd-lead", type: "class", desc: "A section or panel heading, and the paragraph under a page title." },
+    { name: "sd-label, sd-label-strong", type: "class", desc: "An uppercase label for section heads and captions." },
+    { name: "sd-muted, sd-subtle, sd-faint", type: "class", desc: "Three steps down in text color." },
+    { name: "sd-meta", type: "class", desc: "A line of small facts, such as owner, time, and a toned status." },
+    { name: "sd-reading", type: "class", desc: "Prose in Literata, with real italics and a semibold for <code>strong</code>. React: <code>face=\"reading\"</code> on <code>Manuscript</code>." },
+    { name: "data-font", type: "attribute", def: "system", desc: "system, leon-sans, or source-code-pro, on <code>&lt;html&gt;</code> or on any element. It does not change code or the reading face." },
+    { name: "setFont(name)", type: "function", desc: "Loads the face, then sets <code>data-font</code> on the root and remembers it. An unknown name throws. <code>getFont()</code> and <code>restoreFont()</code> read and apply it." },
+    { name: "data-sd-font", type: "attribute", desc: "On a button, sets that font on click and keeps <code>aria-pressed</code> current." },
+    { name: "sd:font", type: "event", desc: "Fires on the document after the font applies, with <code>detail.font</code>." },
+  ],
+  a11y: [
+    "Use one <code>h1</code> per page and do not skip levels; <code>sd-title</code> and <code>sd-display</code> change the size, not the outline.",
+    "Nothing is set below 12px, and every text role reaches 4.5:1 on the surfaces of its theme.",
+    "Muted, subtle, and faint text meet 4.5:1, so <code>sd-faint</code> is readable text, not decoration.",
+    "Never dim text with <code>opacity</code>; it drops contrast under 4.5:1.",
+  ],
+  motion: [
+    "Type styles have no transitions of their own; <code>sd-wordmark</code> changes color over 120ms.",
+    "<code>setFont()</code> waits for the face to load, up to 400ms, then switches, so text changes face once instead of passing through the fallback.",
+    "prefers-reduced-motion shortens every transition to 0.01ms.",
+  ],
+  responsive: [
+    "At 40rem and narrower <code>sd-display</code> drops to <code>text-2xl</code> (28px) and <code>sd-display-xl</code> to <code>text-4xl</code> (50px).",
+    "The scale is in rem, so it follows the user's browser text size.",
+  ],
+  notes: [
+    "Two faces and two weights: one text face in 400 and 500, and Source Code Pro for code. The text face is SF Pro, or Segoe UI on Windows, until the font picker swaps it.",
+    "Set families through <code>font-sans</code> or <code>var(--sd-font-sans)</code>, never by name.",
+    "Prose read at length is the one use of <code>font-reading</code>; <code>data-font</code> does not change it.",
+    "<code>text-2xs</code> uppercase with <code>tracking-caps</code> is the label pattern; <code>tracking-wordmark</code> belongs to the wordmark.",
+  ],
+  related: [
+    "rules",
+    "color",
+    "layout",
+    "elements",
+  ],
+};

@@ -15,7 +15,7 @@
  *                         working markup. Its presence adds "Copy page".
  *   examples    { title, html }[]  Examples: live markup, rendered and shown.
  *   api         { name, type, def?, desc }[]  API reference. type is one of
- *                         class, attribute, ARIA, token, function, event.
+ *                         element, class, attribute, ARIA, token, function, event.
  *   keyboard    [key, what][]  Keyboard interactions.
  *   a11y        string[]  Accessibility.
  *   motion      string[]  Motion: durations, loops, reduced motion.

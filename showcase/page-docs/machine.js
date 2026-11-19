@@ -1,0 +1,66 @@
+/** The doc sections of lib-machine.html: see page-docs/index.js. */
+export default {
+  when: [
+    "A system with stations and work moving between them (a deploy queue, a lab, a review pipeline) needs to be shown running, not described.",
+    "One JSON spec should define the whole machine, so a page can swap it, edit a node while it runs, or paste in a new one without new code.",
+    "A live system should drive the board from its own events: <code>driven: true</code> plus <code>emit</code>, <code>start</code>, <code>finish</code> and <code>land</code>.",
+    "A fixed list of steps with a status needs no animation: <code>sd-machine-chain</code> draws it in CSS alone.",
+  ],
+  notWhen: [
+    "A pipeline of stages and jobs that is laid out once and read, not simulated: the flow does that (see Flow).",
+    "Values over time: a chart shows the shape (see Charts).",
+  ],
+  usage: "&lt;figure class=\"sd-machine\" id=\"deploy\" aria-labelledby=\"deploy-h\"&gt;\n  &lt;div class=\"sd-machine-head\"&gt;\n    &lt;span class=\"sd-label sd-label-strong\" id=\"deploy-h\"&gt;Deploy queue&lt;/span&gt;\n  &lt;/div&gt;\n  &lt;div class=\"sd-machine-board\"&gt;&lt;/div&gt;\n&lt;/figure&gt;\n&lt;script type=\"module\"&gt;\n  import { mountMachine } from \"signal-design/js\";\n  mountMachine(document.getElementById(\"deploy\"), {\n    size: [24, 8],\n    nodes: [\n      { id: \"writers\", kind: \"source\", at: [1, 2], size: [4, 4], agents: 2, every: [3, 6], to: \"build\", label: \"writers\" },\n      { id: \"build\", kind: \"box\", at: [9, 2], size: [4, 4], hold: [2, 4], label: \"build\", out: \"prod\" },\n      { id: \"prod\", kind: \"line\", at: [16, 3], size: [7, 2], label: \"prod\" },\n    ],\n    wires: [{ from: \"writers\", to: \"build\" }, { from: \"build\", to: \"prod\" }],\n  });\n&lt;/script&gt;",
+  api: [
+    { name: "mountMachine(figure, spec, options)", type: "function", desc: "Draws the spec into the figure's <code>sd-machine-board</code> and returns the machine; options are <code>autoplay</code>, <code>speed</code>, <code>select</code> and <code>minScale</code>." },
+    { name: "defineKind(name, kind)", type: "function", desc: "Adds a node kind next to <code>box</code>, <code>press</code>, <code>scan</code>, <code>checks</code>, <code>line</code>, <code>source</code> and <code>sink</code>; <code>machineKinds()</code> lists them." },
+    { name: "sd-machine", type: "class", desc: "The figure; <code>sd-machine-head</code>, <code>sd-machine-board</code> and <code>sd-machine-foot</code> are its parts." },
+    { name: "sd-machine-clock", type: "class", desc: "A label in the head with an <code>i</code> hand that turns once per <code>clock.period</code> of machine seconds." },
+    { name: "sd-machine-chain", type: "class", desc: "A static row of <code>span</code> steps joined by arrows, dashed until a step has a status." },
+    { name: "data-status", type: "attribute", desc: "<code>running</code>, <code>done</code>, <code>waiting</code> or <code>failed</code> on a chain step, token or check chip." },
+    { name: "data-chart-theme", type: "attribute", def: "mono", desc: "<code>spectrum</code> on the figure or a chain colors statuses; <code>mono</code> keeps them grey." },
+    { name: "machine.speed, play(), pause(), toggle()", type: "function", desc: "Run the clock: speed 1 is real time, 0.25 is slow motion; <code>advance(seconds)</code> steps it by hand." },
+    { name: "machine.emit(node, token)", type: "function", desc: "Sends a token out of a node; from a sink it sends a copy down each wire." },
+    { name: "machine.start(node, token)", type: "function", desc: "Enters a token into a node, with optional <code>from</code>, <code>hold</code>, <code>since</code>, <code>count</code> and <code>link</code>." },
+    { name: "machine.finish(key, outcome)", type: "function", desc: "Ends a keyed token's hold with <code>\"pass\"</code>, <code>\"fail\"</code> or an outcome object that can set <code>items</code>." },
+    { name: "machine.land(line, token)", type: "function", desc: "Puts a dot on a line at once, judged when <code>status</code> is given." },
+    { name: "machine.set(node, patch)", type: "function", desc: "Changes a node while it runs: <code>tone</code>, <code>frozen</code>, <code>label</code>, <code>meta</code>, <code>items</code>, <code>value</code>, <code>hold</code>, <code>out</code>." },
+    { name: "machine.status(key, status)", type: "function", desc: "Retones a keyed token, such as <code>waiting</code> for a stalled run." },
+    { name: "machine.fold(key, intoKey)", type: "function", desc: "Glides one keyed token into another and merges them; the counts add up." },
+    { name: "machine.clear(), load(spec), destroy()", type: "function", desc: "Empties the board, swaps the whole spec, or removes the machine." },
+    { name: "sd:machine", type: "event", desc: "Fires on the figure with <code>detail.type</code> (<code>emit</code>, <code>start</code>, <code>finish</code>, <code>fold</code>, <code>land</code>, <code>select</code>, <code>open</code>, <code>predict</code> and others) and <code>detail.t</code>." },
+  ],
+  keyboard: [
+    ["Tab", "Reaches a node that has a <code>link</code> or a selectable machine's node, a token started with a <code>link</code>, and the board itself while it scrolls."],
+    ["Enter / Space", "Fires <code>open</code> on a linked node or token, or selects a node when <code>select</code> is on."],
+  ],
+  a11y: [
+    "Label the figure with <code>aria-labelledby</code> pointing at the head's label.",
+    "Each node is <code>role=\"group\"</code> named by its <code>label</code> (or id), with an <code>aria-description</code> such as \"1 working, 2 waiting\". A node with a <code>link</code>, or any node when <code>select</code> is on, becomes <code>role=\"button\"</code>; selectable nodes carry <code>aria-pressed</code>.",
+    "Wires are <code>aria-hidden</code>, and so are tokens unless one was started with a <code>link</code>, which makes it a focusable button named by its label.",
+    "A board wider than its figure at the smallest scale takes <code>tabindex=\"0\"</code> so a keyboard user can scroll it.",
+    "Put the same facts in text near the machine when they matter, such as the count of failed runs: tokens move and a reader may look away.",
+  ],
+  motion: [
+    "Tokens travel at <code>spec.travel</code> px per machine second (default 300); the whole clock scales with <code>machine.speed</code>.",
+    "Node, check and chain color changes run 200ms; a token moving between slots runs 180ms; flips and pops run 200ms.",
+    "The loop sleeps while the machine is off screen or the tab is hidden.",
+    "With <code>prefers-reduced-motion</code> the machine does not autoplay until <code>machine.play()</code>, and tokens jump to their place instead of gliding; the base layer also cuts CSS transitions and animations to 0.01ms.",
+  ],
+  responsive: [
+    "The canvas scales down to fit the figure's width, to 0.5 at most by default (<code>minScale</code>), then the board scrolls.",
+    "On a touch screen a machine with pressable nodes keeps full size (scale 1) and scrolls, so a finger lands on a node.",
+  ],
+  notes: [
+    "The spec is in grid cells: <code>size: [cols, rows]</code>, each node has <code>at</code> and <code>size</code>, and <code>spec.cell</code> sets px per cell (default 20). A wire's <code>start</code>, <code>end</code> and <code>via</code> points override its ports and bend it at right angles.",
+    "<code>hold</code> and <code>every</code> take seconds or a <code>[min, max]</code> range; <code>seed</code> makes a run repeatable.",
+    "<code>out</code> is a node id, or a table of named outcomes with <code>to</code>, <code>weight</code>, <code>status</code> and <code>items</code>. <code>queue: \"latest\"</code> keeps one waiting token and folds later arrivals into it. <code>judge: true</code> colors the line's dots with each outcome's status.",
+    "A driven machine (<code>driven: true</code>) starts nothing by itself: the host names tokens with a <code>key</code> and calls <code>emit</code>, <code>start</code>, <code>finish</code> and <code>land</code> from its own events. <code>instant: true</code> on a token draws what is already true without a glide.",
+    "<code>meta</code> text fills <code>{in}</code>, <code>{done}</code>, <code>{failed}</code>, <code>{queue}</code> and <code>{busy}</code> live.",
+  ],
+  related: [
+    "flow",
+    "charts",
+    "timeline",
+  ],
+};

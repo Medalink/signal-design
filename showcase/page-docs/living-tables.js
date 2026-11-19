@@ -1,0 +1,65 @@
+/** The doc sections of lib-living-tables.html: see page-docs/index.js. */
+export default {
+  when: [
+    "A table whose rows arrive, change, and leave while the user reads it: groups hold the rows and each group opens and closes on its own.",
+    "A table in a container whose width changes: metadata folds beneath each title as the container narrows, so the first column stays readable.",
+    "A table the user may want wider or narrower: a grip on the trailing edge resizes the width, by pointer or keyboard.",
+  ],
+  notWhen: [
+    "A static table with sorting: a plain <code>sd-table</code> does that (see Stats and tables).",
+    "A short list where each item is one outcome: rows read better than columns (see Rows).",
+  ],
+  usage: "&lt;div class=\"sd-living-table\" data-sd-living-table id=\"work\"&gt;\n  &lt;div class=\"sd-table-wrap\" id=\"work-content\"&gt;\n    &lt;table class=\"sd-table\"&gt;\n      &lt;caption&gt;Component work&lt;/caption&gt;\n      &lt;thead&gt;&lt;tr&gt;\n        &lt;th scope=\"col\"&gt;Work item&lt;/th&gt;\n        &lt;th scope=\"col\" data-fold=\"2\"&gt;Status&lt;/th&gt;\n        &lt;th scope=\"col\" data-fold=\"1\"&gt;Owner&lt;/th&gt;\n      &lt;/tr&gt;&lt;/thead&gt;\n      &lt;tbody data-id=\"review\"&gt;\n        &lt;tr class=\"sd-living-table-group\"&gt;&lt;th scope=\"rowgroup\" colspan=\"3\"&gt;&lt;button type=\"button\" disabled aria-expanded=\"true\"&gt;In review &lt;span class=\"sd-living-table-count\" aria-hidden=\"true\"&gt;1&lt;/span&gt;&lt;/button&gt;&lt;/th&gt;&lt;/tr&gt;\n        &lt;tr&gt;&lt;th scope=\"row\"&gt;Tighten focus rings&lt;/th&gt;&lt;td&gt;Review&lt;/td&gt;&lt;td&gt;Mira Chen&lt;/td&gt;&lt;/tr&gt;\n      &lt;/tbody&gt;\n    &lt;/table&gt;\n  &lt;/div&gt;\n  &lt;div data-sd-living-resize hidden aria-label=\"Resize table width\"&gt;&lt;/div&gt;\n&lt;/div&gt;\n\nimport { mountLivingTable } from \"signal-design/js\";\nconst table = mountLivingTable(document.getElementById(\"work\"));",
+  api: [
+    { name: "sd-living-table, data-sd-living-table", type: "attribute", desc: "The root: a table wrapper with an id and a resize separator inside it." },
+    { name: "sd-living-table-group", type: "class", desc: "A group's heading row: one <code>th scope=\"rowgroup\"</code> cell holding a disclosure button." },
+    { name: "sd-living-table-count", type: "class", desc: "The count inside a group's button, in mono." },
+    { name: "tbody[data-id]", type: "attribute", desc: "A unique id for each group; every group needs one." },
+    { name: "th[data-fold]", type: "attribute", def: "0", desc: "<code>1</code> or <code>2</code> on a column header: the width tier at which that column folds beneath the title. The first column does not fold." },
+    { name: "data-label", type: "attribute", desc: "On a cell: the label shown before its value once folded; the mount fills it from the header." },
+    { name: "data-sd-living-resize", type: "attribute", desc: "The grip, a sibling of the wrapper; the mount shows it and gives it separator semantics." },
+    { name: "aria-expanded", type: "ARIA", desc: "On a group's button: true while its rows show; a closed group hides its rows." },
+    { name: "mountLivingTable(root)", type: "function", desc: "Mounts the table and returns <code>toggle()</code>, <code>resize()</code>, <code>refresh()</code>, and <code>dispose()</code>." },
+    { name: "toggle(id, open?)", type: "function", desc: "Opens, closes, or flips a group by its <code>data-id</code>." },
+    { name: "resize({ width })", type: "function", desc: "Sets the width in CSS pixels; <code>null</code> restores the parent's width." },
+    { name: "refresh()", type: "function", desc: "Re-reads rows and groups after you changed them." },
+    { name: "sd:living-table", type: "event", desc: "Fires on the root with <code>detail.width</code> and <code>detail.collapsed</code>, the ids of the closed groups." },
+  ],
+  keyboard: [
+    ["Left, Right", "On the grip: narrows or widens the table by 16px, reversed in a right-to-left page."],
+    ["Shift + Left, Right", "Moves 64px at a time."],
+    ["Home", "Sets the smallest width: 320px, or the parent's width when that is less."],
+    ["End", "Fills the parent."],
+    ["Esc", "Cancels a drag in progress."],
+    ["Enter, Space", "On a group's button: opens or closes the group."],
+  ],
+  a11y: [
+    "Use a real <code>table</code> with a <code>caption</code>, <code>th scope=\"col\"</code> headers, and <code>th scope=\"row\"</code> in each row; the mount throws when the structure is incomplete.",
+    "A group heading is a <code>th scope=\"rowgroup\"</code> with a <code>button</code> and <code>aria-expanded</code>; the count is <code>aria-hidden</code> so the name stays short.",
+    "The grip becomes <code>role=\"separator\"</code> with <code>aria-orientation</code>, <code>aria-controls</code>, and <code>aria-valuemin</code>, <code>aria-valuemax</code>, <code>aria-valuenow</code>, and <code>aria-valuetext</code> in pixels; its default label is \"Resize table width\".",
+    "When a closed group would hide the focused row, focus moves to the group's button.",
+    "Without mounting, the markup is a readable static table; the group buttons stay disabled.",
+  ],
+  motion: [
+    "A group's chevron turns over 160ms and a row's hover fill changes over 160ms.",
+    "The grip's edge color changes over 160ms on hover, focus, and while dragging.",
+    "prefers-reduced-motion removes these transitions; state changes still show at once.",
+  ],
+  responsive: [
+    "Folding follows the table's own container, not the viewport: at 48rem and below, columns marked <code>data-fold=\"1\"</code> fold beneath the title; at 32rem and below, <code>data-fold=\"2\"</code> columns fold too.",
+    "A folded cell shows its header text before its value, such as \"Owner: Mira Chen\".",
+    "The resize grip changes width only; <code>resize({ width: null })</code> fills the parent again.",
+    "It needs CSS subgrid and container queries: Chromium 117+ and Safari 16+.",
+  ],
+  notes: [
+    "Mount with <code>mountLivingTable()</code>, which works independently of <code>init()</code>; call <code>dispose()</code> to restore the authored markup.",
+    "Call <code>refresh()</code> after rows or groups change. Remount after a change to the columns: <code>refresh()</code> throws then.",
+    "Do not mount a live root twice: a second mount throws until <code>dispose()</code>.",
+    "Tier the columns with <code>data-fold</code>: 1 folds first, 2 folds on the narrowest container. The first column needs no tier.",
+  ],
+  related: [
+    "stats",
+    "rows",
+    "feed",
+  ],
+};

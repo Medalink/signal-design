@@ -1,0 +1,67 @@
+/** The doc sections of lib-elements.html: see page-docs/index.js. */
+export default {
+  when: [
+    "Articles, docs, and settings pages where plain markup is enough.",
+    "Forms with native controls: every input type, select, textarea, checkbox, radio, switch, range, and file.",
+    "Anywhere you would rather write a table than a component.",
+    "A native <code>details</code>, <code>dialog</code>, or <code>[popover]</code>: the browser supplies the behavior, and Signal supplies the look.",
+  ],
+  notWhen: [
+    "A state the element cannot express, such as a tone or a selected row: use the component and its <code>data-tone</code> or ARIA state.",
+    "Your own dropdown, tooltip, modal, or tabs: use the native element plus Signal (see Overlays, Menus, and Bars and tabs).",
+    "An <code>sd-</code> class added out of habit: the unclassed element is already styled.",
+    "A control that needs a label, a hint, and an error: wrap it in <code>sd-field</code> (see Fields).",
+  ],
+  usage: "&lt;h1&gt;32 open. &lt;em&gt;8 done.&lt;/em&gt;&lt;/h1&gt;\n&lt;p&gt;Paragraph text with a &lt;a href=\"/docs\"&gt;link&lt;/a&gt; and &lt;code&gt;code()&lt;/code&gt;.&lt;/p&gt;\n&lt;ul&gt;&lt;li&gt;Square markers&lt;/li&gt;&lt;li&gt;Faint marker color&lt;/li&gt;&lt;/ul&gt;\n&lt;form&gt;\n  &lt;fieldset&gt;\n    &lt;legend&gt;Account&lt;/legend&gt;\n    &lt;label&gt;Email &lt;input type=\"email\" required&gt;&lt;/label&gt;\n    &lt;label class=\"sd-check\"&gt;&lt;input type=\"checkbox\"&gt; Send me updates&lt;/label&gt;\n  &lt;/fieldset&gt;\n  &lt;button&gt;Save&lt;/button&gt;\n&lt;/form&gt;",
+  api: [
+    { name: "h1 ... h6", type: "element", desc: "Plain headings with no class. <code>em</code> inside <code>h1</code> to <code>h3</code> is the quiet half." },
+    { name: "ul, ol, dl", type: "element", desc: "Plain lists: square faint markers, tabular numbers, nested lists indent themselves. A list that carries a class is yours to style." },
+    { name: "blockquote, pre, hr", type: "element", desc: "Plain quote (with a <code>footer</code> or <code>cite</code>), code block, and rule. <code>sd-code</code> adds a titled, copyable snippet." },
+    { name: "sd-table-wrap", type: "class", desc: "Wraps a plain <code>table</code> so a narrow screen scrolls the table, not the page. <code>sd-table</code> adds density and row states." },
+    { name: "sd-check", type: "class", desc: "A label around a checkbox, radio, or <code>role=\"switch\"</code> checkbox." },
+    { name: "role=\"switch\"", type: "ARIA", desc: "On a checkbox: it renders as a switch." },
+    { name: "fieldset, legend", type: "element", desc: "Group related controls with a visible group name." },
+    { name: "details, summary", type: "element", desc: "A native disclosure. Stacked <code>details</code> read as one accordion." },
+    { name: "dialog", type: "element", desc: "A native dialog. <code>sd-dialog</code> adds a header, body, and foot." },
+    { name: "data-sd-open, data-sd-close", type: "attribute", desc: "Open a dialog by id as a modal, and close the nearest one." },
+    { name: "popovertarget", type: "attribute", desc: "The native attribute that toggles a <code>[popover]</code>." },
+    { name: "sd-field", type: "class", desc: "Adds a label, a hint, and an error to a control." },
+    { name: "sd-lead, sd-muted, sd-meta", type: "class", desc: "Change emphasis on plain text. <code>sd-title</code> and <code>sd-display</code> change a heading's size, not its level." },
+  ],
+  keyboard: [
+    ["Enter / Space", "Toggles a <code>summary</code> and presses a button, as in any browser."],
+    ["Esc", "Closes a modal <code>dialog</code>, unless it has <code>data-sd-static</code>, and a <code>[popover]</code> that light-dismisses."],
+    ["Tab", "Moves through the controls. A modal <code>dialog</code> keeps focus inside it."],
+  ],
+  a11y: [
+    "Use one <code>h1</code> per page and do not skip levels.",
+    "A table takes a <code>caption</code>, <code>th</code> cells with <code>scope</code>, and the wrap for narrow screens.",
+    "Wrap each control in a <code>label</code> or give it one with <code>for</code>; a placeholder disappears when you type and is not a label.",
+    "Group related controls in <code>fieldset</code> with a <code>legend</code>.",
+    "Give <code>img</code> an <code>alt</code>, <code>iframe</code> a <code>title</code>, and set <code>width</code> and <code>height</code> so layout holds.",
+    "The indeterminate checkbox is a property, not an attribute: set <code>input.indeterminate = true</code> from script.",
+  ],
+  motion: [
+    "A dialog fades in and rises 8px over 160ms.",
+    "Links change color over 120ms; fields, checkboxes, and radios change border and fill over 120ms.",
+    "A switch moves its thumb over 160ms, and a progress bar changes width over 200ms.",
+    "prefers-reduced-motion shortens every transition to 0.01ms.",
+  ],
+  responsive: [
+    "Media scales to its container; width and height attributes keep the layout from shifting.",
+    "A table inside <code>sd-table-wrap</code> scrolls sideways on a narrow screen.",
+    "A dialog is at most 32rem wide and never wider than the viewport minus 32px, and it scrolls when taller than the viewport minus 64px.",
+  ],
+  notes: [
+    "Write the right element first and add an <code>sd-</code> class only when the element cannot say enough.",
+    "The base layer comes after Tailwind's reset, and an <code>sd-</code> class or a utility sits in a later layer, so it wins.",
+    "Inputs, checkboxes, and media have square corners and no shadows.",
+    "Prefer the native element: <code>dialog</code>, <code>[popover]</code>, and <code>details</code> get their behavior from the browser.",
+  ],
+  related: [
+    "fields",
+    "type",
+    "overlays",
+    "stats",
+  ],
+};
