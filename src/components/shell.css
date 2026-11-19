@@ -879,9 +879,13 @@
   .sd-shell:not(:has(> .sd-shell-status)) {
     --shell-status: 0px;
   }
+  /* Its row is one line tall, so the bar scrolls sideways there instead of
+     wrapping. */
   .sd-shell-status {
     z-index: 40;
+    flex-wrap: nowrap;
     min-height: 0;
+    padding-block: 0;
   }
   .sd-shell-status .sd-status {
     font-size: inherit;

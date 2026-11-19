@@ -396,13 +396,16 @@
   }
 
   /* Status bar: key hints along the bottom. It is chrome over content that
-     scrolls under it, so it takes the darkest tone and an edge shadow. */
+     scrolls under it, so it takes the darkest tone and an edge shadow. Hints
+     that do not fit on one line wrap to a second rather than being cut off
+     at the edge. */
   .sd-statusbar {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 18px;
+    gap: 4px 18px;
     min-height: 36px;
-    padding: 0 16px;
+    padding: 4px 16px;
     background: var(--sd-tone-0);
     box-shadow: var(--sd-edge-above);
     color: var(--sd-fg-subtle);
@@ -415,6 +418,7 @@
   }
   .sd-statusbar > * {
     display: inline-flex;
+    flex-shrink: 0;
     align-items: center;
     gap: 6px;
   }
