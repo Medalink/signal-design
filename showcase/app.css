@@ -729,114 +729,532 @@
     gap: 12px;
     padding-block: 48px 8px;
   }
-  /* The landing: sections span the page, each one's content in the wide column. */
-  .home-section {
-    border-block-start: 1px solid var(--sd-line);
+  /* ---- The overview ------------------------------------------------------ */
+  html[data-page="index"] {
+    scroll-padding-top: calc(var(--doc-topbar-h) + 16px);
   }
-  .home-inner {
-    max-width: var(--container-wide);
-    margin-inline: auto;
-    padding: 44px 24px 28px;
+  /* The first screen: a short intro over one live composition that fills the rest of the window. */
+  .home-top {
+    display: flex;
+    flex-direction: column;
+    height: max(calc(100svh - var(--doc-topbar-h)), 44rem);
   }
-  @media (max-width: 40rem) {
-    .home-inner {
-      padding: 28px 16px 20px;
-    }
+  .home-intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 32px;
+    padding: 14px var(--doc-gutter) 12px;
   }
-  .home-section .sd-grid {
-    margin-top: 20px;
-  }
-  /* A card in a row of taller ones keeps its title over its description instead of spreading them apart. */
-  :is(.home-section, .doc-section) .sd-link-card {
-    align-content: start;
-  }
-  /* The landing hero: full-bleed rain, the copy in the wide column on canvas. */
-  .home-hero {
-    border-block-start: 0;
-  }
-  .home-hero .home-inner {
-    padding-block: 96px 72px;
-  }
-  .home-hero-copy {
-    max-width: 48rem;
-  }
-  @media (max-width: 40rem) {
-    .home-hero .home-inner {
-      padding-block: 48px 40px;
-    }
-  }
-  /* Featured example cards: a big art slot on top, like a screenshot. */
-  .home-featured-card {
-    max-width: none;
-  }
-  .home-featured-card > .home-featured-art {
+  .home-intro-copy {
     display: grid;
-    place-items: center;
-    width: calc(100% + 28px);
-    max-width: none;
-    height: 150px;
-    aspect-ratio: auto;
-    margin: -12px -14px 6px;
-    border: 0;
-    --sd-art-cell: 12px;
+    gap: 2px;
+    min-width: 0;
+    max-width: 56rem;
   }
-  /* A group under "Browse everything": spacing separates, no second rule. */
-  .home-browse-group {
-    padding-block: 28px 0;
+  .home-intro h1 {
+    margin: 0;
+    font-size: var(--text-xl);
+    font-weight: 500;
+    letter-spacing: var(--tracking-display);
   }
-  .home-browse-group > .sd-grid,
-  .home-browse-group .home-browse-group > .sd-grid {
-    margin-top: 12px;
-  }
-  /* FAQ questions. */
-  .home-faq h3 {
-    margin: 0 0 6px;
+  .home-intro p {
+    margin: 0;
+    color: var(--sd-fg-muted);
     font-size: var(--text-base);
   }
-  .home-faq p {
-    margin: 0;
+  .home-intro-act {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+  .home-install {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+    padding: 2px 2px 2px 12px;
+    background: var(--sd-field-fill);
+  }
+  .home-install code {
+    font-family: var(--sd-font-mono);
+    font-size: var(--text-sm);
+    overflow-wrap: anywhere;
+  }
+  .home-install-copy {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    color: var(--sd-fg-muted);
+    background: none;
+    border: 0;
+  }
+  .home-install-copy:hover {
+    color: var(--sd-fg);
+  }
+  .home-install-copy svg {
+    width: 16px;
+    height: 16px;
+  }
+  @media (pointer: coarse) {
+    .home-install-copy {
+      width: var(--sd-touch);
+      height: var(--sd-touch);
+    }
+  }
+
+  /* The composition is a real app shell sized to what is left of the window. */
+  .home-stage {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .home-shell {
+    --shell-rail: 4.5rem;
+    --shell-sidebar: 11rem;
+    --shell-head: 3rem;
+    --shell-status: 2rem;
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 0;
+  }
+  .home-shell .sd-shell-main {
+    --shell-gap: 0px;
+    padding: 0;
+  }
+  .home-account {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    --sd-ring: var(--sd-tone-0);
+  }
+  .home-account-who {
+    display: grid;
+    min-width: 0;
     font-size: var(--text-sm);
   }
-  /* The footer: a band set off by tone, not a line. */
-  .home-footer {
-    border-block-start: 0;
-    background: var(--sd-tone-1);
+  .home-content {
+    min-height: 0;
+    padding: 10px;
+    overflow: auto;
   }
-  .home-footer .home-inner {
-    padding-block: 56px 32px;
-  }
-  /* Footer nav columns. */
-  .home-footer-nav {
+  .home-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
-    gap: 24px;
-    margin-top: 40px;
+    gap: 10px;
+    height: 100%;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1.15fr) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "thread stats stats"
+      "thread chart form"
+      "thread flow form";
   }
-  .home-footer-nav ul {
+  .home-thread { grid-area: thread; }
+  .home-stats { grid-area: stats; }
+  .home-chart { grid-area: chart; }
+  .home-flow { grid-area: flow; }
+  .home-form { grid-area: form; }
+  .home-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+    min-height: 0;
+    padding: 12px 14px;
+    background: var(--sd-tone-3);
+    --sd-ring: var(--sd-tone-3);
+  }
+  .home-cell-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 28px;
+  }
+  .home-cell-head h2 {
     margin: 0;
-    padding: 0;
-    list-style: none;
+    font-size: var(--text-sm);
+    font-weight: 500;
+  }
+  .home-cell-head a {
+    text-decoration: underline;
+    text-decoration-color: var(--sd-fg-faint);
+    text-underline-offset: 3px;
+  }
+  .home-cell-head a:hover {
+    text-decoration-color: currentColor;
+  }
+  .home-sub {
+    color: var(--sd-fg-muted);
+    font-size: var(--text-sm);
+  }
+  .home-channels {
+    display: none;
+    align-self: start;
+  }
+  /* The newest message sits at the bottom, over the composer, however tall the cell is. */
+  .home-feed {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    min-height: 8rem;
+    overflow-y: auto;
+    --sd-feed-bg: var(--sd-tone-3);
+  }
+  .home-feed > :first-child {
+    margin-block-start: auto;
+  }
+  .home-feed > * {
+    flex: none;
+  }
+  .home-composer {
+    flex: none;
+  }
+  .home-typing {
+    flex: none;
+  }
+  .home-stat-row {
     display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .home-stat-row .sd-stat-value {
+    font-size: var(--text-xl);
+  }
+  .home-plot {
+    flex: 1 1 0;
+    min-height: 5rem;
+  }
+  .home-plot svg {
+    height: 100%;
+  }
+  .home-uptime {
+    display: grid;
+    gap: 8px;
+  }
+  .home-uptime-label {
+    display: flex;
+    justify-content: space-between;
     gap: 8px;
     font-size: var(--text-sm);
   }
-  .home-footer-nav .sd-label {
-    margin-block-end: 4px;
+  .home-flow .sd-machine {
+    margin: 0;
   }
-  .home-footer-nav a {
-    display: inline-flex;
-    align-items: center;
-    min-block-size: 24px;
-    margin-block: -2px;
+  .home-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: none;
+    height: 100%;
   }
-  @media (pointer: coarse) {
-    .home-footer-nav a {
-      min-block-size: var(--sd-touch);
-      margin-block: 0;
+  .home-settings .sd-choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+  }
+  .home-share-row {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .home-rollout {
+    flex: 1 1 0;
+    min-width: 0;
+    padding-block-end: 8px;
+  }
+  .home-people {
+    display: none;
+  }
+  .home-people .sd-roster {
+    overflow-y: auto;
+  }
+  /* Wide windows add a people column. */
+  @media (min-width: 100rem) {
+    .home-grid {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.1fr) minmax(0, 0.9fr) minmax(0, 0.7fr);
+      grid-template-areas:
+        "thread stats stats people"
+        "thread chart form people"
+        "thread flow form people";
+    }
+    .home-people {
+      display: flex;
+      grid-area: people;
     }
   }
-  .home-copyright {
-    margin-block-start: 40px;
+  .home-form-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-block-start: auto;
+  }
+  .home-sub {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px 12px;
+  }
+  /* Short windows give up the second uptime row before they crop anything else. */
+  @media (max-height: 56rem) and (min-width: 64rem) {
+    .home-uptime > :nth-child(2) {
+      display: none;
+    }
+  }
+  /* Tablets: the rail stays, the sidebar gives way to a channel switch in the thread. */
+  @media (max-width: 63.99rem) {
+    .home-top {
+      height: auto;
+    }
+    .home-stage {
+      flex: none;
+    }
+    .home-shell {
+      grid-template-columns: var(--shell-rail) minmax(0, 1fr);
+      grid-template-areas:
+        "rail main"
+        "status status";
+      grid-template-rows: auto auto;
+      height: auto;
+    }
+    .home-shell > .sd-sidebar {
+      display: none;
+    }
+    .home-content {
+      overflow: visible;
+    }
+    .home-grid {
+      height: auto;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-areas:
+        "thread stats"
+        "thread chart"
+        "flow form";
+      grid-template-rows: auto auto auto;
+    }
+    .home-feed {
+      min-height: 14rem;
+      max-height: 22rem;
+    }
+    .home-channels {
+      display: inline-flex;
+    }
+  }
+  /* Phones: one column of the same parts, no rail, no frame chrome. */
+  @media (max-width: 47.99rem) {
+    .home-shell {
+      display: block;
+    }
+    .home-shell > .sd-rail,
+    .home-shell > .sd-sidebar,
+    .home-shell > .sd-shell-status {
+      display: none;
+    }
+    .home-content {
+      padding: 8px;
+    }
+    .home-grid {
+      display: flex;
+      flex-direction: column;
+    }
+    .home-cell {
+      flex: none;
+    }
+    .home-search span {
+      display: none;
+    }
+    .home-stat-row {
+      gap: 8px;
+    }
+    .home-stat-row .sd-stat-value {
+      font-size: var(--text-xl);
+    }
+    .home-stat-row .sd-stat-delta {
+      display: none;
+    }
+    .home-plot {
+      flex: none;
+      height: 7rem;
+    }
+  }
+
+  /* Sections under the first screen. */
+  .home-section {
+    border: 0;
+  }
+  .home-inner {
+    max-width: 100rem;
+    margin-inline: auto;
+    padding: 56px var(--doc-gutter) 0;
+  }
+  .home-h {
+    margin: 0 0 20px;
+    font-size: var(--text-xl);
+    font-weight: 500;
+    letter-spacing: var(--tracking-display);
+  }
+  /* Example apps: each frame is the app at desktop size, scaled to its card (pages/home.js sets --scale). */
+  .home-previews {
+    display: grid;
+    gap: 28px 24px;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 30rem), 1fr));
+  }
+  .home-preview {
+    position: relative;
+    display: grid;
+    gap: 10px;
+    align-content: start;
+  }
+  .home-frame {
+    --fw: 1440;
+    --fh: 900;
+    position: relative;
+    aspect-ratio: var(--fw) / var(--fh);
+    overflow: clip;
+    background: var(--sd-tone-2);
+  }
+  .home-frame iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(var(--fw) * 1px);
+    max-width: none;
+    height: calc(var(--fh) * 1px);
+    border: 0;
+    transform: scale(var(--scale, 0.4));
+    transform-origin: 0 0;
+    background: var(--sd-canvas);
+  }
+  .home-preview-text h3 {
+    margin: 0;
+    font-size: var(--text-base);
+    font-weight: 500;
+  }
+  .home-preview-text h3 a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+  .home-preview-text h3 a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .home-preview:has(a:focus-visible) .home-frame {
+    outline: 2px solid var(--sd-fg);
+    outline-offset: 2px;
+  }
+  .home-preview-text a:focus-visible {
+    outline: 0;
+  }
+  .home-preview-text p {
+    margin: 2px 0 0;
+    color: var(--sd-fg-muted);
+    font-size: var(--text-sm);
+  }
+  @media (max-width: 47.99rem) {
+    .home-frame {
+      --fw: 390;
+      --fh: 520;
+    }
+  }
+  /* The index: every page under the group the docs sidebar files it in. */
+  .home-index-section {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    gap: 8px 24px;
+    padding-block: 20px 0;
+  }
+  .home-index-section > h3 {
+    margin: 0;
+    font-size: var(--text-md);
+    font-weight: 500;
+  }
+  .home-index-groups {
+    display: grid;
+    gap: 20px 24px;
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  }
+  .home-index-group h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 4px;
+    color: var(--sd-fg-subtle);
+    font-size: var(--text-sm);
+    font-weight: 400;
+  }
+  .home-index-group ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .home-index-group a {
+    display: flex;
+    align-items: center;
+    min-block-size: 28px;
+    color: var(--sd-fg-muted);
+    font-size: var(--text-base);
+  }
+  .home-index-group a:hover {
+    color: var(--sd-fg);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  @media (pointer: coarse) {
+    .home-index-group a {
+      min-block-size: var(--sd-touch);
+    }
+  }
+  @media (max-width: 47.99rem) {
+    .home-index-section {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .home-index-groups {
+      grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    }
+  }
+  .home-agents {
+    display: grid;
+    gap: 20px 24px;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  }
+  .home-agents h3 {
+    margin: 0 0 2px;
+    font-size: var(--text-base);
+    font-weight: 500;
+  }
+  .home-agents a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 28px;
+    text-decoration: underline;
+    text-decoration-color: var(--sd-fg-faint);
+    text-underline-offset: 3px;
+  }
+  .home-agents p {
+    margin: 0;
+    color: var(--sd-fg-muted);
+    font-size: var(--text-sm);
+  }
+  @media (pointer: coarse) {
+    .home-agents a {
+      min-block-size: var(--sd-touch);
+    }
+  }
+  .home-foot {
+    margin: 40px 0 0;
+    padding-block-end: 32px;
+    color: var(--sd-fg-subtle);
     font-size: var(--text-sm);
   }
   /* Doc anatomy sections on a library page, and the lists inside them. */

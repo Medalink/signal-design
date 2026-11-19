@@ -10,7 +10,8 @@
  */
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { basename, resolve } from "node:path";
-import { HOME, LIBRARY, EXAMPLES, SECTIONS, byFile, byId, keyOf, neighbors } from "./pages.js";
+import { HOME, SECTIONS, byFile, byId, keyOf, neighbors } from "./pages.js";
+import { homeContent } from "./home-markup.js";
 
 const dir = import.meta.dirname;
 const template = () => readFileSync(resolve(dir, "layout.html"), "utf8");
@@ -213,145 +214,6 @@ function pageSections(page) {
   }
   for (const [id, title] of splitIntro(html)?.sections ?? []) out.push([id, title]);
   return out;
-}
-
-/** Cards for the overview: a section per library section, a grid per group. Each lives in the landing's wide column, so the groups separate by spacing, not a second rule. */
-function cards() {
-  const card = (p) =>
-    `      <a class="sd-link-card" href="./${p.file}"><span class="sd-link-card-title">${p.title}</span><span class="sd-link-card-desc">${p.summary}</span></a>`;
-  const group = (g) => `    <section class="home-browse-group" aria-label="${g.title}">
-      <h3 class="sd-label">${g.title}</h3>
-      <div class="sd-grid" style="--min: 14rem; --gap: 12px">
-${g.pages.map(card).join("\n")}
-      </div>
-    </section>`;
-  return SECTIONS.map(
-    (s) => `  <section class="home-browse-group" id="home-${s.id}" aria-labelledby="home-${s.id}-h">
-    <h2 id="home-${s.id}-h" class="sd-title">${s.title}</h2>
-${s.groups.map(group).join("\n")}
-  </section>`,
-  ).join("\n\n");
-}
-
-/** The lead sentence under the hero headline: real counts from the registry. */
-const homeLead = () =>
-  `<p class="sd-lead max-w-[42rem]">A design library for Tailwind v4 apps, plain HTML and Tauri. <b>${LIBRARY.length} component pages</b> and <b>${EXAMPLES.length} example apps</b> show every part working.</p>`;
-
-/** The strongest example apps, one art piece each. */
-const FEATURED = [
-  ["chat.html", "signal", "A group channel in the whole app frame, with a poll, replies and members by role."],
-  ["shell.html", "laptop", "A containers screen: rows open to details, a confirm before removal, a live status bar."],
-  ["charts.html", "chip", "Live CPU and memory plots for a fleet, with a per-container table."],
-  ["stream.html", "wifi", "A Twitch overlay package with live alerts, ready for OBS."],
-  ["react-shell.html", "terminal", "The app shell as React components, state owned by React."],
-];
-
-/** Everything under the hero: featured apps, the full grid, AI files, FAQ and the footer. Each section's content sits in the landing's wide column. */
-function homeCards(grid) {
-  const featured = FEATURED.map(
-    ([file, art, line]) =>
-      `      <a class="sd-link-card sd-link-card-hero home-featured-card" href="./${file}"><span class="sd-link-card-thumb home-featured-art"><span class="sd-art" data-sd-art="${art}" aria-hidden="true"></span></span><span class="sd-link-card-title">${EXAMPLES.find((p) => p.file === file)?.title ?? file}</span><span class="sd-link-card-desc">${line}</span></a>`,
-  ).join("\n");
-  const faq = [
-    ["What is Signal?", `A flat, square, monochrome design library: CSS components for Tailwind v4 or one prebuilt stylesheet, plus a small dependency-free JS module that wires behavior through attributes.`],
-    ["How do I install it?", `From GitHub, not npm: <code>pnpm add github:Medalink/signal-design</code>. Pin a tag or commit for reproducible builds.`],
-    ["Does it need Tailwind?", `No. With Tailwind, import it after <code>tailwindcss</code>. Without, link <code>dist/signal.css</code> and keep the fonts next to it.`],
-    ["How do themes work?", `Four themes: ink, graphite, paper and auto. <code>&lt;html data-theme&gt;</code> sets one, <code>setTheme()</code> switches and remembers it, and every color reads a <code>--sd-*</code> token, so a theme change never breaks a page.`],
-    ["Can my AI read it?", `Yes. <code>llms-full.txt</code> holds the guide and every component's HTML in one file, and <code>ai/components.json</code> holds the same as data with copyable markup.`],
-    ["Where does it run?", `Any browser and most WebViews: Tauri on WebView2, WKWebView and WebKitGTK.`],
-  ]
-    .map(([q, a]) => `      <div><h3>${q}</h3><p class="sd-muted">${a}</p></div>`)
-    .join("\n");
-  return `  <section class="home-section" id="home-featured" aria-labelledby="home-featured-h">
-    <div class="home-inner">
-    <h2 id="home-featured-h" class="sd-title">See it in use</h2>
-    <p class="sd-muted max-w-[42rem]">Whole apps built only from library parts. Open one and click around.</p>
-    <div class="sd-grid home-featured-grid" style="--min: 20rem; --gap: 20px">
-${featured}
-    </div>
-    </div>
-  </section>
-
-  <section class="home-section" id="home-browse" aria-labelledby="home-browse-h">
-    <div class="home-inner">
-    <h2 id="home-browse-h" class="sd-title">Browse everything</h2>
-    <p class="sd-muted max-w-[42rem]">Every part of the library on its own page, with preview and code side by side.</p>
-
-${grid}
-    </div>
-  </section>
-
-  <section class="home-section" id="home-ai" aria-labelledby="home-ai-h">
-    <div class="home-inner">
-    <h2 id="home-ai-h" class="sd-title">Use Signal with your AI</h2>
-    <p class="sd-muted max-w-[42rem]">Install from GitHub, then point your agent at the files it reads. The docs ship as plain text on purpose.</p>
-    <div class="grid gap-3 sm:grid-cols-2 items-start">
-      <div class="sd-code">
-        <div class="sd-code-head">pnpm <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#install-pnpm">Copy</button></div>
-        <pre id="install-pnpm" tabindex="0"><code>pnpm add github:Medalink/signal-design</code></pre>
-      </div>
-      <div class="sd-code">
-        <div class="sd-code-head">npm <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#install-npm">Copy</button></div>
-        <pre id="install-npm" tabindex="0"><code>npm install github:Medalink/signal-design</code></pre>
-      </div>
-    </div>
-    <ul class="doc-list max-w-[42rem]">
-      <li><code>llms-full.txt</code> is the guide and every component's HTML in one file. <a href="https://github.com/Medalink/signal-design/blob/main/llms-full.txt">Read it on GitHub</a>.</li>
-      <li><code>ai/components.json</code> is every block as data, with copyable markup. <a href="https://github.com/Medalink/signal-design/blob/main/ai/components.json">Browse it on GitHub</a>.</li>
-      <li>The <a href="./lib-setup.html">Setup page</a> shows what <code>init()</code> wires, attribute by attribute.</li>
-    </ul>
-    </div>
-  </section>
-
-  <section class="home-section" id="home-faq" aria-labelledby="home-faq-h">
-    <div class="home-inner">
-    <h2 id="home-faq-h" class="sd-title">Good questions</h2>
-    <div class="sd-grid home-faq" style="--min: 15rem; --gap: 32px 24px">
-${faq}
-    </div>
-    </div>
-  </section>
-
-  <section class="home-section home-footer" aria-labelledby="home-cta-h">
-    <div class="home-inner">
-    <h2 id="home-cta-h" class="sd-title">Start with one page.</h2>
-    <p class="sd-lead max-w-[42rem]">Try it on its page, then install it with one command.</p>
-    <div class="sd-actions">
-      <a class="sd-btn" href="./lib-buttons.html">Open the Buttons page</a>
-      <a class="sd-btn sd-btn-ghost" href="./lib-setup.html">Set it up</a>
-    </div>
-    <nav class="home-footer-nav" aria-label="Footer">
-      <div>
-        <p class="sd-label">Library</p>
-        <ul>
-          <li><a href="./lib-rules.html">Rules</a></li>
-          <li><a href="./lib-buttons.html">Buttons</a></li>
-          <li><a href="./lib-fields.html">Fields</a></li>
-          <li><a href="./lib-setup.html">Setup</a></li>
-        </ul>
-      </div>
-      <div>
-        <p class="sd-label">AI</p>
-        <ul>
-          <li><a href="https://github.com/Medalink/signal-design/blob/main/llms-full.txt">llms-full.txt</a></li>
-          <li><a href="https://github.com/Medalink/signal-design/blob/main/ai/components.json">ai/components.json</a></li>
-          <li><a href="./lib-owned.html">Framework state</a></li>
-        </ul>
-      </div>
-      <div>
-        <p class="sd-label">Examples</p>
-        <ul>
-          <li><a href="./chat.html">Chat</a></li>
-          <li><a href="./shell.html">App shell</a></li>
-          <li><a href="./charts.html">Charts</a></li>
-          <li><a href="./stream.html">Stream</a></li>
-          <li><a href="./react-shell.html">React app shell</a></li>
-        </ul>
-      </div>
-    </nav>
-    <p class="sd-subtle home-copyright">© 2026 Signal design. MIT.</p>
-    </div>
-  </section>`;
 }
 
 /** One doc section: an h2 with a stable id that the "On this page" rail links to. */
@@ -589,7 +451,7 @@ export function renderPage(page, html) {
   const body = ((library ? breakAtPipes(usageAfterDemo(html)) : html).match(/<body[^>]*>([\s\S]*)<\/body>/)?.[1] ?? "").replace(/^\s+|\s+$/g, "");
   const content = library
     ? libraryContent(page, body)
-    : body.replace("<!--@lead-->", homeLead()).replace("<!--@cards-->", homeCards(cards()));
+    : body.replace("<!--@home-->", homeContent());
   const title = library ? `${page.title} · Signal design library` : "Signal design library";
   const fill = {
     icons: ICONS,
