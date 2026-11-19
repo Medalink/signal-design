@@ -48,6 +48,11 @@
       min-width: var(--sd-hit);
       min-height: var(--sd-hit);
     }
+    /* A tab with a short label ("All") still gets a --sd-hit wide box; its
+       text stays centered and longer tabs are already wider. */
+    .sd-tabs > :where(a, button) {
+      min-inline-size: var(--sd-hit);
+    }
     /* A chip's dismiss is --sd-hit square around its 16px glyph. The negative
        margins (indicators.css gives 4px more at the trailing side) keep the
        chip's own width, and the box reaches past the chip into the gap. */

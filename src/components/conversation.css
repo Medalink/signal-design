@@ -1377,6 +1377,8 @@
     color: var(--sd-fg);
   }
   .sd-voice-speed {
+    min-block-size: 24px;
+    min-inline-size: 24px;
     padding: 2px 6px;
     border: 0;
     background: color-mix(in srgb, var(--sd-fg) 10%, var(--sd-tone-3));

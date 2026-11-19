@@ -58,7 +58,9 @@
   .sd-tabs > :where(a) {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
+    min-inline-size: 24px;
     margin-block-end: -1px;
     padding: 10px 0;
     border: 0;

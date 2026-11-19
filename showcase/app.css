@@ -801,6 +801,18 @@
   .home-footer-nav .sd-label {
     margin-block-end: 4px;
   }
+  .home-footer-nav a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 24px;
+    margin-block: -2px;
+  }
+  @media (pointer: coarse) {
+    .home-footer-nav a {
+      min-block-size: var(--sd-touch);
+      margin-block: 0;
+    }
+  }
   .home-copyright {
     margin-block-start: 40px;
     font-size: var(--text-sm);

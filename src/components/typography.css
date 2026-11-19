@@ -12,6 +12,9 @@
     text-decoration: none;
     transition: color 120ms var(--ease-out);
   }
+  a.sd-wordmark {
+    min-block-size: 24px;
+  }
   a.sd-wordmark:hover {
     color: var(--sd-fg-muted);
   }
