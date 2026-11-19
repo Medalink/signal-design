@@ -276,12 +276,15 @@ function mountPreviews() {
   });
   for (const frame of frames) fit.observe(frame);
   // A frame starts loading a screen before it is reached, so the first screen carries none of them.
+  // Until it has loaded, the card shows its own surface rather than a page half drawn.
   const load = new IntersectionObserver(
     (entries) => {
       for (const { target, isIntersecting } of entries) {
         if (!isIntersecting) continue;
         load.unobserve(target);
         const iframe = target.querySelector("iframe");
+        target.setAttribute("aria-busy", "true");
+        iframe.addEventListener("load", () => target.removeAttribute("aria-busy"), { once: true });
         iframe.src = iframe.dataset.src;
       }
     },

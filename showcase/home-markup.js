@@ -206,7 +206,7 @@ ${feedHtml(ch)}
 /** Every example app as a scaled live preview that opens the app full size. */
 export function homePreviews() {
   const card = (p) => `      <article class="home-preview">
-        <div class="home-frame"><iframe data-src="./${p.file}?frame" title="${p.title} example" loading="lazy" inert tabindex="-1"></iframe></div>
+        <div class="home-frame"><iframe data-src="./${p.file}?frame" title="${p.title} example" inert tabindex="-1"></iframe></div>
         <div class="home-preview-text"><h3><a href="./${p.file}">${p.title}</a></h3><p>${p.summary}</p></div>
       </article>`;
   return `  <section class="home-section" id="home-examples" aria-labelledby="home-examples-h">

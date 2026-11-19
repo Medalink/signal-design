@@ -1184,6 +1184,15 @@
     transform: scale(var(--scale, 0.4));
     transform-origin: 0 0;
     background: var(--sd-canvas);
+    transition: opacity 160ms var(--ease-out);
+  }
+  .home-frame[aria-busy="true"] iframe {
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .home-frame iframe {
+      transition: none;
+    }
   }
   .home-preview-text h3 {
     margin: 0;
