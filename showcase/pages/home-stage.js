@@ -177,7 +177,7 @@ function mountSettings(thread) {
     else delete deploy.dataset.tone;
     return name;
   };
-  env.addEventListener("click", () => queueMicrotask(label));
+  env.addEventListener("click", () => setTimeout(label, 0));
   canary.addEventListener("change", setProgress);
   share.addEventListener("input", setProgress);
   share.addEventListener("change", setProgress);

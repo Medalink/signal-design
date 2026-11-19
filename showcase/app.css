@@ -1049,6 +1049,9 @@
     .home-channels {
       display: inline-flex;
     }
+    .home-stats .sd-cluster {
+      display: none;
+    }
   }
   /* Phones: one column of the same parts, no rail, no frame chrome. */
   @media (max-width: 47.99rem) {
