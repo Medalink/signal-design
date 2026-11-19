@@ -892,6 +892,12 @@
   .sd-shell-status .sd-status {
     font-size: inherit;
   }
+  /* Toasts rise above the status bar so they never cover what it shows. The
+     toaster is a child of <body>, outside the shell, so it cannot read
+     --shell-status; 2.25rem is that default. */
+  :root:not([data-sd-keyboard]):has(.sd-shell > .sd-shell-status) .sd-toaster {
+    bottom: calc(2.25rem + 12px);
+  }
 
   .sd-shell-scrim {
     display: none;
