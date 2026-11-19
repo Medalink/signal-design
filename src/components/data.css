@@ -251,8 +251,9 @@
   /* Code block with a header: a well one step above its parent, so it reads
      as a box on the page and inside a card alike. */
   .sd-code {
+    --sd-code-bg: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-tone-3));
     min-width: 0; /* long lines scroll inside the block instead of widening a grid or flex parent */
-    background: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-tone-3));
+    background: var(--sd-code-bg);
   }
   .sd-code-head {
     display: flex;
@@ -269,9 +270,21 @@
     margin-inline-start: auto;
   }
   .sd-code > pre {
+    --sd-pre-bg: var(--sd-code-bg);
     margin: 0;
     border: 0;
-    background: transparent;
+  }
+  /* A line longer than the block scrolls, and a shade on the right edge says
+     so. The shade stays put while the end of the code carries a patch of the
+     block's own fill (background-attachment: local), so scrolling to the end
+     covers the shade. */
+  .sd-code pre {
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    background:
+      linear-gradient(to left, var(--sd-pre-bg, var(--sd-tone-3)) 1rem, transparent) right / 2rem 100% no-repeat local,
+      linear-gradient(to left, color-mix(in srgb, var(--sd-fg) 14%, transparent), transparent) right / 1rem 100% no-repeat scroll,
+      var(--sd-pre-bg, var(--sd-tone-3));
   }
 
   /*
