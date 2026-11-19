@@ -1017,6 +1017,17 @@
     .home-uptime > :nth-child(2) {
       display: none;
     }
+    /* The Settings card keeps its Deploy button in view at 1366x768. */
+    .home-settings {
+      gap: 8px;
+    }
+    .home-form {
+      gap: 6px;
+      padding-block: 10px;
+    }
+    .home-form .sd-field-label {
+      margin-block-end: 2px;
+    }
   }
   /* Tablets: the rail stays, the sidebar gives way to a channel switch in the thread. */
   @media (max-width: 63.99rem) {
@@ -1070,7 +1081,7 @@
     html[data-page="index"] .home-top {
       order: -2;
     }
-    html[data-page="index"] .home-index {
+    html[data-page="index"] .home-components {
       order: -1;
     }
     .home-shell {
@@ -1192,6 +1203,174 @@
       --fw: 390;
       --fh: 520;
     }
+  }
+  /* The wall: a part per library section, a group per sidebar group, a tile per page. From 48rem up; a phone gets the index. */
+  .home-wall {
+    display: none;
+  }
+  .home-index {
+    display: block;
+  }
+  @media (min-width: 48rem) {
+    .home-wall {
+      display: block;
+    }
+    .home-index {
+      display: none;
+    }
+  }
+  .wall-part {
+    padding-block: 28px 0;
+  }
+  .wall-part-h {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-weight: 500;
+    line-height: 1.25;
+  }
+  .wall-group {
+    padding-block: 20px 0;
+  }
+  .wall-group-h {
+    margin: 0 0 10px;
+    color: var(--sd-fg-muted);
+    font-size: var(--text-base);
+    font-weight: 400;
+    line-height: 1.3;
+  }
+  .wall-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  /* Each tile carries how many columns it spans at 2, 3 and 4 (home-wall.js), so every row ends flush. */
+  .wall-tile {
+    grid-column: span var(--s2);
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 8px;
+    min-width: 0;
+    padding: 4px 16px 16px;
+    background: var(--sd-tone-3);
+  }
+  @media (min-width: 52rem) {
+    .wall-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .wall-tile {
+      grid-column: span var(--s3);
+    }
+  }
+  @media (min-width: 72rem) {
+    .wall-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .wall-tile {
+      grid-column: span var(--s4);
+    }
+  }
+  .wall-tile-title {
+    margin: 0;
+    font-size: var(--text-base);
+    font-weight: 500;
+  }
+  .wall-tile-title a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: var(--sd-touch);
+    color: var(--sd-fg);
+    text-decoration: none;
+  }
+  .wall-tile-title a:hover .wall-arrow {
+    transform: translateX(3px);
+  }
+  .wall-arrow {
+    width: 16px;
+    height: 16px;
+    flex: none;
+    transition: transform 150ms;
+    color: var(--sd-fg-muted);
+  }
+  .wall-tile-body {
+    display: grid;
+    align-content: start;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  .wall-swatches,
+  .wall-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+  }
+  .wall-swatch {
+    display: grid;
+    gap: 4px;
+    font-size: var(--text-sm);
+  }
+  .wall-swatch i {
+    display: block;
+    width: 56px;
+    height: 28px;
+  }
+  .wall-type {
+    display: grid;
+    gap: 6px;
+    justify-items: start;
+  }
+  .wall-feed,
+  .wall-list {
+    max-height: 15rem;
+    overflow-y: auto;
+  }
+  .wall-rain {
+    position: relative;
+    height: 11rem;
+    overflow: hidden;
+  }
+  .wall-rain canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .wall-ornament {
+    position: relative;
+    min-height: 9rem;
+    padding: 16px;
+    background: var(--sd-surface);
+  }
+  .wall-art {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 16px;
+  }
+  .wall-ascii {
+    display: grid;
+    justify-items: center;
+    overflow: hidden;
+  }
+  .wall-rail {
+    display: flex;
+    height: 16rem;
+  }
+  .wall-sidebar {
+    display: flex;
+    height: 13rem;
+    background: var(--sd-shell-bg);
+  }
+  .wall-sidebar-main {
+    flex: 1;
+    margin: 0;
+    padding: 16px;
+    font-size: var(--text-sm);
+  }
+  .wall-dock {
+    max-width: none;
   }
   /* The index: every page under the group the docs sidebar files it in. */
   .home-index-section {

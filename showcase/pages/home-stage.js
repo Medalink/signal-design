@@ -2,6 +2,7 @@
 import { mountLibrary } from "../library.js";
 import { getTheme, toast } from "../../src/js/index.js";
 import { mountMachine } from "../../src/js/machine.js";
+import { mountWall } from "./home-wall.js";
 import { CHANNELS, ME, POINTS, UPTIME_CELLS, feedHtml, history, messageHtml, plotSvg, uptimeHtml, uptimeStates } from "../home-data.js";
 
 const $ = (id) => document.getElementById(id);
@@ -306,4 +307,5 @@ export function mountHome() {
   mountRoster();
   mountFlow();
   mountPreviews();
+  mountWall();
 }

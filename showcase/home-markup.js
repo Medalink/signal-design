@@ -11,6 +11,7 @@ import { icon } from "../src/js/icons.js";
 import { EXAMPLES, LIBRARY, SECTIONS, byId } from "./pages.js";
 import { themeSeg } from "./settings.js";
 import { CHANNELS, SPACES, UPTIME_CELLS, feedHtml, history, plotSvg, uptimeHtml, uptimeStates } from "./home-data.js";
+import { homeWall } from "./home-wall.js";
 
 const dir = import.meta.dirname;
 const REPO = "https://github.com/Medalink/signal-design";
@@ -218,8 +219,8 @@ ${EXAMPLES.map(card).join("\n")}
   </section>`;
 }
 
-/** Every library page, grouped the way the docs sidebar groups them. The example apps are the previews above it. */
-export function homeIndex() {
+/** Every library page as a link, grouped the way the docs sidebar groups them. Phones get this list in place of the wall. */
+function homeIndex() {
   const group = (g) => `        <div class="home-index-group">
           <h4>${g.title} <span class="sd-count">${g.pages.length}</span></h4>
           <ul>${g.pages.map((p) => `<li><a href="./${p.file}">${p.title}</a></li>`).join("")}</ul>
@@ -230,10 +231,22 @@ export function homeIndex() {
 ${s.groups.map(group).join("\n")}
         </div>
       </section>`;
-  return `  <section class="home-section home-index" id="home-components" aria-labelledby="home-components-h">
+  return `    <div class="home-index">
+${SECTIONS.map(section).join("\n")}
+    </div>`;
+}
+
+/**
+ * Every library page: a wall of live parts from 48rem up, the plain link index
+ * below it (a phone scrolls 15,000px to get through the wall). One section
+ * holds both so #home-components is a single anchor at every width.
+ */
+export function homeComponents() {
+  return `  <section class="home-section home-components" id="home-components" aria-labelledby="home-components-h">
     <div class="home-inner">
       <h2 id="home-components-h" class="home-h">All pages</h2>
-${SECTIONS.map(section).join("\n")}
+${homeWall()}
+${homeIndex()}
     </div>
   </section>`;
 }
@@ -263,7 +276,7 @@ ${homeStage()}
 
 ${homePreviews()}
 
-${homeIndex()}
+${homeComponents()}
 
 ${homeAgents()}`;
 }
