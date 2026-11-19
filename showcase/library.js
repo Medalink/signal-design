@@ -255,10 +255,12 @@ function wireScrollspy() {
 
 /**
  * The topbar palette lists pages in sidebar order and Enter opens the first
- * match. A page's data-keywords reads "block titles | named parts | summary |
- * parts it uses" (layout-plugin.js), so a query ranks by the first place it
- * lands: the page title, the start of a title word, inside the title, a block
- * title, a part the page documents, its summary, then a part it only uses.
+ * match. A page's data-keywords reads "section and group | block titles |
+ * named parts | summary | parts it uses" (layout-plugin.js), so a query ranks
+ * by the first place it lands: the page title, the start of a title word,
+ * inside the title, its section or group (Forms lists every Forms page), a
+ * block title, a part the page documents, its summary, then a part it only
+ * uses.
  * While a query is typed the matches run as one list in that order; the group
  * labels come back with an empty query.
  */
@@ -276,7 +278,7 @@ function wirePalette() {
     if (title.split(/[^a-z0-9-]+/).some((word) => word.startsWith(q))) return 1;
     if (title.includes(q)) return 2;
     const at = (option.dataset.keywords ?? "").toLowerCase().split(" | ").findIndex((part) => part.includes(q));
-    return at < 0 ? 7 : at + 3;
+    return at < 0 ? 8 : at + 3;
   };
   const arrange = () => {
     const q = input.value.trim().toLowerCase();

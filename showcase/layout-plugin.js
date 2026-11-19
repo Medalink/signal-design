@@ -118,7 +118,8 @@ const searchCache = new Map();
 /**
  * What a reader might type for a page besides its title, strongest first, as
  * "block titles and find words | parts its usage notes and API table name |
- * summary | every part its markup uses". The palette matches the whole string
+ * summary | every part its markup uses". palette() puts the page's section
+ * and group in front ("Components Forms | …"). The palette matches the whole string
  * and library.js ranks a hit by the first place it lands, so `sd-btn` opens
  * Buttons, which documents it, before a page that only uses it. Example pages
  * and the overview have a summary only.
@@ -145,13 +146,13 @@ function searchTerms(page) {
 
 /** The page-level palette: every page under its group, from the registry. It is not a demo block. */
 function palette() {
-  const option = (p, hint = "") => `      <a role="option" href="./${p.file}" data-keywords="${inAttribute(searchTerms(p))}">${p.title}${hint && ` <span class="sd-menu-hint">${hint}</span>`}</a>`;
+  const option = (p, hint = "", where = "") => `      <a role="option" href="./${p.file}" data-keywords="${inAttribute(`${where} | ${searchTerms(p)}`)}">${p.title}${hint && ` <span class="sd-menu-hint">${hint}</span>`}</a>`;
   const label = (text) => `    <div class="sd-menu-label" role="presentation">${text}</div>`;
   return `<dialog class="sd-command" id="nav-palette" aria-label="Go to a page" data-sd-palette>
   <input type="search" placeholder="Go to a page" aria-label="Go to a page">
   <div class="sd-menu" role="listbox" aria-label="Pages">
 ${option(HOME, "overview")}
-${SECTIONS.flatMap((s) => s.groups.map((g) => [label(g.title), ...g.pages.map((p) => option(p))].join("\n"))).join("\n")}
+${SECTIONS.flatMap((s) => s.groups.map((g) => [label(g.title), ...g.pages.map((p) => option(p, "", `${s.title} ${g.title}`))].join("\n"))).join("\n")}
 ${label("Actions")}
     <button type="button" role="option" data-sd-theme-cycle data-keywords="dark light paper">Next theme <span class="sd-menu-hint">Shift T</span></button>
   </div>
