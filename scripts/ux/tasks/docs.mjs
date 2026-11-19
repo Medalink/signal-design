@@ -22,9 +22,8 @@ export const DOCS_TASKS = [
     start: 'index.html',
     steps: [
       { click: '.doc-topbar-nav a[href="./lib-rules.html"]', only: 'desktop' },
-      { click: 'a[href="./lib-buttons.html"].sd-btn', only: 'phone' },
-      { click: '.doc-menu-btn', only: 'phone' },
-      { click: '.doc-nav-link[href="./lib-messages.html"]' },
+      { click: '.doc-nav-link[href="./lib-messages.html"]', only: 'desktop' },
+      { click: '.home-index a[href="./lib-messages.html"]', only: 'phone' },
     ],
     done: () => location.pathname.endsWith('/lib-messages.html'),
   },
