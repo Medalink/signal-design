@@ -53,6 +53,10 @@
     .sd-tabs > :where(a, button) {
       min-inline-size: var(--sd-hit);
     }
+    /* The first tab's label keeps the row's left edge; its box grows right. */
+    .sd-tabs > :where(a, button):first-child {
+      justify-content: flex-start;
+    }
     /* A chip's dismiss is --sd-hit square around its 16px glyph. The negative
        margins (indicators.css gives 4px more at the trailing side) keep the
        chip's own width, and the box reaches past the chip into the gap. */
