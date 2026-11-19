@@ -145,10 +145,17 @@
     white-space: nowrap;
     translate: 0 -50%;
   }
+  /* A bar too short for both years keeps the start year and ends the other
+     with an ellipsis, rather than cutting a digit in half at its edge. */
   .sd-timeline-bar > b {
+    flex: none;
     font-weight: 400;
   }
   .sd-timeline-bar > b + b {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
     color: var(--tone, var(--sd-fg-subtle));
   }
   .sd-timeline-bar[data-tone] {
