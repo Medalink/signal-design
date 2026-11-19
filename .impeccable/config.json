@@ -47,6 +47,15 @@
         ],
         "createdAt": "2026-11-18T23:09:11.069Z",
         "reason": "poteto-agent: six peer rule rows share one gap-y-8 on purpose, with a tighter gap-3 inside each row between rule and specimen; section spacing comes from shared chrome. Checked in ink and paper at 1280 and 390 wide."
+      },
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "showcase/lib-layout.html"
+        ],
+        "createdAt": "2026-11-19T03:10:32.893Z",
+        "reason": "agent decision, not user confirmed: lib-layout.html is a body fragment of library demos; its h1 (38px) and prose (16px) come from layout-plugin.js and app.css, so the file alone shows no heading roles"
       }
     ]
   }
