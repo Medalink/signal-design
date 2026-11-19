@@ -514,12 +514,12 @@ No JS needed: the HTML works with the CSS alone.
 
 4px base unit (--spacing) · max-w-column (720px), max-w-narrow (560px), max-w-wide (1024px) · transitions 120ms (hover, color), 160ms (collapse, toast), 200ms (expand, scroll) on ease-out · animate-slide-in, animate-fade-in, animate-rise-in for entrances
 
-Classes: sd-btn, sd-dot, sd-kv, sd-row, sd-row-body, sd-row-title
+Classes: sd-btn, sd-dot, sd-grid, sd-kv, sd-row, sd-row-body, sd-row-title
 
 No JS needed: the HTML works with the CSS alone.
 
 ```html
-<div class="grid gap-6 sm:grid-cols-3">
+<div class="sd-grid" style="--min: 17rem; --gap: 24px">
   <dl class="sd-kv">
     <dt>Base unit</dt><dd>4px (Tailwind <code>--spacing</code>)</dd>
     <dt>Column</dt><dd>720px <code>max-w-column</code></dd>

@@ -169,6 +169,7 @@
    "classes": [
     "sd-btn",
     "sd-dot",
+    "sd-grid",
     "sd-kv",
     "sd-row",
     "sd-row-body",
@@ -177,7 +178,7 @@
    "attributes": [],
    "usage": "4px base unit (--spacing) · max-w-column (720px), max-w-narrow (560px), max-w-wide (1024px) · transitions 120ms (hover, color), 160ms (collapse, toast), 200ms (expand, scroll) on ease-out · animate-slide-in, animate-fade-in, animate-rise-in for entrances",
    "js": "No JS needed: the HTML works with the CSS alone.",
-   "html": "<div class=\"grid gap-6 sm:grid-cols-3\">\n  <dl class=\"sd-kv\">\n    <dt>Base unit</dt><dd>4px (Tailwind <code>--spacing</code>)</dd>\n    <dt>Column</dt><dd>720px <code>max-w-column</code></dd>\n    <dt>Narrow</dt><dd>560px <code>max-w-narrow</code></dd>\n    <dt>Wide</dt><dd>1024px <code>max-w-wide</code></dd>\n  </dl>\n  <dl class=\"sd-kv\">\n    <dt>Fast</dt><dd>120ms hover, color</dd>\n    <dt>Base</dt><dd>160ms collapse, toast</dd>\n    <dt>Slow</dt><dd>200ms expand, scroll</dd>\n    <dt>Ease</dt><dd><code>ease-out</code></dd>\n  </dl>\n  <div class=\"grid gap-3 content-start\">\n    <button type=\"button\" class=\"sd-btn\" data-demo=\"motion\">Replay slide-in</button>\n    <div class=\"sd-row\" data-demo-row=\"\" style=\"min-height: 0; padding-block: 10px\">\n      <span class=\"sd-dot\" data-tone=\"success\"></span>\n      <div class=\"sd-row-body\"><p class=\"sd-row-title text-md\">New item arrives in 180ms</p></div>\n    </div>\n  </div>\n</div>"
+   "html": "<div class=\"sd-grid\" style=\"--min: 17rem; --gap: 24px\">\n  <dl class=\"sd-kv\">\n    <dt>Base unit</dt><dd>4px (Tailwind <code>--spacing</code>)</dd>\n    <dt>Column</dt><dd>720px <code>max-w-column</code></dd>\n    <dt>Narrow</dt><dd>560px <code>max-w-narrow</code></dd>\n    <dt>Wide</dt><dd>1024px <code>max-w-wide</code></dd>\n  </dl>\n  <dl class=\"sd-kv\">\n    <dt>Fast</dt><dd>120ms hover, color</dd>\n    <dt>Base</dt><dd>160ms collapse, toast</dd>\n    <dt>Slow</dt><dd>200ms expand, scroll</dd>\n    <dt>Ease</dt><dd><code>ease-out</code></dd>\n  </dl>\n  <div class=\"grid gap-3 content-start\">\n    <button type=\"button\" class=\"sd-btn\" data-demo=\"motion\">Replay slide-in</button>\n    <div class=\"sd-row\" data-demo-row=\"\" style=\"min-height: 0; padding-block: 10px\">\n      <span class=\"sd-dot\" data-tone=\"success\"></span>\n      <div class=\"sd-row-body\"><p class=\"sd-row-title text-md\">New item arrives in 180ms</p></div>\n    </div>\n  </div>\n</div>"
   },
   {
    "id": "components-layout",
