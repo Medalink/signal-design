@@ -1151,28 +1151,34 @@
    *   </header>
    * The JS sets data-platform (mac | windows | linux) and data-maximized.
    * On macOS the native traffic lights stay; the bar leaves room for them.
+   * Three tracks: the brand sits in the middle one, centered on the bar, and
+   * the start and end groups each get an equal side, so a long end group
+   * shortens its metrics instead of running over the brand.
    */
   .sd-titlebar {
     position: relative;
     z-index: 60;
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
     height: 2.25rem;
-    padding-inline-start: 12px;
     background: var(--sd-tone-0);
     user-select: none;
     -webkit-user-select: none;
     container-type: inline-size;
   }
   .sd-titlebar-brand {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
+    grid-row: 1;
+    grid-column: 2;
+    min-width: 0;
+    padding-inline: 12px;
+    overflow: hidden;
     color: var(--sd-fg-subtle);
     font-size: var(--text-sm);
     letter-spacing: 0.25em;
+    text-overflow: ellipsis;
     text-transform: uppercase;
+    white-space: nowrap;
     pointer-events: none;
   }
   .sd-titlebar-brand b {
@@ -1181,35 +1187,52 @@
   }
   .sd-titlebar-start,
   .sd-titlebar-end {
-    position: relative;
-    z-index: 1;
+    grid-row: 1;
     display: flex;
     align-items: center;
     gap: 6px;
+    min-width: 0;
     height: 100%;
   }
-  .sd-titlebar-end {
-    margin-inline-start: auto;
+  .sd-titlebar-start {
+    grid-column: 1;
+    padding-inline-start: 12px;
   }
+  /* A brand inside the start group is the app's name at the left edge. */
+  .sd-titlebar-start > .sd-titlebar-brand {
+    padding-inline: 0;
+  }
+  /* Laid out from the right: the last child (the window controls) first, then
+     each one before it while it fits. One that does not fit wraps to a second
+     line, which the bar's height hides, so a metric goes whole rather than
+     cut mid-word. The orders count from the end so the row reads in source
+     order. */
+  .sd-titlebar-end {
+    grid-column: 3;
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: flex-start;
+    overflow: hidden;
+  }
+  .sd-titlebar-end > * { order: 6; }
+  .sd-titlebar-end > :nth-last-child(1) { order: 0; }
+  .sd-titlebar-end > :nth-last-child(2) { order: 1; }
+  .sd-titlebar-end > :nth-last-child(3) { order: 2; }
+  .sd-titlebar-end > :nth-last-child(4) { order: 3; }
+  .sd-titlebar-end > :nth-last-child(5) { order: 4; }
+  .sd-titlebar-end > :nth-last-child(6) { order: 5; }
   .sd-titlebar-metric {
     display: inline-flex;
     flex: none;
-    align-items: baseline;
+    align-items: center;
     gap: 6px;
+    height: 100%;
     padding: 0 8px;
     color: var(--sd-fg-faint);
     font-size: var(--text-sm);
     letter-spacing: var(--tracking-wide);
     white-space: nowrap;
-  }
-  /* The brand sits at the bar's center, so the end group may only reach the
-     middle. Two metrics and the controls (about 340px) reach it under about
-     46rem, one metric under about 32rem: a narrower window keeps the first
-     metric, then only its controls. */
-  @container (max-width: 48rem) {
-    .sd-titlebar-metric ~ .sd-titlebar-metric {
-      display: none;
-    }
   }
   @container (max-width: 32rem) {
     .sd-titlebar-metric {
@@ -1223,6 +1246,7 @@
   }
   .sd-window-controls {
     display: flex;
+    flex-shrink: 0;
     height: 100%;
   }
   .sd-window-controls > :is(button, span) {
@@ -1235,6 +1259,10 @@
     color: var(--sd-fg-subtle);
     cursor: default;
     transition: background-color 100ms var(--ease-out), color 100ms var(--ease-out);
+  }
+  /* The end group clips at the bar's edges, so the ring goes inside. */
+  .sd-window-controls > button:focus-visible {
+    outline-offset: -2px;
   }
   .sd-window-controls > button:hover {
     background: var(--sd-raised);
@@ -1270,7 +1298,7 @@
     display: block;
   }
   /* macOS: native traffic lights on the left, no custom controls. */
-  .sd-titlebar[data-platform="mac"] {
+  .sd-titlebar[data-platform="mac"] .sd-titlebar-start {
     padding-inline-start: 78px;
   }
   .sd-titlebar[data-platform="mac"] .sd-window-controls {
