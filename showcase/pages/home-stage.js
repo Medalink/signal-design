@@ -295,12 +295,15 @@ function mountPreviews() {
   });
 }
 
-mountLibrary();
-// A sidebar folded on another page stays open here: it is how the channels are chosen.
-$("home-shell").removeAttribute("data-sidebar");
-const thread = mountThread();
-mountMetrics();
-mountSettings(thread);
-mountRoster();
-mountFlow();
-mountPreviews();
+/** The package marks its JS as side-effect free, so the overview calls this export instead of importing the module for its effects. */
+export function mountHome() {
+  mountLibrary();
+  // A sidebar folded on another page stays open here: it is how the channels are chosen.
+  $("home-shell").removeAttribute("data-sidebar");
+  const thread = mountThread();
+  mountMetrics();
+  mountSettings(thread);
+  mountRoster();
+  mountFlow();
+  mountPreviews();
+}

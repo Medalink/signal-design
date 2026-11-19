@@ -11,5 +11,5 @@ function followOldLink() {
 if (!followOldLink()) {
   // An old link followed while the overview is already open changes only the hash.
   addEventListener("hashchange", followOldLink);
-  import("./home-stage.js");
+  import("./home-stage.js").then((stage) => stage.mountHome());
 }
