@@ -90,16 +90,24 @@ const releaseCard = () => {
  * settings.js; Search opens the page palette. A page with its own palette demo
  * keeps Ctrl K for that demo, so its Search button has no key of its own.
  */
-function topbar({ menu, components, examples, ownPalette }) {
-  const here = (on) => (on ? ' aria-current="true"' : "");
+const TOPBAR_LINKS = [
+  ["components", "./index.html#home-components", "Components"],
+  ["examples", "./index.html#home-examples", "Examples"],
+  ["docs", "./lib-rules.html", "Docs"],
+  ["setup", "./lib-setup.html", "Setup"],
+];
+
+/** Which topbar link a page sits under: Docs and Setup are pages of their own, other pages go by section. The overview has none. */
+const topbarArea = (page) =>
+  page === HOME ? null : page.id === "rules" ? "docs" : page.id === "setup" ? "setup" : page.section.id === "examples" ? "examples" : "components";
+
+function topbar({ menu, area, ownPalette }) {
+  const links = TOPBAR_LINKS.map(([key, href, label]) => `    <a href="${href}"${key === area ? ' aria-current="true"' : ""}>${label}</a>`).join("\n");
   return `<header class="doc-topbar">
   ${menu ? `<button class="doc-menu-btn" data-doc-nav aria-controls="doc-sidebar" aria-expanded="false" aria-label="Open navigation"><svg><use href="#i-menu"/></svg></button>
   ` : ""}<a href="./index.html" class="sd-wordmark" aria-label="Signal home"><svg class="sd-mark" style="width:22px;height:22px"><use href="#i-mark"/></svg> Signal</a>
   <nav class="doc-topbar-nav" aria-label="Library">
-    <a href="./index.html#home-components"${here(components)}>Components</a>
-    <a href="./index.html#home-examples"${here(examples)}>Examples</a>
-    <a href="./lib-rules.html">Docs</a>
-    <a href="./lib-setup.html">Setup</a>
+${links}
   </nav>
   <div class="doc-topbar-end">
     <button class="doc-topbar-search" type="button" data-sd-open="nav-palette"${ownPalette ? "" : ' data-sd-key="mod+k" aria-keyshortcuts="Control+K"'} aria-label="Search pages"><svg aria-hidden="true"><use href="#i-search"/></svg><span>Search</span><kbd class="sd-kbd">Ctrl K</kbd></button>
@@ -466,8 +474,7 @@ export function renderPage(page, html) {
     release: releaseCard(),
     topbar: topbar({
       menu: library,
-      components: library && page.section.id !== "examples",
-      examples: library && page.section.id === "examples",
+      area: topbarArea(page),
       ownPalette: library && /data-sd-palette/.test(body),
     }),
     aside: library ? asideFor(page) : "",
