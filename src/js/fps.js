@@ -41,7 +41,12 @@ function paint(value) {
 
 function measure(now) {
   frameCount++;
-  if (now - lastTime >= WINDOW_MS) {
+  if (now - lastTime > 2 * WINDOW_MS) {
+    // The page drew nothing for most of the sample (a frame scrolled away, a covered window):
+    // that is a pause, not a slow page, so start a fresh sample instead of showing 0.
+    lastTime = now;
+    frameCount = 0;
+  } else if (now - lastTime >= WINDOW_MS) {
     current = Math.round((frameCount * 1000) / (now - lastTime));
     frameCount = 0;
     lastTime = now;
