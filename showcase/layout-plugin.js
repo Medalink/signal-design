@@ -489,6 +489,16 @@ function docHtml(page) {
 }
 
 /**
+ * A usage note lists alternatives as one unspaced token, `a|b|c` in a `code`. The browser has no
+ * place to end a line in it, so a narrow column cut a name in the middle (`squar` over `es`). A
+ * `<wbr>` after each pipe offers one, and copying the text is unchanged.
+ */
+const breakAtPipes = (html) =>
+  html.replace(/<p class="demo-usage">[\s\S]*?<\/p>/g, (note) =>
+    note.replace(/<code>([^<]*\|[^<]*)<\/code>/g, (_, code) => `<code>${code.replaceAll("|", "|<wbr>")}</code>`),
+  );
+
+/**
  * A block's usage note explains its demo, so it follows the demo: the first screen of a page shows the
  * part, not a paragraph about it. It reads the page file as written, because the indent is how it finds
  * a block's end: the closing tag sits at the opener's indent and the notes one level in. A note with
@@ -576,7 +586,7 @@ export function pageOf(filename) {
 
 export function renderPage(page, html) {
   const library = page !== HOME;
-  const body = ((library ? usageAfterDemo(html) : html).match(/<body[^>]*>([\s\S]*)<\/body>/)?.[1] ?? "").replace(/^\s+|\s+$/g, "");
+  const body = ((library ? breakAtPipes(usageAfterDemo(html)) : html).match(/<body[^>]*>([\s\S]*)<\/body>/)?.[1] ?? "").replace(/^\s+|\s+$/g, "");
   const content = library
     ? libraryContent(page, body)
     : body.replace("<!--@lead-->", homeLead()).replace("<!--@cards-->", homeCards(cards()));
