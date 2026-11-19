@@ -7,11 +7,11 @@
   },
   {
    "name": "--sd-surface",
-   "description": "Panels a step above the page: rail, sidebar, cards, the shell's content box. ink #0a0a0a · graphite #1a1a1a · paper #f6f6f7"
+   "description": "Panels a step above the page: rail, sidebar, cards, the shell's content box. ink #0a0a0a · graphite #1a1a1a · paper #f4f4f6"
   },
   {
    "name": "--sd-raised",
-   "description": "Hover rows and raised controls. ink #191a1d · graphite #242424 · paper #eeeef0"
+   "description": "Hover rows and raised controls. ink #191a1d · graphite #242424 · paper #e9e9ed"
   },
   {
    "name": "--sd-overlay",
@@ -19,11 +19,11 @@
   },
   {
    "name": "--sd-line",
-   "description": "Hairlines and default borders. ink #262626 · graphite #2e2e2e · paper #0000001a"
+   "description": "Hairlines and default borders. ink #262626 · graphite #2e2e2e · paper #00000026"
   },
   {
    "name": "--sd-line-strong",
-   "description": "Control borders and dividers that must read. ink #333333 · graphite #3d3d3d · paper #00000038"
+   "description": "Control borders and dividers that must read. ink #333333 · graphite #3d3d3d · paper #0000004d"
   },
   {
    "name": "--sd-fg",
