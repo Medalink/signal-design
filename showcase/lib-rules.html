@@ -3,33 +3,33 @@
 <head></head>
 <body>
   <header class="demo-intro">
-    <p class="sd-lead max-w-[42rem]">The rules every Signal part follows.</p>
-    <p class="sd-muted max-w-[42rem]">Parts for what plain elements cannot do: buttons, fields, rows, navigation, feedback and overlays. Tone and state come from attributes, so your CSS, your code and a screen reader agree on what is true.</p>
+    <p class="sd-lead max-w-[42rem]">The rules every Signal component follows.</p>
+    <p class="sd-muted max-w-[42rem]">Components for what plain elements cannot do: buttons, fields, rows, navigation, feedback, and overlays. Tone and state come from attributes, so your CSS, your code, and a screen reader agree on what is true.</p>
     <p class="sd-muted max-w-[42rem]">Classes start with <code>sd-</code>. Color comes from <code>data-tone</code>: accent, success, danger, warning, pending, extra, neutral. State comes from ARIA and <code>data-*</code>, so the JS never needs your Tailwind build to contain a class.</p>
     <div class="demo-intro-cols">
       <div>
         <p class="sd-label">Principles</p>
         <ul>
-          <li><b class="text-fg font-semibold">Tone is data.</b> <code>data-tone</code> takes accent, success, danger, warning, pending, extra or neutral. A part never takes a color class.</li>
-          <li><b class="text-fg font-semibold">State is ARIA.</b> <code>aria-pressed</code>, <code>aria-expanded</code>, <code>aria-current</code> and <code>aria-selected</code> drive the styling. Set them from your own code and the part follows.</li>
-          <li><b class="text-fg font-semibold">One writer per state.</b> Where React, Vue or Svelte renders a piece's state, leave out its <code>data-sd-*</code> behavior attribute and render the attributes yourself. The <a href="./lib-owned.html">Framework state</a> page has an example.</li>
+          <li><b class="text-fg font-semibold">Tone is data.</b> <code>data-tone</code> takes accent, success, danger, warning, pending, extra, or neutral. A component never takes a color class.</li>
+          <li><b class="text-fg font-semibold">State is ARIA.</b> <code>aria-pressed</code>, <code>aria-expanded</code>, <code>aria-current</code>, and <code>aria-selected</code> drive the styling. Set them from your own code and the component follows.</li>
+          <li><b class="text-fg font-semibold">One writer per state.</b> Where React, Vue, or Svelte renders a piece's state, leave out its <code>data-sd-*</code> behavior attribute and render the attributes yourself. The <a href="./lib-owned.html">Framework state</a> page has an example.</li>
           <li><b class="text-fg font-semibold">Minimal by default.</b> A row shows its outcome and expands for detail. A view has one primary button.</li>
-          <li><b class="text-fg font-semibold">Square, flat, grey.</b> Parts use hairline borders and no shadows. Navigation stays grey, and color marks status.</li>
+          <li><b class="text-fg font-semibold">Square, flat, grey.</b> Components are told apart by background tone, not borders. Navigation stays grey, and color marks status.</li>
         </ul>
       </div>
       <div class="grid content-start gap-8">
         <div>
           <p class="sd-label">Use it for</p>
           <ul>
-            <li>Status with <code>sd-badge</code>, <code>sd-status</code>, <code>sd-dot</code> and <code>sd-count</code>, each of which takes a tone.</li>
-            <li>Lists of work: rows, tables, key-value lists and living tables.</li>
-            <li>Overlays: dialogs, sheets, popovers, menus and tooltips, wired by <code>init()</code>.</li>
+            <li>Status with <code>sd-badge</code>, <code>sd-status</code>, <code>sd-dot</code>, and <code>sd-count</code>, each of which takes a tone.</li>
+            <li>Lists of work: rows, tables, key-value lists, and living tables.</li>
+            <li>Overlays: dialogs, sheets, popovers, menus, and tooltips, wired by <code>init()</code>.</li>
           </ul>
         </div>
         <div>
           <p class="sd-label">Leave it out when</p>
           <ul>
-            <li>Coloring navigation, headings or icons. Color is for status.</li>
+            <li>Coloring navigation, headings, or icons. Color is for status.</li>
             <li>Your own sidebar layout around an app. Use the App Shell, <code>sd-shell</code>.</li>
           </ul>
         </div>
@@ -49,7 +49,7 @@
           </div>
         </li>
         <li class="grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center">
-          <p class="text-fg-muted">Flat surfaces. No glass, grain, glow or shadow.</p>
+          <p class="text-fg-muted">Flat surfaces. No glass, grain, glow, or shadow.</p>
           <div class="sd-cluster">
             <span class="bg-canvas p-3 text-sm">Canvas</span>
             <span class="bg-surface p-3 text-sm">Surface</span>
@@ -57,7 +57,7 @@
           </div>
         </li>
         <li class="grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center">
-          <p class="text-fg-muted">Color is for important things: risk, status, success and selection. Everything else is black, white and grey, navigation included.</p>
+          <p class="text-fg-muted">Color is for important things: risk, status, success, and selection. Everything else is black, white, and grey, navigation included.</p>
           <div class="sd-cluster">
             <nav class="sd-nav" aria-label="Grey navigation"><a href="#tokens-hard-rules" aria-current="page">Projects</a><a href="#tokens-hard-rules">History</a></nav>
             <span class="sd-badge" data-tone="danger">Risk</span>
@@ -65,7 +65,7 @@
           </div>
         </li>
         <li class="grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center">
-          <p class="text-fg-muted">120–200ms transitions and a one-pass hover shimmer. Loops are allowed; the rain moves while work runs or when the reader turns it on.</p>
+          <p class="text-fg-muted">Transitions run 120–200ms. Hover shimmers play once. Loops run only while work runs or when turned on, and stop under reduced motion.</p>
           <div class="sd-cluster">
             <button class="sd-btn">Hover me</button>
             <span class="sd-typing"><i><b></b></i><span>Working</span></span>
@@ -75,7 +75,7 @@
           <p class="text-fg-muted">Minimal by default, detail on expand.</p>
           <details>
             <summary>web-1 · running</summary>
-            <p>Image, ports and the last restart.</p>
+            <p>Image, ports, and the last restart.</p>
           </details>
         </li>
         <li class="grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center">
@@ -83,7 +83,7 @@
           <p>Regular <span class="font-medium">Medium</span> <code>mono</code></p>
         </li>
       </ul>
-      <p class="demo-usage">Square corners · flat, hairlines only · color only for status and selection · transitions of 120–200ms · tokens, never hex values · one text face in regular and medium, <code>font-mono</code> for code · see AGENTS.md for the full list and <code>npx signal-design check</code> to test a page against it</p>
+      <p class="demo-usage">Square corners, tone instead of lines, color only for status and selection, 120–200ms transitions, tokens instead of hex values, and one text face in regular and medium. AGENTS.md has the full list, and <code>npx signal-design check</code> tests a page against it.</p>
     </div>
 </body>
 </html>

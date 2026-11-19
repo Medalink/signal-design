@@ -11,7 +11,7 @@
           <li><b class="text-fg font-semibold">Delegated listeners.</b> Every listener is delegated, so markup added later works without calling <code>init()</code> again.</li>
           <li><b class="text-fg font-semibold">State is attributes, never classes.</b> Your Tailwind build never needs to contain a class the JS adds, and tests or app code can set the same attributes.</li>
           <li><b class="text-fg font-semibold">One writer per state.</b> If a framework renders a piece's state, leave out its <code>data-sd-*</code> behavior attribute. The Framework-owned state block shows how.</li>
-          <li><b class="text-fg font-semibold">Heavy parts mount explicitly.</b> Living tables, countdowns and feeds use <code>mountLivingTable</code>, <code>mountCountdown</code> and <code>mountFeed</code>. <code>init()</code> does not mount them.</li>
+          <li><b class="text-fg font-semibold">Heavy components mount explicitly.</b> Living tables, countdowns, and feeds use <code>mountLivingTable</code>, <code>mountCountdown</code>, and <code>mountFeed</code>. <code>init()</code> does not mount them.</li>
           <li><b class="text-fg font-semibold">Typing is never hijacked.</b> <code>data-sd-key</code> and <code>hotkeys</code> ignore keys typed into a field, except Ctrl or Cmd combinations.</li>
         </ul>
       </div>
@@ -19,9 +19,9 @@
         <div>
           <p class="sd-label">Use it for</p>
           <ul>
-            <li>Dialogs, popovers, tabs, toggles, tooltips and copy buttons from attributes alone.</li>
+            <li>Dialogs, popovers, tabs, toggles, tooltips, and copy buttons from attributes alone.</li>
             <li>Live lists that must keep the reader's place: <code>mountFeed</code>.</li>
-            <li>Theme switching: <code>setTheme</code>, <code>data-sd-theme</code> and <kbd>Shift T</kbd>.</li>
+            <li>Theme switching: <code>setTheme</code>, <code>data-sd-theme</code>, and <kbd>Shift T</kbd>.</li>
           </ul>
         </div>
         <div>
@@ -69,12 +69,12 @@ setTheme("paper");                        // ink | graphite | paper | auto</code
         <button class="sd-btn sd-btn-sm" data-sd-key="d" data-sd-open="demo-sheet">Sheet <kbd>D</kbd></button>
         <button class="sd-btn sd-btn-sm" data-sd-key="shift+t" data-sd-theme-cycle>Next theme <kbd>Shift+T</kbd></button>
       </div>
-      <p class="demo-usage"><code>init()</code> once after the DOM exists; listeners are delegated, so later markup works · <code>toast(text, { tone })</code> · <code>hotkeys({ key: fn })</code> returns the off function · <code>setTheme("ink|graphite|paper|auto")</code> · every <code>data-sd-*</code> attribute does nothing without <code>init()</code> · a framework that renders the state leaves the attribute out and sets ARIA and <code>data-*</code> itself</p>
+      <p class="demo-usage">Call <code>init()</code> once after the DOM exists. Without it, no <code>data-sd-*</code> attribute does anything. Listeners are delegated, so later markup works. <code>hotkeys()</code> returns its off function. A framework that renders the state leaves the attribute out and sets ARIA and <code>data-*</code> itself.</p>
     </div>
 
     <div class="demo-block" id="js-copy-feedback">
       <h2 class="sd-label">Copy feedback</h2>
-      <p class="demo-usage">Copy needs browser clipboard access. On an insecure LAN connection, or when permission is denied, the danger toast says "Copy unavailable. Select the line instead." The command stays selectable. Successful copies still say "Copied". No insecure clipboard bypass is used.</p>
+      <p class="demo-usage">Copy needs clipboard access. Without it (an insecure connection or a denied permission), a danger toast says "Copy unavailable. Select the line instead." and the text stays selectable. A successful copy says "Copied".</p>
       <div class="sd-code">
         <div class="sd-code-head">Command <button class="sd-btn sd-btn-sm sd-btn-ghost" data-sd-copy="#copy-command">Copy</button></div>
         <pre id="copy-command" tabindex="0"><code>npm test</code></pre>

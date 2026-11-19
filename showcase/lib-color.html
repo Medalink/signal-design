@@ -3,14 +3,14 @@
 <head></head>
 <body>
   <header class="demo-intro">
-    <p class="sd-lead max-w-[42rem]">Every color, size and duration is a token. Your markup reads roles such as <code>--sd-fg</code> and <code>--sd-danger</code>, so a theme change needs no rebuild.</p>
+    <p class="sd-lead max-w-[42rem]">Every color, size, and duration is a token. Your markup reads roles such as <code>--sd-fg</code> and <code>--sd-danger</code>, so a theme change needs no rebuild.</p>
     <p class="sd-muted max-w-[42rem]">Raw values live in <code>@theme</code> and become utilities. Semantic roles switch per theme at runtime, so <code>bg-canvas</code> or <code>text-fg-muted</code> follow the theme with no rebuild. The values in the blocks above are read live from the current theme.</p>
     <div class="demo-intro-cols">
       <div>
         <p class="sd-label">Principles</p>
         <ul>
           <li><b class="text-fg font-semibold">Name the job, not the hue.</b> Use <code>text-danger</code>, never <code>text-pink</code> or a hex value. Paper deepens the signal colors, and a hard-coded value would not follow.</li>
-          <li><b class="text-fg font-semibold">Color means something.</b> Only status and selection are colored. Everything else, navigation, focus rings and the current item included, is black, white and grey.</li>
+          <li><b class="text-fg font-semibold">Color means something.</b> Only status and selection are colored. Everything else, navigation, focus rings, and the current item included, is black, white, and grey.</li>
           <li><b class="text-fg font-semibold">Text stays readable.</b> Every text role meets 4.5:1 on every surface of its theme. The Contrast on canvas block above shows each ratio live.</li>
           <li><b class="text-fg font-semibold">Two faces, two weights.</b> One text face in regular and medium, and Source Code Pro for code. The text face is SF Pro (Segoe UI on Windows) unless the font picker swaps it. Set a family through <code>font-sans</code> or <code>var(--sd-font-sans)</code>, never by name. Prose read at length, such as a manuscript, is the one exception: <code>font-reading</code>.</li>
           <li><b class="text-fg font-semibold">Transitions are short.</b> They run 120 to 200ms on <code>ease-out</code>. Loops are allowed.</li>
@@ -20,8 +20,8 @@
         <div>
           <p class="sd-label">Use it for</p>
           <ul>
-            <li>Choosing a color, size or duration for your own component.</li>
-            <li>Checking a theme before you ship. Switch ink, graphite and paper from the Theme button.</li>
+            <li>Choosing a color, size, or duration for your own component.</li>
+            <li>Checking a theme before you ship. Switch ink, graphite, and paper from the Theme button.</li>
             <li>Reading how a role looks: the swatches and ratios above follow the current theme.</li>
           </ul>
         </div>
@@ -102,7 +102,7 @@
 
     <div class="demo-block" id="tokens-contrast-on-canvas">
       <h2 class="sd-label">Contrast on canvas</h2>
-      <p class="demo-usage">WCAG ratio of each text role against the current canvas. Body text needs 4.5. Every text role, <code>fg-faint</code> included, reaches it on the canvas, surface and raised fills of all three themes, so none of them is limited to decoration.</p>
+      <p class="demo-usage">WCAG ratio of each text role against the current canvas. Body text needs 4.5. Every text role, <code>fg-faint</code> included, reaches it on the canvas, surface, and raised fills of all three themes, so none of them is limited to decoration.</p>
       <div class="sd-table-wrap"><table class="sd-table sd-table-compact" data-contrast></table></div>
     </div>
 </body>

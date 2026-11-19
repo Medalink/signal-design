@@ -28,25 +28,25 @@ const library = [
     id: "foundations", title: "Foundations", label: "Basics", icon: "tokens",
     groups: [
       group("Design", [
-        { id: "rules", title: "Rules", summary: "The hard rules and the principles every part follows." },
-        { id: "color", title: "Color", summary: "Semantic roles, signals, greys and themes, read live from the current theme." },
-        { id: "type", title: "Type", summary: "The type scale, tracking, weights, fonts and text styles." },
-        { id: "layout", title: "Layout", summary: "Spacing, motion, panel widths, page layout and visibility helpers." },
+        { id: "rules", title: "Rules", summary: "The hard rules and the principles every component follows." },
+        { id: "color", title: "Color", summary: "Semantic roles, signals, greys, and themes, read live from the current theme." },
+        { id: "type", title: "Type", summary: "The type scale, tracking, weights, fonts, and text styles." },
+        { id: "layout", title: "Layout", summary: "Spacing, motion, panel widths, page layout, and visibility helpers." },
         { id: "icons", title: "Icons", summary: "Square-stroke icons sized to the text beside them, and the icon set." },
       ]),
       group("Plain HTML", [
-        { id: "elements", title: "Elements", summary: "Plain HTML with no classes: headings, text, lists, tables and form controls." },
+        { id: "elements", title: "Elements", summary: "Plain HTML with no classes: headings, text, lists, tables, and form controls." },
       ]),
     ],
   },
   {
-    id: "components", title: "Components", label: "Parts", icon: "inputs",
+    id: "components", title: "Components", label: "Components", icon: "inputs",
     groups: [
       group("Forms", [
         {
-          id: "buttons", title: "Buttons", summary: "Primary, ghost and link buttons in every size, with icons and states.",
+          id: "buttons", title: "Buttons", summary: "Primary, ghost, and link buttons in every size, with icons and states.",
           doc: {
-            intro: "Every action a view offers, from the one solid primary down to a quiet link, with tones, sizes, icons and a busy state.",
+            intro: "Every action a view offers, from the one solid primary down to a quiet link, with tones, sizes, icons, and a busy state.",
             when: [
               "A view has one clear action: the primary is that action and appears once.",
               "Rows and toolbars of secondary actions: ghost and link buttons keep them quiet.",
@@ -76,7 +76,7 @@ const library = [
               },
             ],
             responsive: [
-              "Sizes are fixed, not fluid: the three sizes hold 26, 34 and 44 px of height at every viewport, and a long label wraps the row, not the button.",
+              "Sizes are fixed, not fluid: the three sizes hold 26, 34, and 44 px of height at every viewport, and a long label wraps the row, not the button.",
               "A row of buttons wraps: <code>sd-actions</code> is a wrapping flex row, so toolbars fold onto more lines on narrow screens.",
               "Hover styles apply on touch too (there is no fine-pointer gate), so never put information only in hover; the press nudge gives touch its feedback.",
             ],
@@ -94,7 +94,7 @@ const library = [
               { name: "sd-btn-sm, sd-btn-lg", type: "class", desc: "Smaller and larger sizes; sd-btn-icon is square for an icon only." },
               { name: "sd-btn-block", type: "class", desc: "Takes the full width of its column, for stacked forms." },
               { name: "sd-btn-group", type: "class", desc: "Joins buttons into one control with role=\"group\"." },
-              { name: "data-tone", type: "attribute", def: "unset", desc: "success, danger, warning, pending or accent, on plain and primary buttons." },
+              { name: "data-tone", type: "attribute", def: "unset", desc: "success, danger, warning, pending, or accent, on plain and primary buttons." },
               { name: "aria-busy", type: "ARIA", def: "false", desc: "Shows work in flight without disabling the button." },
               { name: "sd-kbd", type: "class", desc: "A key look for any element, inside a button or beside it." },
             ],
@@ -115,11 +115,11 @@ const library = [
           },
         },
         {
-          id: "fields", title: "Fields", summary: "Labels, hints, inputs, selects, switches and a dropzone.",
+          id: "fields", title: "Fields", summary: "Labels, hints, inputs, selects, switches, and a dropzone.",
           doc: {
-            intro: "One field is a label, a control and its hint or error, read in that order by assistive tech and styled by the library.",
+            intro: "One field is a label, a control, and its hint or error, read in that order by assistive tech and styled by the library.",
             when: [
-              "Any form: settings, creation dialogs, filters and importers.",
+              "Any form: settings, creation dialogs, filters, and importers.",
               "A value needs a format: the hint states it, the error restates it after a failed blur.",
               "Files must come from the user: the dropzone labels a real file input.",
             ],
@@ -130,7 +130,7 @@ const library = [
             usage: '&lt;div class="sd-field"&gt;\n  &lt;label class="sd-field-label" for="name"&gt;Name&lt;/label&gt;\n  &lt;input id="name" aria-describedby="name-hint"&gt;\n  &lt;p class="sd-field-hint" id="name-hint"&gt;Shown on your profile.&lt;/p&gt;\n&lt;/div&gt;',
             api: [
               { name: "sd-form", type: "class", desc: "The form grid; sd-form-row puts fields side by side." },
-              { name: "sd-field", type: "class", desc: "One field: label, control, hint and error in a column." },
+              { name: "sd-field", type: "class", desc: "One field: label, control, hint, and error in a column." },
               { name: "sd-field-label", type: "class", desc: "The visible label. Point its for at the control." },
               { name: "sd-field-hint, sd-field-error", type: "class", desc: "Helper text under the control; the error shows when the field is invalid." },
               { name: "sd-field-aside", type: "class", desc: "A marker in the label, such as optional." },
@@ -156,10 +156,10 @@ const library = [
           },
         },
         { id: "choices", title: "Choices", summary: "Option cards and segmented controls, wrapped in narrow containers." },
-        { id: "pickers", title: "Combobox and tags", summary: "Combobox, tags, number input and steps." },
+        { id: "pickers", title: "Combobox and tags", summary: "Combobox, tags, number input, and steps." },
       ]),
       group("Navigation", [
-        { id: "nav-bars", title: "Bars and tabs", summary: "Top bar, side navigation, tabs, pagination and status bar." },
+        { id: "nav-bars", title: "Bars and tabs", summary: "Top bar, side navigation, tabs, pagination, and status bar." },
         {
           id: "menus", title: "Menus", summary: "Dropdown lists and popovers anchored to their trigger, with keyboard focus.",
           doc: {
@@ -204,14 +204,14 @@ const library = [
             related: ["overlays", "command", "buttons"],
           },
         },
-        { id: "overlays", title: "Overlays", summary: "Dialogs, sheets and drawers opened with an attribute.", find: "tooltip" },
+        { id: "overlays", title: "Overlays", summary: "Dialogs, sheets, and drawers opened with an attribute.", find: "tooltip" },
         { id: "command", title: "Command palette", summary: "A command palette and keyboard shortcuts." },
       ]),
       group("Status", [
-        { id: "badges", title: "Badges", summary: "Markers, badges, chips and pills, each taking a tone." },
-        { id: "avatars", title: "Avatars", summary: "Square pictures and initials in every size, with presence, status and counts." },
+        { id: "badges", title: "Badges", summary: "Markers, badges, chips, and pills, each taking a tone." },
+        { id: "avatars", title: "Avatars", summary: "Square pictures and initials in every size, with presence, status, and counts." },
         {
-          id: "feedback", title: "Feedback", summary: "Callouts, notes, progress, skeletons, checks, empty states and toasts.",
+          id: "feedback", title: "Feedback", summary: "Callouts, notes, progress, skeletons, checks, empty states, and toasts.",
           doc: {
             intro: "What the system tells the user while it works and after it finishes, from an inline note to a toast.",
             when: [
@@ -251,7 +251,7 @@ const library = [
       ]),
       group("Data", [
         {
-          id: "stats", title: "Stats and tables", summary: "Stats, numbers, tables and key-value lists.",
+          id: "stats", title: "Stats and tables", summary: "Stats, numbers, tables, and key-value lists.",
           doc: {
             intro: "Numbers and their facts: a stat for one figure, a table for many rows, a key-value list for one record.",
             when: [
@@ -268,7 +268,7 @@ const library = [
               { name: "sd-stat", type: "class", desc: "An inline stat: value over label, with an optional delta." },
               { name: "sd-stat-value, sd-stat-label", type: "class", desc: "The figure, with small for units, and its name." },
               { name: "sd-stat-delta", type: "class", desc: "The change since before, taking a tone." },
-              { name: "sd-stat-box", type: "class", desc: "The boxed stat, with -sm, sd-stat-sub and sd-stat-end." },
+              { name: "sd-stat-box", type: "class", desc: "The boxed stat, with -sm, sd-stat-sub, and sd-stat-end." },
               { name: "sd-table", type: "class", desc: "The table, in an sd-table-wrap; -hover and -compact vary it." },
               { name: "th[data-sort]", type: "attribute", desc: "A sortable header; the JS sets aria-sort." },
               { name: "sd-num", type: "class", desc: "Tabular numbers on numeric cells, so digits line up." },
@@ -287,12 +287,12 @@ const library = [
           },
         },
         { id: "rows", title: "Rows", summary: "Lists of work that show an outcome and expand for detail." },
-        { id: "living-tables", title: "Living tables", summary: "Tables whose rows arrive, change and leave while you read them." },
-        { id: "charts", title: "Charts", summary: "Live time series, chart types, square CSS charts, sparklines and diffs." },
+        { id: "living-tables", title: "Living tables", summary: "Tables whose rows arrive, change, and leave while you read them." },
+        { id: "charts", title: "Charts", summary: "Live time series, chart types, square CSS charts, sparklines, and diffs." },
         { id: "timeline", title: "Timeline", summary: "Ranges over one time axis." },
         { id: "schedule", title: "Schedule", summary: "An hour roster of status blocks in mono or spectrum." },
         { id: "flow", title: "Flow", summary: "A pipeline of stages and jobs on a dot grid, and its checklist, in mono or spectrum." },
-        { id: "machine", title: "Machine", summary: "A live state machine from one JSON spec: stations, wires and tokens that travel, wait, fold and land." },
+        { id: "machine", title: "Machine", summary: "A live state machine from one JSON spec: stations, wires, and tokens that travel, wait, fold, and land." },
       ]),
     ],
   },
@@ -300,22 +300,22 @@ const library = [
     id: "patterns", title: "Patterns", label: "Patterns", icon: "shell",
     groups: [
       group("Conversation", [
-        { id: "messages", title: "Messages", summary: "Author names, role edges, replies, selection and narrow columns." },
+        { id: "messages", title: "Messages", summary: "Author names, role edges, replies, selection, and narrow columns." },
         { id: "feed", title: "Feed", summary: "A message feed with day breaks and a jump back to the present." },
-        { id: "composer", title: "Composer", summary: "The composer, its add menu and the emoji picker." },
-        { id: "people", title: "People", summary: "Conversation items, presence, counts and the roster." },
-        { id: "attachments", title: "Blocks and links", summary: "Banners, files, polls, tiles and link cards inside a conversation." },
+        { id: "composer", title: "Composer", summary: "The composer, its add menu, and the emoji picker." },
+        { id: "people", title: "People", summary: "Conversation items, presence, counts, and the roster." },
+        { id: "attachments", title: "Blocks and links", summary: "Banners, files, polls, tiles, and link cards inside a conversation." },
       ]),
       group("App shell", [
-        { id: "window", title: "Window and bars", summary: "The full shell, the desktop title bar and the header bar." },
-        { id: "rail", title: "Rail", summary: "A compact rail of places with tiles, unread marks and counts." },
+        { id: "window", title: "Window and bars", summary: "The full shell, the desktop title bar, and the header bar." },
+        { id: "rail", title: "Rail", summary: "A compact rail of places with tiles, unread marks, and counts." },
         { id: "sidebar", title: "Sidebar", summary: "Section heads and a panel beside the content that you can resize." },
       ]),
       group("Effects", [
         { id: "rain", title: "Rain", summary: "The digital rain backdrop, and a job that speeds it up." },
-        { id: "ornaments", title: "Ornaments", summary: "Corner ornaments, border glow, art ornaments and edge dust." },
+        { id: "ornaments", title: "Ornaments", summary: "Corner ornaments, border glow, art ornaments, and edge dust." },
         { id: "surfaces", title: "Shimmer and scrollbars", summary: "The hover shimmer and the scrollbar styles." },
-        { id: "art", title: "Art", summary: "Pixel pieces in the theme's ink, mascots, scenes and circuit ornaments, drawn from attributes." },
+        { id: "art", title: "Art", summary: "Pixel pieces in the theme's ink, mascots, scenes, and circuit ornaments, drawn from attributes." },
         { id: "ascii", title: "ASCII", summary: "Animated art drawn in greys, still until the work behind it is running." },
       ]),
     ],
@@ -329,7 +329,7 @@ const library = [
           doc: {
             intro: "One import and one call: init() reads data-sd attributes and writes ARIA and data-* state that the CSS styles.",
             when: [
-              "Plain HTML or server-rendered pages: attributes alone give dialogs, menus, tabs and tooltips.",
+              "Plain HTML or server-rendered pages: attributes alone give dialogs, menus, tabs, and tooltips.",
               "Markup that arrives after load: every listener is delegated, so no re-init is needed.",
               "Theme switching with a remembered choice, and copy buttons with feedback.",
               "Live lists that must keep the reader's place: mountFeed.",
@@ -337,14 +337,14 @@ const library = [
             notWhen: [
               "A page where the HTML works with CSS alone: each block says whether it needs JS.",
               "A framework already renders the state: leave out that piece's data-sd attribute and set ARIA yourself (see Framework state).",
-              "Heavy parts: living tables, countdowns and feeds mount explicitly, init() does not run them.",
+              "Heavy components (living tables, countdowns, and feeds) mount explicitly. init() does not run them.",
             ],
             usage: 'import { init } from "signal-design/js";\n\ninit(); // once, after the DOM exists',
             api: [
               { name: "init()", type: "function", desc: "Wires every data-sd attribute once, after the DOM exists." },
               { name: "toast(text, { tone })", type: "function", desc: "Shows a toast; data-sd-toast does it from a click." },
               { name: "hotkeys({ key: fn })", type: "function", desc: "A map of shortcuts, including sequences; returns the off function." },
-              { name: "setTheme(name)", type: "function", desc: "ink, graphite, paper or auto; remembers the choice." },
+              { name: "setTheme(name)", type: "function", desc: "ink, graphite, paper, or auto; remembers the choice." },
               { name: "data-sd-open, data-sd-close", type: "attribute", desc: "Opens a dialog as modal, closes the nearest one." },
               { name: "data-sd-toggle", type: "attribute", desc: "Opens and closes an .sd-expand, keeping aria-expanded in sync." },
               { name: "data-sd-seg", type: "attribute", desc: "A single-select button group; fires change." },
@@ -356,7 +356,7 @@ const library = [
             ],
             keyboard: [
               ["Shift T", "Steps to the next theme, from data-sd-theme-cycle or the key itself."],
-              ["Esc", "Closes the top dialog, popover or tooltip."],
+              ["Esc", "Closes the top dialog, popover, or tooltip."],
             ],
             a11y: [
               "The JS writes ARIA; it never reads classes back, so tests and frameworks can set the same attributes.",
@@ -364,13 +364,13 @@ const library = [
               "Toasts and copy feedback are announced; the failure toast names the fallback.",
             ],
             motion: [
-              "Dialogs, popovers and menus move in 120-200ms.",
+              "Dialogs, popovers, and menus move in 120-200ms.",
               "prefers-reduced-motion removes the movement; everything still opens and closes.",
             ],
             related: ["owned", "overlays", "command"],
           },
         },
-        { id: "owned", title: "Framework state", summary: "Leaving state to React, Vue or Svelte: one writer per state." },
+        { id: "owned", title: "Framework state", summary: "Leaving state to React, Vue, or Svelte: one writer per state." },
         { id: "predict", title: "Prediction", summary: "Where the mouse is heading, so a route or a file loads before the click." },
       ]),
       group("Mounts", [
@@ -391,19 +391,19 @@ const examples = {
   id: "examples", title: "Examples", label: "Examples", icon: "pages",
   groups: [
     group("HTML apps", [
-      { file: "shell.html", title: "App shell", summary: "Watcher's Containers screen: tiles, container groups whose rows open to details and actions, a confirm before Remove, a live status bar." },
-      { file: "chat.html", title: "Chat", summary: "A group channel in the full app frame: group rail, resizable channel sidebar, feed with a poll and replies, members by role." },
-      { file: "form.html", title: "Form", summary: "AI settings: connected servers, a found server, command-line agents and an add-a-server form that validates on blur and counts its errors." },
-      { file: "landing.html", title: "Landing", summary: "A one-screen download page: a hero, four points and a download block." },
-      { file: "ship.html", title: "Continuous flow", summary: "A live machine: agents ship to main, rings fold and judge, failures queue agent runs. Swap in any machine or edit its spec." },
-      { file: "charts.html", title: "Charts", summary: "Watcher's Stats screen: range, tiles, CPU and memory plots with a limit line, a per-container table and database facts." },
-      { file: "stream.html", title: "Stream", summary: "A Twitch overlay package: starting soon, in game, BRB and ending scenes with live alerts, ready for OBS." },
+      { file: "shell.html", title: "App shell", summary: "A container manager in the full app frame. Rows expand to details and actions, Remove asks for confirmation, and the status bar updates live." },
+      { file: "chat.html", title: "Chat", summary: "A group channel with a rail, a resizable sidebar, and members by role. The feed holds a poll and replies." },
+      { file: "form.html", title: "Form", summary: "A settings page for AI servers and command-line agents. The add-a-server form validates on blur and counts its errors." },
+      { file: "landing.html", title: "Landing", summary: "A one-screen download page with a hero, four points, and a download block." },
+      { file: "ship.html", title: "Continuous flow", summary: "A live state machine: changes ship to main, roll out in stages, and failures queue a new agent run. Swap in another machine or edit its spec." },
+      { file: "charts.html", title: "Charts", summary: "A monitoring screen with CPU and memory plots against a limit line. Below them, a per-container table and database facts." },
+      { file: "stream.html", title: "Stream", summary: "A Twitch overlay package: starting soon, in game, BRB, and ending scenes with live alerts, ready for OBS." },
       { file: "stream-setup.html", title: "Stream setup", summary: "Builds the OBS source URLs for each Stream scene and layer." },
     ]),
     group("React apps", [
-      { file: "react.html", title: "React", summary: "Every binding on one page with no init(): buttons, fields, overlays, menus, tabs, tables and toasts." },
-      { file: "react-shell.html", title: "React app shell", summary: "The Signal App Shell as React components: rail sections, sidebar panels, drawer and details panel owned by React state." },
-      { file: "react-editor.html", title: "React editor", summary: "The parts a document editor is built from, as React components: toolbar, manuscript, marks, document tree, combobox, command palette and choice controls." },
+      { file: "react.html", title: "React", summary: "Every React binding on one page, with no init(). Buttons, fields, overlays, menus, tabs, tables, and toasts." },
+      { file: "react-shell.html", title: "React app shell", summary: "The Signal App Shell as React components: rail sections, sidebar panels, drawer, and details panel owned by React state." },
+      { file: "react-editor.html", title: "React editor", summary: "The React components a document editor is built from: toolbar, manuscript, marks, document tree, combobox, command palette, and choice controls." },
     ]),
   ],
 };

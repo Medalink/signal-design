@@ -280,14 +280,14 @@ const SPECIMENS = {
   messages: () => `<div class="wall-feed">
   <article class="sd-message" style="--who: var(--sd-extra)"><time class="sd-message-time" datetime="09:42">09:42</time><div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Alex</b><span class="sd-message-tag">Lead</span>Names take the person's color and the text follows on the same line.</div><div class="sd-reactions"><button data-sd-reaction aria-pressed="true"><span>👍</span><b>3</b></button><button data-sd-reaction aria-pressed="false"><span>👀</span><b>1</b></button></div></div></article>
   <article class="sd-message" data-grouped style="--who: var(--sd-extra)"><div class="sd-message-body"><div class="sd-message-text">A second message from the same author groups under the first.</div></div></article>
-  <article class="sd-message" data-own style="--who: var(--sd-success)"><time class="sd-message-time" datetime="09:44">09:44</time><div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">You</b>Your own messages carry the own marker.</div></div></article>
+  <article class="sd-message" data-own style="--who: var(--sd-success)"><time class="sd-message-time" datetime="09:44">09:44</time><div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">You</b>Your messages carry the <code>own</code> marker.</div></div></article>
 </div>`,
 
   feed: () => `<div class="wall-feed">
   <div class="sd-divider sd-feed-day">Today</div>
   <article class="sd-message" style="--who: var(--sd-warning)"><time class="sd-message-time" datetime="16:02">16:02</time><div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Sam</b>The day line sticks to the top of the scroller.</div></div></article>
   <div class="sd-event"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square" aria-hidden="true"><path d="M2 8h8M7 5l3 3-3 3M10.5 2.5h3v11h-3"/></svg><span><b>Mina</b> joined<time>16:05</time></span></div>
-  <article class="sd-message" style="--who: var(--sd-accent)"><time class="sd-message-time" datetime="16:09">16:09</time><div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Mina</b>Scroll up and a bar offers the way back to now.</div></div></article>
+  <article class="sd-message" style="--who: var(--sd-accent)"><time class="sd-message-time" datetime="16:09">16:09</time><div class="sd-message-body"><div class="sd-message-text"><b class="sd-message-author">Mina</b>Scroll up to reveal a jump-to-latest bar.</div></div></article>
 </div>`,
 
   composer: () => `<div class="sd-shell-dock wall-dock">${element(block("conversation-composer"), /<form class="sd-composer"/).replace(" · A message opens with its author in their name color.", " · On it.")}</div>`,

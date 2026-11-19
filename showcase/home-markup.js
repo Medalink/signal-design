@@ -29,12 +29,12 @@ const ic = icon;
 export function homeIntro() {
   return `  <header class="home-intro">
     <div class="home-intro-copy">
-      <h1 id="home-h">Signal design library</h1>
-      <p>CSS components and a small JavaScript module for Tailwind v4, plain HTML and Tauri.</p>
+      <h1 id="home-h">Signal Design</h1>
+      <p>Square, monochrome-first UI components driven by ARIA and data attributes. Built for Tailwind v4, plain HTML, and Tauri.</p>
     </div>
     <div class="home-intro-act">
       <div class="home-install"><code id="home-install-cmd">${INSTALL}</code><button class="home-install-copy" type="button" data-sd-copy="#home-install-cmd" aria-label="Copy install command"><svg aria-hidden="true"><use href="#i-copy"/></svg></button></div>
-      <a class="sd-btn sd-btn-primary" href="./lib-setup.html">Set it up</a>
+      <a class="sd-btn sd-btn-primary" href="./lib-setup.html">Get started</a>
     </div>
   </header>`;
 }
@@ -244,7 +244,7 @@ ${SECTIONS.map(section).join("\n")}
 export function homeComponents() {
   return `  <section class="home-section home-components" id="home-components" aria-labelledby="home-components-h">
     <div class="home-inner">
-      <h2 id="home-components-h" class="home-h">All pages</h2>
+      <h2 id="home-components-h" class="home-h">Components &amp; foundations</h2>
 ${homeWall()}
 ${homeIndex()}
     </div>
@@ -257,9 +257,9 @@ export function homeAgents() {
     <div class="home-inner">
       <h2 id="home-ai-h" class="home-h">For AI agents</h2>
       <div class="home-agents">
-        <div><h3><a href="${REPO}/blob/main/AGENTS.md">AGENTS.md</a></h3><p>The rules the design holds to and the parts to build from.</p></div>
+        <div><h3><a href="${REPO}/blob/main/AGENTS.md">AGENTS.md</a></h3><p>The rules the design holds to and the components to build from.</p></div>
         <div><h3><a href="${REPO}/blob/main/llms-full.txt">llms-full.txt</a></h3><p>The guide and every component's HTML in one text file.</p></div>
-        <div><h3><a href="${REPO}/blob/main/ai/components.json">ai/components.json</a></h3><p>Every block as data, with classes, attributes and copyable markup.</p></div>
+        <div><h3><a href="${REPO}/blob/main/ai/components.json">ai/components.json</a></h3><p>Every block as data, with classes, attributes, and copyable markup.</p></div>
         <div><h3><a href="./lib-setup.html">Setup</a></h3><p>What <code>init()</code> wires, attribute by attribute.</p></div>
       </div>
       <p class="home-foot">Signal design library · MIT · <a href="${REPO}">GitHub</a></p>

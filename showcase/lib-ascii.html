@@ -58,7 +58,7 @@ mountAscii(panel.querySelector(".sd-ascii"), piece, { at: 4 });
 // The art follows aria-busy on its closest ancestor that has it.
 panel.setAttribute("aria-busy", "true");   // plays
 panel.removeAttribute("aria-busy");        // holds the frame it is on</script>
-      <p class="demo-usage"><code>mountAscii(el, piece, { at })</code> · the art plays while <code>aria-busy="true"</code> is on it or its closest ancestor that has the attribute, and holds the frame it is on when removed · set it on the panel that is working · <code>art.busy(true|false)</code> overrides · plays only on screen, in a visible tab and without <code>prefers-reduced-motion</code></p>
+      <p class="demo-usage"><code>mountAscii(el, piece, { at })</code> · the art plays while <code>aria-busy="true"</code> is on it or its closest ancestor that has the attribute, and holds the frame it is on when removed · set it on the panel that is working · <code>art.busy(true|false)</code> overrides · plays only on screen, in a visible tab, and without <code>prefers-reduced-motion</code></p>
     </div>
 
     <div class="demo-block" id="ascii-gallery">
@@ -114,7 +114,7 @@ mountAscii(card.querySelector(".sd-ascii"), piece, { at: 3 });
 // Hover or focus plays the card, leaving holds it.
 card.addEventListener("pointerenter", () => card.setAttribute("aria-busy", "true"));
 card.addEventListener("pointerleave", () => card.removeAttribute("aria-busy"));</script>
-      <p class="demo-usage">One <code>sd-ascii</code> per piece, each with <code>data-piece</code>, <code>data-at</code> (seconds into the piece for the still frame), <code>role="img"</code> and <code>aria-label</code> · put the art in <code>sd-card</code> and set <code>aria-busy</code> on the card from hover or a play button · <code>--cols</code> and <code>--rows</code> size the box before the art loads</p>
+      <p class="demo-usage">One <code>sd-ascii</code> per piece, each with <code>data-piece</code>, <code>data-at</code> (seconds into the piece for the still frame), <code>role="img"</code>, and <code>aria-label</code> · put the art in <code>sd-card</code> and set <code>aria-busy</code> on the card from hover or a play button · <code>--cols</code> and <code>--rows</code> size the box before the art loads</p>
     </div>
 
     <div class="demo-block" id="ascii-empty-state">

@@ -36,7 +36,7 @@ const stop = predict(button, () => loadSettingsDialog());
     </div>
 
     <div class="demo-block" id="js-predict-parts">
-      <h2 class="sd-label">Signal parts</h2>
+      <h2 class="sd-label">Signal components</h2>
       <div class="demo-predict-field demo-predict-parts" id="predict-parts">
         <button class="sd-rail-tile" type="button" aria-label="Operations">OP</button>
         <button class="sd-thread-chip" type="button">
@@ -54,7 +54,7 @@ const stop = predict(button, () => loadSettingsDialog());
         <header class="sd-dialog-head"><span id="predict-dialog-h">Settings</span><button class="sd-btn sd-btn-icon sd-btn-sm sd-btn-ghost" data-sd-close aria-label="Close">×</button></header>
         <div class="sd-dialog-body"><p>Loaded when the pointer headed for the button.</p></div>
       </dialog>
-      <p class="demo-usage"><code>sd-rail-tile</code>, <code>sd-thread-chip</code>, <code>button.sd-shot</code> and <code>[data-sd-open]</code> are targets with no attribute · <code>data-sd-predict="off"</code> on one or an ancestor opts out</p>
+      <p class="demo-usage"><code>sd-rail-tile</code>, <code>sd-thread-chip</code>, <code>button.sd-shot</code>, and <code>[data-sd-open]</code> are targets with no attribute · <code>data-sd-predict="off"</code> on one or an ancestor opts out</p>
       <script type="text/plain" data-demo-js>
 document.addEventListener("sd:predict", (event) => {
   const el = event.target;

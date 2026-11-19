@@ -4,7 +4,7 @@
 <body>
     <div class="demo-block" id="js-framework-owned">
       <h2 class="sd-label">Framework-owned state</h2>
-      <p class="demo-usage">When React, Vue or Svelte renders a piece's state, leave out its <code>data-sd-*</code> attribute and render the ARIA and <code>data-*</code> attributes the CSS keys on. These three have no <code>data-sd-*</code>: this page's own code keeps the state and writes the attributes, as a framework would. README "Framework-owned state" lists every piece and what <code>init()</code> wires without an attribute (<code>role="tab"</code>, <code>.sd-shell</code>, popovers, scrollers).</p>
+      <p class="demo-usage">When React, Vue, or Svelte renders a piece's state, leave out its <code>data-sd-*</code> attribute and render the ARIA and <code>data-*</code> attributes the CSS keys on. These three have no <code>data-sd-*</code>: this page's own code keeps the state and writes the attributes, as a framework would. README "Framework-owned state" lists every piece and what <code>init()</code> wires without an attribute (<code>role="tab"</code>, <code>.sd-shell</code>, popovers, scrollers).</p>
       <div class="sd-cluster" style="--gap: 16px">
         <div class="sd-seg sd-seg-inline" id="owned-view" role="group" aria-label="View"><button type="button" data-value="list" aria-pressed="true">list</button><button type="button" data-value="board" aria-pressed="false">board</button></div>
         <button class="sd-btn sd-btn-sm" id="owned-toggle" aria-expanded="false" aria-controls="owned-details">Details</button>
