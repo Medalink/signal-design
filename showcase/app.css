@@ -612,6 +612,9 @@
       min-block-size: var(--sd-touch);
       margin-block: 0;
     }
+    :is(.doc-nav-link, .doc-nav-sub, .doc-nav-heading) {
+      min-block-size: var(--sd-touch);
+    }
   }
   @media (max-width: 68.75rem) {
     .doc-grid {
