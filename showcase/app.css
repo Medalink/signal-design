@@ -2138,6 +2138,8 @@
   .has-vp-bar[data-sd-keyboard] .vp-bar {
     translate: 0 var(--sd-view-top);
   }
+  /* The width frame covers the window, so it comes and goes at once. A
+     dialog's fade kept its backdrop dimming the page for 160ms after Full. */
   .vp-dialog {
     width: 100vw;
     max-width: none;
@@ -2148,6 +2150,8 @@
     border: 0;
     background: var(--sd-shell-bg);
     color: var(--sd-fg);
+    transform: none;
+    transition: none;
   }
   .vp-dialog::backdrop {
     background: var(--sd-backdrop);
