@@ -23,8 +23,12 @@ concurrency:
 jobs:
   regenerate:
     runs-on: ubuntu-latest
-    # The job runs in about 45 seconds with the browser cache below.
-    timeout-minutes: 3
+    # The job runs in about 45 seconds with a warm browser cache and a fast
+    # apt mirror. The cap still needs headroom: even the cache-hit path runs
+    # `playwright install-deps chromium`, which apt-installs ~80MB of fonts,
+    # and a slow mirror blew a 3-minute cap on 2026-11-18 and 2026-11-19
+    # (the job then ends cancelled and failed the release ring's wait).
+    timeout-minutes: 10
     steps:
       # The current tip of main, not the commit that triggered this run: the
       # one run that survives a newer push builds the tip.
