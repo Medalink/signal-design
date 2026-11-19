@@ -1193,6 +1193,7 @@
   }
   .sd-titlebar-metric {
     display: inline-flex;
+    flex: none;
     align-items: baseline;
     gap: 6px;
     padding: 0 8px;
@@ -1201,7 +1202,15 @@
     letter-spacing: var(--tracking-wide);
     white-space: nowrap;
   }
-  /* A narrow window keeps its controls and drops the metrics. */
+  /* The brand sits at the bar's center, so the end group may only reach the
+     middle. Two metrics and the controls (about 340px) reach it under about
+     46rem, one metric under about 32rem: a narrower window keeps the first
+     metric, then only its controls. */
+  @container (max-width: 48rem) {
+    .sd-titlebar-metric ~ .sd-titlebar-metric {
+      display: none;
+    }
+  }
   @container (max-width: 32rem) {
     .sd-titlebar-metric {
       display: none;
