@@ -120,27 +120,31 @@
     grid-template-columns: var(--label-w) minmax(0, 1fr);
     column-gap: var(--label-gap);
     min-height: var(--row-h);
+    /* The row fill, kept in a variable so a block label can stack it under its
+       own tint and stay opaque (see .sd-schedule-label). */
+    --row-fill: transparent;
+    background: var(--row-fill);
     transition: background-color 160ms var(--ease-out);
   }
   /* Rows alternate by a faint band instead of a rule. The canvas holds the
      grid and the axis first, so the rows are its odd children and the even
      ones are the banded rows. */
   .sd-schedule-row:nth-child(even) {
-    background: color-mix(in srgb, var(--sd-fg) 3%, transparent);
+    --row-fill: color-mix(in srgb, var(--sd-fg) 3%, transparent);
   }
   .sd-schedule-row:is(:hover, :focus-within) {
-    background: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-tone-3));
+    --row-fill: color-mix(in srgb, var(--sd-fg) 6%, var(--sd-tone-3));
   }
   .sd-schedule-row[aria-selected="true"],
   .sd-schedule-row[data-selected] {
-    background: var(--sd-current-fill);
+    --row-fill: var(--sd-current-fill);
   }
   .sd-schedule-row[data-state="conflict"] {
-    background: var(--sd-chart-alert);
+    --row-fill: var(--sd-chart-alert);
     box-shadow: inset 2px 0 0 var(--sd-chart-critical);
   }
   .sd-schedule-row[data-state="conflict"]:hover {
-    background: color-mix(in srgb, var(--sd-chart-critical) 18%, transparent);
+    --row-fill: color-mix(in srgb, var(--sd-chart-critical) 18%, transparent);
   }
   .sd-schedule-resource {
     display: grid;
@@ -187,6 +191,7 @@
     --interval: calc((var(--to) - var(--from)) / var(--span) * 100cqi);
     --reveal: max(var(--interval), min(20rem, 100cqi));
     position: absolute;
+    z-index: 1;
     top: 50%;
     left: calc((var(--from) - var(--start)) / var(--span) * 100%);
     width: calc((var(--to) - var(--from)) / var(--span) * 100%);
@@ -208,7 +213,12 @@
     overflow: hidden;
     padding: 4px min(var(--label-pad), 10%);
     border: 1px solid color-mix(in srgb, var(--block) 55%, transparent);
-    background: color-mix(in srgb, var(--block) 10%, transparent);
+    /* The tint over the row fill over the board: the same color as a see-through
+       tint, but opaque, so the now line under the block never shows through. */
+    background:
+      linear-gradient(color-mix(in srgb, var(--block) 10%, transparent) 0 0),
+      linear-gradient(var(--row-fill, transparent) 0 0),
+      var(--sd-tone-3);
     text-overflow: ellipsis;
     white-space: nowrap;
     transition:
@@ -260,8 +270,11 @@
   .sd-schedule [data-status="conflict"] {
     --block: var(--sd-chart-critical);
   }
+  /* Dashes cover half the edge, so a proposed block takes its full color, as
+     its legend swatch does. */
   .sd-schedule-block[data-status="proposed"] > .sd-schedule-label {
     border-style: dashed;
+    border-color: var(--block);
   }
   /* A colored label sits on its own tint, so it leans toward --sd-fg for 4.5:1. */
   .sd-schedule-block[data-status="conflict"] {
@@ -272,10 +285,11 @@
     color: color-mix(in srgb, var(--block) 70%, var(--sd-fg));
   }
 
-  /* The now line, over the rows. data-label pins a small readout at the top. */
+  /* The now line: over the rows, under the blocks, so it never crosses a
+     label. data-label pins a small readout at the top. */
   .sd-schedule-now {
     position: absolute;
-    z-index: 1;
+    z-index: 0;
     inset-block: var(--axis-h) 0;
     left: calc(var(--label-w) + var(--label-gap) + (var(--at) - var(--start)) / var(--span) * var(--plot));
     width: 1px;

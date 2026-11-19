@@ -166,8 +166,11 @@ export default async function checkSchedule(page, where, fail, only) {
               const now = el.closest(".sd-schedule").querySelector(".sd-schedule-now");
               const line = now.getBoundingClientRect();
               now.style.pointerEvents = "auto";
+              // The line runs under the blocks (so it never crosses a label) but over the row's fill.
+              const stack = document.elementsFromPoint(line.left + 0.5, box.top + box.height / 2);
+              const row = stack.indexOf(el.closest(".sd-schedule-row"));
               const lineVisible = getComputedStyle(now).backgroundColor !== "rgba(0, 0, 0, 0)" &&
-                document.elementFromPoint(line.left + 0.5, box.top + box.height / 2) === now;
+                stack.includes(now) && (row < 0 || stack.indexOf(now) < row);
               now.style.removeProperty("pointer-events");
               return { complete, lineVisible, text: el.innerText.replaceAll("\n", " · ") };
             });
