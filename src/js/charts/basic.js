@@ -21,6 +21,21 @@ import { pointer, crosshair, cursorPositioner } from "./plugins.js";
 
 const DASHES = [[], [6, 3], [2, 3], [8, 3, 2, 3], [1, 2], [10, 4]];
 
+/**
+ * Widens a ranking chart's category axis to its longest label. Chart.js caps a side axis at half
+ * the width left after layout padding, which the value labels' room shrinks, so in a narrow chart
+ * a long label started left of the canvas.
+ */
+function fitCategoryLabels(scale) {
+  const { ctx } = scale;
+  const { font, padding } = scale.options.ticks;
+  ctx.save();
+  ctx.font = `${font.size}px ${font.family}`;
+  const widest = Math.max(0, ...scale.ticks.map((tick) => ctx.measureText(String(tick.label)).width));
+  ctx.restore();
+  scale.width = Math.max(scale.width, Math.ceil(widest) + padding);
+}
+
 /** Value labels at the end of each bar (ranking charts). */
 const barLabels = {
   id: "sdBarLabels",
@@ -150,7 +165,7 @@ export function createBasicChart(canvas, opts) {
     if (horizontal) {
       return {
         x: { type: "linear", beginAtZero: true, grid, border: { display: false }, ticks: valueTicks, stacked },
-        y: { type: "category", grid: { display: false }, border: { display: false }, ticks: { ...ticks, color: rgba(t.label) }, stacked },
+        y: { type: "category", grid: { display: false, drawTicks: false }, border: { display: false }, ticks: { ...ticks, color: rgba(t.label) }, stacked, afterFit: fitCategoryLabels },
       };
     }
     return {

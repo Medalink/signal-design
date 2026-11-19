@@ -12,14 +12,17 @@
  * The canvas reads every color below at draw time and repaints on a theme
  * change. mono is black and white: series differ by grey and dash, and color
  * is kept for thresholds, heat and alerts. spectrum is the full signal palette.
- * The same tokens color .sd-plot (data.css), so both kinds of chart match.
- * Set data-chart-theme on the chart, the plot, or any element above them.
+ * The same tokens color .sd-plot (data.css), so both kinds of chart match,
+ * and the square-chart legends (.sd-key, .sd-heatmap-key), so a swatch is
+ * the color it names. Set data-chart-theme on the chart, the plot, or any element above them.
  */
 @layer components {
   .sd-chart,
   .sd-plot,
   .sd-heatmap,
   .sd-waffle,
+  .sd-key,
+  .sd-heatmap-key,
   .sd-uptime,
   .sd-meter,
   .sd-weighted,
@@ -98,6 +101,8 @@
   .sd-plot:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *),
   .sd-heatmap:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *),
   .sd-waffle:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *),
+  .sd-key:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *),
+  .sd-heatmap-key:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *),
   .sd-uptime:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *),
   .sd-meter:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *),
   .sd-weighted:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *),
@@ -152,6 +157,8 @@
   .sd-plot:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="paper"], [data-theme="paper"] *, [data-theme="light"], [data-theme="light"] *),
   .sd-heatmap:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="paper"], [data-theme="paper"] *, [data-theme="light"], [data-theme="light"] *),
   .sd-waffle:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="paper"], [data-theme="paper"] *, [data-theme="light"], [data-theme="light"] *),
+  .sd-key:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="paper"], [data-theme="paper"] *, [data-theme="light"], [data-theme="light"] *),
+  .sd-heatmap-key:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="paper"], [data-theme="paper"] *, [data-theme="light"], [data-theme="light"] *),
   .sd-uptime:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="paper"], [data-theme="paper"] *, [data-theme="light"], [data-theme="light"] *),
   .sd-meter:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="paper"], [data-theme="paper"] *, [data-theme="light"], [data-theme="light"] *),
   .sd-weighted:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="paper"], [data-theme="paper"] *, [data-theme="light"], [data-theme="light"] *),
@@ -192,6 +199,8 @@
     .sd-plot:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="auto"], [data-theme="auto"] *),
     .sd-heatmap:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="auto"], [data-theme="auto"] *),
     .sd-waffle:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="auto"], [data-theme="auto"] *),
+    .sd-key:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="auto"], [data-theme="auto"] *),
+    .sd-heatmap-key:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="auto"], [data-theme="auto"] *),
     .sd-uptime:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="auto"], [data-theme="auto"] *),
     .sd-meter:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="auto"], [data-theme="auto"] *),
     .sd-weighted:is([data-chart-theme="spectrum"], [data-chart-theme="spectrum"] *):is([data-theme="auto"], [data-theme="auto"] *),
