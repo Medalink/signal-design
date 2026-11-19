@@ -123,8 +123,12 @@
     font-size: var(--text-sm);
     white-space: nowrap;
   }
+  /* An attached button carries the field's bottom edge, so the line runs the
+     whole group, and takes no hairline of its own. */
   .sd-input-group > .sd-btn {
+    --btn-border: transparent;
     min-height: auto;
+    border-block-end-color: var(--sd-field-edge, var(--sd-line-control));
   }
 
   /* Checkbox, radio or switch with its text. */
