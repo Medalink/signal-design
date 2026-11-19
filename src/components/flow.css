@@ -1,3 +1,10 @@
+/* The flow board edge fade (below), animated by its scroll position. */
+@property --sd-flow-fade {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
 @layer components {
   /*
    * Flow: a pipeline of stages, left to right, each a column of jobs.
@@ -64,6 +71,26 @@
     min-width: 0;
     overflow-x: auto;
     background: var(--sd-tone-3);
+  }
+  /* While stages run past the right edge, the edge fades out so the cut reads
+     as more to scroll, not as the end. The fade follows the scroll position and
+     is gone at the end; a board that fits never has one. */
+  @supports (animation-timeline: scroll()) {
+    .sd-flow-board {
+      -webkit-mask-image: linear-gradient(to left, transparent, #000 var(--sd-flow-fade));
+      mask-image: linear-gradient(to left, transparent, #000 var(--sd-flow-fade));
+      animation: sd-flow-fade linear both;
+      animation-timeline: scroll(self inline);
+    }
+  }
+  @keyframes sd-flow-fade {
+    0%,
+    92% {
+      --sd-flow-fade: 48px;
+    }
+    100% {
+      --sd-flow-fade: 0px;
+    }
   }
 
   /* The canvas: one row of stage columns on a dot grid. The dots start

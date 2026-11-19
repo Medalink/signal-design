@@ -28,6 +28,14 @@
   .sd-dialog-head > :last-child:not(:first-child) {
     margin-inline-start: auto;
   }
+  /* A close button (data-sd-close, or the icon button React renders last)
+     keeps a 32px target whatever its size class; the negative margin keeps
+     the head as tall as its title. */
+  .sd-dialog-head > :is([data-sd-close], .sd-btn-icon:last-child) {
+    min-width: 32px;
+    min-height: 32px;
+    margin-block: -4px;
+  }
   /* A title that is a heading looks like the text around it, whatever its level. */
   .sd-dialog-title {
     margin: 0;
