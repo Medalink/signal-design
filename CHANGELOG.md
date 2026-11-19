@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 1.4.87 (2026-11-19)
+
+### Fixed
+- `sd-window-controls` buttons change color over 120ms instead of 100ms,
+  inside the 120-200ms range every other transition keeps.
+
 ## 1.4.86 (2026-11-19)
 
 ### Changed
