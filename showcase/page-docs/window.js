@@ -37,7 +37,7 @@ export default {
     "Keep one <code>h1</code> per page and the skip link at the start, as for any page.",
   ],
   motion: [
-    "Window buttons change color in 100ms; icon buttons in the bar run 120ms.",
+    "Window buttons and icon buttons in the bar change color in 120ms.",
     "<code>prefers-reduced-motion</code> cuts those transitions to 0.01ms.",
   ],
   responsive: [

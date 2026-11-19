@@ -1278,7 +1278,7 @@
     background: none;
     color: var(--sd-fg-subtle);
     cursor: default;
-    transition: background-color 100ms var(--ease-out), color 100ms var(--ease-out);
+    transition: background-color 120ms var(--ease-out), color 120ms var(--ease-out);
   }
   /* The end group clips at the bar's edges, so the ring goes inside. */
   .sd-window-controls > button:focus-visible {
