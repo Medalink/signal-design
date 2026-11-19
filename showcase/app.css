@@ -1147,6 +1147,19 @@
     gap: 10px;
     align-content: start;
   }
+  /* The machine on the first screen animates every frame, and each frame re-layers the whole page,
+     the eleven example apps and the wall included. Off-screen cards and tiles skip paint, and their
+     frames stop rendering, until they near the viewport. The guesses are the measured medians; only
+     the height is remembered, as for .doc-section. A tile's menus are popovers in the top layer,
+     so the containment does not clip them. */
+  .home-preview {
+    content-visibility: auto;
+    contain-intrinsic-block-size: auto 500px;
+  }
+  .wall-tile {
+    content-visibility: auto;
+    contain-intrinsic-block-size: auto 280px;
+  }
   .home-frame {
     --fw: 1440;
     --fh: 900;
@@ -1202,6 +1215,9 @@
     .home-frame {
       --fw: 390;
       --fh: 520;
+    }
+    .home-preview {
+      contain-intrinsic-block-size: auto 560px;
     }
   }
   /* The wall: a part per library section, a group per sidebar group, a tile per page. From 48rem up; a phone gets the index. */
