@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 1.4.81 (2026-11-19)
+
+### Fixed
+- `initRain` (run by `init()`): a second `init()` call no longer mounts every rain canvas again. The guard stored an empty string and tested it as a boolean, so it never held; on the worker path the second mount tried to take a canvas the first had already handed to its worker and threw `InvalidStateError` from `getContext`.
+
 ## 1.4.80 (2026-11-19)
 
 ### Fixed
