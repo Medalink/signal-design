@@ -287,8 +287,48 @@ export async function auditPage(screenshotBase64) {
     fontWeights: {},
     textColors: new Set(),
     truncated: 0,
+    brokenWords: 0,
+    brokenList: [],
     fieldChars: 0,
     offenders: [],
+  }
+
+  // Words of a wrapped text node that the line break cut in the middle. A word is a run of
+  // characters between spaces. A line may end after a hyphen, dash or slash, so a break there is not
+  // a split, and neither is one after any other punctuation (a pipe, a slash, `=`, `?` inside code);
+  // a break between two letters or digits, or between a letter and the comma after it, is (a column
+  // too narrow for the word, `overflow-wrap: anywhere`). Each word is a Range, and its client rects
+  // say which lines it was laid on. A word cut twice still counts once. Run only on nodes that
+  // already wrap, so a page pays for the few that do.
+  const ALNUM = /[\p{L}\p{N}]/u
+  function brokenWordsIn(node, el) {
+    const raw = node.textContent
+    const range = document.createRange()
+    const found = []
+    for (const match of raw.matchAll(/\S+/g)) {
+      const word = match[0]
+      if (word.length < 2) continue
+      const start = match.index
+      range.setStart(node, start)
+      range.setEnd(node, start + word.length)
+      const rects = [...range.getClientRects()].filter(r => r.width > 0 && r.height > 0)
+      if (rects.length < 2 || !rects.some(r => Math.abs(r.top - rects[0].top) > rects[0].height / 2)) continue
+      let cutAt = -1
+      let before = null
+      for (let k = 0; k < word.length; k++) {
+        range.setStart(node, start + k)
+        range.setEnd(node, start + k + 1)
+        const rect = range.getClientRects()[0]
+        if (!rect || rect.width === 0) continue
+        if (before && rect.top - before.top > before.height / 2 && ALNUM.test(word[k - 1])) {
+          cutAt = k
+          break
+        }
+        before = rect
+      }
+      if (cutAt > 0) found.push({ word: word.slice(0, 40), cutAfter: word.slice(0, cutAt).slice(-12), selector: selectorFor(el) })
+    }
+    return found
   }
 
   // Counts `chars` characters of text in the style `cs` and scores their contrast against what is
@@ -366,6 +406,9 @@ export async function auditPage(screenshotBase64) {
       text.wrappedChars += chars
       if (chars / lineCount > 80) text.longLineChars += chars
       if (lhRatio > 0 && lhRatio < 1.3) text.tightLineChars += chars
+      const broken = brokenWordsIn(node, el)
+      text.brokenWords += broken.length
+      text.brokenList.push(...broken)
     }
     record(el, cs, chars, fg, (fg ? fg.a : 1) * opacityOf(el), shown, clean(raw))
   }
@@ -467,6 +510,8 @@ export async function auditPage(screenshotBase64) {
       tightLineChars: text.tightLineChars,
       contrastMin: Number.isFinite(text.contrastMin) ? text.contrastMin : null,
       truncated: text.truncated,
+      brokenWords: text.brokenWords,
+      brokenList: text.brokenList.slice(0, 10),
       fieldChars: text.fieldChars,
       textColors: [...text.textColors],
       fontSizes: text.fontSizes,
@@ -519,6 +564,8 @@ export function mergeAudits(steps) {
       tightLineChars: sum(t => t.tightLineChars),
       contrastMin: contrast.length ? Math.round(Math.min(...contrast) * 100) / 100 : 0,
       truncated: sum(t => t.truncated),
+      brokenWords: sum(t => t.brokenWords),
+      brokenList: steps.flatMap(step => step.text.brokenList).slice(0, 10),
       fieldChars: sum(t => t.fieldChars),
       textColors: new Set(steps.flatMap(step => step.text.textColors)).size,
       fontSizes: sorted(steps.reduce((all, step) => addMaps(all, step.text.fontSizes), {})),

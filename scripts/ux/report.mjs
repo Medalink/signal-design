@@ -173,6 +173,10 @@ export function renderReport(record, baseline) {
         table(lines, ['pages', 'ratio', 'px', 'text', 'where'], lowContrast.map(o => [pagesOf(o.pages), o.ratio, o.fontSize, code(o.text), code(o.selector)]))
       }
 
+      const broken = grouped(audited.flatMap(([id, s]) => (s.text.brokenList ?? []).map(o => ({ id, ...o }))), o => `${o.selector}|${o.word}`).slice(0, 20)
+      lines.push('', broken.length ? 'Words split across two lines:' : 'Words split across two lines: none.')
+      if (broken.length) table(lines, ['pages', 'word', 'cut after', 'where'], broken.map(o => [pagesOf(o.pages), code(o.word), code(o.cutAfter), code(o.selector)]))
+
       const smallest = grouped(audited.flatMap(([id, s]) => s.targets.offenders.map(o => ({ id, ...o }))).sort((a, b) => Math.min(a.width, a.height) - Math.min(b.width, b.height)), o => `${o.selector}|${o.name}|${o.width}x${o.height}`).slice(0, 20)
       lines.push('', 'Smallest controls on the pages themselves:')
       table(lines, ['pages', 'size', 'name', 'where'], smallest.map(o => [pagesOf(o.pages), `${o.width}x${o.height}`, code(o.name), code(o.selector)]))

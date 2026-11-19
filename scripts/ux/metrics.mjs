@@ -91,6 +91,8 @@ export const METRICS = [
     compute: r => share(r, s => s.text.tightLineChars, s => s.text.wrappedChars) },
   { id: 'legibility.truncated', title: 'Labels cut off with an ellipsis', unit: 'count', better: 'lower', target: null, kind: 'measured', needs: 'surfaces',
     compute: r => sum(audited(r), s => s.text.truncated) },
+  { id: 'legibility.brokenWords', title: 'Words split across two lines in the middle', unit: 'count', better: 'lower', target: 0, kind: 'measured', needs: 'surfaces',
+    compute: r => sum(audited(r), s => s.text.brokenWords) },
   { id: 'targets.smallShare', title: 'Controls under 24 px, shared docs chrome counted once', unit: 'share', better: 'lower', target: 0, kind: 'measured', needs: 'surfaces',
     compute: r => controlShare(r, 'small') },
   { id: 'targets.under44Share', title: 'Controls under 44 px, shared docs chrome counted once', unit: 'share', better: 'lower', target: null, kind: 'measured', needs: 'surfaces', touchOnly: true,
