@@ -813,11 +813,15 @@
   }
 
   /* The composition is a real app shell sized to what is left of the window. */
+  /* The shell inside lifts its rail (z 30) and status bar (z 40) for the
+     app it frames; isolated, they stay under the page's sticky topbar when
+     the stage scrolls beneath it. */
   .home-stage {
     display: flex;
     flex: 1 1 0;
     flex-direction: column;
     min-height: 0;
+    isolation: isolate;
   }
   .home-shell {
     --shell-rail: 4.5rem;
