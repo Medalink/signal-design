@@ -60,7 +60,10 @@ and `data-sd-prefetch`.
 1. **Square corners.** No `rounded-*`, no `border-radius`. Avatars and checkboxes too.
 2. **Tone, not lines.** Regions and boxes are told apart by background steps
    (`--sd-tone-0` chrome, `-1` side panels, `-2` content, `-3` raised;
-   `--sd-field-fill` for a field, chip or plain button), not by borders. Where a
+   `--sd-field-fill` for a field, chip or plain button), not by borders. In
+   paper, where that fill alone blends into white, a plain button, chip, pill
+   and flow job also take a 1px `--sd-fill-edge` (transparent in ink and
+   graphite). Where a
    bar or panel meets what scrolls beside it, it takes an edge shadow
    (`--sd-edge-below`, `-above`, `-left`, `-right`); a floating layer takes
    `--sd-lift`. No other blurred shadow, no glow, no glass. Lines stay only where

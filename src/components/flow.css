@@ -218,7 +218,7 @@
     height: var(--job-h);
     margin: 0;
     padding: 0 12px;
-    border: 1px solid transparent;
+    border: 1px solid var(--sd-fill-edge);
     background: var(--job-fill);
     color: var(--sd-fg);
     font: inherit;

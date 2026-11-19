@@ -243,6 +243,8 @@
   /* A field, chip or plain button: the fg mixed thinly over whatever it sits on, so it always reads one
      step up from its parent, on content and in a card alike. 4% keeps --sd-fg-faint at 4.5:1 on it. */
   --sd-field-fill: color-mix(in srgb, var(--sd-fg) 4%, transparent);
+  /* The hairline around that fill: none on dark themes, where the fill already reads. */
+  --sd-fill-edge: transparent;
   --sd-flash: #ffffff; /* hover shimmer: the brightest ink */
   --sd-icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%23050506' stroke-width='2' stroke-linecap='square'/%3E%3C/svg%3E");
   --sd-icon-dash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='4' y='7' width='8' height='2' fill='%23050506'/%3E%3C/svg%3E");
@@ -301,6 +303,8 @@
   /* A field, chip or plain button: the fg mixed thinly over whatever it sits on, so it always reads one
      step up from its parent, on content and in a card alike. 4% keeps --sd-fg-faint at 4.5:1 on it. */
   --sd-field-fill: color-mix(in srgb, var(--sd-fg) 4%, transparent);
+  /* The hairline around that fill: none on dark themes, where the fill already reads. */
+  --sd-fill-edge: transparent;
   --sd-flash: #ffffff;
   --sd-icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%230F0F0F' stroke-width='2' stroke-linecap='square'/%3E%3C/svg%3E");
   --sd-icon-dash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='4' y='7' width='8' height='2' fill='%230F0F0F'/%3E%3C/svg%3E");
@@ -314,13 +318,13 @@
   color-scheme: light;
   --sd-on-tone: #ffffff;
   --sd-canvas: #ffffff;
-  --sd-surface: #f6f6f7;
-  --sd-raised: #eeeef0;
+  --sd-surface: #f4f4f6;
+  --sd-raised: #e9e9ed;
   --sd-overlay: #ffffff;
   --sd-mention-fill: color-mix(in srgb, var(--sd-fg) 7%, transparent);
   --sd-current-fill: color-mix(in srgb, var(--sd-fg) 10%, transparent);
-  --sd-line: rgb(0 0 0 / 0.1);
-  --sd-line-strong: rgb(0 0 0 / 0.22);
+  --sd-line: rgb(0 0 0 / 0.15);
+  --sd-line-strong: rgb(0 0 0 / 0.3);
   --sd-line-control: #858585; /* 3:1 on every light surface, the shell behind the app included */
   --sd-fg: var(--color-ink-1000);
   --sd-fg-muted: #2e2e33;
@@ -359,6 +363,8 @@
   /* A field, chip or plain button: the fg mixed thinly over whatever it sits on, so it always reads one
      step up from its parent, on content and in a card alike. 4% keeps --sd-fg-faint at 4.5:1 on it. */
   --sd-field-fill: color-mix(in srgb, var(--sd-fg) 4%, transparent);
+  /* On white a 4% fill alone blends in, so a plain button, chip, pill or flow job also takes a hairline. */
+  --sd-fill-edge: var(--sd-line);
   --sd-flash: #000000;
   --sd-icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='square'/%3E%3C/svg%3E");
   --sd-icon-dash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='4' y='7' width='8' height='2' fill='%23FFFFFF'/%3E%3C/svg%3E");
@@ -373,13 +379,13 @@
     color-scheme: light;
     --sd-on-tone: #ffffff;
     --sd-canvas: #ffffff;
-    --sd-surface: #f6f6f7;
-    --sd-raised: #eeeef0;
+    --sd-surface: #f4f4f6;
+    --sd-raised: #e9e9ed;
     --sd-overlay: #ffffff;
     --sd-mention-fill: color-mix(in srgb, var(--sd-fg) 7%, transparent);
     --sd-current-fill: color-mix(in srgb, var(--sd-fg) 10%, transparent);
-    --sd-line: rgb(0 0 0 / 0.1);
-    --sd-line-strong: rgb(0 0 0 / 0.22);
+    --sd-line: rgb(0 0 0 / 0.15);
+    --sd-line-strong: rgb(0 0 0 / 0.3);
     --sd-line-control: #858585;
     --sd-fg: var(--color-ink-1000);
     --sd-fg-muted: #2e2e33;
@@ -418,6 +424,8 @@
     /* A field, chip or plain button: the fg mixed thinly over whatever it sits on, so it always reads one
        step up from its parent, on content and in a card alike. 4% keeps --sd-fg-faint at 4.5:1 on it. */
     --sd-field-fill: color-mix(in srgb, var(--sd-fg) 4%, transparent);
+    /* On white a 4% fill alone blends in, so a plain button, chip, pill or flow job also takes a hairline. */
+    --sd-fill-edge: var(--sd-line);
     --sd-flash: #000000;
     --sd-icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='square'/%3E%3C/svg%3E");
     --sd-icon-dash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='4' y='7' width='8' height='2' fill='%23FFFFFF'/%3E%3C/svg%3E");

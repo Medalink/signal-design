@@ -7,7 +7,7 @@
   .sd-btn {
     --btn-fg: var(--sd-fg);
     --btn-bg: var(--sd-field-fill);
-    --btn-border: transparent;
+    --btn-border: var(--sd-fill-edge);
     display: inline-flex;
     align-items: center;
     justify-content: center;
