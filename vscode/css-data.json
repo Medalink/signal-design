@@ -51,7 +51,7 @@
   },
   {
    "name": "--sd-accent",
-   "description": "Signal: selected, active, now. Focus rings and the current item use fg, not accent. ink #00d4ff · graphite #00d4ff · paper #006c89"
+   "description": "Signal: selected, active, now: the current rail tile's bar, a chosen option card, the palette's active result. Focus rings and current nav links use fg, not accent. ink #00d4ff · graphite #00d4ff · paper #006c89"
   },
   {
    "name": "--sd-success",
@@ -63,11 +63,11 @@
   },
   {
    "name": "--sd-warning",
-   "description": "Signal: costly. ink #ff8800 · graphite #ff8800 · paper #a24a00"
+   "description": "Signal: costly. ink #ff6a00 · graphite #ff6a00 · paper #ad3f00"
   },
   {
    "name": "--sd-pending",
-   "description": "Signal: unproven, waiting, low confidence. ink #ffaa00 · graphite #ffaa00 · paper #855800"
+   "description": "Signal: unproven, waiting, low confidence. ink #ffb800 · graphite #ffb800 · paper #7a5c00"
   },
   {
    "name": "--sd-extra",
