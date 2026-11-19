@@ -33,7 +33,7 @@ import { checkSidebarResize } from "./check-sidebar-resize.mjs";
 import { checkHashRedirects, checkShowcasePages, checkShowcaseRegistry } from "./check-showcase-pages.mjs";
 import { checkShowcaseBar } from "./check-showcase-bar.mjs";
 import { gotoSettled } from "./settle.mjs";
-import { transient, watchTransient } from "./transient.mjs";
+import { TRANSIENT_ATTEMPTS, transient, watchTransient } from "./transient.mjs";
 import { ALL, EXAMPLES, HOME, LIBRARY, byId, keyOf } from "../showcase/pages.js";
 
 // One file per component in scripts/checks/, each exporting
@@ -1065,7 +1065,9 @@ for (const name of Object.keys(engines)) {
           } finally {
             await init.dispose().catch(() => {});
           }
-          console.log(`ok   ${where}`);
+          // checkPage fails a console error without throwing, so a failed
+          // attempt reaches here; ok only when this attempt found nothing.
+          if (!held.getStore()?.failed) console.log(`ok   ${where}`);
         }, viewport: { width, height: 900 } });
       }
     }
@@ -1157,6 +1159,13 @@ const browsers = Object.fromEntries(Object.entries(engines).map(([name, engine])
 // covers the failures a network change causes without naming it: a selector
 // that never appears because its script was aborted, a network that never
 // settles. A failure on a page that saw no such error is never retried.
+//
+// One retry is not always enough: the machine's network can churn for a whole
+// sweep — veth pairs made and removed as other rings start and stop — and
+// kill in-flight loads on the second attempt too, on a page whose checks all
+// passed (the lab at ea8f832 failed on 25 of these). So a job keeps retrying
+// while its attempt met a transient error, up to TRANSIENT_ATTEMPTS; a
+// failure that repeats past the last attempt fails and is logged as before.
 /** Why the job's run should repeat, or null: the first transient FAIL line, else the first thing its page saw, when it failed. */
 const transientWhy = (out, met) => {
   const line = out.lines.find((l) => l.startsWith("FAIL ") && transient.test(l));
@@ -1201,7 +1210,7 @@ async function runJob(job, kept) {
       watch?.stop();
       await page?.close().catch(() => {});
     }
-    const why = attempt === 1 ? transientWhy(out, watch?.met ?? []) : null;
+    const why = attempt < TRANSIENT_ATTEMPTS ? transientWhy(out, watch?.met ?? []) : null;
     if (!why) return;
     failures -= out.failed;
     out.failed = 0;

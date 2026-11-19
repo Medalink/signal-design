@@ -6,14 +6,15 @@
  *
  * Exits non-zero when any violation is found. A page whose audit met a network
  * change (a failed request or console error, see scripts/transient.mjs) is
- * audited once more; if that audit meets one too, the page is a `page-load`
- * violation, never audited half-loaded.
+ * audited again while that keeps happening, up to TRANSIENT_ATTEMPTS; a hit
+ * on the last one makes the page a `page-load` violation, never audited
+ * half-loaded.
  */
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { chromium } from "playwright";
 import { ALL, keyOf } from "../showcase/pages.js";
-import { transient, watchTransient } from "./transient.mjs";
+import { TRANSIENT_ATTEMPTS, transient, watchTransient } from "./transient.mjs";
 
 const require = createRequire(import.meta.url);
 const axeSource = readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
@@ -71,19 +72,19 @@ async function auditOnce(browser, key, theme, width) {
   }
 }
 
-/** Audits a page once, and once more when a network change hit the first audit; a second hit fails the page. */
+/** Audits a page, and again while a network change hits the audit, up to TRANSIENT_ATTEMPTS; a hit on the last one fails the page. */
 async function audit(browser, key, theme, width) {
   const where = `${theme}@${width}`;
   let run = await auditOnce(browser, key, theme, width);
-  if (run.met.length) {
+  for (let attempt = 1; run.met.length && attempt < TRANSIENT_ATTEMPTS; attempt++) {
     console.log(`::warning::${key} ${where}: ${run.met[0]}; auditing again`);
     run = await auditOnce(browser, key, theme, width);
-    if (run.met.length) {
-      const k = `${key} · page-load · ${run.met[0]}`;
-      if (!found.has(k)) found.set(k, { page: key, rule: "page-load", impact: "critical", help: "the page could not be loaded to audit", target: run.met[0], html: "", where: [], summary: "a network change hit both audits" });
-      found.get(k).where.push(where);
-      return;
-    }
+  }
+  if (run.met.length) {
+    const k = `${key} · page-load · ${run.met[0]}`;
+    if (!found.has(k)) found.set(k, { page: key, rule: "page-load", impact: "critical", help: "the page could not be loaded to audit", target: run.met[0], html: "", where: [], summary: "a network change hit every audit" });
+    found.get(k).where.push(where);
+    return;
   }
   for (const v of run.violations) {
     for (const n of v.nodes) {

@@ -13,6 +13,16 @@
 export const transient = /ERR_CONNECTION_REFUSED|ERR_CONNECTION_RESET|ERR_NETWORK_CHANGED|Could not connect to server|fonts:.*:error|network did not settle/;
 
 /**
+ * How many attempts a job that keeps meeting transient errors gets. One retry
+ * is not always enough: the machine's network can churn for a whole sweep —
+ * veth pairs made and removed as other rings start and stop — and kill
+ * in-flight loads on the second attempt too. A failure that repeats past the
+ * last attempt still fails and is logged; a page that saw no transient error
+ * never retries at all.
+ */
+export const TRANSIENT_ATTEMPTS = 4;
+
+/**
  * Watches a page for a load that a network change or a refused connection
  * killed: a failed request or a console error that matches `transient`.
  * Attach it before the page navigates. `met` lists what it saw, in order;
