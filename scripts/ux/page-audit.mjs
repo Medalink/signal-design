@@ -298,8 +298,11 @@ export async function auditPage(screenshotBase64) {
   // a split, and neither is one after any other punctuation (a pipe, a slash, `=`, `?` inside code);
   // a break between two letters or digits, or between a letter and the comma after it, is (a column
   // too narrow for the word, `overflow-wrap: anywhere`). Each word is a Range, and its client rects
-  // say which lines it was laid on. A word cut twice still counts once. Run only on nodes that
-  // already wrap, so a page pays for the few that do.
+  // say which lines it was laid on. A word cut twice still counts once. A run longer than
+  // LONGEST_WORD is a token (a hash, an id, a name with no spaces) that no column is meant to hold,
+  // so breaking it is the fix, not the defect. Run only on nodes that already wrap, so a page pays
+  // for the few that do.
+  const LONGEST_WORD = 30
   const ALNUM = /[\p{L}\p{N}]/u
   function brokenWordsIn(node, el) {
     const raw = node.textContent
@@ -307,7 +310,7 @@ export async function auditPage(screenshotBase64) {
     const found = []
     for (const match of raw.matchAll(/\S+/g)) {
       const word = match[0]
-      if (word.length < 2) continue
+      if (word.length < 2 || word.length > LONGEST_WORD) continue
       const start = match.index
       range.setStart(node, start)
       range.setEnd(node, start + word.length)

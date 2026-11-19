@@ -355,7 +355,7 @@ the first demo.
 | `legibility.distinctFontSizes`, `.distinctFontFamilies` | sizes and families in use | lower | |
 | `legibility.longLineShare`, `.tightLineShare` | line length and line height | lower | |
 | `legibility.truncated` | labels cut off with an ellipsis | lower | |
-| `legibility.brokenWords` | words the line break splits in the middle, such as `Tailwin` over `d`; a break after a hyphen, dash or slash is not a split | lower | 0 |
+| `legibility.brokenWords` | words the line break splits in the middle, such as `Tailwin` over `d`; a break after a hyphen, dash or slash is not a split, and neither is a break in a token over 30 characters (a hash, an id, a name with no spaces), which no column is meant to hold | lower | 0 |
 | `targets.smallShare`, `.under44Share` | control size, shared docs chrome counted once (the second on touch only) | lower | 0 |
 | `targets.unnamed`, `.iconOnlyShare` | naming, shared docs chrome included | lower | 0 |
 | `targets.chrome.count` | distinct controls in the shared docs chrome | none | |
