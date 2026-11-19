@@ -12,8 +12,15 @@
      what scrolls beside it. */
   :root {
     --doc-topbar-h: 4rem;
-    --doc-sidebar-w: 242px;
+    --doc-sidebar-w: 288px;
     --doc-gutter: 26px;
+    --doc-toc-w: 216px;
+    /* The article and its demos grow with the window up to this width. Past it
+       a preview is only more of the field tone around the same specimen, and a
+       code panel only more empty line. */
+    --doc-article-max: 1600px;
+    /* Running prose stops here: about 75 characters in the body face. */
+    --doc-measure: 68ch;
   }
   /* The topbar is the only bar on a library page and on the overview: the
      showcase bar (viewport.js) mounts on example pages only. Anything
@@ -69,9 +76,9 @@
     display: inline-flex;
     align-items: center;
     height: 100%;
-    padding: 0 11px;
+    padding: 0 12px;
     color: var(--sd-fg-muted);
-    font-size: 14px;
+    font-size: var(--text-sm);
     text-decoration: none;
   }
   .doc-topbar-nav a:hover,
@@ -92,10 +99,10 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    height: 32px;
+    height: 34px;
     padding: 0 12px;
     color: var(--sd-fg);
-    font-size: 13px;
+    font-size: var(--text-sm);
     background: var(--sd-field-fill);
     border: 0;
   }
@@ -117,11 +124,11 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    width: 136px;
-    height: 32px;
-    padding: 0 5px 0 10px;
+    width: 168px;
+    height: 34px;
+    padding: 0 6px 0 10px;
     color: var(--sd-fg-muted);
-    font-size: 13px;
+    font-size: var(--text-sm);
     background: var(--sd-field-fill);
     border: 0;
   }
@@ -130,8 +137,8 @@
     white-space: nowrap;
     padding: 0 4px;
     border: 0;
-    font-size: 12px;
-    line-height: 18px;
+    font-size: var(--text-2xs);
+    line-height: 20px;
     color: var(--sd-fg-subtle);
   }
   .doc-topbar-search:hover {
@@ -191,15 +198,15 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    height: 32px;
-    padding: 0 6px 0 10px;
+    height: 38px;
+    padding: 0 8px 0 12px;
     border-block-end: 1px solid var(--sd-field-edge, var(--sd-line-control));
     background: var(--sd-field-fill);
     cursor: text;
   }
   .doc-search svg {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     flex: none;
     color: var(--sd-fg-subtle);
   }
@@ -215,7 +222,7 @@
     background: transparent;
     border: 0;
     color: var(--sd-fg);
-    font-size: 13px;
+    font-size: var(--text-sm);
   }
   #doc-filter::placeholder {
     color: var(--sd-fg-subtle);
@@ -229,16 +236,16 @@
     display: flex;
     flex: none;
     gap: 2px;
-    margin: 8px 0 18px;
+    margin: 8px 0 24px;
     padding: 3px;
     background: var(--sd-field-fill);
   }
   .doc-tiers [role="radio"] {
     flex: 1;
-    height: 24px;
-    padding: 0 8px;
+    height: 30px;
+    padding: 0 6px;
     color: var(--sd-fg-muted);
-    font-size: 12px;
+    font-size: var(--text-sm);
     background: none;
     border: 0;
   }
@@ -265,7 +272,7 @@
     display: none;
   }
   .doc-nav-section + .doc-nav-section {
-    margin-block-start: 14px;
+    margin-block-start: 32px;
   }
   .doc-nav summary {
     list-style: none;
@@ -299,14 +306,15 @@
   details:not([open]) > summary > .doc-chevron {
     rotate: -90deg;
   }
+  /* Section: the largest text in the nav, in fg, with its icon. */
   .doc-nav-heading {
     display: flex;
     align-items: center;
-    gap: 8px;
-    height: 30px;
+    gap: 10px;
+    height: 40px;
     padding: 0 8px;
     color: var(--sd-fg);
-    font-size: 13px;
+    font-size: var(--text-md);
     font-weight: 500;
   }
   .doc-nav-heading:hover,
@@ -315,29 +323,36 @@
   }
   .doc-nav-icon {
     flex: none;
-    width: 15px;
-    height: 15px;
+    width: 20px;
+    height: 20px;
     color: var(--sd-fg-muted);
   }
   .doc-nav-total {
     margin-inline-start: auto;
     color: var(--sd-fg-subtle);
     font-family: var(--sd-font-mono);
-    font-size: 12px;
+    font-size: var(--text-2xs);
     font-weight: 400;
   }
+  /* Group: a caps label in fg, smaller than the links under it, so it reads as a heading and not as one more link. */
   .doc-nav-sub {
     display: flex;
     align-items: center;
-    gap: 6px;
-    height: 30px;
-    padding: 0 8px 0 10px;
+    gap: 8px;
+    height: 34px;
+    margin-block-start: 10px;
+    padding: 0 8px;
     color: var(--sd-fg);
-    font-size: 13px;
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
   .doc-nav-sub .sd-count {
+    margin-inline-start: auto;
     color: var(--sd-fg-subtle);
-    font-size: 12px;
+    font-size: var(--text-2xs);
+    letter-spacing: 0;
   }
   .doc-nav-links {
     display: grid;
@@ -349,10 +364,10 @@
     position: relative;
     display: flex;
     align-items: center;
-    height: 30px;
-    padding: 0 8px;
+    height: 36px;
+    padding: 0 10px;
     color: var(--sd-fg-muted);
-    font-size: 13px;
+    font-size: var(--text-sm);
     text-decoration: none;
   }
   .doc-nav-link:hover {
@@ -362,7 +377,7 @@
   .doc-nav-link::before {
     content: "";
     position: absolute;
-    inset: 4px auto 4px -7px;
+    inset: 6px auto 6px -7px;
     width: 2px;
     background: transparent;
   }
@@ -380,11 +395,11 @@
     flex: none;
     align-items: center;
     gap: 8px;
-    height: 40px;
+    height: 44px;
     margin-block-start: 8px;
     padding: 0 12px;
     color: var(--sd-fg);
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 500;
     text-decoration: none;
     background: var(--sd-field-fill);
@@ -396,18 +411,18 @@
     margin-inline-start: auto;
     color: var(--sd-fg-subtle);
     font-family: var(--sd-font-mono);
-    font-size: 12px;
+    font-size: var(--text-2xs);
     font-weight: 400;
   }
   .doc-release svg {
-    width: 13px;
-    height: 13px;
+    width: 14px;
+    height: 14px;
     color: var(--sd-fg-subtle);
   }
   .doc-nav-empty {
     margin: 12px 8px;
     color: var(--sd-fg-faint);
-    font-size: 13px;
+    font-size: var(--text-sm);
   }
   .doc-scrim {
     position: fixed;
@@ -424,12 +439,15 @@
   .doc-main {
     flex: 1;
     min-width: 0;
-    padding: 36px 57.6px 64px;
+    padding: 36px clamp(24px, 3.5vw, 64px) 64px;
   }
+  /* The article takes what the window leaves between the sidebar and the
+     rail, up to --doc-article-max; past that the pair centers in the room. */
   .doc-grid {
     display: grid;
-    grid-template-columns: minmax(0, 775px) 200px;
-    gap: 56px;
+    grid-template-columns: minmax(0, var(--doc-article-max)) var(--doc-toc-w);
+    justify-content: center;
+    gap: clamp(32px, 3.5vw, 56px);
     align-items: start;
   }
   .doc-article {
@@ -441,7 +459,7 @@
   /* Plain muted text, not the chip crumbs an app shell uses. */
   .doc-crumbs .sd-breadcrumb {
     color: var(--sd-fg-muted);
-    font-size: 13px;
+    font-size: var(--text-sm);
   }
   .doc-crumbs .sd-breadcrumb > li > :where(a, span, button) {
     min-height: 0;
@@ -467,16 +485,17 @@
   .doc-article .doc-h1 {
     margin: 0;
     color: var(--sd-fg);
-    font-size: 40px;
+    font-size: var(--text-3xl);
     font-weight: 500;
-    line-height: 44px;
-    letter-spacing: -1.2px;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
   }
   .doc-lead {
     margin: 0;
+    max-width: var(--doc-measure);
     color: var(--sd-fg-muted);
-    font-size: 16px;
-    line-height: 1.5;
+    font-size: var(--text-md);
+    line-height: 1.55;
   }
   /* The header row: the install pill left, the copy-page action right. */
   .doc-header-row {
@@ -497,7 +516,7 @@
   }
   .doc-install-pill code {
     font-family: var(--sd-font-mono);
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     overflow-wrap: anywhere;
   }
   .doc-icon-btn {
@@ -515,8 +534,8 @@
     color: var(--sd-fg);
   }
   .doc-icon-btn svg {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
   }
   /* Copy page: a split button on the field fill, the chevron opening the
      copy menu. */
@@ -528,15 +547,15 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    height: 34px;
-    padding: 0 12px;
+    height: 38px;
+    padding: 0 14px;
     color: var(--sd-fg);
-    font-size: 13px;
+    font-size: var(--text-sm);
     background: var(--sd-field-fill);
     border: 0;
   }
   .doc-copy-page > button + button {
-    width: 34px;
+    width: 38px;
     justify-content: center;
     padding: 0;
   }
@@ -544,8 +563,8 @@
     background: var(--sd-tone-3);
   }
   .doc-copy-page svg {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
   }
   /* Pager: field-fill cards, next on the right like uiarc's. */
   .doc-pager-link {
@@ -564,7 +583,7 @@
   }
   .doc-pager-link .doc-pager-title {
     color: var(--sd-fg);
-    font-size: 15px;
+    font-size: var(--text-base);
     font-weight: 500;
   }
   .doc-pager-link[rel="next"] {
@@ -579,7 +598,7 @@
     margin-block-start: 48px;
     padding-block: 20px 0;
     color: var(--sd-fg-subtle);
-    font-size: 13px;
+    font-size: var(--text-sm);
   }
   .doc-footer a {
     display: inline-flex;
@@ -823,10 +842,10 @@
   }
   .doc-section > .sd-title {
     margin: 0 0 16px;
-    font-size: 22px;
+    font-size: var(--text-xl);
     font-weight: 500;
-    line-height: 28px;
-    letter-spacing: -0.3px;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
   }
   /* Code blocks in the doc: a quiet head (file name or package-manager
      tabs) with an icon Copy at its end. */
@@ -846,22 +865,22 @@
     align-items: center;
     gap: 8px;
     font-family: var(--sd-font-mono);
-    font-size: 12px;
+    font-size: var(--text-sm);
     color: var(--sd-fg-muted);
   }
   .doc-code-file svg {
-    width: 13px;
-    height: 13px;
+    width: 15px;
+    height: 15px;
   }
   .doc-code-copy {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    height: 26px;
+    height: 30px;
     margin-inline-start: auto;
-    padding: 0 8px;
+    padding: 0 10px;
     color: var(--sd-fg-muted);
-    font-size: 12px;
+    font-size: var(--text-sm);
     background: none;
     border: 0;
   }
@@ -870,19 +889,19 @@
     background: var(--sd-field-fill);
   }
   .doc-code-copy svg {
-    width: 13px;
-    height: 13px;
+    width: 15px;
+    height: 15px;
   }
   .doc-pm-tabs {
     display: flex;
     gap: 2px;
   }
   .doc-pm-tabs [role="tab"] {
-    height: 26px;
-    padding: 0 10px;
+    height: 30px;
+    padding: 0 12px;
     color: var(--sd-fg-muted);
     font-family: var(--sd-font-mono);
-    font-size: 12px;
+    font-size: var(--text-sm);
     background: none;
     border: 0;
   }
@@ -916,7 +935,8 @@
     display: grid;
     gap: 10px;
     color: var(--sd-fg-muted);
-    max-width: 48rem;
+    font-size: var(--text-base);
+    max-width: var(--doc-measure);
   }
   .doc-list li {
     padding-inline-start: 16px;
@@ -951,8 +971,9 @@
   }
   .doc-toc-label {
     margin: 0;
-    color: var(--sd-fg-muted);
-    font-size: 13px;
+    color: var(--sd-fg);
+    font-size: var(--text-base);
+    font-weight: 500;
   }
   .doc-toc {
     margin: 0;
@@ -962,9 +983,9 @@
   .doc-toc a {
     position: relative;
     display: block;
-    padding: 5px 0 5px 14px;
+    padding: 6px 0 6px 14px;
     color: var(--sd-fg-muted);
-    font-size: 13px;
+    font-size: var(--text-sm);
     text-decoration: none;
   }
   .doc-toc a:hover {
@@ -973,7 +994,7 @@
   .doc-toc a::before {
     content: "";
     position: absolute;
-    inset: 4px auto 4px 0;
+    inset: 5px auto 5px 0;
     width: 2px;
     background: transparent;
   }
@@ -985,7 +1006,12 @@
   }
   /* Named examples under a doc's Examples section. */
   .doc-toc a.doc-toc-sub {
-    padding-inline-start: 26px;
+    padding-inline-start: 28px;
+    color: var(--sd-fg-subtle);
+  }
+  .doc-toc a.doc-toc-sub:hover,
+  .doc-toc a.doc-toc-sub[aria-current="location"] {
+    color: var(--sd-fg);
   }
   .doc-toc-foot {
     display: grid;
@@ -999,7 +1025,7 @@
     margin-block: -2px;
     padding: 0;
     color: var(--sd-fg-muted);
-    font-size: 13px;
+    font-size: var(--text-sm);
     text-decoration: none;
     background: none;
     border: 0;
@@ -1008,8 +1034,8 @@
     color: var(--sd-fg);
   }
   .doc-toc-link svg {
-    width: 13px;
-    height: 13px;
+    width: 15px;
+    height: 15px;
   }
   /* The preview shell around a page's demo blocks: a Preview/Code tablist
      over one canvas. The bar sits on the page background; the canvas is the
@@ -1038,13 +1064,13 @@
     height: 30px;
     padding: 0 2px;
     color: var(--sd-fg-muted);
-    font-size: 13px;
+    font-size: var(--text-sm);
     background: none;
     border: 0;
   }
   .doc-tabs [role="tab"] svg {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
   }
   .doc-tabs [role="tab"]:hover {
     color: var(--sd-fg);
@@ -1112,7 +1138,7 @@
     gap: 14px;
     align-content: safe center;
     min-height: 520px;
-    padding: clamp(12px, 4vw, 48px);
+    padding: clamp(12px, 2.5vw, 40px);
     background: var(--sd-field-fill);
     /* Wide demos scroll here, like the old shell's content box did, so the
        document itself never overflows. */
@@ -1122,7 +1148,6 @@
   .doc-examples {
     display: grid;
     gap: 32px;
-    max-width: 48rem;
   }
   .doc-example {
     display: grid;
@@ -1144,8 +1169,8 @@
   }
   .doc-note {
     margin-block-start: 14px;
-    max-width: 48rem;
-    font-size: var(--text-sm);
+    max-width: var(--doc-measure);
+    font-size: var(--text-base);
   }
   .doc-section > .sd-title + .doc-note {
     margin-block: 0 16px;
@@ -1209,9 +1234,10 @@
     border-block-start: 0;
   }
   .demo-usage {
+    max-width: var(--doc-measure);
     overflow-wrap: anywhere;
-    font-size: var(--text-sm);
-    color: var(--sd-fg-subtle);
+    font-size: var(--text-base);
+    color: var(--sd-fg-muted);
   }
   /* Preview / code flip, in place. */
   /* The icon set: one cell per icon with its name. */

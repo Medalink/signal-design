@@ -541,7 +541,7 @@ function libraryContent(page, body) {
           </div>
         </div>`
     : "";
-  const title = `<div class="demo-title"><h1 id="${page.id}-h" class="doc-h1">${page.title}</h1>${intro ? `\n      <p class="doc-lead${split && !page.doc?.intro ? " max-w-[42rem]" : ""}">${intro}</p>` : ""}\n      <div class="doc-header-row">\n        <div class="doc-install-pill"><code id="doc-header-cmd">pnpm add github:Medalink/signal-design</code><button class="doc-icon-btn" type="button" data-sd-copy="#doc-header-cmd" aria-label="Copy install command"><svg aria-hidden="true"><use href="#i-copy"/></svg></button></div>${copyPage}\n      </div></div>`;
+  const title = `<div class="demo-title"><h1 id="${page.id}-h" class="doc-h1">${page.title}</h1>${intro ? `\n      <p class="doc-lead">${intro}</p>` : ""}\n      <div class="doc-header-row">\n        <div class="doc-install-pill"><code id="doc-header-cmd">pnpm add github:Medalink/signal-design</code><button class="doc-icon-btn" type="button" data-sd-copy="#doc-header-cmd" aria-label="Copy install command"><svg aria-hidden="true"><use href="#i-copy"/></svg></button></div>${copyPage}\n      </div></div>`;
   let header;
   let blocks = body;
   if (blocks.startsWith('<header class="demo-intro">')) {
