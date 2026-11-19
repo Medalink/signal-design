@@ -7,9 +7,10 @@
  * (a bridge or veth pair made or removed on the machine) aborts in-flight
  * loads with ERR_NETWORK_CHANGED. A font face it kills mid-fetch shows no
  * network text of its own, only an `error` status in the fonts rule's FAIL
- * line.
+ * line. A burst can also starve a page's first requests past the settle
+ * window without any of them failing; the settle throw names that itself.
  */
-export const transient = /ERR_CONNECTION_REFUSED|ERR_CONNECTION_RESET|ERR_NETWORK_CHANGED|Could not connect to server|fonts:.*:error/;
+export const transient = /ERR_CONNECTION_REFUSED|ERR_CONNECTION_RESET|ERR_NETWORK_CHANGED|Could not connect to server|fonts:.*:error|network did not settle/;
 
 /**
  * Watches a page for a load that a network change or a refused connection
