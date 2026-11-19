@@ -202,7 +202,13 @@ function wireSidebar() {
   nav.querySelector('.doc-nav-link[aria-current="page"]')?.scrollIntoView({ block: "nearest" });
 }
 
-/** The toc's marker bar follows the section in view: the last section whose top has risen past the topbar is current, and Preview before any has. */
+/**
+ * The toc's marker bar follows the section in view: the last section whose top
+ * has risen past a line is current, and Preview before any has. The line sits
+ * under the topbar and slides to the bottom of the window over the last screen
+ * of scroll, so short sections at the end of the page still become current.
+ * A toc link that was clicked stays current until the reader scrolls.
+ */
 function wireScrollspy() {
   const links = [...document.querySelectorAll(".doc-toc a[href^='#']")];
   const ids = [...new Set(links.map((a) => a.getAttribute("href").slice(1)))];
@@ -215,15 +221,27 @@ function wireScrollspy() {
       else a.removeAttribute("aria-current");
     }
   };
-  // The line a section crosses sits just under the topbar.
   const top = 104;
   let ticking = false;
+  let pinned = null;
   const mark = () => {
     ticking = false;
+    if (pinned) return setCurrent(pinned);
+    const span = innerHeight - top;
+    const maxScroll = document.documentElement.scrollHeight - innerHeight;
+    const from = Math.max(0, maxScroll - span);
+    const slide = maxScroll > from ? Math.min(1, Math.max(0, (scrollY - from) / (maxScroll - from))) : 0;
+    const line = top + span * slide;
     let current = targets[0].id;
-    for (const t of targets) if (t.getBoundingClientRect().top <= top) current = t.id;
+    for (const t of targets) if (t.getBoundingClientRect().top <= line) current = t.id;
     setCurrent(current);
   };
+  for (const a of links) a.addEventListener("click", () => { pinned = a.getAttribute("href").slice(1); setCurrent(pinned); });
+  for (const type of ["wheel", "touchstart", "keydown", "pointerdown"]) {
+    addEventListener(type, (e) => {
+      if (pinned && !e.target.closest?.(".doc-toc")) { pinned = null; mark(); }
+    }, { passive: true });
+  }
   addEventListener("scroll", () => {
     if (!ticking) {
       ticking = true;
