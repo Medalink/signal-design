@@ -283,7 +283,7 @@ Every block from the library pages, with its copyable HTML. `JS:` says what `ini
 
 ## Design / Hard rules
 
-Square corners · flat, hairlines only · color only for status and selection · transitions of 120–200ms · tokens, never hex values · one text face in regular and medium, font-mono for code · see AGENTS.md for the full list and npx signal-design check to test a page against it
+Square corners, tone instead of lines, color only for status and selection, 120–200ms transitions, tokens instead of hex values, and one text face in regular and medium. AGENTS.md has the full list, and npx signal-design check tests a page against it.
 
 Classes: sd-avatar, sd-badge, sd-btn, sd-check, sd-check-text, sd-cluster, sd-nav, sd-typing
 
@@ -300,7 +300,7 @@ No JS needed: the HTML works with the CSS alone.
     </div>
   </li>
   <li class="grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center">
-    <p class="text-fg-muted">Flat surfaces. No glass, grain, glow or shadow.</p>
+    <p class="text-fg-muted">Flat surfaces. No glass, grain, glow, or shadow.</p>
     <div class="sd-cluster">
       <span class="bg-canvas p-3 text-sm">Canvas</span>
       <span class="bg-surface p-3 text-sm">Surface</span>
@@ -308,7 +308,7 @@ No JS needed: the HTML works with the CSS alone.
     </div>
   </li>
   <li class="grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center">
-    <p class="text-fg-muted">Color is for important things: risk, status, success and selection. Everything else is black, white and grey, navigation included.</p>
+    <p class="text-fg-muted">Color is for important things: risk, status, success, and selection. Everything else is black, white, and grey, navigation included.</p>
     <div class="sd-cluster">
       <nav class="sd-nav" aria-label="Grey navigation"><a href="#tokens-hard-rules" aria-current="page">Projects</a><a href="#tokens-hard-rules">History</a></nav>
       <span class="sd-badge" data-tone="danger">Risk</span>
@@ -316,7 +316,7 @@ No JS needed: the HTML works with the CSS alone.
     </div>
   </li>
   <li class="grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center">
-    <p class="text-fg-muted">120–200ms transitions and a one-pass hover shimmer. Loops are allowed; the rain moves while work runs or when the reader turns it on.</p>
+    <p class="text-fg-muted">Transitions run 120–200ms. Hover shimmers play once. Loops run only while work runs or when turned on, and stop under reduced motion.</p>
     <div class="sd-cluster">
       <button class="sd-btn">Hover me</button>
       <span class="sd-typing"><i><b></b></i><span>Working</span></span>
@@ -326,7 +326,7 @@ No JS needed: the HTML works with the CSS alone.
     <p class="text-fg-muted">Minimal by default, detail on expand.</p>
     <details>
       <summary>web-1 · running</summary>
-      <p>Image, ports and the last restart.</p>
+      <p>Image, ports, and the last restart.</p>
     </details>
   </li>
   <li class="grid gap-3 sm:grid-cols-2 sm:gap-x-12 sm:items-center">
@@ -432,7 +432,7 @@ JS: init() from signal-design/js wires data-sd-check-ignore.
 
 ## Design / Contrast on canvas
 
-WCAG ratio of each text role against the current canvas. Body text needs 4.5. Every text role, fg-faint included, reaches it on the canvas, surface and raised fills of all three themes, so none of them is limited to decoration.
+WCAG ratio of each text role against the current canvas. Body text needs 4.5. Every text role, fg-faint included, reaches it on the canvas, surface, and raised fills of all three themes, so none of them is limited to decoration.
 
 Classes: sd-table, sd-table-compact, sd-table-wrap
 
@@ -554,7 +554,7 @@ JS: init() from signal-design/js wires data-sd-ornaments · data-sd-seg.
 <div class="grid gap-4 sm:grid-cols-3">
   <article class="sd-card">
     <header class="sd-card-head">Card <span class="sd-badge">3</span></header>
-    <div class="sd-card-body sd-muted">Header, body and footer split by hairlines.</div>
+    <div class="sd-card-body sd-muted">Header, body, and footer split by hairlines.</div>
     <footer class="sd-card-foot"><button class="sd-btn sd-btn-sm">Open</button></footer>
   </article>
   <article class="sd-card" data-tone="danger">
@@ -568,7 +568,7 @@ JS: init() from signal-design/js wires data-sd-ornaments · data-sd-seg.
 
 <div class="sd-card" data-sd-ornaments="" data-sd-ornaments-size="220" style="background-color: var(--sd-container)">
   <div class="sd-card-body grid place-items-center text-center" style="min-height: 260px">
-    <div><p class="sd-label">Ornaments</p><p class="mt-2 sd-muted max-w-[28rem]">Dust in the bottom-right corner: filled squares, outlines and dots, fading as they spread. <code>data-sd-ornaments</code></p></div>
+    <div><p class="sd-label">Ornaments</p><p class="mt-2 sd-muted max-w-[28rem]">Dust in the bottom-right corner: filled squares, outlines, and dots, fading as they spread. <code>data-sd-ornaments</code></p></div>
   </div>
 </div>
 
@@ -648,7 +648,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Design / Icons
 
-sd-icon-text + sd-icon · icons size to 1.5cap (the 24 grid's 4-unit inset makes the drawn shape span the caps), so they follow the text at any size. Buttons, rows, navigation and the shell use the same rule. In Tailwind: size-[1.5cap] with items-baseline.
+sd-icon-text + sd-icon · icons size to 1.5cap (the 24 grid's 4-unit inset makes the drawn shape span the caps), so they follow the text at any size. Buttons, rows, navigation, and the shell use the same rule. In Tailwind: size-[1.5cap] with items-baseline.
 
 Classes: sd-actions, sd-btn, sd-btn-lg, sd-btn-sm, sd-icon, sd-icon-text
 
@@ -714,7 +714,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Plain HTML / Text
 
-Plain p, a, strong, em, small, mark, del, ins, abbr, time, code, kbd and address, no class · margins appear between siblings only · kbd kbd nests one key per cap · reach for sd-lead, sd-muted or sd-meta only to change emphasis
+Plain p, a, strong, em, small, mark, del, ins, abbr, time, code, kbd, and address, no class · margins appear between siblings only · kbd kbd nests one key per cap · reach for sd-lead, sd-muted, or sd-meta only to change emphasis
 
 Classes: none
 
@@ -722,7 +722,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ```html
 <div class="max-w-[42rem]">
-  <p>Paragraph text sits at 16px on a 1.5 line height. It holds a <a href="#elements">link</a>, <strong>strong</strong>, <em>emphasis</em>, <i>idiomatic</i>, <b>bold</b>, <small>small print</small>, <mark>marked</mark>, <del>deleted</del>, <ins>inserted</ins>, <s>struck</s>, <u>underlined</u>, H<sub>2</sub>O, x<sup>2</sup>, <abbr title="Continuous integration">CI</abbr>, <cite>a cited title</cite>, <q>an inline quote</q>, <dfn>a definition</dfn>, <time datetime="2026-10-18T07:55">07:55</time>, <var>count</var>, <samp>exit 0</samp>, <code>code()</code> and <kbd><kbd>Shift</kbd>+<kbd>N</kbd></kbd>.</p>
+  <p>Paragraph text sits at 16px on a 1.5 line height. It holds a <a href="#elements">link</a>, <strong>strong</strong>, <em>emphasis</em>, <i>idiomatic</i>, <b>bold</b>, <small>small print</small>, <mark>marked</mark>, <del>deleted</del>, <ins>inserted</ins>, <s>struck</s>, <u>underlined</u>, H<sub>2</sub>O, x<sup>2</sup>, <abbr title="Continuous integration">CI</abbr>, <cite>a cited title</cite>, <q>an inline quote</q>, <dfn>a definition</dfn>, <time datetime="2026-10-18T07:55">07:55</time>, <var>count</var>, <samp>exit 0</samp>, <code>code()</code>, and <kbd><kbd>Shift</kbd>+<kbd>N</kbd></kbd>.</p>
   <p>A second paragraph follows with flow spacing. Margins only appear between siblings, never after the last one.</p>
   <address>ACME Inc. · 100 Main Street · Springfield</address>
 </div>
@@ -730,7 +730,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Plain HTML / Lists
 
-Plain ul, ol and dl, no class: square faint markers, tabular numbers, nested lists indent themselves · a list that carries any class is yours to style, so use sd-item or sd-row for interactive rows and sd-kv for aligned pairs
+Plain ul, ol, and dl, no class: square faint markers, tabular numbers, nested lists indent themselves · a list that carries any class is yours to style, so use sd-item or sd-row for interactive rows and sd-kv for aligned pairs
 
 Classes: none
 
@@ -759,7 +759,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Plain HTML / Quote, code, rule
 
-Plain blockquote (with a footer or cite for the source), pre > code and hr, no class · use sd-code for a titled, copyable snippet with data-sd-copy
+Plain blockquote (with a footer or cite for the source), pre > code, and hr, no class · use sd-code for a titled, copyable snippet with data-sd-copy
 
 Classes: none
 
@@ -779,7 +779,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Plain HTML / Table
 
-Plain table with caption, thead, tbody, tfoot and th scope, no class · wrap it in sd-table-wrap so a narrow screen scrolls the table, not the page · use sd-table for density and row states
+Plain table with caption, thead, tbody, tfoot, and th scope, no class · wrap it in sd-table-wrap so a narrow screen scrolls the table, not the page · use sd-table for density and row states
 
 Classes: sd-table-wrap
 
@@ -802,7 +802,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Plain HTML / Form controls
 
-Native input, select, textarea, button, progress, meter and output, styled with no class · fieldset + legend group them · type="checkbox" + role="switch" is the switch, :indeterminate the mixed checkbox · reach for sd-field when a control needs a label, hint and error
+Native input, select, textarea, button, progress, meter, and output, styled with no class · fieldset + legend group them · type="checkbox" + role="switch" is the switch, :indeterminate the mixed checkbox · reach for sd-field when a control needs a label, hint, and error
 
 Classes: sd-check
 
@@ -899,7 +899,7 @@ for (const box of document.querySelectorAll("input[data-indeterminate]")) box.in
 
 ## Plain HTML / Details, dialog, popover
 
-Native details + summary (stacked ones read as one accordion), dialog and [popover], no class · data-sd-open / data-sd-close drive a plain dialog, popovertarget a popover · use sd-dialog, sd-popover or sd-expand for header, body, anchoring and animation
+Native details + summary (stacked ones read as one accordion), dialog, and [popover], no class · data-sd-open / data-sd-close drive a plain dialog, popovertarget a popover · use sd-dialog, sd-popover, or sd-expand for header, body, anchoring, and animation
 
 Classes: none
 
@@ -933,7 +933,7 @@ JS: init() from signal-design/js wires data-sd-open · data-sd-close · popovert
 
 ## Plain HTML / Media
 
-Plain figure + figcaption, img, video, audio and iframe, no class · media scales to its container · give img and iframe width/height or alt/title so layout holds and screen readers have a name
+Plain figure + figcaption, img, video, audio, and iframe, no class · media scales to its container · give img and iframe width/height or alt/title so layout holds and screen readers have a name
 
 Classes: none
 
@@ -1074,7 +1074,7 @@ JS: init() from signal-design/js wires data-sd-seg.
 
 ## Forms / Option cards
 
-sd-options + --min · sd-option + -preview|-title|-desc · selected by :checked, aria-pressed or aria-checked · disabled by :disabled or aria-disabled
+sd-options + --min · sd-option + -preview|-title|-desc · selected by :checked, aria-pressed, or aria-checked · disabled by :disabled or aria-disabled
 
 Classes: sd-field, sd-field-hint, sd-field-label, sd-option, sd-option-desc, sd-option-preview, sd-option-title, sd-options, sd-skeleton
 
@@ -1143,7 +1143,7 @@ JS: init() from signal-design/js wires data-sd-seg.
 </div>
 ```
 
-## Forms / Combobox, tags, number and steps
+## Forms / Combobox, tags, number, and steps
 
 sd-combobox + data-sd-combobox · sd-tags + data-sd-tags · sd-number + data-sd-number · sd-steps
 
@@ -1202,7 +1202,7 @@ JS: init() from signal-design/js wires role="tab".
     <button role="tab" aria-controls="tab-checks" id="t-checks">Checks <span class="sd-count" data-tone="success">4</span></button>
     <button role="tab" aria-controls="tab-diff" id="t-diff">Activity</button>
   </div>
-  <div class="sd-tabpanel" role="tabpanel" id="tab-proof" aria-labelledby="t-proof"><p class="sd-muted">Summary, owner and due date go here. Arrow keys move between tabs.</p></div>
+  <div class="sd-tabpanel" role="tabpanel" id="tab-proof" aria-labelledby="t-proof"><p class="sd-muted">Summary, owner, and due date go here. Arrow keys move between tabs.</p></div>
   <div class="sd-tabpanel" role="tabpanel" id="tab-checks" aria-labelledby="t-checks" hidden="">
     <ul class="sd-checks"><li data-tone="success">checks passed · 214 tests</li><li data-tone="success">reviewed by Alex</li><li data-tone="pending">monitoring for 7 days</li><li data-tone="danger">lint · 2 warnings</li></ul>
   </div>
@@ -1383,7 +1383,7 @@ JS: init() from signal-design/js wires data-sd-open · data-sd-tip · data-sd-cl
 
 ## Navigation / Command palette and shortcuts
 
-dialog.sd-command[data-sd-palette] + setOptions() · sd-command-search holds an icon, the input and a kbd · sd-menu-lead before an option's label · dialog[data-sd-shortcuts] opens on ? · sd-shortcuts
+dialog.sd-command[data-sd-palette] + setOptions() · sd-command-search holds an icon, the input, and a kbd · sd-menu-lead before an option's label · dialog[data-sd-shortcuts] opens on ? · sd-shortcuts
 
 Classes: sd-actions, sd-avatar, sd-avatar-sm, sd-btn, sd-btn-ghost, sd-btn-icon, sd-btn-sm, sd-command, sd-command-foot, sd-command-list, sd-command-search, sd-dialog, sd-dialog-body, sd-dialog-head, sd-kbd, sd-menu, sd-menu-hint, sd-menu-label, sd-menu-lead, sd-shortcuts, sd-shortcuts-group
 
@@ -1537,7 +1537,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Status / Avatar sizes and presence
 
-Steps at 22, 24, 28, 34 and 48px, or any size with --sd-avatar-size; the initials and the presence square grow with it. The square's ring, a corner count's ring and a stack's gaps take the color of what they sit on: every Signal surface sets --sd-ring, and outside them it is the page canvas. On a panel of your own, set --sd-ring to its background. --sd-avatar-size · sd-avatar-md · data-status="online|away|afk|busy|offline" · --sd-ring
+Steps at 22, 24, 28, 34, and 48px, or any size with --sd-avatar-size; the initials and the presence square grow with it. The square's ring, a corner count's ring, and a stack's gaps take the color of what they sit on: every Signal surface sets --sd-ring, and outside them it is the page canvas. On a panel of your own, set --sd-ring to its background. --sd-avatar-size · sd-avatar-md · data-status="online|away|afk|busy|offline" · --sd-ring
 
 Classes: sd-avatar, sd-avatar-lg, sd-avatar-md, sd-avatar-sm, sd-avatar-stack, sd-avatar-xl, sd-badge-count, sd-btn, sd-btn-icon, sd-card, sd-cluster, sd-item, sd-item-body, sd-item-sub, sd-item-title, sd-meta
 
@@ -2064,7 +2064,7 @@ Classes: sd-btn, sd-btn-sm, sd-chart, sd-chart-bar, sd-chart-plot, sd-label, sd-
 No JS needed: the HTML works with the CSS alone.
 
 ```html
-<p class="sd-muted max-w-[46rem]">The three presets of <code>createChart</code> on 10 second, 5 minute and 1 minute data: the core view with live appends, a week of bandwidth and a latency view with a forecast.</p>
+<p class="sd-muted max-w-[46rem]">The three presets of <code>createChart</code> on 10 second, 5 minute, and 1 minute data: the core view with live appends, a week of bandwidth, and a latency view with a forecast.</p>
 
 <figure class="sd-chart" data-chart-theme="mono" style="--h: 500px" id="core">
 <div class="sd-chart-bar">
@@ -2088,7 +2088,7 @@ No JS needed: the HTML works with the CSS alone.
 <figure class="sd-chart" data-chart-theme="mono" style="--h: 320px" id="bandwidth">
   <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Internet uplink · 7 days</span></div></div>
   <div class="sd-chart-plot"><canvas aria-label="Internet bandwidth, last 7 days" role="img"></canvas></div>
-  <p class="sd-subtle text-sm">preset "bandwidth": 5-minute rollup, smoothed (window 7, tension 0.35), daily peaks, a week-over-week ghost, working hours and day lines.</p>
+  <p class="sd-subtle text-sm">preset "bandwidth": 5-minute rollup, smoothed (window 7, tension 0.35), daily peaks, a week-over-week ghost, working hours, and day lines.</p>
 </figure>
 <figure class="sd-chart" data-chart-theme="mono" style="--h: 320px" id="latency">
   <div class="sd-chart-bar"><div><span class="sd-label sd-label-strong">Branch → core RTT</span></div></div>
@@ -2107,7 +2107,7 @@ Classes: sd-chart, sd-chart-bar, sd-chart-plot, sd-faint, sd-heatmap, sd-heatmap
 No JS needed: the HTML works with the CSS alone.
 
 ```html
-<p class="sd-muted max-w-[46rem]">The same tokens drive every chart type: <code>createChart(canvas, { type })</code> for line, area, step, bar, ranking bars, histogram and scatter, and CSS-only squares for heatmaps, part-of-whole, uptime and meters. Series take colors 1–6 in order; in mono, lines also take a dash each.</p>
+<p class="sd-muted max-w-[46rem]">The same tokens drive every chart type: <code>createChart(canvas, { type })</code> for line, area, step, bar, ranking bars, histogram, and scatter, and CSS-only squares for heatmaps, part-of-whole, uptime, and meters. Series take colors 1–6 in order; in mono, lines also take a dash each.</p>
 
 <div class="grid gap-x-10 gap-y-12 lg:grid-cols-2">
   <figure class="sd-chart" data-chart-theme="mono" style="--h: 300px" id="g-percentiles">
@@ -2519,7 +2519,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Data / Flow
 
-sd-flow + -head|-legend|-board|-canvas|-stage|-stage-head|-jobs|-job · data-status="done|running|queued|waiting|failed|skipped" on stages, jobs and legend entries · --value (0–100) fills a stage head and a running job · edges leave a stage in its status · aria-current marks the open job · data-chart-theme="mono|spectrum" · CSS only
+sd-flow + -head|-legend|-board|-canvas|-stage|-stage-head|-jobs|-job · data-status="done|running|queued|waiting|failed|skipped" on stages, jobs, and legend entries · --value (0–100) fills a stage head and a running job · edges leave a stage in its status · aria-current marks the open job · data-chart-theme="mono|spectrum" · CSS only
 
 Classes: sd-flow, sd-flow-board, sd-flow-canvas, sd-flow-head, sd-flow-job, sd-flow-jobs, sd-flow-legend, sd-flow-stage, sd-flow-stage-head, sd-label, sd-label-strong, sd-meta, sd-sr-only
 
@@ -2669,7 +2669,7 @@ JS: init() from signal-design/js wires data-sd-tip.
 
 ## Data / Checklist
 
-sd-checklist + -head · <li data-status="done|running|queued|waiting|failed|skipped"> with <i> mark, <b> name and <span> result · --value (0–100) on a running check · data-tone on a result for an exception · data-chart-theme="mono|spectrum" · CSS only
+sd-checklist + -head · <li data-status="done|running|queued|waiting|failed|skipped"> with <i> mark, <b> name, and <span> result · --value (0–100) on a running check · data-tone on a result for an exception · data-chart-theme="mono|spectrum" · CSS only
 
 Classes: sd-checklist, sd-checklist-head, sd-label, sd-label-strong, sd-meta, sd-sr-only
 
@@ -2936,7 +2936,7 @@ JS: init() from signal-design/js wires data-sd-contextmenu · data-sd-reaction �
 
 ## Conversation / Message markdown
 
-sd-md wraps the blocks of a Markdown message and starts under the author · inline code, bold, italic, strike and links need no wrapper · sd-code + sd-code-head carries a fence's language · sd-table-wrap scrolls a wide table
+sd-md wraps the blocks of a Markdown message and starts under the author · inline code, bold, italic, strike, and links need no wrapper · sd-code + sd-code-head carries a fence's language · sd-table-wrap scrolls a wide table
 
 Classes: sd-code, sd-code-head, sd-md, sd-message, sd-message-author, sd-message-body, sd-message-text, sd-message-time, sd-table-wrap
 
@@ -2947,7 +2947,7 @@ No JS needed: the HTML works with the CSS alone.
         <article class="sd-message" style="--who: var(--sd-extra)">
           <time class="sd-message-time" datetime="11:02">11:02</time>
           <div class="sd-message-body">
-            <div class="sd-message-text"><b class="sd-message-author">Alex</b>Inline marks stay in the line: <b>bold</b>, <i>italic</i>, <s>strikethrough</s>, <code>pnpm run build</code> and <a href="#conversation-message-markdown">a link</a>.</div>
+            <div class="sd-message-text"><b class="sd-message-author">Alex</b>Inline marks stay in the line: <b>bold</b>, <i>italic</i>, <s>strikethrough</s>, <code>pnpm run build</code>, and <a href="#conversation-message-markdown">a link</a>.</div>
           </div>
         </article>
         <article class="sd-message" style="--who: var(--sd-accent)">
@@ -2972,7 +2972,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Conversation / Spoilers
 
-sd-spoiler around one inner span · role="button" tabindex="0" aria-roledescription="spoiler" · aria-expanded (state) · aria-label="Spoiler" while closed · data-sd-spoiler · fires sd:spoiler · closed text is out of selection, find and screen readers · plain inline content only
+sd-spoiler around one inner span · role="button" tabindex="0" aria-roledescription="spoiler" · aria-expanded (state) · aria-label="Spoiler" while closed · data-sd-spoiler · fires sd:spoiler · closed text is out of selection, find, and screen readers · plain inline content only
 
 Classes: sd-message, sd-message-author, sd-message-body, sd-message-text, sd-message-time, sd-spoiler
 
@@ -3311,7 +3311,7 @@ JS: init() from signal-design/js wires data-sd-autogrow · data-sd-enter-submit 
 
 ## Conversation / Voice recording
 
-Empty composer: sd-composer-mic (a ghost icon button) sits where send does, and the app swaps it for send once there is text · data-recording on sd-composer hides the field, + and mic and shows sd-composer-discard, sd-composer-rec and send in its primary look · sd-composer-rec holds a pending sd-dot (it blinks), sd-composer-rec-time (mono, pending tone, role="timer") and sd-composer-rec-wave (one <i> per level sample with --h 0 to 1, newest on the right; the app pushes a bar and drops the oldest) · the app owns the recorder and writes the time and levels
+Empty composer: sd-composer-mic (a ghost icon button) sits where send does, and the app swaps it for send once there is text · data-recording on sd-composer hides the field, +, and mic and shows sd-composer-discard, sd-composer-rec, and send in its primary look · sd-composer-rec holds a pending sd-dot (it blinks), sd-composer-rec-time (mono, pending tone, role="timer") and sd-composer-rec-wave (one <i> per level sample with --h 0 to 1, newest on the right; the app pushes a bar and drops the oldest) · the app owns the recorder and writes the time and levels
 
 Classes: sd-btn, sd-btn-ghost, sd-btn-icon, sd-btn-primary, sd-composer, sd-composer-add, sd-composer-discard, sd-composer-mic, sd-composer-rec, sd-composer-rec-time, sd-composer-rec-wave, sd-composer-row, sd-composer-send, sd-dot, sd-dot-lg, sd-icon
 
@@ -3425,7 +3425,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Conversation / Activity
 
-sd-activity = sd-tabs + sd-tabpanels of sd-item rows · sd-item-mark (24px box: @, an icon or an emoji) · title is <b class="sd-message-author"> in --who + the action · sd-item-sub "group › #channel" · sd-item-end <time> in mono · data-unread = pending-tone square at the left edge (add an sd-sr-only "Unread" for assistive tech)
+sd-activity = sd-tabs + sd-tabpanels of sd-item rows · sd-item-mark (24px box: @, an icon, or an emoji) · title is <b class="sd-message-author"> in --who + the action · sd-item-sub "group › #channel" · sd-item-end <time> in mono · data-unread = pending-tone square at the left edge (add an sd-sr-only "Unread" for assistive tech)
 
 Classes: sd-activity, sd-icon, sd-item, sd-item-body, sd-item-end, sd-item-mark, sd-item-sub, sd-item-title, sd-message-author, sd-sr-only, sd-tabpanel, sd-tabs
 
@@ -3454,7 +3454,7 @@ JS: init() from signal-design/js wires role="tab".
 
 ## Conversation / Row actions
 
-sd-item-row = a box around the sd-item link and an sd-item-actions cell, as siblings, because a link cannot hold a button · the box carries hover, keyboard focus and aria-current (set on the link) for both · the cell shows on hover and keyboard focus, always on touch (hover: none), and Tab reaches the link, then the action · the cell keeps its width on every row, empty when a row has nothing to do (the read row above), so the time column holds and long text ends before the button
+sd-item-row = a box around the sd-item link and an sd-item-actions cell, as siblings, because a link cannot hold a button · the box carries hover, keyboard focus, and aria-current (set on the link) for both · the cell shows on hover and keyboard focus, always on touch (hover: none), and Tab reaches the link, then the action · the cell keeps its width on every row, empty when a row has nothing to do (the read row above), so the time column holds and long text ends before the button
 
 Classes: sd-activity, sd-icon, sd-icon-btn, sd-item, sd-item-actions, sd-item-body, sd-item-end, sd-item-mark, sd-item-row, sd-item-sub, sd-item-title, sd-message-author, sd-sr-only
 
@@ -3709,7 +3709,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Conversation / Content warnings
 
-sd-cw around sd-cw-media (an sd-shot or an sd-file) and sd-cw-cover (an sd-badge with the warning and the sd-cw-toggle button) · aria-expanded on the toggle is the state, with aria-controls the media and aria-describedby the chip · data-sd-cw flips it and fires sd:cw · the toggle holds sd-cw-show and sd-cw-hide, the state shows one · closed, a solid surface (no blur) and the media is out of sight, tab order and assistive tech · set the width on sd-cw · React: ContentWarning (label, open / defaultOpen / onOpenChange, showLabel, hideLabel)
+sd-cw around sd-cw-media (an sd-shot or an sd-file) and sd-cw-cover (an sd-badge with the warning and the sd-cw-toggle button) · aria-expanded on the toggle is the state, with aria-controls the media and aria-describedby the chip · data-sd-cw flips it and fires sd:cw · the toggle holds sd-cw-show and sd-cw-hide, the state shows one · closed, a solid surface (no blur) and the media is out of sight, tab order, and assistive tech · set the width on sd-cw · React: ContentWarning (label, open / defaultOpen / onOpenChange, showLabel, hideLabel)
 
 Classes: sd-badge, sd-btn, sd-btn-sm, sd-cw, sd-cw-cover, sd-cw-hide, sd-cw-media, sd-cw-show, sd-cw-toggle, sd-file, sd-file-body, sd-file-meta, sd-file-name, sd-file-type, sd-icon, sd-shot, sd-shot-hint
 
@@ -3882,7 +3882,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Conversation / Link cards
 
-sd-link-card + sd-link-card-hero (thumb on top: an image, GIF or <video>) · sd-link-card-compact · sd-link-card-type (documents) · data-blocked + sd-link-card-note (render a <div>, not a link) · aria-busy="true" (loading) · data-tone · sd-link-card-actions (buttons under the text, such as Join on an invite; a <div> card)
+sd-link-card + sd-link-card-hero (thumb on top: an image, GIF, or <video>) · sd-link-card-compact · sd-link-card-type (documents) · data-blocked + sd-link-card-note (render a <div>, not a link) · aria-busy="true" (loading) · data-tone · sd-link-card-actions (buttons under the text, such as Join on an invite; a <div> card)
 
 Classes: sd-btn, sd-btn-sm, sd-link-card, sd-link-card-actions, sd-link-card-compact, sd-link-card-desc, sd-link-card-hero, sd-link-card-note, sd-link-card-site, sd-link-card-thumb, sd-link-card-title, sd-link-card-type, sd-sr-only
 
@@ -3890,7 +3890,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ```html
 <div class="grid gap-4 sm:grid-cols-2 items-start">
-  <a class="sd-link-card sd-link-card-hero" href="#conversation"><img class="sd-link-card-thumb" alt="" width="640" height="336" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 336'%3E%3Crect width='640' height='336' fill='%230A0A0B'/%3E%3Crect x='0' y='0' width='128' height='336' fill='%23111113'/%3E%3Crect x='168' y='44' width='200' height='10' fill='%232A2A2F'/%3E%3Crect x='168' y='96' width='420' height='120' fill='none' stroke='%232A2A2F'/%3E%3Crect x='188' y='120' width='160' height='40' fill='%2300D4FF' fill-opacity='.35'/%3E%3Crect x='168' y='270' width='300' height='8' fill='%231F1F23'/%3E%3C/svg%3E"><span class="sd-link-card-site">acme.example</span><span class="sd-link-card-title">A dashboard for the whole team</span><span class="sd-link-card-desc">One place for status, owners and what changed since you last looked.</span></a>
+  <a class="sd-link-card sd-link-card-hero" href="#conversation"><img class="sd-link-card-thumb" alt="" width="640" height="336" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 336'%3E%3Crect width='640' height='336' fill='%230A0A0B'/%3E%3Crect x='0' y='0' width='128' height='336' fill='%23111113'/%3E%3Crect x='168' y='44' width='200' height='10' fill='%232A2A2F'/%3E%3Crect x='168' y='96' width='420' height='120' fill='none' stroke='%232A2A2F'/%3E%3Crect x='188' y='120' width='160' height='40' fill='%2300D4FF' fill-opacity='.35'/%3E%3Crect x='168' y='270' width='300' height='8' fill='%231F1F23'/%3E%3C/svg%3E"><span class="sd-link-card-site">acme.example</span><span class="sd-link-card-title">A dashboard for the whole team</span><span class="sd-link-card-desc">One place for status, owners, and what changed since you last looked.</span></a>
   <div class="grid gap-4">
     <a class="sd-link-card sd-link-card-compact" href="#conversation"><span class="sd-link-card-site">docs.acme.example</span><span class="sd-link-card-title">Getting started with workspaces and roles</span><span class="sd-link-card-thumb"></span></a>
     <a class="sd-link-card" href="#conversation"><span class="sd-link-card-site">acme.example</span><span class="sd-link-card-title">quarterly-report-q3.pdf</span><span class="sd-link-card-desc">12 pages · 2.4 MB</span><span class="sd-link-card-type">pdf</span></a>
@@ -3903,7 +3903,7 @@ No JS needed: the HTML works with the CSS alone.
 
 ## Conversation / Link card slots
 
-role="link" + tabindex="0" on a <div> card (hovers like a link) · sd-link-card-dismiss on an sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm (end column; floats over the media in a hero or media card) · sd-link-card-media (only an image, GIF or <video>, shown whole; -compact or --sd-media-max for a shorter one) · sd-link-card-thumb-label and -thumb-action inside the thumb
+role="link" + tabindex="0" on a <div> card (hovers like a link) · sd-link-card-dismiss on an sd-btn sd-btn-ghost sd-btn-icon sd-btn-sm (end column; floats over the media in a hero or media card) · sd-link-card-media (only an image, GIF, or <video>, shown whole; -compact or --sd-media-max for a shorter one) · sd-link-card-thumb-label and -thumb-action inside the thumb
 
 Classes: sd-btn, sd-btn-ghost, sd-btn-icon, sd-btn-sm, sd-icon, sd-link-card, sd-link-card-actions, sd-link-card-compact, sd-link-card-desc, sd-link-card-dismiss, sd-link-card-hero, sd-link-card-media, sd-link-card-note, sd-link-card-site, sd-link-card-thumb, sd-link-card-thumb-action, sd-link-card-thumb-label, sd-link-card-title
 
@@ -3982,7 +3982,7 @@ JS: init() from signal-design/js wires data-sd-window · data-sd-edges · data-s
 
 ## App shell / Compact rail of places
 
-A 72px rail of groups, servers or workspaces: square tiles with a picture, initials or an icon, next to ordinary sd-rail-item tools. aria-current draws the edge on the rail's outer side; data-unread a short edge; data-pending a dashed tile for a place still joining. A corner sd-badge-count carries a count; put it in the tile's aria-label too, because the label replaces the tile's text. In the shell, set --shell-rail: 4.5rem on .sd-shell; a rail on its own takes the same variable. sd-rail-tile (a, button, or a span for a tile that is not a control) with an img, initials or an svg · aria-current · data-unread · data-pending · sd-badge-count + data-corner · --tile (48px) · --shell-rail: 4.5rem
+A 72px rail of groups, servers, or workspaces: square tiles with a picture, initials, or an icon, next to ordinary sd-rail-item tools. aria-current draws the edge on the rail's outer side; data-unread a short edge; data-pending a dashed tile for a place still joining. A corner sd-badge-count carries a count; put it in the tile's aria-label too, because the label replaces the tile's text. In the shell, set --shell-rail: 4.5rem on .sd-shell; a rail on its own takes the same variable. sd-rail-tile (a, button, or a span for a tile that is not a control) with an img, initials, or an svg · aria-current · data-unread · data-pending · sd-badge-count + data-corner · --tile (48px) · --shell-rail: 4.5rem
 
 Classes: sd-badge-count, sd-rail, sd-rail-item, sd-rail-list, sd-rail-sep, sd-rail-tile, sd-rail-tools, sd-subtle
 
@@ -4171,7 +4171,7 @@ JS: init() from signal-design/js wires data-sd-ornaments · data-sd-edges.
 
 ## Effects / Art ornaments
 
-Drawn imagery for a background, in the same quiet squares and hairlines as the dust. Name a style next to the placement. Each is a still picture in the theme's text color, faint enough to read over, and the same on every load. Contours are for fiction, a lattice for research, a waveform for blogs and notes, dashed frames for empty and planned things, the open book is the editor's hero, and the stack is a manuscript. data-sd-ornaments="contours" · "tl lattice" · "bottom waveform" · "center dashed" · data-sd-ornaments-size · data-sd-ornaments-seed="elderwood" varies contours, lattice and waveform per item
+Drawn imagery for a background, in the same quiet squares and hairlines as the dust. Name a style next to the placement. Each is a still picture in the theme's text color, faint enough to read over, and the same on every load. Contours are for fiction, a lattice for research, a waveform for blogs and notes, dashed frames for empty and planned things, the open book is the editor's hero, and the stack is a manuscript. data-sd-ornaments="contours" · "tl lattice" · "bottom waveform" · "center dashed" · data-sd-ornaments-size · data-sd-ornaments-seed="elderwood" varies contours, lattice, and waveform per item
 
 Classes: sd-empty, sd-empty-title, sd-label, sd-muted
 
@@ -4339,7 +4339,7 @@ JS: init() from signal-design/js wires data-sd-mascot.
 
 ## Effects / Tech pieces
 
-Fifteen pieces for devices, data and the network, 4px per cell by default (--sd-art-cell). The signal cells take a tone. <span class="sd-art" data-sd-art="router" role="img" aria-label="Router"> · data-flip mirrors a piece · defineArt(name, rows) adds your own
+Fifteen pieces for devices, data, and the network, 4px per cell by default (--sd-art-cell). The signal cells take a tone. <span class="sd-art" data-sd-art="router" role="img" aria-label="Router"> · data-flip mirrors a piece · defineArt(name, rows) adds your own
 
 Classes: sd-art, sd-muted
 
@@ -4367,7 +4367,7 @@ JS: init() from signal-design/js wires data-sd-art.
 
 ## Effects / Nature pieces
 
-Sixteen pieces for the outdoors: trees, sky, ground and water. Sun, flowers, sprouts and mushrooms carry the signal cells. ART_SETS.tech · ART_SETS.nature list the names
+Sixteen pieces for the outdoors: trees, sky, ground, and water. Sun, flowers, sprouts, and mushrooms carry the signal cells. ART_SETS.tech · ART_SETS.nature list the names
 
 Classes: sd-art, sd-muted
 
@@ -4498,7 +4498,7 @@ JS: init() from signal-design/js wires data-sd-seg · data-sd-ornaments · data-
 
 ## Effects / Circuit ornaments
 
-The ornaments' tech style: traces leave the edges near a corner, turn on the grid and end in pads, thinning as they spread. The pads sparkle like the dust. data-sd-ornaments-style="circuit" with any corner, "top" or "bottom"
+The ornaments' tech style: traces leave the edges near a corner, turn on the grid, and end in pads, thinning as they spread. The pads sparkle like the dust. data-sd-ornaments-style="circuit" with any corner, "top", or "bottom"
 
 Classes: none
 
@@ -4569,7 +4569,7 @@ stage.setAttribute("aria-busy", "true");
 
 ## Effects / While work runs
 
-mountAscii(el, piece, { at }) · the art plays while aria-busy="true" is on it or its closest ancestor that has the attribute, and holds the frame it is on when removed · set it on the panel that is working · art.busy(true|false) overrides · plays only on screen, in a visible tab and without prefers-reduced-motion
+mountAscii(el, piece, { at }) · the art plays while aria-busy="true" is on it or its closest ancestor that has the attribute, and holds the frame it is on when removed · set it on the panel that is working · art.busy(true|false) overrides · plays only on screen, in a visible tab, and without prefers-reduced-motion
 
 Classes: sd-actions, sd-ascii, sd-btn, sd-btn-primary, sd-panel, sd-panel-title, sd-panel-wide, sd-progress, sd-progress-label
 
@@ -4603,7 +4603,7 @@ panel.removeAttribute("aria-busy");        // holds the frame it is on
 
 ## Effects / Gallery
 
-One sd-ascii per piece, each with data-piece, data-at (seconds into the piece for the still frame), role="img" and aria-label · put the art in sd-card and set aria-busy on the card from hover or a play button · --cols and --rows size the box before the art loads
+One sd-ascii per piece, each with data-piece, data-at (seconds into the piece for the still frame), role="img", and aria-label · put the art in sd-card and set aria-busy on the card from hover or a play button · --cols and --rows size the box before the art loads
 
 Classes: sd-ascii, sd-btn, sd-btn-sm, sd-card, sd-card-body, sd-card-head
 
@@ -4722,7 +4722,7 @@ mountAscii(art, piece, { at: 4 });
 
 ## Setup / Setup and attributes
 
-init() once after the DOM exists; listeners are delegated, so later markup works · toast(text, { tone }) · hotkeys({ key: fn }) returns the off function · setTheme("ink|graphite|paper|auto") · every data-sd-* attribute does nothing without init() · a framework that renders the state leaves the attribute out and sets ARIA and data-* itself
+Call init() once after the DOM exists. Without it, no data-sd-* attribute does anything. Listeners are delegated, so later markup works. hotkeys() returns its off function. A framework that renders the state leaves the attribute out and sets ARIA and data-* itself.
 
 Classes: sd-actions, sd-btn, sd-btn-ghost, sd-btn-sm, sd-code, sd-code-head, sd-subtle, sd-table, sd-table-wrap
 
@@ -4766,7 +4766,7 @@ setTheme("paper");                        // ink | graphite | paper | auto</code
 
 ## Setup / Copy feedback
 
-Copy needs browser clipboard access. On an insecure LAN connection, or when permission is denied, the danger toast says "Copy unavailable. Select the line instead." The command stays selectable. Successful copies still say "Copied". No insecure clipboard bypass is used.
+Copy needs clipboard access. Without it (an insecure connection or a denied permission), a danger toast says "Copy unavailable. Select the line instead." and the text stays selectable. A successful copy says "Copied".
 
 Classes: sd-btn, sd-btn-ghost, sd-btn-sm, sd-code, sd-code-head
 
@@ -4781,7 +4781,7 @@ JS: init() from signal-design/js wires data-sd-copy.
 
 ## Setup / Framework-owned state
 
-When React, Vue or Svelte renders a piece's state, leave out its data-sd-* attribute and render the ARIA and data-* attributes the CSS keys on. These three have no data-sd-*: this page's own code keeps the state and writes the attributes, as a framework would. README "Framework-owned state" lists every piece and what init() wires without an attribute (role="tab", .sd-shell, popovers, scrollers).
+When React, Vue, or Svelte renders a piece's state, leave out its data-sd-* attribute and render the ARIA and data-* attributes the CSS keys on. These three have no data-sd-*: this page's own code keeps the state and writes the attributes, as a framework would. README "Framework-owned state" lists every piece and what init() wires without an attribute (role="tab", .sd-shell, popovers, scrollers).
 
 Classes: sd-btn, sd-btn-sm, sd-cluster, sd-expand, sd-note, sd-reactions, sd-seg, sd-seg-inline, sd-table, sd-table-wrap
 
@@ -4874,9 +4874,9 @@ import { predict } from "signal-design/js";
 const stop = predict(button, () => loadSettingsDialog());
 ```
 
-## Setup / Signal parts
+## Setup / Signal components
 
-sd-rail-tile, sd-thread-chip, button.sd-shot and [data-sd-open] are targets with no attribute · data-sd-predict="off" on one or an ancestor opts out
+sd-rail-tile, sd-thread-chip, button.sd-shot, and [data-sd-open] are targets with no attribute · data-sd-predict="off" on one or an ancestor opts out
 
 Classes: sd-avatar, sd-avatar-stack, sd-btn, sd-btn-ghost, sd-btn-icon, sd-btn-sm, sd-dialog, sd-dialog-body, sd-dialog-head, sd-kv, sd-rail-tile, sd-thread-chip
 
