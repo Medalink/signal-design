@@ -212,11 +212,14 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* Key-value grid. */
+  /* Key-value grid. The key column keeps 8rem and the gap 24px in a list wide
+     enough for them; in a narrow one (a third of a three-up row) both give way
+     to a share of the list, so the values keep room for their words instead of
+     breaking in the middle of one. */
   .sd-kv {
     display: grid;
-    grid-template-columns: minmax(8rem, max-content) 1fr;
-    gap: 10px 24px;
+    grid-template-columns: minmax(min(8rem, 30%), max-content) minmax(0, 1fr);
+    gap: 10px clamp(12px, 6%, 24px);
     margin: 0;
   }
   .sd-kv > dt {
