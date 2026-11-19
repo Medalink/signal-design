@@ -282,7 +282,7 @@ Outlines that brighten under the pointer.
 - **Primary:** filled with Instrument White, on-primary text, weight 500, no border; hover dims to 88% opacity. One per view.
 - **Ghost / Link:** ghost drops the border; link is subtle text with a hairline underline 3px below, brightening to fg on hover.
 - **Toned:** `data-tone` colors the text and a 40% hairline; hover adds an 8% wash and strengthens the hairline to 70%. A toned primary button fills solid with the tone and sets canvas-colored text.
-- **Disabled / Busy:** disabled at 35% opacity; busy dims to 70% and says so in words.
+- **Disabled / Busy:** disabled takes the label in `--sd-fg-faint` (4.5:1 or better in every theme) on a near-empty fill, with no tone or primary fill; busy dims to 70% and says so in words.
 
 ### Chips and Badges
 - **Chip:** a square token on surface fill with a strong hairline, 28px tall, 3px 10px padding, fg text at 0.9375rem; a button chip shimmers on hover.

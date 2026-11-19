@@ -200,11 +200,19 @@
   .sd-rail-item:focus-visible {
     outline-offset: -1px;
   }
-  /* A section that is not available: dimmed like a disabled button. */
+  /* A section that is not available: its label in --sd-fg-faint, like a
+     disabled button, which keeps 4.5:1 where opacity fell to about 1.8:1. */
   .sd-rail-item:disabled,
   .sd-rail-item[aria-disabled="true"] {
-    opacity: 0.35;
+    color: var(--sd-fg-faint);
+    opacity: 1;
     pointer-events: none;
+  }
+  /* The faint label is only a step below an enabled one, so the icon steps
+     further back to tell the two apart at a glance. */
+  .sd-rail-item:disabled svg,
+  .sd-rail-item[aria-disabled="true"] svg {
+    opacity: 0.45;
   }
 
   /* A place: a square image, initials or icon, for a narrow rail of groups,

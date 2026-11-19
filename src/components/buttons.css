@@ -130,10 +130,24 @@
     flex-shrink: 0;
   }
 
+  /* Disabled: the label in --sd-fg-faint (4.5:1 on every surface in every
+     theme) on a half-strength field fill, with no tone, primary fill or
+     hairline. Opacity (the base rule for a disabled <button>) dropped the
+     label to about 1.8:1 against the page. */
   .sd-btn:disabled,
   .sd-btn[aria-disabled="true"] {
-    opacity: 0.35;
+    --btn-fg: var(--sd-fg-faint);
+    --btn-bg: color-mix(in srgb, var(--sd-fg) 2%, transparent);
+    --btn-border: transparent;
+    color: var(--sd-fg-faint);
+    opacity: 1;
     pointer-events: none;
+  }
+  .sd-btn-ghost:disabled,
+  .sd-btn-ghost[aria-disabled="true"],
+  .sd-btn-link:disabled,
+  .sd-btn-link[aria-disabled="true"] {
+    --btn-bg: transparent;
   }
   /* Busy is a state, not an animation: dim it and say so. */
   .sd-btn[aria-busy="true"] {
