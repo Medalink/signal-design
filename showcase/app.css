@@ -1377,8 +1377,18 @@
     height: 13rem;
     background: var(--sd-shell-bg);
   }
+  /* The specimen's sidebar is 15rem, about the whole tile. Capping it keeps
+     6rem for the content pane, so its line wraps by word, not by letter. */
+  .wall-sidebar,
+  .wall-sidebar > .sd-sidebar {
+    min-width: 0;
+  }
+  .wall-sidebar > .sd-sidebar {
+    max-width: calc(100% - 6rem);
+  }
   .wall-sidebar-main {
     flex: 1;
+    min-width: 0;
     margin: 0;
     padding: 16px;
     font-size: var(--text-sm);
