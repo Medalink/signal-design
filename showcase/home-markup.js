@@ -96,7 +96,7 @@ ${sidebar()}
             <section class="home-cell home-thread" aria-labelledby="home-thread-h">
               ${head("home-thread-h", doc("messages"), `<span class="home-sub">${doc("composer")}</span>`)}
               <div class="sd-seg sd-seg-sm home-channels" data-sd-seg aria-label="Channel">${CHANNELS.map((c, i) => `<button type="button" data-channel="${c.id}" aria-pressed="${i === 0}">${c.id}</button>`).join("")}</div>
-              <div class="home-feed" id="home-feed" role="log" aria-label="Messages" tabindex="0" style="--sd-feed-bg: var(--sd-tone-3)">
+              <div class="home-feed" id="home-feed" role="log" aria-label="Messages" tabindex="0" data-sd-follow style="--sd-feed-bg: var(--sd-tone-3)">
 ${feedHtml(ch)}
               </div>
               <div class="sd-composer-status home-typing" id="home-typing" hidden><span class="sd-typing"><i><b></b></i><span><b style="--who: var(--sd-pending)">Scout</b> is typing</span></span></div>

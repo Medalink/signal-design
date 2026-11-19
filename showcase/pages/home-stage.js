@@ -226,10 +226,10 @@ const DEPLOY = {
   cell: 12,
   clock: { period: 40 },
   nodes: [
-    { id: "writers", kind: "source", at: [1, 2.5], size: [4, 6], agents: 2, every: [5, 9], to: "build", label: "writers", labelSide: "top-start" },
-    { id: "build", kind: "box", at: [8, 4], size: [4, 4], capacity: 2, hold: [2, 4], label: "build", labelSide: "top-start", out: "deploy" },
-    { id: "deploy", kind: "press", at: [15, 4], size: [4, 4], hold: [0.6, 1.2], label: "deploy", labelSide: "top-start", out: "prod" },
-    { id: "prod", kind: "line", at: [22, 5], size: [7, 2], label: "prod", labelSide: "top-start", note: "", notes: { done: "healthy", failed: "failing" } },
+    { id: "writers", kind: "source", at: [1, 3], size: [8, 6], agents: 2, every: [5, 9], to: "build", label: "writers", labelSide: "top-start" },
+    { id: "build", kind: "box", at: [11, 4], size: [4, 4], capacity: 2, hold: [2, 4], label: "build", labelSide: "top-start", out: "deploy" },
+    { id: "deploy", kind: "press", at: [17.5, 4], size: [4, 4], hold: [0.6, 1.2], label: "deploy", labelSide: "top-start", out: "prod" },
+    { id: "prod", kind: "line", at: [24, 5], size: [5, 2], label: "prod", labelSide: "top-start", note: "", notes: { done: "healthy", failed: "failing" } },
   ],
   wires: [
     { from: "writers", to: "build" },
