@@ -5,6 +5,7 @@
  * here: the plot tile is Signal's SVG plot, not a chart.
  */
 import { hotkeys, mountCountdown, mountFeed } from "../../src/js/index.js";
+import { markScrollers } from "./home-scrollers.js";
 
 /** Run `start` when `el` comes near the screen; it may return a stop function, called when the part leaves. */
 function whenVisible(el, start, { margin = "200px 0px" } = {}) {
@@ -138,25 +139,14 @@ function mountLivingTableTile() {
     let table;
     import("../../src/js/index.js").then(({ mountLivingTable }) => {
       table = mountLivingTable(root);
+      requestAnimationFrame(markScrollers);
     });
     return () => table?.dispose?.();
   });
 }
 
-/** A tile whose part is wider than the tile scrolls sideways, and a keyboard has to be able to reach that. */
-function mountScrollers() {
-  const watch = new ResizeObserver((entries) => {
-    for (const { target } of entries) {
-      if (target.scrollWidth > target.clientWidth) target.tabIndex = 0;
-      else target.removeAttribute("tabindex");
-    }
-  });
-  for (const body of document.querySelectorAll(".wall-tile-body")) watch.observe(body);
-}
-
 /** The package marks its JS as side-effect free, so the home page calls this export instead of importing the module for its effects. */
 export function mountWall() {
-  mountScrollers();
   mountLevel();
   mountOwned();
   mountPredict();
