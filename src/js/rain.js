@@ -251,7 +251,7 @@ export const rain = {
 export function initRain(root = document) {
   const pref = preference();
   for (const canvas of root.querySelectorAll("canvas[data-sd-rain]")) {
-    if (canvas.dataset.rainMounted) continue;
+    if ("rainMounted" in canvas.dataset) continue;
     canvas.dataset.rainMounted = "";
     const playing = pref === "on" || (pref !== "off" && canvas.dataset.sdRain === "play");
     mountRain(canvas, { playing });
