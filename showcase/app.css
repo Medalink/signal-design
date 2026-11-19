@@ -28,8 +28,8 @@
   html[data-page^="lib-"] {
     scroll-padding-top: calc(var(--doc-topbar-h) + 32px);
   }
-  /* Topbar: sticky, 64px tall, translucent canvas with an edge shadow where
-     it meets what scrolls under it. */
+  /* Topbar: sticky, 64px tall, solid canvas (a translucent one let cards
+     ghost through) with an edge shadow where it meets what scrolls under it. */
   .doc-topbar {
     position: sticky;
     top: 0;
@@ -39,7 +39,7 @@
     gap: 8px;
     height: var(--doc-topbar-h);
     padding: 0 var(--doc-gutter);
-    background: color-mix(in srgb, var(--sd-canvas) 96%, transparent);
+    background: var(--sd-canvas);
     box-shadow: var(--sd-edge-below);
   }
   /* The home link is a full-height target, not a 22px line of type. */
