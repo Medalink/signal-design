@@ -29,9 +29,10 @@ const pkg = JSON.parse(readFileSync(resolve(root, "package.json"), "utf8"));
 
 /* The ring's worktree is cleaned before every run, so Vite always starts cold, and the first
    showcase page can take over 30 s to transform when the machine is busy (the release ring
-   failed exactly there on 2026-11-15). Give the waits a real budget: a page that never
-   renders still fails, just later. */
-const PAGE_BUDGET = 120_000;
+   failed exactly there on 2026-11-15, then again at 120 s on 2026-11-19 while the lab was
+   measuring the machine). Give the waits a real budget: a page that never renders still
+   fails, just later. */
+const PAGE_BUDGET = 300_000;
 
 /** What each data-sd-* attribute does; the generator fails on an unknown one. */
 const ATTRIBUTES = {
@@ -144,8 +145,14 @@ try {
   /* ---- components: every block of every library page, in registry order --- */
   const blocks = [];
   for (const { file, group } of LIBRARY) {
-    await page.goto(`http://localhost:${port}/${file}`, { timeout: PAGE_BUDGET });
-    await page.waitForSelector(".demo-code pre", { state: "attached", timeout: PAGE_BUDGET });
+    try {
+      await page.goto(`http://localhost:${port}/${file}`, { timeout: PAGE_BUDGET });
+      await page.waitForSelector(".demo-code pre", { state: "attached", timeout: PAGE_BUDGET });
+    } catch (error) {
+      // A timeout alone never says which page hung; name it.
+      error.message = `reading ${file}: ${error.message}`;
+      throw error;
+    }
     blocks.push(
       ...(await page.evaluate((section) =>
         [...document.querySelectorAll(".demo-block")].map((b) => {
