@@ -62,10 +62,17 @@
     color: var(--sd-fg);
     box-shadow: inset 1px 0 0 var(--sd-fg);
   }
+  /* Disabled: faint words (4.5:1), pictures at 45%. */
+  [role="treeitem"][aria-disabled="true"] > .sd-tree-row,
+  [role="treeitem"][aria-disabled="true"] > .sd-tree-row :not(svg, svg *, img, .sd-avatar, .sd-avatar *, .sd-badge, .sd-badge-count, .sd-count, [data-tone], [data-tone] *) {
+    color: var(--sd-fg-faint);
+  }
   [role="treeitem"][aria-disabled="true"] > .sd-tree-row {
-    opacity: 0.4;
     cursor: default;
     pointer-events: none;
+  }
+  [role="treeitem"][aria-disabled="true"] > .sd-tree-row :is(svg, img) {
+    opacity: 0.45;
   }
   .sd-tree-label {
     flex: 1;

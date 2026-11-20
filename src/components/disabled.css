@@ -1,0 +1,93 @@
+/*
+ * Disabled parts. A disabled control keeps its words legible: --sd-fg-faint,
+ * 4.5:1 on every surface in every theme, at full opacity, while its pictures
+ * (icons, images) drop to 45% so the part still reads as off. Avatars and
+ * status marks keep their color: initials are words, and a count still counts.
+ *
+ * base.css fades a disabled button that no part claims to 35%. This file
+ * claims the parts with text; sd-btn, sd-seg, sd-option, sd-chip, sd-pill,
+ * sd-number, sd-tabs and sd-rail-item do the same in their own files, and a
+ * locked sd-poll-option shows its result at full strength. Emoji buttons
+ * (sd-emoji-grid, sd-emoji-cats, the message action bar) keep the fade: an
+ * emoji is a picture that color cannot dim.
+ */
+@layer components {
+  :is(
+    .sd-icon-btn,
+    .sd-rail-tile,
+    .sd-roster-row,
+    .sd-roster-more,
+    .sd-roster-head > button,
+    .sd-reactions > button,
+    .sd-thread-chip,
+    .sd-message-ref,
+    .sd-tasklist-add,
+    .sd-voice-play,
+    .sd-voice-speed,
+    .sd-suggest-command,
+    .sd-file,
+    .sd-shot,
+    .sd-item,
+    .sd-sidebar-link,
+    .sd-gutter-marker,
+    .sd-statusbar-seg
+  ):is(:disabled, [aria-disabled="true"]) {
+    color: var(--sd-fg-faint);
+    opacity: 1;
+    pointer-events: none;
+  }
+  /* Words inside take the faint color too, past their own greys. Pictures,
+     avatars and status marks (a count, a badge, a toned word) keep theirs. */
+  :is(
+    .sd-icon-btn,
+    .sd-rail-tile,
+    .sd-roster-row,
+    .sd-roster-more,
+    .sd-roster-head > button,
+    .sd-reactions > button,
+    .sd-thread-chip,
+    .sd-message-ref,
+    .sd-tasklist-add,
+    .sd-voice-play,
+    .sd-voice-speed,
+    .sd-suggest-command,
+    .sd-file,
+    .sd-shot,
+    .sd-item,
+    .sd-sidebar-link,
+    .sd-gutter-marker,
+    .sd-statusbar-seg
+  ):is(:disabled, [aria-disabled="true"]) :not(svg, svg *, img, .sd-avatar, .sd-avatar *, .sd-badge, .sd-badge-count, .sd-count, [data-tone], [data-tone] *) {
+    color: var(--sd-fg-faint);
+  }
+  /* A flow job sits on a lifted fill where faint text falls under 4.5:1. */
+  .sd-flow-job:is(:disabled, [aria-disabled="true"]) {
+    color: var(--sd-fg-subtle);
+    opacity: 1;
+    pointer-events: none;
+  }
+  :is(
+    .sd-icon-btn,
+    .sd-rail-tile,
+    .sd-roster-row,
+    .sd-roster-more,
+    .sd-roster-head > button,
+    .sd-reactions > button,
+    .sd-thread-chip,
+    .sd-message-ref,
+    .sd-tasklist-add,
+    .sd-voice-play,
+    .sd-voice-speed,
+    .sd-suggest-command,
+    .sd-file,
+    .sd-shot,
+    .sd-item,
+    .sd-sidebar-link,
+    .sd-gutter-marker,
+    .sd-statusbar-seg,
+    .sd-flow-job,
+    .sd-tabs > button
+  ):is(:disabled, [aria-disabled="true"]) :is(svg, img) {
+    opacity: 0.45;
+  }
+}

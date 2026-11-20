@@ -279,9 +279,17 @@
   .sd-menu :where([aria-selected="true"]) {
     box-shadow: inset 1px 0 0 var(--sd-fg);
   }
+  /* Disabled: faint words (4.5:1), pictures at 45%. Specific enough to beat
+     the hint, lead and tone colors below. */
+  .sd-menu [aria-disabled="true"],
+  .sd-menu [aria-disabled="true"] :not(svg, svg *, img, .sd-avatar, .sd-avatar *, .sd-badge, .sd-badge-count, .sd-count, [data-tone], [data-tone] *) {
+    color: var(--sd-fg-faint);
+  }
   .sd-menu :where([aria-disabled="true"]) {
-    opacity: 0.4;
     pointer-events: none;
+  }
+  .sd-menu :where([aria-disabled="true"]) :where(svg, img) {
+    opacity: 0.45;
   }
   .sd-menu :where([data-tone]:not(.sd-avatar)) {
     color: var(--tone);

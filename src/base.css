@@ -523,10 +523,20 @@
     outline: 1px solid var(--sd-fg);
     outline-offset: 2px;
   }
+  /* Disabled field: the value in --sd-fg-faint (4.5:1 on every surface)
+     rather than a fade that drops it near 2:1. WebKit paints a disabled
+     value through its own text fill color, so that follows too. A checkbox,
+     radio or range is a picture and fades below. */
   input:is(:disabled),
   textarea:is(:disabled),
   select:is(:disabled) {
-    opacity: 0.4;
+    color: var(--sd-fg-faint);
+    -webkit-text-fill-color: var(--sd-fg-faint);
+    opacity: 1;
+  }
+  :is(input, textarea):is(:disabled)::placeholder {
+    color: var(--sd-fg-faint);
+    -webkit-text-fill-color: var(--sd-fg-faint);
   }
   /* Read-only is not a field to type in: no fill, a dashed edge. Focus and
      invalid keep their own edge. */

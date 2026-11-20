@@ -57,8 +57,8 @@
   }
   /* Dimmed only when every text control in the field is off; a group with one
      disabled choice (an option card) still has a live label. */
-  .sd-field:has(:is(input, select, textarea):disabled):not(:has(:is(input, select, textarea):enabled)) .sd-field-label {
-    opacity: 0.5;
+  .sd-field:has(:is(input, select, textarea):disabled):not(:has(:is(input, select, textarea):enabled)) :is(.sd-field-label, .sd-field-label *, .sd-field-hint) {
+    color: var(--sd-fg-faint);
   }
   /* Focusing a control, from a failed submit or a skip link, leaves its label
      above it and its message below it in view. */
@@ -166,14 +166,12 @@
   .sd-check-bare > input:not([role="switch"]) {
     margin-top: 0;
   }
-  /* The label fades the control and its text together, once: the control's own
-     disabled fade (base.css) would stack on it. */
-  .sd-check:has(:disabled) {
-    opacity: 0.5;
+  /* Disabled: the text drops to --sd-fg-faint (4.5:1) and the box keeps the
+     control's own fade (base.css), so the words stay readable. */
+  .sd-check:has(:disabled),
+  .sd-check:has(:disabled) :is(.sd-check-text, .sd-check-text *) {
+    color: var(--sd-fg-faint);
     cursor: not-allowed;
-  }
-  .sd-check > input:disabled {
-    opacity: 1;
   }
   .sd-check-text {
     display: grid;
