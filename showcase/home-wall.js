@@ -58,7 +58,7 @@ ${g.pages.map((p, at) => tile(p, at, g.pages)).join("\n")}
 ${groups}
     </div>`;
   });
-  return `  <div class="home-wall">
+  return `  <div class="home-wall" data-sd-check-ignore="primary">
 ${sections.join("\n")}
   </div>`;
 }
