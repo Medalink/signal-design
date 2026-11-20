@@ -74,10 +74,16 @@ export default async function checkMascot(page, where, fail) {
     .then(() => true, () => false);
   if (!centered) bad("eyes look out when the pointer is over the mascot");
 
-  // A press smiles, then returns to the mood it had.
+  // A press smiles, then returns to the mood it had. The smile is awaited like
+  // the return: a busy runner can delay the click's handler past a read taken
+  // the moment the click resolves, and the 2026-11-19 WebKit sweep failed on
+  // exactly that while every other engine and viewport passed. A press that
+  // never smiles still fails, with the mood it kept.
   await stage.click();
-  const smiled = await page.evaluate(() => document.getElementById("mascot-demo").dataset.mood);
-  if (smiled !== "happy") bad("press smiles", smiled);
+  const smiled = await page
+    .waitForFunction(() => document.getElementById("mascot-demo").dataset.mood === "happy", null, { timeout: 2000 })
+    .then(() => true, () => false);
+  if (!smiled) bad("press smiles", await page.evaluate(() => document.getElementById("mascot-demo").dataset.mood));
   const back = await page
     .waitForFunction(() => document.getElementById("mascot-demo").dataset.mood === "idle", null, { timeout: 3000 })
     .then(() => true, () => false);
