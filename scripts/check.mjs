@@ -508,7 +508,10 @@ async function checkFeedAndHotkeys(page, name) {
     assert(root.scrollTop === 0 && !detail.returnPending, "expanded detail did not block default idle return");
     root.querySelector("button").remove();
     live.select("row-5");
+    // select() ignores the scroll it causes until the next animation frame. A fixed sleep can end before a busy
+    // page runs that frame, and the scrollbar-style scroll below would then be ignored as the feed's own.
     await wait();
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     root.scrollTop = 0;
     root.dispatchEvent(new Event("scroll"));
     assert(detail.returnPending, "scrollbar-style scroll after a jump did not rearm return");
