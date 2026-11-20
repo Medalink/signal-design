@@ -1812,8 +1812,11 @@
      active state take the current fill (the library's selected-row fill), and
      keyboard focus adds an fg ring inside the row, so it differs from hover
      and from the active row. */
+  /* background-color, not the shorthand: the hover shimmer paints the row
+     through a background-image clipped to the glyphs, which `background:`
+     would wipe and leave the row invisible on hover (motion.css). */
   .sd-suggest .sd-menu [role="option"]:is(:hover, :focus-visible, [data-active]) {
-    background: var(--sd-current-fill);
+    background-color: var(--sd-current-fill);
   }
   .sd-suggest .sd-menu [role="option"]:focus-visible {
     outline: 1px solid var(--sd-fg);
