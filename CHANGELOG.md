@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 1.4.88 (2026-11-20)
+
+### Fixed
+- `PaletteOption` (types for `setOptions`) gains `leading?: string | Node`,
+  the text or node `setOptions` already renders before the label.
+
 ## 1.4.87 (2026-11-19)
 
 ### Fixed
