@@ -34,6 +34,28 @@ const pkg = JSON.parse(readFileSync(resolve(root, "package.json"), "utf8"));
    fails, just later. */
 const PAGE_BUDGET = 300_000;
 
+// A refused or blipped page retries past a network change mid-run: during the
+// 395eff0 ring (2026-11-20) the a11y audit hit net::ERR_NETWORK_CHANGED on the
+// lab's own dev server, and build-ai's one shot at goto + waitForSelector then
+// starved for its whole budget on a page whose requests died before Vite
+// finished transforming it. Every other lab step already retries (check.mjs
+// re-settles the network, a11y re-audits, perf.mjs has this same helper); a
+// page that never renders still fails here, with the last error.
+async function settle(page, url) {
+  let error;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      await page.goto(url, { timeout: PAGE_BUDGET });
+      await page.waitForSelector(".demo-code pre", { state: "attached", timeout: PAGE_BUDGET });
+      return;
+    } catch (cause) {
+      error = cause;
+      await page.waitForTimeout(5000).catch(() => {});
+    }
+  }
+  throw error;
+}
+
 /** What each data-sd-* attribute does; the generator fails on an unknown one. */
 const ATTRIBUTES = {
   "data-sd-living-table": "Grouped native table mounted explicitly with mountLivingTable(root), independent of init(). Metadata folds at container widths of 48rem and 32rem.",
@@ -146,8 +168,7 @@ try {
   const blocks = [];
   for (const { file, group } of LIBRARY) {
     try {
-      await page.goto(`http://localhost:${port}/${file}`, { timeout: PAGE_BUDGET });
-      await page.waitForSelector(".demo-code pre", { state: "attached", timeout: PAGE_BUDGET });
+      await settle(page, `http://localhost:${port}/${file}`);
     } catch (error) {
       // A timeout alone never says which page hung; name it.
       error.message = `reading ${file}: ${error.message}`;
