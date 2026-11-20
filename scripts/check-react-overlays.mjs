@@ -291,10 +291,16 @@ window.__sdDialog = { onDialogClick, onDialogKeydown };` });
     await away();
     await secondTrigger.focus();
     await page.keyboard.press("Escape");
+    // Focus leaves Second before the pointer arrives: a page that loses and regains focus under a busy parallel sweep
+    // fires focus again on the element that still has it, and focus shows a tip at once, which is not what this
+    // sequence measures. Blurring after Escape closes nothing (the tip is already gone), so the dismissal under test
+    // is the same.
+    await secondTrigger.evaluate((el) => el.blur());
     await moveTo(target);
     const spent = (await clock()) - began;
     await pause(250);
-    return { spent, waits: (await tipsNow()).length === 0 };
+    const tips = await tipsNow();
+    return { spent, waits: tips.length === 0, tips, hasFocus: await page.evaluate(() => document.hasFocus()) };
   };
   let run = await escapeSteps();
   // Two things can spoil one pass of the sequence without saying anything
@@ -310,7 +316,7 @@ window.__sdDialog = { onDialogClick, onDialogKeydown };` });
     run = await escapeSteps();
   }
   expect(run.spent < 280, `the steps fit inside the 300 ms warm window, took ${Math.round(run.spent)} ms`);
-  expect(run.waits, `after Escape closed a tip the next trigger waits its delay even inside the warm window, got ${JSON.stringify(await tipsNow())}`);
+  expect(run.waits, `after Escape closed a tip the next trigger waits its delay even inside the warm window, got ${JSON.stringify(run.tips)} after ${Math.round(run.spent)} ms of steps (page focused: ${run.hasFocus})`);
   await trigger("Second").blur();
 
   // At delay 0 too: a tip opened by focus gives way to the one the pointer opens, even in another demo.
