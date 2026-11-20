@@ -37,6 +37,24 @@ async function mainThread(cdp, run) {
 }
 
 const rows = [];
+// A refused or hung page retries past a blip: the lab's dev server has died
+// mid-run on a busy, swapping machine (the ring at c4db5c4 and 395eff0), and
+// one failed goto used to fail the whole perf pass. The counters skip the
+// waits between attempts, so a retried page's numbers stay honest; a page
+// that never loads still fails with the last error.
+async function settle(page, url) {
+  let error;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      await page.goto(url, { waitUntil: "load" });
+      return;
+    } catch (cause) {
+      error = cause;
+      await page.waitForTimeout(5000).catch(() => {});
+    }
+  }
+  throw error;
+}
 for (const key of only) {
   const ctx = await browser.newContext({ viewport: { width: 1600, height: 900 } });
   const page = await ctx.newPage();
@@ -45,7 +63,7 @@ for (const key of only) {
   await cdp.send("Performance.enable");
 
   const load = await mainThread(cdp, async () => {
-    await page.goto(base + PAGES[key], { waitUntil: "load" });
+    await settle(page, base + PAGES[key]);
     await page.waitForTimeout(2500);
   });
 
