@@ -214,7 +214,8 @@
     padding: 0 14px;
     border: 0;
     background: transparent;
-    color: var(--sd-fg-subtle);
+    /* Muted, not subtle: a disabled item's faint label must read lower. */
+    color: var(--sd-fg-muted);
     font: inherit;
     font-size: var(--text-sm);
     letter-spacing: var(--tracking-wider);

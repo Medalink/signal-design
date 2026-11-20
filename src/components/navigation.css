@@ -66,7 +66,8 @@
     border: 0;
     border-block-end: 1px solid transparent;
     background: none;
-    color: var(--sd-fg-subtle);
+    /* Muted, not subtle: a disabled tab's faint label must read lower. */
+    color: var(--sd-fg-muted);
     font: inherit;
     font-size: var(--text-sm);
     letter-spacing: var(--tracking-wider);
