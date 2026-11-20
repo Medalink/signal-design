@@ -27,7 +27,7 @@
       <p class="demo-usage"><code>sd-composer</code> + <code>-row|-add|-send|-reply|-status|-chips|-hint</code> · send stays quiet until there is text · <code>sd-add-menu</code> (the + opens every content type) · in an <code>sd-shell-dock</code> (<code>data-flush</code> to rest on the window bottom) the status line and composer share one box · <code>data-sd-autogrow</code> · <code>data-sd-enter-submit</code> · <code>data-sd-suggest</code> + <code>data-sd-trigger</code> · <code>sd-suggest</code></p>
     </div>
 
-    <div class="demo-block" id="conversation-slash-commands">
+    <div class="demo-block" id="conversation-slash-commands" data-sd-check-ignore="primary">
       <h2 class="sd-label">Slash commands</h2>
       <div class="max-w-column sd-shell-dock" style="padding-top: 17rem">
         <form class="sd-composer" onsubmit="event.preventDefault(); this.querySelector('textarea').value=''">
@@ -51,7 +51,7 @@
       <p class="demo-usage"><code>sd-suggest-command</code> on an option: the command in mono and its arguments in <code>sd-menu-hint</code>, faint on the right · the active option carries <code>aria-selected="true"</code> and the menu's marker · <code>data-sd-trigger-start="/"</code> opens the list only when the text starts with <code>/</code> (<code>data-sd-trigger="@"</code> keeps mentions on the same textarea) · <code>data-trigger="/"</code> on an option keeps it out of the mentions list · the query filters by name, not by arguments · the list opens above the composer</p>
     </div>
 
-    <div class="demo-block" id="conversation-send-silently">
+    <div class="demo-block" id="conversation-send-silently" data-sd-check-ignore="primary">
       <h2 class="sd-label">Send silently</h2>
       <div class="max-w-column sd-shell-dock">
         <article class="sd-message" data-own style="--who: var(--sd-success); --sd-feed-bg: var(--sd-surface)">
@@ -70,7 +70,7 @@
       <p class="demo-usage">Silent mark: an icon-only item in <code>sd-message-meta</code> with <code>role="img"</code> and <code>aria-label="Sent silently"</code> · Send menu: <code>data-sd-contextmenu="id"</code> on <code>sd-composer-send</code> opens an <code>sd-popover sd-message-menu</code> holding an <code>sd-menu</code> on right-click or long press, while a plain click still sends · leave "Send when … is online" out when the recipient's presence is off · no new class: right-click the send button</p>
     </div>
 
-    <div class="demo-block" id="conversation-voice-recording">
+    <div class="demo-block" id="conversation-voice-recording" data-sd-check-ignore="primary">
       <h2 class="sd-label">Voice recording</h2>
       <div class="grid gap-3 max-w-column">
         <form class="sd-composer" onsubmit="event.preventDefault()">
