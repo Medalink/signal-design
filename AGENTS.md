@@ -81,7 +81,10 @@ and `data-sd-prefetch`.
    Focus rings and current nav links and tabs (`aria-current`) are `fg`, not a
    color. Three selection markers are `accent`: the bar beside the current
    `sd-rail-tile`, the edge and corner of a chosen `sd-option`, and the start
-   edge of the command palette's active result. Pending marks differ from
+   edge of the command palette's active result. A resize grip
+   (`sd-sidebar-resize`, `sd-resize-handle`) is a 3px `accent` line while it is
+   dragged or focused: it shows the edge that moves, so it stands in for the
+   ring. Pending marks differ from
    warning by shape too: a ringed `sd-dot` and `sd-status` square, a dashed
    `sd-badge` edge.
    Never use hues directly (`text-pink`, `#ff3366`). In a conversation every
