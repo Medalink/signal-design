@@ -655,7 +655,23 @@ export async function checkReact(page, base) {
     new MutationObserver((records) => records.forEach((r) => r.target.dataset.leaving !== undefined && window.__leaving.push(r.target.textContent))).observe(document.querySelector(".sd-toaster"), { subtree: true, attributes: true, attributeFilter: ["data-leaving"] });
   });
   await toastButton("Quick toast").click();
-  await toasts("Quick").hover();
+  // A busy runner can spend the toast's 300 ms between the click and the
+  // hover landing; the toast is already leaving then, never sits still, and
+  // the hover times out (seen once in a WebKit sweep). The pair re-runs when
+  // the hover fails: the pointer goes away so the leftover toast can leave,
+  // and a fresh click races a fresh 300 ms. A toast that hover can never
+  // reach still fails the hold check below.
+  let held = false;
+  for (let attempt = 0; attempt < 3 && !held; attempt++) {
+    try {
+      await toastButton("Quick toast").click();
+      await toasts("Quick").hover({ timeout: 5000 });
+      held = true;
+    } catch {
+      await page.mouse.move(2, 2);
+      await until(() => ![...document.querySelectorAll(".sd-toast")].some((t) => t.textContent === "Quick"), null, 3000);
+    }
+  }
   await pause(1600);
   expect(await toasts("Quick").count() === 1, "hovering a toast holds it past its timeout");
   await page.mouse.move(2, 2);
