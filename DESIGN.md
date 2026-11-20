@@ -241,7 +241,8 @@ A font picker (`data-font`) can swap the text face for Leon Sans or Source Code 
 ### Hierarchy
 - **Display XL** (400, 4.125rem, 1.04): hero lines on landing surfaces; 3.125rem on phones.
 - **Display** (400, 2.375rem, 1.18, -0.03em): the page's display line, often two-tone: the second clause in faint text ("32 open. 8 done."); 1.75rem on phones.
-- **Title** (400, 1.4375rem, 1.3, -0.025em): page and panel titles.
+- **Title** (400, 1.4375rem, 1.3, -0.025em): page titles.
+- **Panel title** (400, 1.1875rem, 1.4, -0.025em, text color): a panel's or a row's title, in sentence case.
 - **Lead** (400, 1.1875rem, 1.55, muted): the sentence under a title.
 - **Body** (400, 1rem, 1.5): all running text and controls.
 - **Label** (400, 0.875rem, 0.16em, uppercase, subtle): section heads, field labels, badges, status lines.

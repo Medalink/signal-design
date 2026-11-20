@@ -41,12 +41,14 @@
   .sd-panel-fluid {
     max-width: none;
   }
+  /* A panel's title sits a size above body, in sentence case, so it never
+     reads as one of the caps field labels under it. */
   .sd-panel-title {
-    margin-block-end: 8px;
-    font-size: var(--text-xs);
+    margin-block-end: 12px;
+    font-size: var(--text-lg);
     font-weight: 400;
-    letter-spacing: var(--tracking-widest);
-    text-transform: uppercase;
+    line-height: 1.4;
+    letter-spacing: var(--tracking-tight);
     color: var(--sd-fg);
   }
   .sd-panel-desc {
