@@ -29,13 +29,15 @@
  * starts over (clear), and hears a click on anything with a `link` as
  * an "open" event, and the pointer heading for one as a "predict" event.
  */
-import { KINDS } from "./machine-kinds.js";
+import { KINDS, MIN_SLOT_PITCH } from "./machine-kinds.js";
 import { initPredict } from "./predict.js";
 
 const kinds = new Map(Object.entries(KINDS));
 const SVG = "http://www.w3.org/2000/svg";
 const TRAIL = 36;
-const QUEUE_GAP = 14;
+/** Waiting tokens line up at a port a hit target's width apart, so two linked
+ * tokens in one queue keep the 24px pitch their hit areas need. */
+const QUEUE_GAP = 24;
 const QUEUE_SHOWN = 7;
 
 /** Add or replace a node kind. See machine-kinds.js for the hooks a kind may define. */
@@ -200,13 +202,17 @@ export function mountMachine(root, spec, options = {}) {
     };
     byEl.set(tok.el, tok);
     if (link) {
-      // A token with a link is a button the host can open. The layer is hidden
-      // from assistive tech only while nothing in it can be activated.
+      // A token with a link is a button the host can open. The button lives on
+      // a real 24x24 hit centred on the drawn token, so it meets WCAG 2.2
+      // target-size however small the token is drawn and however close its
+      // neighbours stand. The layer is hidden from assistive tech only while
+      // nothing in it can be activated.
       tok.el.dataset.link = "";
       tok.el.dataset.sdPredict = "";
-      tok.el.tabIndex = 0;
-      tok.el.setAttribute("role", "button");
-      tok.el.setAttribute("aria-label", String(label || key || "Open"));
+      const hit = el("button", "sd-machine-hit", tok.el);
+      hit.type = "button";
+      hit.tabIndex = 0;
+      hit.setAttribute("aria-label", String(label || key || "Open"));
       tokensLayer.removeAttribute("aria-hidden");
     }
     if (kind) tok.el.dataset.kind = kind;
@@ -621,6 +627,16 @@ export function mountMachine(root, spec, options = {}) {
 
   function defaultSlots(n, count) {
     const across = n.w >= n.h;
+    const span = across ? n.w : n.h;
+    // Linked tokens are 24x24 hit targets (WCAG 2.2 target-size): when the
+    // even spread would seat them closer than that and the node has the
+    // room, centre them on a 24px pitch instead.
+    if (span / (count + 1) < MIN_SLOT_PITCH && (count + 1) * MIN_SLOT_PITCH <= span) {
+      const start = (span - (count - 1) * MIN_SLOT_PITCH) / 2;
+      return Array.from({ length: count }, (_, i) =>
+        across ? [start + i * MIN_SLOT_PITCH, n.h / 2] : [n.w / 2, start + i * MIN_SLOT_PITCH],
+      );
+    }
     return Array.from({ length: count }, (_, i) => {
       const f = (i + 1) / (count + 1);
       return across ? [n.w * f, n.h / 2] : [n.w / 2, n.h * f];

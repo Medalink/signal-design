@@ -616,17 +616,41 @@
   .sd-machine-token[data-held][data-retoned][data-status]:not([data-kind="signal"]) {
     background-color: var(--status);
   }
-  /* A token with a link is a button: a wider target, and a hard ring for focus. */
+  /* A token with a link is a button: a real 24x24 hit area (WCAG 2.2
+     target-size), a hard ring for focus, and the pointer. */
   .sd-machine-token[data-link] {
     pointer-events: auto;
     cursor: pointer;
   }
-  .sd-machine-token[data-link]:not([data-more])::before {
-    content: "";
+  .sd-machine-token .sd-machine-hit {
     position: absolute;
-    inset: -8px;
+    left: 50%;
+    top: 50%;
+    width: 24px;
+    height: 24px;
+    translate: -50% -50%;
+    padding: 0;
+    border: 0;
+    margin: 0;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+    /* Focus draws on the token (the rule above); the hit stays invisible. */
+    outline: none;
   }
-  .sd-machine-token[data-link]:focus-visible {
+  @media (forced-colors: active) {
+    .sd-machine-token .sd-machine-hit {
+      /* The hit is invisible on purpose; the system backplate would draw it. */
+      forced-color-adjust: none;
+      background: transparent;
+    }
+    .sd-machine-token .sd-machine-hit:focus-visible {
+      /* Box shadows do not draw here; the system focus color does. */
+      outline: 2px solid Highlight;
+      outline-offset: 1px;
+    }
+  }
+  .sd-machine-token[data-link]:has(.sd-machine-hit:focus-visible) {
     box-shadow: 0 0 0 2px var(--sd-tone-1), 0 0 0 3px var(--sd-fg);
   }
   .sd-machine-token[data-hidden] {

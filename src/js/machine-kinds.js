@@ -26,6 +26,13 @@
  */
 
 const SLOT = 22;
+/**
+ * Linked tokens are 24x24 hit targets (WCAG 2.2 target-size), so two slots
+ * that hold them must not sit closer than that: overlapping hit areas fail
+ * the rule's obscured-target check. Where the engine picks the slot grid
+ * itself, it keeps this pitch when the node has the room.
+ */
+export const MIN_SLOT_PITCH = 24;
 const HEX = "0123456789abcdef";
 
 const sha = (h) => Array.from({ length: 7 }, () => HEX[Math.floor(h.rand() * 16)]).join("");
@@ -57,7 +64,17 @@ function drawSlots(n, h) {
 
 function gridSlots(n, count) {
   const spec = n.spec;
-  const cols = spec.cols ?? (n.w >= n.h ? count : 1);
+  const wide = n.w >= n.h;
+  const shape = (cols) => Math.min(n.w / (cols + 1), n.h / (Math.ceil(count / cols) + 1));
+  let cols = spec.cols ?? (wide ? count : 1);
+  if (spec.cols == null && shape(cols) < MIN_SLOT_PITCH) {
+    // The engine's own shape crowds the slots below a 24px pitch. When the
+    // node has the room, take the shape closest to the engine's own (a row
+    // for a wide node, a column for a tall one) that keeps the pitch.
+    const fits = [];
+    for (let c = 1; c <= count; c++) if (shape(c) >= MIN_SLOT_PITCH) fits.push(c);
+    if (fits.length) cols = wide ? fits[fits.length - 1] : fits[0];
+  }
   const rows = Math.ceil(count / cols) || 1;
   return Array.from({ length: count }, (_, i) => {
     const c = i % cols;
