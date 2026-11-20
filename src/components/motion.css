@@ -74,6 +74,9 @@
     /* Layer 1, clipped to the text: settled hover color behind the band,
        the band, then the same color dimmed ahead of it.
        Layer 2 is empty; its border-box clip keeps the background color.
+       The layers are !important: an app rule such as a:hover { background: … }
+       would otherwise reset them while the transparent text fill stays, and
+       the words vanish until the sweep ends. background-color stays the app's.
        90% puts the band's front edge on the right edge, 10% its back edge
        on the left, so every step of progress moves something. */
     background-image:
@@ -83,12 +86,12 @@
         color-mix(in oklab, currentColor 50%, var(--sd-flash)) 50%,
         color-mix(in oklab, currentColor 55%, transparent) 60% 100%
       ),
-      linear-gradient(transparent, transparent);
-    background-size: 300% 100%, auto;
-    background-position: calc(90% - 80% * var(--sd-sweep)) 0, 0 0;
-    background-repeat: no-repeat;
-    -webkit-background-clip: text, border-box;
-    background-clip: text, border-box;
+      linear-gradient(transparent, transparent) !important;
+    background-size: 300% 100%, auto !important;
+    background-position: calc(90% - 80% * var(--sd-sweep)) 0, 0 0 !important;
+    background-repeat: no-repeat !important;
+    -webkit-background-clip: text, border-box !important;
+    background-clip: text, border-box !important;
     -webkit-text-fill-color: transparent;
   }
 

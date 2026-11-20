@@ -348,10 +348,9 @@
   .sd-uptime > i[data-state="down"] {
     background: var(--sd-chart-critical);
   }
+  /* No data: a grey cell, so it reads as a cell on any surface, not a gap. */
   .sd-uptime > i[data-state="none"] {
-    background: transparent;
-    outline: 1px dashed var(--sd-line);
-    outline-offset: -1px;
+    background: var(--sd-line-strong);
   }
   .sd-uptime > i:hover {
     outline: 1px solid var(--sd-fg);
