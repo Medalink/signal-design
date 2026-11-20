@@ -18,7 +18,16 @@ export default async function checkOptionCards(page, where, fail) {
   const noise = page.locator('[aria-labelledby="demo-option-noise-label"]');
   await noise.locator("button", { hasText: "Strong" }).click();
   const pressed = await noise.evaluate((g) => [...g.children].filter((b) => b.getAttribute("aria-pressed") === "true").map((b) => b.textContent.trim()));
-  const disabled = await noise.evaluate((g) => getComputedStyle(g.querySelector(":disabled")).opacity === "0.5");
+  // A disabled card keeps its words at full opacity in --sd-fg-faint; it does not fade.
+  const disabled = await noise.evaluate((g) => {
+    const probe = document.createElement("span");
+    probe.style.color = "var(--sd-fg-faint)";
+    document.body.append(probe);
+    const faint = getComputedStyle(probe).color;
+    probe.remove();
+    const style = getComputedStyle(g.querySelector(":disabled"));
+    return style.opacity === "1" && style.color === faint;
+  });
   await page.click(card("ink"));
   const got = { clicked, focus, keyed, pressed: pressed.length === 1 && pressed[0].startsWith("Strong"), disabled };
   for (const [key, passed] of Object.entries(got)) if (!passed) fail(`${where} option cards`, key);

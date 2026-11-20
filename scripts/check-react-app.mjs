@@ -578,8 +578,14 @@ export async function checkReactApp(page, base) {
   expect(widths.text === 400 && widths.plain === 400 && widths.own === 400 && widths.nameless === 400, `a hand-written label fills its parent, with a text span or without, got ${JSON.stringify(widths)}`);
   expect(await page.locator("#react-forms .sd-check-text").count() >= 3, "a control with a label still renders its text");
 
-  // A disabled control is faded once, by the label around it. The control's own disabled fade used to stack on that.
+  // A disabled control's box fades once, to the same level bare or labelled (the label does not stack a fade on it).
+  // The label's words stay at full opacity in --sd-fg-faint so they remain legible.
   const faded = await page.evaluate(() => {
+    const probe = document.createElement("span");
+    probe.style.color = "var(--sd-fg-faint)";
+    document.body.append(probe);
+    const faint = getComputedStyle(probe).color;
+    probe.remove();
     const seen = (el) => {
       let product = 1;
       for (let node = el; node && node !== document.body; node = node.parentElement) product *= Number(getComputedStyle(node).opacity);
@@ -592,11 +598,13 @@ export async function checkReactApp(page, base) {
       bareBox: seen(control("Locked box")),
       labelledSwitch: seen(labelled.closest("label").querySelector("input")),
       labelledText: seen(labelled),
+      labelledTextFaint: getComputedStyle(labelled).color === faint,
       enabled: seen(control("Mute channel")),
     };
   });
-  expect(faded.bareSwitch === faded.labelledText && faded.bareBox === faded.labelledText && faded.labelledSwitch === faded.labelledText, `a disabled control is faded once, to the same level as its label and as a bare one, got ${JSON.stringify(faded)}`);
-  expect(faded.labelledText < 1 && faded.enabled === 1, `a disabled control is faded and an enabled one is not, got ${JSON.stringify(faded)}`);
+  expect(faded.bareSwitch === faded.labelledSwitch && faded.bareBox === faded.labelledSwitch, `a disabled control is faded once, to the same level bare or labelled, got ${JSON.stringify(faded)}`);
+  expect(faded.labelledSwitch < 1 && faded.enabled === 1, `a disabled control is faded and an enabled one is not, got ${JSON.stringify(faded)}`);
+  expect(faded.labelledText === 1 && faded.labelledTextFaint, `a disabled control's label keeps full opacity in --sd-fg-faint, got ${JSON.stringify(faded)}`);
 
   /* ---- Dialog without a header, and unmountOnClose ---- */
   const naming = await page.evaluate(() => {
