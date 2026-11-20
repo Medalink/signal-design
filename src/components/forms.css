@@ -245,6 +245,15 @@
     color: var(--sd-fg);
     box-shadow: inset 0 -1px 0 var(--sd-fg);
   }
+  /* Disabled: the label drops to --sd-fg-faint (4.5:1) instead of fading.
+     A pressed item drops its fill, which faint text cannot read on, and
+     keeps its edge. */
+  .sd-seg > :is(button:disabled, label:has(> input:disabled)) {
+    background: transparent;
+    color: var(--sd-fg-faint);
+    opacity: 1;
+    pointer-events: none;
+  }
   .sd-seg > label:has(:focus-visible) {
     outline: 1px solid var(--sd-fg);
     outline-offset: -1px;
@@ -360,9 +369,19 @@
     outline: 1px solid var(--sd-fg);
     outline-offset: 2px;
   }
+  /* Disabled: no fill and faint text (4.5:1), with the preview dimmed, so
+     the card reads as off without fading its words. */
   .sd-option:is(:disabled, [aria-disabled="true"], :has(> input:disabled)) {
-    opacity: 0.5;
+    background: transparent;
+    color: var(--sd-fg-faint);
+    opacity: 1;
     cursor: not-allowed;
+  }
+  .sd-option:is(:disabled, [aria-disabled="true"], :has(> input:disabled)) :is(.sd-option-title, .sd-option-desc) {
+    color: var(--sd-fg-faint);
+  }
+  .sd-option:is(:disabled, [aria-disabled="true"], :has(> input:disabled)) .sd-option-preview {
+    opacity: 0.45;
   }
   .sd-option:has(> input:disabled) > input {
     cursor: not-allowed;

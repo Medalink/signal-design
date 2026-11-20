@@ -111,7 +111,9 @@
     color: var(--sd-fg);
   }
   .sd-number > button:disabled {
-    opacity: 0.35;
+    background: color-mix(in srgb, var(--sd-fg) 2%, var(--sd-field-fill));
+    color: var(--sd-fg-faint);
+    opacity: 1;
   }
   .sd-number > input {
     width: 4.5rem;

@@ -84,6 +84,11 @@
     color: var(--sd-fg);
     border-block-end-color: var(--sd-fg);
   }
+  .sd-tabs > :where(button):disabled {
+    color: var(--sd-fg-faint);
+    opacity: 1;
+    pointer-events: none;
+  }
   .sd-tabs > :where(button):focus-visible,
   .sd-tabs > :where(a):focus-visible {
     outline-offset: -1px;

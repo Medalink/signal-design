@@ -102,6 +102,25 @@
   button.sd-chip {
     cursor: pointer;
   }
+  /* Disabled: faint text (4.5:1) on a near-empty fill, like sd-btn. Only a
+     pressed chip keeps its edge. */
+  .sd-chip:is(:disabled, [aria-disabled="true"]):not([aria-pressed="true"], [aria-checked="true"]),
+  .sd-pill:is(:disabled, [aria-disabled="true"]) {
+    border-color: transparent;
+  }
+  .sd-chip:is(:disabled, [aria-disabled="true"]),
+  .sd-pill:is(:disabled, [aria-disabled="true"]) {
+    background: color-mix(in srgb, var(--sd-fg) 2%, transparent);
+    color: var(--sd-fg-faint);
+    opacity: 1;
+    pointer-events: none;
+  }
+  .sd-chip:is(:disabled, [aria-disabled="true"]) :is(b, .sd-chip-key),
+  .sd-pill:is(:disabled, [aria-disabled="true"]) b,
+  .sd-chip > button:disabled {
+    color: var(--sd-fg-faint);
+    opacity: 1;
+  }
 
   /* Counter pill: "↑ 21 NEW ABOVE  ⇧N". A filled tag; hover lifts the fill. */
   .sd-pill {

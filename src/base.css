@@ -850,11 +850,20 @@
     background: var(--sd-primary);
     opacity: 0.88;
   }
+  /* Disabled: a fallback 35% fade for buttons inside a part that draws no
+     disabled state of its own. A plain button, one with no class and not
+     directly in a Signal part, instead keeps its label legible like sd-btn:
+     --sd-fg-faint (4.5:1 on every surface) on a near-empty fill. */
   button:is(:disabled):is(*, :root),
   input[type="submit"]:is(:disabled),
   input[type="button"]:is(:disabled),
   input[type="reset"]:is(:disabled) {
     opacity: 0.35;
+  }
+  :is(button, input[type="submit"], input[type="button"], input[type="reset"]):is(:not([class]):not([class*="sd-"] > *)):is(:disabled) {
+    background: color-mix(in srgb, var(--sd-fg) 2%, transparent);
+    color: var(--sd-fg-faint);
+    opacity: 1;
   }
 
   /* Progress and meter: 4px flat bars. */
