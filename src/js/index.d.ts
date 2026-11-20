@@ -609,6 +609,8 @@ export function prerender(href: string): boolean;
 export interface PaletteOption {
   label: string;
   hint?: string;
+  /** Text or a node (an icon, an avatar) shown before the label. */
+  leading?: string | Node;
   group?: string;
   href?: string;
   keywords?: string;
