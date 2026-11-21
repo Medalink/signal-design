@@ -2,8 +2,11 @@
  * Performance pass over the showcase pages, in a real (headed) Chromium with
  * the GPU on and the CPU slowed down to stand in for a modest laptop.
  *
- *   node scripts/perf.mjs [baseUrl] [--throttle 4] [--pages index,lib-color,chat]
+ *   node scripts/perf.mjs [baseUrl] [--throttle 4] [--pages index,lib-color,chat] [--jobs 4]
  *
+ * Pages run in --jobs separate browsers side by side (default: one per 8 CPUs,
+ * at most 4). The CPU slowdown is per page, so a browser with its own cores
+ * measures what a serial run does; on a machine with fewer cores pass --jobs 1.
  * Per page it reports:
  *   load     main-thread time until the page settles, and the longest task
  *   idle     main-thread time over 3s of doing nothing (should be near 0)
@@ -11,6 +14,7 @@
  *   theme    time from a theme switch to the next painted frame
  *   heap     JS heap after load
  */
+import { availableParallelism } from "node:os";
 import { chromium } from "playwright";
 import { ALL, keyOf } from "../showcase/pages.js";
 
@@ -23,8 +27,9 @@ const opt = (name, fallback) => {
 const throttle = Number(opt("throttle", "4"));
 const PAGES = Object.fromEntries(ALL.map((p) => [keyOf(p), p.file]));
 const only = opt("pages", Object.keys(PAGES).join(",")).split(",");
+const jobs = Math.max(1, Math.min(only.length, Number(opt("jobs", Math.min(4, Math.floor(availableParallelism() / 8))))));
 
-const browser = await chromium.launch({ headless: false, args: ["--enable-gpu", "--ignore-gpu-blocklist"] });
+const launch = () => chromium.launch({ headless: false, args: ["--enable-gpu", "--ignore-gpu-blocklist"] });
 
 /** Main-thread time spent while `run` happens, from Chrome's counters. */
 async function mainThread(cdp, run) {
@@ -36,7 +41,6 @@ async function mainThread(cdp, run) {
   return { total: d("TaskDuration"), script: d("ScriptDuration"), layout: d("LayoutDuration"), style: d("RecalcStyleDuration") };
 }
 
-const rows = [];
 // A refused or hung page retries past a blip: the lab's dev server has died
 // mid-run on a busy, swapping machine (the ring at c4db5c4 and 395eff0), and
 // one failed goto used to fail the whole perf pass. The counters skip the
@@ -55,7 +59,7 @@ async function settle(page, url) {
   }
   throw error;
 }
-for (const key of only) {
+async function measure(browser, key) {
   const ctx = await browser.newContext({ viewport: { width: 1600, height: 900 } });
   const page = await ctx.newPage();
   const cdp = await ctx.newCDPSession(page);
@@ -117,13 +121,30 @@ for (const key of only) {
   });
 
   const { usedSize } = await cdp.send("Runtime.getHeapUsage");
-  rows.push({ page: key, load, idle, scroll, theme, themeWork: themeWorkM.total, heap: usedSize / 1e6 });
   await ctx.close();
+  return { page: key, load, idle, scroll, theme, themeWork: themeWorkM.total, heap: usedSize / 1e6 };
 }
-await browser.close();
+
+// Each worker owns a browser and takes the next unmeasured page, so a slow page
+// does not hold the others back. Rows keep the order of `only`.
+const rows = new Array(only.length);
+let next = 0;
+async function worker() {
+  const browser = await launch();
+  try {
+    while (next < only.length) {
+      const i = next++;
+      rows[i] = await measure(browser, only[i]);
+    }
+  } finally {
+    await browser.close();
+  }
+}
+await Promise.all(Array.from({ length: jobs }, worker));
 
 const f = (n, d = 0) => n.toFixed(d).padStart(6);
-console.log(`CPU slowed ${throttle}x. Times in ms of main-thread work.\n`);
+console.log(`CPU slowed ${throttle}x. Times in ms of main-thread work.`);
+console.log(`${jobs === 1 ? "One browser" : `${jobs} browsers side by side`}.\n`);
 console.log("page        load  script  layout  style  idle/3s  scroll-fps  p95   max   theme  themeWork  heap MB");
 for (const r of rows) {
   console.log(
