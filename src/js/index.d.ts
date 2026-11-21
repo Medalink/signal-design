@@ -367,7 +367,7 @@ export function mountMachine(root: HTMLElement, spec: MachineSpec, options?: {
   speed?: number;
   /** Nodes become buttons with aria-pressed; a click selects one and fires a select event. */
   select?: boolean;
-  /** The smallest scale before the board scrolls instead. Default 0.5, or 1 on a touch screen when a node is a button. */
+  /** The smallest scale before the board scrolls instead. Default 0.5, raised so two linked tokens' 24px hit areas stay 24px apart on screen, and 1 on a touch screen when a node is a button or a token has a link. */
   minScale?: number;
 }): Machine;
 export function defineKind(name: string, kind: MachineKind): void;

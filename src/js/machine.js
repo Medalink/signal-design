@@ -169,6 +169,10 @@ export function mountMachine(root, spec, options = {}) {
   let ids = 0;
   let selected = null;
   let snap = false;
+  /** Linked tokens on the board: their hit targets are the pressable buttons. */
+  let linked = 0;
+  /** The closest rest pitch between linked tokens that the last resize() scaled for. */
+  let lastPitch = Infinity;
   let canvas;
   let fit;
   let wiresLayer;
@@ -203,10 +207,11 @@ export function mountMachine(root, spec, options = {}) {
     byEl.set(tok.el, tok);
     if (link) {
       // A token with a link is a button the host can open. The button lives on
-      // a real 24x24 hit centred on the drawn token, so it meets WCAG 2.2
-      // target-size however small the token is drawn and however close its
-      // neighbours stand. The layer is hidden from assistive tech only while
-      // nothing in it can be activated.
+      // a real 24x24 hit centred on the drawn token, and the engine never
+      // scales two hits closer than 24px apart on screen (resize), so it
+      // meets WCAG 2.2 target-size however small the token is drawn. The
+      // layer is hidden from assistive tech only while nothing in it can be
+      // activated.
       tok.el.dataset.link = "";
       tok.el.dataset.sdPredict = "";
       const hit = el("button", "sd-machine-hit", tok.el);
@@ -221,6 +226,8 @@ export function mountMachine(root, spec, options = {}) {
     place(tok, x, y);
     tokens.add(tok);
     if (key != null) keyed.set(key, tok);
+    // The first linked token can make the board pressable: keep it full size.
+    if (link && ++linked === 1) resize();
     return tok;
   }
 
@@ -228,6 +235,8 @@ export function mountMachine(root, spec, options = {}) {
     moving.delete(tok);
     tokens.delete(tok);
     if (keyed.get(tok.key) === tok) keyed.delete(tok.key);
+    // The last linked token gone can leave the board unpressable: let it shrink again.
+    if (tok.link && --linked === 0) resize();
     dropTrail(tok);
     tok.el.dataset.gone = how;
     setTimeout(() => tok.el.remove(), 200);
@@ -284,6 +293,7 @@ export function mountMachine(root, spec, options = {}) {
       const then = tok.then;
       tok.then = null;
       then?.();
+      rescale();
     }
   }
 
@@ -679,6 +689,7 @@ export function mountMachine(root, spec, options = {}) {
     tokens.clear();
     keyed.clear();
     moving.clear();
+    linked = 0;
     board.replaceChildren();
     const [W, H] = px(s.size || [48, 24]);
     fit = el("div", "sd-machine-fit", board);
@@ -698,15 +709,47 @@ export function mountMachine(root, spec, options = {}) {
     loop();
   }
 
+  /** The closest rest pitch between two linked tokens, Infinity with fewer
+   * than two at rest. Tokens in flight are left out: they pass close only for
+   * a frame, and the hits are judged at rest. */
+  function linkedPitch() {
+    const parked = [];
+    for (const tok of tokens) if (tok.link && !moving.has(tok)) parked.push(tok);
+    let min = Infinity;
+    for (let i = 1; i < parked.length; i++)
+      for (let j = 0; j < i; j++)
+        min = Math.min(min, Math.hypot(parked[i].x - parked[j].x, parked[i].y - parked[j].y));
+    return min;
+  }
+
+  /** Scale again when a token came to rest and the closest rest pitch between
+   * linked tokens changed: it sets the smallest scale that keeps two hits
+   * 24px apart on screen. */
+  function rescale() {
+    if (linked < 2) return;
+    const pitch = linkedPitch();
+    if (pitch !== lastPitch) resize();
+  }
+
   function resize() {
     if (!canvas) return;
     const W = canvas.offsetWidth;
     const H = canvas.offsetHeight;
     const room = board.clientWidth;
-    // Pressable nodes on a touch screen keep their size so a finger lands on
-    // them: the board scrolls instead of shrinking them.
-    const pressable = matchMedia("(pointer: coarse)").matches && [...nodes.values()].some((n) => n.el.tabIndex === 0);
-    const scale = room ? Math.max(options.minScale ?? (pressable ? 1 : 0.5), Math.min(1, room / W)) : 1;
+    // Pressable things on a touch screen keep their size so a finger lands on
+    // them: the board scrolls instead of shrinking them. Linked tokens count:
+    // their hit targets are the buttons.
+    const pressable =
+      matchMedia("(pointer: coarse)").matches &&
+      (linked > 0 || [...nodes.values()].some((n) => n.el.tabIndex === 0));
+    // Two linked tokens at rest stand a `pitch` apart on the canvas. The scale
+    // never drops below 24 divided by that pitch, kept a hair above so the
+    // hits' 24px circles stay apart on screen (WCAG 2.2 target-size). The
+    // host's minScale still wins.
+    const pitch = linkedPitch();
+    lastPitch = pitch;
+    const floor = pressable ? 1 : Math.max(0.5, Math.min(1, Math.ceil(2400 / pitch) / 100));
+    const scale = room ? Math.max(options.minScale ?? floor, Math.min(1, room / W)) : 1;
     // A tab stop on the board while it overflows, so keyboard users can scroll
     // it (WCAG 2.1.1); the stop goes away when the machine fits again.
     if (room > 0 && W * scale > room + 1) {
@@ -1076,6 +1119,8 @@ export function mountMachine(root, spec, options = {}) {
     },
     /** Empty every token, dot and count without rebuilding, so a replay can start over. Looks set with set() stay. */
     clear() {
+      const had = linked > 0;
+      linked = 0;
       tokens.clear();
       keyed.clear();
       moving.clear();
@@ -1094,6 +1139,7 @@ export function mountMachine(root, spec, options = {}) {
         n.kind.clear?.(n, helpers);
         refresh(n);
       }
+      if (had) resize();
       emit("clear");
     },
     select,

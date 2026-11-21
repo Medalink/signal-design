@@ -48,8 +48,8 @@ export default {
     "With <code>prefers-reduced-motion</code> the machine does not autoplay until <code>machine.play()</code>, and tokens jump to their place instead of gliding; the base layer also cuts CSS transitions and animations to 0.01ms.",
   ],
   responsive: [
-    "The canvas scales down to fit the figure's width, to 0.5 at most by default (<code>minScale</code>), then the board scrolls.",
-    "On a touch screen a machine with pressable nodes keeps full size (scale 1) and scrolls, so a finger lands on a node.",
+    "The canvas scales down to fit the figure's width, to 0.5 at most by default (<code>minScale</code>), then the board scrolls. It never scales below 24 divided by the closest pitch between two linked tokens, so their hit areas stay 24px apart on screen.",
+    "On a touch screen a machine with pressable nodes or linked tokens keeps full size (scale 1) and scrolls, so a finger lands on a target.",
   ],
   notes: [
     "The spec is in grid cells: <code>size: [cols, rows]</code>, each node has <code>at</code> and <code>size</code>, and <code>spec.cell</code> sets px per cell (default 20). A wire's <code>start</code>, <code>end</code> and <code>via</code> points override its ports and bend it at right angles.",
