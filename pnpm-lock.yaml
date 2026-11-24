@@ -24,8 +24,8 @@ importers:
         specifier: 19.3.0
         version: 19.3.0(@types/react@19.3.0)
       ascii-magic-art:
-        specifier: 1.0.2
-        version: 1.0.2
+        specifier: 1.1.0
+        version: 1.1.0
       axe-core:
         specifier: 4.10.3
         version: 4.10.3
@@ -523,8 +523,8 @@ packages:
   '@types/react@19.3.0':
     resolution: {integrity: sha512-N0rFCuH9YoxG9/m61l9MfpJKfmLOVU0em7ipIz6TRgSSkvReLB9vL85GB+yr8Bs5leqpvg96JSwF4ZS1s4viQg==}
 
-  ascii-magic-art@1.0.2:
-    resolution: {integrity: sha512-c3TGcWiGSS+mZQiP2d8yHC7+FuS0P0zbG+NvXcD/VEFoadUHk5LKmbs7SqeHpaUJiyFyhLS8CWHEOfEJ2Vyu6w==}
+  ascii-magic-art@1.1.0:
+    resolution: {integrity: sha512-KjDQGjUzsdHW0XgGRsysSpMczykX2PGpJY+onqQ8hJKWzDV9Z1MeS970rU4gJjp8WUYRT8DU/lkALRlEigkURA==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -1068,7 +1068,7 @@ snapshots:
     dependencies:
       csstype: 3.2.3
 
-  ascii-magic-art@1.0.2: {}
+  ascii-magic-art@1.1.0: {}
 
   axe-core@4.10.3: {}
 
