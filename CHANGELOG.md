@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## 1.4.96 (2026-11-24)
+
+### Changed
+- Update vite from 8.3.4 to 8.3.8
+- Update tailwindcss from 4.3.3 to 4.3.5
+- Update playwright from 1.64.1 to 1.65.1
+- Update chart.js from 4.5.1 to 4.6.1
+- Update axe-core from 4.10.3 to 4.14.1
+- Update ascii-magic-art from 1.0.2 to 1.1.0
+- Update @tailwindcss/vite from 4.3.3 to 4.3.5
+- Update @tailwindcss/cli from 4.3.3 to 4.3.5
+
 ## 1.4.95 (2026-11-21)
 
 ### Changed
