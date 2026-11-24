@@ -27,8 +27,8 @@ importers:
         specifier: 1.1.0
         version: 1.1.0
       axe-core:
-        specifier: 4.10.3
-        version: 4.10.3
+        specifier: 4.14.1
+        version: 4.14.1
       chart.js:
         specifier: 4.5.1
         version: 4.5.1
@@ -528,8 +528,8 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  axe-core@4.10.3:
-    resolution: {integrity: sha512-Xm7bpRXnDSX2YE2YFfBk2FnF0ep6tmG7xPh8iHee8MIcrgq762Nkce856dYtJYLkuIoYZvGfTs/PbZhideTcEg==}
+  axe-core@4.14.1:
+    resolution: {integrity: sha512-FHfa+lmNjQZfJz1q8wKqIDwC6DExcHt/pkjNQb09a3NPjCKg2rhu5qb2S4r76ASyFNNtuFooJpZe37OgudVGtQ==}
     engines: {node: '>=4'}
 
   chart.js@4.5.1:
@@ -1070,7 +1070,7 @@ snapshots:
 
   ascii-magic-art@1.1.0: {}
 
-  axe-core@4.10.3: {}
+  axe-core@4.14.1: {}
 
   chart.js@4.5.1:
     dependencies:
