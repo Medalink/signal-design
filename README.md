@@ -442,8 +442,8 @@ own). Tiles mix with ordinary `sd-rail-item` tools.
 
 ```html
 <div class="sd-rail-list">
-  <a class="sd-rail-tile" href="/g/design" aria-current="page" aria-label="Design"><img alt="" src="design.png"></a>
-  <a class="sd-rail-tile" href="/g/ops" data-unread aria-label="Operations, 3 unread">OP<span class="sd-badge-count" data-corner>3</span></a>
+  <a class="sd-rail-tile" href="/g/design" aria-current="page" aria-label="DE — Design"><img alt="" src="design.png"></a>
+  <a class="sd-rail-tile" href="/g/ops" data-unread aria-label="OP 3 — Operations, unread">OP<span class="sd-badge-count" data-corner>3</span></a>
   <span class="sd-rail-tile" data-pending role="img" aria-label="Joining Hiking"><svg>…</svg></span>
 </div>
 ```
@@ -453,7 +453,7 @@ own). Tiles mix with ordinary `sd-rail-item` tools.
 | `aria-current` (also `aria-pressed="true"`, `aria-expanded="true"`) | Strong border on a raised grey; `aria-current` adds a 40px edge on the rail's outer side. |
 | `data-unread` | A 10px edge on the rail's outer side. |
 | `data-pending` | A dashed border in a quieter grey, for a place that is still joining. |
-| `.sd-badge-count[data-corner]` child | A count on the tile's top corner. Repeat it in `aria-label`, which replaces the tile's text. |
+| `.sd-badge-count[data-corner]` child | A count on the tile's top corner. Keep it in `aria-label` too: the label must contain the tile's visible text (initials and count), or it fails Label in Name (WCAG 2.5.3). |
 
 Use `a` or `button` for a tile you can open, which keeps keyboard focus; use a
 `span` with `role="img"` for one that is not a control. `--tile` (48px) sets

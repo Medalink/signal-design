@@ -36,7 +36,7 @@ export default {
   ],
   a11y: [
     "Label the figure with <code>aria-labelledby</code> pointing at the head's label.",
-    "Each node is <code>role=\"group\"</code> named by its <code>label</code> (or id), with an <code>aria-description</code> such as \"1 working, 2 waiting\". A node with a <code>link</code>, or any node when <code>select</code> is on, becomes <code>role=\"button\"</code>; selectable nodes carry <code>aria-pressed</code>.",
+    "Each node is <code>role=\"group\"</code> named by the text it shows — its <code>label</code>, <code>meta</code>, note and a checks node's chips — and falls back to its id when it shows nothing; it carries an <code>aria-description</code> such as \"1 working, 2 waiting\". A node with a <code>link</code>, or any node when <code>select</code> is on, becomes <code>role=\"button\"</code>; selectable nodes carry <code>aria-pressed</code>.",
     "Wires are <code>aria-hidden</code>, and so are tokens unless one was started with a <code>link</code>, which makes it a focusable button named by its label.",
     "A board wider than its figure at the smallest scale takes <code>tabindex=\"0\"</code> so a keyboard user can scroll it.",
     "Put the same facts in text near the machine when they matter, such as the count of failed runs: tokens move and a reader may look away.",

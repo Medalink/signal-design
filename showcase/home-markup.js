@@ -62,7 +62,7 @@ function sidebar() {
 
 function rail() {
   const tile = (s, i) =>
-    `<button class="sd-rail-tile" type="button" data-space="${s.id}" data-name="${s.name}" aria-label="${s.name}" data-sd-tip="${s.name}" data-sd-tip-side="right"${i ? "" : ' aria-current="true"'}>${s.initials}</button>`;
+    `<button class="sd-rail-tile" type="button" data-space="${s.id}" data-name="${s.name}" aria-label="${s.initials} — ${s.name}" data-sd-tip="${s.name}" data-sd-tip-side="right"${i ? "" : ' aria-current="true"'}>${s.initials}</button>`;
   return `    <nav class="sd-rail" aria-label="Workspaces">
       <div class="sd-rail-list">
         ${SPACES.map(tile).join("\n        ")}

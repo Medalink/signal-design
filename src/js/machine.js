@@ -504,6 +504,11 @@ export function mountMachine(root, spec, options = {}) {
     });
   }
 
+  function nameFromText(n) {
+    if ((n.el.textContent || "").trim()) n.el.removeAttribute("aria-label");
+    else n.el.setAttribute("aria-label", n.spec.label || n.id);
+  }
+
   function refresh(n) {
     const busy = n.slots.filter((slot) => slot.tok).length;
     n.el.dataset.queue = String(n.queue.length);
@@ -516,6 +521,7 @@ export function mountMachine(root, spec, options = {}) {
       if (n.metaEl.textContent !== text) n.metaEl.textContent = text;
     }
     n.el.setAttribute("aria-description", `${busy} working, ${n.queue.length} waiting${n.spec.frozen ? ", frozen" : ""}`);
+    nameFromText(n);
   }
 
   /* A node's label block is made when first needed: a name, then a mono meta, then a note. */
@@ -570,7 +576,6 @@ export function mountMachine(root, spec, options = {}) {
       delete n.el.dataset.link;
       delete n.el.dataset.sdPredict;
     }
-    n.el.setAttribute("aria-label", n.spec.label || n.id);
   }
 
   /** The look a host can change live: tone, frozen, label, label side, meta and link. */

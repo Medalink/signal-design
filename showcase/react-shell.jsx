@@ -199,7 +199,7 @@ function Shell() {
           <div className="sd-shell-header-end">
             <Menu>
               <MenuTrigger>
-                <IconButton label="Account" size="sm" variant="ghost">
+                <IconButton label="JD — Account" size="sm" variant="ghost">
                   <Avatar name="Jane Doe" tone="success" />
                 </IconButton>
               </MenuTrigger>

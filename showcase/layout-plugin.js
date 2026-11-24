@@ -111,7 +111,7 @@ function topbar({ menu, area, ownPalette }) {
 ${links}
   </nav>
   <div class="doc-topbar-end">
-    <button class="doc-topbar-search" type="button" data-sd-open="nav-palette"${ownPalette ? "" : ' data-sd-key="mod+k" aria-keyshortcuts="Control+K"'} aria-label="Search pages"><svg aria-hidden="true"><use href="#i-search"/></svg><span>Search</span><kbd class="sd-kbd">Ctrl K</kbd></button>
+    <button class="doc-topbar-search" type="button" data-sd-open="nav-palette"${ownPalette ? "" : ' data-sd-key="mod+k" aria-keyshortcuts="Control+K"'} aria-label="Search, Ctrl K"><svg aria-hidden="true"><use href="#i-search"/></svg><span>Search</span> <kbd class="sd-kbd">Ctrl K</kbd></button>
     <button class="doc-topbar-appearance" type="button" popovertarget="doc-appearance" aria-label="Theme and font"><svg aria-hidden="true"><use href="#i-theme"/></svg><span>Theme</span></button>
     <a class="doc-topbar-btn" href="https://github.com/Medalink/signal-design" target="_blank" rel="noreferrer" aria-label="Signal design on GitHub"><svg aria-hidden="true"><use href="#i-github"/></svg></a>
   </div>

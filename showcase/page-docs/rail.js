@@ -10,7 +10,7 @@ export default {
     "Navigation to sections of one app: <code>sd-rail-item</code> entries and a sidebar do that (see Sidebar).",
     "A horizontal set of views: tabs do that (see Bars and tabs).",
   ],
-  usage: "&lt;nav class=\"sd-rail\" aria-label=\"Places\" style=\"--shell-rail: 4.5rem\"&gt;\n  &lt;div class=\"sd-rail-list\"&gt;\n    &lt;a class=\"sd-rail-tile\" href=\"#design\" aria-current=\"page\" aria-label=\"Design\"&gt;DE&lt;/a&gt;\n    &lt;a class=\"sd-rail-tile\" href=\"#ops\" data-unread aria-label=\"Operations, 3 unread\"&gt;OP\n      &lt;span class=\"sd-badge-count\" data-corner&gt;3&lt;/span&gt;\n    &lt;/a&gt;\n  &lt;/div&gt;\n  &lt;div class=\"sd-rail-tools\"&gt;\n    &lt;button class=\"sd-rail-tile\" aria-label=\"Add a group\"&gt;&lt;svg&gt;…&lt;/svg&gt;&lt;/button&gt;\n  &lt;/div&gt;\n&lt;/nav&gt;",
+  usage: "&lt;nav class=\"sd-rail\" aria-label=\"Places\" style=\"--shell-rail: 4.5rem\"&gt;\n  &lt;div class=\"sd-rail-list\"&gt;\n    &lt;a class=\"sd-rail-tile\" href=\"#design\" aria-current=\"page\" aria-label=\"DE — Design\"&gt;DE&lt;/a&gt;\n    &lt;a class=\"sd-rail-tile\" href=\"#ops\" data-unread aria-label=\"OP 3 — Operations, unread\"&gt;OP\n      &lt;span class=\"sd-badge-count\" data-corner&gt;3&lt;/span&gt;\n    &lt;/a&gt;\n  &lt;/div&gt;\n  &lt;div class=\"sd-rail-tools\"&gt;\n    &lt;button class=\"sd-rail-tile\" aria-label=\"Add a group\"&gt;&lt;svg&gt;…&lt;/svg&gt;&lt;/button&gt;\n  &lt;/div&gt;\n&lt;/nav&gt;",
   api: [
     { name: "sd-rail", type: "class", desc: "The rail. In the shell, set <code>--shell-rail: 4.5rem</code> on <code>.sd-shell</code>; a rail on its own takes the same variable." },
     { name: "sd-rail-list", type: "class", desc: "The scrolling column of places; its scrollbar is hidden." },
@@ -32,7 +32,7 @@ export default {
     ["Enter / Space", "Activates the focused tile; a toggle tile also carries <code>aria-pressed</code> or <code>aria-expanded</code>."],
   ],
   a11y: [
-    "The tile's <code>aria-label</code> replaces its text, so put the name and any count in it (\"Operations, 3 unread\"); the corner badge alone is not read.",
+    "The tile's <code>aria-label</code> must contain its visible text: put the initials and any count first, then the name (\"OP 3 — Operations, unread\"). A name that drops what the tile shows fails Label in Name (WCAG 2.5.3).",
     "Give a picture tile <code>alt=\"\"</code> and the name in <code>aria-label</code>.",
     "A tile that is not a control, such as the pending one or the one in the welcome head, is <code>role=\"img\"</code> with an <code>aria-label</code>.",
     "Name each tile with <code>data-sd-tip</code> too, so sighted users can read it on hover and focus; <code>data-sd-tip-side=\"right\"</code> places it beside the rail.",
