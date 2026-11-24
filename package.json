@@ -128,7 +128,7 @@
     "react-dom": "19.3.1",
     "tailwindcss": "^4.3.5",
     "typescript": "5.9.3",
-    "vite": "8.3.4"
+    "vite": "8.3.8"
   },
   "types": "./src/js/index.d.ts",
   "engines": {
