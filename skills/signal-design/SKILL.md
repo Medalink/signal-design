@@ -17,7 +17,7 @@ Read `AGENTS.md` from the library first. Find it at, in order:
 - `${CLAUDE_PLUGIN_ROOT}/AGENTS.md` (this plugin's copy).
 
 It covers install (GitHub only, not npm), the seven hard rules, themes, which
-part to use for which need, and the accessibility duties.
+part to use for which need (in `docs/building-pages.md`), and the accessibility duties.
 
 ## 2. Copy real markup, don't invent it
 

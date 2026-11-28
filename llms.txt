@@ -7,6 +7,7 @@ Start with AGENTS.md: it is the contract (install, hard rules, which parts to us
 ## Guide
 
 - [AGENTS.md](https://github.com/Medalink/signal-design/blob/main/AGENTS.md): install, rules, patterns, accessibility, checking
+- [docs/building-pages.md](https://github.com/Medalink/signal-design/blob/main/docs/building-pages.md): which part for which need
 - [README.md](https://github.com/Medalink/signal-design/blob/main/README.md): full human documentation
 
 ## Reference

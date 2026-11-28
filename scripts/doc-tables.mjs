@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Builds the component tables in AGENTS.md and README.md from one file per entry.
+ * Builds the component tables in docs/building-pages.md and README.md from one file per entry.
  *
  *   node scripts/doc-tables.mjs           rewrite the tables
  *   node scripts/doc-tables.mjs --check   fail when a table is out of date (no writes)
@@ -21,7 +21,7 @@ const dir = resolve(root, "docs/tables");
 // `segments`: the body is a piece of a row, and entries with the same `row` join with ", ".
 // Otherwise the body is a whole table row.
 const TABLES = {
-  agents: { file: "AGENTS.md", head: ["Need", "Use"], segments: true },
+  agents: { file: "docs/building-pages.md", head: ["Need", "Use"], segments: true },
   conversation: { file: "README.md", head: ["Class", "What"] },
   inputs: { file: "README.md", head: ["Class", "JS hook", "What"] },
   "framework-state": { file: "README.md", head: ["Class", "Render this", "Leave out", "You handle"] },

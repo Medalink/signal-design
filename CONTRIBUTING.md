@@ -27,7 +27,7 @@ change. The flow releases that version as it is. No release branch is made.
 | File | Instead |
 |---|---|
 | `CHANGELOG.md` | Add `changes/<name>.md` with a `### Added` / `Changed` / `Fixed` / `Removed` heading and bullets. See `changes/README.md`. |
-| The rows of the generated tables in `AGENTS.md` and `README.md` | Add or edit `docs/tables/<table>/<name>.txt`, then run `pnpm build:docs`. See "Component docs". |
+| The rows of the generated tables in `docs/building-pages.md` and `README.md` | Add or edit `docs/tables/<table>/<name>.txt`, then run `pnpm build:docs`. See "Component docs". |
 | `ai/components.json`, `ai/tokens.json`, `llms-full.txt`, `vscode/html-data.json`, `vscode/css-data.json` | Nothing. The `ai-files` workflow rebuilds them on `main` after every push and commits them as `github-actions[bot]`. |
 
 `pnpm check:ai` runs that build without writing, and fails on a `data-sd-*` attribute
@@ -70,13 +70,13 @@ release commit changes `CHANGELOG.md` and these files.
   icon is missing. A new example app is an entry in a group of `examples` and
   a page of its own that carries `data-page="<key>"` on `<html>` and calls
   `mountBar()` from its script.
-- **`AGENTS.md` and `README.md` tables:** a component's entry is a file of its
+- **`docs/building-pages.md` and `README.md` tables:** a component's entry is a file of its
   own in `docs/tables/`, never a line in a table, so two components never edit
   the same file. See "Component docs" below.
 
 ## Component docs
 
-The component tables in `AGENTS.md` ("Building pages") and `README.md`
+The component tables in `docs/building-pages.md` (linked from the "Building pages" section of `AGENTS.md`) and `README.md`
 ("Conversation and lists", "Inputs", "Framework-owned state") sit between
 `<!-- doc-table:… -->` markers and are generated. Each entry is one file,
 `docs/tables/<table>/<name>.txt`, with `<table>` one of `agents`,
@@ -119,7 +119,7 @@ files as UTF-8, whatever tool resolves a conflict.
 - The generated tables are committed, so when another change lands first and
   `ship` stops on a conflict inside one of them (between the `doc-table`
   markers), do not merge the rows by hand. Run `git rebase origin/main`, then at each stop
-  `pnpm build:docs && git add AGENTS.md README.md && git rebase --continue`, then
+  `pnpm build:docs && git add docs/building-pages.md README.md && git rebase --continue`, then
   `ship` again. `pnpm build:docs` rebuilds the whole table from the files, so
   it drops the conflict markers and keeps both entries.
 
@@ -150,7 +150,7 @@ pnpm score -- --md docs/scorecard.md            # score and rank every block and
 node scripts/check-showcase-build.mjs           # production build under /signal-design/, every page
 node e2e/check.mjs                              # the check CLI on a sample page per rule (after build:css)
 node scripts/changelog.mjs --check              # changelog fragments
-pnpm build:docs                                 # regenerate the AGENTS.md and README.md tables from docs/tables/
+pnpm build:docs                                 # regenerate the building-pages and README.md tables from docs/tables/
 pnpm check:docs                                 # fail when those tables are out of date
 pnpm check:utf8                                 # fail on a tracked text file that is not valid UTF-8
 pnpm check:ai                                   # the AI-files build with nothing written (after build:css)

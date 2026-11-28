@@ -32,7 +32,7 @@ The package carries what an AI agent needs to use it well:
 
 | File | For |
 |---|---|
-| `AGENTS.md` | The contract: install, the hard rules, which part for which need, accessibility duties, checking. Point your project's own `AGENTS.md` at `node_modules/signal-design/AGENTS.md`. |
+| `AGENTS.md` | The contract: install, the hard rules, which part for which need (the table is `docs/building-pages.md`), accessibility duties, checking. Point your project's own `AGENTS.md` at `node_modules/signal-design/AGENTS.md`. |
 | `llms.txt`, `llms-full.txt` | The index, and the guide plus every component's HTML in one file. |
 | `ai/components.json` | Every block from the library pages: classes, `data-sd-*` attributes, copyable HTML, the JS it needs. |
 | `ai/tokens.json` | Every token resolved per theme (W3C design-token form) with contrast ratios. |

@@ -3,7 +3,7 @@
  *
  *   ai/components.json      every block: classes, attributes, HTML, JS, notes
  *   ai/tokens.json          every token, resolved per theme (W3C design tokens)
- *   llms-full.txt           AGENTS.md plus every component snippet, one file
+ *   llms-full.txt           AGENTS.md, the building-pages table plus every component snippet, one file
  *   vscode/html-data.json   data-sd-* attribute completions with descriptions
  *   vscode/css-data.json    --sd-* custom property completions with values
  *
@@ -300,8 +300,11 @@ try {
 
   // Same output on every OS: a Windows checkout may have CRLF line endings.
   const agents = readFileSync(resolve(root, "AGENTS.md"), "utf8").replace(/\r\n/g, "\n");
+  const pages = readFileSync(resolve(root, "docs/building-pages.md"), "utf8").replace(/\r\n/g, "\n");
   const full =
     agents.trimEnd() +
+    "\n\n---\n\n" +
+    pages.trimEnd() +
     "\n\n---\n\n# Component reference (generated)\n\nEvery block from the library pages, with its copyable HTML. " +
     "`JS:` says what `init()` must wire.\n" +
     components
